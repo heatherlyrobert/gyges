@@ -1,0 +1,1948 @@
+/*============================----beg-of-source---============================*/
+
+/*===[[ DECISION :: FORMAT ]]=================================================*/
+
+/*   PROBLEM (pr)
+ *   gyges is a intended to be a powerful, technical, and stable spreadsheet on
+ *   which i will constantly depend.  i simply won't have time and energy to
+ *   constantly update the file format or desire to debug something complicated.
+ *
+ *   OBJECTIVES (o)
+ *      -- human readable and editable
+ *      -- not require an external library or tool to access, read, or convert
+ *      -- stable over very long periods
+ *      -- only store what gyges requires and nothing more
+ *
+ *    ALTERNATIVES (act)
+ *      a) excel     proprietary, binary, evolving, and complex
+ *      b) oocalc    open, xml, compressed, evolving, and complex
+ *      c) gnumeric  open, evolving, and complex
+ *      d) sylk      open, xml, and complex
+ *      e) custom    requires definition and might not work long term
+ *
+ *   DECISION (ion)
+ *   gyges is an order of magnitude simplier that these spreadsheets.  they
+ *   each do so much and have tons of complexity, not the least of which is
+ *   all the formatting options that i will never have or allow.  the answer
+ *   is obvious -- custom and simple.
+ *
+ */
+
+/*===[[ DESIGN PRINCIPLES ]]==================================================*/
+
+/*   given that i will be away from the code for extended periods,
+ *   maintainability requires simplicity and clarity rather than compactness
+ *   and brilliance.
+ *
+ *   the design principles for the file format are...
+ *      -- ascii text only that can be read, altered, and created in an editor
+ *      -- 7 bit safe (unsigned char) for transportability (values 0 - 127)
+ *      -- columnar for readability, even though it wastes space
+ *      -- ascii field separator delimited to make column boundaries clear
+ *      -- record type fields to aid parsing and interpretation
+ *      -- internal comments, headings, and counts for human readability
+ *      -- as close to gyges data representation as possible for clarity
+ *      -- some additional contextual data if it helps readability
+ *
+ */
+
+
+
+#include   "gyges.h"
+
+
+
+/*---(globals)----------+-----------+-*/
+char        ver_ctrl    = '-';
+char        ver_num     [10]        = "----";
+char        ver_txt     [100]       = "----------";
+
+char        s_recd      [MAX_STR];
+
+char        s_cellbad   = 0;
+
+
+/*====================------------------------------------====================*/
+/*===----                            utilities                         ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___UTILITIES_______o () { return; }
+
+char        s_string    [MAX_STR];
+
+char*        /*--> clean whitespace from a string --------[--------[--------]-*/
+ySTR_trim          (char *a_source, char a_mode)
+{
+   /*---(design notes)-------------------*/
+   /*
+    *   n = none   (string untouched)
+    *   h = head   (all leading spaces gone)
+    *   t = tail   (all ending spaces gone)
+    *   b = both   (head and tail)
+    *   s = single (both plus internal not-in-strings compressed to one space)
+    *   e = every  (both plus internal not-in-strings taken out)
+    *   m = max    (both plus all internal taken fully out)
+    *
+    */
+   /*---(locals)-----------+-----------+-*/
+   int         i, j;                             /* iterators -- characters   */
+   int         x_len       = 0;                  /* source string length      */
+   int         x_count     = 0;                  /* whitespace counter        */
+   int         x_limit     = 0;
+   char        in_str      = '-';
+   /*---(defense: bad source)------------*/
+   strcpy (s_string, "(null)");
+   if (a_source == NULL)   return NULL;
+   x_len = strlen(a_source);
+   strcpy (s_string, "(empty)");
+   if (x_len    <= 0   )   return NULL;
+   /*---(prepare)------------------------*/
+   if (a_mode == 's')   x_limit = 1;
+   /*---(leading whitespace)-------------*/
+   if (strchr("hbsem", a_mode) != 0) {
+      for (i = 0; i <= x_len; ++i) {
+         if (a_source[0] != ' ') break;
+         for (j = 0; j <= x_len; ++j)
+            a_source[j] = a_source[j + 1];
+         --x_len;
+      }
+   }
+   /*---(trailing whitespace)------------*/
+   if (strchr("tbsem", a_mode) != 0) {
+      for (i = x_len - 1; i >= 0; --i) {
+         if (a_source[i] != ' ') break;
+         a_source[i] = '\0';
+         --x_len;
+      }
+   }
+   /*---(internal whitespace)------------*/
+   if (strchr("esm" , a_mode) != 0) {
+      for (i = 0; i <= x_len; ++i) {
+         /*---(check for strings)--------*/
+         if (a_mode != 'm') {
+            if (in_str == 'y') {
+               if (a_source[i] == '"') {
+                  /*> if (i > 0 && a_source[i-1] == '\\')  continue;                  <*/
+                  in_str = '-';
+                  continue;
+               }
+               continue;
+            } else {
+               if (a_source[i] == '"') {
+                  /*> if (i > 0 && a_source[i-1] == '\\')  continue;                  <*/
+                  in_str = 'y';
+                  continue;
+               }
+            }
+         }
+         /*---(check limit)--------------*/
+         if (a_source[i] != ' '    )  { x_count = 0; continue; }
+         if (x_count   <  x_limit)  { ++x_count;   continue; }
+         /*---(compress)-----------------*/
+         for (j = i; j <= x_len; ++j)
+            a_source[j] = a_source[j + 1];
+         --x_len;
+         --i;
+         /*---(done)---------------------*/
+      }
+   }
+   /*---(prepare for return)-------------*/
+   strncpy (s_string, a_source, MAX_STR);
+   /*---(complete)-----------------------*/
+   return a_source;
+}
+
+char*        /*--> clean string characters ---------------[--------[--------]-*/
+ySTR_clean         (char *a_source, char a_mode, char a_compress)
+{
+   /*---(design notes)-------------------*/
+   /*
+    *   a = alpha    lower and upper case letters only
+    *   n = alnum    alpha plus numbers
+    *   b = basic    alnum plus space, dash, and underscore
+    *   w = write    basic plus normal punctuation
+    *   e = exten    write plus coding symbols
+    *   p = print    all 7-bit printable ascii characters
+    *   7 = seven    all 7-bit, safe ascii characters
+    *
+    */
+   /*---(locals)-----------+-----------+-*/
+   char       *x_alpha     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+   char       *x_alnum     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
+   char       *x_basic     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789_-";
+   char       *x_write     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789_.,:;!?-()\"\'&";
+   char       *x_exten     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789_.,:;!?-()\"\'&<>{}[]+*/=#@\\^%`~^|$";
+   char        x_legal     [MAX_STR]   = "";
+   int         i, j;                     /* loop iterators -- characters        */
+   int         x_len       = 0;            /* source string length                */
+   /*---(header)-------------------------*/
+   DEBUG_YSTR  yLOG_enter   (__FUNCTION__);
+   DEBUG_YSTR  yLOG_point   ("a_source"  , a_source);
+   DEBUG_YSTR  yLOG_char    ("a_mode"    , a_mode);
+   DEBUG_YSTR  yLOG_char    ("a_compress", a_compress);
+   /*---(defenses)-----------------------*/
+   strcpy (s_string, "(null)");
+   if (a_source == NULL) {
+      DEBUG_YSTR  yLOG_note    ("null source, exiting");
+      DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
+   DEBUG_YSTR  yLOG_info    ("a_source"  , a_source);
+   x_len = strlen(a_source);
+   DEBUG_YSTR  yLOG_value   ("len"       , x_len);
+   strcpy (s_string, "(empty)");
+   if (x_len    <= 0   ) {
+      DEBUG_YSTR  yLOG_note    ("no length, exiting");
+      DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
+   /*---(setup legal characters)---------*/
+   switch (a_mode) {
+   case 'n' : strncpy (s_string, a_source, MAX_STR);
+              DEBUG_YSTR  yLOG_note    ("no clean mode, exiting");
+              DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
+              return a_source;
+              break;
+   case 'a' : strcpy (x_legal, x_alpha);            break;
+   case '9' : strcpy (x_legal, x_alnum);            break;
+   case 'b' : strcpy (x_legal, x_basic);            break;
+   case 'w' : strcpy (x_legal, x_write);            break;
+   case 'e' : strcpy (x_legal, x_exten);            break;
+   case 'p' : for (i = ' '; i <= '~'; ++i) {
+                 j = i - ' ';
+                 x_legal [j    ] = i;
+                 x_legal [j + 1] = '\0';
+              }
+              break;
+   case '7' : for (i = 1; i <= 127; ++i) {
+                 j = i - 1;
+                 x_legal [j    ] = i;
+                 x_legal [j + 1] = '\0';
+              }
+              break;
+   default : strcpy (s_string, "(bad mode)");
+             DEBUG_YSTR  yLOG_note    ("unknown mode, exiting");
+             DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
+             return NULL;
+   }
+   DEBUG_YSTR  yLOG_info    ("x_legal"   , x_legal);
+   /*---(clear)--------------------------*/
+   for (i = 0; i <= x_len; ++i) {
+      if (strchr (x_legal, a_source[i]) != 0)  continue;
+      if (a_compress == '\0') {
+         for (j = i; j <= x_len; ++j)  a_source[j] = a_source[j + 1];
+         --x_len;
+         --i;
+         continue;
+      }
+      a_source [i] = a_compress;
+   }
+   /*---(prepare for testing)------------*/
+   strncpy (s_string, a_source, MAX_STR);
+   /*---(complete)-----------------------*/
+   DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
+   return a_source;
+}
+
+char         /*--> count the number of a char in string --[ petal -[--------]-*/
+ySTR_count         (char *a_source, char a_char)
+{
+   /*---(locals)-------------------------*/
+   int         i           = 0;
+   int         x_len       = 0;
+   int         x_count     = 0;
+   /*---(defenses)-----------------------*/
+   if (a_source == NULL) return NULL;
+   /*---(count)--------------------------*/
+   x_len     = strlen (a_source);
+   for (i = 0; i <= x_len; ++i) {
+      if (a_source [i] != a_char)    continue;
+      ++x_count;
+   }
+   /*---(complete)-----------------------*/
+   return x_count;
+}
+
+char*      /*LD--: replace one substring with another -----------------------*/
+ySTR_repl          (char *a_source, cchar *a_old, cchar *a_new, cint a_count)
+{
+   /*---(defenses)-----------------------*/
+   if (a_source == NULL) return NULL;
+   /*---(locals)-------------------------*/
+   int       i;
+   int       lens      = strlen(a_source);
+   int       leno      = strlen(a_old);
+   int       lenn      = strlen(a_new);
+   char      new [MAX_STR];
+   char      xfound    = 0;
+   /*---(find old)-----------------------*/
+   for (i = 0; i <= lens; ++i) {
+      if (strncmp(a_source + i, a_old, leno) != 0) continue;
+      snprintf (new, MAX_STR, "%-*.*s%s%s", i, i, a_source, a_new, a_source + i + leno);
+      strncpy (a_source, new, MAX_STR);
+      lens = strlen(a_source);
+      ++xfound;
+      if (xfound >= a_count) break;
+      i = i + lenn;
+   }
+   /*---(complete)-----------------------*/
+   return a_source;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                          versioning                          ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___VERSIONING______o () { return; }
+
+char
+FILE_bump          (char a_type, char *a_ver)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_temp      [MAX_STR];
+   char        rc          = 0;
+   char        rce         = -10;
+   /*---(defense: a_type)----------------*/
+   --rce;  if (strchr ("SMmf", a_type) == NULL)  return rce;
+   /*---(defense: a_ver)-----------------*/
+   --rce;  if (a_ver == NULL)                    return rce;
+   --rce;  if (FILE_version (a_ver, x_temp) < 0) return rce;
+   /*---(factor)-------------------------*/
+   if (strchr ("f", a_type) != NULL) {
+      if (a_ver [4] <  'z') {
+         ++a_ver[4];
+         return 0;
+      }
+   }
+   a_ver [4] = 'a';
+   /*---(minor)--------------------------*/
+   if (strchr ("mf", a_type) != NULL) {
+      if (a_ver [3] <  '9') {
+         ++a_ver[3];
+         return 0;
+      }
+      if (a_ver [3] == '9') {
+         a_ver  [3] =  'A';
+         return 0;
+      }
+      if (a_ver [3] <  'F') {
+         ++a_ver[3];
+         return 0;
+      }
+   }
+   a_ver [3] = '0';
+   /*---(major)--------------------------*/
+   if (strchr ("Mmf", a_type) != NULL) {
+      if (a_ver [1] <  '9') {
+         ++a_ver[1];
+         return 0;
+      }
+      if (a_ver [1] == '9') {
+         a_ver  [1] =  'A';
+         return 0;
+      }
+      if (a_ver [1] <  'F') {
+         ++a_ver[1];
+         return 0;
+      }
+   }
+   a_ver [1] = '0';
+   /*---(super)--------------------------*/
+   if (strchr ("SMmf", a_type) != NULL) {
+      if (a_ver [0] <  '9') {
+         ++a_ver[0];
+         return 0;
+      }
+      if (a_ver [0] == '9') {
+         a_ver  [0] =  'A';
+         return 0;
+      }
+      if (a_ver [0] <  'F') {
+         ++a_ver[0];
+         return 0;
+      }
+   }
+   /*---(complete)-----------------------*/
+   strcpy (a_ver, "XX.Xx");
+   return  -1;
+}
+
+char
+FILE_version       (char *a_ver, char *a_final)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_len       = 0;
+   char        rce         = -10;
+   char        x_work      [10];
+   /*---(defense : a_final)--------------*/
+   --rce;  if (a_final == NULL)             return rce;
+   /*---(set default)--------------------*/
+   strcpy (a_final, "00.0a");
+   /*---(defense : empty)----------------*/
+   --rce;  if (a_ver == NULL)               return rce;
+   x_len = strlen (a_ver);
+   --rce;  if (strcmp (a_ver, "") == 0)     return rce;
+   --rce;  if (x_len <= 0)                  return rce;
+   /*---(defense: bad length)------------*/
+   --rce;  if (x_len < 4)                   return rce;
+   --rce;  if (x_len > 5)                   return rce;
+   /*---(prepare)------------------------*/
+   if (x_len == 4)   sprintf (x_work, "0%s", a_ver);
+   else              strcpy  (x_work, a_ver);
+   /*---(test chars)---------------------*/
+   --rce;  if (strchr ("abcdefghijklmnopqrstuvwxyz", x_work [4]) == 0)  return rce;
+   --rce;  if (strchr ("0123456789ABCDEF",           x_work [3]) == 0)  return rce;
+   --rce;  if (x_work [2] != '.')                       return rce;
+   --rce;  if (strchr ("0123456789ABCDEF",           x_work [1]) == 0)  return rce;
+   --rce;  if (strchr ("0123456789ABCDEF",           x_work [0]) == 0)  return rce;
+   /*---(finalize)-----------------------*/
+   strcpy (a_final, x_work);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> clear a tab entry ---------------------[ petal -[--------]-*/
+TAB_init           (int a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   int         j           = 0;
+   char        t           [100];
+   char        x_new       = 'y';
+   /*---(check for new tab)-----------*/
+   if (tabs[a_tab].active != 'y')  x_new = '-';
+   /*---(main config)-----------------*/
+   tabs[a_tab].active  = '-';
+   sprintf (t, "tab%02d", a_tab);
+   strcpy  (tabs[a_tab].name, t);
+   tabs[a_tab].c       =    0;
+   /*---(size limits)-----------------*/
+   tabs[a_tab].ncol    = DEF_COLS;
+   tabs[a_tab].nrow    = DEF_ROWS;
+   /*---(current position)------------*/
+   tabs[a_tab].ccol    =    0;
+   tabs[a_tab].crow    =    0;
+   /*---(screen position)-------------*/
+   tabs[a_tab].bcol    =    0;
+   tabs[a_tab].brow    =    0;
+   tabs[a_tab].ecol    =    0;
+   tabs[a_tab].erow    =    0;
+   /*---(initialize columns)----------*/
+   for (i = 0; i < MAX_COLS; ++i) {
+      tabs[a_tab].cols[i].w        = DEF_WIDTH;
+      tabs[a_tab].cols[i].x        = 0;
+      tabs[a_tab].cols[i].c        = 0;
+      if        (i < 26)  {
+         tabs[a_tab].cols[i].l[0] = '-';
+         tabs[a_tab].cols[i].l[1] = i + 'a';
+      } else  {
+         tabs[a_tab].cols[i].l[0] = (i / 26) - 1 + 'a';
+         tabs[a_tab].cols[i].l[1] = (i % 26) + 'a';
+      }
+      tabs[a_tab].cols[i].l[2] = '\0';
+   }
+   /*---(initialize rows)-------------*/
+   for (i = 0; i < MAX_ROWS; ++i) {
+      tabs[a_tab].rows[i].h = DEF_HEIGHT;
+      tabs[a_tab].rows[i].y = 0;
+      tabs[a_tab].rows[i].c = 0;
+   }
+   /*---(clean cells)-----------------*/
+   for (i = 0; i < MAX_COLS; ++i) {
+      for (j = 0; j < MAX_ROWS; ++j) {
+         tabs[a_tab].sheet[i][j] = NULL;
+      }
+   }
+   /*---(locked row/col)--------------*/
+   tabs[a_tab].froz_col  = '-';
+   tabs[a_tab].froz_bcol = 0;
+   tabs[a_tab].froz_ecol = 0;
+   tabs[a_tab].froz_row  = '-';
+   tabs[a_tab].froz_brow = 0;
+   tabs[a_tab].froz_erow = 0;
+   /*---(deactivate tab)--------------*/
+   tabs[a_tab].active  = '-';
+   /*---(done)------------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       history recording                      ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___HISTORY_________o () { return; }
+
+char         /*--> clear out the history -----------------[--------[--------]-*/
+HIST_clear         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(clear list)------------------*/
+   for (i = 0; i < MAX_HIST; ++i) {
+      strcpy (hist [i].act   , "");
+      hist [i].btab  = -1;
+      hist [i].bcol  = -1;
+      hist [i].brow  = -1;
+      strcpy (hist [i].before, "");
+      strcpy (hist [i].after , "");
+   }
+   /*---(clear vars)------------------*/
+   nhist =  0;
+   chist = -1;
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+char         /*--> record a cell change ------------------[--------[--------]-*/
+HIST_change        (
+      /*----------+-----------+-----------------------------------------------*/
+      char       *a_type,     /* type of formatting                           */
+      int         a_tab,      /* tab of change                                */
+      int         a_col,      /* col of change                                */
+      int         a_row,      /* row of change                                */
+      char       *a_before,   /* contents before change (for undo)            */
+      char       *a_after)    /* contents after change  (for redo)            */
+{
+   /*---(update pointers)-------------*/
+   ++chist;
+   nhist = chist + 1;
+   /*---(add record)------------------*/
+   strncpy (hist [chist].act   , a_type, 14);
+   hist [chist].btab  = a_tab;
+   hist [chist].bcol  = a_col;
+   hist [chist].brow  = a_row;
+   strcpy (hist [chist].before, a_before);
+   strcpy (hist [chist].after , a_after );
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+char         /*--> record a cell change ------------------[--------[--------]-*/
+HIST_overwrite     (
+      /*----------+-----------+-----------------------------------------------*/
+      char       *a_type,     /* type of formatting                           */
+      int         a_tab,      /* tab of change                                */
+      int         a_col,      /* col of change                                */
+      int         a_row,      /* row of change                                */
+      char       *a_before,   /* contents before change (for undo)            */
+      char       *a_beforeF,  /* contents before change (for undo)            */
+      char       *a_after,    /* contents after change  (for redo)            */
+      char       *a_afterF)   /* contents after change  (for redo)            */
+{
+   /*---(update pointers)-------------*/
+   ++chist;
+   nhist = chist + 1;
+   /*---(add record)------------------*/
+   strncpy (hist [chist].act   , a_type, 14);
+   hist [chist].btab  = a_tab;
+   hist [chist].bcol  = a_col;
+   hist [chist].brow  = a_row;
+   sprintf (hist [chist].before, "%s::%s", a_beforeF, a_before);
+   sprintf (hist [chist].after , "%s::%s", a_afterF , a_after );
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+char         /*--> record a cell change ------------------[--------[--------]-*/
+HIST_format        (
+      /*----------+-----------+-----------------------------------------------*/
+      char       *a_type,     /* type of formatting                           */
+      int         a_tab,      /* tab of change                                */
+      int         a_col,      /* col of change                                */
+      int         a_row,      /* row of change                                */
+      char        a_before,   /* format before                                */
+      char        a_after)    /* format after                                 */
+{
+   /*---(update pointers)-------------*/
+   ++chist;
+   nhist = chist + 1;
+   /*---(add record)------------------*/
+   strncpy (hist [chist].act   , a_type, 14);
+   hist [chist].btab  = a_tab;
+   hist [chist].bcol  = a_col;
+   hist [chist].brow  = a_row;
+   sprintf (hist [chist].before, "%c", a_before);
+   sprintf (hist [chist].after , "%c", a_after );
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+char         /*--> record a cell change ------------------[--------[--------]-*/
+HIST_size          (
+      /*----------+-----------+-----------------------------------------------*/
+      char       *a_type,     /* type of sizing                               */
+      int         a_tab,      /* tab of change                                */
+      int         a_col,      /* col of change                                */
+      int         a_row,      /* row of change                                */
+      int         a_before,   /* size before                                  */
+      int         a_after)    /* size after                                   */
+{
+   /*---(update pointers)-------------*/
+   ++chist;
+   nhist = chist + 1;
+   /*---(add record)------------------*/
+   strncpy (hist [chist].act   , a_type, 14);
+   hist [chist].btab  = a_tab;
+   hist [chist].bcol  = a_col;
+   hist [chist].brow  = a_row;
+   sprintf (hist [chist].before, "%d", a_before);
+   sprintf (hist [chist].after , "%d", a_after );
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+char         /*--> take a change away --------------------[--------[--------]-*/
+HIST_undo          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_lower     [15];                 /* action in lower case      */
+   char        x_upper     [15];                 /* action in upper case      */
+   int         i           = 0;                  /* generic iterator          */
+   char        x_temp      [15];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_HIST  yLOG_value   ("nhist"     , nhist);
+   DEBUG_HIST  yLOG_value   ("chist"     , chist);
+   /*---(defense)------------------------*/
+   if (chist <  0    ) {
+      DEBUG_HIST  yLOG_note    ("chist less than zero");
+      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+      return -1;
+   }
+   if (chist >= nhist) {
+      DEBUG_HIST  yLOG_note    ("chist greater than or equal to nhist");
+      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+      return -2;
+   }
+   /*---(prepare)------------------------*/
+   DEBUG_HIST  yLOG_info    ("action"    , hist[chist].act);
+   strcpy (x_lower, hist[chist].act);
+   for (i = 0; i < 15; ++i)   x_lower[i] = tolower (x_lower[i]);
+   DEBUG_HIST  yLOG_info    ("lower"     , x_lower);
+   strcpy (x_upper, hist[chist].act);
+   for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
+   DEBUG_HIST  yLOG_info    ("upper"     , x_upper);
+   /*---(get to right location)----------*/
+   DEBUG_HIST  yLOG_note    ("clear any existing selection");
+   SEL_clear ();
+   DEBUG_HIST  yLOG_complex ("jump to"   , "t=%4d, c=%4d, r=%4d", hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+   LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+   /*---(handle request)-----------------*/
+   DEBUG_HIST  yLOG_info    ("before"    , hist[chist].before);
+   if        (strcmp ("change", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_change");
+      if (strcmp (hist[chist].before, "[<{(null)}>]") == 0) {
+         CELL__delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+      } else {
+         CELL_change  (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
+      }
+   } else if (strcmp ("overwrite", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_overwrite");
+      if (strcmp (hist[chist].before, "???::[<{(null)}>]") == 0) {
+         CELL__delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+      } else {
+         sprintf (x_temp, "%c%c%c", hist[chist].before[0], hist[chist].before[1], hist[chist].before[2]);
+         CELL_overwrite (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before + 5, x_temp);
+      }
+   } else if (strcmp ("delete", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL__delete");
+      CELL_change   (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
+   } else if (strcmp ("decimals", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_decimals");
+      CELL_decimals (CHG_NOHIST, hist[chist].before[0]);
+   } else if (strcmp ("align"   , x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_align");
+      CELL_align    (CHG_NOHIST, hist[chist].before[0]);
+   } else if (strcmp ("format"  , x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_format");
+      CELL_format   (CHG_NOHIST, hist[chist].before[0]);
+   } else if (strcmp ("width"   , x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_width");
+      CELL_width    (CHG_NOHIST, -(atoi (hist[chist].before)));
+   } else if (strcmp ("height"  , x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_height");
+      CELL_height   (CHG_NOHIST, -(atoi (hist[chist].before)));
+   }
+   /*---(uptate)-------------------------*/
+   --chist;
+   DEBUG_HIST  yLOG_value   ("chist"     , chist);
+   /*---(tail recursion)-----------------*/
+   if (chist >= 0) {
+      DEBUG_HIST  yLOG_info    ("action"    , hist[chist + 1].act);
+      if (strcmp (hist[chist + 1].act, x_upper) == 0) {
+         DEBUG_HIST  yLOG_note    ("check previous action");
+         if      (strcmp (hist[chist].act, x_lower) == 0) {
+            DEBUG_HIST  yLOG_note    ("final recursive call");
+            HIST_undo ();
+         }
+         else if (strcmp (hist[chist].act, x_upper) == 0) {
+            DEBUG_HIST  yLOG_note    ("another in series");
+            HIST_undo ();
+         }
+         else {
+            DEBUG_HIST  yLOG_note    ("does not match, don't recurse");
+         }
+      }
+   }
+   /*---(complet)------------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> put a change back ---------------------[--------[--------]-*/
+HIST_redo          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_lower     [15];                 /* action in lower case      */
+   char        x_upper     [15];                 /* action in upper case      */
+   int         i           = 0;                  /* generic iterator          */
+   char        x_temp      [15];
+   /*---(defense)------------------------*/
+   if (chist >= nhist - 1) return -1;
+   /*---(uptate)-------------------------*/
+   ++chist;
+   /*---(prepare)------------------------*/
+   strcpy (x_lower, hist[chist].act);
+   for (i = 0; i < 15; ++i)   x_lower[i] = tolower (x_lower[i]);
+   strcpy (x_upper, hist[chist].act);
+   for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
+   /*---(get to right location)----------*/
+   LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+   SEL_clear ();
+   /*---(handle request)-----------------*/
+   if        (strcmp ("change"  , x_lower) == 0) {
+      if (strcmp (hist[chist].after , "[<{(null)}>]") == 0) {
+         CELL__delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+      } else {
+         CELL_change (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].after);
+      }
+   } else if (strcmp ("overwrite", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_overwrite");
+      if (strcmp (hist[chist].after , "???::[<{(null)}>]") == 0) {
+         CELL__delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+      } else {
+         sprintf (x_temp, "%c%c%c", hist[chist].after [0], hist[chist].after [1], hist[chist].after [2]);
+         CELL_overwrite (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].after  + 5, x_temp);
+      }
+   } else if (strcmp ("delete", x_lower) == 0) {
+      CELL__delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+   } else if (strcmp ("decimals", x_lower) == 0) {
+      CELL_decimals (CHG_NOHIST, hist[chist].after[0]);
+   } else if (strcmp ("align"   , x_lower) == 0) {
+      CELL_align    (CHG_NOHIST, hist[chist].after[0]);
+   } else if (strcmp ("format"  , x_lower) == 0) {
+      CELL_format   (CHG_NOHIST, hist[chist].after[0]);
+   } else if (strcmp ("width"   , x_lower) == 0) {
+      CELL_width    (CHG_NOHIST, -(atoi (hist[chist].after )));
+   } else if (strcmp ("height"  , x_lower) == 0) {
+      CELL_height   (CHG_NOHIST, -(atoi (hist[chist].after )));
+   }
+   /*---(tail recursion)-----------------*/
+   if (chist <  nhist - 1) {
+      if (strcmp (hist[chist + 1].act, x_upper) == 0)  HIST_redo ();
+   }
+   /*---(complet)------------------------*/
+   return 0;
+}
+
+char         /*--> list history --------------------------[--------[--------]-*/
+HIST_list          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_name      [100]       = "";
+   char        rce         = -10;
+   FILE       *x_file      = NULL;
+   /*---(open)---------------------------*/
+   snprintf (x_name, 95, "%s.hist", f_title);
+   x_file = fopen(x_name, "w");
+   --rce;
+   if (x_file == NULL)      return rce;
+   /*---(print)--------------------------*/
+   fprintf (x_file, "details of history\n\n");
+   fprintf (x_file, "nhist = %d\n" , nhist);
+   fprintf (x_file, "chist = %d\n" , chist);
+   for (i = 0; i < nhist; ++i) {
+      if (i % 5 == 0)  fprintf (x_file, "\n-ref- %c action--------- %c btab %c bcol %c brow %c before/after ----------------------------------------\n", 31, 31, 31, 31, 31);
+      fprintf (x_file, "%-5d %c %-15.15s %c %4d %c %4d %c %4d %c %s %c %s %c\n", i,
+            31, hist [i].act   , 31, hist [i].btab  ,
+            31, hist [i].bcol  , 31, hist [i].brow  ,
+            31, hist [i].before, 31, hist [i].after , 31);
+   }
+   fprintf (x_file, "\ndone\n");
+   /*---(close)--------------------------*/
+   fclose (x_file);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                    reading and writing tabs                  ----===*/
+/*====================------------------------------------====================*/
+static void   o___TABS____________o (void) { return; }
+
+/* tab records are allowed to evolve separately from other input types as the
+ * need arises.  as such, they have their own versioning and format.
+ *
+ * C) tab         tab#  ncol  nrow  ccol  crow  name-------------------
+ *    tab            0    26   100     2     6  tab00
+ *
+ * D) tab         tab#  ncol  nrow  bcol  brow  ccol  crow  name-------------------
+ *    tab            0    26   100     2     3     5    13  tab00
+ *
+ * E) tab         tab#  ncol  nrow  bcol  brow  ccol  crow  t -lbeg- -lend-  name-------------------
+ *    tab            0    26   100     0     1     5    23  - ------ ------  tab00
+ *
+ * F) tab         ver  tab#  --max--  --beg--  --cur--  t  lockbeg  lockend  name-------------------
+ *    tab         -F-     0  0az999   0a1      0g5      b  0a5      0b5      one
+ *
+ *
+ *
+ *
+ */
+
+char         /*--> parse a tab entry ---------------------[ flower [--------]-*/
+INPT_tab           (
+      /*----------+-----------+-----------------------------------------------*/
+      cchar      *a_recd)     /* input record (const)                         */
+{  /*---(design notes)--------------------------------------------------------*/
+   /*
+   */
+   /*---(locals)-----------+-----------+-*/
+   int         x_len       = 0;                  /* generic string length     */
+   char        x_temp      [MAX_STR];            /* strtok working string     */
+   char       *p           = NULL;               /* strtok return pointer     */
+   char       *q           = "\x1F";             /* strtok delimeters         */
+   char       *r           = NULL;               /* strtok context variable   */
+   int         x_tab       = 0;
+   char        rc          = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   char        x_type      = 0;
+   int         i           = 0;               /* temp */
+   char        x_beg       [10] = "";         /* temp */
+   char        x_end       [10] = "";         /* temp */
+   char        x_ver       = '-';
+   char        rce         = -10;                /* return code for errors    */
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   /*---(defense: a_recd null)-----------*/
+   DEBUG_INPT  yLOG_point   ("a_recd"    , a_recd);
+   --rce;  if (a_recd == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("a_recd"    , a_recd);
+   /*---(defense: a_recd length)---------*/
+   x_len = strlen (a_recd);
+   DEBUG_INPT  yLOG_value   ("length"    , x_len);
+   --rce;  if (x_len <   80) {
+      DEBUG_INPT  yLOG_note    ("length shorter than minimum (80)");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (x_len >  120)  {
+      DEBUG_INPT  yLOG_note    ("length longer than maximum (120)");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: type/verb)-------------*/
+   strncpy (x_temp, a_recd, MAX_STR);
+   p = strtok_r (x_temp, "\x1F", &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   ySTR_trim (p, ySTR_BOTH);
+   DEBUG_INPT  yLOG_info    ("verb"      , p);
+   --rce;  if (strcmp (p, "tab") != 0) {
+      DEBUG_INPT  yLOG_note    ("not a tab record");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(ver number)---------------------*/
+   p = strtok_r (NULL, "\x1F", &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   ySTR_trim (p, ySTR_BOTH);
+   --rce;  if (strlen (p) != 3) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (p[0] != '-')  {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (p[2] != '-') {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   x_ver = p[1];
+   DEBUG_INPT  yLOG_char    ("ver num"   , x_ver);
+   --rce;  if (strchr ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", x_ver) == 0)  return rce;
+   /*---(tab number)---------------------*/
+   p = strtok_r (NULL, "\x1F", &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   ySTR_trim (p, ySTR_BOTH);
+   --rce;  if (strlen (p) <= 0)  {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   x_tab = atoi (p);
+   DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
+   /*---(maximums)-----------------------*/
+   if (x_ver >= 'E') {
+      x_col = x_row = 0;
+      p = strtok_r (NULL, "\x1F", &r);
+      if (p != NULL) {
+         ySTR_trim (p, ySTR_BOTH);
+         DEBUG_INPT  yLOG_info    ("maximum"   , p);
+         rc = LOC_parse (p, NULL, &x_col, &x_row, NULL);
+      } else {
+         DEBUG_INPT  yLOG_info    ("maximum"   , "not found/readable");
+      }
+      ++x_col;
+      ++x_row;
+      if (rc < 0 || x_col <= 0)  x_col = DEF_COLS;
+      if (x_col >  MAX_COLS)     x_col = MAX_COLS;
+      if (rc < 0 || x_row <= 0)  x_row = DEF_ROWS;
+      if (x_row >  MAX_ROWS)     x_row = MAX_ROWS;
+      tabs[x_tab].ncol = x_col;
+      tabs[x_tab].nrow = x_row;
+      DEBUG_INPT  yLOG_value   ("ncol"      , tabs[x_tab].ncol);
+      DEBUG_INPT  yLOG_value   ("nrow"      , tabs[x_tab].nrow);
+   } else {
+      p = strtok_r (NULL, "\x1F", &r);
+      tabs[x_tab].ncol = atoi (ySTR_trim (p, ySTR_BOTH));
+      DEBUG_INPT  yLOG_value   ("ncol"      , tabs[x_tab].ncol);
+      p = strtok_r (NULL, "\x1F", &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      tabs[x_tab].nrow = atoi (ySTR_trim (p, ySTR_BOTH));
+      DEBUG_INPT  yLOG_value   ("nrow"      , tabs[x_tab].nrow);
+   }
+   /*---(beginning)----------------------*/
+   if (x_ver >= 'E') {
+      x_col = x_row = 0;
+      p = strtok_r (NULL, "\x1F", &r);
+      if (p != NULL) {
+         ySTR_trim (p, ySTR_BOTH);
+         DEBUG_INPT  yLOG_info    ("beginning" , p);
+         LOC_parse (p, NULL, &x_col, &x_row, NULL);
+      } else {
+         DEBUG_INPT  yLOG_info    ("beginning" , "not found/readable");
+      }
+      if (x_col <= 0)   x_col = 0;
+      if (x_row <= 0)   x_row = 0;
+      tabs[x_tab].bcol = x_col;
+      tabs[x_tab].brow = x_row;
+      DEBUG_INPT  yLOG_value   ("bcol"      , tabs[x_tab].bcol);
+      DEBUG_INPT  yLOG_value   ("brow"      , tabs[x_tab].brow);
+   } else {
+      p = strtok_r (NULL, "\x1F", &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      tabs[x_tab].bcol = atoi (ySTR_trim (p, ySTR_BOTH));
+      DEBUG_INPT  yLOG_value   ("bcol"      , tabs[x_tab].bcol);
+      p = strtok_r (NULL, "\x1F", &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      tabs[x_tab].brow = atoi (ySTR_trim (p, ySTR_BOTH));
+      DEBUG_INPT  yLOG_value   ("brow"      , tabs[x_tab].brow);
+   }
+   /*---(current)------------------------*/
+   if (x_ver >= 'E') {
+      x_col = x_row = 0;
+      p = strtok_r (NULL, "\x1F", &r);
+      if (p != NULL) {
+         ySTR_trim (p, ySTR_BOTH);
+         DEBUG_INPT  yLOG_info    ("current"   , p);
+         LOC_parse (p, NULL, &x_col, &x_row, NULL);
+      } else {
+         DEBUG_INPT  yLOG_info    ("current"   , "not found/readable");
+      }
+      if (x_col <= 0)   x_col = 0;
+      if (x_row <= 0)   x_row = 0;
+      tabs[x_tab].ccol = x_col;
+      tabs[x_tab].crow = x_row;
+      DEBUG_INPT  yLOG_value   ("ccol"      , tabs[x_tab].ccol);
+      DEBUG_INPT  yLOG_value   ("crow"      , tabs[x_tab].crow);
+   } else {
+      p = strtok_r (NULL, "\x1F", &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      tabs[x_tab].ccol = atoi (ySTR_trim (p, ySTR_BOTH));
+      DEBUG_INPT  yLOG_value   ("ccol"      , tabs[x_tab].ccol);
+      p = strtok_r (NULL, "\x1F", &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      tabs[x_tab].crow = atoi (ySTR_trim (p, ySTR_BOTH));
+      DEBUG_INPT  yLOG_value   ("crow"      , tabs[x_tab].crow);
+   }
+   /*---(frozen)-------------------------*/
+   if (x_ver >= 'E') {
+      /*---(type)--------------*/
+      x_type = '-';
+      tabs[x_tab].froz_col  = tabs[x_tab].froz_row  = '-';
+      tabs[x_tab].froz_bcol = tabs[x_tab].froz_ecol = 0;
+      tabs[x_tab].froz_brow = tabs[x_tab].froz_erow = 0;
+      p = strtok_r (NULL, "\x1F", &r);
+      if (p != NULL) {
+         ySTR_trim (p, ySTR_BOTH);
+         x_type = p[0];
+         DEBUG_INPT  yLOG_char    ("froz_type" , x_type);
+      } else {
+         DEBUG_INPT  yLOG_info    ("froz_type" , "not found/readable");
+      }
+      switch (x_type) {
+      case  'r' : tabs[x_tab].froz_col  = '-';
+                  tabs[x_tab].froz_row  = 'y';
+                  break;
+      case  'c' : tabs[x_tab].froz_col  = 'y';
+                  tabs[x_tab].froz_row  = '-';
+                  break;
+      case  'b' : tabs[x_tab].froz_col  = 'y';
+                  tabs[x_tab].froz_row  = 'y';
+                  break;
+      }
+      if (strchr ("rcb", x_type) != 0) {
+         /*---(beg)---------------*/
+         x_col = x_row = 0;
+         p = strtok_r (NULL, "\x1F", &r);
+         if (p != NULL) {
+            ySTR_trim (p, ySTR_BOTH);
+            DEBUG_INPT  yLOG_info    ("froz_beg"  , p);
+            LOC_parse (p, NULL, &x_col, &x_row, NULL);
+         } else {
+            DEBUG_INPT  yLOG_info    ("froz_beg"  , "not found/readable");
+         }
+         if (x_col <= 0)   x_col = 0;
+         if (x_row <= 0)   x_row = 0;
+         tabs[x_tab].froz_bcol = x_col;
+         tabs[x_tab].froz_brow = x_row;
+         DEBUG_INPT  yLOG_value   ("froz_bcol" , tabs[x_tab].froz_bcol);
+         DEBUG_INPT  yLOG_value   ("froz_brow" , tabs[x_tab].froz_brow);
+         /*---(end)---------------*/
+         x_col = x_row = 0;
+         p = strtok_r (NULL, "\x1F", &r);
+         if (p != NULL) {
+            ySTR_trim (p, ySTR_BOTH);
+            DEBUG_INPT  yLOG_info    ("froz_end"  , p);
+            LOC_parse (p, NULL, &x_col, &x_row, NULL);
+         } else {
+            DEBUG_INPT  yLOG_info    ("froz_end"  , "not found/readable");
+         }
+         if (x_col <= 0)   x_col = 0;
+         if (x_row <= 0)   x_row = 0;
+         tabs[x_tab].froz_ecol = x_col;
+         tabs[x_tab].froz_erow = x_row;
+         DEBUG_INPT  yLOG_value   ("froz_ecol" , tabs[x_tab].froz_ecol);
+         DEBUG_INPT  yLOG_value   ("froz_erow" , tabs[x_tab].froz_erow);
+      } else {
+         p = strtok_r (NULL, "\x1F", &r);
+      }
+   } else if (x_ver == '8') {
+      p = strtok_r (NULL, "\x1F", &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      ySTR_trim (p, ySTR_BOTH);
+      --rce;  if (strlen (p) < 5) {
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      tabs[x_tab].froz_col  = '-';
+      tabs[x_tab].froz_row  = '-';
+      DEBUG_INPT  yLOG_char    ("lock type" , p[0]);
+      switch (p[0]) {
+      case  'r' : tabs[x_tab].froz_row  = 'y';
+                  break;
+      case  'c' : tabs[x_tab].froz_col  = 'y';
+                  break;
+      case  'b' : tabs[x_tab].froz_col  = 'y';
+                  tabs[x_tab].froz_row  = 'y';
+                  break;
+      }
+      DEBUG_INPT  yLOG_char    ("froz_col"  , tabs[x_tab].froz_col);
+      DEBUG_INPT  yLOG_char    ("froz_row"  , tabs[x_tab].froz_row);
+      if (tabs[x_tab].froz_col == 'y' || tabs[x_tab].froz_row == 'y') {
+         strcpy (x_beg, "");
+         strcpy (x_end, "");
+         for (i = 2; i < 8; ++i) {
+            if (p[i] == ' ')  break;
+            x_beg [i -  2] = p [i];
+            x_beg [i -  1] = '\0';
+         }
+         DEBUG_INPT  yLOG_info    ("beg"       , x_beg);
+         if (p != NULL) {
+            rc = LOC_parse (x_beg, NULL, &tabs[x_tab].froz_bcol, &tabs[x_tab].froz_brow, NULL);
+         }
+         DEBUG_INPT  yLOG_value   ("froz_bcol" , tabs[x_tab].froz_bcol);
+         DEBUG_INPT  yLOG_value   ("froz_brow" , tabs[x_tab].froz_brow);
+         for (i = 10; i < 16; ++i) {
+            if (p[i] == ' ')  break;
+            x_end [i - 10] = p [i];
+            x_end [i -  9] = '\0';
+         }
+         DEBUG_INPT  yLOG_info    ("end"       , x_end);
+         if (p != NULL) {
+            rc = LOC_parse (x_end, NULL, &tabs[x_tab].froz_ecol, &tabs[x_tab].froz_erow, NULL);
+         }
+         DEBUG_INPT  yLOG_value   ("froz_ecol" , tabs[x_tab].froz_ecol);
+         DEBUG_INPT  yLOG_value   ("froz_erow" , tabs[x_tab].froz_erow);
+      }
+      switch (p[0]) {
+      case  'b' : if (tabs[x_tab].bcol <= tabs[x_tab].froz_ecol)  tabs[x_tab].bcol = tabs[x_tab].ccol = tabs[x_tab].froz_ecol + 1;
+                     tabs[x_tab].brow = tabs[x_tab].crow = tabs[x_tab].froz_erow + 1;
+                  break;
+      case  'c' : tabs[x_tab].bcol = tabs[x_tab].ccol = tabs[x_tab].froz_ecol + 1;
+                  break;
+      case  'r' : tabs[x_tab].bcol = tabs[x_tab].ccol = tabs[x_tab].froz_ecol;
+                  tabs[x_tab].brow = tabs[x_tab].crow = tabs[x_tab].froz_erow + 1;
+                  break;
+      }
+   }
+   /*---(name)---------------------------*/
+   p = strtok_r (NULL, "\x1F", &r);
+   if (p != NULL) {
+      ySTR_trim (p, ySTR_BOTH);
+      DEBUG_INPT  yLOG_info    ("name"      , p);
+      if (strlen (p) > 0)  strncpy (tabs[x_tab].name, p, MAX_STR);
+   }
+   /*---(complet)------------------------*/
+   tabs[x_tab].active = 'y';
+   NTAB               = x_tab + 1;
+   /*---(complet)------------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;             /* iterator -- tab                */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_type      = '-';
+   char        x_addr      [25]        = "";
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   --rce;  if (*a_seq <  0)                      return rce;
+   --rce;  if (a_btab <  0)                      return rce;
+   --rce;  if (a_btab >= my.ntab)                return rce;
+   --rce;  if (a_etab <  a_btab)                 return rce;
+   --rce;  if (a_etab <  0)                      return rce;
+   --rce;  if (a_etab >= my.ntab)                return rce;
+   /*---(header)-------------------------*/
+   if (*a_seq == 0) {
+      fprintf (a_file, "\n\n\n");
+      fprintf (a_file, "#===[[ TABS AND SIZES ]]================================================================================================\n");
+      fprintf (a_file, "#--------- %c ver %c tab# %c --max-- %c --beg-- %c --cur-- %c f %c --top-- %c --bot-- %c ---name------------------------\n", 31, 31, 31, 31, 31, 31, 31, 31, 31);
+   }
+   /*---(tabs)---------------------------*/
+   for (i = a_btab; i <= a_etab; ++i) {
+      /*---(lead)--------------*/
+      fprintf (a_file, "tab        %c -%c- %c %4d ", 31, 'A', 31, i);
+      /*---(max)---------------*/
+      rc = LOC_ref (i, tabs[i].ncol - 1, tabs[i].nrow - 1, 0, x_addr);
+      if (rc < 0)  LOC_ref (i, DEF_COLS - 1, DEF_ROWS - 1, 0, x_addr);
+      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
+      /*---(beg)---------------*/
+      rc = LOC_ref (i, tabs[i].bcol, tabs[i].brow, 0, x_addr);
+      if (rc < 0)  strcpy (x_addr, "------");
+      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
+      /*---(cur)---------------*/
+      rc = LOC_ref (i, tabs[i].ccol, tabs[i].crow, 0, x_addr);
+      if (rc < 0)  strcpy (x_addr, "------");
+      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
+      /*---(frozen type)-------*/
+      x_type = '-';
+      if      (tabs[i].froz_col == 'y' && tabs[i].froz_row == 'y')  x_type = 'b';
+      else if (tabs[i].froz_col == 'y' && tabs[i].froz_row != 'y')  x_type = 'c';
+      else if (tabs[i].froz_col != 'y' && tabs[i].froz_row == 'y')  x_type = 'r';
+      fprintf (a_file, "%c %c "            , 31, x_type);
+      /*---(frozen near)-------*/
+      rc = LOC_ref (i, tabs[i].froz_bcol, tabs[i].froz_brow, 0, x_addr);
+      if (rc < 0)  strcpy (x_addr, "------");
+      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
+      /*---(frozen far)--------*/
+      rc = LOC_ref (i, tabs[i].froz_ecol, tabs[i].froz_erow, 0, x_addr);
+      if (rc < 0)  strcpy (x_addr, "------");
+      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
+      /*---(name)--------------*/
+      fprintf (a_file, "%c %s", 31, tabs[i].name);
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                    reading and writing cells                 ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___SIZES___________o () { return; }
+
+char         /* parse a cell entry -----------------------[--------[--------]-*/
+INPT_cell          (
+      /*----------+-----------+-----------------------------------------------*/
+      cchar      *a_recd)     /* input record (const)                         */
+{  /*---(design notes)--------------------------------------------------------*/
+   /*
+   */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;                  /* generic return code       */
+   int         x_len       = 0;                  /* generic string length     */
+   char        x_temp      [MAX_STR];            /* strtok working string     */
+   char       *p           = NULL;               /* strtok return pointer     */
+   char       *q           = "\x1F";             /* strtok delimeters         */
+   char       *r           = NULL;               /* strtok context variable   */
+   char        x_ver       = ' ';                /* record version number     */
+   char        x_verb      [20];                 /* type/verb of record       */
+   char        x_format    = '-';
+   int         x_decs      = 0;
+   char        x_align     = '-';
+   char        x_bformat   [10];
+   tCELL      *new         = NULL;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   /*---(defense: a_recd null)-----------*/
+   DEBUG_INPT  yLOG_point   ("a_recd"    , a_recd);
+   --rce;  if (a_recd == NULL) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "record null");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("a_recd"    , a_recd);
+   /*---(defense: a_recd length)---------*/
+   x_len = strlen (a_recd);
+   DEBUG_INPT  yLOG_value   ("length"    , x_len);
+   --rce;  if (x_len <   55) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "length shorter than minimum (60)");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (x_len >  900)  {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "length longer than maximum (900)");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: type/verb)-------------*/
+   strncpy (x_temp, a_recd, MAX_STR);
+   p = strtok_r (x_temp, q, &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "record type null");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   ySTR_trim (p, ySTR_BOTH);
+   strcpy (x_verb, p);
+   DEBUG_INPT  yLOG_info    ("verb"      , x_verb);
+   --rce;  if ((strcmp (x_verb, "cell_dep") != 0) && (strcmp (x_verb, "cell_free") != 0))  {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "not a cell_dep or cell_free record");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(ver number)---------------------*/
+   p = strtok_r (NULL, q, &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "version null");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   x_len = strlen (p);
+   ySTR_trim (p, ySTR_BOTH);
+   if (x_len == 3 && strlen (p) == 1) {
+      x_ver = p[0];
+      p = strtok_r (NULL, q, &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_warn    ("ERROR"     , "level null");
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      ySTR_trim (p, ySTR_BOTH);
+   }
+   if (x_ver != ' ')  DEBUG_INPT  yLOG_char    ("ver num"   , x_ver);
+   else               DEBUG_INPT  yLOG_info    ("ver num"   , "unassigned");
+   --rce;  if (strchr (" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", x_ver) == 0) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "version number not valid [ A-Za-z]");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(clear level)--------------------*/
+   x_len = strlen (p);
+   if (x_len == 0 || x_ver > 'F' || strcmp (x_verb, "cell_dep") == 0) {
+      DEBUG_INPT  yLOG_info    ("level"     , p);
+      p = strtok_r (NULL, q, &r);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT  yLOG_warn    ("ERROR"     , "sequence null");
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      ySTR_trim (p, ySTR_BOTH);
+   }
+   /*---(clear sequence)-----------------*/
+   DEBUG_INPT  yLOG_info    ("sequence"  , p);
+   /*---(get location)-------------*/
+   p = strtok_r (NULL, q, &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "null pointer for location");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   ySTR_trim (p, ySTR_BOTH);
+   DEBUG_INPT  yLOG_info    ("loc"       , p);
+   rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_INPT  yLOG_value   ("rc"        , rc);
+   DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
+   DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "can not parse location");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(formatting)---------------*/
+   p = strtok_r (NULL, q, &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "null pointer for formatting");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   ySTR_trim (p, ySTR_BOTH);
+   DEBUG_INPT  yLOG_info    ("formatting", p);
+   DEBUG_INPT  yLOG_value   ("length"    , strlen (p));
+   --rce;
+   if        (strlen (p) == 7) {
+      x_format = p[2];
+      x_decs   = p[4];
+      x_align  = p[6];
+   } else if (strlen (p) == 8) {   /* if wrote decimals as number */
+      x_format = p[2];
+      x_decs   = ((p[4] - '0') * 10) + (p[5] - '0');
+      x_align  = p[7];
+   } else {
+      DEBUG_INPT  yLOG_warn    ("ERROR"    , "wrong length for fomatting");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
+   DEBUG_INPT  yLOG_char    ("x_decs"    , x_decs);
+   DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
+   sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);
+   /*---(contents)-----------------*/
+   p = strtok_r (NULL, q, &r);
+   --rce;  if (p == NULL) {
+      DEBUG_INPT  yLOG_warn    ("ERROR"     , "no contents found");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   x_len = strlen (p);
+   /*---(create)-------------------*/
+   --rce;
+   if (x_len > 1) {
+      DEBUG_INPT  yLOG_info    ("source"    , p + 1);
+      new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, p + 1, x_bformat);
+      DEBUG_INPT  yLOG_point   ("new"       , new);
+      if (new == NULL) {
+         DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+   } else {
+      DEBUG_INPT  yLOG_info    ("source"    , "(nada)");
+      new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, ""   , x_bformat);
+      DEBUG_INPT  yLOG_point   ("new"       , new);
+      if (new == NULL) {
+         DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
+         DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+   }
+   /*---(sort it out)--------------*/
+   tabs[x_tab].active = 'y';
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_note    ("successful addition of cell");
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                          reading files                       ----===*/
+/*====================------------------------------------====================*/
+static void   o___READ____________o (void) { return; }
+
+char         /* file reading driver ----------------------[--------[--------]-*/
+FILE_read          (char *a_name)
+{
+   /*---(locals)-----------+-----------+-*/
+   FILE       *f           = NULL;
+   char        x_recd      [MAX_STR];            /* input record              */
+   char        x_temp      [MAX_STR];            /* strtok version of input   */
+   char        x_verb      [20];                 /* record type/verb          */
+   int         x_len       = 0;                  /* string length             */
+   char       *p;
+   char       *q           = ";";
+   char       *r;
+   tCELL      *new         = NULL;
+   int         rc          = 0;
+   char        rce         = -10;
+   char        x_format    = '-';
+   int         x_decs      = 0;
+   char        x_align     = '-';
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   int         x_ver       = 0;
+   int         i           = 0;
+   char        x_beg       [10] = "";
+   char        x_end       [10] = "";
+   char        x_bformat   [10];
+   int         x_celltry   = 0;
+   int         x_cellbad   = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   /*---(open file)----------------------*/
+   DEBUG_INPT  yLOG_info    ("filename"  , a_name);
+   strncpy (f_title, a_name, MAX_STR);
+   f = fopen (a_name, "r");
+   DEBUG_INPT  yLOG_point   ("file"      , f);
+   --rce;  if (f == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(initialize)---------------------*/
+   DEBUG_INPT  yLOG_note    ("initializing");
+   strncpy (f_maker, "unknown", MAX_STR);
+   f_lines = 0;
+   NCOL = DEF_COLS;
+   BCOL = ECOL = 0;
+   NROW = DEF_ROWS;
+   BROW = EROW = 0;
+   /*---(read lines)---------------------*/
+   DEBUG_INPT  yLOG_note    ("read lines");
+   while (1) {
+      /*---(read and clean)--------------*/
+      ++f_lines;
+      DEBUG_INPT  yLOG_value   ("line"      , f_lines);
+      fgets (x_recd, MAX_STR, f);
+      if (feof(f))           break;
+      x_len = strlen (x_recd);
+      if (x_len <= 0)          continue;
+      x_recd [--x_len] = '\0';
+      DEBUG_INPT  yLOG_info    ("fixed"     , x_recd);
+      /*---(prepare working variables)---*/
+      strncpy   (x_temp, x_recd, MAX_STR);
+      strncpy   (x_verb, x_recd, 10     );
+      ySTR_trim (x_verb, ySTR_BOTH);
+      /*---(get recd type)---------------*/
+      p = strtok (x_recd, "\x1F");
+      if (p == NULL)         continue;
+      x_len = strlen (p);
+      if (x_len <= 0)          continue;
+      if (p[0] == '#')       continue;
+      ySTR_trim (p, ySTR_BOTH);
+      /*---(process size)----------------*/
+      if (strcmp (p, "format") == 0) {
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         x_ver = atoi (ySTR_trim (p, ySTR_BOTH));
+      }
+      /*---(versioned)-------------------*/
+      if (strcmp (p, "versioned") == 0) {
+         DEBUG_INPT  yLOG_note    ("found version entry");
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         ySTR_trim (p, ySTR_BOTH);
+         rc = FILE_version (p, ver_num);
+         if (rc >= 0)   ver_ctrl = 'y';
+         DEBUG_INPT  yLOG_info    ("ver_num"   , ver_num);
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         ySTR_trim (p, ySTR_BOTH);
+         strcpy (ver_txt, p);
+         DEBUG_INPT  yLOG_info    ("ver_txt"   , ver_txt);
+      }
+      /*---(process size)----------------*/
+      if (strcmp (p, "tab") == 0)  INPT_tab (x_temp);
+      /*---(process size)----------------*/
+      /*---(process width)---------------*/
+      if (strcmp (p, "width") == 0) {
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         rc = LOC_parse (ySTR_trim (p, ySTR_BOTH), &x_tab, &x_col, &x_row, NULL);
+         if (rc < 0)         continue;
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         tabs[x_tab].cols[x_col].w = atoi (ySTR_trim (p, ySTR_BOTH));
+         tabs[x_tab].active = 'y';
+         continue;
+      }
+      /*---(process height)--------------*/
+      if (strcmp (p, "height") == 0) {
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         rc = LOC_parse (ySTR_trim (p, ySTR_BOTH), &x_tab, &x_col, &x_row, NULL);
+         if (rc < 0)         continue;
+         p = strtok (NULL, "\x1F");
+         if (p == NULL)      continue;
+         tabs[x_tab].rows[x_row].h = atoi (ySTR_trim (p, ySTR_BOTH));
+         tabs[x_tab].active = 'y';
+         continue;
+      }
+      /*---(process cell)----------------*/
+      if (strncmp (p, "cell_", 5) == 0) {
+         ++x_celltry;
+         rc = INPT_cell (x_temp);
+         if (rc < 0)  ++x_cellbad;
+      }
+      /*> if (strncmp (p, "cell_", 5) == 0) {                                               <* 
+       *>    /+---(clear level field)--------+/                                             <* 
+       *>    if (x_ver > 6 || strcmp (p, "cell_dep") == 0) {                                <* 
+       *>       p = strtok (NULL, "\x1F");                                                  <* 
+       *>       DEBUG_INPT  yLOG_info    ("level"     , p);                                 <* 
+       *>       if (p == NULL)      continue;                                               <* 
+       *>    }                                                                              <* 
+       *>    /+---(clear seq field)----------+/                                             <* 
+       *>    p = strtok (NULL, "\x1F");                                                     <* 
+       *>    DEBUG_INPT  yLOG_info    ("seq"       , p);                                    <* 
+       *>    if (p == NULL)      continue;                                                  <* 
+       *>    /+---(get location)-------------+/                                             <* 
+       *>    p = strtok (NULL, "\x1F");                                                     <* 
+       *>    DEBUG_INPT  yLOG_info    ("loc"       , p);                                    <* 
+       *>    if (p == NULL)      continue;                                                  <* 
+       *>    rc = LOC_parse (ySTR_trim (p, ySTR_BOTH), &x_tab, &x_col, &x_row, NULL);       <* 
+       *>    DEBUG_INPT  yLOG_value   ("rc"        , rc);                                   <* 
+       *>    DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);                                <* 
+       *>    DEBUG_INPT  yLOG_value   ("x_col"     , x_col);                                <* 
+       *>    DEBUG_INPT  yLOG_value   ("x_row"     , x_row);                                <* 
+       *>    if (rc < 0)         continue;                                                  <* 
+       *>    /+---(formatting)---------------+/                                             <* 
+       *>    p = strtok (NULL, "\x1F");                                                     <* 
+       *>    if (p == NULL)      continue;                                                  <* 
+       *>    ySTR_trim (p, ySTR_BOTH);                                                      <* 
+       *>    DEBUG_INPT  yLOG_info    ("formatting", p);                                    <* 
+       *>    if (strlen (p) != 7)  continue;                                                <* 
+       *>    x_format = p[2];                                                               <* 
+       *>    x_decs   = p[4];                                                               <* 
+       *>    x_align  = p[6];                                                               <* 
+       *>    DEBUG_INPT  yLOG_char    ("x_format"  , x_format);                             <* 
+       *>    DEBUG_INPT  yLOG_value   ("x_decs"    , x_decs);                               <* 
+       *>    DEBUG_INPT  yLOG_char    ("x_align"   , x_align);                              <* 
+       *>    sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);                      <* 
+       *>    /+---(contents)-----------------+/                                             <* 
+       *>    p = strtok (NULL, "\x1F");                                                     <* 
+       *>    if (p == NULL)      continue;                                                  <* 
+       *>    x_len = strlen (p);                                                            <* 
+       *>    if (x_len > 1) {                                                               <* 
+       *>       DEBUG_INPT  yLOG_info    ("source"    , p + 1);                             <* 
+       *>       new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, p + 1, x_bformat);   <* 
+       *>       if (new == NULL)    continue;                                               <* 
+       *>    } else {                                                                       <* 
+       *>       DEBUG_INPT  yLOG_info    ("source"    , "(nada)");                          <* 
+       *>       new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, ""   , x_bformat);   <* 
+       *>       if (new == NULL)    continue;                                               <* 
+       *>    }                                                                              <* 
+       *>    /+---(sort it out)--------------+/                                             <* 
+       *>    tabs[x_tab].active = 'y';                                                      <* 
+       *>    /+---(complete)-----------------+/                                             <* 
+       *> }                                                                                 <*/
+   }
+   /*---(close file)---------------------*/
+   DEBUG_INPT  yLOG_note    ("close file");
+   fclose  (f);
+   /*---(summary)------------------------*/
+   DEBUG_INPT  yLOG_value   ("cell_try"  , x_celltry);
+   DEBUG_INPT  yLOG_value   ("cell_bad"  , x_cellbad);
+   /*---(calculate)----------------------*/
+   DEBUG_INPT  yLOG_note    ("recalc");
+   DEP_recalc();
+   /*---(complete)-------------------------*/
+   DEBUG_INPT yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                          writing files                       ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___WRITE___________o () { return; }
+
+char         /*--> write file header ---------------------[ leaf   [ ------ ]-*/
+FILE_header        (FILE *a_file)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;             /* iterator -- tab                */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_temp      [100];
+   time_t      x_time;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   /*---(introduction)---------------------*/
+   fprintf (a_file, "#!/usr/local/bin/gyges\n");
+   fprintf (a_file, "#   generated by the heatherly spreadsheet tool gyges-hekatonkheires (hundred-handed)\n");
+   /*---(write header)---------------------*/
+   fprintf (a_file, "\n\n\n");
+   fprintf (a_file, "#===[[ GENERAL INFO AND SETTINGS ]]==========================================================================\n");
+   fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);
+   /*---(format identifiers)---------------*/
+   fprintf (a_file, "gyges      %c %5s %c %-60.60s %c\n", 31, VER_NUM, 31, VER_TXT                      , 31);
+   fprintf (a_file, "format     %c %5d %c %-60.60s %c\n", 31, 9      , 31, "improved tab records"       , 31);
+   /*---(timestamp)------------------------*/
+   x_time = time(NULL);
+   strftime (x_temp, 100, "%y.%m.%d.%H.%M.%S", localtime(&x_time));
+   fprintf (a_file, "timestamp  %c %5s %c %-60.60s %c\n", 31, "-----", 31, x_temp                       , 31);
+   /*---(version)------------------------*/
+   if (ver_ctrl == 'y') {
+      fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",
+            31, ver_num, 31, ver_txt, 31);
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char         /*--> write file column widths --------------[ leaf   [ ------ ]-*/
+FILE_Ocols         (FILE *a_file, int *a_seq, int a_tab, int a_bcol, int a_ecol)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;             /* iterator -- column             */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_label     [20];            /* holder for cell address        */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   --rce;  if (*a_seq <  0)                      return rce;
+   --rce;  if (a_tab  <  0)                      return rce;
+   --rce;  if (a_tab  >= my.ntab)                return rce;
+   --rce;  if (a_bcol <  0)                      return rce;
+   --rce;  if (a_bcol >= tabs[a_tab].ncol)       return rce;
+   --rce;  if (a_ecol <  a_bcol)                 return rce;
+   --rce;  if (a_ecol <  0)                      return rce;
+   --rce;  if (a_ecol >= tabs[a_tab].ncol)       return rce;
+   /*---(header)-------------------------*/
+   if (*a_seq == 0) {
+      fprintf (a_file, "\n\n\n");
+      fprintf (a_file, "#===[[ COLUMN WIDTHS, changes only ]]========================================================================\n");
+      fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
+      fprintf (a_file, "width_def  %c -------- %c %4d %c\n", 31, 31, DEF_WIDTH, 31);
+   }
+   /*---(columns)------------------------*/
+   for (i = a_bcol; i <= a_ecol; ++i) {
+      /*---(filter unchanged)------------*/
+      if (tabs[a_tab].cols[i].w == DEF_WIDTH)  continue;
+      /*---(break every five)------------*/
+      if (*a_seq % 5 == 0)  {
+         fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
+      }
+      /*---(make column address)---------*/
+      rc = LOC_ref (a_tab, i, 0, 0, x_label);
+      if (rc < 0) continue;
+      /*---(write exception)-------------*/
+      fprintf (a_file, "width      %c %-8.8s %c %4d %c\n",
+            31, x_label, 31, tabs[a_tab].cols[i].w, 31);
+      /*---(prepare for next)------------*/
+      ++(*a_seq);
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char         /*--> write file row heights ----------------[ leaf   [ ------ ]-*/
+FILE_rows          (FILE *a_file, int *a_seq, int a_tab, int a_brow, int a_erow)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;             /* iterator -- row                */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_label     [20];            /* holder for cell address        */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   --rce;  if (*a_seq <  0)                      return rce;
+   --rce;  if (a_tab  <  0)                      return rce;
+   --rce;  if (a_tab  >= my.ntab)                return rce;
+   --rce;  if (a_brow <  0)                      return rce;
+   --rce;  if (a_brow >= tabs[a_tab].nrow)       return rce;
+   --rce;  if (a_erow <  a_brow)                 return rce;
+   --rce;  if (a_erow <  0)                      return rce;
+   --rce;  if (a_erow >= tabs[a_tab].nrow)       return rce;
+   /*---(header)-------------------------*/
+   if (*a_seq == 0) {
+      fprintf (a_file, "\n\n\n");
+      fprintf (a_file, "#===[[ ROW HEIGHTS, changes only ]]==========================================================================\n");
+      fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
+      fprintf (a_file, "height_def %c -------- %c %4d %c\n", 31, 31, DEF_HEIGHT, 31);
+   }
+   /*---(rows)---------------------------*/
+   for (i = a_brow; i <= a_erow; ++i) {
+      /*---(filter unchanged)------------*/
+      if (tabs[a_tab].rows[i].h == DEF_HEIGHT)  continue;
+      /*---(break every five)------------*/
+      if (*a_seq % 5 == 0)  {
+         fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
+      }
+      /*---(make row address)------------*/
+      rc = LOC_ref (a_tab, 0, i, 0, x_label);
+      if (rc < 0) continue;
+      /*---(write exception)-------------*/
+      fprintf (a_file, "height     %c %-8.8s %c %4d %c\n",
+            31, x_label, 31, tabs[a_tab].rows[i].h, 31);
+      /*---(prepare for next)------------*/
+      ++(*a_seq);
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char         /*--> write file dependent cells ------------[ leaf   [ ------ ]-*/
+FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_pre       [50]        = "-           ";
+   /*---(defense)------------------------*/
+   if (a_curr    == NULL)        return;     /* no cell                       */
+   if (a_curr->s == NULL)        return;     /* nothing to write              */
+   if (a_curr->u == a_stamp)     return;     /* already written               */
+   if (a_curr->t == '-')         return;     /* don't write, recreate on read */
+   /*---(header)-------------------------*/
+   if (*a_seq == 0) {
+      fprintf (a_file, "\n\n\n");
+      fprintf (a_file, "#===[[ DEPENDENCY TREE, in reverse order ]]==================================================================\n");
+   }
+   /*---(prepare)------------------------*/
+   if      (a_level == 0 )   sprintf (x_pre, "root         ");
+   else if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s",
+         a_level, a_level, "------------", a_level, " ");
+   else                      sprintf (x_pre, "            +");
+   /*---(print)--------------------------*/
+   if (*a_seq % 5 == 0 || a_level == 0) {
+      fprintf (a_file, "#--------- %c ---level---- %c -seq- %c ---loc--", 31, 31, 31);
+      fprintf (a_file, " %c t-f-d-a %c ---source--------------------------------------\n", 31, 31);
+   }
+   fprintf (a_file, "cell_dep   %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %s\n",
+         31, x_pre, 31, *a_seq, 31, a_curr->label,
+         31, a_curr->t, a_curr->f, a_curr->d, a_curr->a,
+         31, a_curr->s);
+   ++(*a_seq);
+   /*---(update)-------------------------*/
+   a_curr->u = a_stamp;
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char         /*--> write file independent cells ----------[ left   [ ------ ]-*/
+FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x           = 0;             /* iterator -- columns            */
+   int         y           = 0;             /* iterator -- row                */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_label     [20];            /* holder for cell address        */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   --rce;  if (*a_seq <  0)                      return rce;
+   --rce;  if (a_tab  <  0)                      return rce;
+   --rce;  if (a_tab  >= my.ntab)                return rce;
+   --rce;  if (a_bcol <  0)                      return rce;
+   --rce;  if (a_bcol >= tabs[a_tab].ncol)       return rce;
+   --rce;  if (a_ecol <  a_bcol)                 return rce;
+   --rce;  if (a_ecol <  0)                      return rce;
+   --rce;  if (a_ecol >= tabs[a_tab].ncol)       return rce;
+   --rce;  if (a_brow <  0)                      return rce;
+   --rce;  if (a_brow >= tabs[a_tab].nrow)       return rce;
+   --rce;  if (a_erow <  a_brow)                 return rce;
+   --rce;  if (a_erow <  0)                      return rce;
+   --rce;  if (a_erow >= tabs[a_tab].nrow)       return rce;
+   /*---(header)-------------------------*/
+   if (*a_seq == 0) {
+      fprintf (a_file, "\n\n\n");
+      fprintf (a_file, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=====================================================\n");
+   }
+   /*---(cells)--------------------------*/
+   for (x = a_bcol; x <= a_ecol; ++x) {
+      for (y = a_brow; y <= a_erow; ++y) {
+         /*> CROW  = y;                                                          <*/
+         if (tabs[a_tab].sheet[x][y]    == NULL)        continue;
+         if (tabs[a_tab].sheet[x][y]->s == NULL)        continue;
+         if (tabs[a_tab].sheet[x][y]->t == '-'    )     continue;
+         if (tabs[a_tab].sheet[x][y]->t == 'l'    )     continue;
+         if (tabs[a_tab].sheet[x][y]->u == a_stamp)     continue;
+         if (*a_seq % 5 == 0) {
+            fprintf (a_file, "#--------- %c ---level---- %c -seq- %c ---loc-- %c ", 31, 31, 31, 31);
+            fprintf (a_file, "t-f-d-a %c ---source--------------------------------------\n", 31, 31);
+         }
+         fprintf (a_file, "cell_free  %c              %c %5d %c %-8.8s %c %c %c %c %c %c %s\n",
+               31, 31, *a_seq, 31, tabs[a_tab].sheet[x][y]->label, 31,
+               tabs[a_tab].sheet[x][y]->t, tabs[a_tab].sheet[x][y]->f, tabs[a_tab].sheet[x][y]->d,
+               tabs[a_tab].sheet[x][y]->a, 31, tabs[a_tab].sheet[x][y]->s);
+         ++(*a_seq);
+      }
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char
+FILE_write         (char *a_name)
+{
+   /*---(locals)-----------+-----------+-*/
+   FILE       *f           = NULL;
+   char       *p;
+   int         x_seq;
+   int         i           = 0;       /* iterator -- columns                            */
+   long        x_stamp     = 0;
+   char        rc          = 0;
+   char        x_temp      [100];
+   char       *x_bufs      = "abcdefghijklmnopqrstuvwxyz";
+   int         x_len       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT yLOG_enter   (__FUNCTION__);
+   /*---(defense: name)------------------*/
+   if (a_name == NULL) return -1;
+   /*---(prepare versioning)-------------*/
+   strcpy (f_name, a_name);
+   p = strchr (f_name, '.');
+   if (p != NULL)  p[0] = '\0';
+   strcpy (f_suffix, "gyges");
+   /*---(open file)----------------------*/
+   strncpy (f_title, a_name, MAX_STR);
+   f = fopen(a_name, "w");
+   if (f == NULL)      return -2;
+   /*---(header)-------------------------*/
+   FILE_header (f);
+   /*---(tab data)-----------------------*/
+   x_seq = 0;
+   rc = FILE_Otabs    (f, &x_seq, 0, my.ntab - 1);
+   /*---(column data)--------------------*/
+   x_seq = 0;
+   for (i = 0; i < NTAB; ++i) {
+      rc = FILE_Ocols (f, &x_seq, i, 0, tabs[i].ncol - 1);
+   }
+   if (x_seq == 0)  fprintf (f, "# no column widths vary from default\n");
+   /*---(row data)-----------------------*/
+   x_seq = 0;
+   for (i = 0; i < NTAB; ++i) {
+      rc = FILE_rows    (f, &x_seq, i, 0, tabs[i].nrow - 1);
+   }
+   if (x_seq == 0)  fprintf (f, "# no row heights vary from default\n");
+   /*---(dependent cells)------------------*/
+   x_stamp = rand ();
+   x_seq     = 0;
+   rc = DEP_tail (f, '-', &x_seq, 0, dtree, x_stamp, FILE_dep);
+   if (x_seq == 0)  fprintf (f, "# no cells in dependency tree\n");
+   /*---(non-dependency cells)-------------*/
+   x_seq = 0;
+   for (i = 0; i < NTAB; ++i) {
+      rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, tabs[i].ncol - 1, 0, tabs[i].nrow - 1);
+   }
+   if (x_seq == 0)  fprintf (f, "# no cells in outside dependency tree\n");
+   /*---(buffer contents)------------------*/
+   x_seq = 0;
+   x_len = strlen (x_bufs);
+   for (i = 0; i < x_len; ++i) {
+      rc = REG_file     (f, &x_seq, x_bufs [i]);
+   }
+   if (x_seq == 0)  fprintf (f, "# no cells in any lettered buffers\n");
+   /*---(footer data)----------------------*/
+   fprintf (f, "\n\n\n");
+   fprintf (f, "# done, finito, complete\n");
+   /*---(close file)-----------------------*/
+   fclose  (f);
+   /*---(make version)---------------------*/
+   if (ver_ctrl == 'y') {
+      sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", a_name, f_name, ver_num[0], ver_num[1], ver_num + 3);
+      system (x_temp);
+   }
+   /*---(complete)-------------------------*/
+   DEBUG_INPT yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___UNIT_TEST_______o () { return; }
+
+char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
+FILE_unit          (char *a_question, int a_ref)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         rc          = -1;
+   /*---(preprare)-----------------------*/
+   strcpy  (unit_answer, "s_file           : question not understood");
+   /*---(selection)----------------------*/
+   if      (strcmp (a_question, "ver_num"   )    == 0) {
+      snprintf (unit_answer, LEN_TEXT, "s_file ver_num   : %s", ver_num);
+   } else if (strcmp (a_question, "string"    )    == 0) {
+      if (strcmp (s_string, "(null)") == 0) {
+         snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5s) :%-.40s:", "-----"          , ""      );
+      } else if (strcmp (s_string, "(empty)") == 0) {
+         snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5d) :%-.40s:", 0                , ""      );
+      } else {
+         snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5d) :%-.40s:", strlen (s_string), s_string);
+      }
+   } else if (strcmp (a_question, "freeze"    )    == 0) {
+      snprintf (unit_answer, LEN_TEXT, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)", tabs[a_ref].froz_col, tabs[a_ref].froz_bcol, tabs[a_ref].froz_ecol, tabs[a_ref].froz_row, tabs[a_ref].froz_brow, tabs[a_ref].froz_erow);
+   } else if (strcmp (a_question, "tab_name"  )    == 0) {
+      snprintf (unit_answer, LEN_TEXT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, tabs[a_ref].active, tabs[a_ref].name);
+   } else if (strcmp (a_question, "tab_count" )    == 0) {
+      snprintf (unit_answer, LEN_TEXT, "s_file tab count : ntab=%4d", NTAB);
+   } else if (strcmp (a_question, "history"   )    == 0) {
+      if      (nhist == 0    )  snprintf (unit_answer, LEN_TEXT, "s_file history   : n=%4d, c=%4d, n/a", nhist, chist);
+      if      (chist <  0    )  snprintf (unit_answer, LEN_TEXT, "s_file history   : n=%4d, c=%4d, n/a", nhist, chist);
+      else                      snprintf (unit_answer, LEN_TEXT, "s_file history   : n=%4d, c=%4d, %s" , nhist, chist, hist[chist].act);
+   } else if (strcmp (a_question, "entry"     )    == 0) {
+      if      (a_ref <  0    )  snprintf (unit_answer, LEN_TEXT, "s_file entry     : %4d too small", a_ref);
+      else if (a_ref >= nhist)  snprintf (unit_answer, LEN_TEXT, "s_file entry     : %4d too large", a_ref);
+      else                      snprintf (unit_answer, LEN_TEXT, "s_file entry     : %4d, t=%4d, c=%4d, r=%4d, %s", a_ref, hist[a_ref].btab, hist[a_ref].bcol, hist[a_ref].brow, hist[a_ref].act);
+   } else if (strcmp (a_question, "before"    )    == 0) {
+      if      (a_ref <  0    )  snprintf (unit_answer, LEN_TEXT, "s_file before    : %4d too small", a_ref);
+      else if (a_ref >= nhist)  snprintf (unit_answer, LEN_TEXT, "s_file before    : %4d too large", a_ref);
+      else                      snprintf (unit_answer, LEN_TEXT, "s_file before    : %4d :%s:", a_ref, hist[a_ref].before);
+   } else if (strcmp (a_question, "after"     )    == 0) {
+      if      (a_ref <  0    )  snprintf (unit_answer, LEN_TEXT, "s_file after     : %4d too small", a_ref);
+      else if (a_ref >= nhist)  snprintf (unit_answer, LEN_TEXT, "s_file after     : %4d too large", a_ref);
+      else                      snprintf (unit_answer, LEN_TEXT, "s_file after     : %4d :%s:", a_ref, hist[a_ref].after);
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
+
+
+/*============================----end-of-source---============================*/

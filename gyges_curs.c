@@ -1,0 +1,677 @@
+/*============================----beg-of-source---============================*/
+
+/*===[[ MODULE ]]=============================================================*
+
+ *   application   : s
+ *   module        : s_curses
+ *   purpose       : provide all code for visual interface using ncures
+ *
+ */
+/*===[[ EXPLANATION ]]========================================================*
+
+ *   the s spreadsheet calculator requires a user interface of some sort when
+ *   being used interactively (as opposed to in filter mode).
+ *
+ *   the point of s is not to compete with full-on, integrated, kitchen-sink
+ *   gui-based spreadsheets, it is to provide a rapid, light, clean prototyping
+ *   and analysis tool;  therefore, fonts, menus, graphing, and the like are
+ *   distractions.
+ *
+ *   s will be a console based spreedsheet that will obviously have to work in
+ *   a full screen mode that can adapt to the nature and size of the terminal
+ *   emulator window.  as such, this is a perfect chance to learn ncurses.
+ *
+ */
+
+#include   "gyges.h"
+
+
+PRIV  char      CURS_page          (void);
+
+
+/*===[[ COLOR DEFINITIONS ]]==================================================*/
+/*---(window)-------------------------*/
+#define     NCOLOR_TITLE      COLOR_PAIR(40) | A_BOLD
+#define     NCOLOR_TITLEE     COLOR_PAIR(61)
+#define     NCOLOR_STATUS     COLOR_PAIR(40) | A_BOLD
+#define     NCOLOR_STATUSE    COLOR_PAIR(61)
+#define     NCOLOR_KEYS       COLOR_PAIR(71) | A_BOLD
+#define     NCOLOR_MESSAGE    COLOR_PAIR(77)
+/*---(edit modes)---------------------*/
+#define     NCOLOR_CONTENT    COLOR_PAIR(43) | A_BLINK
+#define     NCOLOR_SOURCE     COLOR_PAIR(42) | A_BLINK
+#define     NCOLOR_INPUT      COLOR_PAIR(47) | A_BLINK
+#define     NCOLOR_WANDER     COLOR_PAIR(41) | A_BLINK
+/*---(cells)--------------------------*/
+#define     NCOLOR_CURRENT    COLOR_PAIR(43) | A_BLINK
+#define     NCOLOR_VISUAL     COLOR_PAIR(23) | A_BOLD
+#define     NCOLOR_ROOT       COLOR_PAIR(33) | A_BOLD
+#define     NCOLOR_REQS       COLOR_PAIR(25) | A_BOLD
+#define     NCOLOR_PROS       COLOR_PAIR(22) | A_BOLD
+#define     NCOLOR_LIKE       COLOR_PAIR(24) | A_BOLD
+#define     NCOLOR_ERROR      COLOR_PAIR(61) | A_BOLD
+#define     NCOLOR_POINTER    COLOR_PAIR(76) | A_BOLD
+#define     NCOLOR_FSIMPLE    COLOR_PAIR(72) | A_BOLD
+#define     NCOLOR_FDANGER    COLOR_PAIR(71) | A_BOLD
+#define     NCOLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
+#define     NCOLOR_FLIKE      COLOR_PAIR(32) | A_BOLD
+#define     NCOLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
+#define     NCOLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
+#define     NCOLOR_STRING     COLOR_PAIR(73) | A_BOLD
+#define     NCOLOR_LABEL      COLOR_PAIR(73)
+#define     NCOLOR_NULL       COLOR_PAIR(70) | A_BOLD
+/*---(row and column headers)---------*/
+#define     NCOLOR_HEADY      COLOR_PAIR(33) | A_BOLD
+#define     NCOLOR_HEADL      COLOR_PAIR(43) | A_BOLD
+#define     NCOLOR_HEADF      COLOR_PAIR(73)
+#define     NCOLOR_HEADN      COLOR_PAIR(74)
+
+
+char        msg_type  = '-';
+char        sta_type  = 'v';
+char        sta_error = '-';
+
+
+/*====================------------------------------------====================*/
+/*===----                      public functions                        ----===*/
+/*====================------------------------------------====================*/
+
+char
+CURS_formula       (tCELL *a_curr)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------------------------*/
+   char      msg[500]  = "";                   /* temporary display message   */
+   char      label[3]  = "";                   /* temporary display message   */
+   int       len       = 0;
+   int       w         = 0;
+   /*---(clear line)---------------------*/
+   if (sta_error == 'y')  attron (NCOLOR_TITLEE);
+   else                   attron (NCOLOR_TITLE);
+   mvprintw (row_formula, 0, "%*.*s", my.x_full, my.x_full, empty);
+   /*---(location)-----------------------*/
+   /*> strcpy(label, tab->cols[CCOL].l);                                         <* 
+    *> if (label[0] == '-') label[0] = ' ';                                           <*/
+   /*> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (SEL_islive()) ? 'v' : ' ', label, CROW + 1);   <*/
+   if (a_curr != NULL)    strcpy  (label, a_curr->label);
+   else                   LOC_ref (CTAB, CCOL, CROW, 0, label);
+   mvprintw (row_formula,  0, "%c%c %c%c %-6.6s", mode, (SEL_islive()) ? 'v' : ' ', creg, creg_lock, label);
+   /*---(version)------------------------*/
+   mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
+   /*---(characteristics)--------------------*/
+   if (a_curr != NULL) {
+      mvprintw (row_formula, 12, " %02d %c %c %c %c  "   , tab->cols[CCOL].w, a_curr->t, a_curr->f, a_curr->d, a_curr->a);
+   } else {
+      mvprintw (row_formula, 12, " %02d                []", tab->cols[CCOL].w);
+   }
+   /*---(length)-----------------------------*/
+   len = strlen(contents);
+   mvprintw (row_formula, 25, "%4d:", len);
+   if (sta_error == 'y')  attroff(NCOLOR_TITLEE);
+   else                   attroff(NCOLOR_TITLE);
+   /*---(set color)--------------------------*/
+   if      (mode == MODE_SOURCE)  attron (NCOLOR_SOURCE );
+   else if (mode == MODE_INPUT )  attron (NCOLOR_INPUT  );
+   else if (mode == MODE_WANDER)  attron (NCOLOR_WANDER );
+   else                           attron (NCOLOR_CONTENT);
+   /*---(contents)---------------------------*/
+   w  = my.apos - strlen(contents);
+   if (w < 0) w = 0;
+   mvprintw (row_formula, 30, "%*.*s", my.apos, my.apos, empty);
+   if (w >  0) snprintf(msg, 500, "[%s]",    contents);
+   if (w == 0) snprintf(msg, 500, "[%*.*s]", my.apos, my.apos, contents + my.bpos);
+   mvprintw (row_formula, 30, "%s%*.*s", msg, w, w, empty);
+   /*---(clear color)--------------------*/
+   if      (mode == MODE_SOURCE)  attroff(NCOLOR_SOURCE );
+   else if (mode == MODE_INPUT )  attroff(NCOLOR_INPUT  );
+   else if (mode == MODE_WANDER)  attroff(NCOLOR_WANDER );
+   else                           attroff(NCOLOR_CONTENT);
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+CURS_status        (tCELL *a_curr)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   int         l           = 0;             /* string length                  */
+   int         i           = 0;             /* iterator -- keys               */
+   char        msg[500]  = "";                   /* temporary display message   */
+   char        rpn[MAX_STR] = "";
+   switch (sta_type) {
+   case 'c' : /* cell details */
+      if (a_curr != NULL) {
+         strncpy (rpn , "+", MAX_STR);
+         if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
+         snprintf (msg, 500, "[ rpn %-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ]", rpn, reqs, deps, like);
+      }
+      break;
+   case 'r' : /* buffer contents */
+      REG_list     (creg  , bufc);
+      snprintf (msg, 500, "[ %-100.100s ]", bufc);
+      break;
+   case 'k' : /* keylog */
+      KEYS_status (msg);
+      break;
+   case 'u' :
+      snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
+      break;
+   case 'v' : /* file version */
+   default  :
+      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", f_title, tab->ncol, tab->nrow, ver_num, ver_txt);
+      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", f_title, tab->ncol, tab->nrow);
+      break;
+   }
+   if (sta_error == 'y')  attron (NCOLOR_STATUSE);
+   else                   attron (NCOLOR_STATUS);
+   mvprintw(row_status, 0, "%*.*s", my.x_full, my.x_full, empty);
+   mvprintw(row_status, 0, msg);
+   if (sta_error == 'y')  attroff(NCOLOR_STATUSE);
+   else                   attroff(NCOLOR_STATUS);
+   sta_error = '-';
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+CURS_message       (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   attron  (NCOLOR_MESSAGE);
+   mvprintw (row_message, 0, "%*.*s", my.x_full, my.x_full, empty);
+   mvprintw (row_message, 0, message);
+   attroff (NCOLOR_MESSAGE);
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> update the column labels --------------[ ------ [ ------ ]-*/
+CURS_colhead       (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;                  /* iterator -- columns       */
+   int         w           = 0;                  /* column width              */
+   int         wa          = 0;                  /* adjusted column width     */
+   int         cw          = my.x_left;          /* cumulative column width   */
+   char        msg         [500]       = "";     /* temporary display message */
+   char        label       [3]         = "";     /* column lable              */
+   /*---(begin)--------------------------*/
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(process locked)-----------------*/
+   if (tab->froz_col == 'y') {
+      for (i = tab->froz_bcol; i <=  tab->froz_ecol; ++i) {
+         if (i >= NCOL) break;
+         /*---(prepare)---------------------*/
+         w     = tab->cols[i].w;
+         wa    = w - 4;
+         cw    = tab->cols[i].x + w;
+         strcpy(label, tab->cols[i].l);
+         /*---(output)----------------------*/
+         snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, dashes, label);
+         if      (i == CCOL          )  attron  (NCOLOR_HEADY   );
+         else if (i <= tab->froz_ecol)  attron  (NCOLOR_HEADL   );
+         else if (tab->cols[i].c >  0)  attron  (NCOLOR_HEADF   );
+         else                           attron  (NCOLOR_HEADN   );
+         mvprintw (row_chead, tab->cols[i].x, msg);
+         if      (i == CCOL          )  attroff (NCOLOR_HEADY   );
+         else if (i <= tab->froz_ecol)  attroff (NCOLOR_HEADL   );
+         else if (tab->cols[i].c >  0)  attroff (NCOLOR_HEADF   );
+         else                           attroff (NCOLOR_HEADN   );
+      }
+   }
+   /*---(process oolumns)----------------*/
+   for (i = BCOL; i <=  ECOL; ++i) {
+      if (i >= NCOL) break;
+      /*---(prepare)---------------------*/
+      w     = tab->cols[i].w;
+      wa    = w - 4;
+      cw    = tab->cols[i].x + w;
+      strcpy(label, tab->cols[i].l);
+      /*---(output)----------------------*/
+      snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, dashes, label);
+      if      (i == CCOL          )  attron  (NCOLOR_HEADY   );
+      else if (tab->cols[i].c >  0)  attron  (NCOLOR_HEADF   );
+      else                           attron  (NCOLOR_HEADN   );
+      mvprintw (row_chead, tab->cols[i].x, msg);
+      if      (i == CCOL          )  attroff (NCOLOR_HEADY   );
+      else if (tab->cols[i].c >  0)  attroff (NCOLOR_HEADF   );
+      else                           attroff (NCOLOR_HEADN   );
+   }
+   /*---(fill in right side)-------------*/
+   if (cw < (my.x_full - my.x_right)) {
+      w     = my.x_full - cw;
+      wa    = w - 4;
+      strcpy(label, tab->cols[ECOL + 1].l);
+      if (ECOL < NCOL - 1){
+         if      (w == 1) snprintf(msg, 500, ">");
+         else if (w == 2) snprintf(msg, 500, "\[>");
+         else if (w == 3) snprintf(msg, 500, "\[->");
+         else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, dashes, label);
+      } else              snprintf(msg, 500, "%*.*s ", w, w, empty);
+      if (tab->cols[ECOL + 1].c == 0)  attron  (NCOLOR_HEADN   );
+      mvprintw (row_chead, cw, msg);
+      if (tab->cols[ECOL + 1].c == 0)  attroff (NCOLOR_HEADN   );
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> update row labels ---------------------[ ------ [ ------ ]-*/
+CURS_rowhead       (void)
+{
+   /*---(locals)-----------------------------*/
+   int       i         = 0;                    /* iterator -- rows            */
+   int       j         = 0;                    /* iterator -- rows            */
+   int       h         = 0;                    /* row height                  */
+   int       ch        = row_main;             /* cumulative column width     */
+   /*---(header)-----------------------------*/
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(process locked rows)----------------*/
+   if (tab->froz_row == 'y') {
+      for (i = tab->froz_brow; i <=  tab->froz_erow; ++i) {
+         if (i >= NROW)  break;
+         /*---(prepare)----------------------------*/
+         h     = tab->rows[i].h;
+         ch   += h;
+         if      (i == CROW          )  attron  (NCOLOR_HEADY   );
+         else if (i <= tab->froz_erow)  attron  (NCOLOR_HEADL   );
+         else if (tab->rows[i].c >  0)  attron  (NCOLOR_HEADF   );
+         else                           attron  (NCOLOR_HEADN   );
+         for (j = 0; j < h; ++j) {
+            /*> if (ch + j > my.y_avail)  break;                                         <*/
+            switch (j) {
+            case  0 : mvprintw (tab->rows[i].y    , 0, "%4d", i + 1);   break;
+            default : mvprintw (tab->rows[i].y + j, 0, "   .");         break;
+            }
+         }
+         if      (i == CROW          )  attroff (NCOLOR_HEADY   );
+         else if (i <= tab->froz_erow)  attroff (NCOLOR_HEADL   );
+         else if (tab->rows[i].c >  0)  attroff (NCOLOR_HEADF   );
+         else                           attroff (NCOLOR_HEADN   );
+      }
+   }
+   /*---(process rows)-----------------------*/
+   for (i = BROW; i <=  EROW; ++i) {
+      if (i >= NROW)  break;
+      /*---(prepare)----------------------------*/
+      h     = tab->rows[i].h;
+      ch   += h;
+      if      (i == CROW          )  attron  (NCOLOR_HEADY   );
+      else if (tab->rows[i].c >  0)  attron  (NCOLOR_HEADF   );
+      else                           attron  (NCOLOR_HEADN   );
+      for (j = 0; j < h; ++j) {
+         /*> if (ch + j > my.y_avail)  break;                                         <*/
+         switch (j) {
+         case  0 : mvprintw (tab->rows[i].y    , 0, "%4d", i + 1);   break;
+         default : mvprintw (tab->rows[i].y + j, 0, "   .");         break;
+         }
+      }
+      if      (i == CROW          )  attroff (NCOLOR_HEADY   );
+      else if (tab->rows[i].c >  0)  attroff (NCOLOR_HEADF   );
+      else                           attroff (NCOLOR_HEADN   );
+   }
+   /*---(complete)---------------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+int                /* PURPOSE : presents the outer window frame elements      */
+CURS_main          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         ch          = 0;
+   tCELL      *curr        = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(initialize)---------------------*/
+   my.apos = my.x_full - 30 - 15 - 2;
+   curr    = tab->sheet[CCOL][CROW];
+   strncpy (reqs, "+", MAX_STR);
+   strncpy (deps, "+", MAX_STR);
+   strncpy (like, "+", MAX_STR);
+   DEP_requires (curr, reqs);
+   DEP_provides (curr, deps);
+   DEP_like     (curr, like);
+   /*---(update cells)-------------------*/
+   CURS_formula   (curr);
+   CURS_status    (curr);
+   CURS_message   ();
+   CURS_colhead   ();
+   CURS_rowhead   ();
+   CURS_page      ();
+   /*---(command)------------------------*/
+   attron   (NCOLOR_KEYS);
+   mvprintw (row_chead, 0, cmd);
+   attroff  (NCOLOR_KEYS);
+   /*---(cursor pos)---------------------*/
+   if (mode != MODE_SOURCE && mode != MODE_INPUT)
+      move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
+   else
+      move (row_formula, 31 + my.cpos - my.bpos);
+   /*---(refresh)------------------------*/
+   refresh ();
+   ch = getch ();
+   DEBUG_GRAF  yLOG_value   ("key"       , ch);
+   /*> if (ch == 3) {                                                                 <* 
+    *>    endwin();                                                                   <* 
+    *>    exit(-1);                                                                   <* 
+    *> }                                                                              <*/
+   if (ch == KEY_RESIZE) {
+      CURS_size ();
+      KEYS_col  (" r");
+      KEYS_row  (" r");
+   }
+   /*---(complete)--------------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return ch;
+}
+
+char               /* PURPOSE : display an individual cell                    */
+CURS_cell          (int a_col, int a_row)
+{
+   /*---(locals)---------------------------*/
+   tCELL    *curr      = tab->sheet[a_col][a_row];
+   tCELL    *next      = NULL;
+   char      label[MAX_STR] = "zzz";
+   char      l[MAX_STR]  = "";
+   char      high      = 0;
+   int       i         = 0;
+   uint      xmax      = 0;
+   int       xcol      = 0;
+   char      xdisp [MAX_STR];
+   /*---(check for merges)-----------------*/
+   if (curr != NULL && curr->a == '+')  return 0;
+   /*---(identify cell)--------------------*/
+   if (curr != NULL) {
+      LOC_label  (curr, l);
+      sprintf    (label, ",%s,", l);
+   }
+   /*---(current)--------------------------*/
+   if      (a_col == CCOL && a_row == CROW)     { high= 1; attron (NCOLOR_CURRENT); }
+   /*---(visual-range)---------------------*/
+   else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (NCOLOR_ROOT   ); }
+   else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (NCOLOR_VISUAL ); }
+   /*---(content-based)--------------------*/
+   else if (curr != NULL) {
+      /*---(trouble)--------------------------*/
+      if      (curr->t == 'E')                  { high=31; attron (NCOLOR_ERROR  ); }
+      else if (curr->t == 'e')                  { high=31; attron (NCOLOR_ERROR  ); }
+      else if (curr->t == 'w')                  { high=31; attron (NCOLOR_ERROR  ); }
+      /*---(related)--------------------------*/
+      else if (strstr(reqs, label) != NULL)     { high= 7; attron (NCOLOR_REQS   ); }
+      else if (strstr(deps, label) != NULL)     { high= 8; attron (NCOLOR_PROS   ); }
+      else if (strstr(like, label) != NULL)     { high=10; attron (NCOLOR_LIKE   ); }
+      /*---(pointers)-------------------------*/
+      else if (curr->t == 'p')                  { high=32; attron (NCOLOR_POINTER); }
+      else if (curr->t == 'd')                  { high=32; attron (NCOLOR_POINTER); }
+      /*---(minor highlighting)---------------*/
+      else if (curr->t == 'f') {
+         if      (curr->s[0] == '~')            { high= 9; attron (NCOLOR_FLIKE  ); }
+         else if (curr->s[0] == '#')            { high=11; attron (NCOLOR_FSTRING); }
+         else if (curr->s[0] == '!')            { high=15; attron (NCOLOR_FCOPY  ); }
+         else if (curr->nrequire < 3)           { high= 3; attron (NCOLOR_FSIMPLE); }
+         else                                   { high= 4; attron (NCOLOR_FDANGER); }
+      }
+      else if (curr->t == 'n')                  { high= 5; attron (NCOLOR_NUMBER ); }
+      else if (curr->t == 'l')                  { high=13; attron (NCOLOR_LABEL  ); }
+      else if (curr->t == '-')                  { high=14; attron (NCOLOR_NULL   ); }
+      else                                      { high= 6; attron (NCOLOR_STRING ); }
+   }
+   /*---(check max width)------------------*/
+   xmax = tab->cols[a_col].w;
+   if (curr != NULL) {
+      xcol = curr->col + 1;
+      next = tab->sheet[xcol][a_row];
+      while (next != NULL && xcol <= ECOL && next->a == '+') {
+         xmax += tab->cols[next->col].w;
+         ++xcol;
+         next = tab->sheet[xcol][a_row];
+      }
+   }
+   /*---(check for current)----------------*/
+   if (curr!= NULL && a_row == CROW) {
+      xcol = curr->col + 1;
+      next = tab->sheet[xcol][a_row];
+      while  (next != NULL) {
+         if (next->a != '+') break;
+         if (xcol == CCOL) {
+            high = 1;
+            attron (NCOLOR_CURRENT);
+            break;
+         }
+         ++xcol;
+         next = tab->sheet[xcol][a_row];
+      }
+   }
+   /*---(display cell)---------------------*/
+   for (i = 0; i < tab->rows[a_row].h; ++i) {
+      if (curr == NULL || curr->p == NULL) {
+         mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);
+      } else {
+         if (i == 0) {
+            sprintf (xdisp, "%-*.*s", xmax, xmax, curr->p);
+            if (xmax < strlen(curr->p)) xdisp[xmax - 1] = '>';
+            mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, xdisp);
+         } else {
+            mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);
+         }
+      }
+   }
+   /*---(highlight off)--------------------*/
+   if      (high ==  1) attroff (NCOLOR_CURRENT);
+   else if (high ==  2) attroff (NCOLOR_VISUAL );
+   else if (high == 12) attroff (NCOLOR_ROOT   );
+   else if (high ==  9) attroff (NCOLOR_FLIKE  );
+   else if (high == 15) attroff (NCOLOR_FCOPY  );
+   else if (high ==  3) attroff (NCOLOR_FSIMPLE);
+   else if (high ==  4) attroff (NCOLOR_FDANGER);
+   else if (high == 11) attroff (NCOLOR_FSTRING);
+   else if (high ==  5) attroff (NCOLOR_NUMBER );
+   else if (high ==  6) attroff (NCOLOR_STRING );
+   else if (high == 13) attroff (NCOLOR_LABEL  );
+   else if (high == 14) attroff (NCOLOR_NULL   );
+   else if (high ==  7) attroff (NCOLOR_REQS   );
+   else if (high ==  8) attroff (NCOLOR_PROS   );
+   else if (high == 10) attroff (NCOLOR_LIKE   );
+   else if (high == 31) attroff (NCOLOR_ERROR  );
+   else if (high == 32) attroff (NCOLOR_POINTER);
+   /*---(complete)-------------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      private functions                       ----===*/
+/*====================------------------------------------====================*/
+
+PRIV char       /* PURPOSE : redisplay all cell data on the screen --------*/
+CURS_page          (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   int         y_cur       = 0;
+   int         x_cur       = 0;
+   int       end   = 0;
+   int       avail = my.x_full - 1;
+   int       left  = 0;
+   int       xmax  = 0;
+   int         ch          = 0;
+   int         i           = 0;
+   /*---(cycle rows)---------------------*/
+   if (tab->froz_row == 'y') {
+      for (y_cur = tab->froz_brow; y_cur <= tab->froz_erow; ++y_cur) {
+         /*---(prepare)---------------------*/
+         ch += tab->rows[y_cur].h;
+         /*---(cycle normal columns)-----------*/
+         for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
+            CURS_cell (x_cur, y_cur);
+         }
+         /*---(cycle locked columns)-----------*/
+         if (tab->froz_col == 'y') {
+            for (x_cur = tab->froz_ecol; x_cur >= tab->froz_bcol; --x_cur) {
+               CURS_cell (x_cur, y_cur);
+            }
+         }
+         /*---(fill in at end)-----------*/
+         end  = tab->cols[ECOL].x + tab->cols[ECOL].w;
+         left = avail - end + 1;
+         if (left > 0) {
+            for (i = 0; i < tab->rows[y_cur].h; ++i) {
+               mvprintw (tab->rows[y_cur].y + i, end, "%*.*s", left, left, empty);
+            }
+         }
+      }
+   }
+   /*---(cycle rows)---------------------*/
+   for (y_cur = BROW; y_cur <= EROW; ++y_cur) {
+      /*---(prepare)---------------------*/
+      ch += tab->rows[y_cur].h;
+      /*---(cycle normal columns)-----------*/
+      for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
+         CURS_cell (x_cur, y_cur);
+      }
+      /*---(cycle locked columns)-----------*/
+      if (tab->froz_col == 'y') {
+         for (x_cur = tab->froz_ecol; x_cur >= tab->froz_bcol; --x_cur) {
+            CURS_cell (x_cur, y_cur);
+         }
+      }
+      /*---(fill in at end)-----------*/
+      end  = tab->cols[ECOL].x + tab->cols[ECOL].w;
+      left = avail - end + 1;
+      if (left > 0) {
+         for (i = 0; i < tab->rows[y_cur].h; ++i) {
+            mvprintw (tab->rows[y_cur].y + i, end, "%*.*s", left, left, empty);
+         }
+      }
+   }
+   /*---(fill in bottom)-----------------*/
+   for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {
+      mvprintw (tab->rows[y_cur].y, 5, "%*.*s", my.x_avail, my.x_avail, empty);
+   }
+   /*---(complete)------------------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char       /* PURPOSE : shutdown curses                               */
+CURS_size         (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------------------------*/
+   int    y;
+   int    x;
+   /*---(get dimensions)--------------*/
+   getmaxyx (stdscr, y, x);
+   /*---(set positions)---------------*/
+   row_buffers  = 0;
+   row_formula  = 0;
+   row_chead    = 1;
+   row_main     = 2;
+   row_status   = y - 2;
+   row_message  = y - 1;
+   col_header   = 0;
+   col_far      = x - 1;
+   /*---(critical numbers)------------*/
+   my.y_full    = y;
+   my.y_avail   = y - row_main - 2;
+   /*---(column markers)--------------*/
+   my.x_full    =  x;
+   my.x_left    =  5;
+   my.x_right   =  0;
+   my.x_avail   = x - my.x_left - my.x_right;
+   /*---(clear the screen)------------*/
+   clear();
+   /*---(complete)--------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char               /* PURPOSE : initialize curses                             */
+CURS_begin         (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(initialize)------------------*/
+   initscr();       /* fire up ncurses with a default screen (stdscr)         */
+   raw();           /* read key-by-key rather than waiting for \n (raw mode)  */
+   noecho();        /* don't automatically echo keypresses to the screen      */
+   ESCDELAY = 0;    /* so escape responds immediately                         */
+   /*---(get window size)-------------*/
+   CURS_size   ();
+   /*---(colors)----------------------*/
+   start_color ();
+   use_default_colors();
+   /*---(transparent)--------------------*/
+   init_pair (70, COLOR_BLACK  , -1           );
+   init_pair (71, COLOR_RED    , -1           );
+   init_pair (72, COLOR_GREEN  , -1           );
+   init_pair (73, COLOR_YELLOW , -1           );
+   init_pair (74, COLOR_BLUE   , -1           );
+   init_pair (75, COLOR_MAGENTA, -1           );
+   init_pair (76, COLOR_CYAN   , -1           );
+   init_pair (77, COLOR_WHITE  , -1           );
+   /*---(same color)---------------------*/
+   init_pair (20, COLOR_BLACK  , COLOR_BLACK  );
+   init_pair (21, COLOR_RED    , COLOR_RED    );
+   init_pair (22, COLOR_GREEN  , COLOR_GREEN  );
+   init_pair (23, COLOR_YELLOW , COLOR_YELLOW );
+   init_pair (24, COLOR_BLUE   , COLOR_BLUE   );
+   init_pair (25, COLOR_MAGENTA, COLOR_MAGENTA);
+   init_pair (26, COLOR_CYAN   , COLOR_CYAN   );
+   init_pair (27, COLOR_WHITE  , COLOR_WHITE  );
+   /*---(color on black)-----------------*/
+   init_pair (30, COLOR_BLACK  , COLOR_BLACK  );
+   init_pair (31, COLOR_RED    , COLOR_BLACK  );
+   init_pair (32, COLOR_GREEN  , COLOR_BLACK  );
+   init_pair (33, COLOR_YELLOW , COLOR_BLACK  );
+   init_pair (34, COLOR_BLUE   , COLOR_BLACK  );
+   init_pair (35, COLOR_MAGENTA, COLOR_BLACK  );
+   init_pair (36, COLOR_CYAN   , COLOR_BLACK  );
+   init_pair (37, COLOR_WHITE  , COLOR_BLACK  );
+   /*---(black on color)-----------------*/
+   init_pair (40, COLOR_BLACK  , COLOR_BLACK  );
+   init_pair (41, COLOR_BLACK  , COLOR_RED    );
+   init_pair (42, COLOR_BLACK  , COLOR_GREEN  );
+   init_pair (43, COLOR_BLACK  , COLOR_YELLOW );
+   init_pair (44, COLOR_BLACK  , COLOR_BLUE   );
+   init_pair (45, COLOR_BLACK  , COLOR_MAGENTA);
+   init_pair (46, COLOR_BLACK  , COLOR_CYAN   );
+   init_pair (47, COLOR_BLACK  , COLOR_WHITE  );
+   /*---(color on white)-----------------*/
+   init_pair (50, COLOR_BLACK  , COLOR_WHITE  );
+   init_pair (51, COLOR_RED    , COLOR_WHITE  );
+   init_pair (52, COLOR_GREEN  , COLOR_WHITE  );
+   init_pair (53, COLOR_YELLOW , COLOR_WHITE  );
+   init_pair (54, COLOR_BLUE   , COLOR_WHITE  );
+   init_pair (55, COLOR_MAGENTA, COLOR_WHITE  );
+   init_pair (56, COLOR_CYAN   , COLOR_WHITE  );
+   init_pair (57, COLOR_WHITE  , COLOR_WHITE  );
+   /*---(white on color)-----------------*/
+   init_pair (60, COLOR_WHITE  , COLOR_BLACK  );
+   init_pair (61, COLOR_WHITE  , COLOR_RED    );
+   init_pair (62, COLOR_WHITE  , COLOR_GREEN  );
+   init_pair (63, COLOR_WHITE  , COLOR_YELLOW );
+   init_pair (64, COLOR_WHITE  , COLOR_BLUE   );
+   init_pair (65, COLOR_WHITE  , COLOR_MAGENTA);
+   init_pair (66, COLOR_WHITE  , COLOR_CYAN   );
+   init_pair (67, COLOR_WHITE  , COLOR_WHITE  );
+   /*---(complete)--------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char               /* PURPOSE : shutdown curses                               */
+CURS_end           (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   endwin();        /* shut down ncurses                                      */
+   /*---(complete)--------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+/*============================----end-of-source---============================*/
