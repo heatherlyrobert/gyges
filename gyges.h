@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0b"
-#define     VER_TXT   "change ySTR_trim to strltrim in CALC formulas"
+#define     VER_NUM   "1.0c"
+#define     VER_TXT   "fix the formatting menu and document in vi-keys"
 
 
 
@@ -762,7 +762,7 @@ char        creg_lock;
 
 
 #define     MODE_NORMAL    'N'
-#define     MODE_FORMAT    'O'
+#define     MODE_FORMAT    'F'    /* data formatting */
 #define     MODE_VISUAL    'V'
 #define     MODE_SOURCE    'S'
 #define     MODE_BUFFER    'B'
@@ -771,6 +771,8 @@ char        creg_lock;
 #define     MODE_COMMAND   'C'
 
 
+#define     MENU_FORMAT    'F'
+#define     MENU_SIZING    'S'
 
 
 

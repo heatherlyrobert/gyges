@@ -12,7 +12,8 @@ main (int argc, char *argv[])
    /*---(locals)-----------+-----------+-*/
    /*---(formats)---------*/
    char        msg_normal   [500] = "(N) normal   : horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}";
-   char        msg_format   [500] = "(O) format   : ali=<|>[^]  fmt=ifpeE,acs#%%xXbBoOtdT  fil= _-=.+  w=mhHlLnNwW h=jk  dec=0123456789  mrg=MU  modes={esc}{ret}";
+   /*> char        msg_format   [500] = "(O) format   : ali=<|>[^]  fmt=ifpeE,acs#%%xXbBoOtdT  fil= _-=.+  w=mhHlLnNwW h=jk  dec=0123456789  mrg=MU  modes={esc}{ret}";   <*/
+   char        msg_format   [500] = "(f) format   : ali=<|>[^] num=ir,as$%%p tec=#eExXbBoO tim=tdT fil= _-=.+ dec=0-9";
    char        msg_visual   [500] = "(V) visual   : dxy  !: ~uU /nN oO sS";
    char        msg_source   [500] = "(S) source   : horz(a)=0HhlL$  words=wbe  find=f;  undo=u  modes=IiaA{esc}{ret}";
    char        msg_buffer   [500] = "(B) buffer   : select=0...9  modes={ret}(esc}";

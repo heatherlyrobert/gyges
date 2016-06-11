@@ -478,7 +478,7 @@ KEYS_format        (int  a_prev, int  a_curr)
    case  'l' : CELL_width    (CHG_INPUT, 'l');  break;  /* more by 1   */
    case  'L' : CELL_width    (CHG_INPUT, 'L');  break;  /* more by 5   */
    case  'n' : CELL_width    (CHG_INPUT, 'n');  break;  /* normal      */
-   case  'N' : CELL_width    (CHG_INPUT, 'N');  break;  /* wide-normal */
+   case  'N' : CELL_width    (CHG_INPUT, 'N');  break;  /* normal-plus */
    case  'w' : CELL_width    (CHG_INPUT, 'w');  break;  /* wide        */
    case  'W' : CELL_width    (CHG_INPUT, 'W');  break;  /* largest     */
 
@@ -511,7 +511,7 @@ KEYS_format        (int  a_prev, int  a_curr)
    case  'U' : CELL_merge    ('u');  break;  /* unmerge     */
 
    case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /* integer         */
-   case  'f' : CELL_format   (CHG_INPUT, 'f');  break;  /* float           */
+   case  'r' : CELL_format   (CHG_INPUT, 'f');  break;  /* float           */
    case  'e' : CELL_format   (CHG_INPUT, 'e');  break;  /* exponencial     */
    case  'E' : CELL_format   (CHG_INPUT, 'E');  break;  /* spaced exponent */
    case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* point/bullet    */

@@ -115,7 +115,7 @@
 */
 
 static char sv_formats     [50] = "";
-static char sv_nums        [20] = "?ifpeE";
+static char sv_nums        [20] = "?irpeE";
 static char sv_commas      [20] = ",a$s#%";
 static char sv_special     [20] = "xXbBoO\"";
 static char sv_times       [20] = "tTdD";
@@ -1775,7 +1775,7 @@ CELL__print_number (
    switch (a_format) {
    case '?':
    case 'i':
-   case 'f':
+   case 'r':
    case 'p': sprintf  (x_temp, "%lld%"      , x_int);
              break;
    }
@@ -1786,7 +1786,7 @@ CELL__print_number (
       case '?':
       case 'i': sprintf  (x_temp, " %*.*s"      , a_decimal, a_decimal, " ");
                 break;
-      case 'f':
+      case 'r':
       case 'p': sprintf  (x_temp, ".%0*.*lld%"  , a_decimal, a_decimal, x_frac);
                 break;
       }
