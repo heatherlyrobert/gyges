@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0a"
-#define     VER_TXT   "clean up a bit of unit testing and for github"
+#define     VER_NUM   "1.0b"
+#define     VER_TXT   "change ySTR_trim to strltrim in CALC formulas"
 
 
 

@@ -724,7 +724,7 @@ CALC__trim         (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
-   ySTR_trim (r, ySTR_BOTH);
+   strltrim (r, ySTR_BOTH, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
@@ -741,7 +741,7 @@ CALC__ltrim        (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
-   ySTR_trim (r, ySTR_HEAD);
+   strltrim (r, ySTR_HEAD, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
@@ -758,7 +758,7 @@ CALC__rtrim        (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
-   ySTR_trim (r, ySTR_TAIL);
+   strltrim (r, ySTR_TAIL, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
@@ -775,7 +775,7 @@ CALC__strim        (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
-   ySTR_trim (r, ySTR_SINGLE);
+   strltrim (r, ySTR_SINGLE, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
@@ -792,7 +792,7 @@ CALC__etrim        (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
-   ySTR_trim (r, ySTR_EVERY);
+   strltrim (r, ySTR_EVERY, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
@@ -809,7 +809,7 @@ CALC__mtrim        (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
-   ySTR_trim (r, ySTR_MAX);
+   strltrim (r, ySTR_MAX, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/

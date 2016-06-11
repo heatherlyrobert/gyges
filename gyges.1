@@ -1,0 +1,415 @@
+.TH gyges 1 2013-Jan "linux" "heatherly custom tools manual"
+
+.SH NAME
+gyges-hekatonkheires \- clean, powerful, and technical console spreadsheet
+
+.SH IMAGERY (see HERITAGE at bottom for more)
+ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant
+
+.SH SUMMARY
+gyges (pronounced j-eye-j-ees) is a clean, powerful, technical, and
+keyboard-centric console spreadsheet focused on functionality, analytics,
+interfacing, scripting, and smart data in a plain package.
+
+.SH SYNOPSIS
+
+.B gyges [OPTIONS]
+.nf
+primary production version
+
+.B gyges_debug [URGENTS] [OPTIONS]
+.nf
+performs all gyges actions, but with debugging and tracing
+
+.SH MOVEMENT
+gyges seeks to drive consistency by fully using the vi-keys mini-language as
+well as contributing concepts and useful extentions back to that language.
+
+horizontal movement is consistent with vi-keys...
+
+.B 0     
+: move to the very first col/char
+
+.B H     
+: move five col/char to the left
+
+.B h     
+: move a single col/char to the left
+
+.B l     
+: move a single col/char to the right
+
+.B L     
+: move five col/char to the right
+
+.B $     
+: move to the very last col/char
+
+
+.SH QUICK INPUT
+
+the challenge with most spreadsheets is that they are mouse-driven so users must
+continually move back and forth between the keyboard and mouse for user input.
+this spreadsheet will focus on rapid input of information into cells without
+any reference to computer mice or other pointing tools.
+
+with each of the prefixes below, the user will be placed immediately into input
+mode within the current cell.  when input is complete, simply hit <cr> and the
+data will be saved and user returned to normal mode.  press <esc> twice and the
+input will be disregarded.
+
+.B +/- (positive or negative)
+.RS 8
+these are prefixes for integer or floating point numeric literals.  valid input
+values are numbers and an optional decimal point.
+.RE
+
+.B """ (double quote)
+.RS 8
+this is a prefix for a string literal.  all characters are allowed and the
+double quote will not be included in the actual content.
+.RE
+
+.B = (equality sign)
+.RS 8
+this is the prefix for a numeric formula.  the input will then be parsed for
+valid content, operators, functions, etc, and then evaluated.
+.RE
+
+.B & (ampersand)
+.RS 8
+this is the prefix for a cell or range pointer.  the following input will be
+validated as various forms of cell references.  these pointers can be used
+to simplify formulas.
+.RE
+
+.B # (ampersand)
+.RS 8
+this is the prefix for a string formula.  the input will then be parsed for
+valid content, operators, functions, etc, and then evaluated.
+.RE
+
+.B ~ (tilda)
+.RS 8
+this prefix is the indication for a "like" formula cell.  the input will then be
+parsed for a cell reference and its formula evaluated relative to the new position.
+.RE
+
+.SH TRIGONOMETTRY
+given that gyges will be supporting my robotics and kinetics, i need a very
+supportive plane and spherical trigonometry function set.
+
+.B deg   (rads)                 -- convert radians to degrees
+.B rad   (degs)                 -- convert degrees to radians
+.B sin   (degs), sinr  (rads)   -- sine
+.B cos   (degs), cosr  (rads)   -- cosine
+.B tan   (degs), tanr  (rads)   -- tangent
+.B csc   (degs), cscr  (rads)   -- cosecant
+.B sec   (degs), secr  (rads)   -- secant
+.B cot   (degs), cotr  (rads)   -- cotangent
+.B crd   (degs), crdr  (rads)   -- chord
+.B asin  (degs), asinr (rads)   -- arcsine
+.B acos  (degs), acosr (rads)   -- arccosine
+.B atan  (degs), atanr (rads)   -- arctangent
+
+.SH VISUAL SELECTION
+
+visual selection is the method by which you indicate rectangular ranges of
+cells on which to perform actions.  while i am going to follow vi/vim's lead
+on how to perform this in a keyboard-centric manner, most application use a
+mouse for this purpose.
+
+.B v (visual from)
+.RS 8
+begin and stay rooted to the current cell
+.RE
+
+.B V (visual cummulative)
+.RS 8
+begin and add each additional cell touched
+.RE
+
+.B gv (go previous visual)
+.RS 8
+restore the previous visual selection
+.RE
+
+.B y (yank fresh)
+.RS 8
+copy selected cells into the current register
+.RE
+
+.B Y (yank more)
+.RS 8
+append selected cells into the current register
+.RE
+
+.B p (paste clear)
+.RS 8
+copy the current register to the current location, clear first
+.RE
+
+.B P (paste on top)
+.RS 8
+copy the current register to the current location, additive
+.RE
+
+.B x (cut and adapt)
+.RS 8
+cut selected cells into current register, integrate on paste
+.RE
+
+.B X (cut and leave)
+.RS 8
+cut selected cells into the current register, don't reconnect
+.RE
+
+.B d (delete)
+.RS 8
+delete cells and do not put in any register
+.RE
+
+.B "# (delete register)
+.RS 8
+delete cells in the current register
+.RE
+
+.B ")a
+.RS 8
+copy the current register into the new one
+.RE
+
+.B ">a
+.RS 8
+move the current register into the new one
+.RE
+
+.B "]a
+.RS 8
+append the current register onto the new one
+.RE
+
+.SH SCREEN RELATIVE MOVEMENTS
+
+quick movement around the screen is critical to avoid pressing and holding
+arrow keys as is usually done, or having to resort to the mouse.  these
+movements are part of the goto (g) family of keystrokes.
+
+the first set are horizontal movements
+
+.B gs (go start)
+.RS 8
+go to the leftmost column shown on the screen
+.RE
+
+.B gl (go left)
+.RS 8
+go left to the quarter screen mark on left
+.RE
+
+.B gc (go center)
+.RS 8
+go to the horizontal center of the screen
+.RE
+
+.B gh (go right)
+.RS 8
+go right to the quarter screen mark on right
+.RE
+
+.B ge (go end)
+.RS 8
+go to the rightmost column shown on the screen
+.RE
+
+the second set are vertical movements
+
+.B gt (go top)
+.RS 8
+go to the topmost row shown on the screen
+.RE
+
+.B gk (go up)
+.RS 8
+go up to the quarter screen mark on top
+.RE
+
+.B gm (go middle)
+.RS 8
+go to the vertical middle of the screen
+.RE
+
+.B gj (go down)
+.RS 8
+go down to the quarter screen mark on bottom
+.RE
+
+.B gb (go bottom)
+.RS 8
+go to the bottommost row shown on the screen
+.RE
+
+the third set are combination movements
+
+.B gn (go near)
+.RS 8
+go to the top-leftmost corner shown on the screen
+.RE
+
+.B g. (go dot)
+.RS 8
+go up to center-middle of the screen
+.RE
+
+.B gf (go far)
+.RS 8
+go to the bottom-rightmost corner of the screen
+.RE
+
+the fourth set are related to titles
+
+.B g_ (go vert-beginning)
+.RS 8
+go to the title rows on top without changing screen
+.RE
+
+.B g0 (go horz-beginning)
+.RS 8
+go to the title columns on right without changing screen
+.RE
+
+the fifth set is related to visual selection
+
+.B gv (go visual)
+.RS 8
+re-highlight the last visual selection range
+.RE
+
+
+
+.SH END STYLE MOVEMENTS
+
+with the focus on rows, columns, and tables; movements through groups of cells
+is common so making them quick and efficient is desireable.  these end-
+style movements have been around since the lotus days although they tend to
+be forgotten by the mouse-crowd.  these were two key instructions of the {end}
+key followed by an arrow key, such as {down}.
+
+the heatherly vim-style mini-language will support these as two character
+instructions starting with the letter 'e' for end.
+
+the first set travel arcoss the beginnings and endings of contiguous cells
+making navigation over and between groups of cells much easier.
+
+.B el (end-left)
+.RS 8
+left to beginning of filled cells, or ending of prev
+.RE
+
+.B eh (end-right)
+.RS 8
+right to ending of filled cells, or beginning of next
+.RE
+
+.B ek (end-up)
+.RS 8
+up to beginning of filled cells, or ending of prev
+.RE
+
+.B ej (end-down)
+.RS 8
+down to ending of filled cells, or beginning of next
+.RE
+
+.B en (end-near)
+.RS 8
+left/up to beginning of filled cells, or ending of prev
+.RE
+
+.B ef (end-far)
+.RS 8
+down/right to beginning of filled cells, or ending of next
+.RE
+
+the second set travel to the very edges of occupied cells making it easier
+to understand and work with the extent of the data.
+
+.B es (end-start)
+.RS 8
+left to the leftmost column with any contents
+.RE
+
+.B ee (end-end)
+.RS 8
+right to the rightmost column with any contents
+.RE
+
+.B et (end-top)
+.RS 8
+up to the topmost row with any contents
+.RE
+
+.B eb (end-bottom)
+.RS 8
+down to bottommost row with any contents
+.RE
+
+.B ea (end-alpha)
+.RS 8
+left/up to very top-left edge of occupied cells
+.RE
+
+.B eo (end-omega)
+.RS 8
+down/right to very bottom-right edge of occupied cells
+.RE
+
+.SH RELATIVE AND ABSOLUTE ADDRESSES
+in copying and moving cells between locations, formulas are expected to adjust
+to their new locations, such as, when the formula "=c3" is copied to a location
+which is two rows down, the formula is expected to read "=c5".  this is called
+a relative address and is the default treatment of addresses when moved.
+
+the alternative is absolute addressing where any or all of the three address
+elements cal be locked in and therefore never adjust.  this is done by placing
+a greed ($) in front of the specific element to lock in -- tab, column, or
+row.  for instance if "=c$3" is copied to a cell two rows down is remains the
+same as the row has an absolute marker.  but, if it is copied two columns to
+the right it becomes "=e$3" as the column does not have an absolute marker.
+
+finally, if a reference is never supposed to adjust no matter where it is
+moved, the worm (@) is a shortcut for using all three absolute indicators and
+means that the address will never adjust.
+
+#  hash
+*  splat
+@  worm
+$  greed
+!  bang
+?  query
+'  prime
+"  quote
+
+
+
+
+.SH HERITAGE
+gyges the big-limbed is the youngest of three primeval greek giant brothers
+called the hekatonkheires (hundred-handed).  these brothers were born of ouranos
+(father sky) and gaia (mother earth) and therefore siblings of the titans.
+the hekatonkheires were extremely powerful, in fact more powerful than all
+the titans together, and each had one-hundred arms and fifty heads.
+
+they were also unbelievably ugly in the way that only something with fifty
+heads and one-hundred arms can be ;)
+
+this spreadsheet is named after gyges given the extremely powerful and yet
+dangerously unconstrained nature of the spreadsheet concept.
+
+.SH AUTHOR
+heatherly
+
+.SH COLOPHON
+this page is part of a documentation package mean to make the use of the
+heatherly tools easier and faster
+

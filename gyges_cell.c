@@ -147,15 +147,15 @@ CELL__new          (char a_linked)     /* cell goes into the linked list ?    */
     */
    /*---(locals)-----------+-----------+-*/
    tCELL      *x_curr      = NULL;
-   int         tries       = 0;
+   int         x_tries     = 0;
    /*---(begin)--------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_value   ("a_linked"  , a_linked);
    /*---(create cell)--------------------*/
    while (x_curr == NULL) {
-      ++tries;
+      ++x_tries;
       x_curr = (tCELL *) malloc (sizeof (tCELL));
-      if (tries > 10)   return NULL;
+      if (x_tries > 10)   return NULL;
    }
    ++ACEL;
    DEBUG_CELL   yLOG_value   ("ACEL"      , ACEL);
