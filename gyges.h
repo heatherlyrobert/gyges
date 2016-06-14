@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0d"
-#define     VER_TXT   "update to pass unit test for cell formatting"
+#define     VER_NUM   "1.0e"
+#define     VER_TXT   "fixed localtime issue in time formatting"
 
 
 
