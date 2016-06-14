@@ -511,7 +511,7 @@ KEYS_format        (int  a_prev, int  a_curr)
    case  'U' : CELL_merge    ('u');  break;  /* unmerge     */
 
    case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /* integer         */
-   case  'r' : CELL_format   (CHG_INPUT, 'f');  break;  /* float           */
+   case  'r' : CELL_format   (CHG_INPUT, 'r');  break;  /* real/float      */
    case  'e' : CELL_format   (CHG_INPUT, 'e');  break;  /* exponencial     */
    case  'E' : CELL_format   (CHG_INPUT, 'E');  break;  /* spaced exponent */
    case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* point/bullet    */

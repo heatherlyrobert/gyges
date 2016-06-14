@@ -897,20 +897,20 @@ CELL__interpret    (
    }
    /*---(defense: zero length)-----------*/
    DEBUG_CELL   yLOG_point   ("length"    , a_cell->l);
-   --rce;
-   if (a_cell->l <=    0) {
-      DEBUG_CELL   yLOG_note    ("cell length is zero");
-      a_cell->s = strndup ("", MAX_STR);
-      a_cell->l = 0;
-      a_cell->a = '?';
-      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
+   /*> --rce;                                                                         <* 
+    *> if (a_cell->l <=    0) {                                                       <* 
+    *>    DEBUG_CELL   yLOG_note    ("cell length is zero");                          <* 
+    *>    a_cell->s = strndup ("", MAX_STR);                                          <* 
+    *>    a_cell->l = 0;                                                              <* 
+    *>    a_cell->a = '?';                                                            <* 
+    *>    DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
    /*---(check for blank)----------------*/
    if      (strcmp (a_cell->s, "") == 0) {
       a_cell->t = '-';
       a_cell->l = 0;
-      a_cell->a = '>';
+      a_cell->a = '?';
       DEBUG_CELL   yLOG_complex ("type"      , "empty which is an %c", a_cell->t);
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
@@ -951,8 +951,10 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
       DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");
       rc = RPN_convert (a_cell);
-      if (temp[0] == '#')  a_cell->a = '<';
-      else                 a_cell->a = '>';
+      if (a_cell->a == '?')  {
+         if (temp[0] == '#')  a_cell->a = '<';
+         else                 a_cell->a = '>';
+      }
       if (rc < 0) {
          a_cell->t = 'E';
          a_cell->v_str = strndup ("#.rpn", MAX_STR);
@@ -1025,10 +1027,10 @@ CELL__interpret    (
       /*---(therefore, number)-----------*/
       if (a_cell->t == 'n') {
          a_cell->v_num = atof(a_cell->s);
-         a_cell->a = '>';
+         if (a_cell->a == '?')  a_cell->a = '>';
          DEBUG_CELL   yLOG_complex ("type"      , "numeric which is an %c", a_cell->t);
       } else {
-         a_cell->a = '<';
+         if (a_cell->a == '?')  a_cell->a = '<';
          DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
       }
    }
@@ -1129,7 +1131,10 @@ CELL_format        (char a_mode, char a_type)
                if (x_count == 0)  HIST_format ("format", x_tab, x_col, x_row, x_next->f, a_type);
                else               HIST_format ("FORMAT", x_tab, x_col, x_row, x_next->f, a_type);
             }
-            x_next->f = a_type;
+            if      (x_next->t == 's' && strchr (sv_fillers, a_type) != NULL)
+               x_next->f = a_type;
+            else if (x_next->t == 'n' && strchr (sv_fillers, a_type) == NULL)
+               x_next->f = a_type;
             ++x_count;
          }
          CELL_printable (x_next);
@@ -1164,8 +1169,8 @@ CELL_align         (char a_mode, char a_align)
    do {
       x_align = a_align;
       if (x_next != NULL) {
-         if ((x_align == '}' || x_align == '{') &&
-               (x_next->t != 'n' && x_next->t != 'f')) x_align = x_next->a;
+         /*> if ((x_align == '}' || x_align == '{') &&                                <* 
+          *>       (x_next->t != 'n' && x_next->t != 'f')) x_align = x_next->a;       <*/
          if (x_next->a != '+') {
             if (a_mode == CHG_INPUT) {
                if (x_count == 0) HIST_format ("align", x_tab, x_col, x_row, x_next->a, x_align);
@@ -1826,8 +1831,10 @@ CELL_printable     (tCELL *a_curr) {
    int       pad1  = 0;                 /* leading edge padding               */
    int       pad2  = 0;                 /* trailing edge padding              */
    int       start = 0;                 /* starting character to print        */
-   char      temp[MAX_STR] = "";          /* temp working string                */
+   char      x_temp  [MAX_STR] = "";    /* temp working string                */
+   char      x_final [MAX_STR] = "";    /* temp working string                */
    char     *p   = NULL;                /* final printable string             */
+   char     *x_filler = empty;
    /*---(defense)------------------------*/
    if (a_curr    == NULL) return 0;     /* cell does not exist                */
    if (a_curr->s == NULL) return 0;     /* nothing to do without source       */
@@ -1847,35 +1854,35 @@ CELL_printable     (tCELL *a_curr) {
    if (a_curr->t == 'n' || (a_curr->t == 'f' && a_curr->v_str == NULL)) {
       DEBUG_CELL  yLOG_snote  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
-         CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, temp);
+         CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       } else if (strchr (sv_nums, a_curr->f) != 0)  {
-         CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, temp);
+         CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       } else if (strchr (sv_times, a_curr->f) != 0)  {
-         CELL__print_times  (a_curr->f, a_curr->v_num, temp);
+         CELL__print_times  (a_curr->f, a_curr->v_num, x_temp);
       } else if (strchr (sv_special, a_curr->f) != 0)  {
-         CELL__print_special(a_curr->f, a_curr->d - '0', a_curr->v_num, temp);
+         CELL__print_special(a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       } else if (a_curr->f == '#') {
-         strcat(temp, a_curr->s);
+         strcat(x_temp, a_curr->s);
          a_curr->t = 's';
       } else {
-         CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, temp);
+         CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       }
    } else if (a_curr->t == 'f' && a_curr->v_str != NULL) {
       DEBUG_CELL  yLOG_snote  ("string");
-      strcat(temp, a_curr->v_str);
+      strcat(x_temp, a_curr->v_str);
    } else if (a_curr->t == '-') {
       DEBUG_CELL  yLOG_snote  ("empty");
-      strcat(temp, "-");
+      strcat(x_temp, "-");
    } else if (strchr("WE", a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("error");
-      strcat(temp, a_curr->s);
+      strcat(x_temp, a_curr->s);
       a_curr->a = '<';
    } else {
       DEBUG_CELL  yLOG_snote  ("other");
-      strcat(temp, a_curr->s);
+      strcat(x_temp, a_curr->s);
    }
    /*---(indented formats)---------------*/
-   DEBUG_CELL  yLOG_sinfo  ("x=", temp);
+   DEBUG_CELL  yLOG_sinfo  ("x=", x_temp);
    /*---(merge formats)------------------*/
    int i;
    DEBUG_CELL  yLOG_svalue ("w=", tabs[CTAB].cols[a_curr->col].w);
@@ -1887,50 +1894,55 @@ CELL_printable     (tCELL *a_curr) {
       w    += tabs[a_curr->tab].cols[i].w;
    }
    wa    = w - 1;
+   /*---(choose filler)------------------*/
+   if (strchr("sm+", a_curr->t) != NULL || a_curr->v_str != NULL) {
+      if      (a_curr->f == '-') x_filler = dashes;
+      else if (a_curr->f == '=') x_filler = equals;
+      else if (a_curr->f == '_') x_filler = unders;
+      else if (a_curr->f == '.') x_filler = dots;
+      else if (a_curr->f == '+') x_filler = pluses;
+      else                       x_filler = empty;
+   }
+   /*---(prefix/suffix)------------------*/
+   if      (a_curr->a == '{')   sprintf (x_final, "%2.2s%s", x_filler, x_temp);
+   else if (a_curr->a == '}')   sprintf (x_final, "%s%2.2s", x_temp, x_filler);
+   else                         sprintf (x_final, "%s"     , x_temp);
    /*---(placement variables)------------*/
-   if (a_curr->a == '{')   strcat(temp, "  ");
-   if (a_curr->a == '}')   strcat(temp, " ");
-   len   = strlen(temp);
+   len   = strlen(x_final);
    pad2  = (wa - len) / 2;
    pad1  = wa - len - pad2;
    start = (len / 2) - ((wa - 1) / 2);
-   /*---(choose filler)------------------*/
-   char   *filler = empty;
-   if (strchr("sm+", a_curr->t) != NULL || a_curr->v_str != NULL) {
-      if      (a_curr->f == '-') filler = dashes;
-      else if (a_curr->f == '=') filler = equals;
-      else if (a_curr->f == '_') filler = unders;
-      else if (a_curr->f == '.') filler = dots;
-      else if (a_curr->f == '+') filler = pluses;
-      else                       filler = empty;
-   }
    /*---(make printable)-----------------*/
    /*---(prepare)------*/
    if (a_curr->p != NULL) free (a_curr->p);
    while (p == NULL)  p = (char*) malloc(w + 1);
    /*---(lefty)--------*/
-   if      (strchr("<[",   a_curr->a) != 0) {
+   if      (strchr("<[{",   a_curr->a) != 0) {
       if (len <  w) {
-         if (len < w - 2 && a_curr->a == '[') snprintf(p, w + 1, "[%s%.*s]",  temp, wa - len - 1, filler);
-         else                                 snprintf(p, w + 1, "%s%.*s ",   temp, wa - len, filler);
+         if (len < w - 2 && (a_curr->a == '[' || a_curr->a == '{'))
+            snprintf(p, w + 1, "[%s%.*s]",  x_final, wa - len - 1, x_filler);
+         else 
+            snprintf(p, w + 1, "%s%.*s ",   x_final, wa - len, x_filler);
       }
-      else          snprintf(p, w + 1, "%-*.*s> ", wa - 1, wa - 1, temp);
+      else          snprintf(p, w + 1, "%-*.*s> ", wa - 1, wa - 1, x_final);
    }
    /*---(righty)-------*/
-   else if (strchr("?>]{}", a_curr->a) != 0) {
+   else if (strchr("?>]}", a_curr->a) != 0) {
       if (len <  w) {
-         if (len < w - 2 && a_curr->a == ']') snprintf(p, w + 1, "[%.*s%s]",  wa - len - 1, filler, temp);
-         else                                 snprintf(p, w + 1, "%.*s%s ",   wa - len, filler, temp);
+         if (len < w - 2 && (a_curr->a == ']' || a_curr->a == '}'))
+            snprintf(p, w + 1, "[%.*s%s]",  wa - len - 1, x_filler, x_final);
+         else
+            snprintf(p, w + 1, "%.*s%s ",   wa - len, x_filler, x_final);
       }
-      else          snprintf(p, w + 1, "<%*.*s ", wa - 1, wa - 1, temp + (len - w) + 2);
+      else          snprintf(p, w + 1, "<%*.*s ", wa - 1, wa - 1, x_final + (len - w) + 2);
    }
    /*---(centered)-----*/
    else if (strchr("|^",   a_curr->a) != 0) {
       if (len <  w) {
-         if (len < w - 2 && a_curr->a == '^') snprintf(p, w + 1, "[%.*s%-*.*s%.*s]", pad1 - 1, filler, len, len, temp, pad2, filler);
-         else                                 snprintf(p, w + 1, "%.*s%-*.*s%.*s ",  pad1, filler, len, len, temp, pad2, filler);
+         if (len < w - 2 && a_curr->a == '^') snprintf(p, w + 1, "[%.*s%-*.*s%.*s]", pad1 - 1, x_filler, len, len, x_final, pad2, x_filler);
+         else                                 snprintf(p, w + 1, "%.*s%-*.*s%.*s ",  pad1, x_filler, len, len, x_final, pad2, x_filler);
       }
-      else          snprintf(p, w + 1, "<%*.*s> ",                     wa - 2, wa - 2, temp + start);
+      else          snprintf(p, w + 1, "<%*.*s> ",                     wa - 2, wa - 2, x_final + start);
    }
    /*---(save)---------*/
    a_curr->p = p;

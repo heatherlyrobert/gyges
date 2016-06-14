@@ -1342,7 +1342,7 @@ SCRP          (s_cell) placing string and numeric literals in cells        CEL
      exec     change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "hey hey monkey"                                   p_exists    0                                                            
      code     create a custom expect string        sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  14, "hey hey monkey");                                                                                     
      get      check the cell's source string       unit_accessor         "cell_source",   x_one                                        s_equal     [[ CUSTOM ]]                                                 
-     get      check the cell's information         unit_accessor         "cell_info",     x_one                                        s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0         
+     get      check the cell's information         unit_accessor         "cell_info",     x_one                                        s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0         
      get      check the cell's value               unit_accessor         "cell_value",    x_one                                        s_equal     Cell Value       :           0.000000                        
 
    COND       change source to a real                                                                                                                                                                               
@@ -1370,7 +1370,7 @@ SCRP          (s_cell) placing string and numeric literals in cells        CEL
      exec     change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "9876.432b"                                        p_exists    0                                                            
      code     create a custom expect string        sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   9, "9876.432b");                                                                                          
      get      check the cell's source string       unit_accessor         "cell_source",   x_one                                        s_equal     [[ CUSTOM ]]                                                 
-     get      check the cell's information         unit_accessor         "cell_info",     x_one                                        s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0         
+     get      check the cell's information         unit_accessor         "cell_info",     x_one                                        s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0         
      get      check the cell's value               unit_accessor         "cell_value",    x_one                                        s_equal     Cell Value       :           0.000000                        
 
    COND       change to two worksheets                                                                                                                                                                              
@@ -3297,9 +3297,9 @@ SCRP          (s_calc) basic trig       [19] sin, cos, tan, deg, rad, ...  CEL
      get      check the sine                       CELL__unitnew         "cell_value"     , "0g6"                                      u_round/1   s_celln value    :           1.000000                                  
      get      check the cosine                     CELL__unitnew         "cell_value"     , "0g7"                                      u_round/1   s_celln value    :           0.000000                                  
      get      check the tangent                    CELL__unitnew         "cell_value"     , "0g8"                                      u_round/1   s_celln value    :           0.000000                                  
-     set      v21  turn debugging on                    yVAR_debug            'y'                                                                                                   i_equal     0                                                                      
+#     set      v21  turn debugging on                    yVAR_debug            'y'                                                                                                   i_equal     0                                                                      
      get      check the arcsine                    CELL__unitnew         "cell_value"     , "0g9"                                      u_round/5   s_celln value    :          90.000000                                  
-     set      v21  turn debugging off                   yVAR_debug            '-'                                                                                                   i_equal     0                                                                      
+#     set      v21  turn debugging off                   yVAR_debug            '-'                                                                                                   i_equal     0                                                                      
      get      check the arccosine                  CELL__unitnew         "cell_value"     , "0g10"                                     u_round/5   s_celln value    :          90.000000                                  
      get      check the arctangent                 CELL__unitnew         "cell_value"     , "0g11"                                     u_round/5   s_celln value    :           0.000000                                  
 #    ####       radians
@@ -7644,11 +7644,12 @@ COND     get a empty string in the cell                                     
 
 COND     format with a empty fill                                           
   exec   change the formatting                  CELL_format                CHG_INPUT, ' '                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=- f=  d=0 a=? c=  0 r=  0 d=  0    
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=- f=- d=0 a=? c=  0 r=  0 d=  0    
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :          - :                
 
 COND     get a longer value in the cell                                     
   exec   change the source string               CELL_change               CHG_INPUT,  0, 10, 10, "testing"                                        p_exists   0                                                       
+  exec   change the formatting                  CELL_format                CHG_INPUT, ' '                                                      i_equal    0                                                       
   code   create a custom expect string          sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   7, "testing");
   get    check the cell's source string         unit_accessor              "cell_source",   x_one                                   s_equal    [[ CUSTOM ]]                                            
   get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0    
@@ -7666,24 +7667,24 @@ COND     format to the center                                               
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :  testing   :                
 
 COND     format with dash fill                                              
-  exec   change the format                      CELL_format                CHG_INPUT, '-'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0    
-  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :--testing-- :                
+  exec   change the format                      CELL_format                CHG_INPUT, '.'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :..testing.. :                
 
 COND     format with numeric format                                         
-  exec   change the format                      CELL_format                CHG_INPUT, 'f'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=f d=0 a=| c=  0 r=  0 d=  0    
-  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :  testing   :                
+  exec   change the format                      CELL_format                CHG_INPUT, 'f'                                                      i_lesser   0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :..testing.. :                
 
 COND     format with numeric format                                         
   exec   change the format                      CELL_format                CHG_INPUT, ','                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=, d=0 a=| c=  0 r=  0 d=  0    
-  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :  testing   :                
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :..testing.. :                
 
 COND     format with numeric format                                         
   exec   change the format                      CELL_format                CHG_INPUT, 'x'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=x d=0 a=| c=  0 r=  0 d=  0    
-  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :  testing   :                
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :..testing.. :                
 
 COND     format with dash fill, again                                       
   exec   change the format                      CELL_format                CHG_INPUT, '-'                                                      i_equal    0                                                       
@@ -7694,9 +7695,9 @@ COND     get a almost max length string in cell                             
   exec   change the source string               CELL_change                CHG_INPUT, 0, 10, 10, "eleventeen"                                     p_exists   0                                                       
   code   create a custom expect string          sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  10, "eleventeen");
   get    check the cell's source string         unit_accessor              "cell_source",   x_one                                   s_equal    [[ CUSTOM ]]                                            
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=- d=0 a=< c=  0 r=  0 d=  0    
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0    
   get    check the cell's value                 unit_accessor              "cell_value",    x_one                                   s_equal    Cell Value       :           0.000000                   
-  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :eleventeen- :                
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :-eleventeen :                
 
 COND     format to the left                                                 
   exec   change the alignment                   CELL_align                 CHG_INPUT, '<'                                                      i_equal    0                                                       
@@ -7717,7 +7718,7 @@ COND     get a longer value in the cell                                     
   exec   change the source string               CELL_change                CHG_INPUT, 0, 10, 10, "eleventeeny"                                     p_exists   0                                                      
   code   create a custom expect string          sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  11, "eleventeeny");
   get    check the cell's source string         unit_accessor              "cell_source",   x_one                                   s_equal    [[ CUSTOM ]]                                            
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0    
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0    
   get    check the cell's value                 unit_accessor              "cell_value",    x_one                                   s_equal    Cell Value       :           0.000000                   
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :eleventeeny :                
 
@@ -7768,9 +7769,9 @@ COND     get a over long string with spaces                                 
   exec   change the source string               CELL_change                CHG_INPUT, 0, 10, 10, "super alaf agal stic"                            p_exists   0                                                      
   code   create a custom expect string          sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  20, "super alaf agal stic");
   get    check the cell's source string         unit_accessor              "cell_source",   x_one                                   s_equal    [[ CUSTOM ]]                                            
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0    
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=| c=  0 r=  0 d=  0    
   get    check the cell's value                 unit_accessor              "cell_value",    x_one                                   s_equal    Cell Value       :           0.000000                   
-  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :super alaf> :                
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :< alaf aga> :                
 
 COND     format to the left                                                 
   exec   change the alignment                   CELL_align                 CHG_INPUT, '<'                                                      i_equal    0                                                       
@@ -7781,6 +7782,51 @@ COND     format to the right                                                
   exec   change the alignment                   CELL_align                 CHG_INPUT, '>'                                                      i_equal    0                                                       
   get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0    
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :< agal stic :                
+
+COND     make cell even wider                                               
+  exec   change the alignment                   CELL_width                 CHG_INPUT, 'w'                                                      i_equal    0                                                       
+  exec   change the alignment                   CELL_width                 CHG_INPUT, 'L'                                                      i_equal    0                                                       
+  exec   change the alignment                   CELL_width                 CHG_INPUT, 'L'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :         super alaf agal stic : 
+
+COND     use equal sign filler                                              
+  exec   change the format                      CELL_format                CHG_INPUT, '='                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f== d=0 a=> c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :=========super alaf agal stic : 
+
+COND     try left with bracket alignment                                    
+  exec   change the alignment                   CELL_align                 CHG_INPUT, '['                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f== d=0 a=[ c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :[super alaf agal stic========]: 
+
+COND     put a medium size string in the cell                               
+  exec   change the source string               CELL_change                CHG_INPUT, 0, 10, 10, "super calaf"                      p_exists   0                                                      
+  code   create a custom expect string          sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  11, "super calaf");
+  get    check the cell's source string         unit_accessor              "cell_source",   x_one                                   s_equal    [[ CUSTOM ]]                                            
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f== d=0 a=[ c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :[super calaf=================]: 
+
+COND     switch to righ bracket alignment                                   
+  exec   change the alignment                   CELL_align                 CHG_INPUT, ']'                                                      i_equal    0                                                       
+  exec   change the format                      CELL_format                CHG_INPUT, '_'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=_ d=0 a=] c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :[_________________super calaf]: 
+
+COND     switch to left brace alignment                                     
+  exec   change the alignment                   CELL_align                 CHG_INPUT, '{'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=_ d=0 a={ c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :[__super calaf_______________]: 
+
+COND     switch to right brace alignment                                    
+  exec   change the alignment                   CELL_align                 CHG_INPUT, '}'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=_ d=0 a=} c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :[_______________super calaf__]: 
+
+COND     try to force real/float format                                     
+  exec   change the format                      CELL_format                CHG_INPUT, 'r'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=_ d=0 a=} c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  30) :[_______________super calaf__]: 
 
    COND       purge all cells                                                                                                                                                                                       
      exec     purge the cells                      CELL__purge                                                                         i_equal     0                                                            
@@ -7849,8 +7895,8 @@ COND     change to currency format                                          
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :   $54,322  :                
 
 COND     change to float format                                             
-  exec   change the format                      CELL_format                CHG_INPUT, 'f'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=f d=0 a=> c=  0 r=  0 d=  0    
+  exec   change the format                      CELL_format                CHG_INPUT, 'r'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=r d=0 a=> c=  0 r=  0 d=  0    
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :      54322 :                
 
 COND     change to comma format                                             
@@ -7903,7 +7949,7 @@ COND     change to four decimals                                            
   get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=, d=4 a=> c=  0 r=  0 d=  0    
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :54,321.6789 :                
 
-COND     change to integer format                                           
+COND     change to integer format (but four dec spacing)                    
   exec   change the format                      CELL_format                CHG_INPUT, 'i'                                                      i_equal    0                                                       
   get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=i d=4 a=> c=  0 r=  0 d=  0    
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) : 54322      :                
@@ -7920,6 +7966,21 @@ COND     change to no decimals                                              
 
 COND     change to integer format                                           
   exec   change the format                      CELL_format                CHG_INPUT, 'i'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :      54322 :                
+
+COND     change filler type                                                 
+  exec   change the format                      CELL_format                CHG_INPUT, '-'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :      54322 :                
+
+COND     change another filler                                              
+  exec   change the format                      CELL_format                CHG_INPUT, '.'                                                      i_equal    0                                                       
+  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0    
+  get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :      54322 :                
+
+COND     change to an illegal format                                        
+  exec   change the format                      CELL_format                CHG_INPUT, 'Q'                                                      i_lesser   0                                                       
   get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0    
   get    check the cell's printable string      unit_accessor              "cell_printable",x_one                                   s_equal    Cell Printable   : (  12) :      54322 :                
 
@@ -8266,19 +8327,19 @@ SCRP          (s_cell) printable numeric formats                           CEL
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<3.5)>>                                            
 
    COND       switching to floating point                                                                                                                                                                                     
-     exec     pass a simple number                 CELL__print_number    'f',  0,        -50     , x_string                            i_equal     0                                                                      
+     exec     pass a simple number                 CELL__print_number    'r',  0,        -50     , x_string                            i_equal     0                                                                      
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<-50>>                                             
 
    COND       with a few decimals                                                                                                                                                                                             
-     exec     pass a simple number                 CELL__print_number    'f',  2,        -23.785 , x_string                            i_equal     0                                                                      
+     exec     pass a simple number                 CELL__print_number    'r',  2,        -23.785 , x_string                            i_equal     0                                                                      
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<-23.79>>                                          
 
    COND       add a bigger number                                                                                                                                                                                             
-     exec     pass a simple number                 CELL__print_number    'f',  2,    1523453.785 , x_string                            i_equal     0                                                                      
+     exec     pass a simple number                 CELL__print_number    'r',  2,    1523453.785 , x_string                            i_equal     0                                                                      
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<1523453.79>>                                      
 
    COND       with more decimals                                                                                                                                                                                              
-     exec     pass a simple number                 CELL__print_number    'f',  5,    1523453.785 , x_string                            i_equal     0                                                                      
+     exec     pass a simple number                 CELL__print_number    'r',  5,    1523453.785 , x_string                            i_equal     0                                                                      
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<1523453.78500>>                                   
 
    COND       and now exponential format                                                                                                                                                                                      
