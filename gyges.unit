@@ -1877,7 +1877,7 @@ SCRP          (s_dep ) range dependency creation and destruction           DEP
 # 2014-02-17 : had to change from CELL__create to CELL_change to avoid cell deletion when dependencies are cleared
 
    COND       verify program setup initializes                                                                                                                                                                                
-     exec     setup the program                    PROG_testloud                                                                       i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the deps counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -8728,7 +8728,7 @@ SCRP          (s_file) version bumping                                     FIL
 SCRP          (s_file) verify the reading of tab records                   INPT_tab                                                                                                                                             
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testloud                                                                       i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      code     tab record                           char   x_recd [MAX_STR] = "";                                                                                                                                                
 
    COND       check the initial state                                                                                                                                                                                         
@@ -8740,7 +8740,7 @@ SCRP          (s_file) verify the reading of tab records                   INP
      code     v21  save an input record                 - - - - - - - - - - -  strcpy (x_recd, "tab         -F-     0  0d10     0a1      0a1      -  0a1      0a1      one                     ");        
      exec     call the tab parsing routine         INPT_tab              x_recd                                                        i_equal     0                                                                      
      get      review the maximum position          move_unit             "tab_max"        , 0                                          s_equal     s_move tab max   : tab=   0, col=   4, row=  10                        
-     get      review the beginning position        move_unit             "tab_beg"        , 0                                          s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
+     get      review the beginning position        move_unit             "tab_beg"        , 0                                          s_equal     s_move tab beg   : tab=   0, col=   0, row=   0                        
      get      review the current position          move_unit             "tab_pos"        , 0                                          s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
      get      review the frozen areas              FILE_unit             "freeze"         , 0                                          s_equal     s_file freeze    : col=- (   0 to    0)   row=- (   0 to    0)         
      get      review the tab name                  FILE_unit             "tab_name"       , 0                                          s_equal     s_file tab name  : tab=   0, act=y, :one:                              

@@ -812,10 +812,10 @@ static void   o___TABS____________o (void) { return; }
 
 char
 INPT_rowcol        (
-      char *a_cell,
-      int  *a_col   , int *a_row   , int  a_min,
-      int   a_defcol, int  a_defrow,
-      int   a_maxcol, int  a_maxrow)
+      char  *a_cell,
+      short *a_col   , short *a_row   , int  a_min,
+      int    a_defcol, int    a_defrow,
+      int    a_maxcol, int    a_maxrow)
 {
    /*---(design notes)-------------------*/
    /*
@@ -833,8 +833,10 @@ INPT_rowcol        (
    DEBUG_INPT   yLOG_spoint  (a_cell);
    /*---(defense)------------------------*/
    --rce;  if (a_cell == NULL) {
-      DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return rce;
    }
+   DEBUG_INPT   yLOG_sinfo   ("a_cell"    , a_cell);
    /*---(fixing limits and defaults)-----*/
    if (a_defcol < 0)         a_defcol = DEF_COLS;
    if (a_defcol > MAX_COLS)  a_defcol = MAX_COLS;
@@ -846,6 +848,7 @@ INPT_rowcol        (
    if (a_maxrow > MAX_ROWS)  a_maxrow = MAX_ROWS;
    /*---(parse)--------------------------*/
    rc = LOC_parse (a_cell, NULL, &x_col, &x_row, NULL);
+   DEBUG_INPT   yLOG_sint    (rc);
    /*---(add min value)------------------*/
    x_col += a_min;
    x_row += a_min;
@@ -862,7 +865,7 @@ INPT_rowcol        (
    if (a_col != NULL)  *a_col = x_col;
    if (a_row != NULL)  *a_row = x_row;
    /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_senter  (__FUNCTION__);
+   DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -880,42 +883,49 @@ INPT_tabF          (void)
    int         x_col       = 0;
    int         x_row       = 0;
    char        x_type      = 0;
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(read fields)--------------------*/
    for (i = 1; i < 20; ++i) {
-      DEBUG_CONF   yLOG_note    ("read next field");
+      DEBUG_INPT   yLOG_note    ("read next field");
       p = strtok_r (NULL  , q, &s_context);
       --rce;  if (p == NULL) {
-         DEBUG_CONF   yLOG_note    ("strtok_r came up empty");
-         DEBUG_CONF   yLOG_exit    (__FUNCTION__);
+         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
+         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
          break;
       }
       strltrim (p, ySTR_BOTH, LEN_RECD);
-      if (p [0] == '-')  p[0] = '\0';
+      /*> if (p [0] == '-')  p[0] = '\0';                                             <*/
       x_len = strlen (p);
       switch (i) {
       case  1 :  /*---(tab number)-------*/
          x_tab = atoi (p);
          DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
-         if (x_tab <= 0 && strcmp (x_tab, "0") != 0) {
+         if (x_tab == 0 && strcmp (p, "0") != 0) {
             DEBUG_INPT  yLOG_note    ("tab number not correct");
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
             return rce + i;
          }
+         DEBUG_INPT   yLOG_note    ("initializing tab");
+         TAB_init (x_tab);
          break;
       case  2 : /*---(size of sheet)-----*/
-         rc = INPT_rowcol (p, 1, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
-               DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);
+         rc = INPT_rowcol (p, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
+               1, DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);
          break;
       case  3 : /*---(top of screen)-----*/
-         rc = INPT_rowcol (p, 0, &(tabs[x_tab].bcol), &(tabs[x_tab].brow),
-               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         rc = INPT_rowcol (p, &(tabs[x_tab].bcol), &(tabs[x_tab].brow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
          break;
       case  4 : /*---(cur position)------*/
-         rc = INPT_rowcol (p, 0, &(tabs[x_tab].ccol), &(tabs[x_tab].crow),
-               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         rc = INPT_rowcol (p, &(tabs[x_tab].ccol), &(tabs[x_tab].crow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
          break;
       case  5 : /*---(freeze type)-------*/
+         DEBUG_INPT   yLOG_char    ("freeze"    , p[0]);
          switch (p[0]) {
+         case  '-' : tabs[x_tab].froz_col  = '-';
+                     tabs[x_tab].froz_row  = '-';
+                     break;
          case  'r' : tabs[x_tab].froz_col  = '-';
                      tabs[x_tab].froz_row  = 'y';
                      break;
@@ -931,21 +941,24 @@ INPT_tabF          (void)
          }
          break;
       case  6 : /*---(freeze beg)--------*/
-         rc = INPT_rowcol (p, 0, &(tabs[x_tab].froz_bcol), &(tabs[x_tab].froz_brow),
-               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         rc = INPT_rowcol (p, &(tabs[x_tab].froz_bcol), &(tabs[x_tab].froz_brow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
          break;
       case  7 : /*---(freeze end)--------*/
-         rc = INPT_rowcol (p, 0, &(tabs[x_tab].froz_ecol), &(tabs[x_tab].froz_erow),
-               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         rc = INPT_rowcol (p, &(tabs[x_tab].froz_ecol), &(tabs[x_tab].froz_erow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
          break;
       case  8 : /*---(name)--------------*/
          if (x_len > 0)  strlcpy (tabs[x_tab].name, p, LEN_STR);
+         DEBUG_INPT   yLOG_info    ("name"      , p);
          tabs[x_tab].active = 'y';
          NTAB               = x_tab + 1;
          break;
       }
+      DEBUG_INPT   yLOG_note    ("done with loop");
    } 
-   DEBUG_CONF   yLOG_note    ("done parsing fields");
+   DEBUG_INPT   yLOG_note    ("done parsing fields");
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1036,6 +1049,10 @@ INPT_tab           (
    }
    if (x_ver == 'F') {
       INPT_tabF ();
+      /*> printf ("s_file freeze    : col=%c (%4d to %4d)\n",                          <* 
+       *>       tabs[x_tab].froz_col, tabs[x_tab].froz_bcol, tabs[x_tab].froz_ecol);   <* 
+       *> printf ("s_file freeze    : row=%c (%4d to %4d)\n",                          <* 
+       *>       tabs[x_tab].froz_row, tabs[x_tab].froz_brow, tabs[x_tab].froz_erow);   <*/
       return 0;
    }
    /*---(tab number)---------------------*/
@@ -2071,7 +2088,9 @@ FILE_unit          (char *a_question, int a_ref)
          snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5d) :%-.40s:", strlen (s_string), s_string);
       }
    } else if (strcmp (a_question, "freeze"    )    == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)", tabs[a_ref].froz_col, tabs[a_ref].froz_bcol, tabs[a_ref].froz_ecol, tabs[a_ref].froz_row, tabs[a_ref].froz_brow, tabs[a_ref].froz_erow);
+      snprintf (unit_answer, LEN_TEXT, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)",
+            tabs[a_ref].froz_col, tabs[a_ref].froz_bcol, tabs[a_ref].froz_ecol,
+            tabs[a_ref].froz_row, tabs[a_ref].froz_brow, tabs[a_ref].froz_erow);
    } else if (strcmp (a_question, "tab_name"  )    == 0) {
       snprintf (unit_answer, LEN_TEXT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, tabs[a_ref].active, tabs[a_ref].name);
    } else if (strcmp (a_question, "tab_count" )    == 0) {

@@ -63,14 +63,24 @@ PROG_version       (void)
 char         /*--: evaluate logger needs early -----------[ leaf   [ ------ ]-*/
 PROG_logger        (int a_argc, char *a_argv[])
 {
-   /*---(locals)-------------------------*/
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char       *a           = NULL;
    char        x_prog      [LEN_STR] = "";
+   char        x_log       = '-';
    /*---(default urgents)----------------*/
    PROG_urgsmass  ('-', 'y');   /* turn everything off */
    debug.logger   = -1;
    strlcpy (x_prog, a_argv [0], LEN_STR);
    /*---(test for normal version)--------*/
    if        (strcmp (a_argv[0], "gyges"        ) == 0)  return 0;
+   /*---(check for urgents)--------------*/
+   for (i = 1; i < a_argc; ++i) {
+      a = a_argv[i];
+      if (a[0] != '@')  continue;
+      x_log = 'y';
+   }
+   if (x_log != 'y')  return 0;
    /*---(startup logging)----------------*/
    debug.tops     = 'y';
    if (strcmp (a_argv [0], "gyges_debug"  ) == 0)
@@ -497,11 +507,6 @@ PROG_testloud      (void)
 {
    char       *x_args [2]  = { "gyges_unit", "@@kitchen"    };
    PROG_logger (2, x_args);
-
-   yLOG_end     ();
-   exit (0);
-
-
    PROG_init   ();
    PROG_urgs   (2, x_args);
    PROG_args   (2, x_args);

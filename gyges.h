@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0f"
-#define     VER_TXT   "get logging working again for unit testing"
+#define     VER_NUM   "1.0g"
+#define     VER_TXT   "simplify tab reading logic and pass unit test"
 
 
 
