@@ -1273,6 +1273,9 @@ move_unit          (char *a_question, int a_num)
    else if (strcmp(a_question, "tab_cur"       ) == 0) {
       snprintf(unit_answer, LEN_TEXT, "s_move tab cur   : tab=%4d, col=%4d, row=%4d", CTAB, CCOL, CROW);
    }
+   else if (strcmp(a_question, "tab_beg"       ) == 0) {
+      snprintf(unit_answer, LEN_TEXT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].bcol, tabs [a_num].brow);
+   }
    else if (strcmp(a_question, "tab_pos"       ) == 0) {
       snprintf(unit_answer, LEN_TEXT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ccol, tabs [a_num].crow);
    }

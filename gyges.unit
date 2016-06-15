@@ -29,7 +29,7 @@ SCRP          v21  (s_cell) fundamental cell creation and destruction         
      code     create a pointer to an unlinked cell void *x_out  = NULL;                                                                                                                                                       
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -137,7 +137,7 @@ SCRP          v21  (s_cell) fundamental cell creation and destruction         
      exec     delete last cell                     CELL__free            x_tail         , NULL                                         i_lesser    0                                                                      
 
    COND       verify program teardown (still cant get last unlinked)       ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -147,7 +147,7 @@ SCRP          v21  (s_cell) fundamental cell creation and destruction         
 SCRP          (s_loc) location validation                                  LOC_legal                                                                                                                                            
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -339,7 +339,7 @@ SCRP          (s_loc) location validation                                  LOC
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -349,7 +349,7 @@ SCRP          (s_loc) location validation                                  LOC
 SCRP          (s_loc) cell attachment to a sheet                           LOC_hook, LOC_unhook                                                                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -535,7 +535,7 @@ SCRP          (s_loc) cell attachment to a sheet                           LOC
      get      check the sheet location             LOC_unit              "loc_who"  ,     tabs[1].sheet[1][2]                          s_equal     [[ CUSTOM ]]                                                           
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -545,7 +545,7 @@ SCRP          (s_loc) cell attachment to a sheet                           LOC
 SCRP          (s_cell) creating and destroying attached cells              CELL__create, CELL__delete, CELL_dup                                                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -673,7 +673,7 @@ SCRP          (s_cell) creating and destroying attached cells              CEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -683,7 +683,7 @@ SCRP          (s_cell) creating and destroying attached cells              CEL
 SCRP          (s_loc) moving cells between locations                       LOC_move                                                                                                                                             
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -847,7 +847,7 @@ SCRP          (s_loc) moving cells between locations                       LOC
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -857,7 +857,7 @@ SCRP          (s_loc) moving cells between locations                       LOC
 SCRP          (s_loc) direct movement between cells                        LOC_jump                                                                                                                                             
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -981,7 +981,7 @@ SCRP          (s_loc) direct movement between cells                        LOC
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -993,7 +993,7 @@ SCRP          (s_loc) direct movement between cells                        LOC
 SCRP          (s_loc) create cell labels from locations                    LOC_ref                                                                                                                                              
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -1141,7 +1141,7 @@ SCRP          (s_loc) create cell labels from locations                    LOC
      exec     check the label                      LOC_unit              "loc_label"      , NULL                                       s_equal     s_loc label      : @0p13                                               
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -1151,7 +1151,7 @@ SCRP          (s_loc) create cell labels from locations                    LOC
 SCRP          (s_loc) convert cells to labels and back                     LOC_label, LOC_parse                                                                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -1255,7 +1255,7 @@ SCRP          (s_loc) convert cells to labels and back                     LOC
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -1272,7 +1272,7 @@ SECT          basic cell changes                                              
 SCRP          (s_cell) placing string and numeric literals in cells        CELL_change                                                                                                                                          
 
    COND       verify program setup                                                                                                                                                                                  
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                            
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -1419,7 +1419,7 @@ SCRP          (s_cell) placing string and numeric literals in cells        CEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -1444,7 +1444,7 @@ SCRP          (s_dep ) one-way dependency creation and destruction         DEP
      code     create a pointer to the last dep     void *x_tail = NULL;                                                                                                                                                       
 
    COND       (DLL00) verify program setup initializes                                                                                                                                                                        
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the deps counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -1561,7 +1561,7 @@ SCRP          (s_dep ) one-way dependency creation and destruction         DEP
      get      review the deps linked list links    DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   1, fore=   1, back=   1                      
 
    COND       (DLL18) verify program teardown purges                                                                                                                                                                          
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                    s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the link counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -1572,7 +1572,7 @@ SCRP          (s_dep ) one-way dependency creation and destruction         DEP
 SCRP          (s_dep ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check                                                                                        
 
    COND       verify program setup initializes                                                                                                                                                                                
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the deps counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
@@ -1864,7 +1864,7 @@ SCRP          (s_dep ) two-way dependency creation and destruction         DEP
      get      review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                    s_equal     s_dep provides   : 0k11  ( 1) ,root,                                   
 
    COND       verify program teardown purges                                                                                                                                                                                  
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the linked list               DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the link counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
@@ -2286,7 +2286,7 @@ SCRP          (s_dep ) range dependency creation and destruction           DEP
      get      review the provides 8th              DEP_unit              "cell_provides"  ,  "0j10"                                    s_equal     s_dep provides   : 0j10  ( 0) .                                        
 
    COND       verify program teardown purges                                                                                                                                                                                  
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the linked list               DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the link counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -2298,7 +2298,7 @@ SCRP          (s_dep ) range dependency creation and destruction           DEP
 SCRP          (s_dep ) two-way dependency creation using formulas          DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check                                                                                        
 
    COND       verify program setup initializes                                                                                                                                                                                
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the deps counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -2569,7 +2569,7 @@ SCRP          (s_dep ) two-way dependency creation using formulas          DEP
      get      review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                    s_equal     s_dep provides   : 0k11  ( 1) ,root,                                   
 
    COND       verify program teardown purges                                                                                                                                                                                  
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the linked list               DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      review the link counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -2587,7 +2587,7 @@ SECT          cell formula conversion from infix to rpn                       
 SCRP          (s_calc) basic arithmetic [ 7] +, -, *, /, %, --, ++         CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval                                                                                      
 
    COND       verify program setup                                                                                                                                                                                  
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                                            
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -2737,7 +2737,7 @@ SCRP          (s_calc) basic arithmetic [ 7] +, -, *, /, %, --, ++         CEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -2747,7 +2747,7 @@ SCRP          (s_calc) basic arithmetic [ 7] +, -, *, /, %, --, ++         CEL
 SCRP          (s_calc) basic logical    [ 3] &&, ||, !                     CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval                                                                                      
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)              
@@ -2914,7 +2914,7 @@ COND     use the IF statement (NESTED)                                      
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -2924,7 +2924,7 @@ COND     use the IF statement (NESTED)                                      
 SCRP          (s_calc) basic relational [ 6] ==, <, >, <=, >=, !=          CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval                                                                                      
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
@@ -3077,7 +3077,7 @@ SCRP          (s_calc) basic relational [ 6] ==, <, >, <=, >=, !=          CEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -3088,7 +3088,7 @@ SCRP          (s_calc) basic relational [ 6] ==, <, >, <=, >=, !=          CEL
 SCRP          (s_calc) basic trig       [19] sin, cos, tan, deg, rad, ...  CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval                                                                                      
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
@@ -3657,7 +3657,7 @@ SCRP          (s_calc) basic trig       [19] sin, cos, tan, deg, rad, ...  CEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -3673,7 +3673,7 @@ SECT          range selection                                                 
 SCRP          (s_sel ) set range selections directly from functions        SEL_clear, SEL_start, SEL_increase, SEL_islive, SEL_set                                                                                                                      
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -3886,7 +3886,7 @@ SCRP          (s_sel ) set range selections directly from functions        SEL
      exec     check if selection is live           SEL_islive                                                                          i_equal     1                                                                      
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -3896,7 +3896,7 @@ SCRP          (s_sel ) set range selections directly from functions        SEL
 SCRP          (s_sel ) validate whether cells are in current selection     SEL_selected                                                                                                                                                                 
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -4012,7 +4012,7 @@ SCRP          (s_sel ) validate whether cells are in current selection     SEL
      exec     call the selection test              SEL_selected             0,   15,   20                                              i_equal     0                                                                      
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -4022,7 +4022,7 @@ SCRP          (s_sel ) validate whether cells are in current selection     SEL
 SCRP          (s_sel ) range selection retrieval for range functions       SEL_first, SEL_next, SEL_range                                                                                                                                               
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -4279,7 +4279,7 @@ SCRP          (s_sel ) range selection retrieval for range functions       SEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -4290,7 +4290,7 @@ SCRP          (s_sel ) range selection retrieval for range functions       SEL
 SCRP          (s_sel ) using range selection simplifiers                   SEL_from, SEL_col, SEL_row                                                                                                                           
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -4413,7 +4413,7 @@ SCRP          (s_sel ) using range selection simplifiers                   SEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -4423,7 +4423,7 @@ SCRP          (s_sel ) using range selection simplifiers                   SEL
 SCRP          (s_sel ) selection buffer hooking and unhooking of cells     REG_hook, REG_unhook, LOC_hook, LOC_unhook                                                                                                           
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -4529,7 +4529,7 @@ SCRP          (s_sel ) selection buffer hooking and unhooking of cells     REG
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -4546,7 +4546,7 @@ SECT          register handling                                               
 SCRP          (s_sel ) basic cut, copy, and paste using base register      REG_copy, REG_paste, SEL_set, CELL_change                                                                                                            
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -5881,7 +5881,7 @@ SCRP          (s_sel ) basic cut, copy, and paste using base register      REG
      get      review the deps counts               DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=  16, fore=  16, back=  16                      
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -5892,7 +5892,7 @@ SCRP          (s_sel ) basic cut, copy, and paste using base register      REG
 SCRP          (s_rpn ) adjusting formulas to account for cell movement     RPN_adjust, LOC_parse, LOC_ref, yRPN_stokens                                                                                                         
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -6141,7 +6141,7 @@ SCRP          (s_rpn ) adjusting formulas to account for cell movement     RPN
      get      review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                      s_equal     s_rpn updated    : = #REF                                              
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -6152,7 +6152,7 @@ SCRP          (s_rpn ) adjusting formulas to account for cell movement     RPN
 #SCRP          (s_sel ) working with registers                              SEL_init, REG_index , basics of SEL_save                                                                                                             
 #
 #   COND       verify program setup                                                                                                                                                                                            
-#     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+#     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 #     get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
 #     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : num=   0, fore=   0, back=   0                      
 #
@@ -6387,7 +6387,7 @@ SCRP          (s_rpn ) adjusting formulas to account for cell movement     RPN
 #     exec     check if selection is live           SEL_islive                                                                          i_equal     0                                                                      
 #
 #   COND       verify program teardown                                                                                                                                                                                         
-#     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+#     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 #     get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
 #     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : num=   0, fore=   0, back=   0                      
 
@@ -6400,7 +6400,7 @@ SCRP          (s_calc) basic cell reference formulas                       CEL
      code     create a custom expect string        char custom [2000];                                                                                                                                                          
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list"      , NULL                                       u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count"     , NULL                                       s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
@@ -7093,7 +7093,7 @@ SCRP          (s_calc) basic cell reference formulas                       CEL
      get      check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                     s_equal     s_dep provides   : 1g11  ( 0) .                                        
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -7109,7 +7109,7 @@ SCRP          (s_calc) basic range functions                               CEL
      code     create a pointer to second           tCELL *x_two  = NULL;
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
      get      review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                     s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
@@ -7290,7 +7290,7 @@ SCRP          (s_calc) basic range functions                               CEL
      get      check the cell's value               unit_accessor         "cell_value",    x_one                                        s_equal     Cell Value       :          54.000000                                  
 
    COND       verify program teardown                                      
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                       
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -7301,7 +7301,7 @@ SCRP          (s_calc) basic range functions                               CEL
 SCRP          (s_cell) verify cell width setting                           CELL_width                                                    none                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -7532,7 +7532,7 @@ SCRP          (s_cell) verify cell width setting                           CEL
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -7543,7 +7543,7 @@ SCRP          (s_cell) verify cell width setting                           CEL
 SCRP     single cell string formatting          CELL_printable            
 
 COND     verify program setup                                               
-  exec   setup the program                      PROG_testing                                                                        i_equal    0                                                       
+  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -7834,7 +7834,7 @@ COND     try to force real/float format                                     
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -7844,7 +7844,7 @@ COND     try to force real/float format                                     
 SCRP     single cell numeric formatting         CELL_printable            
 
 COND     verify program setup                                               
-  exec   setup the program                      PROG_testing                                                                        i_equal    0                                                       
+  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -8004,7 +8004,7 @@ COND     change to bullet format                                            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -8020,7 +8020,7 @@ COND     change to bullet format                                            
 SCRP     alter cell alignment                   CELL_align                
 
 COND     verify program setup                                               
-  exec   setup the program                      PROG_testing                                                                        i_equal    0                                                       
+  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -8088,7 +8088,7 @@ COND     format to the left                                                 
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -8103,7 +8103,7 @@ SCRP          (s_cell) printable comma formats                             CEL
      code     create a return holder               char  x_string  [MAX_STR];                                                                                                                                                 
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       test a very simple number                                                                                                                                                                                       
      exec     pass a simple number                 CELL__print_comma     ',',  0,          1.0   , x_string                            i_equal     0                                                                      
@@ -8232,7 +8232,7 @@ SCRP          (s_cell) printable comma formats                             CEL
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<+50,000.123000>>                                  
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -8244,7 +8244,7 @@ SCRP          (s_cell) printable numeric formats                           CEL
      code     create a return holder               char  x_string  [MAX_STR];                                                                                                                                                 
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       start with integer formats                                                                                                                                                                                      
      exec     pass a simple number                 CELL__print_number    'i',  0,          1     , x_string                            i_equal     0                                                                      
@@ -8367,7 +8367,7 @@ SCRP          (s_cell) printable numeric formats                           CEL
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<-5.0 e +01>>                                      
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -8379,7 +8379,7 @@ SCRP          (s_cell) printable time formats                              CEL
      code     create a return holder               char  x_string  [MAX_STR];                                                                                                                                                 
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       start with basic date format                                                                                                                                                                                    
      exec     pass a simple number                 CELL__print_times     'd',     1389992527 , x_string                                i_equal     0                                                                      
@@ -8418,7 +8418,7 @@ SCRP          (s_cell) printable time formats                              CEL
      get      review the cell counts               CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<75.05.08.07.30.00>>                               
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -8427,7 +8427,7 @@ SCRP          (s_cell) printable time formats                              CEL
 SCRP          (s_file) version number verification                         FILE_version                                                                                                                                         
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       start with a default version                                                                                                                                                                                    
      exec     pass a simple number                 FILE_version          "00.0a"             , ver_num                                 i_equal     0                                                                      
@@ -8578,7 +8578,7 @@ SCRP          (s_file) version number verification                         FIL
      get      review the cell counts               FILE_unit             "ver_num"        , 0                                          s_equal     s_file ver_num   : 00.1a                                               
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -8587,7 +8587,7 @@ SCRP          (s_file) version number verification                         FIL
 SCRP          (s_file) version bumping                                     FILE_version                                                                                                                                         
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       perform a factor bump                                                                                                                                                                                           
      code     create a custom expect string        strcpy (ver_num, "00.0a");
@@ -8719,7 +8719,7 @@ SCRP          (s_file) version bumping                                     FIL
      exec     pass a simple number                 FILE_bump             'f'                 , NULL                                    i_lesser    0                                                                      
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -8728,7 +8728,7 @@ SCRP          (s_file) version bumping                                     FIL
 SCRP          (s_file) verify the reading of tab records                   INPT_tab                                                                                                                                             
 
    COND       verify program setup                                                                                                                                                                                            
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testloud                                                                       i_equal     0                                                                      
      code     tab record                           char   x_recd [MAX_STR] = "";                                                                                                                                                
 
    COND       check the initial state                                                                                                                                                                                         
@@ -8737,10 +8737,11 @@ SCRP          (s_file) verify the reading of tab records                   INP
      get      review the frozen areas              FILE_unit             "freeze"         , 0                                          s_equal     s_file freeze    : col=- (   0 to    0)   row=- (   0 to    0)         
 
    COND       load a smaller than default tab                                                                                                                                                                                 
-     code     prepare the input record             strcpy (x_recd, "tab        \x1F -F- \x1F    0 \x1F 0d10    \x1F 0a1     \x1F 0a1     \x1F - \x1F 0a1     \x1F 0a1     \x1F one                     ");                      
+     code     v21  save an input record                 - - - - - - - - - - -  strcpy (x_recd, "tab         -F-     0  0d10     0a1      0a1      -  0a1      0a1      one                     ");        
      exec     call the tab parsing routine         INPT_tab              x_recd                                                        i_equal     0                                                                      
-     get      review the current position          move_unit             "tab_pos"        , 0                                          s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
      get      review the maximum position          move_unit             "tab_max"        , 0                                          s_equal     s_move tab max   : tab=   0, col=   4, row=  10                        
+     get      review the beginning position        move_unit             "tab_beg"        , 0                                          s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
+     get      review the current position          move_unit             "tab_pos"        , 0                                          s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
      get      review the frozen areas              FILE_unit             "freeze"         , 0                                          s_equal     s_file freeze    : col=- (   0 to    0)   row=- (   0 to    0)         
      get      review the tab name                  FILE_unit             "tab_name"       , 0                                          s_equal     s_file tab name  : tab=   0, act=y, :one:                              
      get      review the tab count                 FILE_unit             "tab_count"      , 0                                          s_equal     s_file tab count : ntab=   1                                           
@@ -8933,7 +8934,7 @@ SCRP          (s_file) verify the reading of tab records                   INP
      get      review the tab count                 FILE_unit             "tab_count"      , 0                                          s_equal     s_file tab count : ntab=   4                                           
 
    COND       verify program teardown                                                                                                                                                                                         
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -8942,7 +8943,7 @@ SCRP          (s_file) verify the reading of tab records                   INP
 SCRP     alter cell format                      CELL_align                
 
 COND     verify program setup                                               
-  exec   setup the program                      PROG_testing                                                                        i_equal    0                                                       
+  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -9034,7 +9035,7 @@ COND     format to percent                                                  
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                            
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -9044,7 +9045,7 @@ COND     format to percent                                                  
 SCRP     test vi_input mode                     KEYS_input                
 
 COND     verify program setup                                               
-  exec   setup the program                      PROG_testing                                                                        i_equal    0                                                       
+  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -9169,7 +9170,7 @@ COND     get back into input after the ending                               
   get    check the mode                         unit_accessor              "mode",          NULL                                    s_equal    Mode             : I                                    
 
 COND     verify program teardown                                            
-  exec   wrap-up the program                    PROG_end                                                                            i_equal    0                                                       
+  exec   wrap-up the program                    PROG_testend                                                                        i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -9180,7 +9181,7 @@ COND     verify program teardown                                            
 SCRP     test vi_source mode                    KEYS_source               
 
 COND     verify program setup                                               
-  exec   setup the program                      PROG_testing                                                                        i_equal    0                                                       
+  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -9465,7 +9466,7 @@ COND     verify that all cells are detached                                 
   get    check the sheet location               unit_accessor              "sheet_who",     tabs[0].sheet[1][2]                             s_equal    [[ CUSTOM ]]                                            
 
 COND     verify program teardown                                            
-  exec   wrap-up the program                    PROG_end                                                                            i_equal    0                                                       
+  exec   wrap-up the program                    PROG_testend                                                                        i_equal    0                                                       
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -9480,7 +9481,7 @@ COND     verify program teardown                                            
 SCRP          verify row movement                                          KEYS_row                                                     
 
    COND       verify program setup                                        
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -9842,7 +9843,7 @@ COND     purge all cells                                                   
 SCRP          (s_move) verify edge movements                               KEYS__edge                                                   
 
    COND       initialize testing                                           ------------------------------------------------------------  ------------------------------------------------------------------------------------  04 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                       04 
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                       04 
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)             04 
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
@@ -9909,7 +9910,7 @@ SCRP          (s_move) verify edge movements                               KEY
 SCRP          (s_file) verify functioning of ySTR_trim                     ySTR_trim                                                                                                                                                                     05 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       setup some testing variables                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
      code     create the input string              char  x_orig   [2000] = "    testing for,  a/\"clear  result\".   ";                                                                                                                                  05 
@@ -9973,7 +9974,7 @@ SCRP          (s_file) verify functioning of ySTR_trim                     yST
 
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 #23456789012  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-  123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  12 
@@ -9981,7 +9982,7 @@ SCRP          (s_file) verify functioning of ySTR_trim                     yST
 SCRP          (s_file) verify functioning of ySTR_clean                    ySTR_clean                                                                                                                                                                    05 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       setup some testing variables                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
      code     create the input string              char  x_orig   [2000] = "testing for (.ne) :- or [an0the9] ?!#t";                                                                                                                                    
@@ -10059,7 +10060,7 @@ SCRP          (s_file) verify functioning of ySTR_clean                    yST
      get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   11) :tes ;#\ton10:                               05 
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -10068,7 +10069,7 @@ SCRP          (s_file) verify functioning of ySTR_clean                    yST
 SCRP          (s_file) verify functioning of ySTR_count                    ySTR_count                                                                                                                                                                    05 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                      
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       check on a single instance                                   ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
      exec     call the function                    ySTR_count            "   testing   "  , 'e'                                                              i_equal     1                                                                       05 
@@ -10086,7 +10087,7 @@ SCRP          (s_file) verify functioning of ySTR_count                    yST
      exec     call the function                    ySTR_count            "   testing   "  , 'T'                                                              i_equal     0                                                                       05 
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -10096,7 +10097,7 @@ SCRP          (s_file) verify functioning of ySTR_count                    yST
 SCRP          (s_file) verify basic undo and redo handling                 HIST_undo, HIST_redo                                         
 
    COND       initialize testing                                           ------------------------------------------------------------  ------------------------------------------------------------------------------------  04 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                       04 
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                       04 
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       check stack condition                                        ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
@@ -10655,7 +10656,7 @@ SCRP          (s_file) verify basic undo and redo handling                 HIS
      get      check entry 05                       FILE_unit             "after"          , 4                                                                s_equal     s_file after     :    4 too large                                       05 
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_end                                                                            i_equal     0                                                                      
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 
@@ -10665,7 +10666,7 @@ SCRP          (s_file) verify basic undo and redo handling                 HIS
 SCRP          (s_file) verify basic undo and redo handling                 HIST_undo, HIST_redo                                          --------------------  ----------  ----------------------------------------------------------------------  -- 
 
    COND       initialize testing                                           ------------------------------------------------------------  ------------------------------------------------------------------------------------  04 
-     exec     setup the program                    PROG_testing                                                                        i_equal     0                                                                       04 
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                       04 
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       check stack condition (initially blank)                      ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
@@ -11052,7 +11053,7 @@ SCRP          (s_file) verify basic undo and redo handling                 HIS
      exec     clear                                HIST_clear                                                                                                i_equal     0                                                                       05 
 
    COND       verify program teardown                                      ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     wrap-up the program                  PROG_end                                                                                                  i_equal     0                                                                       05 
+     exec     wrap-up the program                  PROG_testend                                                                                              i_equal     0                                                                       05 
 
 
 

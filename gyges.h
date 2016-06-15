@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0e"
-#define     VER_TXT   "fixed localtime issue in time formatting"
+#define     VER_NUM   "1.0f"
+#define     VER_TXT   "get logging working again for unit testing"
 
 
 
@@ -184,6 +184,8 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     MIN_HEIGHT  1
 /*---(string length)------------------*/
 #define     MAX_STR     2000
+#define     LEN_RECD    2000
+#define     LEN_STR     200
 /*---(registers)----------------------*/
 #define     MAX_REG     60
 
@@ -207,6 +209,8 @@ int         nkeylog;
 /* v3.0b : added signal handling                                (2014-feb-01) */
 struct cDEBUG
 {
+   /*---(handle)-------------------------*/
+   int         logger;                 /* log file so that we don't close it  */
    /*---(overall)------------------------*/  /* abcdefghi_kl__opq_stu__x__    */
    /* f = full urgents turns on all standard urgents                          */
    /* k = kitchen sink and turns everything, i mean everything on             */
@@ -248,7 +252,6 @@ struct cDEBUG
 };
 tDEBUG      debug;
 
-#ifdef yLOG
 #define     DEBUG_TOPS          if (debug.tops      == 'y')
 #define     DEBUG_SUMM          if (debug.summ      == 'y')
 #define     DEBUG_ARGS          if (debug.args      == 'y')
@@ -276,35 +279,6 @@ tDEBUG      debug;
 #define     DEBUG_SEL           if (debug.sel       == 'y')
 #define     DEBUG_REGS          if (debug.regs      == 'y')
 #define     DEBUG_YSTR          if (debug.ystr      == 'y')
-#else
-#define     DEBUG_TOPS          if (0)
-#define     DEBUG_SUMM          if (0)
-#define     DEBUG_ARGS          if (0)
-#define     DEBUG_CONF          if (0)
-#define     DEBUG_PROG          if (0)
-#define     DEBUG_INPT          if (0)
-#define     DEBUG_OUTP          if (0)
-#define     DEBUG_LOOP          if (0)
-#define     DEBUG_USER          if (0)
-#define     DEBUG_APIS          if (0)
-#define     DEBUG_SIGN          if (0)
-#define     DEBUG_SCRP          if (0)
-#define     DEBUG_HIST          if (0)
-#define     DEBUG_GRAF          if (0)
-#define     DEBUG_DATA          if (0)
-#define     DEBUG_ENVI          if (0)
-#define     DEBUG_S             if (0)
-#define     DEBUG_RPN           if (0)
-#define     DEBUG_CALC          if (0)
-#define     DEBUG_EXEC          if (0)
-#define     DEBUG_CELL          if (0)
-#define     DEBUG_DEPS          if (0)
-#define     DEBUG_GNOME         if (0)
-#define     DEBUG_LOC           if (0)
-#define     DEBUG_SEL           if (0)
-#define     DEBUG_REGS          if (0)
-#define     DEBUG_YSTR          if (0)
-#endif
 
 
 
@@ -314,6 +288,8 @@ struct cACCESSOR {
    char      quiet;          /* bool : 0=normal, 1=quiet                      */
    int       logger;         /* log file so that we don't close it            */
    char      autocalc;       /* 0=manual, 1=auto                              */
+   /*---(file input)------*/
+   char      recd          [MAX_STR];
    /*---(tab vars)--------*/
    int       ntab;           /* number of worksheet tabs                         */
    int       ctab;           /* current tab                                      */
@@ -848,7 +824,9 @@ extern      char          unit_answer [ LEN_TEXT ];
 int       main               (int argc, char *argv[]);
 
 /*---(from s.c)----------------------------*/
+char      PROG_logger        (int argc, char *argv[]);
 char      PROG_init          (void);
+char      PROG_urgsmass      (char a_set, char a_extra);
 char      PROG_urgs          (int argc, char *argv[]);
 char      PROG_args          (int argc, char *argv[]);
 char      PROG_begin         (void);

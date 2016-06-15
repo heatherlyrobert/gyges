@@ -48,16 +48,43 @@ PROG_version       (void)
 {
    char    t [20] = "";
 #if    __TINYC__ > 0
-   strncpy (t, "[tcc built]", 15);
+   strncpy (t, "[tcc built  ]", 15);
 #elif  __GNUC__  > 0
-   strncpy (t, "[gnu gcc  ]", 15);
+   strncpy (t, "[gnu gcc    ]", 15);
 #elif  __CBANG__  > 0
-   strncpy (t, "[cbang    ]", 15);
+   strncpy (t, "[cbang      ]", 15);
 #else
-   strncpy (t, "[unknown  ]", 15);
+   strncpy (t, "[unknown    ]", 15);
 #endif
    snprintf (verstring, 100, "%s   %s : %s", t, VER_NUM, VER_TXT);
    return verstring;
+}
+
+char         /*--: evaluate logger needs early -----------[ leaf   [ ------ ]-*/
+PROG_logger        (int a_argc, char *a_argv[])
+{
+   /*---(locals)-------------------------*/
+   char        x_prog      [LEN_STR] = "";
+   /*---(default urgents)----------------*/
+   PROG_urgsmass  ('-', 'y');   /* turn everything off */
+   debug.logger   = -1;
+   strlcpy (x_prog, a_argv [0], LEN_STR);
+   /*---(test for normal version)--------*/
+   if        (strcmp (a_argv[0], "gyges"        ) == 0)  return 0;
+   /*---(startup logging)----------------*/
+   debug.tops     = 'y';
+   if (strcmp (a_argv [0], "gyges_debug"  ) == 0)
+      strlcpy (x_prog, "gyges"         , LEN_STR);
+   debug.logger = yLOG_begin (x_prog, yLOG_SYSTEM    , yLOG_NOISE);
+   /*---(log header)------------------*/
+   DEBUG_TOPS   yLOG_info     ("purpose" , "light, clean, vim-ish, technical, and wicked spreadsheet");
+   DEBUG_TOPS   yLOG_info     ("namesake", "ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant");
+   DEBUG_TOPS   yLOG_info     ("gyges"   , PROG_version   ());
+   DEBUG_TOPS   yLOG_info     ("ySTR"    , ySTR_version   ());
+   DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOG_version   ());
+   DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version   ());
+   /*---(complete)-----------------------*/
+   return 0;
 }
 
 char       /*----: very first setup ------------------s-----------------------*/
@@ -66,28 +93,6 @@ PROG_init          (void)
    hist_active = '-';
    nhist =  0;
    chist = -1;
-   return 0;
-}
-
-char       /*----: set up programgents/debugging -----------------------------*/
-PROG_testing       (void)
-{
-   char       *x_args [1]  = { "gyges" };
-   PROG_init   ();
-   PROG_urgs   (1, x_args);
-   PROG_args   (1, x_args);
-   PROG_begin  ();
-   return 0;
-}
-
-char       /*----: set up programgents/debugging -----------------------------*/
-PROG_testloud      (void)
-{
-   char       *x_args [3]  = { "gyges", "@@log", "@@kitchen"    };
-   PROG_init   ();
-   PROG_urgs   (3, x_args);
-   PROG_args   (3, x_args);
-   PROG_begin  ();
    return 0;
 }
 
@@ -145,29 +150,6 @@ PROG_urgs          (int argc, char *argv[])
    char       *a           = NULL;
    int         x_total     = 0;
    int         x_urgs      = 0;
-   /*---(logger init)--------------------*/
-   PROG_urgsmass ('-', 'y');
-   /*---(logger preprocessing)-----------*/
-   my.logger = -1;
-   for (i = 1; i < argc; ++i) {
-      a = argv[i];
-      if (strcmp ("@a"        , a) == 0)  debug.args = 'y';
-      if (strcmp ("@@args"    , a) == 0)  debug.args = 'y';
-      if (strcmp ("@f"        , a) == 0)  debug.args = 'y';
-      if (strcmp ("@@full"    , a) == 0)  debug.args = 'y';
-      if (strcmp ("@k"        , a) == 0)  debug.args = 'y';
-      if (strcmp ("@@kitchen" , a) == 0)  debug.args = 'y';
-      if (strcmp ("@@log"     , a) != 0)  continue;
-      debug.tops = 'y';
-      DEBUG_TOPS  my.logger = yLOG_begin ("gyges", yLOG_SYSTEM, yLOG_NOISE);
-      DEBUG_TOPS  yLOG_info  ("purpose",  "light, clean, vim-ish, technical, and wicked spreadsheet");
-      DEBUG_TOPS  yLOG_info  ("gyges"  ,  PROG_version ());
-      DEBUG_TOPS  yLOG_info  ("yLOG"   ,  yLOG_version ());
-      DEBUG_TOPS  yLOG_info  ("yRPN"   ,  yRPN_version ());
-   }
-   if (my.logger < 0) {
-      DEBUG_TOPS  my.logger = yLOG_begin ("gyges", yLOG_SYSTEM, yLOG_QUIET);
-   }
    /*---(process)------------------------*/
    DEBUG_TOPS  yLOG_enter (__FUNCTION__);
    for (i = 1; i < argc; ++i) {
@@ -400,11 +382,11 @@ PROG_begin         (void)
 char                /* PURPOSE : shutdown program and free memory ------------*/
 PROG_end           (void)
 {
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    DEP_wrap     ();
    CELL_wrap    ();
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
-   DEBUG_PROG  yLOG_end     ();
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   DEBUG_TOPS   yLOG_end     ();
    return 0;
 }
 
@@ -496,6 +478,42 @@ unit_accessor(char *a_question, void *a_thing)
    }
    /*---(complete)-----------------------*/
    return unit_answer;
+}
+
+char       /*----: set up programgents/debugging -----------------------------*/
+PROG_testquiet     (void)
+{
+   char       *x_args [1]  = { "gyges" };
+   PROG_logger (1, x_args);
+   PROG_init   ();
+   PROG_urgs   (1, x_args);
+   PROG_args   (1, x_args);
+   PROG_begin  ();
+   return 0;
+}
+
+char       /*----: set up programgents/debugging -----------------------------*/
+PROG_testloud      (void)
+{
+   char       *x_args [2]  = { "gyges_unit", "@@kitchen"    };
+   PROG_logger (2, x_args);
+
+   yLOG_end     ();
+   exit (0);
+
+
+   PROG_init   ();
+   PROG_urgs   (2, x_args);
+   PROG_args   (2, x_args);
+   PROG_begin  ();
+   return 0;
+}
+
+char       /*----: set up program urgents/debugging --------------------------*/
+PROG_testend       (void)
+{
+   PROG_end       ();
+   return 0;
 }
 
 

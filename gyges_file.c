@@ -57,7 +57,13 @@ char        ver_ctrl    = '-';
 char        ver_num     [10]        = "----";
 char        ver_txt     [100]       = "----------";
 
-char        s_recd      [MAX_STR];
+char        s_vers      [MAX_STR]   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+char        s_recd      [LEN_RECD];
+int         s_len       = 0;
+char       *s_p         = NULL;               /* strtok return pointer     */
+char       *s_q         = "";               /* strtok delimeters         */
+char       *s_context   = NULL;               /* strtok context variable   */
+
 
 char        s_cellbad   = 0;
 
@@ -804,6 +810,145 @@ static void   o___TABS____________o (void) { return; }
  *
  */
 
+char
+INPT_rowcol        (
+      char *a_cell,
+      int  *a_col   , int *a_row   , int  a_min,
+      int   a_defcol, int  a_defrow,
+      int   a_maxcol, int  a_maxrow)
+{
+   /*---(design notes)-------------------*/
+   /*
+    *  this function is infrequently used, so i made it highly defensive.
+    *  i don't want messed up files to blow up the system ;)
+    *
+    */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_senter  (__FUNCTION__);
+   DEBUG_INPT   yLOG_spoint  (a_cell);
+   /*---(defense)------------------------*/
+   --rce;  if (a_cell == NULL) {
+      DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
+   }
+   /*---(fixing limits and defaults)-----*/
+   if (a_defcol < 0)         a_defcol = DEF_COLS;
+   if (a_defcol > MAX_COLS)  a_defcol = MAX_COLS;
+   if (a_maxcol < 0)         a_maxcol = DEF_COLS;
+   if (a_maxcol > MAX_COLS)  a_maxcol = MAX_COLS;
+   if (a_defrow < 0)         a_defrow = DEF_ROWS;
+   if (a_defrow > MAX_ROWS)  a_defrow = MAX_ROWS;
+   if (a_maxrow < 0)         a_maxrow = DEF_ROWS;
+   if (a_maxrow > MAX_ROWS)  a_maxrow = MAX_ROWS;
+   /*---(parse)--------------------------*/
+   rc = LOC_parse (a_cell, NULL, &x_col, &x_row, NULL);
+   /*---(add min value)------------------*/
+   x_col += a_min;
+   x_row += a_min;
+   /*---(column checking)----------------*/
+   if (rc < 0 || x_col <= 0)  x_col = a_defcol;
+   if (x_col >  a_maxcol)     x_col = a_maxcol;
+   /*---(row checking)-------------------*/
+   if (rc < 0 || x_row <= 0)  x_row = a_defrow;
+   if (x_row >  a_maxrow)     x_row = a_maxrow;
+   /*---(display)------------------------*/
+   DEBUG_INPT   yLOG_sint    (x_col);
+   DEBUG_INPT   yLOG_sint    (x_row);
+   /*---(assign)-------------------------*/
+   if (a_col != NULL)  *a_col = x_col;
+   if (a_row != NULL)  *a_row = x_row;
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_senter  (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> parse a tab entry ---------------------[ flower [--------]-*/
+INPT_tabF          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;
+   int         i           = 0;
+   char       *p           = NULL;               /* strtok return pointer     */
+   char       *q           = "";               /* strtok delimeters         */
+   int         x_len       = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   char        x_type      = 0;
+   /*---(read fields)--------------------*/
+   for (i = 1; i < 20; ++i) {
+      DEBUG_CONF   yLOG_note    ("read next field");
+      p = strtok_r (NULL  , q, &s_context);
+      --rce;  if (p == NULL) {
+         DEBUG_CONF   yLOG_note    ("strtok_r came up empty");
+         DEBUG_CONF   yLOG_exit    (__FUNCTION__);
+         break;
+      }
+      strltrim (p, ySTR_BOTH, LEN_RECD);
+      if (p [0] == '-')  p[0] = '\0';
+      x_len = strlen (p);
+      switch (i) {
+      case  1 :  /*---(tab number)-------*/
+         x_tab = atoi (p);
+         DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
+         if (x_tab <= 0 && strcmp (x_tab, "0") != 0) {
+            DEBUG_INPT  yLOG_note    ("tab number not correct");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce + i;
+         }
+         break;
+      case  2 : /*---(size of sheet)-----*/
+         rc = INPT_rowcol (p, 1, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
+               DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);
+         break;
+      case  3 : /*---(top of screen)-----*/
+         rc = INPT_rowcol (p, 0, &(tabs[x_tab].bcol), &(tabs[x_tab].brow),
+               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         break;
+      case  4 : /*---(cur position)------*/
+         rc = INPT_rowcol (p, 0, &(tabs[x_tab].ccol), &(tabs[x_tab].crow),
+               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         break;
+      case  5 : /*---(freeze type)-------*/
+         switch (p[0]) {
+         case  'r' : tabs[x_tab].froz_col  = '-';
+                     tabs[x_tab].froz_row  = 'y';
+                     break;
+         case  'c' : tabs[x_tab].froz_col  = 'y';
+                     tabs[x_tab].froz_row  = '-';
+                     break;
+         case  'b' : tabs[x_tab].froz_col  = 'y';
+                     tabs[x_tab].froz_row  = 'y';
+                     break;
+         default   : tabs[x_tab].froz_col  = '-';
+                     tabs[x_tab].froz_row  = '-';
+                     break;
+         }
+         break;
+      case  6 : /*---(freeze beg)--------*/
+         rc = INPT_rowcol (p, 0, &(tabs[x_tab].froz_bcol), &(tabs[x_tab].froz_brow),
+               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         break;
+      case  7 : /*---(freeze end)--------*/
+         rc = INPT_rowcol (p, 0, &(tabs[x_tab].froz_ecol), &(tabs[x_tab].froz_erow),
+               0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         break;
+      case  8 : /*---(name)--------------*/
+         if (x_len > 0)  strlcpy (tabs[x_tab].name, p, LEN_STR);
+         tabs[x_tab].active = 'y';
+         NTAB               = x_tab + 1;
+         break;
+      }
+   } 
+   DEBUG_CONF   yLOG_note    ("done parsing fields");
+   return 0;
+}
+
 char         /*--> parse a tab entry ---------------------[ flower [--------]-*/
 INPT_tab           (
       /*----------+-----------+-----------------------------------------------*/
@@ -812,11 +957,10 @@ INPT_tab           (
    /*
    */
    /*---(locals)-----------+-----------+-*/
-   int         x_len       = 0;                  /* generic string length     */
-   char        x_temp      [MAX_STR];            /* strtok working string     */
-   char       *p           = NULL;               /* strtok return pointer     */
-   char       *q           = "\x1F";             /* strtok delimeters         */
-   char       *r           = NULL;               /* strtok context variable   */
+   char        x_temp      [LEN_RECD];            /* strtok working string     */
+   /*> char       *p           = NULL;               /+ strtok return pointer     +/   <*/
+   /*> char       *q           = "\x1F";             /+ strtok delimeters         +/   <*/
+   /*> char       *r           = NULL;               /+ strtok context variable   +/   <*/
    int         x_tab       = 0;
    char        rc          = 0;
    int         x_col       = 0;
@@ -832,80 +976,89 @@ INPT_tab           (
    /*---(defense: a_recd null)-----------*/
    DEBUG_INPT  yLOG_point   ("a_recd"    , a_recd);
    --rce;  if (a_recd == NULL) {
+      DEBUG_INPT  yLOG_note    ("record pointer can not be null");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
    DEBUG_INPT  yLOG_info    ("a_recd"    , a_recd);
+   strncpy (my.recd, a_recd, LEN_RECD);   /* globally saved version            */
    /*---(defense: a_recd length)---------*/
-   x_len = strlen (a_recd);
-   DEBUG_INPT  yLOG_value   ("length"    , x_len);
-   --rce;  if (x_len <   80) {
+   s_len = strlen (a_recd);
+   DEBUG_INPT  yLOG_value   ("length"    , s_len);
+   --rce;  if (s_len <   80) {
       DEBUG_INPT  yLOG_note    ("length shorter than minimum (80)");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   --rce;  if (x_len >  120)  {
+   --rce;  if (s_len >  120)  {
       DEBUG_INPT  yLOG_note    ("length longer than maximum (120)");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(defense: type/verb)-------------*/
-   strncpy (x_temp, a_recd, MAX_STR);
-   p = strtok_r (x_temp, "\x1F", &r);
-   --rce;  if (p == NULL) {
+   strncpy (s_recd , a_recd, LEN_RECD);   /* working version                   */
+   s_p = strtok_r (s_recd, s_q, &s_context);
+   --rce;  if (s_p == NULL) {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   ySTR_trim (p, ySTR_BOTH);
-   DEBUG_INPT  yLOG_info    ("verb"      , p);
-   --rce;  if (strcmp (p, "tab") != 0) {
+   strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+   DEBUG_INPT  yLOG_info    ("verb"      , s_p);
+   --rce;  if (strcmp (s_p, "tab") != 0) {
       DEBUG_INPT  yLOG_note    ("not a tab record");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(ver number)---------------------*/
-   p = strtok_r (NULL, "\x1F", &r);
-   --rce;  if (p == NULL) {
+   s_p = strtok_r (NULL, s_q, &s_context);
+   --rce;  if (s_p == NULL) {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   ySTR_trim (p, ySTR_BOTH);
-   --rce;  if (strlen (p) != 3) {
+   strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+   --rce;  if (strlen (s_p) != 3) {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   --rce;  if (p[0] != '-')  {
+   --rce;  if (s_p[0] != '-')  {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   --rce;  if (p[2] != '-') {
+   --rce;  if (s_p[2] != '-') {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   x_ver = p[1];
+   x_ver = s_p[1];
    DEBUG_INPT  yLOG_char    ("ver num"   , x_ver);
-   --rce;  if (strchr ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", x_ver) == 0)  return rce;
+   --rce;  if (strchr (s_vers, x_ver) == 0) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   if (x_ver == 'F') {
+      INPT_tabF ();
+      return 0;
+   }
    /*---(tab number)---------------------*/
-   p = strtok_r (NULL, "\x1F", &r);
-   --rce;  if (p == NULL) {
+   s_p = strtok_r (NULL, s_q, &s_context);
+   --rce;  if (s_p == NULL) {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   ySTR_trim (p, ySTR_BOTH);
-   --rce;  if (strlen (p) <= 0)  {
+   strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+   --rce;  if (strlen (s_p) <= 0)  {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   x_tab = atoi (p);
+   x_tab = atoi (s_p);
    DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
    /*---(maximums)-----------------------*/
    if (x_ver >= 'E') {
       x_col = x_row = 0;
-      p = strtok_r (NULL, "\x1F", &r);
-      if (p != NULL) {
-         ySTR_trim (p, ySTR_BOTH);
-         DEBUG_INPT  yLOG_info    ("maximum"   , p);
-         rc = LOC_parse (p, NULL, &x_col, &x_row, NULL);
+      s_p = strtok_r (NULL, s_q, &s_context);
+      if (s_p != NULL) {
+         strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+         DEBUG_INPT  yLOG_info    ("maximum"   , s_p);
+         rc = LOC_parse (s_p, NULL, &x_col, &x_row, NULL);
       } else {
          DEBUG_INPT  yLOG_info    ("maximum"   , "not found/readable");
       }
@@ -920,25 +1073,25 @@ INPT_tab           (
       DEBUG_INPT  yLOG_value   ("ncol"      , tabs[x_tab].ncol);
       DEBUG_INPT  yLOG_value   ("nrow"      , tabs[x_tab].nrow);
    } else {
-      p = strtok_r (NULL, "\x1F", &r);
-      tabs[x_tab].ncol = atoi (ySTR_trim (p, ySTR_BOTH));
+      s_p = strtok_r (NULL, s_q, &s_context);
+      tabs[x_tab].ncol = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
       DEBUG_INPT  yLOG_value   ("ncol"      , tabs[x_tab].ncol);
-      p = strtok_r (NULL, "\x1F", &r);
-      --rce;  if (p == NULL) {
+      s_p = strtok_r (NULL, s_q, &s_context);
+      --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].nrow = atoi (ySTR_trim (p, ySTR_BOTH));
+      tabs[x_tab].nrow = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
       DEBUG_INPT  yLOG_value   ("nrow"      , tabs[x_tab].nrow);
    }
    /*---(beginning)----------------------*/
    if (x_ver >= 'E') {
       x_col = x_row = 0;
-      p = strtok_r (NULL, "\x1F", &r);
-      if (p != NULL) {
-         ySTR_trim (p, ySTR_BOTH);
-         DEBUG_INPT  yLOG_info    ("beginning" , p);
-         LOC_parse (p, NULL, &x_col, &x_row, NULL);
+      s_p = strtok_r (NULL, s_q, &s_context);
+      if (s_p != NULL) {
+         strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+         DEBUG_INPT  yLOG_info    ("beginning" , s_p);
+         LOC_parse (s_p, NULL, &x_col, &x_row, NULL);
       } else {
          DEBUG_INPT  yLOG_info    ("beginning" , "not found/readable");
       }
@@ -949,29 +1102,29 @@ INPT_tab           (
       DEBUG_INPT  yLOG_value   ("bcol"      , tabs[x_tab].bcol);
       DEBUG_INPT  yLOG_value   ("brow"      , tabs[x_tab].brow);
    } else {
-      p = strtok_r (NULL, "\x1F", &r);
-      --rce;  if (p == NULL) {
+      s_p = strtok_r (NULL, s_q, &s_context);
+      --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].bcol = atoi (ySTR_trim (p, ySTR_BOTH));
+      tabs[x_tab].bcol = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
       DEBUG_INPT  yLOG_value   ("bcol"      , tabs[x_tab].bcol);
-      p = strtok_r (NULL, "\x1F", &r);
-      --rce;  if (p == NULL) {
+      s_p = strtok_r (NULL, s_q, &s_context);
+      --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].brow = atoi (ySTR_trim (p, ySTR_BOTH));
+      tabs[x_tab].brow = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
       DEBUG_INPT  yLOG_value   ("brow"      , tabs[x_tab].brow);
    }
    /*---(current)------------------------*/
    if (x_ver >= 'E') {
       x_col = x_row = 0;
-      p = strtok_r (NULL, "\x1F", &r);
-      if (p != NULL) {
-         ySTR_trim (p, ySTR_BOTH);
-         DEBUG_INPT  yLOG_info    ("current"   , p);
-         LOC_parse (p, NULL, &x_col, &x_row, NULL);
+      s_p = strtok_r (NULL, s_q, &s_context);
+      if (s_p != NULL) {
+         strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+         DEBUG_INPT  yLOG_info    ("current"   , s_p);
+         LOC_parse (s_p, NULL, &x_col, &x_row, NULL);
       } else {
          DEBUG_INPT  yLOG_info    ("current"   , "not found/readable");
       }
@@ -982,19 +1135,19 @@ INPT_tab           (
       DEBUG_INPT  yLOG_value   ("ccol"      , tabs[x_tab].ccol);
       DEBUG_INPT  yLOG_value   ("crow"      , tabs[x_tab].crow);
    } else {
-      p = strtok_r (NULL, "\x1F", &r);
-      --rce;  if (p == NULL) {
+      s_p = strtok_r (NULL, s_q, &s_context);
+      --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].ccol = atoi (ySTR_trim (p, ySTR_BOTH));
+      tabs[x_tab].ccol = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
       DEBUG_INPT  yLOG_value   ("ccol"      , tabs[x_tab].ccol);
-      p = strtok_r (NULL, "\x1F", &r);
-      --rce;  if (p == NULL) {
+      s_p = strtok_r (NULL, s_q, &s_context);
+      --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].crow = atoi (ySTR_trim (p, ySTR_BOTH));
+      tabs[x_tab].crow = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
       DEBUG_INPT  yLOG_value   ("crow"      , tabs[x_tab].crow);
    }
    /*---(frozen)-------------------------*/
@@ -1004,10 +1157,10 @@ INPT_tab           (
       tabs[x_tab].froz_col  = tabs[x_tab].froz_row  = '-';
       tabs[x_tab].froz_bcol = tabs[x_tab].froz_ecol = 0;
       tabs[x_tab].froz_brow = tabs[x_tab].froz_erow = 0;
-      p = strtok_r (NULL, "\x1F", &r);
-      if (p != NULL) {
-         ySTR_trim (p, ySTR_BOTH);
-         x_type = p[0];
+      s_p = strtok_r (NULL, s_q, &s_context);
+      if (s_p != NULL) {
+         strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+         x_type = s_p[0];
          DEBUG_INPT  yLOG_char    ("froz_type" , x_type);
       } else {
          DEBUG_INPT  yLOG_info    ("froz_type" , "not found/readable");
@@ -1026,11 +1179,11 @@ INPT_tab           (
       if (strchr ("rcb", x_type) != 0) {
          /*---(beg)---------------*/
          x_col = x_row = 0;
-         p = strtok_r (NULL, "\x1F", &r);
-         if (p != NULL) {
-            ySTR_trim (p, ySTR_BOTH);
-            DEBUG_INPT  yLOG_info    ("froz_beg"  , p);
-            LOC_parse (p, NULL, &x_col, &x_row, NULL);
+         s_p = strtok_r (NULL, s_q, &s_context);
+         if (s_p != NULL) {
+            strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+            DEBUG_INPT  yLOG_info    ("froz_beg"  , s_p);
+            LOC_parse (s_p, NULL, &x_col, &x_row, NULL);
          } else {
             DEBUG_INPT  yLOG_info    ("froz_beg"  , "not found/readable");
          }
@@ -1042,11 +1195,11 @@ INPT_tab           (
          DEBUG_INPT  yLOG_value   ("froz_brow" , tabs[x_tab].froz_brow);
          /*---(end)---------------*/
          x_col = x_row = 0;
-         p = strtok_r (NULL, "\x1F", &r);
-         if (p != NULL) {
-            ySTR_trim (p, ySTR_BOTH);
-            DEBUG_INPT  yLOG_info    ("froz_end"  , p);
-            LOC_parse (p, NULL, &x_col, &x_row, NULL);
+         s_p = strtok_r (NULL, s_q, &s_context);
+         if (s_p != NULL) {
+            strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+            DEBUG_INPT  yLOG_info    ("froz_end"  , s_p);
+            LOC_parse (s_p, NULL, &x_col, &x_row, NULL);
          } else {
             DEBUG_INPT  yLOG_info    ("froz_end"  , "not found/readable");
          }
@@ -1057,23 +1210,23 @@ INPT_tab           (
          DEBUG_INPT  yLOG_value   ("froz_ecol" , tabs[x_tab].froz_ecol);
          DEBUG_INPT  yLOG_value   ("froz_erow" , tabs[x_tab].froz_erow);
       } else {
-         p = strtok_r (NULL, "\x1F", &r);
+         s_p = strtok_r (NULL, "\x1F", &s_context);
       }
    } else if (x_ver == '8') {
-      p = strtok_r (NULL, "\x1F", &r);
-      --rce;  if (p == NULL) {
+      s_p = strtok_r (NULL, "\x1F", &s_context);
+      --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      ySTR_trim (p, ySTR_BOTH);
-      --rce;  if (strlen (p) < 5) {
+      strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+      --rce;  if (strlen (s_p) < 5) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
       tabs[x_tab].froz_col  = '-';
       tabs[x_tab].froz_row  = '-';
-      DEBUG_INPT  yLOG_char    ("lock type" , p[0]);
-      switch (p[0]) {
+      DEBUG_INPT  yLOG_char    ("lock type" , s_p[0]);
+      switch (s_p[0]) {
       case  'r' : tabs[x_tab].froz_row  = 'y';
                   break;
       case  'c' : tabs[x_tab].froz_col  = 'y';
@@ -1088,29 +1241,29 @@ INPT_tab           (
          strcpy (x_beg, "");
          strcpy (x_end, "");
          for (i = 2; i < 8; ++i) {
-            if (p[i] == ' ')  break;
-            x_beg [i -  2] = p [i];
+            if (s_p[i] == ' ')  break;
+            x_beg [i -  2] = s_p [i];
             x_beg [i -  1] = '\0';
          }
          DEBUG_INPT  yLOG_info    ("beg"       , x_beg);
-         if (p != NULL) {
+         if (s_p != NULL) {
             rc = LOC_parse (x_beg, NULL, &tabs[x_tab].froz_bcol, &tabs[x_tab].froz_brow, NULL);
          }
          DEBUG_INPT  yLOG_value   ("froz_bcol" , tabs[x_tab].froz_bcol);
          DEBUG_INPT  yLOG_value   ("froz_brow" , tabs[x_tab].froz_brow);
          for (i = 10; i < 16; ++i) {
-            if (p[i] == ' ')  break;
-            x_end [i - 10] = p [i];
+            if (s_p[i] == ' ')  break;
+            x_end [i - 10] = s_p [i];
             x_end [i -  9] = '\0';
          }
          DEBUG_INPT  yLOG_info    ("end"       , x_end);
-         if (p != NULL) {
+         if (s_p != NULL) {
             rc = LOC_parse (x_end, NULL, &tabs[x_tab].froz_ecol, &tabs[x_tab].froz_erow, NULL);
          }
          DEBUG_INPT  yLOG_value   ("froz_ecol" , tabs[x_tab].froz_ecol);
          DEBUG_INPT  yLOG_value   ("froz_erow" , tabs[x_tab].froz_erow);
       }
-      switch (p[0]) {
+      switch (s_p[0]) {
       case  'b' : if (tabs[x_tab].bcol <= tabs[x_tab].froz_ecol)  tabs[x_tab].bcol = tabs[x_tab].ccol = tabs[x_tab].froz_ecol + 1;
                      tabs[x_tab].brow = tabs[x_tab].crow = tabs[x_tab].froz_erow + 1;
                   break;
@@ -1122,11 +1275,11 @@ INPT_tab           (
       }
    }
    /*---(name)---------------------------*/
-   p = strtok_r (NULL, "\x1F", &r);
-   if (p != NULL) {
-      ySTR_trim (p, ySTR_BOTH);
-      DEBUG_INPT  yLOG_info    ("name"      , p);
-      if (strlen (p) > 0)  strncpy (tabs[x_tab].name, p, MAX_STR);
+   s_p = strtok_r (NULL, s_q, &s_context);
+   if (s_p != NULL) {
+      strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+      DEBUG_INPT  yLOG_info    ("name"      , s_p);
+      if (strlen (s_p) > 0)  strncpy (tabs[x_tab].name, s_p, LEN_RECD);
    }
    /*---(complet)------------------------*/
    tabs[x_tab].active = 'y';

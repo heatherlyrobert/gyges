@@ -25,6 +25,7 @@ main (int argc, char *argv[])
    int         sch         = 0;        /* saved keystroke                     */
    char        rc          = 0;
    /*---(initialize)---------------------*/
+   if (rc == 0)  rc = PROG_logger  (argc, argv);
    if (rc == 0)  rc = PROG_init    ();
    if (rc == 0)  rc = PROG_urgs    (argc, argv);
    if (rc == 0)  rc = PROG_args    (argc, argv);

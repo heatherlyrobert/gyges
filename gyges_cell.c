@@ -1133,7 +1133,11 @@ CELL_format        (char a_mode, char a_type)
             }
             if      (x_next->t == 's' && strchr (sv_fillers, a_type) != NULL)
                x_next->f = a_type;
+            else if (x_next->t == '#' && strchr (sv_fillers, a_type) == NULL)
+               x_next->f = a_type;
             else if (x_next->t == 'n' && strchr (sv_fillers, a_type) == NULL)
+               x_next->f = a_type;
+            else if (x_next->t == 'f' && strchr (sv_fillers, a_type) == NULL)
                x_next->f = a_type;
             ++x_count;
          }
