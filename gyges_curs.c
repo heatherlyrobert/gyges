@@ -28,6 +28,57 @@
 
 PRIV  char      CURS_page          (void);
 
+#define     MAX_MENU       500
+typedef struct cMENU  tMENU;
+struct  cMENU {  /* two level menu only, none of that complex shit            */
+   char     a_one;                          /* shortcut for menu              */
+   char     a_menu      [LEN_STR];          /* top level menu item            */
+   char     a_group;                        /* selection group                */
+   char     a_two;                          /* shortcut for submenu           */
+   char     a_name      [LEN_STR];          /* name of menu item              */
+   char     a_desc      [LEN_STR];          /* descripion, example, alternate */
+};
+tMENU       menus       [MAX_MENU] = {
+   /* one  ---menu---------- grp -sc-  ---name----------  ---example------------ */
+   {  'f', "format"         ,  1, '<', "left"           , "test                " },
+   {  ' ', ""               ,  1, '|', "center"         , "        test        " },
+   {  ' ', ""               ,  1, '>', "right"          , "               test " },
+   {  ' ', ""               ,  1, '[', "left bracket"   , "[test              ]" },
+   {  ' ', ""               ,  1, '^', "center bracket" , "[       test       ]" },
+   {  ' ', ""               ,  1, ']', "right bracket"  , "[              test]" },
+   {  ' ', ""               ,  1, '{', "right brace"    , "[  test            ]" },
+   {  ' ', ""               ,  1, '}', "left brace"     , "[            test  ]" },
+   {  ' ', ""               ,  2, ' ', "fill space"     , "  test              " },
+   {  ' ', ""               ,  2, '-', "fill dash"      , "--test------------- " },
+   {  ' ', ""               ,  2, '=', "fill equal"     , "==test============= " },
+   {  ' ', ""               ,  2, '_', "fill under"     , "__test_____________ " },
+   {  ' ', ""               ,  2, '.', "fill period"    , ". test . . . . . .  " },
+   {  ' ', ""               ,  2, '+', "fill plus"      , "+ test + + + + + +  " },
+   {  ' ', ""               ,  3, 'i', "integer"        , "            1234567 " },
+   {  ' ', ""               ,  3, 'r', "real"           , "            987.541 " },
+   {  ' ', ""               ,  3, ',', "comma"          , "          1,234,567 " },
+   {  ' ', ""               ,  3, 's', "comma/sign"     , "         +1,234,567 " },
+   {  ' ', ""               ,  3, 'a', "accounting"     , "        (1,234,567) " },
+   {  ' ', ""               ,  3, '$', "currency"       , "         $1,234,567 " },
+   {  ' ', ""               ,  3, '%', "percent"        , "                15% " },
+   {  ' ', ""               ,  3, '#', "technical"      , "  123,456.789'032 + " },
+   {  ' ', ""               ,  3, 'e', "exponential"    , "          1.235e+05 " },
+   {  ' ', ""               ,  3, 'E', "exponential"    , "       +1.235 e +05 " },
+   {  ' ', ""               ,  3, 'x', "hexidecimal"    , "              xaf68 " },
+   {  ' ', ""               ,  3, 'X', "hexidecimal"    , "            x'af'68 " },
+   {  ' ', ""               ,  3, 'b', "binary"         , "          b10101111 " },
+   {  ' ', ""               ,  3, 'B', "binary"         , "        b'1010'1111 " },
+   {  ' ', ""               ,  3, 'o', "octal"          , "               o257 " },
+   {  ' ', ""               ,  3, 'O', "octal"          , "              o'257 " },
+   {  ' ', ""               ,  3, 't', "time"           , "                    " },
+   {  ' ', ""               ,  3, 'd', "date"           , "                    " },
+   {  ' ', ""               ,  3, 'T', "timestamp"      , "                    " },
+   {  ' ', ""               ,  3, 'D', "timestamp"      , "                    " },
+   {  ' ', "end-of-menu"    ,  1, ' ', ""               , ""                     },
+   {  ' ', ""               ,  1, ' ', ""               , ""                     },
+};
+
+
 
 /*===[[ COLOR DEFINITIONS ]]==================================================*/
 /*---(window)-------------------------*/

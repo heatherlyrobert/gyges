@@ -8236,7 +8236,6 @@ SCRP          (s_cell) printable comma formats                             CEL
 
 
 
-
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
 SCRP          (s_cell) printable numeric formats                           CELL__print_number                                                                                                                                   
 
@@ -8368,6 +8367,283 @@ SCRP          (s_cell) printable numeric formats                           CEL
 
    COND       verify program teardown                                                                                                                                                                                         
      exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
+
+
+
+#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
+SCRP          (s_cell) printable technical formats                         CELL__print_special                                                                                                                                  
+
+   COND       setup some testing variables                                                                                                                                                                                    
+     code     create a return holder               char  x_string  [MAX_STR];                                                                                                                                                 
+
+   COND       verify program setup                                                                                                                                                                                            
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
+
+   COND       test the defenses                                                                                                                                                                                               
+     exec     negative number                      CELL__print_special   'o',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+
+   COND       octal format                                                                                                                                                                                                    
+     exec     pass a zero                          CELL__print_special   'o',  0,          0     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o000>>                                            
+     exec     pass a single digit                  CELL__print_special   'o',  0,          5     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o005>>                                            
+     exec     pass a full nibble                   CELL__print_special   'o',  0,         15     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o017>>                                            
+     exec     pass a full nibble plus one          CELL__print_special   'o',  0,         16     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o020>>                                            
+     exec     pass a double digit                  CELL__print_special   'o',  0,         47     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o057>>                                            
+     exec     pass a triple digit                  CELL__print_special   'o',  0,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o150>>                                            
+     exec     pass a full byte                     CELL__print_special   'o',  0,        255     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o377>>                                            
+     exec     pass a full byte plus one            CELL__print_special   'o',  0,        256     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o400>>                                            
+     exec     pass a full octal                    CELL__print_special   'o',  0,        511     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o777>>                                            
+     exec     pass a full octal plus one           CELL__print_special   'o',  0,        512     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o001000>>                                         
+     exec     pass a full byte and nibble          CELL__print_special   'o',  0,       1023     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o001777>>                                         
+     exec     pass a full byte and nibble plus one CELL__print_special   'o',  0,       1024     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o002000>>                                         
+     exec     pass two full bytes                  CELL__print_special   'o',  0,      65535     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o177777>>                                         
+     exec     pass two full bytes plus one         CELL__print_special   'o',  0,      65536     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o200000>>                                         
+     exec     bigger number                        CELL__print_special   'o',  0,     123456     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o361100>>                                         
+     exec     much bigger number                   CELL__print_special   'o',  0,   12345678     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o057060516>>                                      
+     exec     float number                         CELL__print_special   'o',  0,   1234.567     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o002322>>                                         
+     exec     pass a single decimal request        CELL__print_special   'o',  1,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o150>>                                            
+     exec     pass a double decimal request        CELL__print_special   'o',  2,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o000150>>                                         
+     exec     pass a quad decimal request          CELL__print_special   'o',  4,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o000000000150>>                                   
+
+   COND       divided octal format                                                                                                                                                                                           
+     exec     pass a zero                          CELL__print_special   'O',  0,          0     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'000>>                                            
+     exec     pass a single digit                  CELL__print_special   'O',  0,          5     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'005>>                                            
+     exec     pass a full nibble                   CELL__print_special   'O',  0,         15     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'017>>                                            
+     exec     pass a full nibble plus one          CELL__print_special   'O',  0,         16     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'020>>                                            
+     exec     pass a double digit                  CELL__print_special   'O',  0,         47     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'057>>                                            
+     exec     pass a triple digit                  CELL__print_special   'O',  0,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'150>>                                            
+     exec     pass a full byte                     CELL__print_special   'O',  0,        255     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'377>>                                            
+     exec     pass a full byte plus one            CELL__print_special   'O',  0,        256     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'400>>                                            
+     exec     pass a full octal                    CELL__print_special   'O',  0,        511     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'777>>                                            
+     exec     pass a full octal plus one           CELL__print_special   'O',  0,        512     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'001'000>>                                         
+     exec     pass a full byte and nibble          CELL__print_special   'O',  0,       1023     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'001'777>>                                         
+     exec     pass a full byte and nibble plus one CELL__print_special   'O',  0,       1024     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'002'000>>                                         
+     exec     pass two full bytes                  CELL__print_special   'O',  0,      65535     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'177'777>>                                         
+     exec     pass two full bytes plus one         CELL__print_special   'O',  0,      65536     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'200'000>>                                         
+     exec     bigger number                        CELL__print_special   'O',  0,     123456     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'361'100>>                                         
+     exec     much bigger number                   CELL__print_special   'O',  0,   12345678     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'057'060'516>>                                      
+     exec     float number                         CELL__print_special   'O',  0,   1234.567     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'002'322>>                                         
+     exec     negative number                      CELL__print_special   'O',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+     exec     pass a single decimal request        CELL__print_special   'O',  1,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'150>>                                            
+     exec     pass a double decimal request        CELL__print_special   'O',  2,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'000'150>>                                         
+     exec     pass a quad decimal request          CELL__print_special   'O',  4,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o'000'000'000'150>>                                   
+
+   COND       hexadecimal format                                                                                                                                                                                              
+     exec     pass a zero                          CELL__print_special   'x',  0,          0     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x00>>                                             
+     exec     pass a single digit                  CELL__print_special   'x',  0,          5     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x05>>                                             
+     exec     pass a full nibble                   CELL__print_special   'x',  0,         15     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x0F>>                                             
+     exec     pass a full nibble plus one          CELL__print_special   'x',  0,         16     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x10>>                                             
+     exec     pass a double digit                  CELL__print_special   'x',  0,         47     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x2F>>                                             
+     exec     pass a triple digit                  CELL__print_special   'x',  0,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x68>>                                             
+     exec     pass a full byte                     CELL__print_special   'x',  0,        255     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<xFF>>                                             
+     exec     pass a full byte plus one            CELL__print_special   'x',  0,        256     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x0100>>                                           
+     exec     pass a full octal                    CELL__print_special   'x',  0,        511     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x01FF>>                                            
+     exec     pass a full octal plus one           CELL__print_special   'x',  0,        512     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x0200>>                                           
+     exec     pass a full byte and nibble          CELL__print_special   'x',  0,       1023     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x03FF>>                                           
+     exec     pass a full byte and nibble plus one CELL__print_special   'x',  0,       1024     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x0400>>                                           
+     exec     pass two full bytes                  CELL__print_special   'x',  0,      65535     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<xFFFF>>                                           
+     exec     pass two full bytes plus one         CELL__print_special   'x',  0,      65536     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x010000>>                                         
+     exec     bigger number                        CELL__print_special   'x',  0,     123456     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x01E240>>                                         
+     exec     much bigger number                   CELL__print_special   'x',  0,   12345678     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<xBC614E>>                                      
+     exec     float number                         CELL__print_special   'x',  0,   1234.567     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x04D2>>                                           
+     exec     negative number                      CELL__print_special   'x',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+     exec     pass a single decimal request        CELL__print_special   'x',  1,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x68>>                                             
+     exec     pass a double decimal request        CELL__print_special   'x',  2,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x0068>>                                           
+     exec     pass a quad decimal request          CELL__print_special   'x',  4,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x00000068>>                                       
+
+   COND       divided hexadecimal format                                                                                                                                                                                     
+     exec     pass a zero                          CELL__print_special   'X',  0,          0     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'00>>                                             
+     exec     pass a single digit                  CELL__print_special   'X',  0,          5     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'05>>                                             
+     exec     pass a full nibble                   CELL__print_special   'X',  0,         15     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'0F>>                                             
+     exec     pass a full nibble plus one          CELL__print_special   'X',  0,         16     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'10>>                                             
+     exec     pass a double digit                  CELL__print_special   'X',  0,         47     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'2F>>                                             
+     exec     pass a triple digit                  CELL__print_special   'X',  0,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'68>>                                             
+     exec     pass a full byte                     CELL__print_special   'X',  0,        255     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'FF>>                                             
+     exec     pass a full byte plus one            CELL__print_special   'X',  0,        256     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'01'00>>                                           
+     exec     pass a full octal                    CELL__print_special   'X',  0,        511     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'01'FF>>                                            
+     exec     pass a full octal plus one           CELL__print_special   'X',  0,        512     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'02'00>>                                           
+     exec     pass a full byte and nibble          CELL__print_special   'X',  0,       1023     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'03'FF>>                                           
+     exec     pass a full byte and nibble plus one CELL__print_special   'X',  0,       1024     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'04'00>>                                           
+     exec     pass two full bytes                  CELL__print_special   'X',  0,      65535     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'FF'FF>>                                           
+     exec     pass two full bytes plus one         CELL__print_special   'X',  0,      65536     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'01'00'00>>                                         
+     exec     bigger number                        CELL__print_special   'X',  0,     123456     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'01'E2'40>>                                         
+     exec     much bigger number                   CELL__print_special   'X',  0,   12345678     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'BC'61'4E>>                                      
+     exec     float number                         CELL__print_special   'X',  0,   1234.567     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'04'D2>>                                           
+     exec     negative number                      CELL__print_special   'X',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+     exec     pass a single decimal request        CELL__print_special   'X',  1,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'68>>                                             
+     exec     pass a double decimal request        CELL__print_special   'X',  2,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'00'68>>                                           
+     exec     pass a quad decimal request          CELL__print_special   'X',  4,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<x'00'00'00'68>>                                       
+
+   COND       binary format                                                                                                                                                                                                   
+     exec     pass a zero                          CELL__print_special   'b',  0,          0     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b0000>>                                           
+     exec     pass a single digit                  CELL__print_special   'b',  0,          5     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b0101>>                                           
+     exec     pass a full nibble                   CELL__print_special   'b',  0,         15     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b1111>>                                           
+     exec     pass a full nibble plus one          CELL__print_special   'b',  0,         16     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b00010000>>                                         
+     exec     pass a double digit                  CELL__print_special   'b',  0,         47     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b00101111>>                                       
+     exec     pass a triple digit                  CELL__print_special   'b',  0,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b01101000>>                                       
+     exec     pass a full byte                     CELL__print_special   'b',  0,        255     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b11111111>>                                       
+     exec     pass a full byte plus one            CELL__print_special   'b',  0,        256     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b000100000000>>                                   
+     exec     pass a full octal                    CELL__print_special   'b',  0,        511     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b000111111111>>                                    
+     exec     pass a full octal plus one           CELL__print_special   'b',  0,        512     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b001000000000>>                                   
+     exec     pass a full byte and nibble          CELL__print_special   'b',  0,       1023     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b001111111111>>                                   
+     exec     pass a full byte and nibble plus one CELL__print_special   'b',  0,       1024     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b010000000000>>                                   
+     exec     pass two full bytes                  CELL__print_special   'b',  0,      65535     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b1111111111111111>>                                   
+     exec     pass two full bytes plus one         CELL__print_special   'b',  0,      65536     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b00010000000000000000>>                              
+     exec     bigger number                        CELL__print_special   'b',  0,     123456     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b00011110001001000000>>                                         
+     exec     much bigger number                   CELL__print_special   'b',  0,   12345678     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b101111000110000101001110>>                                      
+     exec     float number                         CELL__print_special   'b',  0,   1234.567     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b010011010010>>                                    
+     exec     negative number                      CELL__print_special   'b',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+     exec     pass a single decimal request        CELL__print_special   'b',  1,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b01101000>>                                             
+     exec     pass a double decimal request        CELL__print_special   'b',  2,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b01101000>>                                           
+     exec     pass a quad decimal request          CELL__print_special   'b',  4,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b0000000001101000>>                                       
+
+   COND       divided binary format                                                                                                                                                                                                   
+     exec     pass a zero                          CELL__print_special   'B',  0,          0     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0000>>                                           
+     exec     pass a single digit                  CELL__print_special   'B',  0,          5     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0101>>                                           
+     exec     pass a full nibble                   CELL__print_special   'B',  0,         15     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'1111>>                                           
+     exec     pass a full nibble plus one          CELL__print_special   'B',  0,         16     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0001'0000>>                                         
+     exec     pass a double digit                  CELL__print_special   'B',  0,         47     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0010'1111>>                                       
+     exec     pass a triple digit                  CELL__print_special   'B',  0,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0110'1000>>                                       
+     exec     pass a full byte                     CELL__print_special   'B',  0,        255     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'1111'1111>>                                       
+     exec     pass a full byte plus one            CELL__print_special   'B',  0,        256     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0001'0000'0000>>                                   
+     exec     pass a full octal                    CELL__print_special   'B',  0,        511     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0001'1111'1111>>                                    
+     exec     pass a full octal plus one           CELL__print_special   'B',  0,        512     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0010'0000'0000>>                                   
+     exec     pass a full byte and nibble          CELL__print_special   'B',  0,       1023     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0011'1111'1111>>                                   
+     exec     pass a full byte and nibble plus one CELL__print_special   'B',  0,       1024     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0100'0000'0000>>                                   
+     exec     pass two full bytes                  CELL__print_special   'B',  0,      65535     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'1111'1111'1111'1111>>                                   
+     exec     pass two full bytes plus one         CELL__print_special   'B',  0,      65536     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0001'0000'0000'0000'0000>>                              
+     exec     bigger number                        CELL__print_special   'B',  0,     123456     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0001'1110'0010'0100'0000>>                                         
+     exec     much bigger number                   CELL__print_special   'B',  0,   12345678     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'1011'1100'0110'0001'0100'1110>>                                      
+     exec     float number                         CELL__print_special   'B',  0,   1234.567     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0100'1101'0010>>                                    
+     exec     negative number                      CELL__print_special   'B',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+     exec     pass a single decimal request        CELL__print_special   'B',  1,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0110'1000>>                                             
+     exec     pass a double decimal request        CELL__print_special   'B',  2,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0110'1000>>                                           
+     exec     pass a quad decimal request          CELL__print_special   'B',  4,        104     , x_string                            i_equal     0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<b'0000'0000'0110'1000>>                                       
 
 
 
@@ -8935,109 +9211,6 @@ SCRP          (s_file) verify the reading of tab records                   INP
 
    COND       verify program teardown                                                                                                                                                                                         
      exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
-
-
-
-
-#======  ==========(description)========================(method)=========  =======================(params)========================  =(test)== =======================(result)========================= 
-SCRP     alter cell format                      CELL_align                
-
-COND     verify program setup                                               
-  exec   setup the program                      PROG_testquiet                                                                      i_equal    0                                                       
-     get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
-     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-
-COND     setup some testing variables                                       
-  code   create a custom expect string          char custom[2000];
-  code   create a pointer to one cell           tCELL *x_one  = NULL;
-
-COND     add first cell                                                     
-  exec   add a cell                             CELL__create               0, 10, 10                                                   p_exists   0                                                       
-  code   save cell pointer                      x_one  = yUNIT_p_rc;
-  code   create a custom expect string          sprintf(CUSTOM, "Cell Source      : (    0) :%-.40s:", "(null)");
-  get    check the cell's source string         unit_accessor              "cell_source",   x_one                                   s_equal    [[ CUSTOM ]]                                            
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=- f=? d=0 a=? c=  0 r=  0 d=  0    
-
-   COND       get the initial selection set                               
-     exec     set the current cell                 LOC_jump              0, 10, 10                                                     i_equal     0                                                            
-
-COND     add some contents                                                  
-  exec   change the source string               CELL_change                CHG_INPUT, 0, 10, 10, "test"                                           p_exists   0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to float                                                    
-  exec   change the format                      CELL_format                CHG_INPUT, 'f'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=f d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to currency                                                 
-  exec   change the format                      CELL_format                CHG_INPUT, '$'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=$ d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to accounting                                               
-  exec   change the format                      CELL_format                CHG_INPUT, 'a'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=a d=0 a=< c=  0 r=  0 d=  0    
-
-COND     try upper case of currency                                         
-  exec   change the format                      CELL_format                CHG_INPUT, 'C'                                                      i_not      0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=a d=0 a=< c=  0 r=  0 d=  0    
-
-COND     try illegal symbol                                                 
-  exec   change the format                      CELL_format                CHG_INPUT, '['                                                      i_not      0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=a d=0 a=< c=  0 r=  0 d=  0    
-
-COND     try number                                                         
-  exec   change the format                      CELL_format                CHG_INPUT, '7'                                                      i_not      0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=a d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to exponential                                              
-  exec   change the format                      CELL_format                CHG_INPUT, 'e'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=e d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to hexidecimal                                              
-  exec   change the format                      CELL_format                CHG_INPUT, 'x'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=x d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to bullet                                                   
-  exec   change the format                      CELL_format                CHG_INPUT, 'b'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=b d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to odd character                                            
-  exec   change the format                      CELL_format                CHG_INPUT, '*'                                                      i_not      0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=b d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to fill with equal signs                                    
-  exec   change the format                      CELL_format                CHG_INPUT, '='                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f== d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to fill with underscores                                    
-  exec   change the format                      CELL_format                CHG_INPUT, '_'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=_ d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to fill with dashes                                         
-  exec   change the format                      CELL_format                CHG_INPUT, '-'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=- d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to fill with spaces                                         
-  exec   change the format                      CELL_format                CHG_INPUT, ' '                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to illegal character                                        
-  exec   change the format                      CELL_format                CHG_INPUT, 'W'                                                      i_not      0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0    
-
-COND     format to percent                                                  
-  exec   change the format                      CELL_format                CHG_INPUT, '%'                                                      i_equal    0                                                       
-  get    check the cell's information           unit_accessor              "cell_info",     x_one                                   s_equal    Cell Information : t=s f=% d=0 a=< c=  0 r=  0 d=  0    
-
-   COND       purge all cells                                                                                                                                                                                       
-     exec     purge the cells                      CELL__purge                                                                         i_equal     0                                                            
-     get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
-     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-
-   COND       verify program teardown                                                                                                                                                                               
-     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                            
-     get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
-     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
 
 

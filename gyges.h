@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0g"
-#define     VER_TXT   "simplify tab reading logic and pass unit test"
+#define     VER_NUM   "1.0h"
+#define     VER_TXT   "pass unit test on special number formatting"
 
 
 

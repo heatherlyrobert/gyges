@@ -1588,71 +1588,96 @@ CELL__print_special(
       DEBUG_CELL  yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(defense: negative)--------------*/
+   --rce;  if (a_num < 0) {
+      strcpy (x_work, "#.neg");
+      strncpy (s_print, x_work, MAX_STR);
+      strncpy (a_text , x_work, MAX_STR);
+      return rce;
+   }
    /*---(handle specialty bases)---------*/
    switch (a_format) {
    case 'o': 
-   case 'O': sprintf  (x_work, "0%o",      (long long) a_num);
-             if (a_format == 'o') break;
-             x_len = strlen (x_work);
-             for (i = (x_len - 1) / 3; i > 0; --i) {
-                for (j = x_len; j >= x_len - (i * 3); --j) {
-                   x_work [j + 1] = x_work [j];
-                }
-                x_work [x_len - (i * 3)] = '\'';
-                ++x_len;
-                x_work [x_len] = '\0';
-             }
-             break;
+   case 'O':
+      /*---(any octal)------------*/
+      sprintf  (x_temp, "%o",      (long long) a_num);
+      x_len = strlen (x_temp);
+      if (x_len % 3 == 2) { strcat  (x_prefix,  "0"); x_len += 1; }
+      if (x_len % 3 == 1) { strcat  (x_prefix, "00"); x_len += 2; }
+      for (i = x_len / 3; i < a_decimal; ++i)  strcat (x_prefix, "000");
+      sprintf (x_work, "o%s%s" , x_prefix, x_temp);
+      if (a_format == 'o') break;
+      /*---(extended format)------*/
+      x_len = strlen (x_work);
+      for (i = (x_len - 1) / 3; i > 0; --i) {
+         for (j = x_len; j >= x_len - (i * 3); --j) {
+            x_work [j + 1] = x_work [j];
+         }
+         x_work [x_len - (i * 3)] = '\'';
+         ++x_len;
+         x_work [x_len] = '\0';
+      }
+      break;
+      /*---(done)-----------------*/
    case 'x':
-   case 'X': sprintf  (x_temp, "%x",       (int)  a_num);
-             x_len = strlen (x_temp);
-             if (x_len % 2 == 1) {
-                strcpy  (x_prefix, "0");
-                ++x_len;
-             }
-             for (i = x_len / 2; i < a_decimal; ++i)  strcat (x_prefix, "00");
-             sprintf (x_work, "x%s%s" , x_prefix, x_temp);
-             if (a_format == 'x') break;
-             x_len = strlen (x_work);
-             for (i = (x_len - 1) / 2; i > 0; --i) {
-                for (j = x_len; j >= x_len - (i * 2); --j) {
-                   x_work [j + 1] = x_work [j];
-                }
-                x_work [x_len - (i * 2)] = '\'';
-                ++x_len;
-                x_work [x_len] = '\0';
-             }
-             break;
+   case 'X':
+      /*---(any hex)--------------*/
+      sprintf  (x_temp, "%X",       (int)  a_num);
+      x_len = strlen (x_temp);
+      if (x_len % 2 == 1) {
+         strcpy  (x_prefix, "0");
+         ++x_len;
+      }
+      for (i = x_len / 2; i < a_decimal; ++i)  strcat (x_prefix, "00");
+      sprintf (x_work, "x%s%s" , x_prefix, x_temp);
+      if (a_format == 'x') break;
+      /*---(extended format)------*/
+      x_len = strlen (x_work);
+      for (i = (x_len - 1) / 2; i > 0; --i) {
+         for (j = x_len; j >= x_len - (i * 2); --j) {
+            x_work [j + 1] = x_work [j];
+         }
+         x_work [x_len - (i * 2)] = '\'';
+         ++x_len;
+         x_work [x_len] = '\0';
+      }
+      break;
+      /*---(done)-----------------*/
    case 'b':
-   case 'B': x_num = a_num;
-             while (x_num > 0) {
-                if (x_num % 2 == 0)   strcat (x_temp, "0");
-                else                  strcat (x_temp, "1");
-                x_num /= 2;
-             }
-             x_len = strlen (x_temp);
-             switch (x_len % 4) {
-             case 1 : strcat (x_temp, "0");
-             case 2 : strcat (x_temp, "0");
-             case 3 : strcat (x_temp, "0");
-             }
-             x_len = strlen (x_temp);
-             for (i = x_len / 4; i < a_decimal; ++i)  strcat (x_temp, "0000");
-             strcat (x_temp, "b");
-             /*> for (i = 0; i < 4 - (x_len % 4); ++i)  strcat (x_temp, "0");         <*/
-             x_len = strlen (x_temp) - 1;
-             for (i = x_len; i >= 0; --i) x_work[x_len - i + j] = x_temp[i];
-             if (a_format == 'b') break;
-             x_len = strlen (x_work);
-             for (i = (x_len - 1) / 4; i > 0; --i) {
-                for (j = x_len; j >= x_len - (i * 4); --j) {
-                   x_work [j + 1] = x_work [j];
-                }
-                x_work [x_len - (i * 4)] = '\'';
-                ++x_len;
-                x_work [x_len] = '\0';
-             }
-             break;
+   case 'B':
+      /*---(any binary)-----------*/
+      x_num = a_num;
+      while (x_num > 0) {
+         if (x_num % 2 == 0)   strcat (x_temp, "0");
+         else                  strcat (x_temp, "1");
+         x_num /= 2;
+      }
+      if (a_num == 0)   strcat (x_temp, "0000");
+      x_len = strlen (x_temp);
+      switch (x_len % 4) {
+      case 1 : strcat (x_temp, "0");
+      case 2 : strcat (x_temp, "0");
+      case 3 : strcat (x_temp, "0");
+      }
+      x_len = strlen (x_temp);
+      for (i = x_len / 4; i < a_decimal; ++i)  strcat (x_temp, "0000");
+      strcat (x_temp, "b");
+      /*> for (i = 0; i < 4 - (x_len % 4); ++i)  strcat (x_temp, "0");         <*/
+      x_len = strlen (x_temp) - 1;
+      for (i = x_len; i >= 0; --i) x_work[x_len - i + j] = x_temp[i];
+      if (a_format == 'b') break;
+      /*---(extended format)------*/
+      x_len = strlen (x_work);
+      for (i = (x_len - 1) / 4; i > 0; --i) {
+         for (j = x_len; j >= x_len - (i * 4); --j) {
+            x_work [j + 1] = x_work [j];
+         }
+         x_work [x_len - (i * 4)] = '\'';
+         ++x_len;
+         x_work [x_len] = '\0';
+      }
+      break;
+      /*---(done)-----------------*/
    }
    /*---(allocate)-----------------------*/
    strncpy (s_print, x_work, MAX_STR);
@@ -1885,6 +1910,11 @@ CELL_printable     (tCELL *a_curr) {
       DEBUG_CELL  yLOG_snote  ("other");
       strcat(x_temp, a_curr->s);
    }
+   /*---(formatting errors)--------------*/
+   /*> if (strchr ("WE", a_curr->t) == 0 && strncmp (x_temp, "#.", 2) == 0) {         <* 
+    *>    a_curr->t = 'E';                                                            <* 
+    *>    a_curr->a = '<';                                                            <* 
+    *> }                                                                              <*/
    /*---(indented formats)---------------*/
    DEBUG_CELL  yLOG_sinfo  ("x=", x_temp);
    /*---(merge formats)------------------*/
