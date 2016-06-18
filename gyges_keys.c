@@ -511,17 +511,18 @@ KEYS_format        (int  a_prev, int  a_curr)
    case  'U' : CELL_merge    ('u');  break;  /* unmerge     */
 
    case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /* integer         */
-   case  'r' : CELL_format   (CHG_INPUT, 'r');  break;  /* real/float      */
-   case  'e' : CELL_format   (CHG_INPUT, 'e');  break;  /* exponencial     */
-   case  'E' : CELL_format   (CHG_INPUT, 'E');  break;  /* spaced exponent */
+   case  'r' : CELL_format   (CHG_INPUT, 'r');  CELL_decimals (CHG_INPUT, '3'); break;  /* real/float      */
+   case  'g' : CELL_format   (CHG_INPUT, 'r');  CELL_decimals (CHG_INPUT, '6'); break;  /* real/float      */
+   case  'e' : CELL_format   (CHG_INPUT, 'e');  CELL_decimals (CHG_INPUT, '3'); break;  /* exponencial     */
+   case  'E' : CELL_format   (CHG_INPUT, 'E');  CELL_decimals (CHG_INPUT, '3'); break;  /* spaced exponent */
    case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* point/bullet    */
 
    case  ',' : CELL_format   (CHG_INPUT, ',');  break;  /* comma           */
    case  'a' : CELL_format   (CHG_INPUT, 'a');  break;  /* accounting      */
    case  '$' : CELL_format   (CHG_INPUT, '$');  break;  /* dollar          */
    case  's' : CELL_format   (CHG_INPUT, 's');  break;  /* signed          */
-   case  '#' : CELL_format   (CHG_INPUT, '#');  break;  /* technical       */
-   case  '%' : CELL_format   (CHG_INPUT, '%');  break;  /* percent         */
+   case  '#' : CELL_format   (CHG_INPUT, '#');  CELL_decimals (CHG_INPUT, '6'); break;  /* technical       */
+   case  '%' : CELL_format   (CHG_INPUT, '%');  CELL_decimals (CHG_INPUT, '2'); break;  /* percent         */
 
    case  'o' : CELL_format   (CHG_INPUT, 'o');  break;  /* octal           */
    case  'O' : CELL_format   (CHG_INPUT, 'O');  break;  /* spaced octal    */

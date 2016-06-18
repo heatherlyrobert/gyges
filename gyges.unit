@@ -18,7 +18,7 @@ SECT          v21  creating, deleting, and placing cells                      
 
 #23456789012  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_cell) fundamental cell creation and destruction           CELL_init, CELL__new, CELL__free, CELL__valid, CELL__purge                                                                                                     
+SCRP          v21  (gyges_cell) fundamental cell creation and destruction       CELL_init, CELL__new, CELL__free, CELL__valid, CELL__purge                                                                                                     
 
    COND       setup testing variables                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      code     create a custom expect string        char custom [2000];                                                                                                                                                          
@@ -144,7 +144,7 @@ SCRP          v21  (s_cell) fundamental cell creation and destruction         
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_loc) location validation                                  LOC_legal                                                                                                                                            
+SCRP          (gyges_loc) location validation and adaptation               LOC_legal                                                                                                                                            
 
    COND       verify program setup                                                                                                                                                                                            
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -346,7 +346,7 @@ SCRP          (s_loc) location validation                                  LOC
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_loc) cell attachment to a sheet                           LOC_hook, LOC_unhook                                                                                                                                 
+SCRP          (gyges_loc) cell attachment to and detachment from a sheet   LOC_hook, LOC_unhook                                                                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -542,7 +542,7 @@ SCRP          (s_loc) cell attachment to a sheet                           LOC
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_cell) creating and destroying attached cells              CELL__create, CELL__delete, CELL_dup                                                                                                                 
+SCRP          (gyges_cell) creating and destroying attached cells          CELL__create, CELL__delete, CELL_dup                                                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -680,7 +680,7 @@ SCRP          (s_cell) creating and destroying attached cells              CEL
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_loc) moving cells between locations                       LOC_move                                                                                                                                             
+SCRP          (gyges_loc) moving cells between locations                   LOC_move                                                                                                                                             
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -854,7 +854,7 @@ SCRP          (s_loc) moving cells between locations                       LOC
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_loc) direct movement between cells                        LOC_jump                                                                                                                                             
+SCRP          (gyges_loc) direct movement between cells                    LOC_jump                                                                                                                                             
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -990,7 +990,7 @@ SCRP          (s_loc) direct movement between cells                        LOC
 
 #23456789012  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789- 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_loc) create cell labels from locations                    LOC_ref                                                                                                                                              
+SCRP          (gyges_loc) create cell labels from locations                LOC_ref                                                                                                                                              
 
    COND       verify program setup                                                                                                                                                                                            
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -1148,7 +1148,7 @@ SCRP          (s_loc) create cell labels from locations                    LOC
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
-SCRP          (s_loc) convert cells to labels and back                     LOC_label, LOC_parse                                                                                                                                 
+SCRP          (gyges_loc) convert cells to labels and back                 LOC_label, LOC_parse                                                                                                                                 
 
    COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
@@ -8094,6 +8094,10 @@ COND     format to the left                                                 
 
 
 
+#23456789012  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SECT          v21  (gyges_cell) formatting of numerical cell contents                                                                                                                                                                          
+
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
@@ -8380,8 +8384,10 @@ SCRP          (s_cell) printable technical formats                         CEL
      exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
 
    COND       test the defenses                                                                                                                                                                                               
-     exec     negative number                      CELL__print_special   'o',  0,      -1234     , x_string                            i_lesser    0                                                                      
-     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
+     exec     pass a bad format type               CELL__print_special   'w',  0,          0     , x_string                            i_lesser    0                                                                      
+     exec     pass a numeric format type           CELL__print_special    6 ,  0,          0     , x_string                            i_lesser    0                                                                      
+     exec     pass a null string                   CELL__print_special   'o',  0,          0     , NULL                                i_lesser    0                                                                      
+     exec     pass a negative number               CELL__print_special   'o',  0,         -1     , x_string                            i_lesser    0                                                                      
 
    COND       octal format                                                                                                                                                                                                    
      exec     pass a zero                          CELL__print_special   'o',  0,          0     , x_string                            i_equal     0                                                                      
@@ -8418,6 +8424,8 @@ SCRP          (s_cell) printable technical formats                         CEL
      get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o057060516>>                                      
      exec     float number                         CELL__print_special   'o',  0,   1234.567     , x_string                            i_equal     0                                                                      
      get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o002322>>                                         
+     exec     negative number                      CELL__print_special   'o',  0,      -1234     , x_string                            i_lesser    0                                                                      
+     get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<#.neg>>                                           
      exec     pass a single decimal request        CELL__print_special   'o',  1,        104     , x_string                            i_equal     0                                                                      
      get      review the cell contents             CELL__unit            "cell_print",    NULL                                         s_equal     s_cell print     : <<o150>>                                            
      exec     pass a double decimal request        CELL__print_special   'o',  2,        104     , x_string                            i_equal     0                                                                      
@@ -8696,6 +8704,11 @@ SCRP          (s_cell) printable time formats                              CEL
    COND       verify program teardown                                                                                                                                                                                         
      exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
+
+
+#23456789012  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SECT          v21  (gyges_file) version numbering                                                                                                                                                                                              
 
 
 
@@ -10231,33 +10244,6 @@ SCRP          (s_file) verify functioning of ySTR_clean                    yST
      code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
      exec     call the function                    ySTR_clean            x_work           , ySTR_SEVEN     , ySTR_COMPRESS                                   p_exists    0                                                                       05 
      get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   11) :tes ;#\ton10:                               05 
-
-   COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
-
-
-
-#23456789012  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-  123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  12 
-#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ====(return var)====  ==(test)==  ==========================(results)===================================  ve 
-SCRP          (s_file) verify functioning of ySTR_count                    ySTR_count                                                                                                                                                                    05 
-
-   COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
-
-   COND       check on a single instance                                   ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     call the function                    ySTR_count            "   testing   "  , 'e'                                                              i_equal     1                                                                       05 
-
-   COND       check on a double instance                                   ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     call the function                    ySTR_count            "   testing   "  , 't'                                                              i_equal     2                                                                       05 
-
-   COND       check on a large instance                                    ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     call the function                    ySTR_count            "   testing   "  , ' '                                                              i_equal     6                                                                       05 
-
-   COND       check on a zero instance                                     ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     call the function                    ySTR_count            "   testing   "  , 'x'                                                              i_equal     0                                                                       05 
-
-   COND       check on a wrong case                                        ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     call the function                    ySTR_count            "   testing   "  , 'T'                                                              i_equal     0                                                                       05 
 
    COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
      exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      

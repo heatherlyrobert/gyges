@@ -64,7 +64,7 @@
  *
  *      general formats (4)...
  *      i    integer
- *      f    floating point
+ *      r    floating point
  *      g    floating with six decimal points
  *      e    exponential notation
  *
@@ -114,10 +114,18 @@
 *      
 */
 
+char        empty       [200] = "                                                                                                                                                                                                       ";
+char        dashes      [200] = "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+char        equals      [200] = "=======================================================================================================================================================================================================";
+char        unders      [200] = "_______________________________________________________________________________________________________________________________________________________________________________________________________";
+char        dots        [200] = ".......................................................................................................................................................................................................";
+char        pluses      [200] = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+
+
 static char sv_formats     [50] = "";
-static char sv_nums        [20] = "?irpeE";
+static char sv_nums        [20] = "?irgpeE";
 static char sv_commas      [20] = ",a$s#%";
-static char sv_special     [20] = "xXbBoO\"";
+static char sv_special     [20] = "xXbBoO";
 static char sv_times       [20] = "tTdD";
 static char sv_fillers     [20] = " -=_+.";
 
@@ -945,7 +953,7 @@ CELL__interpret    (
       a_cell->t = 'f';
       DEBUG_CELL   yLOG_complex ("type"      , "formula which is an %c", a_cell->t);
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
-      ySTR_trim (a_cell->s, ySTR_EVERY);
+      strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
       DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
       a_cell->l = strlen  (a_cell->s);
       DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
@@ -1449,7 +1457,7 @@ CELL__print_comma  (
       DEBUG_CELL  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   /*---(defense: text)------------------*/
+   /*---(defense: decimals)--------------*/
    DEBUG_CELL  yLOG_point   ("a_decimal" , a_decimal);
    --rce;
    if (a_decimal < 0 || a_decimal > 9) {
@@ -1532,14 +1540,14 @@ CELL__print_comma  (
       case 'a' :
       case '$' : strcat (x_work, ")");  break;
       case '#' : strcat (x_work, " -"); break;
-      case '%' : strcat (x_work, "%%"); break;
+      case '%' : strcat (x_work, "p");  break;
       }
    } else {
       switch (a_format) {
       case 'a' :
       case '$' : strcat (x_work, " ");  break;
       case '#' : strcat (x_work, " +"); break;
-      case '%' : strcat (x_work, "%%"); break;
+      case '%' : strcat (x_work, "p");  break;
       }
    }
    DEBUG_CELL  yLOG_info    ("merged"    , x_work);
@@ -1588,11 +1596,21 @@ CELL__print_special(
       DEBUG_CELL  yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(defense: decimals)--------------*/
+   DEBUG_CELL  yLOG_point   ("a_decimal" , a_decimal);
+   --rce;
+   if (a_decimal < 0 || a_decimal > 9) {
+      DEBUG_CELL  yLOG_note    ("decimal places value out of range");
+      DEBUG_CELL  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(defense: negative)--------------*/
    --rce;  if (a_num < 0) {
-      strcpy (x_work, "#.neg");
+      strcpy  (x_work, "#.neg");
       strncpy (s_print, x_work, MAX_STR);
       strncpy (a_text , x_work, MAX_STR);
+      DEBUG_CELL  yLOG_note    ("number must not be negative");
+      DEBUG_CELL  yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(handle specialty bases)---------*/
@@ -1679,7 +1697,7 @@ CELL__print_special(
       break;
       /*---(done)-----------------*/
    }
-   /*---(allocate)-----------------------*/
+   /*---(return value)-------------------*/
    strncpy (s_print, x_work, MAX_STR);
    strncpy (a_text , x_work, MAX_STR);
    /*---(complete)-----------------------*/
@@ -1912,7 +1930,7 @@ CELL_printable     (tCELL *a_curr) {
    }
    /*---(formatting errors)--------------*/
    /*> if (strchr ("WE", a_curr->t) == 0 && strncmp (x_temp, "#.", 2) == 0) {         <* 
-    *>    a_curr->t = 'E';                                                            <* 
+    *>    a_curr->t = 'w';                                                            <* 
     *>    a_curr->a = '<';                                                            <* 
     *> }                                                                              <*/
    /*---(indented formats)---------------*/

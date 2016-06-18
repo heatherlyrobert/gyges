@@ -75,87 +75,6 @@ PRIV void  o___UTILITIES_______o () { return; }
 
 char        s_string    [MAX_STR];
 
-char*        /*--> clean whitespace from a string --------[--------[--------]-*/
-ySTR_trim          (char *a_source, char a_mode)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   n = none   (string untouched)
-    *   h = head   (all leading spaces gone)
-    *   t = tail   (all ending spaces gone)
-    *   b = both   (head and tail)
-    *   s = single (both plus internal not-in-strings compressed to one space)
-    *   e = every  (both plus internal not-in-strings taken out)
-    *   m = max    (both plus all internal taken fully out)
-    *
-    */
-   /*---(locals)-----------+-----------+-*/
-   int         i, j;                             /* iterators -- characters   */
-   int         x_len       = 0;                  /* source string length      */
-   int         x_count     = 0;                  /* whitespace counter        */
-   int         x_limit     = 0;
-   char        in_str      = '-';
-   /*---(defense: bad source)------------*/
-   strcpy (s_string, "(null)");
-   if (a_source == NULL)   return NULL;
-   x_len = strlen(a_source);
-   strcpy (s_string, "(empty)");
-   if (x_len    <= 0   )   return NULL;
-   /*---(prepare)------------------------*/
-   if (a_mode == 's')   x_limit = 1;
-   /*---(leading whitespace)-------------*/
-   if (strchr("hbsem", a_mode) != 0) {
-      for (i = 0; i <= x_len; ++i) {
-         if (a_source[0] != ' ') break;
-         for (j = 0; j <= x_len; ++j)
-            a_source[j] = a_source[j + 1];
-         --x_len;
-      }
-   }
-   /*---(trailing whitespace)------------*/
-   if (strchr("tbsem", a_mode) != 0) {
-      for (i = x_len - 1; i >= 0; --i) {
-         if (a_source[i] != ' ') break;
-         a_source[i] = '\0';
-         --x_len;
-      }
-   }
-   /*---(internal whitespace)------------*/
-   if (strchr("esm" , a_mode) != 0) {
-      for (i = 0; i <= x_len; ++i) {
-         /*---(check for strings)--------*/
-         if (a_mode != 'm') {
-            if (in_str == 'y') {
-               if (a_source[i] == '"') {
-                  /*> if (i > 0 && a_source[i-1] == '\\')  continue;                  <*/
-                  in_str = '-';
-                  continue;
-               }
-               continue;
-            } else {
-               if (a_source[i] == '"') {
-                  /*> if (i > 0 && a_source[i-1] == '\\')  continue;                  <*/
-                  in_str = 'y';
-                  continue;
-               }
-            }
-         }
-         /*---(check limit)--------------*/
-         if (a_source[i] != ' '    )  { x_count = 0; continue; }
-         if (x_count   <  x_limit)  { ++x_count;   continue; }
-         /*---(compress)-----------------*/
-         for (j = i; j <= x_len; ++j)
-            a_source[j] = a_source[j + 1];
-         --x_len;
-         --i;
-         /*---(done)---------------------*/
-      }
-   }
-   /*---(prepare for return)-------------*/
-   strncpy (s_string, a_source, MAX_STR);
-   /*---(complete)-----------------------*/
-   return a_source;
-}
 
 char*        /*--> clean string characters ---------------[--------[--------]-*/
 ySTR_clean         (char *a_source, char a_mode, char a_compress)
@@ -247,25 +166,6 @@ ySTR_clean         (char *a_source, char a_mode, char a_compress)
    /*---(complete)-----------------------*/
    DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
    return a_source;
-}
-
-char         /*--> count the number of a char in string --[ petal -[--------]-*/
-ySTR_count         (char *a_source, char a_char)
-{
-   /*---(locals)-------------------------*/
-   int         i           = 0;
-   int         x_len       = 0;
-   int         x_count     = 0;
-   /*---(defenses)-----------------------*/
-   if (a_source == NULL) return NULL;
-   /*---(count)--------------------------*/
-   x_len     = strlen (a_source);
-   for (i = 0; i <= x_len; ++i) {
-      if (a_source [i] != a_char)    continue;
-      ++x_count;
-   }
-   /*---(complete)-----------------------*/
-   return x_count;
 }
 
 char*      /*LD--: replace one substring with another -----------------------*/
@@ -1430,7 +1330,7 @@ INPT_cell          (
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   ySTR_trim (p, ySTR_BOTH);
+   strltrim (p, ySTR_BOTH, MAX_STR);
    strcpy (x_verb, p);
    DEBUG_INPT  yLOG_info    ("verb"      , x_verb);
    --rce;  if ((strcmp (x_verb, "cell_dep") != 0) && (strcmp (x_verb, "cell_free") != 0))  {
@@ -1446,7 +1346,7 @@ INPT_cell          (
       return rce;
    }
    x_len = strlen (p);
-   ySTR_trim (p, ySTR_BOTH);
+   strltrim (p, ySTR_BOTH, MAX_STR);
    if (x_len == 3 && strlen (p) == 1) {
       x_ver = p[0];
       p = strtok_r (NULL, q, &r);
@@ -1455,7 +1355,7 @@ INPT_cell          (
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      ySTR_trim (p, ySTR_BOTH);
+      strltrim (p, ySTR_BOTH, MAX_STR);
    }
    if (x_ver != ' ')  DEBUG_INPT  yLOG_char    ("ver num"   , x_ver);
    else               DEBUG_INPT  yLOG_info    ("ver num"   , "unassigned");
@@ -1474,7 +1374,7 @@ INPT_cell          (
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      ySTR_trim (p, ySTR_BOTH);
+      strltrim (p, ySTR_BOTH, MAX_STR);
    }
    /*---(clear sequence)-----------------*/
    DEBUG_INPT  yLOG_info    ("sequence"  , p);
@@ -1485,7 +1385,7 @@ INPT_cell          (
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   ySTR_trim (p, ySTR_BOTH);
+   strltrim (p, ySTR_BOTH, MAX_STR);
    DEBUG_INPT  yLOG_info    ("loc"       , p);
    rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
    DEBUG_INPT  yLOG_value   ("rc"        , rc);
@@ -1504,7 +1404,7 @@ INPT_cell          (
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   ySTR_trim (p, ySTR_BOTH);
+   strltrim (p, ySTR_BOTH, MAX_STR);
    DEBUG_INPT  yLOG_info    ("formatting", p);
    DEBUG_INPT  yLOG_value   ("length"    , strlen (p));
    --rce;
@@ -1631,32 +1531,32 @@ FILE_read          (char *a_name)
       /*---(prepare working variables)---*/
       strncpy   (x_temp, x_recd, MAX_STR);
       strncpy   (x_verb, x_recd, 10     );
-      ySTR_trim (x_verb, ySTR_BOTH);
+      strltrim  (x_verb, ySTR_BOTH, MAX_STR);
       /*---(get recd type)---------------*/
       p = strtok (x_recd, "\x1F");
       if (p == NULL)         continue;
       x_len = strlen (p);
       if (x_len <= 0)          continue;
       if (p[0] == '#')       continue;
-      ySTR_trim (p, ySTR_BOTH);
+      strltrim  (p, ySTR_BOTH, MAX_STR);
       /*---(process size)----------------*/
       if (strcmp (p, "format") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         x_ver = atoi (ySTR_trim (p, ySTR_BOTH));
+         x_ver = atoi (strltrim (p, ySTR_BOTH, MAX_STR));
       }
       /*---(versioned)-------------------*/
       if (strcmp (p, "versioned") == 0) {
          DEBUG_INPT  yLOG_note    ("found version entry");
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         ySTR_trim (p, ySTR_BOTH);
+         strltrim (p, ySTR_BOTH, MAX_STR);
          rc = FILE_version (p, ver_num);
          if (rc >= 0)   ver_ctrl = 'y';
          DEBUG_INPT  yLOG_info    ("ver_num"   , ver_num);
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         ySTR_trim (p, ySTR_BOTH);
+         strltrim (p, ySTR_BOTH, MAX_STR);
          strcpy (ver_txt, p);
          DEBUG_INPT  yLOG_info    ("ver_txt"   , ver_txt);
       }
@@ -1667,11 +1567,11 @@ FILE_read          (char *a_name)
       if (strcmp (p, "width") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         rc = LOC_parse (ySTR_trim (p, ySTR_BOTH), &x_tab, &x_col, &x_row, NULL);
+         rc = LOC_parse (strltrim (p, ySTR_BOTH, MAX_STR), &x_tab, &x_col, &x_row, NULL);
          if (rc < 0)         continue;
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         tabs[x_tab].cols[x_col].w = atoi (ySTR_trim (p, ySTR_BOTH));
+         tabs[x_tab].cols[x_col].w = atoi (strltrim (p, ySTR_BOTH, MAX_STR));
          tabs[x_tab].active = 'y';
          continue;
       }
@@ -1679,11 +1579,11 @@ FILE_read          (char *a_name)
       if (strcmp (p, "height") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         rc = LOC_parse (ySTR_trim (p, ySTR_BOTH), &x_tab, &x_col, &x_row, NULL);
+         rc = LOC_parse (strltrim (p, ySTR_BOTH, MAX_STR), &x_tab, &x_col, &x_row, NULL);
          if (rc < 0)         continue;
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         tabs[x_tab].rows[x_row].h = atoi (ySTR_trim (p, ySTR_BOTH));
+         tabs[x_tab].rows[x_row].h = atoi (strltrim (p, ySTR_BOTH, MAX_STR));
          tabs[x_tab].active = 'y';
          continue;
       }
@@ -1708,7 +1608,7 @@ FILE_read          (char *a_name)
        *>    p = strtok (NULL, "\x1F");                                                     <* 
        *>    DEBUG_INPT  yLOG_info    ("loc"       , p);                                    <* 
        *>    if (p == NULL)      continue;                                                  <* 
-       *>    rc = LOC_parse (ySTR_trim (p, ySTR_BOTH), &x_tab, &x_col, &x_row, NULL);       <* 
+       *>    rc = LOC_parse (strltrim (p, ySTR_BOTH, MAX_STR), &x_tab, &x_col, &x_row, NULL);       <* 
        *>    DEBUG_INPT  yLOG_value   ("rc"        , rc);                                   <* 
        *>    DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);                                <* 
        *>    DEBUG_INPT  yLOG_value   ("x_col"     , x_col);                                <* 
@@ -1717,7 +1617,7 @@ FILE_read          (char *a_name)
        *>    /+---(formatting)---------------+/                                             <* 
        *>    p = strtok (NULL, "\x1F");                                                     <* 
        *>    if (p == NULL)      continue;                                                  <* 
-       *>    ySTR_trim (p, ySTR_BOTH);                                                      <* 
+       *>    strltrim (p, ySTR_BOTH, MAX_STR);                                                      <* 
        *>    DEBUG_INPT  yLOG_info    ("formatting", p);                                    <* 
        *>    if (strlen (p) != 7)  continue;                                                <* 
        *>    x_format = p[2];                                                               <* 

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0h"
-#define     VER_TXT   "pass unit test on special number formatting"
+#define     VER_NUM   "1.0i"
+#define     VER_TXT   "removed internal ySTR_trim, replaced with strltrim"
 
 
 
@@ -1064,14 +1064,6 @@ char      FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level
 char      FILE_write         (char *a_name);
 char      XML3_read          (char *a_name);
 
-char     *ySTR_trim          (char *a_source, char a_mode);
-#define    ySTR_NONE      'n'
-#define    ySTR_HEAD      'h'
-#define    ySTR_TAIL      't'
-#define    ySTR_BOTH      'b'
-#define    ySTR_SINGLE    's'
-#define    ySTR_EVERY     'e'
-#define    ySTR_MAX       'm'
 
 char*     ySTR_clean         (char *a_source, char a_mode, char a_compress);
 #define    ySTR_ALPHA     'a'
@@ -1083,7 +1075,6 @@ char*     ySTR_clean         (char *a_source, char a_mode, char a_compress);
 #define    ySTR_SEVEN     '7'
 #define    ySTR_COMPRESS  '\0'
 
-char         ySTR_count         (char *a_source, char a_char);
 
 char     *ySTR_repl          (char *a_source, cchar *a_old, cchar *a_new, cint a_count);
 #define    ySTR_ONE         1

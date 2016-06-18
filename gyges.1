@@ -99,18 +99,56 @@ parsed for a cell reference and its formula evaluated relative to the new positi
 given that gyges will be supporting my robotics and kinetics, i need a very
 supportive plane and spherical trigonometry function set.
 
-.B deg   (rads)                 -- convert radians to degrees
-.B rad   (degs)                 -- convert degrees to radians
-.B sin   (degs), sinr  (rads)   -- sine
-.B cos   (degs), cosr  (rads)   -- cosine
-.B tan   (degs), tanr  (rads)   -- tangent
-.B csc   (degs), cscr  (rads)   -- cosecant
-.B sec   (degs), secr  (rads)   -- secant
-.B cot   (degs), cotr  (rads)   -- cotangent
-.B crd   (degs), crdr  (rads)   -- chord
-.B asin  (degs), asinr (rads)   -- arcsine
-.B acos  (degs), acosr (rads)   -- arccosine
-.B atan  (degs), atanr (rads)   -- arctangent
+.B basic constants
+   pi     ()                     constant value to seven decimals
+
+.B conversions
+   deg   (rads)                 convert radians to degrees
+   rad   (degs)                 convert degrees to radians
+
+.B basic functions (both return the same value)
+   sin   (degs) , sinr  (rads)     sine
+   cos   (degs) , cosr  (rads)     cosine
+   tan   (degs) , tanr  (rads)     tangent
+   csc   (degs) , cscr  (rads)     cosecant
+   sec   (degs) , secr  (rads)     secant
+   cot   (degs) , cotr  (rads)     cotangent
+
+.B inverse functions (return either degs or rads)
+   asin  (    ) , asinr (    )     arcsine
+   acos  (    ) , acosr (    )     arccosine
+   atan  (    ) , atanr (    )     arctangent
+   acsc  (    ) , acscr (    )     arccosecant
+   asec  (    ) , asecr (    )     arcsectant
+   acot  (    ) , acotr (    )     arccotangent
+
+.B hyperbolic functions
+   sinh  (    ) , sinhr (    )     sine
+   cosh  (    ) , coshr (    )     cosine
+   tanh  (    ) , tanhr (    )     tangent
+   csch  (    ) , cschr (    )     cosecant
+   sech  (    ) , sechr (    )     secant
+   coth  (    ) , cothr (    )     cotangent
+
+.B historical functions
+   ver   (degs) , verr  (rads)     versed sine
+   vsc   (degs) , vscr  (rads)     versed cosine
+   cvs   (degs) , cvsr  (rads)     coversed sine
+   cvc   (degs) , cvcr  (rads)     coversed cosine
+   hav   (degs) , havr  (rads)     half versed sine
+   hvc   (degs) , hvcr  (rads)     half versed cosine
+   hcv   (degs) , hcvr  (rads)     half coversed sine
+   hcc   (degs) , hccr  (rads)     half coversed cosine
+   exs   (degs) , exsr  (rads)     exterior secant
+   exc   (degs) , excr  (rads)     exterior cosecant
+   crd   (degs) , crdr  (rads)     chord
+   arc   (degs) , arcr  (rads)     bisected arc
+
+.B side solutions
+   hypot (side , side)             solves for hypotoneus
+   side  (hypot, side)             solves for the other side
+
+
 
 .SH VISUAL SELECTION
 
