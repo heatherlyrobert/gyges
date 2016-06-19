@@ -8708,7 +8708,7 @@ SCRP          (s_cell) printable time formats                              CEL
 
 #23456789012  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SECT          v21  (gyges_file) version numbering                                                                                                                                                                                              
+SECT          v21  (gyges_file) file reading and writing                                                                                                                                                                                       
 
 
 
@@ -9224,6 +9224,12 @@ SCRP          (s_file) verify the reading of tab records                   INP
 
    COND       verify program teardown                                                                                                                                                                                         
      exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
+
+
+
+#23456789012  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SECT          v21  checking input and source modes                                                                                                                                                                                             
 
 
 
@@ -10088,166 +10094,6 @@ SCRP          (s_move) verify edge movements                               KEY
      exec     purge the cells                      CELL__purge                                                                         i_equal     0                                                                       04 
      get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)             04 
      get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-
-
-
-#23456789012  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-  123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  12 
-#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ====(return var)====  ==(test)==  ==========================(results)===================================  ve 
-SCRP          (s_file) verify functioning of ySTR_trim                     ySTR_trim                                                                                                                                                                     05 
-
-   COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
-
-   COND       setup some testing variables                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     create the input string              char  x_orig   [2000] = "    testing for,  a/\"clear  result\".   ";                                                                                                                                  05 
-     code     create the working string            char  x_work   [2000] = "";                                                                                                                                                                           05 
-     code     create a return variable             char *x_return        = NULL;                                                                                                                                                                         05 
-
-   COND       do no trimming on the string                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_NONE                                                        p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   39) :    testing for,  a/\"clear  result\".   :  05 
-
-   COND       trim the front of the string                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_HEAD                                                        p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   35) :testing for,  a/\"clear  result\".   :      05 
-
-   COND       trim the tail of the string                                  ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_TAIL                                                        p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   36) :    testing for,  a/\"clear  result\".:     05 
-
-   COND       trim both sides of the string                                ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_BOTH                                                        p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   32) :testing for,  a/\"clear  result\".:         05 
-
-   COND       try bad modes                                                ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , '-'                                                              p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   39) :    testing for,  a/\"clear  result\".   :  05 
-     exec     call the function                    ySTR_trim             x_work           , '0'                                                              p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   39) :    testing for,  a/\"clear  result\".   :  05 
-     exec     call the function                    ySTR_trim             x_work           , ' '                                                              p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   39) :    testing for,  a/\"clear  result\".   :  05 
-     exec     call the function                    ySTR_trim             x_work           , 'B'                                                              p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   39) :    testing for,  a/\"clear  result\".   :  05 
-
-   COND       compress non-quoted whitespace to one each                   ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_SINGLE                                                      p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   31) :testing for, a/\"clear  result\".:          05 
-
-   COND       compress non-quoted whitespace out of the string             ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_EVERY                                                       p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   29) :testingfor,a/\"clear  result\".:            05 
-
-   COND       try a null string                                            ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     exec     call the function                    ySTR_trim             NULL             , ySTR_EVERY                                                       p_null      0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (-----) ::                                           05 
-
-   COND       try an empty string                                          ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, ""    );                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_EVERY                                                       p_null      0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (    0) ::                                           05 
-
-   COND       compress all whitespace out of the string                    ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_trim             x_work           , ySTR_MAX                                                         p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   27) :testingfor,a/\"clearresult\".:              05 
-
-
-   COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
-
-
-#23456789012  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-  123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  12 
-#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ====(return var)====  ==(test)==  ==========================(results)===================================  ve 
-SCRP          (s_file) verify functioning of ySTR_clean                    ySTR_clean                                                                                                                                                                    05 
-
-   COND       verify program setup                                         ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
-
-   COND       setup some testing variables                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     create the input string              char  x_orig   [2000] = "testing for (.ne) :- or [an0the9] ?!#t";                                                                                                                                    
-     code     create the working string            char  x_work   [2000] = "";                                                                                                                                                                          
-     code     create a return variable             char *x_return        = NULL;                                                                                                                                                                        
-
-   COND       do no cleaning on the string                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                             
-     exec     call the function                    ySTR_clean            x_work           , ySTR_NONE      , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for (.ne) :- or [an0the9] ?!#t:     05 
-
-   COND       agressive alpha cleaning (no compress)                       ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_ALPHA     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for __ne_ __ or _an_the__ ___t:     05 
-
-   COND       agressive alpha cleaning (compress)                          ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_ALPHA     , ySTR_COMPRESS                                   p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   26) :testing for ne  or anthe t:                 05 
-
-   COND       now alpha-numeric cleaning (no compress)                     ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_ALNUM     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for __ne_ __ or _an0the9_ ___t:     05 
-
-   COND       and, basic cleaning (no compress)                            ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_BASIC     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for __ne_ _- or _an0the9_ ___t:     05 
-
-   COND       then, writing cleaning (no compress)                         ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_WRITE     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for (.ne) :- or _an0the9_ ?!_t:     05 
-
-   COND       then, writing cleaning (no compress) with new replacement    ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_WRITE     , '~'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for (.ne) :- or ~an0the9~ ?!~t:     05 
-
-   COND       then, writing cleaning (with compression)                    ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_WRITE     , ySTR_COMPRESS                                   p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   35) :testing for (.ne) :- or an0the9 ?!t:        05 
-
-   COND       and, extending cleaning (no compress)                        ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_EXTEN     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for (.ne) :- or [an0the9] ?!#t:     05 
-
-   COND       finally, 7-bit safe cleaning                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_SEVEN     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   38) :testing for (.ne) :- or [an0the9] ?!#t:     05 
-
-   COND       now change the original                                      ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     alter the original string            strcpy (x_orig, "test ;#\tone10");                                                                                                                                                                    05 
-     code     and add a extended char              x_orig [ 3] = 200;                                                                                                                                                                                    05 
-     code     and add a extended char              x_orig [10] =  -5;                                                                                                                                                                                    05 
-
-   COND       again with extended cleaning                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_EXTEN     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   13) :tes_ ;#_on_10:                              05 
-
-   COND       finally, 7-bit safe cleaning                                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_SEVEN     , '_'                                             p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   13) :tes_ ;#\ton_10:                             05 
-
-   COND       then, 7-bit safe cleaning (with compression)                 ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
-     code     refresh working string               strcpy (x_work, x_orig);                                                                                                                                                                              05 
-     exec     call the function                    ySTR_clean            x_work           , ySTR_SEVEN     , ySTR_COMPRESS                                   p_exists    0                                                                       05 
-     get      check the final string               FILE_unit             "string"         , 0                                                                s_equal     s_file string    : (   11) :tes ;#\ton10:                               05 
-
-   COND       verify program teardown                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
-     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
-
 
 
 

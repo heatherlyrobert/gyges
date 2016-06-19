@@ -133,14 +133,14 @@ KEYS_normal        (
                       /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/
       /*> case 'C'      : strncpy (contents, ""  , MAX_STR); my.npos = 0; my.cpos = 0; mode = MODE_INPUT; break;   <*/
       case 's'      : strncpy (contents, ""  , MAX_STR); my.npos = 0; my.cpos = 0; mode = MODE_INPUT; break;
-                      /*> case 'S'      : strncpy (contents, "\"", MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <*/
-      /*> case '='      : strncpy (contents, "=" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '~'      : strncpy (contents, "~" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
+      /*> case 'S'      : strncpy (contents, "\"", MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <*/
+      case '='      : strncpy (contents, "=" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
+      /*> case '~'      : strncpy (contents, "~" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
        *> case '&'      : strncpy (contents, "&" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '#'      : strncpy (contents, "#" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '!'      : strncpy (contents, "!" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '+'      : strncpy (contents, "+" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '-'      : strncpy (contents, "-" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <*/
+       *> case '!'      : strncpy (contents, "!" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <*/
+      case '#'      : strncpy (contents, "#" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
+      case '+'      : strncpy (contents, "+" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
+      case '-'      : strncpy (contents, "-" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
                       /*---(new stuff)----------------*/
       case 'u'      : HIST_undo ();                   break;
       case 'U'      : HIST_redo ();                   break;

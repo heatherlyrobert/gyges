@@ -100,11 +100,10 @@ given that gyges will be supporting my robotics and kinetics, i need a very
 supportive plane and spherical trigonometry function set.
 
 .B basic constants
-   pi     ()                     constant value to seven decimals
+   pi    ()                        PI to seven decimals
 
 .B conversions
-   deg   (rads)                 convert radians to degrees
-   rad   (degs)                 convert degrees to radians
+   deg   (rads) , rad   (degs)     convert deg/rad
 
 .B basic functions (both return the same value)
    sin   (degs) , sinr  (rads)     sine
@@ -115,22 +114,24 @@ supportive plane and spherical trigonometry function set.
    cot   (degs) , cotr  (rads)     cotangent
 
 .B inverse functions (return either degs or rads)
-   asin  (    ) , asinr (    )     arcsine
-   acos  (    ) , acosr (    )     arccosine
-   atan  (    ) , atanr (    )     arctangent
-   acsc  (    ) , acscr (    )     arccosecant
-   asec  (    ) , asecr (    )     arcsectant
-   acot  (    ) , acotr (    )     arccotangent
+   asin  (x)    , asinr (x)        arcsine
+   acos  (x)    , acosr (x)        arccosine
+   atan  (x)    , atanr (x)        arctangent
+   atan2 (x, y) , atan2r(x, y)     arctangent
+   acsc  (x)    , acscr (x)        arccosecant
+   asec  (x)    , asecr (x)        arcsectant
+   acot  (x)    , acotr (x)        arccotangent
+   acot2 (x, y) , acot2r(x, y)     arccotangent
 
-.B hyperbolic functions
-   sinh  (    ) , sinhr (    )     sine
-   cosh  (    ) , coshr (    )     cosine
-   tanh  (    ) , tanhr (    )     tangent
-   csch  (    ) , cschr (    )     cosecant
-   sech  (    ) , sechr (    )     secant
-   coth  (    ) , cothr (    )     cotangent
+.B hyperbolic functions (future expansion)
+   sinh  (x)    , sinhr (x)        sine
+   cosh  (x)    , coshr (x)        cosine
+   tanh  (x)    , tanhr (x)        tangent
+   csch  (x)    , cschr (x)        cosecant
+   sech  (x)    , sechr (x)        secant
+   coth  (x)    , cothr (x)        cotangent
 
-.B historical functions
+.B historical functions (both functions return the same value)
    ver   (degs) , verr  (rads)     versed sine
    vsc   (degs) , vscr  (rads)     versed cosine
    cvs   (degs) , cvsr  (rads)     coversed sine

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0i"
-#define     VER_TXT   "removed internal ySTR_trim, replaced with strltrim"
+#define     VER_NUM   "1.0j"
+#define     VER_TXT   "completed transition fully to ySTR string functions"
 
 
 
@@ -1075,10 +1075,6 @@ char*     ySTR_clean         (char *a_source, char a_mode, char a_compress);
 #define    ySTR_SEVEN     '7'
 #define    ySTR_COMPRESS  '\0'
 
-
-char     *ySTR_repl          (char *a_source, cchar *a_old, cchar *a_new, cint a_count);
-#define    ySTR_ONE         1
-#define    ySTR_ALL      5000
 
 
 #endif

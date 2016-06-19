@@ -168,32 +168,6 @@ ySTR_clean         (char *a_source, char a_mode, char a_compress)
    return a_source;
 }
 
-char*      /*LD--: replace one substring with another -----------------------*/
-ySTR_repl          (char *a_source, cchar *a_old, cchar *a_new, cint a_count)
-{
-   /*---(defenses)-----------------------*/
-   if (a_source == NULL) return NULL;
-   /*---(locals)-------------------------*/
-   int       i;
-   int       lens      = strlen(a_source);
-   int       leno      = strlen(a_old);
-   int       lenn      = strlen(a_new);
-   char      new [MAX_STR];
-   char      xfound    = 0;
-   /*---(find old)-----------------------*/
-   for (i = 0; i <= lens; ++i) {
-      if (strncmp(a_source + i, a_old, leno) != 0) continue;
-      snprintf (new, MAX_STR, "%-*.*s%s%s", i, i, a_source, a_new, a_source + i + leno);
-      strncpy (a_source, new, MAX_STR);
-      lens = strlen(a_source);
-      ++xfound;
-      if (xfound >= a_count) break;
-      i = i + lenn;
-   }
-   /*---(complete)-----------------------*/
-   return a_source;
-}
-
 
 
 /*====================------------------------------------====================*/
