@@ -543,7 +543,7 @@ KEYS_format        (int  a_prev, int  a_curr)
    case  '+' : CELL_format   (CHG_INPUT, '+');  break;  /* filled plus     */
    case  ' ' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
 
-   case  '"' : CELL_format   (CHG_INPUT, '"'); CELL_align    (CHG_INPUT, '"'); CELL_decimals (CHG_INPUT, '"');  break;  /* filled empty    */
+   /*> case  '"' : CELL_format   (CHG_INPUT, '"'); CELL_align    (CHG_INPUT, '"'); CELL_decimals (CHG_INPUT, '"');  break;  /+ filled empty    +/   <*/
    }
    return 0;
 }
@@ -689,7 +689,7 @@ KEYS_command  (int  a_prev, int  a_curr)
    x_len = strlen (command);
    switch (a_curr) {
    case   27 : mode = MODE_NORMAL; return 0;   /* escape  */
-   case   10 : mode = MODE_NORMAL; cmd_exec(command); return 0;   /* return  */
+   case   10 : mode = MODE_NORMAL; cmd_exec (command); return 0;   /* return  */
    }
    /*---(check for backspace)------------*/
    if (a_curr == 8 || a_curr == 127) {

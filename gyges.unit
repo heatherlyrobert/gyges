@@ -2,7 +2,6 @@
 #
 
 
-
 #23456789012  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
 PREP          v21  include the prototype headers                               
@@ -9010,6 +9009,38 @@ SCRP          (s_file) version bumping                                     FIL
    COND       verify program teardown                                                                                                                                                                                         
      exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
+
+
+#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)=================================== 
+SCRP          (gyges_file) verify the reading of cell records              INPT_cell                                                                                                                                            
+
+   COND       verify program setup                                                                                                                                                                                            
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                      
+     code     tab record                           char   x_recd [MAX_STR] = "";                                                                                                                                                
+     code     create a pointer to one cell         tCELL *x_one  = NULL;                                                                                                                                                      
+     code     create a pointer to another          tCELL *x_two  = NULL;                                                                                                                                                      
+     code     create a pointer again               tCELL *x_thr  = NULL;                                                                                                                                                      
+
+   COND       check the cell linked list                                                                                                                                                                                      
+     get      review the cell linked list          CELL__unit            "cell_list",     NULL                                         u_round/1   s_cell main list : num=   0, head=    (nil), tail=    (nil)            
+     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       check the initial tab state                                                                                                                                                                                     
+     get      review the current position          move_unit             "tab_pos"        , 0                                          s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
+     get      review the maximum position          move_unit             "tab_max"        , 0                                          s_equal     s_move tab max   : tab=   0, col=  26, row= 100                        
+
+   COND       load a simple independent cell                                                                                                                                                                                  
+     code     v21  save an input record                 - - - - - - - - - - -  strcpy (x_recd, "cell_free   -D-                       0a1      n ? 0 > -  44904");        
+     exec     call the tab parsing routine         INPT_cell             x_recd                                                        i_equal     0                                                                      
+     exec     get the cell                         LOC_at                "0a1"                                                         i_equal     0                                                                      
+     code     save cell pointer                    x_one  = yUNIT_p_rc;                                                                                                                                                       
+     get      review the cell counts               CELL__unit            "cell_count",    NULL                                         s_equal     s_cell count     : all=   2, num=   1, fore=   1, back=   1            
+     get      check the cell's source string       unit_accessor         "cell_source",   x_one                                        s_equal     Cell Source      : (    5) :44904:                           
+     get      check the cell's information         unit_accessor         "cell_info",     x_one                                        s_equal     Cell Information : t=n f=? d=0 a=> c=  0 r=  0 d=  0         
+     get      check the cell's value               unit_accessor         "cell_value",    x_one                                        s_equal     Cell Value       :       44904.000000                        
+
+   COND       verify program teardown                                                                                                                                                                                         
+     exec     wrap-up the program                  PROG_testend                                                                        i_equal     0                                                                      
 
 
 

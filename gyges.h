@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0j"
-#define     VER_TXT   "completed transition fully to ySTR string functions"
+#define     VER_NUM   "1.0k"
+#define     VER_TXT   "update file reading of cells, very basic unit test"
 
 
 

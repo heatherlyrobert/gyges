@@ -1249,6 +1249,88 @@ FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
 PRIV void  o___SIZES___________o () { return; }
 
 char         /* parse a cell entry -----------------------[--------[--------]-*/
+INPT_cellD         (
+      /*----------+-----------+-----------------------------------------------*/
+      cchar      *a_recd)     /* input record (const)                         */
+{  /*---(design notes)--------------------------------------------------------*/
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;
+   int         i           = 0;
+   int         x_len       = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   char        x_format    = '-';
+   char        x_decs      = '0';
+   char        x_align     = '-';
+   char        x_bformat   [10];
+   tCELL      *new         = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(read fields)--------------------*/
+   for (i = 1; i < 20; ++i) {
+      DEBUG_INPT   yLOG_note    ("read next field");
+      s_p = strtok_r (NULL  , s_q, &s_context);
+      --rce;  if (s_p == NULL) {
+         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
+         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+         break;
+      }
+      if (i != 5) strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      x_len = strlen (s_p);
+      switch (i) {
+      case  1 :  /*---(dep graph)--------*/
+         break;
+      case  2 :  /*---(seq number)-------*/
+         break;
+      case  3 :  /*---(location)----------*/
+         rc = LOC_parse (s_p, &x_tab, &x_col, &x_row, NULL);
+         DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
+         DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
+         DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
+         if (rc < 0) {
+            DEBUG_INPT  yLOG_value   ("rc"        , rc);
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce - i;
+         }
+         if (rc < 0) {
+            DEBUG_INPT  yLOG_value   ("rc"        , rc);
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce - i;
+         }
+         break;
+      case  4 :  /*---(formatting)--------*/
+         if (x_len != 9) return rce - i;
+         x_format = s_p [2];
+         x_decs   = s_p [4];
+         x_align  = s_p [6];
+         DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
+         DEBUG_INPT  yLOG_char    ("x_decs"    , x_decs);
+         DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
+         sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);
+         break;
+      case  5 :  /*---(source)------------*/
+         DEBUG_INPT  yLOG_info    ("source"    , s_p + 1);
+         new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, s_p + 1, x_bformat);
+         DEBUG_INPT  yLOG_point   ("new"       , new);
+         if (new == NULL) {
+            DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce - i;
+         }
+         break;
+      }
+      DEBUG_INPT   yLOG_note    ("done with loop");
+   } 
+   DEBUG_INPT   yLOG_note    ("done parsing fields");
+   DEBUG_INPT   yLOG_note    ("activate tab");
+   tabs [x_tab].active = 'y';
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /* parse a cell entry -----------------------[--------[--------]-*/
 INPT_cell          (
       /*----------+-----------+-----------------------------------------------*/
       cchar      *a_recd)     /* input record (const)                         */
@@ -1298,14 +1380,14 @@ INPT_cell          (
    }
    /*---(defense: type/verb)-------------*/
    strncpy (x_temp, a_recd, MAX_STR);
-   p = strtok_r (x_temp, q, &r);
-   --rce;  if (p == NULL) {
+   s_p = strtok_r (x_temp, s_q, &s_context);
+   --rce;  if (s_p == NULL) {
       DEBUG_INPT  yLOG_warn    ("ERROR"     , "record type null");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   strltrim (p, ySTR_BOTH, MAX_STR);
-   strcpy (x_verb, p);
+   strltrim (s_p, ySTR_BOTH, MAX_STR);
+   strcpy (x_verb, s_p);
    DEBUG_INPT  yLOG_info    ("verb"      , x_verb);
    --rce;  if ((strcmp (x_verb, "cell_dep") != 0) && (strcmp (x_verb, "cell_free") != 0))  {
       DEBUG_INPT  yLOG_warn    ("ERROR"     , "not a cell_dep or cell_free record");
@@ -1313,6 +1395,43 @@ INPT_cell          (
       return rce;
    }
    /*---(ver number)---------------------*/
+   s_p = strtok_r (NULL, s_q, &s_context);
+   --rce;  if (s_p == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   strltrim  (s_p, ySTR_BOTH, LEN_RECD);
+   --rce;  if (strlen (s_p) != 3) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (s_p[0] != '-')  {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (s_p[2] != '-') {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   x_ver = s_p[1];
+   DEBUG_INPT  yLOG_char    ("ver num"   , x_ver);
+   --rce;  if (strchr (s_vers, x_ver) == 0) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(handle versions)----------------*/
+   switch (x_ver) {
+   case '*' : /* latest */
+   case 'D' : INPT_cellD (x_temp);
+              DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+              return 0;
+              break;
+   }
+
+
+
+
+   /*---(sequence)-----------------------*/
    p = strtok_r (NULL, q, &r);
    --rce;  if (p == NULL) {
       DEBUG_INPT  yLOG_warn    ("ERROR"     , "version null");
