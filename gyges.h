@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0k"
-#define     VER_TXT   "update file reading of cells, very basic unit test"
+#define     VER_NUM   "1.0j"
+#define     VER_TXT   "fixed exp() and added sqr()"
 
 
 
@@ -1057,6 +1057,7 @@ char      SYLK_write         (char *a_name, char a_variation);
 char      FILE_version       (char *a_ver, char *a_final);
 char      FILE_bump          (char a_type, char *a_ver);
 
+char      INPT_cell          (cchar *a_recd);
 char      INPT_tab           (cchar *a_recd);
 char      FILE_read          (char *a_name);
 

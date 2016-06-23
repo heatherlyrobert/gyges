@@ -1901,7 +1901,7 @@ FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    /*---(header)-------------------------*/
    if (*a_seq == 0) {
       fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ DEPENDENCY TREE, in reverse order ]]==================================================================\n");
+      fprintf (a_file, "#===[[ DEPENDENCY TREE, in reverse order ]]==========================================================================#\n");
    }
    /*---(prepare)------------------------*/
    if      (a_level == 0 )   sprintf (x_pre, "root         ");
@@ -1910,12 +1910,12 @@ FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    else                      sprintf (x_pre, "            +");
    /*---(print)--------------------------*/
    if (*a_seq % 5 == 0 || a_level == 0) {
-      fprintf (a_file, "#--------- %c ---level---- %c -seq- %c ---loc--", 31, 31, 31);
-      fprintf (a_file, " %c t-f-d-a %c ---source--------------------------------------\n", 31, 31);
+      fprintf (a_file, "#--------- %c ver %c ---level---- %c -seq- %c ---loc--", 31, 31, 31);
+      fprintf (a_file, " %c t-f-d-a-m %c ---source--------------------------------------\n", 31, 31);
    }
-   fprintf (a_file, "cell_dep   %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %s\n",
-         31, x_pre, 31, *a_seq, 31, a_curr->label,
-         31, a_curr->t, a_curr->f, a_curr->d, a_curr->a,
+   fprintf (a_file, "cell_dep    %c %s %c %-12.12s%c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",
+         31, "-D-", 31, x_pre, 31, *a_seq, 31, a_curr->label,
+         31, a_curr->t, a_curr->f, a_curr->d, a_curr->a, '-',
          31, a_curr->s);
    ++(*a_seq);
    /*---(update)-------------------------*/
@@ -1952,7 +1952,7 @@ FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
    /*---(header)-------------------------*/
    if (*a_seq == 0) {
       fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=====================================================\n");
+      fprintf (a_file, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
    }
    /*---(cells)--------------------------*/
    for (x = a_bcol; x <= a_ecol; ++x) {
@@ -1964,13 +1964,13 @@ FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
          if (tabs[a_tab].sheet[x][y]->t == 'l'    )     continue;
          if (tabs[a_tab].sheet[x][y]->u == a_stamp)     continue;
          if (*a_seq % 5 == 0) {
-            fprintf (a_file, "#--------- %c ---level---- %c -seq- %c ---loc-- %c ", 31, 31, 31, 31);
-            fprintf (a_file, "t-f-d-a %c ---source--------------------------------------\n", 31, 31);
+            fprintf (a_file, "#--------- %c ver %c ---level---- %c -seq- %c ---loc-- %c ", 31, 31, 31, 31);
+            fprintf (a_file, "t-f-d-a-m %c ---source--------------------------------------\n", 31, 31);
          }
-         fprintf (a_file, "cell_free  %c              %c %5d %c %-8.8s %c %c %c %c %c %c %s\n",
-               31, 31, *a_seq, 31, tabs[a_tab].sheet[x][y]->label, 31,
+         fprintf (a_file, "cell_free  %c %s %c              %c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",
+               31, "-D-", 31, 31, *a_seq, 31, tabs[a_tab].sheet[x][y]->label, 31,
                tabs[a_tab].sheet[x][y]->t, tabs[a_tab].sheet[x][y]->f, tabs[a_tab].sheet[x][y]->d,
-               tabs[a_tab].sheet[x][y]->a, 31, tabs[a_tab].sheet[x][y]->s);
+               tabs[a_tab].sheet[x][y]->a, '-', 31, tabs[a_tab].sheet[x][y]->s);
          ++(*a_seq);
       }
    }

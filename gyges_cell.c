@@ -2087,7 +2087,12 @@ CELL__unitnew      (
    } else {
       rc     = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
       if (rc < 0) {
-         sprintf (unit_answer, "s_celln          : label <%s> not legal, rc = %d", a_label, rc);
+         sprintf (unit_answer, "s_celln error    : label <%s> not legal", a_label);
+         return unit_answer;
+      }
+      rc     = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
+      if (rc < 0) {
+         sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;
       }
       x_cell = LOC_cell  (x_tab, x_col, x_row);

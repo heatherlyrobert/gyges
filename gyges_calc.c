@@ -843,7 +843,7 @@ CALC__power        (void)
    a = CALC__popval ();
    b = CALC__popval ();
    c = b;
-   for (i = 0; i < a; ++i)  c *= b;
+   for (i = 1; i <  a; ++i)  c *= b;
    CALC_pushval (c);
    return;
 }
@@ -902,6 +902,14 @@ CALC__sqrt          (void)
 {
    a = CALC__popval ();
    CALC_pushval (sqrt(a));
+   return;
+}
+
+PRIV void
+CALC__sqr           (void)
+{
+   a = CALC__popval ();
+   CALC_pushval (a * a);
    return;
 }
 
@@ -1842,7 +1850,7 @@ CALC__vlookup       (void)
    int OFF = ((int) CALC__popval()) - 1;
    int R2  =  (int) CALC__popval();
    int C2  =  (int) CALC__popval();
-   int T2  = (int) CALC__popval();
+   int T2  =  (int) CALC__popval();
    int R1  =  (int) CALC__popval();
    int C1  =  (int) CALC__popval();
    int T1  =  (int) CALC__popval();
@@ -1937,6 +1945,7 @@ struct  cFUNCS {
    { "ceil"       ,  0, CALC__ceiling           , "-----"                    },
    { "floor"      ,  0, CALC__floor             , "-----"                    },
    { "sqrt"       ,  0, CALC__sqrt              , "-----"                    },
+   { "sqr"        ,  0, CALC__sqr               , "-----"                    },
    { "rand"       ,  0, CALC__rand              , "-----"                    },
    /*---(trig functions)------------------*/
    { "radians"    ,  0, CALC__radians           , "-----"                    },
