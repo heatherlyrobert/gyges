@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0l"
-#define     VER_TXT   "added a dirty copy_values to vi_clip.txt for yKINE"
+#define     VER_NUM   "1.0m"
+#define     VER_TXT   "added existing string functions to man page"
 
 
 

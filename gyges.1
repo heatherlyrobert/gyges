@@ -156,6 +156,38 @@ supportive plane and spherical trigonometry function set.
    hypot (side , side)             solves for hypotoneus
    side  (hypot, side)             solves for the other side
 
+.SH STRINGS
+no matter the end use of a spreadsheet, the need to handle complex string
+manipulations is critical.  when <s> is shown below, it can be either a
+literal string or a cell reference.  the numbers <n> and <m> can also be
+either literal numbers or cell references.
+
+.B concatination
+   s#t                             concatenates s directly to t
+   s##t                            concatenates s to t with a space between
+
+.B substrings
+   left   (s, n)                   left <n> characters
+   right  (s, n)                   right <n> characters
+   mid    (s, n, m)                <m> chars starting at <n>
+   len    (s)                      returns the length of <s>
+
+.B ascii
+   char   (n)                      ascii character for ascii code <n>
+   code   (c)                      ascii character number of character <c>
+
+.B cases
+   upper  (s)                      upper case version of string <s>
+   lower  (s)                      lower case version of string <s>
+
+.B trimming spaces
+   trim   (s)                      removes leading and trailing spaces
+   rtrim  (s)                      removes trailing/right-side spaces
+   ltrim  (s)                      removes leading/left-side spaces
+   strim  (s)                      removes all duplicate spaces (single)
+   etrim  (s)                      removes all non-quoted spaces (every)
+   mtrim  (s)                      removes all spaces (max)
+
 
 
 .SH VISUAL SELECTION
