@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0k"
-#define     VER_TXT   "fixed tab writing incorrect version number problem"
+#define     VER_NUM   "1.0l"
+#define     VER_TXT   "added a dirty copy_values to vi_clip.txt for yKINE"
 
 
 
@@ -884,6 +884,7 @@ char      REG_copy           (void);
 char      REG_cut            (void);
 char      REG_append         (void);
 char      REG_paste          (void);
+char      REG_valuesout      (void);
 
 char      REG_file           (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);

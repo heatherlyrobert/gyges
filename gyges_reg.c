@@ -645,6 +645,49 @@ REG_paste          (void)
    return 0;
 }
 
+char
+REG_valuesout     (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          = 0;
+   tCELL      *curr        = NULL;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   int         x_rowsave   = 0;
+   FILE       *f           = NULL;
+   int         w           = 0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(open output file)---------------*/
+   f = fopen("/root/z_gehye/vi_clip.txt", "w");
+   --rce;  if (f == NULL)      return rce;
+   /*---(process independent cells)------*/
+   curr  = SEL_first (&x_tab, &x_col, &x_row);
+   x_rowsave = x_row;
+   while (curr != DONE_DONE) {
+      DEBUG_REGS   yLOG_point   ("curr"      , curr);
+      /*---(look for line break)---------*/
+      if (x_row != x_rowsave)  fprintf (f, "\n");
+      /*---(fill in blank cells)---------*/
+      if (curr == NULL) {
+         w = tabs [x_tab].cols [x_col].w;
+         fprintf (f, "%*.*s", w, w, "                                          ");
+      }
+      /*---(write filled cells)----------*/
+      else {
+         fprintf (f, "%s", curr->p);
+      }
+      x_rowsave = x_row;
+      curr  = SEL_next (&x_tab, &x_col, &x_row);
+   };
+   /*---(close file)---------------------*/
+   fclose  (f);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/

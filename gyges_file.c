@@ -1682,7 +1682,7 @@ FILE_read          (char *a_name)
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
          strltrim (p, ySTR_BOTH, MAX_STR);
-         tabs[x_tab].cols[x_col].w = atoi (p);
+         tabs[x_tab].cols [x_col].w = atoi (p);
          tabs[x_tab].active = 'y';
          continue;
       }
