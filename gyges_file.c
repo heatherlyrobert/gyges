@@ -965,14 +965,16 @@ INPT_tab           (
       DEBUG_INPT  yLOG_value   ("nrow"      , tabs[x_tab].nrow);
    } else {
       s_p = strtok_r (NULL, s_q, &s_context);
-      tabs[x_tab].ncol = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
+      strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      tabs[x_tab].ncol = atoi (s_p);
       DEBUG_INPT  yLOG_value   ("ncol"      , tabs[x_tab].ncol);
       s_p = strtok_r (NULL, s_q, &s_context);
       --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].nrow = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
+      strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      tabs[x_tab].nrow = atoi (s_p);
       DEBUG_INPT  yLOG_value   ("nrow"      , tabs[x_tab].nrow);
    }
    /*---(beginning)----------------------*/
@@ -998,14 +1000,16 @@ INPT_tab           (
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].bcol = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
+      strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      tabs[x_tab].bcol = atoi (s_p);
       DEBUG_INPT  yLOG_value   ("bcol"      , tabs[x_tab].bcol);
       s_p = strtok_r (NULL, s_q, &s_context);
       --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].brow = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
+      strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      tabs[x_tab].brow = atoi (s_p);
       DEBUG_INPT  yLOG_value   ("brow"      , tabs[x_tab].brow);
    }
    /*---(current)------------------------*/
@@ -1031,14 +1035,16 @@ INPT_tab           (
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].ccol = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
+      strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      tabs[x_tab].ccol = atoi (s_p);
       DEBUG_INPT  yLOG_value   ("ccol"      , tabs[x_tab].ccol);
       s_p = strtok_r (NULL, s_q, &s_context);
       --rce;  if (s_p == NULL) {
          DEBUG_INPT  yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      tabs[x_tab].crow = atoi (strltrim  (s_p, ySTR_BOTH, LEN_RECD));
+      strltrim (s_p, ySTR_BOTH, LEN_RECD);
+      tabs[x_tab].crow = atoi (s_p);
       DEBUG_INPT  yLOG_value   ("crow"      , tabs[x_tab].crow);
    }
    /*---(frozen)-------------------------*/
@@ -1206,7 +1212,7 @@ FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
    /*---(tabs)---------------------------*/
    for (i = a_btab; i <= a_etab; ++i) {
       /*---(lead)--------------*/
-      fprintf (a_file, "tab        %c -%c- %c %4d ", 31, 'A', 31, i);
+      fprintf (a_file, "tab        %c -%c- %c %4d ", 31, 'F', 31, i);
       /*---(max)---------------*/
       rc = LOC_ref (i, tabs[i].ncol - 1, tabs[i].nrow - 1, 0, x_addr);
       if (rc < 0)  LOC_ref (i, DEF_COLS - 1, DEF_ROWS - 1, 0, x_addr);
@@ -1427,6 +1433,7 @@ INPT_cell          (
               return 0;
               break;
    }
+   return -5;
 
 
 
@@ -1634,37 +1641,48 @@ FILE_read          (char *a_name)
       strltrim  (p, ySTR_BOTH, MAX_STR);
       /*---(process size)----------------*/
       if (strcmp (p, "format") == 0) {
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         x_ver = atoi (strltrim (p, ySTR_BOTH, MAX_STR));
+         ;;
+         /*> p = strtok (NULL, "\x1F");                                               <* 
+          *> if (p == NULL)      continue;                                            <* 
+          *> x_ver = atoi (strltrim (p, ySTR_BOTH, MAX_STR));                         <* 
+          *> continue;                                                                <*/
+         continue;
       }
       /*---(versioned)-------------------*/
       if (strcmp (p, "versioned") == 0) {
-         DEBUG_INPT  yLOG_note    ("found version entry");
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         strltrim (p, ySTR_BOTH, MAX_STR);
-         rc = FILE_version (p, ver_num);
-         if (rc >= 0)   ver_ctrl = 'y';
-         DEBUG_INPT  yLOG_info    ("ver_num"   , ver_num);
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         strltrim (p, ySTR_BOTH, MAX_STR);
-         strcpy (ver_txt, p);
-         DEBUG_INPT  yLOG_info    ("ver_txt"   , ver_txt);
+         continue;
+         /*> ;;                                                                       <* 
+          *> DEBUG_INPT  yLOG_note    ("found version entry");                        <* 
+          *> p = strtok (NULL, "\x1F");                                               <* 
+          *> if (p == NULL)      continue;                                            <* 
+          *> strltrim (p, ySTR_BOTH, MAX_STR);                                        <* 
+          *> rc = FILE_version (p, ver_num);                                          <* 
+          *> if (rc >= 0)   ver_ctrl = 'y';                                           <* 
+          *> DEBUG_INPT  yLOG_info    ("ver_num"   , ver_num);                        <* 
+          *> p = strtok (NULL, "\x1F");                                               <* 
+          *> if (p == NULL)      continue;                                            <* 
+          *> strltrim (p, ySTR_BOTH, MAX_STR);                                        <* 
+          *> strcpy (ver_txt, p);                                                     <* 
+          *> DEBUG_INPT  yLOG_info    ("ver_txt"   , ver_txt);                        <* 
+          *> ;;                                                                       <*/
       }
-      /*---(process size)----------------*/
-      if (strcmp (p, "tab") == 0)  INPT_tab (x_temp);
+      /*---(process tab)-----------------*/
+      if (strcmp (p, "tab") == 0) {
+         INPT_tab (x_temp);
+         continue;
+      }
       /*---(process size)----------------*/
       /*---(process width)---------------*/
       if (strcmp (p, "width") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         rc = LOC_parse (strltrim (p, ySTR_BOTH, MAX_STR), &x_tab, &x_col, &x_row, NULL);
+         strltrim (p, ySTR_BOTH, MAX_STR);
+         rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
          if (rc < 0)         continue;
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         tabs[x_tab].cols[x_col].w = atoi (strltrim (p, ySTR_BOTH, MAX_STR));
+         strltrim (p, ySTR_BOTH, MAX_STR);
+         tabs[x_tab].cols[x_col].w = atoi (p);
          tabs[x_tab].active = 'y';
          continue;
       }
@@ -1672,11 +1690,13 @@ FILE_read          (char *a_name)
       if (strcmp (p, "height") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         rc = LOC_parse (strltrim (p, ySTR_BOTH, MAX_STR), &x_tab, &x_col, &x_row, NULL);
+         strltrim (p, ySTR_BOTH, MAX_STR);
+         rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
          if (rc < 0)         continue;
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
-         tabs[x_tab].rows[x_row].h = atoi (strltrim (p, ySTR_BOTH, MAX_STR));
+         strltrim (p, ySTR_BOTH, MAX_STR);
+         tabs[x_tab].rows[x_row].h = atoi (p);
          tabs[x_tab].active = 'y';
          continue;
       }

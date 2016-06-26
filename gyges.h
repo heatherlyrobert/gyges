@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0j"
-#define     VER_TXT   "fixed exp() and added sqr()"
+#define     VER_NUM   "1.0k"
+#define     VER_TXT   "fixed tab writing incorrect version number problem"
 
 
 
