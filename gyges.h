@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0o"
-#define     VER_TXT   "added string functions for cleaning characters"
+#define     VER_NUM   "1.0p"
+#define     VER_TXT   "created custom strtok for rpn excluding quoted strings"
 
 
 
@@ -929,6 +929,7 @@ char      CALC_build         (tCELL *a_curr);
 char      CALC_free          (tCELL *a_curr);
 char      CALC_eval          (tCELL *a_curr);
 char      calc_show          (void);
+char*     CALC_strtok        (char *a_str);
 
 char      RPN_adjust         (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
 char      RPN_convert        (tCELL *a_curr);

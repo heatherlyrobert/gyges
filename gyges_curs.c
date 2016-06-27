@@ -211,6 +211,11 @@ CURS_status        (tCELL *a_curr)
       }
       break;
    case 'r' : /* buffer contents */
+      if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
+      else                                       strncpy (rpn, "((null))", MAX_STR);
+      snprintf (msg, 500, "[ %-100.100s ]", rpn);
+      break;
+   case 'R' : /* buffer contents */
       REG_list     (creg  , bufc);
       snprintf (msg, 500, "[ %-100.100s ]", bufc);
       break;

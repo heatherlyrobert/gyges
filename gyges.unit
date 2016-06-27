@@ -11132,4 +11132,73 @@ SCRP          (s_file) verify basic undo and redo handling                 HIS
 
 
 
+#23456789012  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  04 
+#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)=========================  ==(test)==  ==========================(results)===================================  04 
+SCRP          (s_calc) verify custom strtok handling                       CALC_strtok                                                   --------------------  ----------  ----------------------------------------------------------------------  -- 
+
+   COND       initialize testing                                           ------------------------------------------------------------  ------------------------------------------------------------------------------------  04 
+     exec     setup the program                    PROG_testquiet                                                                      i_equal     0                                                                       04 
+
+   COND       setup testing variables                                      ------------------------------------------------------------  ------------------------------------------------------------------------------------ 
+     code     create a custom expect string        char text   [2000];                                                                                                                                                          
+     code     create a return pointer              char *p     = NULL;                                                                                                                                                          
+
+   COND       check parsing empty string                                   ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, ""                              , MAX_STR);                                                                                                                                      
+     exec     v21  parse string                         CALC_strtok           text                                                          p_null      0                                                                      
+
+   COND       check parsing a list of one                                  ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one"                           , MAX_STR);                                                                                                                                      
+     exec     v21  parse string                         CALC_strtok           text                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     one                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+
+   COND       check parsing normal                                         ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one,two,thr"                   , MAX_STR);                                                                                                                                      
+     exec     v21  parse string                         CALC_strtok           text                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     one                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     two                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     thr                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+
+   COND       check parsing with string literal                            ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one,\"two\",thr"               , MAX_STR);                                                                                                                                      
+     exec     v21  parse string                         CALC_strtok           text                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     one                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     \"two\"                                                                
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     thr                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+
+   COND       check parsing with comma in string literal                   ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one\",two\",thr"               , MAX_STR);                                                                                                                                      
+     exec     v21  parse string                         CALC_strtok           text                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     one\",two\"                                                            
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_exists    0                                                                      
+     code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                              
+     echo     v21  check the substring                  - - - - - - - - - -   p                                                             s_equal     thr                                                                    
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+     exec     v21  parse string                         CALC_strtok           NULL                                                          p_null      0                                                                      
+
+
+
+
+   COND       verify program teardown                                      ------------------------------------------------------------  --------------------  ----------  ----------------------------------------------------------------------  05 
+     exec     wrap-up the program                  PROG_testend                                                                         i_equal     0                                                                       05 
+
+
 

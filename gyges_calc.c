@@ -2324,9 +2324,7 @@ struct  cFUNCS {
    { "&&"         ,  0, CALC__and               , "-----"                    },
    { "||"         ,  0, CALC__or                , "-----"                    },
    /*---(string operators)----------------*/
-   { "&"          ,  0, CALC__concat            , "-----"                    },
    { "#"          ,  0, CALC__concat            , "-----"                    },
-   { "|"          ,  0, CALC__concatplus        , "-----"                    },
    { "##"         ,  0, CALC__concatplus        , "-----"                    },
    /*---(string functions)----------------*/
    { "lower"      ,  0, CALC__lower             , "-----"                    },
@@ -2854,6 +2852,69 @@ CALC_cleanse       (
    return 0;
 }
 
+
+char*
+CALC_strtok        (char *a_str)
+{
+   /*---(locals)-----------+-----------+-*/
+   static char *x_str       = NULL;
+   static int  x_pos       = 0;
+   static int  x_next      = 0;
+   static int  x_len       = 0;
+   static char x_lit       = '-';
+   int         i           = 0;
+   /*---(defense)------------------------*/
+   if (a_str == NULL && x_str == NULL) return NULL;
+   /*---(start new string)---------------*/
+   if (a_str != NULL) {
+      /*> printf ("CALC_strtok : new string <<%s>>\n", a_str);                        <*/
+      x_str   = a_str;
+      x_pos   = 0;
+      x_next  = 0;
+      x_len   = strllen (a_str, MAX_STR);
+      x_lit   = '-';
+      /*> printf ("   -- a_str = %p\n", a_str);                                       <*/
+      /*> printf ("   -- x_str = %p <<%s>>\n", x_str, x_str);                         <*/
+   }
+   /*---(or, continue)-------------------*/
+   if (a_str == NULL) {
+      x_pos  = x_next;
+      /*> printf ("CALC_strtok : existing string <<%s>>\n", x_str + x_pos);           <*/
+   }
+   /*---(defense at end)-----------------*/
+   if (x_pos >= x_len)                 return NULL;
+   if (x_str + x_pos == '\0')          return NULL;
+   /*---(search for delimiter)-----------*/
+   for (i = x_pos; i < x_len; ++i) {
+      /*> printf ("   -- looking at %3d %c : ", i, x_str[i]);                         <*/
+      /*---(quoted strings)--------------*/
+      if (x_str [i] == '"' )  {
+         if (x_lit == 'y') {
+            /*> printf ("exiting quote,  ");                                          <*/
+            x_lit = '-';
+         }
+         else {
+            /*> printf ("entering quote, ");                                          <*/
+            x_lit = 'y';
+         }
+      }
+      if (x_lit == 'y') {
+         /*> printf ("next\n");                                                       <*/
+         continue;
+      }
+      if (x_str [i] == ',') {
+         x_str [i] = '\0';
+         x_next = i + 1;
+         /*> printf ("COMMA, x_next = %3d, return %p\n", x_str + x_pos);              <*/
+         return x_str + x_pos;
+      }
+      /*> printf ("next\n");                                                          <*/
+   }
+   /*---(complete)-----------------------*/
+   x_next = x_len;
+   return x_str + x_pos;
+}
+
 char               /* PURPOSE : build a new calculation ----------------------*/
 CALC_build         (tCELL *a_cell)
 {
@@ -2892,7 +2953,8 @@ CALC_build         (tCELL *a_cell)
    if (a_cell->s [0] == '&')  strcpy (label, "");
    /*---(read first tokens)------------------*/
    --rce;
-   p = strtok (work, q);
+   /*> p = strtok (work, q);                                                          <*/
+   p = CALC_strtok (work);
    ++x_ntoken;
    if (p == NULL) {
       a_cell->t = 'E';                 /* turn formula type off and error on  */
@@ -2917,7 +2979,8 @@ CALC_build         (tCELL *a_cell)
          x_calc->s = strndup(p + 1, MAX_STR);
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
-         p = strtok (NULL, q);
+         /*> p = strtok (NULL, q);                                                    <*/
+         p = CALC_strtok (NULL);
          ++x_ntoken;
          continue;
       }
@@ -2937,7 +3000,8 @@ CALC_build         (tCELL *a_cell)
          x_calc->t = 'x';
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
-         p = strtok (NULL, q);
+         /*> p = strtok (NULL, q);                                                    <*/
+         p = CALC_strtok (NULL);
          ++x_ntoken;
          continue;
       }
@@ -2954,7 +3018,8 @@ CALC_build         (tCELL *a_cell)
          }
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
-         p = strtok (NULL, q);
+         /*> p = strtok (NULL, q);                                                    <*/
+         p = CALC_strtok (NULL);
          ++x_ntoken;
          continue;
       }
@@ -2974,7 +3039,8 @@ CALC_build         (tCELL *a_cell)
          if (label [0] == '\0')  strncpy (label, funcs[i].h, 19);
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
-         p = strtok (NULL, q);
+         /*> p = strtok (NULL, q);                                                    <*/
+         p = CALC_strtok (NULL);
          ++x_ntoken;
          break;
       }
@@ -3018,7 +3084,8 @@ CALC_build         (tCELL *a_cell)
          }
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
-         p = strtok (NULL, q);
+         /*> p = strtok (NULL, q);                                                    <*/
+         p = CALC_strtok (NULL);
          ++x_ntoken;
          continue;
       }
@@ -3040,7 +3107,8 @@ CALC_build         (tCELL *a_cell)
          x_calc->v = atof (p);
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
-         p = strtok (NULL, q);
+         /*> p = strtok (NULL, q);                                                    <*/
+         p = CALC_strtok (NULL);
          ++x_ntoken;
          continue;
       }
