@@ -162,6 +162,9 @@ manipulations is critical.  when <s> is shown below, it can be either a
 literal string or a cell reference.  the numbers <n> and <m> can also be
 either literal numbers or cell references.
 
+.B result as string
+   #<formula>                      shows the string result in the cell
+
 .B concatination
    s#t                             concatenates s directly to t
    s##t                            concatenates s to t with a space between
@@ -171,6 +174,7 @@ either literal numbers or cell references.
    right  (s, n)                   right <n> characters
    mid    (s, n, m)                <m> chars starting at <n>
    len    (s)                      returns the length of <s>
+   replace(s, o, t, n)             replaces string <o> with <t>, <n> times
 
 .B ascii
    char   (n)                      ascii character for ascii code <n>
@@ -187,6 +191,34 @@ either literal numbers or cell references.
    strim  (s)                      removes all duplicate spaces (single)
    etrim  (s)                      removes all non-quoted spaces (every)
    mtrim  (s)                      removes all spaces (max)
+
+.B padding
+   lpad   (s, n)                   pads string to the left up to <n> chars
+   rpad   (s, n)                   pads string to the right up to <n> chars
+
+.B printables
+   p      (ref)                    trim of display/formatted cell version
+   lppad  (ref, n)                 lpad on trimmed printable version
+   rppad  (ref, n)                 rpad on trimmed printable version
+
+.B numbers        
+   value  (s)                      returns numeric value of <s>
+
+.B cleaning
+   salpha (s)                      change non-alpha chars to '_'
+   salphac(s)                      remove non-alpha chars
+   salnum (s)                      change non-alphanumeric chars to '_'
+   salnumc(s)                      remove non-alphanumeric chars
+   sbasic (s)                      change non-alphanumeric plus chars to '_'
+   sbasicc(s)                      remove non-alphanumeric plus chars
+   swrite (s)                      change non-writing style chars to '_'
+   swritec(s)                      remove non-writing style chars
+   sexten (s)                      change non-normal chars to '_'
+   sextenc(s)                      remove non-normal chars
+   sprint (s)                      change non-printable chars to '_'
+   sprintc(s)                      remove non-printable chars
+   sseven (s)                      change non-7bit safe chars to '_'
+   ssevenc(s)                      remove non-7bit safe chars
 
 
 

@@ -101,7 +101,7 @@ PRIV   double      tot, min, max;
 PRIV   int         cnt, cnta, cntb, cntr;
 PRIV   double      entries     [1000];
 
-PRIV   char   *r, *s;
+PRIV   char   *q, *r, *s;
 PRIV   char    t[MAX_STR];
 #define  MAX   1000000000
 
@@ -308,6 +308,19 @@ CALC__popref          (void)
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
    case 'r' :  return  calc__stack[calc__nstack].ref;           break;
+   }
+   /*---(complete)-----------------------*/
+   return NULL;
+}
+
+tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+CALC__popprint        (void)
+{  /*---(design notes)-------------------*//*---------------------------------*/
+   /*---(prepare)------------------------*/
+   --calc__nstack;
+   /*---(handle stack types)-------------*/
+   switch (calc__stack[calc__nstack].typ) {
+   case 'r' :  return  strndup (calc__stack[calc__nstack].ref->p, MAX_STR);        break;
    }
    /*---(complete)-----------------------*/
    return NULL;
@@ -810,6 +823,402 @@ CALC__mtrim        (void)
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
    strltrim (r, ySTR_MAX, MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__print        (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popprint ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strltrim (r, ySTR_BOTH, MAX_STR);
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__lpad         (void)
+{
+   /*---(get arguments)------------------*/
+   n = CALC__popval ();
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (n     <  0  )  n = 0;
+   /*---(process)------------------------*/
+   m = strlen (r);
+   if (m >= n) {
+      CALC_pushstr (r);
+   } else {
+      strncpy (t, empty, n - m);
+      t [m] = '\0';
+      strcat  (t, r);
+      CALC_pushstr (t);
+   }
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__rpad         (void)
+{
+   /*---(get arguments)------------------*/
+   n = CALC__popval ();
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (n     <  0  )  n = 0;
+   /*---(process)------------------------*/
+   m = strlen (r);
+   if (m >= n) {
+      CALC_pushstr (r);
+   } else {
+      strcpy  (t, r);
+      strncat (t, empty, n - m);
+      t [n] = '\0';
+      CALC_pushstr (t);
+   }
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__lppad        (void)
+{
+   /*---(get arguments)------------------*/
+   n = CALC__popval   ();
+   r = CALC__popprint ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (n     <  0  )  n = 0;
+   /*---(process)------------------------*/
+   strltrim (r, ySTR_BOTH, MAX_STR);
+   m = strlen (r);
+   if (m >= n) {
+      CALC_pushstr (r);
+   } else {
+      strncpy (t, empty, n - m);
+      t [n-m-1] = '\0';
+      strcat  (t, r);
+      CALC_pushstr (t);
+   }
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__rppad        (void)
+{
+   /*---(get arguments)------------------*/
+   n = CALC__popval   ();
+   r = CALC__popprint ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (n     <  0  )  n = 0;
+   /*---(process)------------------------*/
+   strltrim (r, ySTR_BOTH, MAX_STR);
+   m = strlen (r);
+   if (m >= n) {
+      CALC_pushstr (r);
+   } else {
+      strcpy  (t, r);
+      strncat (t, empty, n - m);
+      t [n] = '\0';
+      CALC_pushstr (t);
+   }
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__value        (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   a = atof (r);
+   /*---(return result)------------------*/
+   CALC_pushval (a);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__salpha       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_ALPHA, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__salphac      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_ALPHA, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__salnum       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_ALNUM, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__salnumc      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_ALNUM, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sbasic       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_BASIC, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sbasicc      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_BASIC, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__swrite       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_WRITE, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__swritec      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_WRITE, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sexten       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_EXTEN, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sextenc      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_EXTEN, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sprint       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_PRINT, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sprintc      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_PRINT, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__sseven       (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_SEVEN, '-', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__ssevenc      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   /*---(process)------------------------*/
+   strlclean (r, ySTR_SEVEN, 'y', MAX_STR);
+   /*---(return result)------------------*/
+   CALC_pushstr (r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__replace      (void)
+{
+   /*---(get arguments)------------------*/
+   n = CALC__popval ();
+   s = CALC__popstr ();
+   q = CALC__popstr ();
+   r = CALC__popstr ();
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (q == NULL)  q = strndup (nada, MAX_STR);
+   if (s == NULL)  s = strndup (nada, MAX_STR);
+   if (n     <  0  )  n = 0;
+   /*---(process)------------------------*/
+   strlrepl (r, q, s, n, MAX_STR);
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
@@ -1937,6 +2346,28 @@ struct  cFUNCS {
    { "strim"      ,  0, CALC__strim             , "-----"                    },
    { "etrim"      ,  0, CALC__etrim             , "-----"                    },
    { "mtrim"      ,  0, CALC__mtrim             , "-----"                    },
+   { "print"      ,  0, CALC__print             , "-----"                    },
+   { "p"          ,  0, CALC__print             , "-----"                    },
+   { "lpad"       ,  0, CALC__lpad              , "-----"                    },
+   { "rpad"       ,  0, CALC__rpad              , "-----"                    },
+   { "lppad"      ,  0, CALC__lppad             , "-----"                    },
+   { "rppad"      ,  0, CALC__rppad             , "-----"                    },
+   { "value"      ,  0, CALC__value             , "-----"                    },
+   { "salpha"     ,  0, CALC__salpha            , "-----"                    },
+   { "salphac"    ,  0, CALC__salphac           , "-----"                    },
+   { "salnum"     ,  0, CALC__salnum            , "-----"                    },
+   { "salnumc"    ,  0, CALC__salnumc           , "-----"                    },
+   { "sbasic"     ,  0, CALC__sbasic            , "-----"                    },
+   { "sbasicc"    ,  0, CALC__sbasicc           , "-----"                    },
+   { "swrite"     ,  0, CALC__swrite            , "-----"                    },
+   { "swritec"    ,  0, CALC__swritec           , "-----"                    },
+   { "sexten"     ,  0, CALC__sexten            , "-----"                    },
+   { "sextenc"    ,  0, CALC__sextenc           , "-----"                    },
+   { "sprint"     ,  0, CALC__sprint            , "-----"                    },
+   { "sprintc"    ,  0, CALC__sprintc           , "-----"                    },
+   { "sseven"     ,  0, CALC__sseven            , "-----"                    },
+   { "ssevenc"    ,  0, CALC__ssevenc           , "-----"                    },
+   { "replace"    ,  0, CALC__replace           , "-----"                    },
    /*---(math functions)------------------*/
    { "exp"        ,  0, CALC__power             , "-----"                    },
    { "abs"        ,  0, CALC__abs               , "-----"                    },

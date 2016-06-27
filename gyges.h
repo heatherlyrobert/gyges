@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0m"
-#define     VER_TXT   "added existing string functions to man page"
+#define     VER_NUM   "1.0o"
+#define     VER_TXT   "added string functions for cleaning characters"
 
 
 
