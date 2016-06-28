@@ -99,8 +99,44 @@ parsed for a cell reference and its formula evaluated relative to the new positi
 given that gyges will be supporting my robotics and kinetics, i need a very
 mathmatical function set, including some simple helpers.
 
-   sqr   (x)
-   sqrt  (x)
+.B basics
+   n + m                           addition
+   n - m                           subtraction
+   n * m                           multipication
+   n / m                           division
+   n % m                           modulus
+   ++n                             increment
+   --n                             decrement
+   -n                              unary minus
+   ()                              grouping of terms
+
+.B additional
+   abs        (n)                  absolute value
+   trunc      (n)                  cut off decimals
+   rtrunc     (n, m)               cut off to m decimals
+   round      (n)                  round decimals up or down to an integer
+   rround     (n, m)               round to m decimals
+   ceil       (n)                  round up to the next larger integer
+   floor      (n)                  round down to the next smaller integer
+   sqr        (n)                  squared
+   cube       (n)                  cubed
+   sqrt       (n)                  square root
+   cbrt       (n)                  cube root
+   exp        (n, m)               n to the m power
+   rand       ()                   random number between 0 and 1
+   randr      (m, m)               random number between m and n
+
+.B logical, all return 0 if true, 1 if false
+   TRUE                            0
+   FALSE                           1
+   &&                              and
+   ||                              or
+   !                               not
+   >                               greater than
+   >=                              greater than or equal to
+   ==                              equal to
+   <=                              less than or equal to
+   <                               less than
 
 .SH TRIGONOMETTRY
 given that gyges will be supporting my robotics and kinetics, i need a very
@@ -170,56 +206,115 @@ either literal numbers or cell references.
    s##t                            concatenates s to t with a space between
 
 .B substrings
-   left   (s, n)                   left <n> characters
-   right  (s, n)                   right <n> characters
-   mid    (s, n, m)                <m> chars starting at <n>
-   len    (s)                      returns the length of <s>
-   repl   (s, o, t, n)             replaces string <o> with <t>, <n> times
-   subs   (s, o, t)                replaces char <o> with <t>
+   left       (s, n)               left <n> characters
+   right      (s, n)               right <n> characters
+   mid        (s, n, m)            <m> chars starting at <n>
+   len        (s)                  returns the length of <s>
+   repl       (s, o, t, n)         replaces string <o> with <t>, <n> times
+   subs       (s, o, t)            replaces char <o> with <t>
 
 .B ascii
-   char   (n)                      ascii character for ascii code <n>
-   code   (c)                      ascii character number of character <c>
+   char       (n)                  ascii character for ascii code <n>
+   code       (c)                  ascii character number of character <c>
 
 .B cases
-   upper  (s)                      upper case version of string <s>
-   lower  (s)                      lower case version of string <s>
+   upper      (s)                  upper case version of string <s>
+   lower      (s)                  lower case version of string <s>
 
 .B trimming spaces
-   trim   (s)                      removes leading and trailing spaces
-   rtrim  (s)                      removes trailing/right-side spaces
-   ltrim  (s)                      removes leading/left-side spaces
-   strim  (s)                      removes all duplicate spaces (single)
-   etrim  (s)                      removes all non-quoted spaces (every)
-   mtrim  (s)                      removes all spaces (max)
+   trim       (s)                  removes leading and trailing spaces
+   rtrim      (s)                  removes trailing/right-side spaces
+   ltrim      (s)                  removes leading/left-side spaces
+   strim      (s)                  removes all duplicate spaces (single)
+   etrim      (s)                  removes all non-quoted spaces (every)
+   mtrim      (s)                  removes all spaces (max)
 
 .B padding
-   lpad   (s, n)                   pads string to the left up to <n> chars
-   rpad   (s, n)                   pads string to the right up to <n> chars
+   lpad       (s, n)               pads string to the left up to <n> chars
+   rpad       (s, n)               pads string to the right up to <n> chars
 
 .B printables
-   p      (ref)                    trim of display/formatted cell version
-   lppad  (ref, n)                 lpad on trimmed printable version
-   rppad  (ref, n)                 rpad on trimmed printable version
+   p          (ref)                trim of display/formatted cell version
+   lppad      (ref, n)             lpad on trimmed printable version
+   rppad      (ref, n)             rpad on trimmed printable version
 
 .B numbers        
-   value  (s)                      returns numeric value of <s>
+   value      (s)                  returns numeric value of <s>
 
-.B cleaning
-   salpha (s)                      change non-alpha chars to '_'
-   salphac(s)                      remove non-alpha chars
-   salnum (s)                      change non-alphanumeric chars to '_'
-   salnumc(s)                      remove non-alphanumeric chars
-   sbasic (s)                      change non-alphanumeric plus chars to '_'
-   sbasicc(s)                      remove non-alphanumeric plus chars
-   swrite (s)                      change non-writing style chars to '_'
-   swritec(s)                      remove non-writing style chars
-   sexten (s)                      change non-normal chars to '_'
-   sextenc(s)                      remove non-normal chars
-   sprint (s)                      change non-printable chars to '_'
-   sprintc(s)                      remove non-printable chars
-   sseven (s)                      change non-7bit safe chars to '_'
-   ssevenc(s)                      remove non-7bit safe chars
+.B cleaning, with suffix of c it means compress or remove
+   salpha     (s), salphac (s)     change non-alpha chars to '_'
+   salnum     (s), salnumc (s)     change non-alphanumeric chars to '_'
+   sbasic     (s), sbasicc (s)     change non-alphanumeric plus chars to '_'
+   swrite     (s), swritec (s)     change non-writing style chars to '_'
+   sexten     (s), sextenc (s)     change non-normal chars to '_'
+   sprint     (s), sprintc (s)     change non-printable chars to '_'
+   sseven     (s), ssevenc (s)     change non-7bit safe chars to '_'
+
+.SH STATISTICS
+statistics are hugely useful and deeply painful to do manually.  perfect for
+a spreadsheet and, if you have these functions, frequently used.  all of them
+are performed with a range as their only argument and return a numberic value.
+simple ;)
+
+.B cell counts
+   countr     (range)              count every cell in the range
+   countn     (range)              count of cells filled with numbers
+   counts     (range)              count of cells filled with strings
+   counta     (range)              count all numeric and string cells
+   countb     (range)              count of blanks; used, but empty cells
+   count      (range)              same as countn ()
+
+.B basic stats
+   sum        (range)              adds all the numeric cells
+   avg        (range)              average of all numeric cells
+   min        (range)              minimum numeric value
+   max        (range)              maximum numeric value
+   range      (range)              difference in min and max
+
+.B more interesting stats
+   mean       (range)              same as average
+   median     (range)              exactly one half of items on either side
+   mode       (range)              most common value
+   qtr0       (range)              same as min
+   qtr1       (range)              one quarter of items are less
+   qtr2       (range)              same as median
+   qtr3       (range)              one quarter of items are more
+   qtr4       (range)              same as max
+   rangeq     (range)              range between qtr3 and qtr1
+   stddev     (range)              standard deviation
+
+.B warning : 
+i could create short names for every one of these so people can cram more
+functions into a single formula; but that is tremendous stupidity.  spreadsheets
+are dangerous, cloudy, mirky analysis engines.  break complex formulas down
+into different cells so you can debug your logic and check your reasoning.  i
+will not contribute to the madness ;))
+
+.SH CELL ADDRESSES
+spreadsheets need methods to be able to read cells like arrays.  it is a
+startlingly useful and common need.  it also has many different nuances and
+requires some safety built in.
+
+.B relative addresses
+   offr       (ref, n)             add n rows to the ref and use it
+   offc       (ref, n)             add n cols to the ref and use it
+   offt       (ref, n)             add n tabs to the ref and use it
+   offs       (ref, n, m, o)       add n tabs, m cols, and o rows
+
+.B absolute addresses
+   loc        (n, m, o)            create a cell ref from tab, col, row
+
+.B parsing cell addresses
+   tab        (ref)                return the tab number
+   col        (ref)                return the col number
+   row        (ref)                return the row number
+
+.B parsing cell ranges
+   tabs       (range)              return the number of tabs
+   cols       (range)              return the number of cols
+   rows       (range)              return the number of rows
+
+
 
 
 

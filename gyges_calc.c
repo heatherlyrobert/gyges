@@ -96,9 +96,9 @@ tTRIG   trig [3600];
 
 
 PRIV   double      a, b, c, d, e;
-PRIV   int         m, n, len;
+PRIV   int         m, n, o, len;
 PRIV   double      tot, min, max;
-PRIV   int         cnt, cnta, cntb, cntr;
+PRIV   int         cnt, cnta, cnts, cntb, cntr;
 PRIV   double      entries     [1000];
 
 PRIV   char   *q, *r, *s;
@@ -1277,10 +1277,36 @@ CALC__abs           (void)
 }
 
 PRIV void
+CALC__rtrunc        (void)
+{
+   int i = 0;
+   n = CALC__popval ();
+   a = CALC__popval ();
+   for (i = 0; i < n; ++i)  a *= 10;
+   a = trunc (a);
+   for (i = 0; i < n; ++i)  a /= 10;
+   CALC_pushval (a);
+   return;
+}
+
+PRIV void
 CALC__trunc         (void)
 {
    a = CALC__popval ();
    CALC_pushval (trunc(a));
+   return;
+}
+
+PRIV void
+CALC__rround        (void)
+{
+   int i = 0;
+   n = CALC__popval ();
+   a = CALC__popval ();
+   for (i = 0; i < n; ++i)  a *= 10;
+   a = round (a);
+   for (i = 0; i < n; ++i)  a /= 10;
+   CALC_pushval (a);
    return;
 }
 
@@ -1311,6 +1337,13 @@ CALC__floor         (void)
 PRIV void       /* PURPOSE : rand between n-m, not just 0-1 ---------------*/
 CALC__rand          (void)
 {
+   CALC_pushval ((double) rand());
+   return;
+}
+
+PRIV void       /* PURPOSE : rand between n-m, not just 0-1 ---------------*/
+CALC__randr         (void)
+{
    a = CALC__popval ();
    b = CALC__popval ();
    CALC_pushval (((double) rand() / (double) RAND_MAX) * (b - a) + a);
@@ -1326,10 +1359,26 @@ CALC__sqrt          (void)
 }
 
 PRIV void
+CALC__cbrt          (void)
+{
+   a = CALC__popval ();
+   CALC_pushval (cbrt(a));
+   return;
+}
+
+PRIV void
 CALC__sqr           (void)
 {
    a = CALC__popval ();
    CALC_pushval (a * a);
+   return;
+}
+
+PRIV void
+CALC__cube          (void)
+{
+   a = CALC__popval ();
+   CALC_pushval (a * a * a);
    return;
 }
 
@@ -1585,6 +1634,198 @@ CALC__atanr2        (void)
 }
 
 
+
+/*====================------------------------------------====================*/
+/*===----                    cell address functions                    ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___ADDRESS_________o () { return; }
+
+PRIV void
+CALC__offset        (int a_tab, int a_col, int a_row)
+{
+   char   rc;
+   int    x_tab;
+   int    x_col;
+   int    x_row;
+   int    x_abs;
+   tCELL *x_base;
+   tCELL *x_new;
+   x_base = CALC__popref ();
+   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
+   DEBUG_CALC   yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_col);
+   DEBUG_CALC   yLOG_value   ("x_brow"    , x_row);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   x_tab += a_tab;
+   x_col += a_col;
+   x_row += a_row;
+   rc     = LOC_legal  (x_tab, x_col, x_row, CELL_FIXED);
+   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   x_new  = LOC_cell   (x_tab, x_col, x_row);
+   if (x_new == NULL)                           CALC_pushval (0);
+   else if (x_new->s == NULL)                   CALC_pushval (0);
+   else if (x_new->t == 'n' || x_new->t == 'f') CALC_pushval (x_new->v_num);
+   else                                         CALC_pushstr (x_new->s);
+   return;
+}
+
+PRIV void
+CALC__offs          (void)
+{
+   n = CALC__popval ();
+   m = CALC__popval ();
+   o = CALC__popval ();
+   CALC__offset  (    o,    m,    n);
+   return;
+}
+
+PRIV void
+CALC__offt          (void)
+{
+   n = CALC__popval ();
+   CALC__offset  (    n,    0,    0);
+   return;
+}
+
+PRIV void
+CALC__offc          (void)
+{
+   n = CALC__popval ();
+   CALC__offset  (    0,    n,    0);
+   return;
+}
+
+PRIV void
+CALC__offr          (void)
+{
+   n = CALC__popval ();
+   CALC__offset  (    0,    0,    n);
+   return;
+}
+
+PRIV void
+CALC__loc           (void)
+{
+   char   rc;
+   tCELL *x_new;
+   n = CALC__popval ();
+   m = CALC__popval ();
+   o = CALC__popval ();
+   rc = LOC_legal  (    o,    m,    n, CELL_FIXED);
+   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   x_new  = LOC_cell   (o, m, n);
+   CALC_pushref (x_new);
+   return;
+}
+
+PRIV void
+CALC__address       (char a_type)
+{
+   char   rc;
+   int    x_tab;
+   int    x_col;
+   int    x_row;
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
+   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   switch (a_type) {
+   case 't' :  CALC_pushval (x_tab);  break;
+   case 'c' :  CALC_pushval (x_col);  break;
+   default  :  CALC_pushval (x_row);  break;
+   }
+   return;
+}
+
+PRIV void
+CALC__tab           (void)
+{
+   CALC__address ('t');
+   return;
+}
+
+PRIV void
+CALC__col           (void)
+{
+   CALC__address ('c');
+   return;
+}
+
+PRIV void
+CALC__row           (void)
+{
+   CALC__address ('r');
+   return;
+}
+
+PRIV void        /* PURPOSE : total the numeric cells in a range ----------*/
+CALC__rangestat    (char a_type)
+{
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *x_beg       = NULL;
+   int         x_btab      = 0;
+   int         x_bcol      = 0;
+   int         x_brow      = 0;
+   tCELL      *x_end       = NULL;
+   int         x_etab      = 0;
+   int         x_ecol      = 0;
+   int         x_erow      = 0;
+   char        rc          = 0;
+   /*---(get values)---------------------*/
+   x_end = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
+   x_beg = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
+   /*---(defense)------------------------*/
+   if (x_beg == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
+   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
+   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
+   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   if (x_end == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
+   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
+   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
+   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   /*---(process)------------------------*/
+   switch (a_type) {
+   case 't' :  CALC_pushval (x_etab - x_btab + 1);  break;
+   case 'c' :  CALC_pushval (x_ecol - x_bcol + 1);  break;
+   default  :  CALC_pushval (x_erow - x_brow + 1);  break;
+   }
+   return;
+}
+
+PRIV void
+CALC__tabs          (void)
+{
+   CALC__rangestat ('t');
+   return;
+}
+
+PRIV void
+CALC__cols          (void)
+{
+   CALC__rangestat ('c');
+   return;
+}
+
+PRIV void
+CALC__rows          (void)
+{
+   CALC__rangestat ('r');
+   return;
+}
+
+
+
 /*====================------------------------------------====================*/
 /*===----                         logic functions                      ----===*/
 /*====================------------------------------------====================*/
@@ -1830,7 +2071,7 @@ CALC__gather       (void)
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
    if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
    /*---(process)------------------------*/
-   cnt = cnta = cntb = cntr = 0;
+   cnt = cnta = cnts = cntb = cntr = 0;
    tot = 0;
    min =   MAX;
    max = -(MAX);
@@ -1856,6 +2097,7 @@ CALC__gather       (void)
             DEBUG_CALC   yLOG_value   ("entry"     , entries [cnt - 1]);
          } else if (strchr("sm", x_curr->t) != 0   ) {
             DEBUG_CALC   yLOG_note    ("string");
+            ++cnts;
             ++cnta;
          } else {
             DEBUG_CALC   yLOG_note    ("blank");
@@ -1935,6 +2177,16 @@ CALC__count        (void)
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
    if (errornum == 0)  CALC_pushval   (cnt);
+   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+   return;
+}
+
+PRIV void    /*--> count all filled cells in a range -----[ ------ [ ------ ]-*/
+CALC__counts       (void)
+{
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   CALC__gather ();
+   if (errornum == 0)  CALC_pushval   (cnts);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2447,12 +2699,17 @@ struct  cFUNCS {
    { "exp"        ,  0, CALC__power             , "-----"                    },
    { "abs"        ,  0, CALC__abs               , "-----"                    },
    { "trunc"      ,  0, CALC__trunc             , "-----"                    },
+   { "rtrunc"     ,  0, CALC__rtrunc            , "-----"                    },
    { "round"      ,  0, CALC__round             , "-----"                    },
+   { "rround"     ,  0, CALC__rround            , "-----"                    },
    { "ceil"       ,  0, CALC__ceiling           , "-----"                    },
    { "floor"      ,  0, CALC__floor             , "-----"                    },
    { "sqrt"       ,  0, CALC__sqrt              , "-----"                    },
+   { "cbrt"       ,  0, CALC__cbrt              , "-----"                    },
    { "sqr"        ,  0, CALC__sqr               , "-----"                    },
+   { "cube"       ,  0, CALC__cube              , "-----"                    },
    { "rand"       ,  0, CALC__rand              , "-----"                    },
+   { "randr"      ,  0, CALC__randr             , "-----"                    },
    /*---(trig functions)------------------*/
    { "radians"    ,  0, CALC__radians           , "-----"                    },
    { "rad"        ,  0, CALC__radians           , "-----"                    },
@@ -2493,6 +2750,18 @@ struct  cFUNCS {
    { "atanr"      ,  0, CALC__atanr             , "-----"                    },
    { "atan2"      ,  0, CALC__atan2             , "-----"                    },
    { "atanr2"     ,  0, CALC__atanr2            , "-----"                    },
+   /*---(address functions)---------------*/
+   { "offs"       ,  0, CALC__offs              , "-----"                    },
+   { "offt"       ,  0, CALC__offt              , "-----"                    },
+   { "offc"       ,  0, CALC__offc              , "-----"                    },
+   { "offr"       ,  0, CALC__offr              , "-----"                    },
+   { "loc"        ,  0, CALC__loc               , "-----"                    },
+   { "tab"        ,  0, CALC__tab               , "-----"                    },
+   { "col"        ,  0, CALC__col               , "-----"                    },
+   { "row"        ,  0, CALC__row               , "-----"                    },
+   { "tabs"       ,  0, CALC__tabs              , "-----"                    },
+   { "cols"       ,  0, CALC__cols              , "-----"                    },
+   { "rows"       ,  0, CALC__rows              , "-----"                    },
    /*---(look for logic functions)--------*/
    { "if"         ,  0, CALC__if                , "-----"                    },
    /*---(time functions)------------------*/
@@ -2513,18 +2782,15 @@ struct  cFUNCS {
    { "su"         ,  0, CALC__sum                , "sum"                      },
    { "count"      ,  0, CALC__count              , "count"                    },
    { "co"         ,  0, CALC__count              , "count"                    },
+   { "countn"     ,  0, CALC__count              , "countn"                   },
+   { "counts"     ,  0, CALC__counts             , "counts"                   },
    { "counta"     ,  0, CALC__counta             , "counta"                   },
-   { "coa"        ,  0, CALC__counta             , "counta"                   },
    { "countb"     ,  0, CALC__countb             , "countb"                   },
-   { "cob"        ,  0, CALC__countb             , "countb"                   },
    { "countr"     ,  0, CALC__countr             , "reqs"                     },
-   { "cor"        ,  0, CALC__countr             , "reqs"                     },
    { "reqs"       ,  0, CALC__countr             , "reqs"                     },
-   { "re"         ,  0, CALC__countr             , "reqs"                     },
    { "average"    ,  0, CALC__average            , "mean"                     },
-   { "av"         ,  0, CALC__average            , "mean"                     },
+   { "avg"        ,  0, CALC__average            , "mean"                     },
    { "mean"       ,  0, CALC__average            , "mean"                     },
-   { "me"         ,  0, CALC__average            , "mean"                     },
    { "qtr0"       ,  0, CALC__minimum            , "0q/min"                   },
    { "qtr1"       ,  0, CALC__quarter1           , "1q"                       },
    { "qtr2"       ,  0, CALC__average            , "2q/med"                   },
@@ -2533,11 +2799,8 @@ struct  cFUNCS {
    { "min"        ,  0, CALC__minimum            , "min"                      },
    { "max"        ,  0, CALC__maximum            , "max"                      },
    { "range"      ,  0, CALC__range              , "range"                    },
-   { "ra"         ,  0, CALC__range              , "range"                    },
    { "rangeq"     ,  0, CALC__rangeq             , "qrange"                   },
-   { "raq"        ,  0, CALC__rangeq             , "qrange"                   },
    { "median"     ,  0, CALC__median             , "median"                   },
-   { "med"        ,  0, CALC__median             , "median"                   },
    { "mode"       ,  0, CALC__mode               , "mode"                     },
    { "stddev"     ,  0, CALC__stddev             , "stddev"                   },
    { "sd"         ,  0, CALC__stddev             , "stddev"                   },

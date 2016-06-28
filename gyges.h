@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0q"
-#define     VER_TXT   "got clookup working, need to adapt search functions"
+#define     VER_NUM   "1.0r"
+#define     VER_TXT   "added offset, range, and cell address functions"
 
 
 
