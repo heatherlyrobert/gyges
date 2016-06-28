@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0p"
-#define     VER_TXT   "created custom strtok for rpn excluding quoted strings"
+#define     VER_NUM   "1.0q"
+#define     VER_TXT   "got clookup working, need to adapt search functions"
 
 
 
@@ -414,6 +414,7 @@ struct cCELL {
    char        d;            /* number of decimals to be shown                */
    char        f;            /* formatting/filler style                       */
    char       *p;            /* printable version of the cell                 */
+   char        n;            /* note for error, searching, etc                */
    /*---(#5, CALCULATION)----------------*/
    /*   in the case that the cell is a formula, this section will contain the */
    /*   conversion into RPN (reverse polish notation) and translation into    */

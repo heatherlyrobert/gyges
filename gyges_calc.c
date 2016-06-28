@@ -105,6 +105,8 @@ PRIV   char   *q, *r, *s;
 PRIV   char    t[MAX_STR];
 #define  MAX   1000000000
 
+PRIV   tCELL      *s_me;
+
 
 char      nada[5] = "";
 
@@ -1222,7 +1224,16 @@ CALC__replace      (void)
    /*---(return result)------------------*/
    CALC_pushstr (r);
    /*---(clean up)-----------------------*/
+   free (q);
    free (r);
+   free (s);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__prev         (void)
+{
    /*---(complete)-----------------------*/
    return;
 }
@@ -2251,6 +2262,72 @@ CALC__stddev       (void)
 /*====================------------------------------------====================*/
 PR void  o___SPREADSHEET_____o () { return; }
 
+PRIV void        /* PURPOSE : search left column in range for string ------*/
+CALC__clookup      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *x_beg       = NULL;
+   int         x_btab      = 0;
+   int         x_bcol      = 0;
+   int         x_brow      = 0;
+   tCELL      *x_end       = NULL;
+   int         x_etab      = 0;
+   int         x_ecol      = 0;
+   int         x_erow      = 0;
+   int         x_crow      = 0;
+   char        rc          = 0;
+   tCELL      *x_curr      = NULL;
+   /*---(get values)---------------------*/
+   n = CALC__popval ();
+   r = CALC__popstr ();
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   x_end = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
+   x_beg = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
+   /*---(defense)------------------------*/
+   if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
+   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
+   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
+   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
+   if (x_end == NULL)     { CALC__seterror ( -1, "#.range");    return; }
+   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
+   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
+   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
+   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
+   if (x_btab != x_etab)  { CALC__seterror ( -1, "#.range");    return; }
+   /*---(process)------------------------*/
+   for (x_crow = x_brow; x_crow <= x_erow; ++x_crow) {
+      DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
+      x_curr = tabs[x_btab].sheet[x_bcol][x_crow];
+      DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
+      if (x_curr == NULL)                                       continue;
+      DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
+      if (strchr ("s", x_curr->t) == 0   )                      continue;
+      if (x_curr->s == NULL)                                    continue;
+      if (x_curr->s [0] != r [0])                               continue;
+      if (strcmp (x_curr->s, r) != 0)                           continue;
+      /*> CALC_pushref (LOC_cell (x_btab, x_bcol, x_crow));                           <*/
+      if (x_bcol + n >  x_ecol)              { CALC_pushval (0); return; }
+      x_curr = tabs[x_btab].sheet[x_bcol + n][x_crow];
+      if (x_curr == NULL)                    { CALC_pushval (0); return; }
+      if (x_curr->s == NULL)                 { CALC_pushval (0); return; }
+      if (x_curr->t == 'n' || x_curr->t == 'f') CALC_pushval (x_curr->v_num);
+      else                                      CALC_pushstr (x_curr->s);
+      return;
+   }
+   /*---(nothing found)------------------*/
+   CALC_pushval (0);
+   /*> CALC__seterror ( -1, "#.nope");                                                <*/
+   /*---(complete)-----------------------*/
+   return;
+}
+
 PR void        /* PURPOSE : total the numeric cells in a range ----------*/
 CALC__vlookup       (void)
 {
@@ -2467,6 +2544,7 @@ struct  cFUNCS {
    /*---(lookup functions)----------------*/
    { "vlookup"    ,  0, CALC__vlookup           , "vlookup"                  },
    { "vl"         ,  0, CALC__vlookup           , "vlookup"                  },
+   { "clookup"    ,  0, CALC__clookup           , "vlookup"                  },
    /*---(end-of-funcs)--------------------*/
    { "END"        ,  0, NULL                     , "-----"                    },
 };
@@ -2567,6 +2645,7 @@ CALC_eval          (tCELL *a_curr)
    /*---(prep)---------------------------*/
    errornum = 0;
    strcpy(errorstr, "");
+   s_me = a_curr;
    /*---(main loop)----------------------*/
    DEBUG_CALC   yLOG_info    ("rpn"       , a_curr->rpn);
    curr        = a_curr->calc;
@@ -2587,11 +2666,13 @@ CALC_eval          (tCELL *a_curr)
    /*---(check errors)-------------------*/
    if        (errornum <  0) {
       a_curr->t = 'E';
+      a_curr->v_str = strndup (errorstr, MAX_STR);
       DEBUG_CALC   yLOG_value   ("errornum"  , errornum);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return rce;
    } else if (errornum >  0) {
       a_curr->t = 'E';
+      a_curr->v_str = strndup (errorstr, MAX_STR);
       DEBUG_CALC   yLOG_value   ("errornum"  , errornum);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return rce;

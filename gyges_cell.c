@@ -1916,17 +1916,18 @@ CELL_printable     (tCELL *a_curr) {
       }
    } else if (a_curr->t == 'f' && a_curr->v_str != NULL) {
       DEBUG_CELL  yLOG_snote  ("string");
-      strcat(x_temp, a_curr->v_str);
+      strcat (x_temp, a_curr->v_str);
    } else if (a_curr->t == '-') {
       DEBUG_CELL  yLOG_snote  ("empty");
-      strcat(x_temp, "-");
+      strcat (x_temp, "-");
    } else if (strchr("WE", a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("error");
-      strcat(x_temp, a_curr->s);
+      /*> strcat (x_temp, a_curr->s);                                                 <*/
+      strcat (x_temp, a_curr->v_str);
       a_curr->a = '<';
    } else {
       DEBUG_CELL  yLOG_snote  ("other");
-      strcat(x_temp, a_curr->s);
+      strcat (x_temp, a_curr->s);
    }
    /*---(formatting errors)--------------*/
    /*> if (strchr ("WE", a_curr->t) == 0 && strncmp (x_temp, "#.", 2) == 0) {         <* 
