@@ -612,7 +612,7 @@ REG_paste          (void)
       DEBUG_SEL    yLOG_info    ("source"    , x_curr->s);
       DEBUG_SEL    yLOG_char    ("type"      , x_curr->t);
       strcpy (x_source, "");
-      if (x_curr->t == 'f') {
+      if (strchr ("fml", x_curr->t) != 0) {
          DEBUG_SEL    yLOG_note    ("formula, calling yRPN_adjust");
          rc = RPN_adjust (x_curr, x_toff, x_xoff, x_yoff, x_source);
          DEBUG_SEL    yLOG_value   ("rc"        , rc);

@@ -132,7 +132,7 @@ RPN_adjust         (
    strcpy (a_final, a_cell->s);
    strcpy (s_final, a_cell->s);
    DEBUG_RPN    yLOG_char    ("a_cell->t" , a_cell->t);
-   --rce;  if (a_cell->t != 'f')   {
+   --rce;  if (strchr ("fml", a_cell->t) == 0)   {
       DEBUG_RPN    yLOG_note    ("aborted, a_cell type is not formula");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;

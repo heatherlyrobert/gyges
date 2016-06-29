@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0u"
-#define     VER_TXT   "fixed unary minus, it was mostly done already"
+#define     VER_NUM   "1.0v"
+#define     VER_TXT   "added entry function and fixed rpn address adjustments"
 
 
 

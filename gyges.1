@@ -317,17 +317,20 @@ requires some safety built in.
    tabs       (range)              return the number of tabs
    cols       (range)              return the number of cols
    rows       (range)              return the number of rows
+   dist       (range)              distance between range corners (cells)
 
 .B data types in cells
    isnum      (ref)                true if number
    isfor      (ref)                true if is numeric calculation
-   isval      (ref)                true if number of numeric calc
+   isvalue    (ref)                true if number of numeric calc
    isstr      (ref)                true if a string
    ismod      (ref)                true if a string calculation
-   istxt      (ref)                true if string or string calc
+   istext     (ref)                true if string or string calc
+   islike     (ref)                true if like style calculation
+   iscalc     (ref)                true if numeric or string formula
+   ispoint    (ref)                true if address or range pointer
+   isblank    (ref)                true is cell is blank
    iserr      (ref)                true if cell is in error
-   isbla      (ref)                true is cell is blank
-   isnul      (ref)                true is cell does not exist
 
 .B pointers in cells
    -- pointers allow centralized range naming

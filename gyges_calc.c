@@ -1759,12 +1759,15 @@ CALC__addr          (void)
 }
 
 PRIV void
-CALC__cell          (a_type)
+CALC__cell          (char a_type)
 {
    tCELL *x_base;
    char   x_type  = a_type;
    x_base = CALC__popref ();
-   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (x_base == NULL) {
+      CALC_pushval (FALSE);
+      return;
+   }
    if (x_base->t == a_type)  CALC_pushval (TRUE);
    else                      CALC_pushval (FALSE);
    return;
@@ -1778,9 +1781,153 @@ CALC__isnum         (void)
 }
 
 PRIV void
+CALC__isfor         (void)
+{
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   /*---(formula)--------*/
+   CALC_pushref (x_base);
+   CALC__cell ('f');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(like)-----------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('l');
+   /*---(complete)-------*/
+   return;
+}
+
+PRIV void
+CALC__isval         (void)
+{
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   /*---(number)---------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('n');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(formula)--------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('f');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(like)-----------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('l');
+   /*---(complete)-------*/
+   return;
+}
+
+PRIV void
+CALC__iscalc        (void)
+{
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   /*---(formula)--------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('f');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(formula)--------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('m');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(like)-----------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('l');
+   /*---(complete)-------*/
+   return;
+}
+
+PRIV void
 CALC__isstr         (void)
 {
    CALC__cell ('s');
+   return;
+}
+
+PRIV void
+CALC__ismod         (void)
+{
+   CALC__cell ('m');
+   return;
+}
+
+PRIV void
+CALC__istext        (void)
+{
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   /*---(formula)--------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('s');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(like)-----------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('m');
+   /*---(complete)-------*/
+   return;
+}
+
+PRIV void
+CALC__iserror       (void)
+{
+   CALC__cell ('E');
+   return;
+}
+
+PRIV void
+CALC__islike        (void)
+{
+   CALC__cell ('l');
+   return;
+}
+
+PRIV void
+CALC__isblank       (void)
+{
+   CALC__cell ('-');
+   return;
+}
+
+PRIV void
+CALC__ispoint       (void)
+{
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   /*---(range)----------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('p');
+   n = CALC__popval ();
+   if (n == TRUE) {
+      CALC_pushval (n);
+      return;
+   }
+   /*---(address---------*/
+   CALC_pushref (x_base);
+   CALC__cell   ('a');
+   /*---(complete)-------*/
    return;
 }
 
@@ -1870,10 +2017,19 @@ CALC__rangestat    (char a_type)
    if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
    /*---(process)------------------------*/
    switch (a_type) {
+   case 'd' :  CALC_pushval (sqrt (pow (x_ecol - x_bcol + 1, 2) + pow (x_erow - x_brow + 1, 2)));  break;
    case 't' :  CALC_pushval (x_etab - x_btab + 1);  break;
    case 'c' :  CALC_pushval (x_ecol - x_bcol + 1);  break;
+   case 'r' :  CALC_pushval (x_ecol - x_bcol + 1);  break;
    default  :  CALC_pushval (x_erow - x_brow + 1);  break;
    }
+   return;
+}
+
+PRIV void
+CALC__dist          (void)
+{
+   CALC__rangestat ('d');
    return;
 }
 
@@ -2596,7 +2752,7 @@ CALC__stddev       (void)
 PR void  o___SPREADSHEET_____o () { return; }
 
 PRIV void        /* PURPOSE : search left column in range for string ------*/
-CALC__clookup      (void)
+CALC__vlookup      (void)
 {
    /*---(locals)-----------+-----------+-*/
    tCELL      *x_beg       = NULL;
@@ -2661,42 +2817,124 @@ CALC__clookup      (void)
    return;
 }
 
-PR void        /* PURPOSE : total the numeric cells in a range ----------*/
-CALC__vlookup       (void)
+PRIV void        /* PURPOSE : search left column in range for string ------*/
+CALC__hlookup      (void)
 {
-   int xrow, xcol;
-   tCELL  *curr   = NULL;
-   int OFF = ((int) CALC__popval()) - 1;
-   int R2  =  (int) CALC__popval();
-   int C2  =  (int) CALC__popval();
-   int T2  =  (int) CALC__popval();
-   int R1  =  (int) CALC__popval();
-   int C1  =  (int) CALC__popval();
-   int T1  =  (int) CALC__popval();
-   r        =  CALC__popstr();
-   /*---(defenses)-----------------------*/
-   if (OFF      <  0)  { CALC__seterror ( -1, "#.off_s");  return; }
-   if (C1 + OFF > C2)  { CALC__seterror ( -1, "#.off_l");  return; }
-   /*> printf ("_CALC__vlookup searching for <<%s>>\n", r);                           <*/
-   s =  "";
-   int xfound = 0;
-   for (xrow = R1; xrow <= R2; ++xrow) {
-      /*> printf ("_CALC__vlookup testing row   %d\n", xrow);                         <*/
-      if (tabs[T1].sheet[C1][xrow]    == NULL)         continue;
-      if (tabs[T1].sheet[C1][xrow]->s == NULL)         continue;
-      /*> printf ("_CALC__vlookup comparing to  <<%s>>\n", tabs[T1].sheet[C1][xrow]->s);   <*/
-      if (strcmp(tabs[T1].sheet[C1][xrow]->s, r) != 0) continue;
-      curr = tabs[T1].sheet[C1 + OFF][xrow];
-      if (curr    == NULL) { CALC__seterror (  1, "#.dest");   return; }
-      if (curr->s == NULL) { CALC__seterror (  1, "#.sourc");  return; }
-      /*> printf ("_CALC__vlookup offset yields <<%s>>\n", curr->s);                  <*/
-      xfound = 1;
-      if (curr->t == 'n' || curr->t == 'f') CALC_pushval (curr->v_num);
-      else                                  CALC_pushstr (curr->s);
-      break;
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *x_beg       = NULL;
+   int         x_btab      = 0;
+   int         x_bcol      = 0;
+   int         x_brow      = 0;
+   tCELL      *x_end       = NULL;
+   int         x_etab      = 0;
+   int         x_ecol      = 0;
+   int         x_erow      = 0;
+   int         x_ccol      = 0;
+   char        rc          = 0;
+   tCELL      *x_curr      = NULL;
+   /*---(get values)---------------------*/
+   n = CALC__popval ();
+   r = CALC__popstr ();
+   if (r == NULL)  r = strndup (nada, MAX_STR);
+   x_end = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
+   x_beg = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
+   /*---(defense)------------------------*/
+   if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
+   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
+   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
+   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
+   if (x_end == NULL)     { CALC__seterror ( -1, "#.range");    return; }
+   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
+   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
+   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
+   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
+   if (x_btab != x_etab)  { CALC__seterror ( -1, "#.range");    return; }
+   /*---(process)------------------------*/
+   for (x_ccol = x_bcol; x_ccol <= x_ecol; ++x_ccol) {
+      DEBUG_CALC   yLOG_value   ("x_ccol"    , x_ccol);
+      x_curr = tabs[x_btab].sheet[x_ccol][x_brow];
+      DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
+      if (x_curr == NULL)                                       continue;
+      DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
+      if (strchr ("s", x_curr->t) == 0   )                      continue;
+      if (x_curr->s == NULL)                                    continue;
+      if (x_curr->s [0] != r [0])                               continue;
+      if (strcmp (x_curr->s, r) != 0)                           continue;
+      /*> CALC_pushref (LOC_cell (x_btab, x_bcol, x_crow));                           <*/
+      if (x_brow + n >  x_erow)              {  CALC__seterror ( -1, "#.inc"); return; }
+      x_curr = tabs[x_btab].sheet[x_ccol][x_brow + n];
+      if (x_curr == NULL)                    { CALC_pushval (0); return; }
+      if (x_curr->s == NULL)                 { CALC_pushval (0); return; }
+      if (strchr ("nfl", x_curr->t) != 0) CALC_pushval (x_curr->v_num);
+      else                                CALC_pushstr (x_curr->s);
+      return;
    }
-   if (xfound == 0) CALC__seterror (  1, "#.null");
-   /*> printf ("_CALC__vlookup done\n");                                              <*/
+   /*---(nothing found)------------------*/
+   CALC_pushval (0);
+   CALC__seterror ( -1, "#.nfound");
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void        /* PURPOSE : search left column in range for string ------*/
+CALC__entry        (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *x_beg       = NULL;
+   int         x_btab      = 0;
+   int         x_bcol      = 0;
+   int         x_brow      = 0;
+   tCELL      *x_end       = NULL;
+   int         x_etab      = 0;
+   int         x_ecol      = 0;
+   int         x_erow      = 0;
+   int         x_crow      = 0;
+   char        rc          = 0;
+   tCELL      *x_curr      = NULL;
+   /*---(get values)---------------------*/
+   x_end = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
+   x_beg = CALC__popref ();
+   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
+   /*---(defense)------------------------*/
+   if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
+   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
+   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
+   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
+   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
+   if (x_end == NULL)     { CALC__seterror ( -1, "#.range");    return; }
+   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
+   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
+   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
+   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
+   if (x_btab != x_etab)  { CALC__seterror ( -1, "#.range");    return; }
+   /*---(process)------------------------*/
+   for (x_crow = s_me->row; x_crow >= x_brow; --x_crow) {
+      DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
+      x_curr = tabs[x_btab].sheet[x_bcol][x_crow];
+      DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
+      if (x_curr    == NULL)                                    continue;
+      DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
+      if (strchr ("sm"  , x_curr->t) == 0)                      continue;
+      DEBUG_CALC   yLOG_note    ("found it");
+      if (x_curr->t == 's')  CALC_pushstr (x_curr->s);
+      else                   CALC_pushstr (x_curr->v_str);
+      return;
+   }
+   /*---(nothing found)------------------*/
+   CALC_pushstr   ("");
+   /*---(complete)-----------------------*/
    return;
 }
 
@@ -2838,8 +3076,16 @@ struct  cFUNCS {
    { "offc"       ,  0, CALC__offc              , "-----"                    },
    { "offr"       ,  0, CALC__offr              , "-----"                    },
    { "loc"        ,  0, CALC__loc               , "-----"                    },
-   { "isnum"      ,  0, CALC__isstr             , "-----"                    },
-   { "isstr"      ,  0, CALC__isnum             , "-----"                    },
+   { "isnum"      ,  0, CALC__isnum             , "-----"                    },
+   { "isfor"      ,  0, CALC__isfor             , "-----"                    },
+   { "isvalue"    ,  0, CALC__isval             , "-----"                    },
+   { "isstr"      ,  0, CALC__isstr             , "-----"                    },
+   { "ismod"      ,  0, CALC__ismod             , "-----"                    },
+   { "istext"     ,  0, CALC__istext            , "-----"                    },
+   { "isblank"    ,  0, CALC__isblank           , "-----"                    },
+   { "iscalc"     ,  0, CALC__iscalc            , "-----"                    },
+   { "ispoint"    ,  0, CALC__ispoint           , "-----"                    },
+   { "iserror"    ,  0, CALC__iserror           , "-----"                    },
    { "me"         ,  0, CALC__me                , "-----"                    },
    { "addr"       ,  0, CALC__addr              , "-----"                    },
    { "filename"   ,  0, CALC__filename          , "-----"                    },
@@ -2848,6 +3094,7 @@ struct  cFUNCS {
    { "tab"        ,  0, CALC__tab               , "-----"                    },
    { "col"        ,  0, CALC__col               , "-----"                    },
    { "row"        ,  0, CALC__row               , "-----"                    },
+   { "dist"       ,  0, CALC__dist              , "-----"                    },
    { "tabs"       ,  0, CALC__tabs              , "-----"                    },
    { "cols"       ,  0, CALC__cols              , "-----"                    },
    { "rows"       ,  0, CALC__rows              , "-----"                    },
@@ -2896,7 +3143,9 @@ struct  cFUNCS {
    /*---(lookup functions)----------------*/
    { "vlookup"    ,  0, CALC__vlookup           , "vlookup"                  },
    { "vl"         ,  0, CALC__vlookup           , "vlookup"                  },
-   { "clookup"    ,  0, CALC__clookup           , "vlookup"                  },
+   { "hlookup"    ,  0, CALC__hlookup           , "hlookup"                  },
+   { "hl"         ,  0, CALC__hlookup           , "hlookup"                  },
+   { "entry"      ,  0, CALC__entry             , "entry"                    },
    /*---(end-of-funcs)--------------------*/
    { "END"        ,  0, NULL                     , "-----"                    },
 };
