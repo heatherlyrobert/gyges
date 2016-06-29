@@ -329,6 +329,17 @@ requires some safety built in.
    isbla      (ref)                true is cell is blank
    isnul      (ref)                true is cell does not exist
 
+.B pointers in cells
+   -- pointers allow centralized range naming
+   -- simply specify the range in a cell starting with a ampersand '&'
+   &b5                             this is a address pointer
+   &b1..c10                        this is a range pointer
+   -- then refer to that cell in a formula that takes a reference
+   =sum(*a5)
+   -- the splat (*) tells gyges to use the range stored in a5
+   -- dependencies pass through so recalculation is automatic
+   -- this method reduces issues and dependencies
+
 
 
 

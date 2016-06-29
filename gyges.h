@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0t"
-#define     VER_TXT   "fixed range pointer calculation!!!!! its awesome ;))"
+#define     VER_NUM   "1.0u"
+#define     VER_TXT   "fixed unary minus, it was mostly done already"
 
 
 

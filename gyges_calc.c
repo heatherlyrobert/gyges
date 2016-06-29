@@ -425,6 +425,14 @@ CALC__decrement    (void)
    return;
 }
 
+PRIV void
+CALC__unaryminus   (void)
+{
+   a = CALC__popval ();
+   CALC_pushval (0 - a);
+   return;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -2714,6 +2722,7 @@ struct  cFUNCS {
    { "%"          ,  0, CALC__modulus           , "-----"                    },
    { "++"         ,  0, CALC__increment         , "-----"                    },
    { "--"         ,  0, CALC__decrement         , "-----"                    },
+   { "-:"         ,  0, CALC__unaryminus        , "-----"                    },
    /*---(relational operators)------------*/
    { "=="         ,  0, CALC__equal             , "-----"                    },
    { "!="         ,  0, CALC__notequal          , "-----"                    },
