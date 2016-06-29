@@ -276,7 +276,7 @@ RPN_convert        (
    }
    DEBUG_RPN    yLOG_info    ("a_curr->s" , a_curr->s);
    DEBUG_RPN    yLOG_char    ("a_curr->t" , a_curr->t);
-   --rce;  if (strchr ("fpml", a_curr->t) == 0) {
+   --rce;  if (strchr ("fapml", a_curr->t) == 0) {
       DEBUG_RPN    yLOG_note    ("passed cell not a formula");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;  /* not a formula        */

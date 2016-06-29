@@ -935,6 +935,7 @@ CELL__interpret    (
          a_cell->t     = 'n';
          a_cell->v_num = x_value;
       }
+      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(check for formula mark)---------*/
@@ -1018,6 +1019,7 @@ CELL__interpret    (
             return rce - 2;
          }
       }
+      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(check for non-numbers)----------*/

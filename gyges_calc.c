@@ -3206,7 +3206,7 @@ CALC_pointer       (
    DEBUG_CALC   yLOG_point   ("x_ref"     , x_ref);
    --rce;  if (x_ref     == NULL)  return rce;
    /*---(look at address pointer)--------*/
-   if (x_ref->t  == 'p' )  {
+   if (x_ref->t  == 'a' )  {
       DEBUG_CALC   yLOG_value   ("nrpn"      , x_ref->nrpn);
       x_temp = x_ref->calc;
       DEBUG_CALC   yLOG_point   ("x_temp"    , x_temp);
@@ -3228,7 +3228,7 @@ CALC_pointer       (
       return 0;
    }
    /*---(look at range pointer)----------*/
-   if (x_ref->t  == 'd' )  {
+   if (x_ref->t  == 'p' )  {
       DEBUG_CALC   yLOG_value   ("nrpn"      , x_ref->nrpn);
       x_temp = x_ref->calc;
       DEBUG_CALC   yLOG_point   ("x_temp"    , x_temp);
