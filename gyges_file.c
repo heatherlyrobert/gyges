@@ -1601,7 +1601,6 @@ FILE_read          (char *a_name)
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(open file)----------------------*/
    DEBUG_INPT  yLOG_info    ("filename"  , a_name);
-   strncpy (f_title, a_name, MAX_STR);
    f = fopen (a_name, "r");
    DEBUG_INPT  yLOG_point   ("file"      , f);
    --rce;  if (f == NULL) {
@@ -2022,7 +2021,6 @@ FILE_write         (char *a_name)
    if (p != NULL)  p[0] = '\0';
    strcpy (f_suffix, "gyges");
    /*---(open file)----------------------*/
-   strncpy (f_title, a_name, MAX_STR);
    f = fopen(a_name, "w");
    if (f == NULL)      return -2;
    /*---(header)-------------------------*/

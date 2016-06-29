@@ -31,16 +31,19 @@
  *         -    empty placeholder
  *         s    source string
  *         n    numeric value
- *         p    address pointer
- *         r    range pointer
- *         l    label for cell to left
+ *         a    address pointer
+ *         p    range pointer
+ *         l    like formula
+ *         d    display of formula to left
  *
  *      calculated
  *         m    modified string
- *         f    formula
+ *         f    numeric formula formula
  *
  *      troubles
- *         E    error (display error message instead)
+ *         w    warning
+ *         e    error
+ *         E    MAJOR error (display error message instead)
  *
  *
  *   a = alignment code.  this field drives how the cell value is displayed and
@@ -88,8 +91,8 @@
  *      t    time (HH:MM) in 24 hour time
  *      d    date (YYYY-mmm-dd)
  *      T    timestamp (YY.MM.DD.hh.mm.ss)
- *
- *      other formats (1)...
+*
+*      other formats (1)...
 *      p    bullet point format
 *
 *      filler formats (6)...
@@ -897,24 +900,15 @@ CELL__interpret    (
    --rce;
    if (a_cell->s == NULL) {
       DEBUG_CELL   yLOG_note    ("cell contents are null");
+      a_cell->t = '-';
       a_cell->s = strndup ("", MAX_STR);
       a_cell->l = 0;
       a_cell->a = '?';
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   /*---(defense: zero length)-----------*/
-   DEBUG_CELL   yLOG_point   ("length"    , a_cell->l);
-   /*> --rce;                                                                         <* 
-    *> if (a_cell->l <=    0) {                                                       <* 
-    *>    DEBUG_CELL   yLOG_note    ("cell length is zero");                          <* 
-    *>    a_cell->s = strndup ("", MAX_STR);                                          <* 
-    *>    a_cell->l = 0;                                                              <* 
-    *>    a_cell->a = '?';                                                            <* 
-    *>    DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
    /*---(check for blank)----------------*/
+   DEBUG_CELL   yLOG_point   ("length"    , a_cell->l);
    if      (strcmp (a_cell->s, "") == 0) {
       a_cell->t = '-';
       a_cell->l = 0;
@@ -941,16 +935,16 @@ CELL__interpret    (
          a_cell->t     = 'n';
          a_cell->v_num = x_value;
       }
-   }
-   /*---(check for string mark)----------*/
-   else if (temp[0] == '"') {
-      a_cell->t = 's';
-      DEBUG_CELL   yLOG_complex ("type"      , "literal string which is an %c", a_cell->t);
-      a_cell->v_str = a_cell->s + 1;
+      return 0;
    }
    /*---(check for formula mark)---------*/
-   else if (strchr("=&#~!", temp[0]) != 0) {
-      a_cell->t = 'f';
+   if (strchr("=&#~!", x_pre) != 0) {
+      switch (x_pre) {
+      case '=' : a_cell->t = 'f';   break;
+      case '&' : a_cell->t = 'p';   break;
+      case '#' : a_cell->t = 'm';   break;
+      case '~' : a_cell->t = 'l';   break;
+      }
       DEBUG_CELL   yLOG_complex ("type"      , "formula which is an %c", a_cell->t);
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
       strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
@@ -960,8 +954,8 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");
       rc = RPN_convert (a_cell);
       if (a_cell->a == '?')  {
-         if (temp[0] == '#')  a_cell->a = '<';
-         else                 a_cell->a = '>';
+         if (x_pre == '#')  a_cell->a = '<';
+         else               a_cell->a = '>';
       }
       if (rc < 0) {
          a_cell->t = 'E';
@@ -1024,23 +1018,24 @@ CELL__interpret    (
             return rce - 2;
          }
       }
+      return 0;
    }
    /*---(check for non-numbers)----------*/
+   a_cell->t = 'n';
+   for (i = 0; i < len; ++i) {
+      if (strchr(sv_numeric, temp[i])  != 0) continue;
+      a_cell->t = 's';
+   }
+   /*---(therefore, number)-----------*/
+   if (a_cell->t == 'n') {
+      a_cell->v_num = atof(a_cell->s);
+      if (a_cell->a == '?')  a_cell->a = '>';
+      DEBUG_CELL   yLOG_complex ("type"      , "numeric which is an %c", a_cell->t);
+   }
+   /*---(then string)-----------------*/
    else {
-      a_cell->t = 'n';
-      for (i = 0; i < len; ++i) {
-         if (strchr(sv_numeric, temp[i])  != 0) continue;
-         a_cell->t = 's';
-      }
-      /*---(therefore, number)-----------*/
-      if (a_cell->t == 'n') {
-         a_cell->v_num = atof(a_cell->s);
-         if (a_cell->a == '?')  a_cell->a = '>';
-         DEBUG_CELL   yLOG_complex ("type"      , "numeric which is an %c", a_cell->t);
-      } else {
-         if (a_cell->a == '?')  a_cell->a = '<';
-         DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
-      }
+      if (a_cell->a == '?')  a_cell->a = '<';
+      DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
    }
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1898,7 +1893,7 @@ CELL_printable     (tCELL *a_curr) {
       return 0;
    }
    /*---(numbers)------------------------*/
-   if (a_curr->t == 'n' || (a_curr->t == 'f' && a_curr->v_str == NULL)) {
+   if (strchr ("nfl", a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
          CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
@@ -1914,18 +1909,26 @@ CELL_printable     (tCELL *a_curr) {
       } else {
          CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       }
-   } else if (a_curr->t == 'f' && a_curr->v_str != NULL) {
+   }
+   /*---(strings)------------------------*/
+   else if (a_curr->t == 'm') {
       DEBUG_CELL  yLOG_snote  ("string");
       strcat (x_temp, a_curr->v_str);
-   } else if (a_curr->t == '-') {
+   }
+   /*---(empty)--------------------------*/
+   else if (a_curr->t == '-') {
       DEBUG_CELL  yLOG_snote  ("empty");
       strcat (x_temp, "-");
-   } else if (strchr("WE", a_curr->t) != 0) {
+   }
+   /*---(troubles)-----------------------*/
+   else if (strchr("WE", a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("error");
       /*> strcat (x_temp, a_curr->s);                                                 <*/
       strcat (x_temp, a_curr->v_str);
       a_curr->a = '<';
-   } else {
+   }
+   /*---(detault)-----------------------*/
+   else {
       DEBUG_CELL  yLOG_snote  ("other");
       strcat (x_temp, a_curr->s);
    }

@@ -304,6 +304,10 @@ requires some safety built in.
 .B absolute addresses
    loc        (n, m, o)            create a cell ref from tab, col, row
 
+.B text address names
+   me         ()                   returns cell address as a string
+   addr       (ref)                returns cell address as a string
+
 .B parsing cell addresses
    tab        (ref)                return the tab number
    col        (ref)                return the col number
@@ -313,6 +317,17 @@ requires some safety built in.
    tabs       (range)              return the number of tabs
    cols       (range)              return the number of cols
    rows       (range)              return the number of rows
+
+.B data types in cells
+   isnum      (ref)                true if number
+   isfor      (ref)                true if is numeric calculation
+   isval      (ref)                true if number of numeric calc
+   isstr      (ref)                true if a string
+   ismod      (ref)                true if a string calculation
+   istxt      (ref)                true if string or string calc
+   iserr      (ref)                true if cell is in error
+   isbla      (ref)                true is cell is blank
+   isnul      (ref)                true is cell does not exist
 
 
 

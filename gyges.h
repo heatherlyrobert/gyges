@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0r"
-#define     VER_TXT   "added offset, range, and cell address functions"
+#define     VER_NUM   "1.0s"
+#define     VER_TXT   "broke out formula types for easier handling"
 
 
 
@@ -756,7 +756,8 @@ char        creg_lock;
 
 extern int     save;
 
-#define     FILE_BLANK  "untitled.gyges"
+#define     FILE_BLANK  "untitled"
+#define     FILE_SUFFIX "gyges"
 char        f_title     [MAX_STR];
 char        f_name      [MAX_STR];
 char        f_suffix    [MAX_STR];

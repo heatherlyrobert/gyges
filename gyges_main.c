@@ -36,7 +36,7 @@ main (int argc, char *argv[])
    }
    /*---(post-initialization)------------*/
    strncpy (message, msg_normal, MAX_STR);
-   if (strcmp (f_title, FILE_BLANK) != 0)  FILE_read (f_title);
+   if (strcmp (f_name, FILE_BLANK) != 0)  FILE_read (f_title);
    if (rc == 0)  rc = CURS_begin ();
    if (rc != 0)  {
       PROG_end     ();

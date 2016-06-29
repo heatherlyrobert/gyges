@@ -1741,6 +1741,72 @@ CALC__address       (char a_type)
 }
 
 PRIV void
+CALC__addr          (void)
+{
+   tCELL *x_base;
+   x_base = CALC__popref ();
+   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   CALC_pushstr (x_base->label);
+   return;
+}
+
+PRIV void
+CALC__cell          (a_type)
+{
+   tCELL *x_base;
+   char   x_type  = a_type;
+   x_base = CALC__popref ();
+   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (x_base->t == a_type)  CALC_pushval (TRUE);
+   else                      CALC_pushval (FALSE);
+   return;
+}
+
+PRIV void
+CALC__isnum         (void)
+{
+   CALC__cell ('n');
+   return;
+}
+
+PRIV void
+CALC__isstr         (void)
+{
+   CALC__cell ('s');
+   return;
+}
+
+PRIV void
+CALC__me            (void)
+{
+   CALC_pushstr (s_me->label);
+   return;
+}
+
+PRIV void
+CALC__filename      (void)
+{
+   CALC_pushstr (f_title);
+   return;
+}
+
+PRIV void
+CALC__filebase      (void)
+{
+   CALC_pushstr (f_name);
+   return;
+}
+
+PRIV void
+CALC__tabname       (void)
+{
+   CALC__address ('t');
+   n = CALC__popval ();
+   CALC_pushstr (tabs[n].name);
+   return;
+}
+
+PRIV void
 CALC__tab           (void)
 {
    CALC__address ('t');
@@ -1823,6 +1889,13 @@ CALC__rows          (void)
    CALC__rangestat ('r');
    return;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      information functions                   ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___INFO____________o () { return; }
 
 
 
@@ -2756,6 +2829,13 @@ struct  cFUNCS {
    { "offc"       ,  0, CALC__offc              , "-----"                    },
    { "offr"       ,  0, CALC__offr              , "-----"                    },
    { "loc"        ,  0, CALC__loc               , "-----"                    },
+   { "isnum"      ,  0, CALC__isstr             , "-----"                    },
+   { "isstr"      ,  0, CALC__isnum             , "-----"                    },
+   { "me"         ,  0, CALC__me                , "-----"                    },
+   { "addr"       ,  0, CALC__addr              , "-----"                    },
+   { "filename"   ,  0, CALC__filename          , "-----"                    },
+   { "filebase"   ,  0, CALC__filebase          , "-----"                    },
+   { "tabname"    ,  0, CALC__tabname           , "-----"                    },
    { "tab"        ,  0, CALC__tab               , "-----"                    },
    { "col"        ,  0, CALC__col               , "-----"                    },
    { "row"        ,  0, CALC__row               , "-----"                    },
@@ -2900,7 +2980,7 @@ CALC_eval          (tCELL *a_curr)
    char        rce         = -10;
    /*---(defense)------------------------*/
    --rce;  if (a_curr       == NULL)  return rce;
-   --rce;  if (a_curr->t    != 'f' )  return rce;
+   --rce;  if (strchr ("fpml", a_curr->t) == 0)  return rce;  /* not a calculation        */
    --rce;  if (a_curr->calc == NULL)  return rce;
    /*---(beginning)----------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3061,7 +3141,7 @@ CALC_checkpointer  (
    DEBUG_CALC   yLOG_char    ("type"      , x_calc->t);
    --rce;  if (x_calc->t    != 'r' )    return rce;
    if (a_cell->nrpn == 1) {
-      a_cell->t = 'p';
+      a_cell->t = 'a';
       a_cell->a = '<';
       DEBUG_CALC   yLOG_note    ("mark as an address pointer");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -3083,7 +3163,7 @@ CALC_checkpointer  (
          DEBUG_CALC   yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      a_cell->t = 'd';
+      a_cell->t = 'p';
       a_cell->a = '<';
       DEBUG_CALC   yLOG_note    ("mark as an range pointer");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -3285,7 +3365,7 @@ CALC_build         (tCELL *a_cell)
    char        label       [20]        = "";
    /*---(defense: starting conditions)---*/
    --rce;  if (a_cell      == NULL)  return rce;  /* cell does not exist      */
-   --rce;  if (a_cell->t   != 'f' )  return rce;  /* not a calculation        */
+   --rce;  if (strchr ("fpml", a_cell->t) == 0)  return rce;  /* not a calculation        */
    --rce;  if (a_cell->rpn == NULL)  return rce;  /* nothing without rpn      */
    /*---(beginning)----------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);

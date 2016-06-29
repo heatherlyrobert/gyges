@@ -117,6 +117,7 @@ tMENU       menus       [MAX_MENU] = {
 #define     NCOLOR_FSIMPLE    COLOR_PAIR(72) | A_BOLD
 #define     NCOLOR_FDANGER    COLOR_PAIR(71) | A_BOLD
 #define     NCOLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
+#define     NCOLOR_FSTRDAG    COLOR_PAIR(76) | A_BOLD
 #define     NCOLOR_FLIKE      COLOR_PAIR(32) | A_BOLD
 #define     NCOLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
 #define     NCOLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
@@ -227,8 +228,8 @@ CURS_status        (tCELL *a_curr)
       break;
    case 'v' : /* file version */
    default  :
-      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", f_title, tab->ncol, tab->nrow, ver_num, ver_txt);
-      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", f_title, tab->ncol, tab->nrow);
+      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", f_name, tab->ncol, tab->nrow, ver_num, ver_txt);
+      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", f_name, tab->ncol, tab->nrow);
       break;
    }
    if (sta_error == 'y')  attron (NCOLOR_STATUSE);
@@ -472,15 +473,18 @@ CURS_cell          (int a_col, int a_row)
       else if (strstr(deps, label) != NULL)     { high= 8; attron (NCOLOR_PROS   ); }
       else if (strstr(like, label) != NULL)     { high=10; attron (NCOLOR_LIKE   ); }
       /*---(pointers)-------------------------*/
-      else if (curr->t == 'p')                  { high=32; attron (NCOLOR_POINTER); }
-      else if (curr->t == 'd')                  { high=32; attron (NCOLOR_POINTER); }
+      else if (curr->t == 'p')  /* range   */   { high=32; attron (NCOLOR_POINTER); }
+      else if (curr->t == 'a')  /* address */   { high=32; attron (NCOLOR_POINTER); }
       /*---(minor highlighting)---------------*/
       else if (curr->t == 'f') {
          if      (curr->s[0] == '~')            { high= 9; attron (NCOLOR_FLIKE  ); }
-         else if (curr->s[0] == '#')            { high=11; attron (NCOLOR_FSTRING); }
          else if (curr->s[0] == '!')            { high=15; attron (NCOLOR_FCOPY  ); }
          else if (curr->nrequire < 3)           { high= 3; attron (NCOLOR_FSIMPLE); }
          else                                   { high= 4; attron (NCOLOR_FDANGER); }
+      }
+      else if (curr->t == 'm') {
+         if      (curr->nrequire < 3)           { high=16; attron (NCOLOR_FSTRDAG); }
+         else                                   { high=11; attron (NCOLOR_FSTRING); }
       }
       else if (curr->t == 'n')                  { high= 5; attron (NCOLOR_NUMBER ); }
       else if (curr->t == 'l')                  { high=13; attron (NCOLOR_LABEL  ); }
@@ -536,6 +540,7 @@ CURS_cell          (int a_col, int a_row)
    else if (high ==  3) attroff (NCOLOR_FSIMPLE);
    else if (high ==  4) attroff (NCOLOR_FDANGER);
    else if (high == 11) attroff (NCOLOR_FSTRING);
+   else if (high == 16) attroff (NCOLOR_FSTRDAG);
    else if (high ==  5) attroff (NCOLOR_NUMBER );
    else if (high ==  6) attroff (NCOLOR_STRING );
    else if (high == 13) attroff (NCOLOR_LABEL  );

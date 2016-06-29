@@ -275,7 +275,8 @@ PROG_args          (int argc, char *argv[])
    int         x_total     = 0;
    int         x_args      = 0;
    /*---(begin)--------------------------*/
-   strncpy(f_title, FILE_BLANK, MAX_STR);
+   strncpy(f_name  , FILE_BLANK , MAX_STR);
+   strncpy(f_suffix, FILE_SUFFIX, MAX_STR);
    /*---(process)------------------------*/
    for (i = 1; i < argc; ++i) {
       a = argv[i];
@@ -283,16 +284,18 @@ PROG_args          (int argc, char *argv[])
       if (a[0] == '@')  continue;
       DEBUG_ARGS  yLOG_info    ("cli arg", a);
       ++x_args;
-      if      (strncmp(a, "-f"        ,10) == 0)  strncpy (f_title, argv[++i], MAX_STR);
+      if      (strncmp(a, "-f"        ,10) == 0)  strncpy (f_name , argv[++i], MAX_STR);
       else if (strncmp(a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp(a, "--help"    ,10) == 0)  PROG_usage();
-      else if (a[0] != '-'                     )  strncpy (f_title, argv[i]  , MAX_STR);
+      else if (a[0] != '-'                     )  strncpy (f_name , argv[i]  , MAX_STR);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);
    DEBUG_ARGS  yLOG_value  ("arguments" , x_args);
    if (x_args == 0) {
       DEBUG_ARGS  yLOG_note   ("no arguments identified");
    }
+   /*---(update title)-------------------*/
+   sprintf(f_title , "%s.%s", f_name, f_suffix);
    /*---(complete)-----------------------*/
    DEBUG_ARGS  yLOG_exit  (__FUNCTION__);
    return 0;
