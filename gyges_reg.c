@@ -98,14 +98,10 @@ static      tREG        s_reg       [MAX_REG];
 
 
 
-/*
- * offset for register numbers when used in the tab field of a cell
- */
-#define     REG_OFFSET     10
 
 
 
-static      char        s_regnames     [MAX_REG] = "0-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+";
+static      char        s_regnames     [MAX_REG] = REG_NAMES;
 
 
 
@@ -118,6 +114,7 @@ char             /* clear all selections -----------------[ ------ [ ------ ]-*/
 REG_init           (void)
 {
    /*---(registers)----------------------*/
+   strlcpy (s_regnames, REG_NAMES, MAX_REG);
    REG_purge   ('y');
    creg        = '-';
    creg_lock   = ' ';
@@ -150,7 +147,7 @@ REG_clear          (char a_reg, char a_init)
    char        rce         = -10;
    char        rc          = 0;
    /*---(get register number)------------*/
-   x_reg  = REG_reg2index  (a_reg);
+   x_reg  = REG__reg2index  (a_reg);
    --rce;  if (x_reg < 0)         return rce;
    /*---(boundaries)---------------------*/
    s_reg [x_reg].otab  = 0;
@@ -183,20 +180,23 @@ REG_clear          (char a_reg, char a_init)
 /*====================------------------------------------====================*/
 static void  o___CONVERSION______o () { return; }
 
-int          /*-->-convert-a-buf-name-to-a-buf-number-----[-leaf---[--------]-*/
-REG_reg2index      (char a_reg)
+int          /*--> convert bufname to bufnum -------------[ leaf   [--------]-*/
+REG__reg2index     (char a_reg)
 {
    /*---(locals)-----------+-----------+-*/
+   char       *x_loc       = NULL;
    int         x_index     =  -1;
    char        rce         = -10;
    /*---(defense)------------------------*/
-   --rce;  if (strchr (s_regnames, a_reg) == 0)       return rce;
+   x_loc     = strchr (s_regnames, a_reg);
+   --rce;  if (x_loc == 0)                            return rce;
    /*---(buffer number)------------------*/
-   if      (a_reg == '0')                   x_index = 0;
-   else if (a_reg == '-')                   x_index = 1;
-   else if (a_reg >= 'a' && a_reg <= 'z')   x_index = a_reg - 'a' +  2;
-   else if (a_reg >= 'A' && a_reg <= 'Z')   x_index = a_reg - 'A' + 28;
-   else if (a_reg == '+')                   x_index = 54;
+   x_index   = (int) (x_loc - s_regnames);
+   /*> if      (a_reg == '0')                   x_index = 0;                          <* 
+    *> else if (a_reg == '-')                   x_index = 1;                          <* 
+    *> else if (a_reg >= 'a' && a_reg <= 'z')   x_index = a_reg - 'a' +  2;           <* 
+    *> else if (a_reg >= 'A' && a_reg <= 'Z')   x_index = a_reg - 'A' + 28;           <* 
+    *> else if (a_reg == '+')                   x_index = 54;                         <*/
    /*---(defense on range)---------------*/
    --rce; if (x_index <  0      )                     return rce;
    --rce; if (x_index >= MAX_REG)                     return rce;
@@ -204,33 +204,33 @@ REG_reg2index      (char a_reg)
    return x_index;
 }
 
-int          /*--> convert a register to a tab number ----[ ------ [ ------ ]-*/
-REG_reg2tab        (char a_buf)
+int          /*--> convert a register to a tabnum --------[ ------ [ ------ ]-*/
+REG__reg2tab       (char a_buf)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_buf       =  -1;
    char        x_tab       =  -1;
    char        rce         = -10;
    /*---(get buffer number)--------------*/
-   x_buf = REG_reg2index  (a_buf);
+   x_buf = REG__reg2index  (a_buf);
    if (x_buf < 0)  return rce;
    /*---(convert to tab number)----------*/
-   x_tab = -(x_buf + REG_OFFSET);
+   x_tab = x_buf + MAX_TABS;
    /*---(complete)-----------------------*/
    return x_tab;
 }
 
 int          /*--> convert a tab number to a register ----[ ------ [ ------ ]-*/
-REG_tab2index      (int a_tab)
+REG__tab2index     (int a_tab)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_index     = 0;
    char        rce         = -10;
    /*---(defense)------------------------*/
-   --rce;  if (a_tab > -10)                 return rce;
-   --rce;  if (a_tab < -64)                 return rce;
+   --rce;  if (a_tab <  MAX_TABS)                        return rce;
+   --rce;  if (a_tab >= MAX_TABS + strlen (s_regnames))  return rce;
    /*---(convert)------------------------*/
-   x_index = (-a_tab) + REG_OFFSET;
+   x_index = a_tab - MAX_TABS;
    /*---(complete)-----------------------*/
    return x_index;
 }
@@ -243,7 +243,7 @@ REG_tab2index      (int a_tab)
 static void  o___ATTACHING_______o () { return; }
 
 char         /*> attach a cell to a buffer ---------------[ -----  [ ------ ]-*/
-REG_hook           (tCELL *a_curr, char a_reg, char a_note)
+REG__hook          (tCELL *a_curr, char a_reg, char a_note)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_reg       =   0;
@@ -260,7 +260,7 @@ REG_hook           (tCELL *a_curr, char a_reg, char a_note)
    --rce;  if (a_curr->col != UNHOOKED)          return  rce;
    --rce;  if (a_curr->row != UNHOOKED)          return  rce;
    /*---(verify the tab)-----------------*/
-   x_reg  = REG_reg2index  (a_reg);
+   x_reg  = REG__reg2index  (a_reg);
    /*---(defense: out of bounds)---------*/
    --rce;  if (x_reg < 0)                        return  rce;
    /*---(defense: buffer full)-----------*/
@@ -274,14 +274,14 @@ REG_hook           (tCELL *a_curr, char a_reg, char a_note)
    ++s_reg[x_reg].nbuf;
    ++s_reg[x_reg].real;
    /*---(update cell)--------------------*/
-   a_curr->tab = REG_reg2tab (a_reg);
+   a_curr->tab = REG__reg2tab (a_reg);
    a_curr->col = x_nbuf;
    /*---(complete)-----------------------*/
    return 0;
 }
 
 char         /*>-detach-a-cell-from-a-buffer--------------[--------[--------]-*/
-REG_unhook         (tCELL *a_curr)
+REG__unhook        (tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    tCELL      *x_curr      = NULL;
@@ -289,11 +289,11 @@ REG_unhook         (tCELL *a_curr)
    char        rce         = -10;                /* return code for errors    */
    /*---(defenses)-----------------------*/
    --rce;  if (a_curr == NULL)                        return rce;
-   --rce;  if (a_curr->tab >= 0)                      return rce;
+   --rce;  if (a_curr->tab <  MAX_TABS)               return rce;
    --rce;  if (a_curr->tab == UNHOOKED)               return rce;
    --rce;  if (a_curr->col == UNHOOKED)               return rce;
    /*---(get register)-------------------*/
-   x_reg = REG_tab2index (a_curr->tab);
+   x_reg = REG__tab2index (a_curr->tab);
    --rce;  if (x_reg < 0)                             return rce;
    /*---(check register location)--------*/
    --rce;  if (a_curr->col >= s_reg [x_reg].nbuf)     return rce;
@@ -373,7 +373,7 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    a_curr->u   = a_stamp;
    DEBUG_SEL    yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
    /*---(place in buffer)----------------*/
-   rc = REG_hook   (x_copy, creg, 'd');
+   rc = REG__hook   (x_copy, creg, 'd');
    --rce;  if (rc < 0)                   return rce;
    ++(*a_seq);
    /*---(complete)-----------------------*/
@@ -392,7 +392,7 @@ REG_list           (char a_buf, char *a_list)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_buf"     , a_buf);
    /*---(buffer number)------------------*/
-   x_buf  = REG_reg2index  (a_buf);
+   x_buf  = REG__reg2index  (a_buf);
    DEBUG_REGS   yLOG_value   ("x_buf"     , x_buf);
    --rce;  if (x_buf < 0)  {
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -415,7 +415,7 @@ REG_list           (char a_buf, char *a_list)
    return 0;
 }
 
-char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
+char         /*--> add cells to a register ---------------[ ------ [ ------ ]-*/
 REG_save           (char a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -440,7 +440,7 @@ REG_save           (char a_type)
    DEBUG_REGS   yLOG_char    ("a_reg"     , creg);
    DEBUG_REGS   yLOG_char    ("a_type"    , a_type);
    /*---(buffer number)------------------*/
-   x_reg  = REG_reg2index  (creg);
+   x_reg  = REG__reg2index  (creg);
    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
    --rce;  if (x_reg < 0)  {
       DEBUG_REGS   yLOG_note    ("bad register requested");
@@ -493,7 +493,7 @@ REG_save           (char a_type)
       x_copy->d   = curr->d;
       x_copy->a   = curr->a;
       x_copy->u = x_stamp;
-      REG_hook   (x_copy, creg, '-');
+      REG__hook   (x_copy, creg, '-');
       ++x_seq;
       DEBUG_REGS   yLOG_note    ("copied");
       curr  = SEL_next (&x_tab, &x_col, &x_row);
@@ -563,7 +563,7 @@ REG_append         (void)
 }
 
 char               /* PURPOSE : use save range to move cells -----------------*/
-REG_paste          (void)
+REG_paste          (char a_adapt)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;             /* iterator -- sequence           */
@@ -592,7 +592,7 @@ REG_paste          (void)
    DEBUG_SEL    yLOG_enter   (__FUNCTION__);
    DEBUG_SEL    yLOG_char    ("a_buf"     , creg);
    /*---(buffer number)------------------*/
-   x_reg  = REG_reg2index  (creg);
+   x_reg  = REG__reg2index  (creg);
    --rce;  if (x_reg < 0)      return rce;
    /*---(figure offsets)-----------------*/
    x_toff = CTAB - s_reg[x_reg].otab;
@@ -704,7 +704,7 @@ REG_file           (FILE *a_file, int  *a_seq, char a_buf)
    int         x_buf       = 0;
    tCELL      *x_curr      = NULL;
    /*---(buffer number)------------------*/
-   x_buf  = REG_reg2index  (a_buf);
+   x_buf  = REG__reg2index  (a_buf);
    --rce;  if (x_buf < 0)                   return rce;
    --rce;  if (s_reg[x_buf].nbuf <= 0)        return rce;
    /*---(header)-------------------------*/
@@ -747,7 +747,7 @@ REG_bufwrite       (char a_buf)
    time_t      x_time;
    int         x_buf       = 0;
    /*---(buffer number)------------------*/
-   x_buf  = REG_reg2index  (a_buf);
+   x_buf  = REG__reg2index  (a_buf);
    --rce;  if (x_buf < 0)      return rce;
    /*---(open file)----------------------*/
    f = fopen(FILE_BUF, "w");
@@ -804,8 +804,23 @@ REG_bufwrite       (char a_buf)
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
 
-char*        /*--> unit test accessor --------------------[-leaf---[ ------ ]-*/
-REG_unit           (char *a_question, char a_reg)
+char         /*--> unit test setter ----------------------[ leaf   [ ------ ]-*/
+REG__setter        (char *a_request, char *a_data)
+{
+   if        (strcmp (a_request, "reg_names"         ) == 0) {
+      strlcpy (s_regnames, a_data, MAX_REG);
+   } else if (strcmp (a_request, "reg_names_def"      ) == 0) {
+      strlcpy (s_regnames, REG_NAMES, MAX_REG);
+   } else if (strcmp (a_request, "reg_curr"           ) == 0) {
+      creg = a_data [0];
+   } else {
+      return -1;
+   }
+   return 0;
+}
+
+char*        /*--> unit test accessor --------------------[ leaf   [ ------ ]-*/
+REG__getter        (char *a_question, char a_reg)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_reg       = 0;
@@ -814,12 +829,20 @@ REG_unit           (char *a_question, char a_reg)
    strcpy  (unit_answer, "s_reg            : question not understood");
    /*---(buffer number)------------------*/
    if (a_reg != 0) {
-      x_reg = REG_reg2index  (a_reg);
+      x_reg = REG__reg2index  (a_reg);
    }
    /*---(defenses)-----------------------*/
    if      (x_reg < 0) {
       snprintf (unit_answer, LEN_TEXT, "s_reg error      : register reference (%c) is not valid", a_reg);
    }
+   /*---(register list)------------------*/
+   else if (strcmp (a_question, "reg_names"    )  == 0) {
+      snprintf (unit_answer, LEN_TEXT, "s_reg names      : %-.45s", s_regnames);
+   }
+   else if (strcmp (a_question, "reg_count"    )  == 0) {
+      snprintf (unit_answer, LEN_TEXT, "s_reg count      : %d", strlen (s_regnames));
+   }
+   /*---(register list)------------------*/
    else if (strcmp (a_question, "reg_sort"     )  == 0) {
       REG_list  (a_reg, x_list);
       if (strlen (x_list) > 12)  DEP_gnome (x_list + 11);
@@ -836,7 +859,7 @@ REG_unit           (char *a_question, char a_reg)
       snprintf (unit_answer, LEN_TEXT, "s_reg reach      : %c, ta=%4d, nc=%4d, nr=%4d, xc=%4d, xr=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].minc, s_reg[x_reg].minr, s_reg[x_reg].maxc, s_reg[x_reg].maxr);
    }
    else if (strcmp (a_question, "reg_buffer")     == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg buffer (%c) : (%02d) nbuf=%4d, head=%9p, tail=%9p", a_reg, x_reg, s_reg[x_reg].nbuf, s_reg[x_reg].buf[0], s_reg[x_reg].buf[s_reg[x_reg].nbuf - 1]);
+      snprintf (unit_answer, LEN_TEXT, "s_reg buffer (%c) : (%02d) r=%3d, n=%3d, h=%10p, t=%10p", a_reg, x_reg, s_reg[x_reg].real, s_reg[x_reg].nbuf, s_reg[x_reg].buf[0], s_reg[x_reg].buf[s_reg[x_reg].nbuf - 1]);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

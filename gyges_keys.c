@@ -125,7 +125,7 @@ KEYS_normal        (
       case 'V'      : SEL_start (CTAB, CCOL, CROW, SEL_CUM);    break;
       case 'y'      : REG_copy  ();                   break;
       case 'Y'      : REG_valuesout();                break;
-      case 'p'      : REG_paste ();                   break;
+      case 'p'      : REG_paste ('y');                break;
                       /*---(modes and multikey)-------*/
       case '@'      : DEP_recalc();                   break;
       case ':'      : strncpy (command , ":", MAX_STR); mode = MODE_COMMAND; break;

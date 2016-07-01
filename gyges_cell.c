@@ -408,7 +408,6 @@ CELL__purge        (void)
       DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
       rc = LOC_unhook   (curr);
       DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
-      /*> REG_unhook   (curr);                                                        <*/
       rc = CELL__free    (curr, LINKED);
       DEBUG_CELL   yLOG_value   ("free rc"   , rc);
       DEBUG_CELL   yLOG_point   ("next"      , next);
@@ -2040,14 +2039,11 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    }
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "cell_where")    == 0) {
-      if (rc == 0) {
-         snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
-      } else {
-         snprintf (unit_answer, LEN_TEXT, "s_cell location  : not found in cell list");
-      }
+      if (rc == 0)  snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      else          snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", NULL  , -1         , -1         , -1         );
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_cell main list : num=%4d, head=%9p, tail=%9p", NCEL, hcell, tcell);
+      snprintf(unit_answer, LEN_TEXT, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);
    }
    else if (strcmp(a_question, "cell_count")     == 0) {
       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }

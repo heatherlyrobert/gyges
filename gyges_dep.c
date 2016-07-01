@@ -7,43 +7,83 @@
  *   purpose       : provide all code for calculating with a dependency graph
  *
  */
-/*===[[ EXPLANATION ]]========================================================*
+/*===[[ EXPLANATION ]]========================================================*/
 
- *   dependencies are simply an extension of calculation to manage a more
- *   effiecient recalculation process.  as far as i know, and i am certainly
- *   not an expert, there are two main theories on recalculation in
- *   spreadsheets.
+/*   situation (S)
  *
- *   the first is wholesale recalculation using some path, such
- *   as, top-left to bottom-right.  this is considered the simpliest as no new
- *   information must be maintained to accomplish it.  on the other hand, it
- *   can leave some cells out of sync and with the wrong values unless it is
- *   done a couple times to push changes through.  it is also an expensive
- *   method on larger sheets as a single update can trigger a full recalc.
- *   summary, simplier programming, harder on the computer, will take longer
- *   to recalc, and can have wrong values.
+ *      spreadsheets, as they should be used, are about interactive and
+ *      transparent analysis which means lots and lots of interlinked,
+ *      changing, and complex calculation.
  *
- *   the second is connecting cells in a graph structure so when a cell is
- *   changed, what other cells then require recaculation is clear.  this is
- *   a whole lot harder to program than the wholesale recalculation solution
- *   which is why the first method can look so attractive.  on the other hand
- *   is is very quick as most cells only effect a small number of others and
- *   therefore recalculation typically only involes a small number of cells.
- *   summary, harder programming, easier on the machine, faster recalculation,
- *   and confidence in the values.
+ *   complication (C)
  *
- *   there could be hybrid methods, but that would take a long time to sort out
- *   and test, and therefore likely have many of the downsides of both
- *   alternatives.  pass.
+ *      there are several theories on how spreadsheets can optimize the
+ *      trade-off of simplicity versus speed.  small spreadsheets typically
+ *      just recalculate everything, larger ones use targeted recalculation.
  *
- *   for this project, i have chosen the dependency graph option to support
- *   recalculation for a couple reasons...
- *      -- i like the idea of being more efficient
- *      -- dependencies will likely be absolutely essential in other programs
- *      -- i can learn this technique in a low-risk situation
- *   so, dependency-graphs it is.  i always lean towards doing a couple of new
- *   things in each program so i can keep learning and make mistakes in a safe
- *   environment without other folks dependent on my getting it right.
+ *
+ *   question (Q)
+ *
+ *      for gyges, what is the best method?
+ *
+ *   answer (A)
+ *
+ *      dependency graph guided calculation to optimize resources
+ *
+ *   objectives (o)
+ *      a) highest learning potential solution
+ *      b) ability to leverage methods in other situations
+ *      c) reliably correct cell values at all times
+ *      d) fast and efficient calculation so i can support massive analysis
+ *      e) long-term usage of gyges to support my own personal needs
+ *      f) clear data structure allowing reliable unit testing
+ *
+ *   alternatives (a)
+ *
+ *      as i understand it, there are three main theories related to
+ *      calculation in spreadsheets.  these different models clearly apply
+ *      to a wide variety of situations well outside spreadsheets also.
+ *
+ *      1) the first is wholesale recalculation using some path, such
+ *      as, top-left to bottom-right.
+ *         ++ this is considered the simpliest and clearest
+ *         ++ no new information must be maintained to accomplish it
+ *         ++ programming is dead simple
+ *         -- it can leave some cells out of sync/wrong values
+ *         -- it must be done multiple times to ensure correct values
+ *         -- is can be resource expensive on larger spreadsheets
+ *         -- it can be much, much slower as it recalcs already correct values
+ *
+ *      2) the second is connecting cells in a graph structure so when a cell is
+ *      changed, the cells requiring recaculation are clear.
+ *         -- new data structures are required
+ *         -- this is a whole lot harder to program
+ *         ++ cell values are always correct and up to date
+ *         ++ it is very quick as all recalculation is targeted
+ *         ++ it has much lower pressure on the cpu
+ *
+ *      3) a hybrid approach that can make option two simplier or more
+ *      efficient.
+ *         -- likely a one off application for spreadsheets
+ *         -- more complex programming
+ *         ++ perhaps more efficient
+ *         ++ perhaps quicker
+ *
+ *   tradeoffs
+ *      ---alternatives-------- -a- -b- -c- -d- -e- -f-
+ *      1) wholesale recalc      -   -   -   -   -   X
+ *      2) dependency graph      X   X   X   X   X   X
+ *      3) optimized hybrid      X   -   X   X   X   -
+ *
+ *   decision
+ *
+ *      i feel that a dependency graph solution is reusable in many
+ *      environments and that this is the perfect opportunity to learn this
+ *      method in a challenging but clear end-use scenario.
+ *       
+ */
+
+/*
  *
  *   on the implementation side, there are many ways to create graph structures
  *   depending on the memory and performance expectations.  in this case, i am
@@ -67,6 +107,31 @@
  *
  */
 
+/*
+ *   gyges supports four types of dependencies
+ *  
+ *   normal dependency for calculation
+ *      DEP_REQUIRE      r
+ *      DEP_PROVIDE      p
+ *
+ *   like-formula dependency to reduce formula mistakes/typos
+ *      DEP_SOURCE       S
+ *      DEP_LIKE         s
+ *
+ *   range dependencies to clarify and reuse ranges to reduce mistakes
+ *      DEP_RANGE        R
+ *      DEP_CELL         c
+ *
+ *   formatting dependencies to allow consistent formats and clean changes
+ *      DEP_FORMAT       F
+ *      DEP_COPY         f
+ *
+ *
+ */
+
+
+static char    s_reqtypes   [10] = "rSRF";
+static char    s_protypes   [10] = "pscf";
 
 
 /*---[[ global header ]]----------------------------------*/
@@ -211,7 +276,7 @@ DEP__free          (
       tDEP       *a_dep)
 {  /*---(design notes)--------------------------------------------------------*/
    /* destroys a single dependency object and removes from the associated     */
-   /* cells and also from the paided dependency.                              */
+   /* cells and also from the paired dependency.                              */
    /*---(defense: null cell)-------------*/
    if (a_dep       == NULL)  return NULL;
    /*---(remove from dependency list)----*/
@@ -226,14 +291,14 @@ DEP__free          (
       a_dep->match         = NULL;
    }
    /*---(if require, take off cell)------*/
-   if (strchr ("rRFS", a_dep->type) != NULL) {
+   if      (strchr (s_reqtypes, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->requires  = a_dep->next;
       --(a_dep->source->nrequire);
    }
    /*---(if provide, take off cell)------*/
-   else if (strchr ("pcfs", a_dep->type) != NULL) {
+   else if (strchr (s_protypes, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->provides  = a_dep->next;

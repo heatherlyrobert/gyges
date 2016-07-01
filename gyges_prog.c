@@ -429,7 +429,8 @@ unit_accessor(char *a_question, void *a_thing)
    }
    /*---(cell focus)---------------------*/
    else if   (strcmp(a_question, "cell_where")     == 0) {
-      snprintf(unit_answer, LEN_TEXT, "Cell Location    : p=%9p, t=%4d, c=%4d, r=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      if (x_curr == NULL)  snprintf(unit_answer, LEN_TEXT, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", NULL  , -1         , -1         , -1         );
+      else                 snprintf(unit_answer, LEN_TEXT, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
    } else if (strcmp(a_question, "sheet_who")      == 0) {
       snprintf(unit_answer, LEN_TEXT, "Sheet Location   : p=%9p", x_curr);
    } else if (strcmp(a_question, "cell_info")      == 0) {

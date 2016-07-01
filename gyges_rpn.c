@@ -69,6 +69,17 @@ char        s_final     [MAX_STR];
 PRIV void  o___MODIFY__________o () { return; }
 
 char         /*--> adjust addresses based on cell moves --[ ------ [ ------ ]-*/
+RPN_extract        (
+      /*----------+-----------+-----------------------------------------------*/
+      tCELL      *a_cell,     /* source cell                                  */
+      int         a_toff,     /* tab offset from original                     */
+      int         a_coff,     /* col offset from original                     */
+      int         a_roff,     /* row offset from original                     */
+      char       *a_final)    /* updated source formula (uncompressed)        */
+{  /*---(design notes)--------------------------------------------------------*/
+}
+
+char         /*--> adjust addresses based on cell moves --[ ------ [ ------ ]-*/
 RPN_adjust         (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.0v"
-#define     VER_TXT   "added entry function and fixed rpn address adjustments"
+#define     VER_NUM   "1.1a"
+#define     VER_TXT   "updated unit test for registers"
 
 
 
@@ -187,7 +187,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     LEN_RECD    2000
 #define     LEN_STR     200
 /*---(registers)----------------------*/
-#define     MAX_REG     60
+#define     MAX_REG     100
 
 
 
@@ -675,18 +675,6 @@ char        hist_active;
 extern      int     errornum;
 extern      char    errorstr [MAX_STR];
 
-/*> struct cDEP  {                                                                     <* 
- *>    char      type;            /+ type of connection                           +/   <* 
- *>    tCELL    *parent;          /+ pointer to parent                            +/   <* 
- *>    tCELL    *other;           /+ pointer to other cell                        +/   <* 
- *>    /+---(cell linked list)--+/                                                     <* 
- *>    tDEP     *prev;            /+ pointer to prev dependency                   +/   <* 
- *>    tDEP     *next;            /+ pointer to next dependency                   +/   <* 
- *>    tDEP     *match;           /+ pointer to matching dependency in other dir  +/   <* 
- *>    /+---(deps linked list)--+/                                                     <* 
- *>    tDEP     *dprev;           /+ pointer to prev dependency                   +/   <* 
- *>    tDEP     *dnext;           /+ pointer to next dependency                   +/   <* 
- *> };                                                                                 <*/
 extern    tDEP     *dhead;
 extern    tDEP     *dtail;
 extern    tCELL    *dtree;
@@ -752,6 +740,7 @@ char        creg_lock;
 #define     MENU_SIZING    'S'
 
 
+#define     REG_NAMES      "0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+"
 
 
 extern int     save;
@@ -875,8 +864,8 @@ char      REG_init           (void);
 char      REG_clear          (char a_reg, char a_init);
 char      REG_purge          (char a_init);
 
-char      REG_hook           (tCELL *a_curr, char a_buf, char a_note);
-char      REG_unhook         (tCELL *a_curr);
+char      REG__hook          (tCELL *a_curr, char a_buf, char a_note);
+char      REG__unhook        (tCELL *a_curr);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
@@ -885,15 +874,15 @@ char      REG_save           (char a_type);
 char      REG_copy           (void);
 char      REG_cut            (void);
 char      REG_append         (void);
-char      REG_paste          (void);
+char      REG_paste          (char a_adapt);
 char      REG_valuesout      (void);
 
 char      REG_file           (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);
 
-int       REG_reg2index      (char a_reg);
-int       REG_reg2tab        (char a_reg);
-int       REG_tab2index      (int  a_tab);
+int       REG__reg2index     (char a_reg);
+int       REG__reg2tab       (char a_reg);
+int       REG__tab2index     (int  a_tab);
 
 char      KEYS_init          (void);
 char      KEYS_record        (int a_curr);
