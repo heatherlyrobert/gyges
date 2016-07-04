@@ -126,12 +126,16 @@
  *      DEP_FORMAT       F
  *      DEP_COPY         f
  *
+ *   formatting dependencies for merged cells
+ *      DEP_MERGED       M
+ *      DEP_EMPTY        e
+ *
  *
  */
 
 
-static char    s_reqtypes   [10] = "rSRF";
-static char    s_protypes   [10] = "pscf";
+static char    s_dep_reqs    [10] = "rSRF";
+static char    s_dep_pros    [10] = "pscf";
 
 
 /*---[[ global header ]]----------------------------------*/
@@ -246,7 +250,7 @@ DEP__new           (void)
    }
    if (curr == NULL)    return NULL;
    /*---(dependency fields)--------------*/
-   curr->type    = '-';
+   curr->type    = DEP_BLANK;
    curr->source  = NULL;
    curr->target  = NULL;
    /*---(cell fields)--------------------*/
@@ -291,14 +295,14 @@ DEP__free          (
       a_dep->match         = NULL;
    }
    /*---(if require, take off cell)------*/
-   if      (strchr (s_reqtypes, a_dep->type) != NULL) {
+   if      (strchr (s_dep_reqs, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->requires  = a_dep->next;
       --(a_dep->source->nrequire);
    }
    /*---(if provide, take off cell)------*/
-   else if (strchr (s_protypes, a_dep->type) != NULL) {
+   else if (strchr (s_dep_pros, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->provides  = a_dep->next;
@@ -431,6 +435,7 @@ DEP_create         (
       case DEP_RANGE   : provide->type   = DEP_CELL;       break;
       case DEP_FORMAT  : provide->type   = DEP_COPY;       break;
       case DEP_SOURCE  : provide->type   = DEP_LIKE;       break;
+      case DEP_MERGED  : provide->type   = DEP_EMPTY;      break;
       }
       provide->source = a_target;
       provide->target = a_source;
@@ -1153,9 +1158,9 @@ DEP__exec          (int a_level, tCELL *a_curr, long a_stamp)
       DEP__exec (a_level + 1, n->target, a_stamp);
       n = n->next;
    }
-   if (strchr("fwe", a_curr->t) != 0 && a_curr->u != a_stamp) {
+   if (strchr (CTYPE_CALCS, a_curr->t) != 0 && a_curr->u != a_stamp) {
       CALC_eval (a_curr);
-      CELL_printable(a_curr);
+      CELL_printable (a_curr);
       a_curr->u = a_stamp;
    }
    DEBUG_CALC   DEP__print (a_level, a_curr);
@@ -1192,7 +1197,7 @@ DEP__revs          (int a_level, tCELL *a_curr, long a_stamp)
    /*---(recurse)------------------------*/
    DEBUG_CALC   yLOG_info    ("label"     , a_curr->label);
    DEBUG_CALC   yLOG_char    ("type"      , a_curr->t);
-   if (a_level > 0 && strchr("fwe", a_curr->t) != 0 && a_curr->u != a_stamp) {
+   if (a_level > 0 && a_curr->u != a_stamp) {
       CALC_eval (a_curr);
       CELL_printable (a_curr);
       a_curr->u = a_stamp;

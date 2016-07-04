@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1a"
-#define     VER_TXT   "updated unit test for registers"
+#define     VER_NUM   "1.1b"
+#define     VER_TXT   "fixed cell merge and better cell type definitions"
 
 
 
@@ -474,6 +474,28 @@ int         acell;           /* count of all cells                            */
 #define     CELL_BUFFER  1
 #define     CELL_SHEET   0
 
+
+/*---(cell types)------------------------*/
+/*---(multiples)----------*/
+#define     CTYPE_ALL    "-snfmlpadEew+"
+#define     CTYPE_FIXED  "-sn+"
+#define     CTYPE_DEPS   "fmlpadEew+"
+#define     CTYPE_CALCS  "fmlpadEew"
+#define     CTYPE_ERRORS "Eew"
+#define     CTYPE_NUMS   "nfl"
+#define     CTYPE_STRS   "sm"
+/*---(singles)------------*/
+#define     CTYPE_BLANK  '-'        /* blank                                  */
+#define     CTYPE_STR    's'        /* string literal                         */
+#define     CTYPE_NUM    'n'        /* numeric literal                        */
+#define     CTYPE_FORM   'f'        /* numeric formula                        */
+#define     CTYPE_MOD    'm'        /* modified string (calculated)           */
+#define     CTYPE_LIKE   'l'        /* like another cell's formula            */
+#define     CTYPE_RANGE  'p'        /* range pointer                          */
+#define     CTYPE_ADDR   'a'        /* address pointer                        */
+#define     CTYPE_WARN   'w'        /* warning status                         */
+#define     CTYPE_ERROR  'E'        /* error status                           */
+#define     CTYPE_MERGE  '+'        /* merged cell (type of blank)            */
 
 
 
@@ -934,6 +956,8 @@ char      DEP_init           /* ------ */  (void);
 char      DEP_wrap           /* ------ */  (void);
 char      DEP_purge          /* ------ */  (void);
 
+#define   DEP_BLANK     '-'
+
 #define   DEP_REQUIRE   'r'
 #define   DEP_PROVIDE   'p'
 
@@ -945,6 +969,9 @@ char      DEP_purge          /* ------ */  (void);
 
 #define   DEP_SOURCE    'S'
 #define   DEP_LIKE      's'
+
+#define   DEP_MERGED    'M'
+#define   DEP_EMPTY     'e'
 
 char      DEP_create         /* ------ */  (char a_type, tCELL *a_from, tCELL *a_to);
 char      DEP_delete         /* ------ */  (tCELL *a_me, tCELL *a_other);
@@ -1057,17 +1084,6 @@ char      FILE_read          (char *a_name);
 char      FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
 char      FILE_write         (char *a_name);
 char      XML3_read          (char *a_name);
-
-
-char*     ySTR_clean         (char *a_source, char a_mode, char a_compress);
-#define    ySTR_ALPHA     'a'
-#define    ySTR_ALNUM     '9'
-#define    ySTR_BASIC     'b'
-#define    ySTR_WRITE     'w'
-#define    ySTR_EXTEN     'e'
-#define    ySTR_PRINT     'p'
-#define    ySTR_SEVEN     '7'
-#define    ySTR_COMPRESS  '\0'
 
 
 

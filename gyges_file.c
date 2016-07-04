@@ -68,107 +68,6 @@ char       *s_context   = NULL;               /* strtok context variable   */
 char        s_cellbad   = 0;
 
 
-/*====================------------------------------------====================*/
-/*===----                            utilities                         ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___UTILITIES_______o () { return; }
-
-char        s_string    [MAX_STR];
-
-
-char*        /*--> clean string characters ---------------[--------[--------]-*/
-ySTR_clean         (char *a_source, char a_mode, char a_compress)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   a = alpha    lower and upper case letters only
-    *   n = alnum    alpha plus numbers
-    *   b = basic    alnum plus space, dash, and underscore
-    *   w = write    basic plus normal punctuation
-    *   e = exten    write plus coding symbols
-    *   p = print    all 7-bit printable ascii characters
-    *   7 = seven    all 7-bit, safe ascii characters
-    *
-    */
-   /*---(locals)-----------+-----------+-*/
-   char       *x_alpha     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
-   char       *x_alnum     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
-   char       *x_basic     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789_-";
-   char       *x_write     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789_.,:;!?-()\"\'&";
-   char       *x_exten     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789_.,:;!?-()\"\'&<>{}[]+*/=#@\\^%`~^|$";
-   char        x_legal     [MAX_STR]   = "";
-   int         i, j;                     /* loop iterators -- characters        */
-   int         x_len       = 0;            /* source string length                */
-   /*---(header)-------------------------*/
-   DEBUG_YSTR  yLOG_enter   (__FUNCTION__);
-   DEBUG_YSTR  yLOG_point   ("a_source"  , a_source);
-   DEBUG_YSTR  yLOG_char    ("a_mode"    , a_mode);
-   DEBUG_YSTR  yLOG_char    ("a_compress", a_compress);
-   /*---(defenses)-----------------------*/
-   strcpy (s_string, "(null)");
-   if (a_source == NULL) {
-      DEBUG_YSTR  yLOG_note    ("null source, exiting");
-      DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
-      return NULL;
-   }
-   DEBUG_YSTR  yLOG_info    ("a_source"  , a_source);
-   x_len = strlen(a_source);
-   DEBUG_YSTR  yLOG_value   ("len"       , x_len);
-   strcpy (s_string, "(empty)");
-   if (x_len    <= 0   ) {
-      DEBUG_YSTR  yLOG_note    ("no length, exiting");
-      DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
-      return NULL;
-   }
-   /*---(setup legal characters)---------*/
-   switch (a_mode) {
-   case 'n' : strncpy (s_string, a_source, MAX_STR);
-              DEBUG_YSTR  yLOG_note    ("no clean mode, exiting");
-              DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
-              return a_source;
-              break;
-   case 'a' : strcpy (x_legal, x_alpha);            break;
-   case '9' : strcpy (x_legal, x_alnum);            break;
-   case 'b' : strcpy (x_legal, x_basic);            break;
-   case 'w' : strcpy (x_legal, x_write);            break;
-   case 'e' : strcpy (x_legal, x_exten);            break;
-   case 'p' : for (i = ' '; i <= '~'; ++i) {
-                 j = i - ' ';
-                 x_legal [j    ] = i;
-                 x_legal [j + 1] = '\0';
-              }
-              break;
-   case '7' : for (i = 1; i <= 127; ++i) {
-                 j = i - 1;
-                 x_legal [j    ] = i;
-                 x_legal [j + 1] = '\0';
-              }
-              break;
-   default : strcpy (s_string, "(bad mode)");
-             DEBUG_YSTR  yLOG_note    ("unknown mode, exiting");
-             DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
-             return NULL;
-   }
-   DEBUG_YSTR  yLOG_info    ("x_legal"   , x_legal);
-   /*---(clear)--------------------------*/
-   for (i = 0; i <= x_len; ++i) {
-      if (strchr (x_legal, a_source[i]) != 0)  continue;
-      if (a_compress == '\0') {
-         for (j = i; j <= x_len; ++j)  a_source[j] = a_source[j + 1];
-         --x_len;
-         --i;
-         continue;
-      }
-      a_source [i] = a_compress;
-   }
-   /*---(prepare for testing)------------*/
-   strncpy (s_string, a_source, MAX_STR);
-   /*---(complete)-----------------------*/
-   DEBUG_YSTR  yLOG_exit    (__FUNCTION__);
-   return a_source;
-}
-
-
 
 /*====================------------------------------------====================*/
 /*===----                          versioning                          ----===*/
@@ -1271,7 +1170,8 @@ INPT_cellD         (
    char        x_decs      = '0';
    char        x_align     = '-';
    char        x_bformat   [10];
-   tCELL      *new         = NULL;
+   tCELL      *x_new       = NULL;
+   tCELL      *x_merge     = NULL;
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(read fields)--------------------*/
@@ -1318,9 +1218,9 @@ INPT_cellD         (
          break;
       case  5 :  /*---(source)------------*/
          DEBUG_INPT  yLOG_info    ("source"    , s_p + 1);
-         new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, s_p + 1, x_bformat);
-         DEBUG_INPT  yLOG_point   ("new"       , new);
-         if (new == NULL) {
+         x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, s_p + 1, x_bformat);
+         DEBUG_INPT  yLOG_point   ("new"       , x_new);
+         if (x_new == NULL) {
             DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
             return rce - i;
@@ -1332,6 +1232,14 @@ INPT_cellD         (
    DEBUG_INPT   yLOG_note    ("done parsing fields");
    DEBUG_INPT   yLOG_note    ("activate tab");
    tabs [x_tab].active = 'y';
+   /*---(check for a merged cell)--------*/
+   for (i = x_new->col + 1; i < tabs [x_tab].ncol; i++) {
+      x_merge = LOC_cell (x_tab, i, x_row);
+      if (x_merge == NULL)            break;
+      if (x_merge->t != CTYPE_MERGE)  break;
+      DEP_create (DEP_MERGED, x_new, x_merge);
+   }
+   /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -2090,14 +1998,6 @@ FILE_unit          (char *a_question, int a_ref)
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "ver_num"   )    == 0) {
       snprintf (unit_answer, LEN_TEXT, "s_file ver_num   : %s", ver_num);
-   } else if (strcmp (a_question, "string"    )    == 0) {
-      if (strcmp (s_string, "(null)") == 0) {
-         snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5s) :%-.40s:", "-----"          , ""      );
-      } else if (strcmp (s_string, "(empty)") == 0) {
-         snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5d) :%-.40s:", 0                , ""      );
-      } else {
-         snprintf (unit_answer, LEN_TEXT, "s_file string    : (%5d) :%-.40s:", strlen (s_string), s_string);
-      }
    } else if (strcmp (a_question, "freeze"    )    == 0) {
       snprintf (unit_answer, LEN_TEXT, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)",
             tabs[a_ref].froz_col, tabs[a_ref].froz_bcol, tabs[a_ref].froz_ecol,

@@ -16,7 +16,6 @@
  *
  */
 
-
 #include   "gyges.h"
 
 /*
@@ -31,14 +30,14 @@
  *         -    empty placeholder
  *         s    source string
  *         n    numeric value
- *         a    address pointer
- *         p    range pointer
- *         l    like formula
- *         d    display of formula to left
  *
  *      calculated
  *         m    modified string
  *         f    numeric formula formula
+ *         l    like formula
+ *         p    range pointer
+ *         a    address pointer
+ *         d    display of formula to left
  *
  *      troubles
  *         w    warning
@@ -90,7 +89,7 @@
  *      time formats (3)...
  *      t    time (HH:MM) in 24 hour time
  *      d    date (YYYY-mmm-dd)
- *      T    timestamp (YY.MM.DD.hh.mm.ss)
+*      T    timestamp (YY.MM.DD.hh.mm.ss)
 *
 *      other formats (1)...
 *      p    bullet point format
@@ -241,7 +240,7 @@ CELL__wipe         (tCELL *a_curr)
    a_curr->s              = NULL;
    a_curr->l              = 0;
    /*---(results)------------------------*/
-   a_curr->t              = '-';
+   a_curr->t              = CTYPE_BLANK;
    if (a_curr->v_str     != NULL)  free (a_curr->v_str);
    a_curr->v_str          = NULL;
    a_curr->v_num          = 0.0;
@@ -884,6 +883,7 @@ CELL__interpret    (
    int         x_col       =   0;
    int         x_row       =   0;
    tCELL      *x_like      = NULL;
+   tCELL      *x_merged    = NULL;
    /*---(heading)------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(defense: null cell)-------------*/
@@ -938,12 +938,13 @@ CELL__interpret    (
       return 0;
    }
    /*---(check for formula mark)---------*/
-   if (strchr("=&#~!", x_pre) != 0) {
+   if (strchr("=&#~!<", x_pre) != 0) {
       switch (x_pre) {
-      case '=' : a_cell->t = 'f';   break;
-      case '&' : a_cell->t = 'p';   break;
-      case '#' : a_cell->t = 'm';   break;
-      case '~' : a_cell->t = 'l';   break;
+      case '=' : a_cell->t = CTYPE_FORM;    break;
+      case '&' : a_cell->t = CTYPE_RANGE;   break;
+      case '#' : a_cell->t = CTYPE_MOD;     break;
+      case '~' : a_cell->t = CTYPE_LIKE;    break;
+      case '<' : a_cell->t = CTYPE_MERGE;   break;
       }
       DEBUG_CELL   yLOG_complex ("type"      , "formula which is an %c", a_cell->t);
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
@@ -951,6 +952,19 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
       a_cell->l = strlen  (a_cell->s);
       DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
+      --rce;
+      if (a_cell->l == 1 && a_cell->t == CTYPE_MERGE) {
+         a_cell->a = '+';
+         a_cell->f = '+';
+         for (i = a_cell->col; i >= 0; --i) {
+            x_merged = LOC_cell (a_cell->tab, i, a_cell->row);
+            if (x_merged == NULL)            return 0; /* base not there yet */
+            if (x_merged->t == CTYPE_MERGE)  continue;
+            break;
+         }
+         rc = DEP_create (DEP_MERGED, x_merged, a_cell);
+         return 0;
+      }
       DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");
       rc = RPN_convert (a_cell);
       if (a_cell->a == '?')  {
@@ -958,7 +972,7 @@ CELL__interpret    (
          else               a_cell->a = '>';
       }
       if (rc < 0) {
-         a_cell->t = 'E';
+         a_cell->t = CTYPE_ERROR;
          a_cell->v_str = strndup ("#.rpn", MAX_STR);
          CALC_free   (a_cell);
          DEP_cleanse (a_cell);
@@ -969,7 +983,7 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_info    ("CALC"      , "call calc build");
       rc = CALC_build  (a_cell);
       if (rc < 0) {
-         a_cell->t = 'E';
+         a_cell->t = CTYPE_ERROR;
          a_cell->v_str = strndup ("#.build", MAX_STR);
          CALC_free   (a_cell);
          DEP_cleanse (a_cell);
@@ -1097,11 +1111,11 @@ CELL_merge         (char a_type)
    do {
       if (a_type == 'm') {
          if (next == NULL) {
-            next    = CELL_change (CHG_NOHIST, CTAB, xcol, xrow, "+");
+            next    = CELL_change (CHG_NOHIST, CTAB, xcol, xrow, "<");
          }
          if (first->col != next->col) next->a = '+';
       } else if (next != NULL) next->a = a_type;
-      CELL_printable(next);
+      CELL_printable (next);
       next  = SEL_next(NULL, &xcol, &xrow);
    } while (next != DONE_DONE);
    /*---(complete)---------------------------*/
@@ -1321,6 +1335,7 @@ CELL_width         (char a_mode, char a_num)
          CURS_colhead ();
          ++x_count;
       }
+      if (next->t == CTYPE_MERGE)  DEP_calc_up (next);
       /*---(update printable)-------------*/
       next  = SEL_next (&x_tab, &x_col, &x_row);
    } while (next != DONE_DONE);
@@ -1883,18 +1898,18 @@ CELL_printable     (tCELL *a_curr) {
    if (a_curr->s == NULL) return 0;     /* nothing to do without source       */
    /*---(header)-------------------------*/
    DEBUG_CELL  yLOG_senter (__FUNCTION__);
-   DEBUG_CELL  yLOG_svalue ("c=", a_curr->col);
-   DEBUG_CELL  yLOG_svalue ("r=", a_curr->row);
-   DEBUG_CELL  yLOG_svalue ("t=", a_curr->t);
-   DEBUG_CELL  yLOG_svalue ("f=", a_curr->f);
+   DEBUG_CELL  yLOG_svalue ("c", a_curr->col);
+   DEBUG_CELL  yLOG_svalue ("r", a_curr->row);
+   DEBUG_CELL  yLOG_schar  (a_curr->t);
+   DEBUG_CELL  yLOG_schar  (a_curr->f);
    /*---(check for hidden)---------------*/
-   if (a_curr->a == '+' ) {             /* merged cell, nothing to show       */
+   if (a_curr->t == CTYPE_MERGE) {             /* merged cell, nothing to show       */
       if (a_curr->p != NULL)  free (a_curr->p);
       a_curr->p = NULL;
       return 0;
    }
    /*---(numbers)------------------------*/
-   if (strchr ("nfl", a_curr->t) != 0) {
+   if (strchr (CTYPE_NUMS, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
          CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
@@ -1904,25 +1919,28 @@ CELL_printable     (tCELL *a_curr) {
          CELL__print_times  (a_curr->f, a_curr->v_num, x_temp);
       } else if (strchr (sv_special, a_curr->f) != 0)  {
          CELL__print_special(a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
-      } else if (a_curr->f == '#') {
-         strcat(x_temp, a_curr->s);
-         a_curr->t = 's';
       } else {
          CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       }
    }
-   /*---(strings)------------------------*/
-   else if (a_curr->t == 'm') {
+   /*---(calced tsrings------------------*/
+   else if (strchr (CTYPE_STRS, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("string");
-      strcat (x_temp, a_curr->v_str);
+      if      (a_curr->t == CTYPE_STR)   strcat (x_temp, a_curr->s);
+      else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
+      else {
+         if (a_curr->p != NULL)  free (a_curr->p);
+         a_curr->p = NULL;
+         return 0;
+      }
    }
    /*---(empty)--------------------------*/
-   else if (a_curr->t == '-') {
+   else if (a_curr->t == CTYPE_BLANK) {
       DEBUG_CELL  yLOG_snote  ("empty");
       strcat (x_temp, "-");
    }
    /*---(troubles)-----------------------*/
-   else if (strchr("WE", a_curr->t) != 0) {
+   else if (strchr(CTYPE_ERRORS, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("error");
       /*> strcat (x_temp, a_curr->s);                                                 <*/
       strcat (x_temp, a_curr->v_str);
@@ -1939,20 +1957,20 @@ CELL_printable     (tCELL *a_curr) {
     *>    a_curr->a = '<';                                                            <* 
     *> }                                                                              <*/
    /*---(indented formats)---------------*/
-   DEBUG_CELL  yLOG_sinfo  ("x=", x_temp);
+   DEBUG_CELL  yLOG_sinfo  ("x", x_temp);
    /*---(merge formats)------------------*/
    int i;
-   DEBUG_CELL  yLOG_svalue ("w=", tabs[CTAB].cols[a_curr->col].w);
    w = tabs[a_curr->tab].cols[a_curr->col].w;
    /*> w = tab->cols[a_curr->col].w;                                                  <*/
    for (i = a_curr->col + 1; i < tabs[a_curr->tab].ncol; ++i) {
-      if (tabs[a_curr->tab].sheet[i][a_curr->row]    == NULL)  break;
-      if (tabs[a_curr->tab].sheet[i][a_curr->row]->a != '+' )  break;
+      if (tabs[a_curr->tab].sheet[i][a_curr->row]    == NULL)         break;
+      if (tabs[a_curr->tab].sheet[i][a_curr->row]->t != CTYPE_MERGE)  break;
       w    += tabs[a_curr->tab].cols[i].w;
    }
+   DEBUG_CELL  yLOG_svalue ("w", w);
    wa    = w - 1;
    /*---(choose filler)------------------*/
-   if (strchr("sm+", a_curr->t) != NULL || a_curr->v_str != NULL) {
+   if (strchr(CTYPE_STRS, a_curr->t) != NULL || a_curr->v_str != NULL) {
       if      (a_curr->f == '-') x_filler = dashes;
       else if (a_curr->f == '=') x_filler = equals;
       else if (a_curr->f == '_') x_filler = unders;

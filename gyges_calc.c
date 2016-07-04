@@ -3282,9 +3282,11 @@ CALC_eval          (tCELL *a_curr)
    if (a_curr->rpn[0] == '#') {
       resstr        = CALC__popstr();
       a_curr->v_str = strndup (resstr, MAX_STR);
+      DEBUG_CALC   yLOG_info    ("v_str"     , a_curr->v_str);
    } else {
       result       = CALC__popval();
       a_curr->v_num = result;
+      DEBUG_CALC   yLOG_value   ("v_num"     , a_curr->v_num);
    }
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
