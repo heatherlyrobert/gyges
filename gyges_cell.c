@@ -1260,16 +1260,17 @@ CELL_width         (char a_mode, char a_num)
     *  value communicated as a negative number.
     */
    /*---(locals)-----------+-----------+-*/
-   int         trow  = 0;
-   int         x_tab  = 0;
-   int         x_col  = 0;
-   int         x_row  = 0;
-   tCELL      *first = SEL_first (&x_tab, &x_col, &x_row);
-   int         scol  = x_col;
-   tCELL      *next  = first;
-   tCOLS      *curr  = NULL;
-   int         i     = 0;
-   int         x_count     = 0;
+   /*------(positions)-----*/
+   int         x_tab       = 0;
+   int         x_bcol      = 0;
+   int         x_ecol      = 0;
+   /*------(objects)-------*/
+   tCELL      *x_entry     = NULL;      /* selection entry                    */
+   tCOLS      *x_col       = NULL;      /* current column                     */
+   tCELL      *x_cell      = NULL;      /* cell for updating                  */
+   /*------(working)-------*/
+   int         i           = 0;
+   int         j           = 0;
    int         x_width     = 0;
    /*---(defenses)---------------------------*/
    char     *valid = "mhHlLnNwW";
@@ -1278,69 +1279,53 @@ CELL_width         (char a_mode, char a_num)
       return -1;
    }
    /*---(process range)----------------------*/
-   trow     = x_row;
-   DEBUG_CELL  yLOG_value  ("row"  , x_row);
-   do {
-      DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d, row=%3d", x_tab, x_col, x_row);
-      if (x_row == trow) {
-         DEBUG_CELL  yLOG_value  ("column"  , x_col);
-         curr = &tabs[x_tab].cols[x_col];
-         DEBUG_CELL  yLOG_value  ("before"  , curr->w);
-         /*---(set it)----------------------*/
-         if (a_num <   0) {
-            x_width                = -(a_num);
-         } else {
-            x_width = curr ->w;
-            switch (a_num) {
-            case  'm' : x_width    = 0;    break;
-            case  'n' : x_width    = 8;    break;
-            case  'N' : x_width    = 12;   break;
-            case  'w' : x_width    = 20;   break;
-            case  'W' : x_width    = 50;   break;
-            case  'h' : x_width   -= 1;    break;
-            case  'l' : x_width   += 1;    break;
-            case  'H' : x_width    = ((x_width / 5) * 5);         break;
-            case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
-            }
+   x_entry  = SEL_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
+   for (i = x_bcol; i <= x_ecol; ++i) {
+      DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d", x_tab, x_col);
+      x_col = &tabs[x_tab].cols[i];
+      /*---(set it)----------------------*/
+      if (a_num <   0) {
+         x_width                = -(a_num);
+      } else {
+         x_width = x_col->w;
+         switch (a_num) {
+         case  'm' : x_width    = 0;                           break;
+         case  'n' : x_width    = 8;                           break;
+         case  'N' : x_width    = 12;                          break;
+         case  'w' : x_width    = 20;                          break;
+         case  'W' : x_width    = 50;                          break;
+         case  'h' : x_width   -= 1;                           break;
+         case  'l' : x_width   += 1;                           break;
+         case  'H' : x_width    = ((x_width / 5) * 5);         break;
+         case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
          }
-         /*---(test limits)------------------*/
-         if (x_width  < MIN_WIDTH)  x_width  =  MIN_WIDTH;
-         if (x_width  > MAX_WIDTH)  x_width  =  MAX_WIDTH;
-         /*---(update printable)-------------*/
-         DEBUG_CELL  yLOG_value  ("after"   , x_width);
-         if (a_mode == CHG_INPUT) {
-            if (x_count == 0)  HIST_size   ("width"   , x_tab, x_col, x_row, curr->w, x_width);
-            else               HIST_size   ("WIDTH"   , x_tab, x_col, x_row, curr->w, x_width);
-         }
-         curr->w = x_width;
-         /*---(update column printables)----*/
-         for (i = 0; i < NROW; ++i) {
-            if (tab->sheet[x_col][i] == NULL) continue;
-            CELL_printable(tab->sheet[x_col][i]);
-            /*> int   x_col = CCOL - 1;                                              <* 
-             *> while (tab->sheet[x_col][i] != NULL) {                                    <* 
-             *>    if (tab->sheet[x_col][i]->a == '+') {                                  <* 
-             *>       --x_col;                                                            <* 
-             *>       if (x_col < 0) break;                                               <* 
-             *>       else          continue;                                            <* 
-             *>    }                                                                     <* 
-             *>    if (strchr("[^]", tab->sheet[x_col][i]->a) != 0) {                     <* 
-             *>       CELL_printable(tab->sheet[x_col][i]);                               <* 
-             *>    }                                                                     <* 
-             *>    break;                                                                <* 
-             *> }                                                                        <*/
-         }
-         /*---(reset headers)---------------*/
-         KEYS_bcol    (BCOL);
-         CURS_colhead ();
-         ++x_count;
       }
-      if (next->t == CTYPE_MERGE)  DEP_calc_up (next);
-      /*---(update printable)-------------*/
-      next  = SEL_next (&x_tab, &x_col, &x_row);
-   } while (next != DONE_DONE);
+      /*---(test limits)------------------*/
+      if (x_width  < MIN_WIDTH)  x_width  =  MIN_WIDTH;
+      if (x_width  > MAX_WIDTH)  x_width  =  MAX_WIDTH;
+      /*---(set width)--------------------*/
+      x_col->w = x_width;
+      /*---(update history)---------------*/
+      /*> ;;                                                                                         <* 
+       *> DEBUG_CELL  yLOG_value  ("after"   , x_width);                                             <* 
+       *> if (a_mode == CHG_INPUT) {                                                                 <* 
+       *>    if (x_count == 0)  HIST_size   ("width"   , x_tab, x_col, x_row, x_ccol->w, x_width);   <* 
+       *>    else               HIST_size   ("WIDTH"   , x_tab, x_col, x_row, x_ccol->w, x_width);   <* 
+       *> }                                                                                          <*/
+      /*---(update column printables)----*/
+      for (j = 0; j < NROW; ++j) {
+         x_cell = tab->sheet[i][j];
+         if (x_cell == NULL) continue;
+         /*---(update merged cells)----------*/
+         if (x_cell->t == CTYPE_MERGE)  DEP_calc_up (x_cell);
+         /*---(update printable)-------------*/
+         CELL_printable (x_cell);
+      }
+   }
+   /*---(reset headers)---------------*/
+   KEYS_bcol    (BCOL);
+   CURS_colhead ();
    /*---(complete)---------------------------*/
-   /*> CCOL = scol;                                                              <*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
 }

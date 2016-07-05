@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1d"
-#define     VER_TXT   "moved file read row/col adjusts to end"
+#define     VER_NUM   "1.1e"
+#define     VER_TXT   "fixed bug with column width updates in blank columns"
 
 
 
