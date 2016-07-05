@@ -733,11 +733,6 @@ INPT_tabF          (void)
       }
       DEBUG_INPT   yLOG_note    ("done with loop");
    } 
-   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
-   KEYS_bcol (BCOL);
-   CURS_colhead();
-   KEYS_brow (BROW);
-   CURS_rowhead();
    DEBUG_INPT   yLOG_note    ("done parsing fields");
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1679,6 +1674,12 @@ FILE_read          (char *a_name)
    /*---(summary)------------------------*/
    DEBUG_INPT  yLOG_value   ("cell_try"  , x_celltry);
    DEBUG_INPT  yLOG_value   ("cell_bad"  , x_cellbad);
+   /*---(screen)-------------------------*/
+   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
+   KEYS_bcol (BCOL);
+   CURS_colhead();
+   KEYS_brow (BROW);
+   CURS_rowhead();
    /*---(calculate)----------------------*/
    DEBUG_INPT  yLOG_note    ("recalc");
    DEP_recalc();
