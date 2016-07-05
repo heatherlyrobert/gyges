@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1b"
-#define     VER_TXT   "fixed cell merge and better cell type definitions"
+#define     VER_NUM   "1.1c"
+#define     VER_TXT   "fixed file reading setting correct upper-left screen"
 
 
 

@@ -663,7 +663,6 @@ INPT_tabF          (void)
       p = strtok_r (NULL  , q, &s_context);
       --rce;  if (p == NULL) {
          DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
-         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
          break;
       }
       strltrim (p, ySTR_BOTH, LEN_RECD);
@@ -688,10 +687,14 @@ INPT_tabF          (void)
       case  3 : /*---(top of screen)-----*/
          rc = INPT_rowcol (p, &(tabs[x_tab].bcol), &(tabs[x_tab].brow),
                0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         DEBUG_INPT   yLOG_value   ("bcol"      , tabs[x_tab].bcol);
+         DEBUG_INPT   yLOG_value   ("brow"      , tabs[x_tab].brow);
          break;
       case  4 : /*---(cur position)------*/
          rc = INPT_rowcol (p, &(tabs[x_tab].ccol), &(tabs[x_tab].crow),
                0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         tabs[x_tab].ecol = tabs[x_tab].ccol;
+         tabs[x_tab].erow = tabs[x_tab].crow;
          break;
       case  5 : /*---(freeze type)-------*/
          DEBUG_INPT   yLOG_char    ("freeze"    , p[0]);
@@ -730,6 +733,11 @@ INPT_tabF          (void)
       }
       DEBUG_INPT   yLOG_note    ("done with loop");
    } 
+   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
+   KEYS_bcol (BCOL);
+   CURS_colhead();
+   KEYS_brow (BROW);
+   CURS_rowhead();
    DEBUG_INPT   yLOG_note    ("done parsing fields");
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;

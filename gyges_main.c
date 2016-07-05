@@ -36,12 +36,12 @@ main (int argc, char *argv[])
    }
    /*---(post-initialization)------------*/
    strncpy (message, msg_normal, MAX_STR);
-   if (strcmp (f_name, FILE_BLANK) != 0)  FILE_read (f_title);
    if (rc == 0)  rc = CURS_begin ();
    if (rc != 0)  {
       PROG_end     ();
       exit (-1);
    }
+   if (strcmp (f_name, FILE_BLANK) != 0)  FILE_read (f_title);
    hist_active = 'y';
    /*---(process)------------------------*/
    KEYS_col (" r");

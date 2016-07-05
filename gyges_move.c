@@ -316,6 +316,8 @@ KEYS_col           (char *a_keys)
    /*---(init)------------------------*/
    s_beg   = BCOL;
    s_end   = ECOL;
+   DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
+   DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
    /*---(adjust curr)-----------------*/
    --rce;  // bad basic request
    if (x_mod == ' ') switch (x_key) {
@@ -332,8 +334,8 @@ KEYS_col           (char *a_keys)
                  ECOL = CCOL;
               else if (CCOL < BCOL)
                  BCOL = CCOL;
-              else
-                 s_beg = -1;
+              /*> else                                                                <*/
+                 /*> s_beg = -1;                                                      <*/
               break;
    default  :
               DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", x_key, x_key);
@@ -341,6 +343,8 @@ KEYS_col           (char *a_keys)
               return rce;
               break;
    }
+   DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
+   DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
    /*---(page moves)---------------------*/
    --rce;  // bad page request
    if (x_mod == 'c') switch (x_key) {
@@ -431,6 +435,8 @@ KEYS_col           (char *a_keys)
    DEBUG_USER  yLOG_note    ("update selection if necessary");
    if (x_key   != 'w')  SEL_update   (CTAB, CCOL, CROW);
    /*---(check for update)------------*/
+   DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
+   DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
    DEBUG_USER  yLOG_note    ("update column headings if necessary");
    if      (BCOL != s_beg) { KEYS_bcol (BCOL); CURS_colhead(); }
    else if (ECOL != s_end) { KEYS_ecol (ECOL); CURS_colhead(); }
@@ -478,9 +484,9 @@ KEYS_bcol          (int a_beg)
    if (tab->froz_col == 'y' && BCOL <= tab->froz_ecol)  BCOL = tab->froz_ecol + 1;
    if (BCOL >= NCOL)  BCOL = NCOL - 1;
    ECOL = BCOL;
-   DEBUG_USER  yLOG_value   ("tab->bcol"   , BCOL);
+   DEBUG_USER  yLOG_value   ("tab->bcol" , BCOL);
    DEBUG_USER  yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER  yLOG_value   ("tab->ecol"   , ECOL);
+   DEBUG_USER  yLOG_value   ("tab->ecol" , ECOL);
    DEBUG_USER  yLOG_value   ("avail"     , my.x_avail);
    /*---(process cols)-------------------*/
    if (tab->froz_col == 'y')  x_1st = tab->froz_ecol + 1;
@@ -509,9 +515,9 @@ KEYS_bcol          (int a_beg)
          break;
       }
    }
-   DEBUG_USER  yLOG_value   ("tab->bcol"   , BCOL);
+   DEBUG_USER  yLOG_value   ("tab->bcol" , BCOL);
    DEBUG_USER  yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER  yLOG_value   ("tab->ecol"   , ECOL);
+   DEBUG_USER  yLOG_value   ("tab->ecol" , ECOL);
    /*---(complete)-----------------------*/
    clear ();
    DEBUG_USER  yLOG_exit    (__FUNCTION__);
@@ -536,9 +542,9 @@ KEYS_ecol          (int a_end)
    if (ECOL <     0) ECOL = 0;
    if (ECOL >= NCOL) ECOL = NCOL - 1;
    BCOL = ECOL;
-   DEBUG_USER  yLOG_value   ("tab->bcol"   , BCOL);
+   DEBUG_USER  yLOG_value   ("tab->bcol" , BCOL);
    DEBUG_USER  yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER  yLOG_value   ("tab->ecol"   , ECOL);
+   DEBUG_USER  yLOG_value   ("tab->ecol" , ECOL);
    DEBUG_USER  yLOG_value   ("avail"     , my.x_avail);
    /*---(process cols)-----------------------*/
    if (tab->froz_col == 'y')  x_1st = tab->froz_ecol + 1;
@@ -567,9 +573,9 @@ KEYS_ecol          (int a_end)
          break;
       }
    }
-   DEBUG_USER  yLOG_value   ("tab->bcol"   , BCOL);
+   DEBUG_USER  yLOG_value   ("tab->bcol" , BCOL);
    DEBUG_USER  yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER  yLOG_value   ("tab->ecol"   , ECOL);
+   DEBUG_USER  yLOG_value   ("tab->ecol" , ECOL);
    /*---(fix x values)-----------------------*/
    cw = my.x_left + KEYS_lcol ();
    for (i = BCOL; i <= ECOL; ++i) {
