@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1f"
-#define     VER_TXT   "update dep_requires and dep_provides to current"
+#define     VER_NUM   "1.1g"
+#define     VER_TXT   "calculated references are now creating dependencies"
 
 
 
@@ -980,7 +980,7 @@ char      DEP_purge          /* ------ */  (void);
 #define   DEP_ADDRESS   'a'
 
 char      DEP_create         /* ------ */  (char a_type, tCELL *a_from, tCELL *a_to);
-char      DEP_delete         /* ------ */  (tCELL *a_me, tCELL *a_other);
+char      DEP_delete         /* ------ */  (char a_type, tCELL *a_me, tCELL *a_other);
 char      DEP_delcalcref     (tCELL *a_source);
 
 char      DEP_range          /* ------ */  (tCELL *a_from, int a_btab, int a_bcol, int a_brow, int a_etab, int a_ecol, int a_erow);

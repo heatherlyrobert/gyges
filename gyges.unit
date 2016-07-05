@@ -1683,7 +1683,7 @@ SCRP          (s_dep ) two-way dependency creation and destruction         DEP
      get      review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                    s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       remove dependency of 3rd on 1st                                                                                                                                                                                 
-     exec     remove a dependency                  DEP_delete            x_3rd            ,  x_1st                                     i_equal     0                                                                      
+     exec     remove a dependency                  DEP_delete            DEP_REQUIRE, x_3rd            ,  x_1st                                     i_equal     0                                                                      
      get      review the deps linked list links    DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
 
    COND       review all cell connections                                                                                                                                                                                     
@@ -1759,7 +1759,7 @@ SCRP          (s_dep ) two-way dependency creation and destruction         DEP
      get      review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                    s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       remove dependency of 2nd on 1st (non-existant)                                                                                                                                                                  
-     exec     remove a dependency                  DEP_delete            x_2nd            ,  x_1st                                     i_lesser    0                                                                      
+     exec     remove a dependency                  DEP_delete            DEP_REQUIRE, x_2nd            ,  x_1st                                     i_lesser    0                                                                      
      get      review the deps linked list links    DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=  12, fore=  12, back=  12                      
 
    COND       add dependency on 5th for 2nd                                                                                                                                                                                   
@@ -1843,7 +1843,7 @@ SCRP          (s_dep ) two-way dependency creation and destruction         DEP
      get      review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                    s_equal     s_dep provides   : 0k11  ( 1) ,root,                                   
 
    COND       remove dependency of 5th on 4th (get 4th back to root)                                                                                                                                                          
-     exec     remove a dependency                  DEP_delete            x_5th            ,  x_4th                                     i_equal     0                                                                      
+     exec     remove a dependency                  DEP_delete            DEP_REQUIRE, x_5th            ,  x_4th                                     i_equal     0                                                                      
      get      review the deps linked list links    DEP_unit              "dep_count"      , "root"                                     s_equal     s_dep count      : num=  16, fore=  16, back=  16                      
 
    COND       review all cell connections                                                                                                                                                                                     

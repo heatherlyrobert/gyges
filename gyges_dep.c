@@ -138,8 +138,6 @@
  */
 
 
-static char    s_dep_reqs    [10] = "rSRF";
-static char    s_dep_pros    [10] = "pscf";
 
 
 /*---[[ global header ]]----------------------------------*/
@@ -299,14 +297,14 @@ DEP__free          (
       a_dep->match         = NULL;
    }
    /*---(if require, take off cell)------*/
-   if      (strchr (s_dep_reqs, a_dep->type) != NULL) {
+   if      (strchr (DEP_SOURCES, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->requires  = a_dep->next;
       --(a_dep->source->nrequire);
    }
    /*---(if provide, take off cell)------*/
-   else if (strchr (s_dep_pros, a_dep->type) != NULL) {
+   else if (strchr (DEP_TARGETS, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->provides  = a_dep->next;
@@ -472,7 +470,7 @@ DEP_create         (
          DEBUG_DEPS   yLOG_point   ("ties to"   , next->target);
          if (next->target == dtree) {
             DEBUG_DEPS   yLOG_note    ("found, remove a dependence from root to target");
-            rc = DEP_delete (dtree, a_target);
+            rc = DEP_delete (DEP_REQUIRE, dtree, a_target);
             DEBUG_DEPS   yLOG_value   ("rc"        , rc);
             if (rc != 0) {
                DEBUG_DEPS   yLOG_value   ("FAILED"    , rce);
@@ -494,7 +492,7 @@ DEP_create         (
    DEBUG_DEPS   yLOG_value   ("rc"        , rc);
    if (rc < 0) {
       DEBUG_DEPS   yLOG_note    ("run DEP_delete");
-      rc = DEP_delete (a_source, a_target);
+      rc = DEP_delete (a_type, a_source, a_target);
       DEBUG_DEPS   yLOG_value   ("rc"        , rc);
       if (rc != 0) {
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -502,7 +500,7 @@ DEP_create         (
       }
       DEBUG_DEPS   yLOG_char    ("troot"     , troot);
       if (troot == 'y') {
-         DEBUG_DEPS   yLOG_note    ("run DEP_delete");
+         DEBUG_DEPS   yLOG_note    ("run DEP_create");
          rc = DEP_create (DEP_REQUIRE, dtree, a_target);
          DEBUG_DEPS   yLOG_value   ("rc"        , rc);
          if (rc != 0) {
@@ -513,7 +511,7 @@ DEP_create         (
       DEBUG_DEPS   yLOG_char    ("sroot"     , sroot);
       if (sroot == 'y') {
          DEBUG_DEPS   yLOG_note    ("run DEP_delete");
-         rc = DEP_delete (dtree, a_source);
+         rc = DEP_delete (DEP_REQUIRE, dtree, a_source);
          DEBUG_DEPS   yLOG_value   ("rc"        , rc);
          if (rc != 0) {
             DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -544,44 +542,24 @@ DEP_delcalcref     (
    /*---(defense: null pointers)---------*/
    DEBUG_DEPS   yLOG_info    ("DEFENSES"  , "make sure this is processable");
    DEBUG_DEPS   yLOG_point   ("source"    , a_source);
-   --rce;  if (a_source     == NULL)   { DEBUG_DEPS yLOG_value ("FAILED", rce); DEBUG_DEPS yLOG_exit (__FUNCTION__); return rce; }
+   --rce;  if (a_source     == NULL)   {
+      DEBUG_DEPS   yLOG_value   ("FAILED"    , rce);
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_info    ("source"    , a_source->label);
    /*---(review calculated deps)---------*/
    --rce;
    next = a_source->requires;
    while (next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("target"    , next->target->label);
       DEBUG_DEPS   yLOG_char    ("type"      , next->type);
       if (next->type != DEP_CALCREF) {
+         DEBUG_DEPS   yLOG_note    ("wrong type, skipping");
          next = next->next;
          continue;
       }
-      /*> if (next->target == NULL) {                                                 <* 
-       *>    next = next->next;                                                       <* 
-       *>    continue;                                                                <* 
-       *> }                                                                           <*/
-      DEBUG_DEPS   yLOG_info    ("unbind"    , next->target->label);
-      if (next->match == NULL)  {
-         DEBUG_DEPS   yLOG_note    ("  FAILED, two connections do not match");
-         DEBUG_DEPS   yLOG_value   ("  FAILED"  , rce);
-         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
-         return rce;
-      }
-      DEBUG_DEPS   yLOG_note    ("  both directions match");
-      DEBUG_DEPS   yLOG_complex ("  free A"  , "connection from <%s> to <%s>", a_source->label, next->target->label);
-      rc = DEP__free (next->match);
-      DEBUG_DEPS   yLOG_value   ("  rc"      , rc);
-      if (rc != 0)  {
-         DEBUG_DEPS   yLOG_value   ("  FAILED"  , rce);
-         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
-         return rce + 1;
-      }
-      DEBUG_DEPS   yLOG_complex ("  free B"  , "connection from <%s> to <%s>", next->target->label, a_source->label);
-      rc = DEP__free (next);
-      DEBUG_DEPS   yLOG_value   ("  rc"      , rc);
-      if (rc != 0)  {
-         DEBUG_DEPS   yLOG_value   ("  FAILED"  , rce);
-         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
-         return rce + 2;
-      }
+      DEP_delete (DEP_CALCREF, a_source, next->target);
       next = next->next;
    }
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -591,6 +569,7 @@ DEP_delcalcref     (
 char         /*--> remove a two-way dependency -----------[ ------ [ ------ ]-*/
 DEP_delete         (
       /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* dependency type                              */
       tCELL      *a_source,   /* cell with the calculation                    */
       tCELL      *a_target)   /* cell with value the source cell needs        */
 {  /*---(design notes)--------------------------------------------------------*/
@@ -711,7 +690,7 @@ DEP_delete         (
       DEBUG_DEPS   yLOG_info    ("provide"  , a_source->provides->target->label);
       if (a_source->provides->target == dtree) {
          DEBUG_DEPS   yLOG_note    ("provides only to root, try to delete provides");
-         rc = DEP_delete (dtree, a_source);
+         rc = DEP_delete (DEP_REQUIRE, dtree, a_source);   /* DEP_REQUIRE */
          if (rc != 0)   {
             DEBUG_DEPS   yLOG_value   ("FAILED"    , rce);
             DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -856,7 +835,7 @@ DEP_cleanse        (
       DEBUG_DEPS    yLOG_point   ("next"      , next);
       save = next->next;
       DEBUG_DEPS    yLOG_complex ("target"    , "ptr=%9p, label=%s", next->target, next->target->label);
-      rc = DEP_delete (a_cell, next->target);
+      rc = DEP_delete (next->type, a_cell, next->target);
       DEBUG_DEPS    yLOG_value   ("nrequire"  , a_cell->nrequire);
       next = save;
    }
@@ -871,7 +850,7 @@ DEP_cleanse        (
       DEBUG_DEPS    yLOG_point   ("dtree"     , dtree);
       if (a_cell->provides->target == dtree) {
          DEBUG_DEPS    yLOG_note    ("unrooting");
-         rc = DEP_delete (dtree, a_cell);
+         rc = DEP_delete (DEP_REQUIRE, dtree, a_cell);
       }
    }
    /*---(complete)-----------------------*/

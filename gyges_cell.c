@@ -258,7 +258,7 @@ CELL__wipe         (tCELL *a_curr)
    a_curr->requires       = NULL;
    a_curr->nrequire       = 0;
    DEBUG_CELL   yLOG_note    ("unroot, but leave any other provides dependences");
-   if (a_curr->provides  != NULL)  rc = DEP_delete (dtree, a_curr);
+   if (a_curr->provides  != NULL)  rc = DEP_delete (DEP_REQUIRE, dtree, a_curr);  /* DEP_REQUIRES */
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
