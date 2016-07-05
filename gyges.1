@@ -295,31 +295,31 @@ spreadsheets need methods to be able to read cells like arrays.  it is a
 startlingly useful and common need.  it also has many different nuances and
 requires some safety built in.
 
-.B relative addresses
+.B relative addresses (returns a ref)
    offr       (ref, n)             add n rows to the ref and use it
    offc       (ref, n)             add n cols to the ref and use it
    offt       (ref, n)             add n tabs to the ref and use it
    offs       (ref, n, m, o)       add n tabs, m cols, and o rows
 
-.B absolute addresses
+.B absolute addresses (returns a ref)
    loc        (n, m, o)            create a cell ref from tab, col, row
 
-.B text address names
+.B text address names (returns string)
    me         ()                   returns cell address as a string
    addr       (ref)                returns cell address as a string
 
-.B parsing cell addresses
+.B parsing cell addresses (returns numbers)
    tab        (ref)                return the tab number
    col        (ref)                return the col number
    row        (ref)                return the row number
 
-.B parsing cell ranges
+.B parsing cell ranges (returns numbers)
    tabs       (range)              return the number of tabs
    cols       (range)              return the number of cols
    rows       (range)              return the number of rows
    dist       (range)              distance between range corners (cells)
 
-.B data types in cells
+.B data types in cells (returns true/false)
    isnum      (ref)                true if number
    isfor      (ref)                true if is numeric calculation
    isvalue    (ref)                true if number of numeric calc

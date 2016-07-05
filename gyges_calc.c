@@ -1724,6 +1724,8 @@ CALC__loc           (void)
    rc = LOC_legal  (    o,    m,    n, CELL_FIXED);
    if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
    x_new  = LOC_cell   (o, m, n);
+   DEP_delcalcref (s_me);
+   /*> DEP_create     (DEP_CALCREF, s_me, x_new);                                     <*/
    CALC_pushref (x_new);
    return;
 }

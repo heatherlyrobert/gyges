@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1e"
-#define     VER_TXT   "fixed bug with column width updates in blank columns"
+#define     VER_NUM   "1.1f"
+#define     VER_TXT   "update dep_requires and dep_provides to current"
 
 
 
@@ -958,10 +958,13 @@ char      DEP_purge          /* ------ */  (void);
 
 #define   DEP_BLANK     '-'
 
-#define   DEP_REQUIRE   'r'
+#define   DEP_SOURCES   "RPFSMA"
+#define   DEP_TARGETS   "pcfsea"
+
+#define   DEP_REQUIRE   'R'
 #define   DEP_PROVIDE   'p'
 
-#define   DEP_RANGE     'R'
+#define   DEP_RANGE     'P'
 #define   DEP_CELL      'c'
 
 #define   DEP_FORMAT    'F'
@@ -973,8 +976,12 @@ char      DEP_purge          /* ------ */  (void);
 #define   DEP_MERGED    'M'
 #define   DEP_EMPTY     'e'
 
+#define   DEP_CALCREF   'A'
+#define   DEP_ADDRESS   'a'
+
 char      DEP_create         /* ------ */  (char a_type, tCELL *a_from, tCELL *a_to);
 char      DEP_delete         /* ------ */  (tCELL *a_me, tCELL *a_other);
+char      DEP_delcalcref     (tCELL *a_source);
 
 char      DEP_range          /* ------ */  (tCELL *a_from, int a_btab, int a_bcol, int a_brow, int a_etab, int a_ecol, int a_erow);
 char      DEP_cleanse        /* ------ */  (tCELL *a_curr);

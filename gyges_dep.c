@@ -80,8 +80,8 @@
  *      i feel that a dependency graph solution is reusable in many
  *      environments and that this is the perfect opportunity to learn this
  *      method in a challenging but clear end-use scenario.
- *       
- */
+*       
+*/
 
 /*
  *
@@ -129,6 +129,10 @@
  *   formatting dependencies for merged cells
  *      DEP_MERGED       M
  *      DEP_EMPTY        e
+ *
+ *   calculated dependencies using formulas (loc, offs, ...)
+ *      DEP_CALCREF      A
+ *      DEP_ADDRESS      a
  *
  *
  */
@@ -431,11 +435,12 @@ DEP_create         (
       /*---(second link)-----------------*/
       provide         = DEP__new();
       switch (a_type) {
-      case DEP_REQUIRE : provide->type   = DEP_PROVIDE;    break;
-      case DEP_RANGE   : provide->type   = DEP_CELL;       break;
-      case DEP_FORMAT  : provide->type   = DEP_COPY;       break;
-      case DEP_SOURCE  : provide->type   = DEP_LIKE;       break;
-      case DEP_MERGED  : provide->type   = DEP_EMPTY;      break;
+      case DEP_REQUIRE  : provide->type   = DEP_PROVIDE;    break;
+      case DEP_RANGE    : provide->type   = DEP_CELL;       break;
+      case DEP_FORMAT   : provide->type   = DEP_COPY;       break;
+      case DEP_SOURCE   : provide->type   = DEP_LIKE;       break;
+      case DEP_MERGED   : provide->type   = DEP_EMPTY;      break;
+      case DEP_CALCREF  : provide->type   = DEP_ADDRESS;    break;
       }
       provide->source = a_target;
       provide->target = a_source;
@@ -521,6 +526,64 @@ DEP_create         (
    }
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_note    ("all actions complete");
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> remove a two-way dependency -----------[ ------ [ ------ ]-*/
+DEP_delcalcref     (
+      /*----------+-----------+-----------------------------------------------*/
+      tCELL      *a_source)   /* cell with the calculation                    */
+{  /*---(design notes)--------------------------------------------------------*/
+   /*---(header)-------------------------*//*---------------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   tDEP       *next        = NULL;
+   char        rc          =    0;
+   /*---(defense: null pointers)---------*/
+   DEBUG_DEPS   yLOG_info    ("DEFENSES"  , "make sure this is processable");
+   DEBUG_DEPS   yLOG_point   ("source"    , a_source);
+   --rce;  if (a_source     == NULL)   { DEBUG_DEPS yLOG_value ("FAILED", rce); DEBUG_DEPS yLOG_exit (__FUNCTION__); return rce; }
+   /*---(review calculated deps)---------*/
+   --rce;
+   next = a_source->requires;
+   while (next != NULL) {
+      DEBUG_DEPS   yLOG_char    ("type"      , next->type);
+      if (next->type != DEP_CALCREF) {
+         next = next->next;
+         continue;
+      }
+      /*> if (next->target == NULL) {                                                 <* 
+       *>    next = next->next;                                                       <* 
+       *>    continue;                                                                <* 
+       *> }                                                                           <*/
+      DEBUG_DEPS   yLOG_info    ("unbind"    , next->target->label);
+      if (next->match == NULL)  {
+         DEBUG_DEPS   yLOG_note    ("  FAILED, two connections do not match");
+         DEBUG_DEPS   yLOG_value   ("  FAILED"  , rce);
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      DEBUG_DEPS   yLOG_note    ("  both directions match");
+      DEBUG_DEPS   yLOG_complex ("  free A"  , "connection from <%s> to <%s>", a_source->label, next->target->label);
+      rc = DEP__free (next->match);
+      DEBUG_DEPS   yLOG_value   ("  rc"      , rc);
+      if (rc != 0)  {
+         DEBUG_DEPS   yLOG_value   ("  FAILED"  , rce);
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce + 1;
+      }
+      DEBUG_DEPS   yLOG_complex ("  free B"  , "connection from <%s> to <%s>", next->target->label, a_source->label);
+      rc = DEP__free (next);
+      DEBUG_DEPS   yLOG_value   ("  rc"      , rc);
+      if (rc != 0)  {
+         DEBUG_DEPS   yLOG_value   ("  FAILED"  , rce);
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce + 2;
+      }
+      next = next->next;
+   }
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -840,7 +903,7 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    strncpy (a_list, ",", MAX_STR);
    n = a_me->requires;
    while (n != NULL) {
-      if (n->type == DEP_REQUIRE || n->type == DEP_RANGE) {
+      if (strchr (DEP_SOURCES, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -869,7 +932,7 @@ DEP_provides       (tCELL  *a_me, char *a_list)
    strncpy (a_list, ",", MAX_STR);
    n = a_me->provides;
    while (n != NULL) {
-      if (n->type == DEP_PROVIDE || n->type == DEP_CELL) {
+      if (strchr (DEP_TARGETS, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }

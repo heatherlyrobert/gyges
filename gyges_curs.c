@@ -211,6 +211,11 @@ CURS_status        (tCELL *a_curr)
          snprintf (msg, 500, "[ rpn %-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ]", rpn, reqs, deps, like);
       }
       break;
+   case 'd' : /* cell details */
+      if (a_curr != NULL) {
+         snprintf (msg, 500, "[ reqs=%-40.40s ][ pros=%-40.40s ]", reqs, deps);
+      }
+      break;
    case 'r' : /* buffer contents */
       if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
       else                                       strncpy (rpn, "((null))", MAX_STR);
