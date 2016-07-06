@@ -168,29 +168,30 @@ struct cDEP_INFO {
    char        type;                   /* connection type                     */
    char        match;                  /* matching connect type               */
    char        desc        [50];       /* description of dependency type      */
+   char        match_index;            /* index of matching type              */
    int         count;                  /* current count of type               */
 } s_dep_info [MAX_DEPTYPE] = {
-   /*-ty- -ma- ---description---------------------------------------- -cnt- */
+   /*-ty- -ma- ---description---------------------------------------- idx -cnt- */
 
-   {  'R', 'p', "requires another cell for its value"                ,    0 },
-   {  'p', 'R', "provides its value to another cell"                 ,    0 },
+   {  'R', 'p', "requires another cell for its value"                , 0 ,    0 },
+   {  'p', 'R', "provides its value to another cell"                 , 0 ,    0 },
 
-   {  'P', 'c', "range pointer that provides dependency shortcut"    ,    0 },
-   {  'c', 'P', "individual cell that makes up a range pointer"      ,    0 },
+   {  'P', 'c', "range pointer that provides dependency shortcut"    , 0 ,    0 },
+   {  'c', 'P', "individual cell that makes up a range pointer"      , 0 ,    0 },
 
-   {  'F', 'f', "format master cell providing format template"       ,    0 },
-   {  'f', 'F', "individual cell following the a format template"    ,    0 },
+   {  'F', 'f', "format master cell providing format template"       , 0 ,    0 },
+   {  'f', 'F', "individual cell following the a format template"    , 0 ,    0 },
 
-   {  'S', 'l', "source formula master other cell follow"            ,    0 },
-   {  'l', 'S', "follows a source formula with ref adjustments"      ,    0 },
+   {  'S', 'l', "source formula master other cell follow"            , 0 ,    0 },
+   {  'l', 'S', "follows a source formula with ref adjustments"      , 0 ,    0 },
 
-   {  'M', 'e', "provides contents for set of merged cells"          ,    0 },
-   {  'e', 'M', "provides extra/empty space to display contents"     ,    0 },
+   {  'M', 'e', "provides contents for set of merged cells"          , 0 ,    0 },
+   {  'e', 'M', "provides extra/empty space to display contents"     , 0 ,    0 },
 
-   {  'A', 'a', "contains a calculated/runtime reference function"   ,    0 },
-   {  'a', 'A', "provides its value to a calculated reference"       ,    0 },
+   {  'A', 'a', "contains a calculated/runtime reference function"   , 0 ,    0 },
+   {  'a', 'A', "provides its value to a calculated reference"       , 0 ,    0 },
 
-   {  '-', '-', "newly created dependency, not yet assigned"         ,    0 },
+   {  '-', '-', "newly created dependency, not yet assigned"         , 0 ,    0 },
 
 };
 
@@ -204,14 +205,32 @@ PRIV void  o___PROG____________o () { return; }
 char       /*----: prepare dependency capability for use ---------------------*/
 DEP_init           (void)
 {
-   /*---(basics)-------------------------*/
-   DEP_purge();
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         i           = 0;
+   int         j           = 0;
+   int         x_count     = 0;
+   int         x_found     = 0;
+   /*---(setup)--------------------------*/
+   DEP_purge  ();
    CELL_dtree ("new");
-   if (dtree == NULL)  return -1;
+   --rce;  if (dtree == NULL)  return rce;
    strcpy (dtree->label, "root");
+   /*---(initialize)---------------------*/
    dhead  = NULL;
    dtail  = NULL;
    ndep   = 0;
+   /*---(complete info table)------------*/
+   for (i = 0; i < MAX_DEPTYPE; ++i) {
+      if (s_dep_info [j].type == '-')  break;
+      ++x_count;
+      for (j = 0; j < MAX_DEPTYPE; ++j) {
+         if (s_dep_info [j].type != s_dep_info [i].match) continue;
+         ++x_found;
+         s_dep_info [j].match_index = j;
+      }
+   }
+   --rce;  if (x_found != x_count)  return rce;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -461,7 +480,7 @@ DEP_create         (
    } else {
       DEBUG_DEPS   yLOG_note    ("create new provides");
       /*---(second link)-----------------*/
-      provide         = DEP__new();
+      provide         = DEP__new ();
       switch (a_type) {
       case DEP_REQUIRE  : provide->type   = DEP_PROVIDE;    break;
       case DEP_RANGE    : provide->type   = DEP_CELL;       break;

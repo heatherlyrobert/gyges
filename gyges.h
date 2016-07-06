@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1h"
-#define     VER_TXT   "added dep type table for later reporting"
+#define     VER_NUM   "1.1i"
+#define     VER_TXT   "change highlight on visual select root to brighter"
 
 
 

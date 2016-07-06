@@ -465,7 +465,8 @@ CURS_cell          (int a_col, int a_row)
    /*---(current)--------------------------*/
    if      (a_col == CCOL && a_row == CROW)     { high= 1; attron (NCOLOR_CURRENT); }
    /*---(visual-range)---------------------*/
-   else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (NCOLOR_ROOT   ); }
+   /*> else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (NCOLOR_ROOT   ); }   <*/
+   else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (NCOLOR_VISUAL ); }
    else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (NCOLOR_VISUAL ); }
    /*---(content-based)--------------------*/
    else if (curr != NULL) {
