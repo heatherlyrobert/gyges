@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1k"
-#define     VER_TXT   "added dependency full totals and debug report ;)"
+#define     VER_NUM   "1.1l"
+#define     VER_TXT   "added totals and formatting to dependency report"
 
 
 

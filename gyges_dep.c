@@ -166,7 +166,8 @@ struct cDEP_INFO {
    {  '-', '-', ' ', "newly created dependency, not yet assigned"         , 0 ,    0,    0 },
 
 };
-
+#define     DEP_DIRREQ    '-'
+#define     DEP_DIRPRO    '+'
 
 static char s_dep_reqs [10] = "";
 static char s_dep_pros [10] = "";
@@ -205,13 +206,13 @@ DEP_init           (void)
    for (i = 0; i < MAX_DEPTYPE; ++i) {
       DEBUG_DEPS   yLOG_char    ("type"      , s_dep_info [i].type);
       /*---(check for end)---------------*/
-      if (s_dep_info [i].type == '-')  break;
+      if (s_dep_info [i].type == DEP_BLANK)  break;
       /*---(add to lists)----------------*/
       sprintf (t, "%c", s_dep_info [i].type);
       DEBUG_DEPS   yLOG_info    ("str type"  , t);
       DEBUG_DEPS   yLOG_char    ("dir"       , s_dep_info [i].dir);
-      if      (s_dep_info [i].dir  == '-')  strcat (s_dep_reqs, t);
-      else if (s_dep_info [i].dir  == '+')  strcat (s_dep_pros, t);
+      if      (s_dep_info [i].dir  == DEP_DIRREQ)  strcat (s_dep_reqs, t);
+      else if (s_dep_info [i].dir  == DEP_DIRPRO)  strcat (s_dep_pros, t);
       else {
          DEBUG_DEPS   yLOG_note    ("type direction not + or -");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -1609,24 +1610,34 @@ DEP_writeall       (void)
    char        rce         = -10;
    FILE       *x_file      = NULL;
    int         i           = 0;
+   int         x_count     = 0;
+   int         x_total     = 0;
    /*---(open)---------------------------*/
    snprintf (x_name, 95, "%s.deps", f_title);
    x_file = fopen(x_name, "w");
-   --rce;
-   if (x_file == NULL)      return rce;
-   /*---(recurse)------------------------*/
-   DEP_write (x_file, 0, dtree, '-');
+   --rce;  if (x_file == NULL)      return rce;
    /*---(totals)-------------------------*/
-   fprintf (x_file, "\n\n");
+   fprintf (x_file, "#!/usr/local/bin/gyges\n");
+   fprintf (x_file, "#  file     : %s\n", f_title);
+   fprintf (x_file, "#  report   : dependency audit file\n");
+   fprintf (x_file, "\nsummary statistics\n\n");
    fprintf (x_file, "idx  ty  ma  idx  desc----------------------------------------------  count  total\n");
    for (i = 0; i < MAX_DEPTYPE; ++i) {
       if (s_dep_info [i].type == '-')  break;
-      if ((i % 3) == 0)  fprintf (x_file, "\n");
+      if ((i % 2) == 0)  fprintf (x_file, "\n");
       fprintf  (x_file, "%-2d   %c    %c   %2d  %-50.50s  %5d  %5d\n", i,
             s_dep_info [i].type       , s_dep_info [i].match      ,
             s_dep_info [i].match_index, s_dep_info [i].desc       ,
             s_dep_info [i].count      , s_dep_info [i].total      );
+      x_count += s_dep_info [i].count;
+      x_total += s_dep_info [i].total;
    }
+   fprintf (x_file, "\n");
+   fprintf (x_file, "---  --  --  ---  -----------------------------------grand-totals---  %5d  %5d\n", x_count, x_total);
+   fprintf (x_file, "                                                     (check) ndep     %5d\n", ndep);
+   /*---(recurse)------------------------*/
+   fprintf (x_file, "\ndetails arranged by first requirement and indented\n\n");
+   DEP_write (x_file, 0, dtree, '-');
    /*---(close)--------------------------*/
    fclose (x_file);
    /*---(complete)-----------------------*/
