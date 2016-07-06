@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1l"
-#define     VER_TXT   "added totals and formatting to dependency report"
+#define     VER_NUM   "1.1m"
+#define     VER_TXT   "added a cell type table to aid program maintenance"
 
 
 
@@ -477,20 +477,21 @@ int         acell;           /* count of all cells                            */
 
 /*---(cell types)------------------------*/
 /*---(multiples)----------*/
-#define     CTYPE_ALL    "-snfmlpadEew+"
+#define     CTYPE_ALL    "-snfmlLpadEew+"
 #define     CTYPE_FIXED  "-sn+"
-#define     CTYPE_DEPS   "fmlpadEew+"
-#define     CTYPE_CALCS  "fmlpadEew"
+#define     CTYPE_DEPS   "fmlLpadEew+"
+#define     CTYPE_CALCS  "fmlLpadEew"
 #define     CTYPE_ERRORS "Eew"
 #define     CTYPE_NUMS   "nfl"
-#define     CTYPE_STRS   "sm"
+#define     CTYPE_STRS   "smL"
 /*---(singles)------------*/
 #define     CTYPE_BLANK  '-'        /* blank                                  */
 #define     CTYPE_STR    's'        /* string literal                         */
 #define     CTYPE_NUM    'n'        /* numeric literal                        */
 #define     CTYPE_FORM   'f'        /* numeric formula                        */
 #define     CTYPE_MOD    'm'        /* modified string (calculated)           */
-#define     CTYPE_LIKE   'l'        /* like another cell's formula            */
+#define     CTYPE_FLIKE  'l'        /* like another cell's formula            */
+#define     CTYPE_MLIKE  'L'        /* like another cell's modified string    */
 #define     CTYPE_RANGE  'p'        /* range pointer                          */
 #define     CTYPE_ADDR   'a'        /* address pointer                        */
 #define     CTYPE_WARN   'w'        /* warning status                         */
