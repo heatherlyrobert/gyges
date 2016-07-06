@@ -107,36 +107,6 @@
  *
  */
 
-/*
- *   gyges supports four types of dependencies
- *  
- *   normal dependency for calculation
- *      DEP_REQUIRE      R
- *      DEP_PROVIDE      p
- *
- *   like-formula dependency to reduce formula mistakes/typos
- *      DEP_SOURCE       S
- *      DEP_LIKE         s
- *
- *   range dependencies to clarify and reuse ranges to reduce mistakes
- *      DEP_RANGE        P
- *      DEP_CELL         c
- *
- *   formatting dependencies to allow consistent formats and clean changes
- *      DEP_FORMAT       F
- *      DEP_COPY         f
- *
- *   formatting dependencies for merged cells
- *      DEP_MERGED       M
- *      DEP_EMPTY        e
- *
- *   calculated dependencies using formulas (loc, offs, ...)
- *      DEP_CALCREF      A
- *      DEP_ADDRESS      a
- *
- *
- */
-
 
 
 
@@ -167,33 +137,38 @@ int       ndep;
 struct cDEP_INFO {
    char        type;                   /* connection type                     */
    char        match;                  /* matching connect type               */
+   char        dir;                    /* direction (require vs provide)      */
    char        desc        [50];       /* description of dependency type      */
    char        match_index;            /* index of matching type              */
    int         count;                  /* current count of type               */
 } s_dep_info [MAX_DEPTYPE] = {
-   /*-ty- -ma- ---description---------------------------------------- idx -cnt- */
+   /*-ty- -ma- -dir ---description---------------------------------------- idx -cnt- */
 
-   {  'R', 'p', "requires another cell for its value"                , 0 ,    0 },
-   {  'p', 'R', "provides its value to another cell"                 , 0 ,    0 },
+   {  'R', 'p', '-', "requires another cell for its value"                , 0 ,    0 },
+   {  'p', 'R', '+', "provides its value to another cell"                 , 0 ,    0 },
 
-   {  'P', 'c', "range pointer that provides dependency shortcut"    , 0 ,    0 },
-   {  'c', 'P', "individual cell that makes up a range pointer"      , 0 ,    0 },
+   {  'P', 'c', '-', "range pointer that provides dependency shortcut"    , 0 ,    0 },
+   {  'c', 'P', '+', "individual cell that makes up a range pointer"      , 0 ,    0 },
 
-   {  'F', 'f', "format master cell providing format template"       , 0 ,    0 },
-   {  'f', 'F', "individual cell following the a format template"    , 0 ,    0 },
+   {  'F', 'f', '-', "format master cell providing format template"       , 0 ,    0 },
+   {  'f', 'F', '+', "individual cell following the a format template"    , 0 ,    0 },
 
-   {  'S', 'l', "source formula master other cell follow"            , 0 ,    0 },
-   {  'l', 'S', "follows a source formula with ref adjustments"      , 0 ,    0 },
+   {  'S', 'l', '-', "source formula master other cell follow"            , 0 ,    0 },
+   {  'l', 'S', '+', "follows a source formula with ref adjustments"      , 0 ,    0 },
 
-   {  'M', 'e', "provides contents for set of merged cells"          , 0 ,    0 },
-   {  'e', 'M', "provides extra/empty space to display contents"     , 0 ,    0 },
+   {  'M', 'e', '-', "provides contents for set of merged cells"          , 0 ,    0 },
+   {  'e', 'M', '+', "provides extra/empty space to display contents"     , 0 ,    0 },
 
-   {  'A', 'a', "contains a calculated/runtime reference function"   , 0 ,    0 },
-   {  'a', 'A', "provides its value to a calculated reference"       , 0 ,    0 },
+   {  'A', 'a', '-', "contains a calculated/runtime reference function"   , 0 ,    0 },
+   {  'a', 'A', '+', "provides its value to a calculated reference"       , 0 ,    0 },
 
-   {  '-', '-', "newly created dependency, not yet assigned"         , 0 ,    0 },
+   {  '-', '-', ' ', "newly created dependency, not yet assigned"         , 0 ,    0 },
 
 };
+
+
+static char s_dep_reqs [10] = "";
+static char s_dep_pros [10] = "";
 
 
 
@@ -205,12 +180,16 @@ PRIV void  o___PROG____________o () { return; }
 char       /*----: prepare dependency capability for use ---------------------*/
 DEP_init           (void)
 {
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    int         i           = 0;
    int         j           = 0;
    int         x_count     = 0;
    int         x_found     = 0;
+   int         x_reqs      = 0;
+   int         x_pros      = 0;
+   int         t           [5];
    /*---(setup)--------------------------*/
    DEP_purge  ();
    CELL_dtree ("new");
@@ -221,17 +200,44 @@ DEP_init           (void)
    dtail  = NULL;
    ndep   = 0;
    /*---(complete info table)------------*/
+   --rce;
    for (i = 0; i < MAX_DEPTYPE; ++i) {
-      if (s_dep_info [j].type == '-')  break;
+      DEBUG_DEPS   yLOG_char    ("type"      , s_dep_info [i].type);
+      /*---(check for end)---------------*/
+      if (s_dep_info [i].type == '-')  break;
+      /*---(add to lists)----------------*/
+      sprintf (t, "%c", s_dep_info [i].type);
+      DEBUG_DEPS   yLOG_info    ("str type"  , t);
+      DEBUG_DEPS   yLOG_char    ("dir"       , s_dep_info [i].dir);
+      if      (s_dep_info [i].dir  == '-')  strcat (s_dep_reqs, t);
+      else if (s_dep_info [i].dir  == '+')  strcat (s_dep_pros, t);
+      else {
+         DEBUG_DEPS   yLOG_note    ("type direction not + or -");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      /*---(find match)------------------*/
       ++x_count;
       for (j = 0; j < MAX_DEPTYPE; ++j) {
          if (s_dep_info [j].type != s_dep_info [i].match) continue;
          ++x_found;
-         s_dep_info [j].match_index = j;
+         s_dep_info [i].match_index = j;
+         DEBUG_DEPS   yLOG_char    ("match"     , s_dep_info [j].type);
+         DEBUG_DEPS   yLOG_value   ("match_indx", s_dep_info [i].match_index);
       }
    }
-   --rce;  if (x_found != x_count)  return rce;
+   DEBUG_DEPS   yLOG_value   ("x_count"   , x_count);
+   DEBUG_DEPS   yLOG_value   ("x_found"   , x_found);
+   --rce;  if (x_found != x_count) {
+      DEBUG_DEPS   yLOG_note    ("could not match all dep types");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(report out)---------------------*/
+   DEBUG_DEPS   yLOG_info    ("s_dep_reqs", s_dep_reqs);
+   DEBUG_DEPS   yLOG_info    ("s_dep_pros", s_dep_pros);
    /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -275,6 +281,41 @@ DEP_wrap           (void)
    ndep   = 0;
    /*---(complete)-----------------------*/
    return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        lookup functions                      ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___LOOKUP__________o () { return; }
+
+char         /*--> find the index of a dep type ----------[ leaf   [ ------ ]-*/
+DEP_index          (char a_type)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(search)-------------------------*/
+   for (i = 0; i < MAX_DEPTYPE; ++i) {
+      if (s_dep_info [i].type != a_type) continue;
+      return i;
+   }
+   /*---(failure)------------------------*/
+   return -1;
+}
+
+char         /*--> find the index of a dep match type-----[ leaf   [ ------ ]-*/
+DEP_match          (char a_type)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(search)-------------------------*/
+   for (i = 0; i < MAX_DEPTYPE; ++i) {
+      if (s_dep_info [i].type != a_type) continue;
+      return s_dep_info [i].match_index;
+   }
+   /*---(failure)------------------------*/
+   return -1;
 }
 
 
@@ -346,14 +387,14 @@ DEP__free          (
       a_dep->match         = NULL;
    }
    /*---(if require, take off cell)------*/
-   if      (strchr (DEP_SOURCES, a_dep->type) != NULL) {
+   if      (strchr (s_dep_reqs, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->requires  = a_dep->next;
       --(a_dep->source->nrequire);
    }
    /*---(if provide, take off cell)------*/
-   else if (strchr (DEP_TARGETS, a_dep->type) != NULL) {
+   else if (strchr (s_dep_pros, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->provides  = a_dep->next;
@@ -395,15 +436,32 @@ DEP_create         (
    char        troot       =  'n';    /* flag if target root tie deleted      */
    char        rc          =    0;
    char        tries       =    0;
+   char        x_index     =    0;
+   /*---(defense: type)------------------*/
+   DEBUG_DEPS   yLOG_char    ("a_type"    , a_type);
+   x_index = DEP_index (a_type);
+   DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+   --rce;  if (x_index < 0) {
+      DEBUG_DEPS   yLOG_note    ("dependency type not found");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(defense: null pointers)---------*/
-   DEBUG_DEPS   yLOG_point   ("source"    , a_source);
-   --rce;  if (a_source     == NULL)   { DEBUG_DEPS yLOG_value ("FAILED", rce); DEBUG_DEPS yLOG_exit (__FUNCTION__); return rce; }
-   DEBUG_DEPS   yLOG_point   ("target"    , a_target);
-   --rce;  if (a_target     == NULL)   { DEBUG_DEPS yLOG_value ("FAILED", rce); DEBUG_DEPS yLOG_exit (__FUNCTION__); return rce; }
-   DEBUG_DEPS   yLOG_complex ("focus"     , "review connection between <%s> and <%s>", a_source->label, a_target->label);
+   DEBUG_DEPS   yLOG_point   ("a_source"  , a_source);
+   --rce;  if (a_source     == NULL)   {
+      DEBUG_DEPS yLOG_value ("FAILED", rce);
+      DEBUG_DEPS yLOG_exit (__FUNCTION__);
+      return rce; 
+   }
+   DEBUG_DEPS   yLOG_point   ("a_target"  , a_target);
+   --rce;  if (a_target     == NULL)   {
+      DEBUG_DEPS yLOG_value ("FAILED", rce);
+      DEBUG_DEPS yLOG_exit (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_complex ("connect"   , "<%s> and <%s>", a_source->label, a_target->label);
    /*---(defense: circular ref)----------*/
-   --rce;
-   if (a_source == a_target) {
+   --rce;  if (a_source == a_target) {
       DEBUG_DEPS   yLOG_note    ("both source and target are equal");
       DEBUG_DEPS   yLOG_value   ("FAILED"    , rce);
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -411,8 +469,7 @@ DEP_create         (
    }
    /*---(check if source needs rooting)--*/
    DEBUG_DEPS   yLOG_info    ("ROOTING"   , "check if source needs to be routed");
-   --rce;
-   if (a_source->provides == NULL && a_source != dtree) {
+   --rce;  if (a_source->provides == NULL && a_source != dtree) {
       DEBUG_DEPS   yLOG_note    ("create a dependence from root to source");
       rc = DEP_create (DEP_REQUIRE, dtree, a_source);
       DEBUG_DEPS   yLOG_value   ("rc"        , rc);
@@ -448,6 +505,8 @@ DEP_create         (
       require->type   = a_type;
       require->source = a_source;
       require->target = a_target;
+      /*---(add to dep counters)---------*/
+      ++(s_dep_info [x_index].count);
       /*---(hook it up to cell)----------*/
       if (a_source->requires == NULL) {
          a_source->requires = require;
@@ -481,14 +540,25 @@ DEP_create         (
       DEBUG_DEPS   yLOG_note    ("create new provides");
       /*---(second link)-----------------*/
       provide         = DEP__new ();
-      switch (a_type) {
-      case DEP_REQUIRE  : provide->type   = DEP_PROVIDE;    break;
-      case DEP_RANGE    : provide->type   = DEP_CELL;       break;
-      case DEP_FORMAT   : provide->type   = DEP_COPY;       break;
-      case DEP_SOURCE   : provide->type   = DEP_LIKE;       break;
-      case DEP_MERGED   : provide->type   = DEP_EMPTY;      break;
-      case DEP_CALCREF  : provide->type   = DEP_ADDRESS;    break;
+      x_index =  DEP_match (a_type);
+      DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+      --rce;  if (x_index < 0) {
+         DEBUG_DEPS   yLOG_note    ("dependency type not found");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce;
       }
+      DEBUG_DEPS   yLOG_char    ("match type", s_dep_info [x_index].type);
+      provide->type = s_dep_info [x_index].type;
+      /*---(add to dep totals)-----------*/
+      ++(s_dep_info [x_index].count);
+      /*> switch (a_type) {                                                           <* 
+       *> case DEP_REQUIRE  : provide->type   = DEP_PROVIDE;    break;                <* 
+       *> case DEP_RANGE    : provide->type   = DEP_CELL;       break;                <* 
+       *> case DEP_FORMAT   : provide->type   = DEP_COPY;       break;                <* 
+       *> case DEP_SOURCE   : provide->type   = DEP_LIKE;       break;                <* 
+       *> case DEP_MERGED   : provide->type   = DEP_EMPTY;      break;                <* 
+       *> case DEP_CALCREF  : provide->type   = DEP_ADDRESS;    break;                <* 
+       *> }                                                                           <*/
       provide->source = a_target;
       provide->target = a_source;
       /*---(hook it up to cell)----------*/
@@ -639,6 +709,16 @@ DEP_delete         (
    char        rc          =    0;
    char        tries       =    0;
    char        found       =    0;
+   char        x_index     =    0;
+   /*---(defense: type)------------------*/
+   DEBUG_DEPS   yLOG_char    ("a_type"    , a_type);
+   x_index = DEP_index (a_type);
+   DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+   --rce;  if (x_index < 0) {
+      DEBUG_DEPS   yLOG_note    ("dependency type not found");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(defense: null pointers)---------*/
    DEBUG_DEPS   yLOG_info    ("DEFENSES"  , "make sure this is processable");
    DEBUG_DEPS   yLOG_point   ("source"    , a_source);
@@ -672,6 +752,18 @@ DEP_delete         (
             DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
             return rce + 1;
          }
+         /*---(find type)------------------*/
+         x_index =  DEP_match (a_type);
+         DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+         --rce;  if (x_index < 0) {
+            DEBUG_DEPS   yLOG_note    ("dependency type not found");
+            DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_DEPS   yLOG_char    ("match type", s_dep_info [x_index].type);
+         /*---(add to dep totals)-----------*/
+         --(s_dep_info [x_index].count);
+         /*---(handlen original)------------*/
          DEBUG_DEPS   yLOG_complex ("  free B"  , "connection from <%s> to <%s>", next->target->label, a_source->label);
          rc = DEP__free (next);
          DEBUG_DEPS   yLOG_value   ("  rc"      , rc);
@@ -680,6 +772,18 @@ DEP_delete         (
             DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
             return rce + 2;
          }
+         /*---(find type)------------------*/
+         x_index =  DEP_index (a_type);
+         DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+         --rce;  if (x_index < 0) {
+            DEBUG_DEPS   yLOG_note    ("dependency type not found");
+            DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_DEPS   yLOG_char    ("match type", s_dep_info [x_index].type);
+         /*---(add to dep counters)---------*/
+         --(s_dep_info [x_index].count);
+         /*---(add to total)----------------*/
          ++found;
       } else {
          DEBUG_DEPS   yLOG_note    ("  SKIP, does not match the target");
@@ -931,7 +1035,7 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    strncpy (a_list, ",", MAX_STR);
    n = a_me->requires;
    while (n != NULL) {
-      if (strchr (DEP_SOURCES, n->type) != 0) {
+      if (strchr (s_dep_reqs, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -960,7 +1064,7 @@ DEP_provides       (tCELL  *a_me, char *a_list)
    strncpy (a_list, ",", MAX_STR);
    n = a_me->provides;
    while (n != NULL) {
-      if (strchr (DEP_TARGETS, n->type) != 0) {
+      if (strchr (s_dep_pros, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -1475,19 +1579,19 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
 }
 
 char
-DEP_write          (FILE *a_file, int a_level, tCELL *a_curr)
+DEP_write          (FILE *a_file, int a_level, tCELL *a_curr, char a_type)
 {
    /*---(locals)-----------+-----------+-*/
    tDEP       *next        = NULL;
    int         i;
    /*---(print)--------------------------*/
    for (i = 0; i < a_level; ++i)  fprintf(a_file, "   ");
-   if (a_curr->t == '-')  fprintf (a_file, "%d %-6.6s:%c:\n", a_level, a_curr->label, a_curr->t);
-   else                   fprintf (a_file, "%d %-6.6s:%c:%3d:%s\n", a_level, a_curr->label, a_curr->t, a_curr->l, a_curr->s);
+   if (a_curr->t == '-')  fprintf (a_file, "%d %-6.6s:%c:%c:\n"      , a_level, a_curr->label, a_type, a_curr->t);
+   else                   fprintf (a_file, "%d %-6.6s:%c:%c:%3d:%s\n", a_level, a_curr->label, a_type, a_curr->t, a_curr->l, a_curr->s);
    /*---(process children)---------------*/
    next = a_curr->requires;
    while (next != NULL) {
-      DEP_write (a_file, a_level + 1, next->target);
+      DEP_write (a_file, a_level + 1, next->target, next->type);
       next = next->next;
    }
    /*---(complete)-----------------------*/
@@ -1501,13 +1605,25 @@ DEP_writeall       (void)
    char        x_name      [100]       = "";
    char        rce         = -10;
    FILE       *x_file      = NULL;
+   int         i           = 0;
    /*---(open)---------------------------*/
    snprintf (x_name, 95, "%s.deps", f_title);
    x_file = fopen(x_name, "w");
    --rce;
    if (x_file == NULL)      return rce;
    /*---(recurse)------------------------*/
-   DEP_write (x_file, 0, dtree);
+   DEP_write (x_file, 0, dtree, '-');
+   /*---(totals)-------------------------*/
+   fprintf (x_file, "\n\n");
+   fprintf (x_file, "idx ty  ma  idx  desc----------------------------------------------  count\n");
+   for (i = 0; i < MAX_DEPTYPE; ++i) {
+      if (s_dep_info [i].type == '-')  break;
+      if ((i % 3) == 0)  fprintf (x_file, "\n");
+      fprintf  (x_file, "%-2d  %c    %c   %2d  %-50.50s  %5d\n", i,
+            s_dep_info [i].type       , s_dep_info [i].match      ,
+            s_dep_info [i].match_index, s_dep_info [i].desc       ,
+            s_dep_info [i].count      );
+   }
    /*---(close)--------------------------*/
    fclose (x_file);
    /*---(complete)-----------------------*/

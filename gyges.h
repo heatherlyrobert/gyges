@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1i"
-#define     VER_TXT   "change highlight on visual select root to brighter"
+#define     VER_NUM   "1.1j"
+#define     VER_TXT   "made dependency types table driven to ease maintenance"
 
 
 
@@ -958,9 +958,6 @@ char      DEP_purge          /* ------ */  (void);
 
 #define   DEP_BLANK     '-'
 
-#define   DEP_SOURCES   "RPFSMA"
-#define   DEP_TARGETS   "pcfsea"
-
 #define   DEP_REQUIRE   'R'
 #define   DEP_PROVIDE   'p'
 
@@ -979,7 +976,7 @@ char      DEP_purge          /* ------ */  (void);
 #define   DEP_CALCREF   'A'
 #define   DEP_ADDRESS   'a'
 
-char      DEP_create         /* ------ */  (char a_type, tCELL *a_from, tCELL *a_to);
+char      DEP_create         /* ------ */  (char a_type, tCELL *a_source, tCELL *a_target);
 char      DEP_delete         /* ------ */  (char a_type, tCELL *a_me, tCELL *a_other);
 char      DEP_delcalcref     (tCELL *a_source);
 
@@ -997,7 +994,7 @@ char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
 
-char      DEP_write          (FILE *a_file, int a_level, tCELL *a_curr);
+char      DEP_write          (FILE *a_file, int a_level, tCELL *a_curr, char a_type);
 char      DEP_writeall       (void);
 char     *DEP_unit           (char *a_question, char *a_label);
 
