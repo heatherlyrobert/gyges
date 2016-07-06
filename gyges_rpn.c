@@ -143,7 +143,7 @@ RPN_adjust         (
    strcpy (a_final, a_cell->s);
    strcpy (s_final, a_cell->s);
    DEBUG_RPN    yLOG_char    ("a_cell->t" , a_cell->t);
-   --rce;  if (strchr ("fml", a_cell->t) == 0)   {
+   --rce;  if (strchr ("fmlLE", a_cell->t) == 0)   {
       DEBUG_RPN    yLOG_note    ("aborted, a_cell type is not formula");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;
@@ -287,7 +287,7 @@ RPN_convert        (
    }
    DEBUG_RPN    yLOG_info    ("a_curr->s" , a_curr->s);
    DEBUG_RPN    yLOG_char    ("a_curr->t" , a_curr->t);
-   --rce;  if (strchr ("fapml", a_curr->t) == 0) {
+   --rce;  if (strchr ("fapmlL", a_curr->t) == 0) {
       DEBUG_RPN    yLOG_note    ("passed cell not a formula");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;  /* not a formula        */
@@ -311,7 +311,6 @@ RPN_convert        (
    a_curr->nrpn = 0;
    /*---(convert)------------------------*/
    strncpy (x_work, a_curr->s, MAX_STR);
-   x_work [0] = '=';
    if (ch == '~') {
       DEBUG_RPN    yLOG_note    ("processing a like formula");
       rc = LOC_parse (x_work + 1, &x_tab, &x_col, &x_row, NULL);
@@ -338,7 +337,12 @@ RPN_convert        (
          return rce;
       }
       strncpy (x_work, x_temp, MAX_STR);
+      strltrim (x_work, ySTR_EVERY, MAX_STR);
+      if (ch == '#')  a_curr->t = CTYPE_MLIKE;
    }
+   x_work [0] = '=';
+   DEBUG_RPN    yLOG_info    ("x_work"    , x_work);
+   DEBUG_RPN    yLOG_value   ("prefix"    , ch);
    x_rpn = yRPN_spreadsheet (x_work, &x_ntoken);
    --rce;  if (x_rpn == NULL)            return rce;
    DEBUG_RPN    yLOG_point   ("x_rpn"     , x_rpn);
@@ -349,6 +353,8 @@ RPN_convert        (
    strcat (x_rpn2, x_rpn);
    len = strlen (x_rpn2);
    x_rpn2 [len - 2] = '\0';
+   DEBUG_RPN    yLOG_info    ("x_rpn2"    , x_rpn2);
+   DEBUG_RPN    yLOG_value   ("x_ntoken"  , x_ntoken);
    /*---(put into cell)------------------*/
    a_curr->rpn   = strndup (x_rpn2, MAX_STR);
    a_curr->nrpn  = x_ntoken;

@@ -3243,10 +3243,11 @@ CALC_eval          (tCELL *a_curr)
    char        rce         = -10;
    /*---(defense)------------------------*/
    --rce;  if (a_curr       == NULL)  return rce;
-   --rce;  if (strchr ("fpml", a_curr->t) == 0)  return rce;  /* not a calculation        */
+   --rce;  if (strchr ("fpmlL", a_curr->t) == 0)  return rce;  /* not a calculation        */
    --rce;  if (a_curr->calc == NULL)  return rce;
    /*---(beginning)----------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   DEBUG_CALC   yLOG_info    ("cell"      , a_curr->label);
    DEBUG_CALC   yLOG_complex ("calc"     , "cell=%9p, col=%3d, row=%3d, calc=%9p", a_curr, a_curr->col, a_curr->row, a_curr->calc);
    /*---(prep)---------------------------*/
    errornum = 0;
@@ -3630,7 +3631,7 @@ CALC_build         (tCELL *a_cell)
    char        label       [20]        = "";
    /*---(defense: starting conditions)---*/
    --rce;  if (a_cell      == NULL)  return rce;  /* cell does not exist      */
-   --rce;  if (strchr ("fpml", a_cell->t) == 0)  return rce;  /* not a calculation        */
+   --rce;  if (strchr ("fpmlL", a_cell->t) == 0)  return rce;  /* not a calculation        */
    --rce;  if (a_cell->rpn == NULL)  return rce;  /* nothing without rpn      */
    /*---(beginning)----------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);

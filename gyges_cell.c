@@ -145,24 +145,25 @@ static char sv_binary      [20] = "01";               /* only binary digits     
 struct cCELL_INFO {
    char        type;                   /* cell type                           */
    char        terse       [10];       /* short description of cell type      */
+   char        rpn;                    /* require processing by rpn           */
    char        calc;                   /* must it be calculated               */
    char        result;                 /* what type is the result             */
    char        desc        [50];       /* description of cell type            */
    int         count;                  /* current count of type               */
 } s_cell_info [MAX_CELLTYPE] = {
-   /*-ty- -terse-- calc type ---description---------------------------------------- -cnt- */
-   {  's', "str"  , '-', '#', "string literal presented from source field"         ,    0 },
-   {  'n', "num"  , '-', '=', "numeric literal presented in various formats"       ,    0 },
-   {  'f', "form" , 'y', '=', "numeric formula"                                    ,    0 },
-   {  'm', "mod"  , 'y', '#', "string formula"                                     ,    0 },
-   {  'l', "flike", 'y', '=', "numeric formula derived from another cell"          ,    0 },
-   {  'L', "mlike", 'y', '#', "string formula derived from another cell"           ,    0 },
-   {  'p', "range", '-', '-', "range pointer to use in other formulas"             ,    0 },
-   {  'a', "addr" , '-', '-', "address pointer to use in other formulas"           ,    0 },
-   {  'w', "warn" , '-', 'e', "cell contains a warning"                            ,    0 },
-   {  'E', "error", '-', 'e', "cell contains an error"                             ,    0 },
-   {  '+', "merge", '-', '-', "empty cell used to present merged information"      ,    0 },
-   {  '-', "blank", '-', '-', "blank cell"                                         ,    0 },
+   /*-ty- -terse-- -rpn calc type ---description---------------------------------------- -cnt- */
+   {  's', "str"  , '-', '-', '#', "string literal presented from source field"         ,    0 },
+   {  'n', "num"  , '-', '-', '=', "numeric literal presented in various formats"       ,    0 },
+   {  'f', "form" , 'y', 'y', '=', "numeric formula"                                    ,    0 },
+   {  'm', "mod"  , 'y', 'y', '#', "string formula"                                     ,    0 },
+   {  'l', "flike", 'y', 'y', '=', "numeric formula derived from another cell"          ,    0 },
+   {  'L', "mlike", 'y', 'y', '#', "string formula derived from another cell"           ,    0 },
+   {  'p', "range", 'y', '-', '-', "range pointer to use in other formulas"             ,    0 },
+   {  'a', "addr" , 'y', '-', '-', "address pointer to use in other formulas"           ,    0 },
+   {  'w', "warn" , '-', '-', 'e', "cell contains a warning"                            ,    0 },
+   {  'E', "error", '-', '-', 'e', "cell contains an error"                             ,    0 },
+   {  '+', "merge", '-', 'y', '-', "empty cell used to present merged information"      ,    0 },
+   {  '-', "blank", '-', '-', '-', "blank cell"                                         ,    0 },
 };
 
 
@@ -1032,7 +1033,7 @@ CELL__interpret    (
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
             return rce;
          }
-         rc = DEP_create (DEP_LIKE, a_cell, x_like);
+         rc = DEP_create (DEP_SOURCE, a_cell, x_like);
          DEBUG_CELL   yLOG_value   ("dep rc"    , rc);
          if (rc < 0) {
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1919,7 +1920,7 @@ CELL_printable     (tCELL *a_curr) {
       return 0;
    }
    /*---(numbers)------------------------*/
-   if (strchr (CTYPE_NUMS, a_curr->t) != 0 && a_curr->rpn [0] == '=') {
+   if (strchr (CTYPE_NUMS, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
          CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
@@ -1934,7 +1935,7 @@ CELL_printable     (tCELL *a_curr) {
       }
    }
    /*---(calced tsrings------------------*/
-   else if (strchr (CTYPE_STRS, a_curr->t) != 0 && a_curr->rpn [0] == '#') {
+   else if (strchr (CTYPE_STRS, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("string");
       if      (a_curr->t == CTYPE_STR)   strcat (x_temp, a_curr->s);
       else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
