@@ -141,28 +141,29 @@ struct cDEP_INFO {
    char        desc        [50];       /* description of dependency type      */
    char        match_index;            /* index of matching type              */
    int         count;                  /* current count of type               */
+   int         total;                  /* total of type ever created          */
 } s_dep_info [MAX_DEPTYPE] = {
-   /*-ty- -ma- -dir ---description---------------------------------------- idx -cnt- */
+   /*-ty- -ma- -dir ---description---------------------------------------- idx -cnt- -tot- */
 
-   {  'R', 'p', '-', "requires another cell for its value"                , 0 ,    0 },
-   {  'p', 'R', '+', "provides its value to another cell"                 , 0 ,    0 },
+   {  'R', 'p', '-', "requires another cell for its value"                , 0 ,    0,    0 },
+   {  'p', 'R', '+', "provides its value to another cell"                 , 0 ,    0,    0 },
 
-   {  'P', 'c', '-', "range pointer that provides dependency shortcut"    , 0 ,    0 },
-   {  'c', 'P', '+', "individual cell that makes up a range pointer"      , 0 ,    0 },
+   {  'P', 'c', '-', "range pointer that provides dependency shortcut"    , 0 ,    0,    0 },
+   {  'c', 'P', '+', "individual cell that makes up a range pointer"      , 0 ,    0,    0 },
 
-   {  'F', 'f', '-', "format master cell providing format template"       , 0 ,    0 },
-   {  'f', 'F', '+', "individual cell following the a format template"    , 0 ,    0 },
+   {  'F', 'f', '-', "format master cell providing format template"       , 0 ,    0,    0 },
+   {  'f', 'F', '+', "individual cell following the a format template"    , 0 ,    0,    0 },
 
-   {  'S', 'l', '-', "source formula master other cell follow"            , 0 ,    0 },
-   {  'l', 'S', '+', "follows a source formula with ref adjustments"      , 0 ,    0 },
+   {  'S', 'l', '-', "source formula master other cell follow"            , 0 ,    0,    0 },
+   {  'l', 'S', '+', "follows a source formula with ref adjustments"      , 0 ,    0,    0 },
 
-   {  'M', 'e', '-', "provides contents for set of merged cells"          , 0 ,    0 },
-   {  'e', 'M', '+', "provides extra/empty space to display contents"     , 0 ,    0 },
+   {  'M', 'e', '-', "provides contents for set of merged cells"          , 0 ,    0,    0 },
+   {  'e', 'M', '+', "provides extra/empty space to display contents"     , 0 ,    0,    0 },
 
-   {  'A', 'a', '-', "contains a calculated/runtime reference function"   , 0 ,    0 },
-   {  'a', 'A', '+', "provides its value to a calculated reference"       , 0 ,    0 },
+   {  'A', 'a', '-', "contains a calculated/runtime reference function"   , 0 ,    0,    0 },
+   {  'a', 'A', '+', "provides its value to a calculated reference"       , 0 ,    0,    0 },
 
-   {  '-', '-', ' ', "newly created dependency, not yet assigned"         , 0 ,    0 },
+   {  '-', '-', ' ', "newly created dependency, not yet assigned"         , 0 ,    0,    0 },
 
 };
 
@@ -507,6 +508,7 @@ DEP_create         (
       require->target = a_target;
       /*---(add to dep counters)---------*/
       ++(s_dep_info [x_index].count);
+      ++(s_dep_info [x_index].total);
       /*---(hook it up to cell)----------*/
       if (a_source->requires == NULL) {
          a_source->requires = require;
@@ -551,6 +553,7 @@ DEP_create         (
       provide->type = s_dep_info [x_index].type;
       /*---(add to dep totals)-----------*/
       ++(s_dep_info [x_index].count);
+      ++(s_dep_info [x_index].total);
       /*> switch (a_type) {                                                           <* 
        *> case DEP_REQUIRE  : provide->type   = DEP_PROVIDE;    break;                <* 
        *> case DEP_RANGE    : provide->type   = DEP_CELL;       break;                <* 
@@ -1615,14 +1618,14 @@ DEP_writeall       (void)
    DEP_write (x_file, 0, dtree, '-');
    /*---(totals)-------------------------*/
    fprintf (x_file, "\n\n");
-   fprintf (x_file, "idx ty  ma  idx  desc----------------------------------------------  count\n");
+   fprintf (x_file, "idx  ty  ma  idx  desc----------------------------------------------  count  total\n");
    for (i = 0; i < MAX_DEPTYPE; ++i) {
       if (s_dep_info [i].type == '-')  break;
       if ((i % 3) == 0)  fprintf (x_file, "\n");
-      fprintf  (x_file, "%-2d  %c    %c   %2d  %-50.50s  %5d\n", i,
+      fprintf  (x_file, "%-2d   %c    %c   %2d  %-50.50s  %5d  %5d\n", i,
             s_dep_info [i].type       , s_dep_info [i].match      ,
             s_dep_info [i].match_index, s_dep_info [i].desc       ,
-            s_dep_info [i].count      );
+            s_dep_info [i].count      , s_dep_info [i].total      );
    }
    /*---(close)--------------------------*/
    fclose (x_file);
