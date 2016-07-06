@@ -111,7 +111,7 @@
  *   gyges supports four types of dependencies
  *  
  *   normal dependency for calculation
- *      DEP_REQUIRE      r
+ *      DEP_REQUIRE      R
  *      DEP_PROVIDE      p
  *
  *   like-formula dependency to reduce formula mistakes/typos
@@ -119,7 +119,7 @@
  *      DEP_LIKE         s
  *
  *   range dependencies to clarify and reuse ranges to reduce mistakes
- *      DEP_RANGE        R
+ *      DEP_RANGE        P
  *      DEP_CELL         c
  *
  *   formatting dependencies to allow consistent formats and clean changes
@@ -163,6 +163,36 @@ int       ndep;
 
 
 
+#define   MAX_DEPTYPE     30
+struct cDEP_INFO {
+   char        type;                   /* connection type                     */
+   char        match;                  /* matching connect type               */
+   char        desc        [50];       /* description of dependency type      */
+   int         count;                  /* current count of type               */
+} s_dep_info [MAX_DEPTYPE] = {
+   /*-ty- -ma- ---description---------------------------------------- -cnt- */
+
+   {  'R', 'p', "requires another cell for its value"                ,    0 },
+   {  'p', 'R', "provides its value to another cell"                 ,    0 },
+
+   {  'P', 'c', "range pointer that provides dependency shortcut"    ,    0 },
+   {  'c', 'P', "individual cell that makes up a range pointer"      ,    0 },
+
+   {  'F', 'f', "format master cell providing format template"       ,    0 },
+   {  'f', 'F', "individual cell following the a format template"    ,    0 },
+
+   {  'S', 'l', "source formula master other cell follow"            ,    0 },
+   {  'l', 'S', "follows a source formula with ref adjustments"      ,    0 },
+
+   {  'M', 'e', "provides contents for set of merged cells"          ,    0 },
+   {  'e', 'M', "provides extra/empty space to display contents"     ,    0 },
+
+   {  'A', 'a', "contains a calculated/runtime reference function"   ,    0 },
+   {  'a', 'A', "provides its value to a calculated reference"       ,    0 },
+
+   {  '-', '-', "newly created dependency, not yet assigned"         ,    0 },
+
+};
 
 
 

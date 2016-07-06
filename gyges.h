@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1g"
-#define     VER_TXT   "calculated references are now creating dependencies"
+#define     VER_NUM   "1.1h"
+#define     VER_TXT   "added dep type table for later reporting"
 
 
 
