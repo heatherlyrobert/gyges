@@ -1235,6 +1235,57 @@ DEP_like           (tCELL  *a_me, char *a_list)
 /*====================------------------------------------====================*/
 PR void  o___CALCULATION_____o () { return; }
 
+char       /*----: list the provisions ---------------------------------------*/
+DEP_updatelikes    (tCELL  *a_me)
+{
+   DEBUG_DEPS    yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *n           = NULL;
+   char        rce         = -10;
+   int         x_tab       =   0;
+   int         x_col       =   0;
+   int         x_row       =   0;
+   char       *x_src       = NULL;
+   tCELL      *x_likes     [1000];
+   int         x_count     =    0;
+   int         i           =    0;
+   /*---(defense: cell)------------------*/
+   DEBUG_DEPS    yLOG_point   ("a_me"      , a_me);
+   --rce;  if (a_me    == NULL) {
+      DEBUG_DEPS    yLOG_note    ("cell pointer is null");
+      DEBUG_DEPS    yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(build the list)--------------*/
+   DEBUG_DEPS    yLOG_point   ("nprovide"  , a_me->nprovide);
+   n = a_me->provides;
+   while (n != NULL) {
+      DEBUG_DEPS    yLOG_point   ("dep cell"  , n->target);
+      DEBUG_DEPS    yLOG_info    ("dep targ"  , n->target->label);
+      DEBUG_DEPS    yLOG_char    ("dep type"  , n->type);
+      if (n->type == DEP_LIKE) {
+         DEBUG_DEPS    yLOG_note    ("ADDED");
+         x_likes [x_count] = n->target;
+         ++x_count;
+      }
+      n = n->next;
+   }
+   /*---(walk the list)---------------*/
+   for (i = 0; i < x_count; ++i) {
+      DEBUG_DEPS    yLOG_value   ("process"   , i);
+      DEBUG_DEPS    yLOG_info    ("label"     , x_likes [i]->label);
+      x_tab = x_likes [i]->tab;
+      x_col = x_likes [i]->col;
+      x_row = x_likes [i]->row;
+      x_src = strdup (x_likes [i]->s);
+      CELL_change (CHG_NOHIST, x_tab, x_col, x_row, x_src);
+      free (x_src);
+   }
+   /*---(complete)--------------------*/
+   DEBUG_DEPS    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 PR char    /*----: dependency-based calculation engine -----------------------*/
 DEP__print         (int a_level, tCELL *a_curr)
 {

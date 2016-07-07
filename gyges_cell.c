@@ -756,6 +756,8 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
          return NULL;
       }
    }
+   /*---(process likes)------------------*/
+   DEP_updatelikes (curr);
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return curr;

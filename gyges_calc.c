@@ -3250,7 +3250,7 @@ CALC_eval          (tCELL *a_curr)
       return rce;
    }
    DEBUG_CALC   yLOG_info    ("label"     , a_curr->label);
-   DEBUG_CALC   yLOG_info    ("type"      , a_curr->t);
+   DEBUG_CALC   yLOG_char    ("type"      , a_curr->t);
    --rce;  if (strchr (G_CELL_CALC, a_curr->t) == 0) {
       DEBUG_CALC   yLOG_note    ("not a calculated type");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -3651,7 +3651,7 @@ CALC_build         (tCELL *a_cell)
       return rce;
    }
    DEBUG_CALC   yLOG_info    ("label"     , a_cell->label);
-   DEBUG_CALC   yLOG_info    ("type"      , a_cell->t);
+   DEBUG_CALC   yLOG_char    ("type"      , a_cell->t);
    --rce;  if (strchr (G_CELL_CALC, a_cell->t) == 0) {
       DEBUG_CALC   yLOG_note    ("not a calculated type");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);

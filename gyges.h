@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1p"
-#define     VER_TXT   "added new cell type variables to RPN and CALC functions"
+#define     VER_NUM   "1.1q"
+#define     VER_TXT   "added auto update of LIKE formulas when source changed ;))"
 
 
 
@@ -970,7 +970,7 @@ char      DEP_purge          /* ------ */  (void);
 #define   DEP_COPY      'f'
 
 #define   DEP_SOURCE    'S'
-#define   DEP_LIKE      's'
+#define   DEP_LIKE      'l'
 
 #define   DEP_MERGED    'M'
 #define   DEP_EMPTY     'e'
@@ -988,6 +988,7 @@ char      DEP_cleanse        /* ------ */  (tCELL *a_curr);
 char      DEP_requires       /* ------ */  (tCELL  *a_me, char* a_list);
 char      DEP_provides       /* ------ */  (tCELL  *a_me, char* a_list);
 char      DEP_like           /* ------ */  (tCELL  *a_me, char* a_list);
+char      DEP_updatelikes    (tCELL  *a_me);
 
 char      DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, char (*a_func) (FILE *r_file, char r_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp));
 char      DEP_recalc         /* ------ */  (void);
