@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1q"
-#define     VER_TXT   "added auto update of LIKE formulas when source changed ;))"
+#define     VER_NUM   "1.1r"
+#define     VER_TXT   "update screen colors to show LIKE better"
 
 
 

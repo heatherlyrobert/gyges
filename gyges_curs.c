@@ -109,19 +109,27 @@ tMENU       menus       [MAX_MENU] = {
 #define     NCOLOR_CURRENT    COLOR_PAIR(43) | A_BLINK
 #define     NCOLOR_VISUAL     COLOR_PAIR(23) | A_BOLD
 #define     NCOLOR_ROOT       COLOR_PAIR(33) | A_BOLD
+
 #define     NCOLOR_REQS       COLOR_PAIR(25) | A_BOLD
 #define     NCOLOR_PROS       COLOR_PAIR(22) | A_BOLD
 #define     NCOLOR_LIKE       COLOR_PAIR(24) | A_BOLD
+
 #define     NCOLOR_ERROR      COLOR_PAIR(61) | A_BOLD
+
 #define     NCOLOR_POINTER    COLOR_PAIR(76) | A_BOLD
+
 #define     NCOLOR_FSIMPLE    COLOR_PAIR(72) | A_BOLD
 #define     NCOLOR_FDANGER    COLOR_PAIR(71) | A_BOLD
-#define     NCOLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
-#define     NCOLOR_FSTRDAG    COLOR_PAIR(76) | A_BOLD
-#define     NCOLOR_FLIKE      COLOR_PAIR(32) | A_BOLD
-#define     NCOLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
-#define     NCOLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
+#define     NCOLOR_FLIKE      COLOR_PAIR(72)           
+
 #define     NCOLOR_STRING     COLOR_PAIR(73) | A_BOLD
+#define     NCOLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
+#define     NCOLOR_FSTRDAG    COLOR_PAIR(75) | A_BOLD
+#define     NCOLOR_MLIKE      COLOR_PAIR(75)          
+
+#define     NCOLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
+
+#define     NCOLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
 #define     NCOLOR_LABEL      COLOR_PAIR(73)
 #define     NCOLOR_NULL       COLOR_PAIR(70) | A_BOLD
 /*---(row and column headers)---------*/
@@ -471,30 +479,32 @@ CURS_cell          (int a_col, int a_row)
    /*---(content-based)--------------------*/
    else if (curr != NULL) {
       /*---(trouble)--------------------------*/
-      if      (curr->t == 'E')                  { high=31; attron (NCOLOR_ERROR  ); }
-      else if (curr->t == 'e')                  { high=31; attron (NCOLOR_ERROR  ); }
-      else if (curr->t == 'w')                  { high=31; attron (NCOLOR_ERROR  ); }
+      if      (curr->t == CTYPE_ERROR)          { high=31; attron (NCOLOR_ERROR  ); }
+      else if (curr->t == CTYPE_WARN )          { high=31; attron (NCOLOR_ERROR  ); }
       /*---(related)--------------------------*/
-      else if (strstr(reqs, label) != NULL)     { high= 7; attron (NCOLOR_REQS   ); }
-      else if (strstr(deps, label) != NULL)     { high= 8; attron (NCOLOR_PROS   ); }
-      else if (strstr(like, label) != NULL)     { high=10; attron (NCOLOR_LIKE   ); }
+      else if (strstr (reqs, label) != NULL)    { high= 7; attron (NCOLOR_REQS   ); }
+      else if (strstr (deps, label) != NULL)    { high= 8; attron (NCOLOR_PROS   ); }
+      else if (strstr (like, label) != NULL)    { high=10; attron (NCOLOR_LIKE   ); }
       /*---(pointers)-------------------------*/
-      else if (curr->t == 'p')  /* range   */   { high=32; attron (NCOLOR_POINTER); }
-      else if (curr->t == 'a')  /* address */   { high=32; attron (NCOLOR_POINTER); }
-      /*---(minor highlighting)---------------*/
-      else if (curr->t == 'f') {
-         if      (curr->s[0] == '~')            { high= 9; attron (NCOLOR_FLIKE  ); }
-         else if (curr->s[0] == '!')            { high=15; attron (NCOLOR_FCOPY  ); }
-         else if (curr->nrequire < 3)           { high= 3; attron (NCOLOR_FSIMPLE); }
+      else if (curr->t == CTYPE_RANGE)          { high=32; attron (NCOLOR_POINTER); }
+      else if (curr->t == CTYPE_ADDR )          { high=32; attron (NCOLOR_POINTER); }
+      /*---(numbers)--------------------------*/
+      else if (curr->t == CTYPE_NUM  )          { high= 5; attron (NCOLOR_NUMBER ); }
+      else if (curr->t == CTYPE_FORM ) {
+         if   (curr->nrequire < 3)              { high= 3; attron (NCOLOR_FSIMPLE); }
          else                                   { high= 4; attron (NCOLOR_FDANGER); }
       }
-      else if (curr->t == 'm') {
+      else if (curr->t == CTYPE_FLIKE)          { high= 9; attron (NCOLOR_FLIKE  ); }
+      /*---(strings)--------------------------*/
+      else if (curr->t == CTYPE_STR  )          { high= 6; attron (NCOLOR_STRING ); }
+      else if (curr->t == CTYPE_MOD  ) {
          if      (curr->nrequire < 3)           { high=16; attron (NCOLOR_FSTRDAG); }
          else                                   { high=11; attron (NCOLOR_FSTRING); }
       }
-      else if (curr->t == 'n')                  { high= 5; attron (NCOLOR_NUMBER ); }
-      else if (curr->t == 'l')                  { high=13; attron (NCOLOR_LABEL  ); }
-      else if (curr->t == '-')                  { high=14; attron (NCOLOR_NULL   ); }
+      else if (curr->t == CTYPE_MLIKE)          { high= 9; attron (NCOLOR_MLIKE  ); }
+      /*---(constants)------------------------*/
+      /*> else if (curr->t == 'l')                  { high=13; attron (NCOLOR_LABEL  ); }   <*/
+      else if (curr->t == CTYPE_BLANK)          { high=14; attron (NCOLOR_NULL   ); }
       else                                      { high= 6; attron (NCOLOR_STRING ); }
    }
    /*---(check max width)------------------*/
@@ -684,21 +694,21 @@ CURS_begin         (void)
    start_color ();
    use_default_colors();
    /*---(transparent)--------------------*/
-   init_pair (70, COLOR_BLACK  , -1           );
-   init_pair (71, COLOR_RED    , -1           );
-   init_pair (72, COLOR_GREEN  , -1           );
-   init_pair (73, COLOR_YELLOW , -1           );
-   init_pair (74, COLOR_BLUE   , -1           );
-   init_pair (75, COLOR_MAGENTA, -1           );
-   init_pair (76, COLOR_CYAN   , -1           );
+   init_pair (70, COLOR_BLACK  , -1           );   /* null/blank             */
+   init_pair (71, COLOR_RED    , -1           );   /* dangerous formulas     */
+   init_pair (72, COLOR_GREEN  , -1           );   /* numeric formulas       */
+   init_pair (73, COLOR_YELLOW , -1           );   /* strings                */
+   init_pair (74, COLOR_BLUE   , -1           );   /* numbers                */
+   init_pair (75, COLOR_MAGENTA, -1           );   /* string formulas        */
+   init_pair (76, COLOR_CYAN   , -1           );   /* pointers               */
    init_pair (77, COLOR_WHITE  , -1           );
    /*---(same color)---------------------*/
    init_pair (20, COLOR_BLACK  , COLOR_BLACK  );
    init_pair (21, COLOR_RED    , COLOR_RED    );
-   init_pair (22, COLOR_GREEN  , COLOR_GREEN  );
-   init_pair (23, COLOR_YELLOW , COLOR_YELLOW );
-   init_pair (24, COLOR_BLUE   , COLOR_BLUE   );
-   init_pair (25, COLOR_MAGENTA, COLOR_MAGENTA);
+   init_pair (22, COLOR_GREEN  , COLOR_GREEN  );   /* provides dependencies  */
+   init_pair (23, COLOR_YELLOW , COLOR_YELLOW );   /* visual selection       */
+   init_pair (24, COLOR_BLUE   , COLOR_BLUE   );   /* like     dependencies  */
+   init_pair (25, COLOR_MAGENTA, COLOR_MAGENTA);   /* requires dependencies  */
    init_pair (26, COLOR_CYAN   , COLOR_CYAN   );
    init_pair (27, COLOR_WHITE  , COLOR_WHITE  );
    /*---(color on black)-----------------*/

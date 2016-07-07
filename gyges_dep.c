@@ -1021,13 +1021,9 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    /*---(locals)-----------+-----------+-*/
    tDEP       *n           = NULL;
    char        rce         = -10;
-   /*---(defense: list)------------------*/
-   --rce;
-   if (a_list  == NULL)  return rce;
-   /*---(defense: cell)------------------*/
-   --rce;
-   strncpy (a_list, "-", MAX_STR);
-   if (a_me    == NULL)  return rce;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_list  == NULL)  return rce;
+   --rce;  if (a_me    == NULL)  return rce;
    /*---(walk the list)------------------*/
    strncpy (a_list, ",", MAX_STR);
    n = a_me->requires;
@@ -1050,18 +1046,41 @@ DEP_provides       (tCELL  *a_me, char *a_list)
    /*---(locals)-----------+-----------+-*/
    tDEP       *n           = NULL;
    char        rce         = -10;
-   /*---(defense: list)------------------*/
-   --rce;
-   if (a_list  == NULL)  return rce;
-   /*---(defense: cell)------------------*/
-   --rce;
-   strncpy (a_list, "-", MAX_STR);
-   if (a_me    == NULL)  return rce;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_list  == NULL)  return rce;
+   --rce;  if (a_me    == NULL)  return rce;
    /*---(walk the list)---------------*/
    strncpy (a_list, ",", MAX_STR);
    n = a_me->provides;
    while (n != NULL) {
       if (strchr (S_DEP_PROS, n->type) != 0) {
+         if (n->type != DEP_LIKE  ) {
+            strncat    (a_list, n->target->label, MAX_STR);
+            strncat    (a_list, ","             , MAX_STR);
+         }
+      }
+      n = n->next;
+   }
+   /*---(catch empty)-----------------*/
+   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+char 
+DEP_like           (tCELL  *a_me, char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *n           = NULL;
+   char        rce         = -10;
+   /*---(defenses)-------s---------------*/
+   --rce;  if (a_list  == NULL)  return rce;
+   --rce;  if (a_me    == NULL)  return rce;
+   /*---(walk the list)---------------*/
+   strncpy (a_list, ",", MAX_STR);
+   n = a_me->provides;
+   while (n != NULL) {
+      if (n->type == DEP_LIKE  ) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -1205,26 +1224,6 @@ DEP_gnome          (char *a_list)
    DEBUG_GNOME   yLOG_info    ("final"     , a_list);
    /*---(complete)-----------------------*/
    DEBUG_GNOME   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char 
-DEP_like           (tCELL  *a_me, char *a_list)
-{
-   /*---(defenses)--------------------*/
-   if (a_list  == NULL) return -1;     /* then no point                       */
-   strncpy (a_list, ".", MAX_STR);
-   if (a_me    == NULL) return -2;
-   /*---(locals)----------------------*/
-   tDEP   *n = NULL;
-   char   *l = NULL;
-   /*---(walk the list)---------------*/
-   strncpy(a_list, ",", MAX_STR);
-   if (a_me->s[0] == '~') {
-      strncat(a_list, a_me->s + 1, MAX_STR);
-      strncat(a_list, ",", MAX_STR);
-   }
-   /*---(complete)--------------------*/
    return 0;
 }
 
