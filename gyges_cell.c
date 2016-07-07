@@ -151,20 +151,29 @@ struct cCELL_INFO {
    char        desc        [50];       /* description of cell type            */
    int         count;                  /* current count of type               */
 } s_cell_info [MAX_CELLTYPE] = {
-   /*-ty- -terse-- -rpn calc type ---description---------------------------------------- -cnt- */
-   {  's', "str"  , '-', '-', '#', "string literal presented from source field"         ,    0 },
-   {  'n', "num"  , '-', '-', '=', "numeric literal presented in various formats"       ,    0 },
-   {  'f', "form" , 'y', 'y', '=', "numeric formula"                                    ,    0 },
-   {  'm', "mod"  , 'y', 'y', '#', "string formula"                                     ,    0 },
-   {  'l', "flike", 'y', 'y', '=', "numeric formula derived from another cell"          ,    0 },
-   {  'L', "mlike", 'y', 'y', '#', "string formula derived from another cell"           ,    0 },
-   {  'p', "range", 'y', '-', '-', "range pointer to use in other formulas"             ,    0 },
-   {  'a', "addr" , 'y', '-', '-', "address pointer to use in other formulas"           ,    0 },
-   {  'w', "warn" , '-', '-', 'e', "cell contains a warning"                            ,    0 },
-   {  'E', "error", '-', '-', 'e', "cell contains an error"                             ,    0 },
-   {  '+', "merge", '-', 'y', '-', "empty cell used to present merged information"      ,    0 },
-   {  '-', "blank", '-', '-', '-', "blank cell"                                         ,    0 },
+   /*-ty- -terse------- -rpn calc -res ---description---------------------------------------- -cnt- */
+   {  's', "string"    , '-', '-', '#', "string literal presented from source field"         ,    0 },
+   {  'n', "number"    , '-', '-', '=', "numeric literal presented in various formats"       ,    0 },
+   {  'f', "formula"   , 'y', 'y', '=', "numeric formula"                                    ,    0 },
+   {  'm', "mod_str"   , 'y', 'y', '#', "string formula"                                     ,    0 },
+   {  'l', "flike"     , 'y', 'y', '=', "numeric formula derived from another cell"          ,    0 },
+   {  'L', "mlike"     , 'y', 'y', '#', "string formula derived from another cell"           ,    0 },
+   {  'p', "range"     , 'y', 'y', '-', "range pointer to use in other formulas"             ,    0 },
+   {  'a', "address"   , 'y', 'y', '-', "address pointer to use in other formulas"           ,    0 },
+   {  'd', "display"   , 'y', 'y', '#', "displays fomula used to the right"                  ,    0 },
+   {  '+', "merged"    , '-', 'y', '-', "empty cell used to present merged information"      ,    0 },
+   {  'w', "warning"   , '-', 'y', 'e', "cell contains a warning"                            ,    0 },
+   {  'E', "error"     , 'y', 'y', 'e', "cell contains an error"                             ,    0 },
+   {  '-', "blank"     , '-', '-', '-', "blank cell"                                         ,    0 },
 };
+
+
+char    G_CELL_ALL    [20] = "";
+char    G_CELL_RPN    [20] = "";
+char    G_CELL_CALC   [20] = "";
+char    G_CELL_NUM    [20] = "";
+char    G_CELL_STR    [20] = "";
+char    G_CELL_ERR    [20] = "";
 
 
 /*====================------------------------------------====================*/
@@ -458,6 +467,15 @@ PRIV void  o___SETUP___________o () { return; }
 char
 CELL_init          (void)
 {
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         i           = 0;
+   int         x_count     = 0;
+   int         x_found     = 0;
+   int         x_reqs      = 0;
+   int         x_pros      = 0;
+   int         t           [5];
    /*---(cells)--------------------------*/
    ACEL   = 0;
    hcell  = NULL;
@@ -469,9 +487,39 @@ CELL_init          (void)
    strcat (sv_formats, sv_special);
    strcat (sv_formats, sv_times);
    strcat (sv_formats, sv_fillers);
+
+   /*---(complete info table)------------*/
+   --rce;
+   for (i = 0; i < MAX_CELLTYPE; ++i) {
+      DEBUG_CELL   yLOG_value   ("ROUND"     , i);
+      DEBUG_CELL   yLOG_char    ("type"      , s_cell_info [i].type);
+      /*---(check for end)---------------*/
+      if (s_cell_info [i].type == CTYPE_BLANK)  break;
+      /*---(add to lists)----------------*/
+      sprintf (t, "%c", s_cell_info [i].type);
+      DEBUG_CELL   yLOG_info    ("str type"  , t);
+      DEBUG_CELL   yLOG_char    ("rpn flag"  , s_cell_info [i].rpn);
+      strcat (G_CELL_ALL , t);
+      if (s_cell_info [i].rpn     == 'y')  strcat (G_CELL_RPN , t);
+      if (s_cell_info [i].calc    == 'y')  strcat (G_CELL_CALC, t);
+      if (s_cell_info [i].result  == '=')  strcat (G_CELL_NUM , t);
+      if (s_cell_info [i].result  == '#')  strcat (G_CELL_STR , t);
+      if (s_cell_info [i].result  == 'e')  strcat (G_CELL_ERR , t);
+      ++x_count;
+   }
+   /*---(report out)---------------------*/
+   DEBUG_CELL   yLOG_value   ("x_count"   , x_count);
+   DEBUG_CELL   yLOG_info    ("G_CELL_ALL" , G_CELL_ALL );
+   DEBUG_CELL   yLOG_info    ("G_CELL_RPN" , G_CELL_RPN );
+   DEBUG_CELL   yLOG_info    ("G_CELL_CALC", G_CELL_CALC);
+   DEBUG_CELL   yLOG_info    ("G_CELL_NUM" , G_CELL_NUM );
+   DEBUG_CELL   yLOG_info    ("G_CELL_STR" , G_CELL_STR );
+   DEBUG_CELL   yLOG_info    ("G_CELL_ERR" , G_CELL_ERR );
    /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+/*---(multiples)----------*/
 
 char
 CELL_wrap          (void)
@@ -1920,7 +1968,7 @@ CELL_printable     (tCELL *a_curr) {
       return 0;
    }
    /*---(numbers)------------------------*/
-   if (strchr (CTYPE_NUMS, a_curr->t) != 0) {
+   if (strchr (G_CELL_NUM, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
          CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
@@ -1935,7 +1983,7 @@ CELL_printable     (tCELL *a_curr) {
       }
    }
    /*---(calced tsrings------------------*/
-   else if (strchr (CTYPE_STRS, a_curr->t) != 0) {
+   else if (strchr (G_CELL_STR, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("string");
       if      (a_curr->t == CTYPE_STR)   strcat (x_temp, a_curr->s);
       else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
@@ -1952,7 +2000,7 @@ CELL_printable     (tCELL *a_curr) {
       strcat (x_temp, "-");
    }
    /*---(troubles)-----------------------*/
-   else if (strchr(CTYPE_ERRORS, a_curr->t) != 0) {
+   else if (strchr(G_CELL_ERR, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_snote  ("error");
       /*> strcat (x_temp, a_curr->s);                                                 <*/
       strcat (x_temp, a_curr->v_str);
@@ -1982,7 +2030,7 @@ CELL_printable     (tCELL *a_curr) {
    DEBUG_CELL  yLOG_svalue ("w", w);
    wa    = w - 1;
    /*---(choose filler)------------------*/
-   if (strchr(CTYPE_STRS, a_curr->t) != NULL || a_curr->v_str != NULL) {
+   if (strchr(G_CELL_STR, a_curr->t) != NULL || a_curr->v_str != NULL) {
       if      (a_curr->f == '-') x_filler = dashes;
       else if (a_curr->f == '=') x_filler = equals;
       else if (a_curr->f == '_') x_filler = unders;

@@ -169,8 +169,8 @@ struct cDEP_INFO {
 #define     DEP_DIRREQ    '-'
 #define     DEP_DIRPRO    '+'
 
-static char s_dep_reqs [10] = "";
-static char s_dep_pros [10] = "";
+static char S_DEP_REQS [10] = "";
+static char S_DEP_PROS [10] = "";
 
 
 
@@ -211,8 +211,8 @@ DEP_init           (void)
       sprintf (t, "%c", s_dep_info [i].type);
       DEBUG_DEPS   yLOG_info    ("str type"  , t);
       DEBUG_DEPS   yLOG_char    ("dir"       , s_dep_info [i].dir);
-      if      (s_dep_info [i].dir  == DEP_DIRREQ)  strcat (s_dep_reqs, t);
-      else if (s_dep_info [i].dir  == DEP_DIRPRO)  strcat (s_dep_pros, t);
+      if      (s_dep_info [i].dir  == DEP_DIRREQ)  strcat (S_DEP_REQS, t);
+      else if (s_dep_info [i].dir  == DEP_DIRPRO)  strcat (S_DEP_PROS, t);
       else {
          DEBUG_DEPS   yLOG_note    ("type direction not + or -");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -236,8 +236,8 @@ DEP_init           (void)
       return rce;
    }
    /*---(report out)---------------------*/
-   DEBUG_DEPS   yLOG_info    ("s_dep_reqs", s_dep_reqs);
-   DEBUG_DEPS   yLOG_info    ("s_dep_pros", s_dep_pros);
+   DEBUG_DEPS   yLOG_info    ("S_DEP_REQS", S_DEP_REQS);
+   DEBUG_DEPS   yLOG_info    ("S_DEP_PROS", S_DEP_PROS);
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -389,14 +389,14 @@ DEP__free          (
       a_dep->match         = NULL;
    }
    /*---(if require, take off cell)------*/
-   if      (strchr (s_dep_reqs, a_dep->type) != NULL) {
+   if      (strchr (S_DEP_REQS, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->requires  = a_dep->next;
       --(a_dep->source->nrequire);
    }
    /*---(if provide, take off cell)------*/
-   else if (strchr (s_dep_pros, a_dep->type) != NULL) {
+   else if (strchr (S_DEP_PROS, a_dep->type) != NULL) {
       if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
       if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
       else                      a_dep->source->provides  = a_dep->next;
@@ -555,14 +555,7 @@ DEP_create         (
       /*---(add to dep totals)-----------*/
       ++(s_dep_info [x_index].count);
       ++(s_dep_info [x_index].total);
-      /*> switch (a_type) {                                                           <* 
-       *> case DEP_REQUIRE  : provide->type   = DEP_PROVIDE;    break;                <* 
-       *> case DEP_RANGE    : provide->type   = DEP_CELL;       break;                <* 
-       *> case DEP_FORMAT   : provide->type   = DEP_COPY;       break;                <* 
-       *> case DEP_SOURCE   : provide->type   = DEP_LIKE;       break;                <* 
-       *> case DEP_MERGED   : provide->type   = DEP_EMPTY;      break;                <* 
-       *> case DEP_CALCREF  : provide->type   = DEP_ADDRESS;    break;                <* 
-       *> }                                                                           <*/
+      /*---(assign cells)----------------*/
       provide->source = a_target;
       provide->target = a_source;
       /*---(hook it up to cell)----------*/
@@ -1039,7 +1032,7 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    strncpy (a_list, ",", MAX_STR);
    n = a_me->requires;
    while (n != NULL) {
-      if (strchr (s_dep_reqs, n->type) != 0) {
+      if (strchr (S_DEP_REQS, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -1068,7 +1061,7 @@ DEP_provides       (tCELL  *a_me, char *a_list)
    strncpy (a_list, ",", MAX_STR);
    n = a_me->provides;
    while (n != NULL) {
-      if (strchr (s_dep_pros, n->type) != 0) {
+      if (strchr (S_DEP_PROS, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -1357,7 +1350,7 @@ DEP__exec          (int a_level, tCELL *a_curr, long a_stamp)
       DEP__exec (a_level + 1, n->target, a_stamp);
       n = n->next;
    }
-   if (strchr (CTYPE_CALCS, a_curr->t) != 0 && a_curr->u != a_stamp) {
+   if (strchr (G_CELL_CALC, a_curr->t) != 0 && a_curr->u != a_stamp) {
       CALC_eval (a_curr);
       CELL_printable (a_curr);
       a_curr->u = a_stamp;

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1n"
-#define     VER_TXT   "fixed like formula to work for string mods.  nice ;)"
+#define     VER_NUM   "1.1o"
+#define     VER_TXT   "finished cell type table and related global variables"
 
 
 
@@ -477,13 +477,12 @@ int         acell;           /* count of all cells                            */
 
 /*---(cell types)------------------------*/
 /*---(multiples)----------*/
-#define     CTYPE_ALL    "-snfmlLpadEw+"
-#define     CTYPE_FIXED  "-sn+"
-#define     CTYPE_DEPS   "fmlLpadEw+"
-#define     CTYPE_CALCS  "fmlLE"
-#define     CTYPE_ERRORS "Ew"
-#define     CTYPE_NUMS   "nfl"
-#define     CTYPE_STRS   "smL"
+extern char G_CELL_ALL    [20];
+extern char G_CELL_RPN    [20];
+extern char G_CELL_CALC   [20];
+extern char G_CELL_NUM    [20];
+extern char G_CELL_STR    [20];
+extern char G_CELL_ERR    [20];
 /*---(singles)------------*/
 #define     CTYPE_BLANK  '-'        /* blank                                  */
 #define     CTYPE_STR    's'        /* string literal                         */
