@@ -3235,6 +3235,7 @@ CALC_free          (tCELL *a_cell)
 char               /* PURPOSE : evaluate a calculation -----------------------*/
 CALC_eval          (tCELL *a_curr)
 {
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
    int         neval       = 0;
    double      result      = 0;
@@ -3242,19 +3243,31 @@ CALC_eval          (tCELL *a_curr)
    tCALC      *curr        = NULL;
    char        rce         = -10;
    /*---(defense)------------------------*/
-   --rce;  if (a_curr       == NULL)  return rce;
-   --rce;  if (strchr ("fpmlL", a_curr->t) == 0)  return rce;  /* not a calculation        */
-   --rce;  if (a_curr->calc == NULL)  return rce;
-   /*---(beginning)----------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   DEBUG_CALC   yLOG_info    ("cell"      , a_curr->label);
-   DEBUG_CALC   yLOG_complex ("calc"     , "cell=%9p, col=%3d, row=%3d, calc=%9p", a_curr, a_curr->col, a_curr->row, a_curr->calc);
-   /*---(prep)---------------------------*/
-   errornum = 0;
-   strcpy(errorstr, "");
-   s_me = a_curr;
-   /*---(main loop)----------------------*/
+   DEBUG_CALC   yLOG_point   ("a_curr"    , a_curr);
+   --rce;  if (a_curr       == NULL)  {
+      DEBUG_CALC   yLOG_note    ("can not calculate a null cell");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_CALC   yLOG_info    ("label"     , a_curr->label);
+   DEBUG_CALC   yLOG_info    ("type"      , a_curr->t);
+   --rce;  if (strchr (G_CELL_CALC, a_curr->t) == 0) {
+      DEBUG_CALC   yLOG_note    ("not a calculated type");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_CALC   yLOG_point   ("calc"      , a_curr->calc);
+   --rce;  if (a_curr->calc == NULL) {
+      DEBUG_CALC   yLOG_note    ("calculation is null, never built");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    DEBUG_CALC   yLOG_info    ("rpn"       , a_curr->rpn);
+   /*---(prep)---------------------------*/
+   s_me     = a_curr;
+   errornum = 0;
+   strcpy (errorstr, "");
+   /*---(main loop)----------------------*/
    curr        = a_curr->calc;
    while (curr != NULL) {
       ++neval;
@@ -3608,6 +3621,7 @@ CALC_strtok        (char *a_str)
 char               /* PURPOSE : build a new calculation ----------------------*/
 CALC_build         (tCELL *a_cell)
 {
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
    char        work        [MAX_STR];       /* working copy of source string  */
    int         x_ntoken    = -1;
@@ -3630,11 +3644,25 @@ CALC_build         (tCELL *a_cell)
    char       *valid       = "0123456789.-+";    /* only digits               */
    char        label       [20]        = "";
    /*---(defense: starting conditions)---*/
-   --rce;  if (a_cell      == NULL)  return rce;  /* cell does not exist      */
-   --rce;  if (strchr ("fpmlL", a_cell->t) == 0)  return rce;  /* not a calculation        */
-   --rce;  if (a_cell->rpn == NULL)  return rce;  /* nothing without rpn      */
-   /*---(beginning)----------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   DEBUG_CALC   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell       == NULL)  {
+      DEBUG_CALC   yLOG_note    ("can not calculate a null cell");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_CALC   yLOG_info    ("label"     , a_cell->label);
+   DEBUG_CALC   yLOG_info    ("type"      , a_cell->t);
+   --rce;  if (strchr (G_CELL_CALC, a_cell->t) == 0) {
+      DEBUG_CALC   yLOG_note    ("not a calculated type");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_CALC   yLOG_info    ("rpn"       , a_cell->rpn);
+   --rce;  if (a_cell->rpn  == NULL) {
+      DEBUG_CALC   yLOG_note    ("rpn is null, so can not build");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(clear calc and deps)------------*/
    CALC_cleanse (a_cell);
    /*---(initialize)-------------------------*/

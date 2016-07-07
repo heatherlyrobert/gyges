@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1o"
-#define     VER_TXT   "finished cell type table and related global variables"
+#define     VER_NUM   "1.1p"
+#define     VER_TXT   "added new cell type variables to RPN and CALC functions"
 
 
 
@@ -477,12 +477,14 @@ int         acell;           /* count of all cells                            */
 
 /*---(cell types)------------------------*/
 /*---(multiples)----------*/
-extern char G_CELL_ALL    [20];
-extern char G_CELL_RPN    [20];
-extern char G_CELL_CALC   [20];
-extern char G_CELL_NUM    [20];
-extern char G_CELL_STR    [20];
-extern char G_CELL_ERR    [20];
+extern char G_CELL_ALL    [20];     /* list of all types                      */
+extern char G_CELL_RPN    [20];     /* types that require RPN conversion      */
+extern char G_CELL_CALC   [20];     /* calculated result types                */
+extern char G_CELL_DEPS   [20];     /* must follow the dependencies           */
+extern char G_CELL_NUM    [20];     /* numeric result types                   */
+extern char G_CELL_STR    [20];     /* string result types                    */
+extern char G_CELL_ERR    [20];     /* error cell types                       */
+extern char G_CELL_FPRE   [20];     /* formula prefixes                       */
 /*---(singles)------------*/
 #define     CTYPE_BLANK  '-'        /* blank                                  */
 #define     CTYPE_STR    's'        /* string literal                         */

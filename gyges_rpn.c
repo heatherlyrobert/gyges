@@ -143,7 +143,7 @@ RPN_adjust         (
    strcpy (a_final, a_cell->s);
    strcpy (s_final, a_cell->s);
    DEBUG_RPN    yLOG_char    ("a_cell->t" , a_cell->t);
-   --rce;  if (strchr ("fmlLE", a_cell->t) == 0)   {
+   --rce;  if (strchr (G_CELL_RPN , a_cell->t) == 0)   {
       DEBUG_RPN    yLOG_note    ("aborted, a_cell type is not formula");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;
@@ -287,7 +287,7 @@ RPN_convert        (
    }
    DEBUG_RPN    yLOG_info    ("a_curr->s" , a_curr->s);
    DEBUG_RPN    yLOG_char    ("a_curr->t" , a_curr->t);
-   --rce;  if (strchr ("fapmlL", a_curr->t) == 0) {
+   --rce;  if (strchr (G_CELL_RPN , a_curr->t) == 0) {
       DEBUG_RPN    yLOG_note    ("passed cell not a formula");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;  /* not a formula        */
@@ -300,7 +300,7 @@ RPN_convert        (
       return rce;  /* empty                */
    }
    DEBUG_RPN    yLOG_char    ("prefix"    , ch);
-   --rce;  if (strchr ("=&~!#", ch) == 0) {
+   --rce;  if (strchr (G_CELL_FPRE, ch) == 0) {
       DEBUG_RPN    yLOG_note    ("prefix not in =&~!#");
       DEBUG_RPN    yLOG_exit    (__FUNCTION__);
       return rce;  /* not a formula        */
@@ -337,7 +337,7 @@ RPN_convert        (
          return rce;
       }
       strncpy (x_work, x_temp, MAX_STR);
-      strltrim (x_work, ySTR_EVERY, MAX_STR);
+      /*> strltrim (x_work, ySTR_EVERY, MAX_STR);                                     <*/
       if (ch == '#')  a_curr->t = CTYPE_MLIKE;
    }
    x_work [0] = '=';

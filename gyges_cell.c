@@ -145,35 +145,38 @@ static char sv_binary      [20] = "01";               /* only binary digits     
 struct cCELL_INFO {
    char        type;                   /* cell type                           */
    char        terse       [10];       /* short description of cell type      */
+   char        prefix;                 /* prefix in cell source string        */
    char        rpn;                    /* require processing by rpn           */
    char        calc;                   /* must it be calculated               */
+   char        deps;                   /* must follow the dependencies        */
    char        result;                 /* what type is the result             */
    char        desc        [50];       /* description of cell type            */
    int         count;                  /* current count of type               */
 } s_cell_info [MAX_CELLTYPE] = {
-   /*-ty- -terse------- -rpn calc -res ---description---------------------------------------- -cnt- */
-   {  's', "string"    , '-', '-', '#', "string literal presented from source field"         ,    0 },
-   {  'n', "number"    , '-', '-', '=', "numeric literal presented in various formats"       ,    0 },
-   {  'f', "formula"   , 'y', 'y', '=', "numeric formula"                                    ,    0 },
-   {  'm', "mod_str"   , 'y', 'y', '#', "string formula"                                     ,    0 },
-   {  'l', "flike"     , 'y', 'y', '=', "numeric formula derived from another cell"          ,    0 },
-   {  'L', "mlike"     , 'y', 'y', '#', "string formula derived from another cell"           ,    0 },
-   {  'p', "range"     , 'y', 'y', '-', "range pointer to use in other formulas"             ,    0 },
-   {  'a', "address"   , 'y', 'y', '-', "address pointer to use in other formulas"           ,    0 },
-   {  'd', "display"   , 'y', 'y', '#', "displays fomula used to the right"                  ,    0 },
-   {  '+', "merged"    , '-', 'y', '-', "empty cell used to present merged information"      ,    0 },
-   {  'w', "warning"   , '-', 'y', 'e', "cell contains a warning"                            ,    0 },
-   {  'E', "error"     , 'y', 'y', 'e', "cell contains an error"                             ,    0 },
-   {  '-', "blank"     , '-', '-', '-', "blank cell"                                         ,    0 },
+   /*-ty- -terse------- -pre -rpn calc -dep -res ---description---------------------------------------- -cnt- */
+   {  's', "string"    , ' ', '-', '-', '-', '#', "string literal presented from source field"         ,    0 },
+   {  'n', "number"    , ' ', '-', '-', '-', '=', "numeric literal presented in various formats"       ,    0 },
+   {  'f', "formula"   , '=', 'y', 'y', 'y', '=', "numeric formula"                                    ,    0 },
+   {  'm', "mod_str"   , '#', 'y', 'y', 'y', '#', "string formula"                                     ,    0 },
+   {  'l', "flike"     , '~', 'y', 'y', 'y', '=', "numeric formula derived from another cell"          ,    0 },
+   {  'L', "mlike"     , '~', 'y', 'y', 'y', '#', "string formula derived from another cell"           ,    0 },
+   {  'p', "range"     , '&', 'y', 'y', 'y', '-', "range pointer to use in other formulas"             ,    0 },
+   {  'a', "address"   , '&', 'y', 'y', 'y', '-', "address pointer to use in other formulas"           ,    0 },
+   {  '+', "merged"    , '<', '-', '-', 'y', '-', "empty cell used to present merged information"      ,    0 },
+   {  'w', "warning"   , ' ', '-', '-', '-', 'e', "cell contains a warning"                            ,    0 },
+   {  'E', "error"     , ' ', 'y', 'y', 'y', 'e', "cell contains an error"                             ,    0 },
+   {  '-', "blank"     , ' ', '-', '-', '-', '-', "blank cell"                                         ,    0 },
 };
 
 
 char    G_CELL_ALL    [20] = "";
 char    G_CELL_RPN    [20] = "";
 char    G_CELL_CALC   [20] = "";
+char    G_CELL_DEPS   [20] = "";
 char    G_CELL_NUM    [20] = "";
 char    G_CELL_STR    [20] = "";
 char    G_CELL_ERR    [20] = "";
+char    G_CELL_FPRE   [20] = "";
 
 
 /*====================------------------------------------====================*/
@@ -500,11 +503,18 @@ CELL_init          (void)
       DEBUG_CELL   yLOG_info    ("str type"  , t);
       DEBUG_CELL   yLOG_char    ("rpn flag"  , s_cell_info [i].rpn);
       strcat (G_CELL_ALL , t);
-      if (s_cell_info [i].rpn     == 'y')  strcat (G_CELL_RPN , t);
       if (s_cell_info [i].calc    == 'y')  strcat (G_CELL_CALC, t);
+      if (s_cell_info [i].deps    == 'y')  strcat (G_CELL_DEPS, t);
       if (s_cell_info [i].result  == '=')  strcat (G_CELL_NUM , t);
       if (s_cell_info [i].result  == '#')  strcat (G_CELL_STR , t);
       if (s_cell_info [i].result  == 'e')  strcat (G_CELL_ERR , t);
+      if (s_cell_info [i].rpn     == 'y') {
+         strcat  (G_CELL_RPN , t);
+         sprintf (t, "%c", s_cell_info [i].prefix);
+         if (strchr (G_CELL_FPRE, s_cell_info [i].prefix) == 0) {
+            strcat  (G_CELL_FPRE , t);
+         }
+      }
       ++x_count;
    }
    /*---(report out)---------------------*/
@@ -512,9 +522,11 @@ CELL_init          (void)
    DEBUG_CELL   yLOG_info    ("G_CELL_ALL" , G_CELL_ALL );
    DEBUG_CELL   yLOG_info    ("G_CELL_RPN" , G_CELL_RPN );
    DEBUG_CELL   yLOG_info    ("G_CELL_CALC", G_CELL_CALC);
+   DEBUG_CELL   yLOG_info    ("G_CELL_DEPS", G_CELL_DEPS);
    DEBUG_CELL   yLOG_info    ("G_CELL_NUM" , G_CELL_NUM );
    DEBUG_CELL   yLOG_info    ("G_CELL_STR" , G_CELL_STR );
    DEBUG_CELL   yLOG_info    ("G_CELL_ERR" , G_CELL_ERR );
+   DEBUG_CELL   yLOG_info    ("G_CELL_FPRE", G_CELL_FPRE);
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -806,6 +818,18 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
 PRIV void  o___DRIVER__________o () { return; }
 
 char
+CELL__ftype        (char a_prefix)
+{
+   int         i           = 0;                  /* iterator -- character     */
+   for (i = 0; i < MAX_CELLTYPE; ++i) {
+      if (s_cell_info [i].type   == '-'     )  break;
+      if (s_cell_info [i].prefix != a_prefix)  continue;
+      return s_cell_info [i].type;
+   }
+   return -1;
+}
+
+char
 CELL__altbase      (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_text,
@@ -1011,41 +1035,48 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   /*---(check for formula mark)---------*/
-   if (strchr("=&#~!<", x_pre) != 0) {
-      switch (x_pre) {
-      case '=' : a_cell->t = CTYPE_FORM;    break;
-      case '&' : a_cell->t = CTYPE_RANGE;   break;
-      case '#' : a_cell->t = CTYPE_MOD;     break;
-      case '~' : a_cell->t = CTYPE_FLIKE;   break;
-      case '<' : a_cell->t = CTYPE_MERGE;   break;
+   /*---(check for merge)----------------*/
+   if (a_cell->l == 1 && x_pre == '<') {
+      DEBUG_CELL   yLOG_complex ("type"      , "merge which is an %c", a_cell->t);
+      DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
+      a_cell->a = '+';
+      a_cell->f = '+';
+      for (i = a_cell->col; i >= 0; --i) {
+         x_merged = LOC_cell (a_cell->tab, i, a_cell->row);
+         if (x_merged == NULL)  {
+            DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+            return 0; /* base not there yet */
+         }
+         if (x_merged->t == CTYPE_MERGE)  continue;
+         break;
       }
+      rc = DEP_create (DEP_MERGED, x_merged, a_cell);
+      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check for formula mark)---------*/
+   if (strchr (G_CELL_FPRE, x_pre) != 0) {
       DEBUG_CELL   yLOG_complex ("type"      , "formula which is an %c", a_cell->t);
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
+      a_cell->t = CELL__ftype (x_pre);
+      DEBUG_CELL   yLOG_char    ("ftype"     , a_cell->t);
+      /*> switch (x_pre) {                                                            <* 
+       *> case '=' : a_cell->t = CTYPE_FORM;    break;                                <* 
+       *> case '&' : a_cell->t = CTYPE_RANGE;   break;                                <* 
+       *> case '#' : a_cell->t = CTYPE_MOD;     break;                                <* 
+       *> case '~' : a_cell->t = CTYPE_FLIKE;   break;                                <* 
+       *> }                                                                           <*/
       strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
       DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
       a_cell->l = strlen  (a_cell->s);
-      DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
-      --rce;
-      if (a_cell->l == 1 && a_cell->t == CTYPE_MERGE) {
-         a_cell->a = '+';
-         a_cell->f = '+';
-         for (i = a_cell->col; i >= 0; --i) {
-            x_merged = LOC_cell (a_cell->tab, i, a_cell->row);
-            if (x_merged == NULL)            return 0; /* base not there yet */
-            if (x_merged->t == CTYPE_MERGE)  continue;
-            break;
-         }
-         rc = DEP_create (DEP_MERGED, x_merged, a_cell);
-         return 0;
-      }
-      DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");
-      rc = RPN_convert (a_cell);
       if (a_cell->a == '?')  {
          if (x_pre == '#')  a_cell->a = '<';
          else               a_cell->a = '>';
       }
-      if (rc < 0) {
+      DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
+      DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");
+      rc = RPN_convert (a_cell);
+      --rce;  if (rc < 0) {
          a_cell->t = CTYPE_ERROR;
          a_cell->v_str = strndup ("#.rpn", MAX_STR);
          CALC_free   (a_cell);
