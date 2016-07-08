@@ -91,62 +91,111 @@ tMENU       menus       [MAX_MENU] = {
 };
 
 
-/*  k=black, r=red, g=green, y=yellow, b=blue, m=magenta, c=cyan, w=grey */
+#define     MAX_COLORS    20
+typedef  struct cCOLOR  tCOLOR;
+struct cCOLOR {
+   char        abbr;
+   char        terse       [ 5];
+   char        desc        [20];
+   short       value;
+};
+static tCOLOR  s_colors [MAX_COLORS] = {
+   {  ' ' , "trn" , "transparent"          , -1                    },
+   {  'k' , "blk" , "black"                , COLOR_BLACK           },
+   {  'r' , "red" , "red"                  , COLOR_RED             },
+   {  'g' , "grn" , "green"                , COLOR_GREEN           },
+   {  'y' , "yel" , "yellow"               , COLOR_YELLOW          },
+   {  'b' , "blu" , "blue"                 , COLOR_BLUE            },
+   {  'm' , "mag" , "magenta"              , COLOR_MAGENTA         },
+   {  'c' , "cyn" , "cyan"                 , COLOR_CYAN            },
+   {  'w' , "whi" , "white"                , COLOR_WHITE           },
+   {  '-' , "---" , "end-of-colors"        , -1                    },
+};
 
-#define     MAX_COLORS      100
+#define     MAX_COLOR_INFO  100
+typedef  struct cCOLOR_INFO  tCOLOR_INFO;
 struct cCOLOR_INFO {
    char        terse       [10];            /* short description              */
    char        ctype;                       /* cell type, if it applies       */
    char        desc        [50];            /* description/reason             */
-   char        bg_color;                    /* background color               */
    char        fg_color;                    /* foreground color               */
+   char        bg_color;                    /* background color               */
    char        bold;                        /* bold y/n                       */
    int         value;                       /* curses attribute value         */
-} s_color_info [MAX_COLORS] = {
-   /*---terse--- -ty- ---description---------------------------------------- -bg-- -fg-- --b- --v- */
+};
+static tCOLOR_INFO  s_color_info [MAX_COLOR_INFO] = {
+   /*---terse--- -ty- ---description---------------------------------------- -fg-- -bg-- --b- --v- */
    /*---(window)---------*/
-   { "t_norm"   , ' ', "normal title color"                                 , '-' , '-' , '-',   0 },
-   { "t_err"    , ' ', "title color when in error"                          , '-' , '-' , '-',   0 },
-   { "s_norm"   , ' ', "normal status color"                                , '-' , '-' , '-',   0 },
-   { "s_err"    , ' ', "status color when in error"                         , '-' , '-' , '-',   0 },
-   { "w_keys"   , ' ', "window keystoke display"                            , '-' , '-' , '-',   0 },
-   { "w_mesg"   , ' ', "window message"                                     , '-' , '-' , '-',   0 },
+   { "t_norm"   , ' ', "normal title color"                                 , 'k' , 'k' , 'y',   0 },
+   { "t_err"    , ' ', "title color when in error"                          , 'w' , 'r' , '-',   0 },
+   { "s_norm"   , ' ', "normal status color"                                , 'k' , 'k' , 'y',   0 },
+   { "s_err"    , ' ', "status color when in error"                         , 'w' , 'r' , '-',   0 },
+   { "w_keys"   , ' ', "window keystoke display"                            , 'r' , ' ' , 'y',   0 },
+   { "w_mesg"   , ' ', "window message"                                     , 'w' , ' ' , '-',   0 },
    /*---(modes)----------*/
-   { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , '-' , '-' , '-',   0 },
-   { "m_src"    , ' ', "source mode (single cell review)"                   , '-' , '-' , '-',   0 },
-   { "m_input"  , ' ', "input mode"                                         , '-' , '-' , '-',   0 },
-   { "m_wand"   , ' ', "wander mode"                                        , '-' , '-' , '-',   0 },
+/*> ** static int  S_COLOR_CONTENT    = COLOR_PAIR(43) | A_BLINK;                        <* 
+ *> ** static int  S_COLOR_SOURCE     = COLOR_PAIR(42) | A_BLINK;                        <* 
+ *> ** static int  S_COLOR_INPUT      = COLOR_PAIR(47) | A_BLINK;                        <* 
+ *> ** static int  S_COLOR_WANDER     = COLOR_PAIR(41) | A_BLINK;                        <*/
+   { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , 'k' , 'y' , 'b',   0 },
+   { "m_src"    , ' ', "source mode (single cell review)"                   , 'k' , 'g' , 'b',   0 },
+   { "m_input"  , ' ', "input mode"                                         , 'k' , 'w' , 'b',   0 },
+   { "m_wand"   , ' ', "wander mode"                                        , 'k' , 'r' , 'b',   0 },
    /*---(row/col header)-*/
-   { "h_cur"    , ' ', "current row/column header"                          , '-' , '-' , '-',   0 },
-   { "h_loc"    , ' ', "locked row/column header"                           , '-' , '-' , '-',   0 },
-   { "h_use"    , ' ', "row/column with entries"                            , '-' , '-' , '-',   0 },
-   { "h_not"    , ' ', "row/column with no entries"                         , '-' , '-' , '-',   0 },
+/*> ** static int  S_COLOR_HEADY      = COLOR_PAIR(33) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_HEADL      = COLOR_PAIR(43) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_HEADF      = COLOR_PAIR(73);                                  <* 
+ *> ** static int  S_COLOR_HEADN      = COLOR_PAIR(74);                                  <*/
+   { "h_cur"    , ' ', "current row/column header"                          , 'y' , 'k' , 'y',   0 },
+   { "h_loc"    , ' ', "locked row/column header"                           , 'b' , 'y' , 'y',   0 },
+   { "h_use"    , ' ', "row/column with entries"                            , 'y' , ' ' , '-',   0 },
+   { "h_not"    , ' ', "row/column with no entries"                         , 'b' , ' ' , '-',   0 },
    /*---(selection)------*/
-   { "curr"     , ' ', "current cell"                                       , '-' , '-' , '-',   0 },
-   { "root"     , ' ', "root of visual selection"                           , '-' , '-' , '-',   0 },
-   { "visu"     , ' ', "selected, not root/curr"                            , '-' , '-' , '-',   0 },
+/*> ** static int  S_COLOR_CURRENT    = COLOR_PAIR(43) | A_BLINK;                        <* 
+ *> ** static int  S_COLOR_VISUAL     = COLOR_PAIR(23) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_ROOT       = COLOR_PAIR(33) | A_BOLD;                         <*/
+   { "curr"     , ' ', "current cell"                                       , 'b' , 'y' , 'b',   0 },
+   { "root"     , ' ', "root of visual selection"                           , 'y' , 'k' , 'y',   0 },
+   { "visu"     , ' ', "selected, not root/curr"                            , 'y' , 'y' , 'y',   0 },
    /*---(dep type)-------*/
-   { "reqs"     , ' ', "value required from cell"                           , '-' , '-' , '-',   0 },
-   { "pros"     , ' ', "value provided to cell"                             , '-' , '-' , '-',   0 },
-   { "like"     , ' ', "formula is copy/variation"                          , '-' , '-' , '-',   0 },
+/*> ** static int  S_COLOR_REQS       = COLOR_PAIR(25) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_PROS       = COLOR_PAIR(22) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_LIKE       = COLOR_PAIR(24) | A_BOLD;                         <*/
+   { "reqs"     , ' ', "value required from cell"                           , 'm' , 'm' , 'b',   0 },
+   { "pros"     , ' ', "value provided to cell"                             , 'g' , 'g' , 'b',   0 },
+   { "like"     , ' ', "formula is copy/variation"                          , 'b' , 'b' , 'b',   0 },
    /*---(danger signs)---*/
-   { "fdang"    , 'f', "complex numeric formula"                            , '-' , '-' , '-',   0 },
-   { "mdang"    , 'm', "complex string formula"                             , '-' , '-' , '-',   0 },
+/*> ** static int  S_COLOR_FDANGER    = COLOR_PAIR(71) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_FSTRDAG    = COLOR_PAIR(75) | A_BOLD;                         <*/
+   { "fdang"    , 'f', "complex numeric formula"                            , 'r' , ' ' , 'y',   0 },
+   { "mdang"    , 'm', "complex string formula"                             , 'r' , ' ' , 'y',   0 },
    /*---(cell types)-----*/
-   { "num"      , 'n', "numeric literal"                                    , '-' , '-' , '-',   0 },
-   { "for"      , 'f', "numeric formula"                                    , '-' , '-' , '-',   0 },
-   { "flike"    , 'l', "numeric formula (copy)"                             , '-' , '-' , '-',   0 },
-   { "str"      , 's', "string literal"                                     , '-' , '-' , '-',   0 },
-   { "mod"      , 'm', "string formula"                                     , '-' , '-' , '-',   0 },
-   { "mlike"    , 'L', "string formula (copy)"                              , '-' , '-' , '-',   0 },
-   { "range"    , 'p', "range pointer"                                      , '-' , '-' , '-',   0 },
-   { "addr"     , 'p', "address pointer"                                    , '-' , '-' , '-',   0 },
-   { "blank"    , '-', "blank cell"                                         , '-' , '-' , '-',   0 },
-   { "def"      , '-', "default for unidentified cells"                     , '-' , '-' , '-',   0 },
+/*> ** static int  S_COLOR_NUMBER     = COLOR_PAIR(74) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_FSIMPLE    = COLOR_PAIR(72) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_FLIKE      = COLOR_PAIR(72)           ;                       <*/
+   { "num"      , 'n', "numeric literal"                                    , 'b' , ' ' , 'y',   0 },
+   { "for"      , 'f', "numeric formula"                                    , 'g' , ' ' , 'y',   0 },
+   { "flike"    , 'l', "numeric formula (copy)"                             , 'g' , ' ' , '-',   0 },
+/*> ** static int  S_COLOR_STRING     = COLOR_PAIR(73) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_FSTRING    = COLOR_PAIR(75) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_MLIKE      = COLOR_PAIR(75)          ;                        <*/
+   { "str"      , 's', "string literal"                                     , 'y' , ' ' , 'y',   0 },
+   { "mod"      , 'm', "string formula"                                     , 'm' , ' ' , 'y',   0 },
+   { "mlike"    , 'L', "string formula (copy)"                              , 'm' , ' ' , '-',   0 },
+/*> ** static int  S_COLOR_POINTER    = COLOR_PAIR(76) | A_BOLD;                         <*/
+   { "range"    , 'p', "range pointer"                                      , 'c' , ' ' , 'y',   0 },
+   { "addr"     , 'p', "address pointer"                                    , 'c' , ' ' , 'y',   0 },
+/*> ** static int  S_COLOR_NULL       = COLOR_PAIR(70) | A_BOLD;                         <* 
+ *> ** static int  S_COLOR_STRING     = COLOR_PAIR(73) | A_BOLD;                         <*/
+   { "blank"    , '-', "blank cell"                                         , 'b' , ' ' , 'y',   0 },
+   { "def"      , ' ', "default for unidentified cells"                     , 'y' , ' ' , 'y',   0 },
    /*---(other)----------*/
-   { "warn"     , 'w', "cell warning"                                       , '-' , '-' , '-',   0 },
-   { "error"    , 'E', "cell error"                                         , '-' , '-' , '-',   0 },
-   { "found"    , '-', "cell found in most recent search"                   , '-' , '-' , '-',   0 },
+/*>    static int  S_COLOR_ERROR      = COLOR_PAIR(61) | A_BOLD;                         <*/
+   { "warn"     , 'w', "cell warning"                                       , 'w' , 'r' , 'y',   0 },
+   { "error"    , 'E', "cell error"                                         , 'w' , 'r' , 'y',   0 },
+   { "found"    , ' ', "cell found in most recent search"                   , 'g' , 'w' , 'y',   0 },
+   /*---(end)------------*/
+   { "-----"    , ' ', "end-of-colors"                                      , '-' , '-' , '-',   0 },
 };
 
 
@@ -175,6 +224,7 @@ static int  S_COLOR_LIKE       = COLOR_PAIR(24) | A_BOLD;
 static int  S_COLOR_ERROR      = COLOR_PAIR(61) | A_BOLD;
 
 static int  S_COLOR_POINTER    = COLOR_PAIR(76) | A_BOLD;
+static int  S_COLOR_ADDRESS    = COLOR_PAIR(76) | A_BOLD;
 
 static int  S_COLOR_FSIMPLE    = COLOR_PAIR(72) | A_BOLD;
 static int  S_COLOR_FDANGER    = COLOR_PAIR(71) | A_BOLD;
@@ -185,13 +235,10 @@ static int  S_COLOR_FSTRING    = COLOR_PAIR(75) | A_BOLD;
 static int  S_COLOR_FSTRDAG    = COLOR_PAIR(75) | A_BOLD;
 static int  S_COLOR_MLIKE      = COLOR_PAIR(75)          ;
 
-static int  S_COLOR_FCOPY      = COLOR_PAIR(34) | A_BOLD | A_BLINK;
-
 static int  S_COLOR_NUMBER     = COLOR_PAIR(74) | A_BOLD;
-static int  S_COLOR_LABEL      = COLOR_PAIR(73);
 static int  S_COLOR_NULL       = COLOR_PAIR(70) | A_BOLD;
 
-static int  S_COLOR_NORMAL     =  COLOR_PAIR(73) | A_BOLD;
+static int  S_COLOR_NORMAL     = COLOR_PAIR(73) | A_BOLD;
 /*---(row and column headers)---------*/
 static int  S_COLOR_HEADY      = COLOR_PAIR(33) | A_BOLD;
 static int  S_COLOR_HEADL      = COLOR_PAIR(43) | A_BOLD;
@@ -202,6 +249,127 @@ static int  S_COLOR_HEADN      = COLOR_PAIR(74);
 char        msg_type  = '-';
 char        sta_type  = 'v';
 char        sta_error = '-';
+
+
+int
+COLOR_find                (char a_abbr)
+{
+   DEBUG_GRAF  yLOG_senter  (__FUNCTION__);
+   DEBUG_GRAF  yLOG_schar   (a_abbr);
+   int         i           = 0;
+   for (i = 0; i < MAX_COLORS; ++i) { 
+      if (s_colors [i].abbr == '-')              break;
+      if (s_colors [i].abbr != a_abbr)           continue;
+      DEBUG_GRAF  yLOG_svalue  ("found"     , s_colors [i].value);
+      DEBUG_GRAF  yLOG_sinfo   ("name"      , s_colors [i].terse);
+      DEBUG_GRAF  yLOG_sexit   (__FUNCTION__);
+      return s_colors [i].value;
+   }
+   DEBUG_GRAF  yLOG_snote   ("FAIL, not found");
+   DEBUG_GRAF  yLOG_sexit   (__FUNCTION__);
+   return -1;
+}
+
+char
+COLOR_setup               (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   int         i           = 0;
+   int         x_fg        = 0;
+   int         x_bg        = 0;
+   for (i = 0; i < MAX_COLOR_INFO; ++i) {
+      DEBUG_GRAF  yLOG_value   ("ENTRY#----", i);
+      /*---(filter)----------------------*/
+      if (s_color_info [i].terse [0] == '-')              break;
+      /*---(get colors)------------------*/
+      DEBUG_GRAF  yLOG_info    ("name"      , s_color_info [i].terse);
+      x_fg = COLOR_find  (s_color_info [i].fg_color);
+      x_bg = COLOR_find  (s_color_info [i].bg_color);
+      init_pair (i + 20, x_fg, x_bg);
+      if (s_color_info [i].bold == 'y') {
+         s_color_info [i].value =  COLOR_PAIR (i + 20) | A_BOLD;
+         DEBUG_GRAF  yLOG_value   ("bold"      , s_color_info [i].value);
+      } else if (s_color_info [i].bold == 'b') {
+         s_color_info [i].value =  COLOR_PAIR (i + 20) | A_BLINK;
+         DEBUG_GRAF  yLOG_value   ("blink"     , s_color_info [i].value);
+      } else {
+         s_color_info [i].value =  COLOR_PAIR (i + 20);
+         DEBUG_GRAF  yLOG_value   ("normal"    , s_color_info [i].value);
+      }
+   }
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return  0;
+}
+
+int
+COLOR_assign              (char *a_terse)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   int         i           = 0;
+   for (i = 0; i < MAX_COLOR_INFO; ++i) {
+      /*---(filter)----------------------*/
+      if (s_color_info [i].terse [0] == '-')              break;
+      if (s_color_info [i].terse [0] != a_terse [0])      continue;
+      if (strcmp (s_color_info [i].terse, a_terse) != 0)  continue;
+      DEBUG_GRAF  yLOG_info    ("found"     , s_color_info [i].desc);
+      DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+      return s_color_info [i].value;
+   }
+   DEBUG_GRAF  yLOG_note    ("not found, returning default");
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return s_color_info [0].value;
+}
+
+char
+COLOR_init                (void)
+{
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(setup colors)-------------------*/
+   COLOR_setup   ();
+   /*---(window)-------------------------*/
+   S_COLOR_TITLE      = COLOR_assign ("t_norm" );
+   S_COLOR_TITLEE     = COLOR_assign ("t_err"  );
+   S_COLOR_STATUS     = COLOR_assign ("s_norm" );
+   S_COLOR_STATUSE    = COLOR_assign ("s_err"  );
+   S_COLOR_KEYS       = COLOR_assign ("w_keys" );
+   S_COLOR_MESSAGE    = COLOR_assign ("w_mesg" );
+   /*---(edit modes)---------------------*/
+   S_COLOR_CONTENT    = COLOR_assign ("m_map"  );
+   S_COLOR_SOURCE     = COLOR_assign ("m_src"  );
+   S_COLOR_INPUT      = COLOR_assign ("m_input");
+   S_COLOR_WANDER     = COLOR_assign ("m_wand" );
+   /*---(selection)----------------------*/
+   S_COLOR_CURRENT    = COLOR_assign ("curr"   );
+   S_COLOR_ROOT       = COLOR_assign ("root"   );
+   S_COLOR_VISUAL     = COLOR_assign ("visu"   );
+   /*---(deps)---------------------------*/
+   S_COLOR_REQS       = COLOR_assign ("reqs"   );
+   S_COLOR_PROS       = COLOR_assign ("pros"   );
+   S_COLOR_LIKE       = COLOR_assign ("like"   );
+   /*---(danger)-------------------------*/
+   S_COLOR_FDANGER    = COLOR_assign ("fdang"  );
+   S_COLOR_FSTRDAG    = COLOR_assign ("mdang"  );
+   /*---(cells)--------------------------*/
+   S_COLOR_NUMBER     = COLOR_assign ("num"    );
+   S_COLOR_FSIMPLE    = COLOR_assign ("for"    );
+   S_COLOR_FLIKE      = COLOR_assign ("flike"  );
+   S_COLOR_STRING     = COLOR_assign ("str"    );
+   S_COLOR_FSTRING    = COLOR_assign ("mod"    );
+   S_COLOR_MLIKE      = COLOR_assign ("mlike"  );
+   S_COLOR_POINTER    = COLOR_assign ("range"  );
+   S_COLOR_ADDRESS    = COLOR_assign ("addr"   );
+   S_COLOR_NULL       = COLOR_assign ("blank"  );
+   S_COLOR_NORMAL     = COLOR_assign ("def"    );
+   S_COLOR_ERROR      = COLOR_assign ("error"  );
+   /*---(row and column headers)---------*/
+   S_COLOR_HEADY      = COLOR_assign ("h_cur"  );
+   S_COLOR_HEADL      = COLOR_assign ("h_loc"  );
+   S_COLOR_HEADF      = COLOR_assign ("h_use"  );
+   S_COLOR_HEADN      = COLOR_assign ("h_not"  );
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return  0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -551,19 +719,18 @@ CURS_cell          (int a_col, int a_row)
       /*---(numbers)--------------------------*/
       else if (curr->t == CTYPE_NUM  )          { high= 5; attron (S_COLOR_NUMBER ); }
       else if (curr->t == CTYPE_FORM ) {
-         if   (curr->nrequire < 3)              { high= 3; attron (S_COLOR_FSIMPLE); }
+         if   (curr->nrequire < 5)              { high= 3; attron (S_COLOR_FSIMPLE); }
          else                                   { high= 4; attron (S_COLOR_FDANGER); }
       }
       else if (curr->t == CTYPE_FLIKE)          { high= 9; attron (S_COLOR_FLIKE  ); }
       /*---(strings)--------------------------*/
       else if (curr->t == CTYPE_STR  )          { high= 6; attron (S_COLOR_STRING ); }
       else if (curr->t == CTYPE_MOD  ) {
-         if      (curr->nrequire < 3)           { high=16; attron (S_COLOR_FSTRDAG); }
-         else                                   { high=11; attron (S_COLOR_FSTRING); }
+         if   (curr->nrequire < 5)              { high=16; attron (S_COLOR_FSTRING); }
+         else                                   { high=11; attron (S_COLOR_FSTRDAG); }
       }
       else if (curr->t == CTYPE_MLIKE)          { high= 9; attron (S_COLOR_MLIKE  ); }
       /*---(constants)------------------------*/
-      /*> else if (curr->t == 'l')                  { high=13; attron (S_COLOR_LABEL  ); }   <*/
       else if (curr->t == CTYPE_BLANK)          { high=14; attron (S_COLOR_NULL   ); }
       else                                      { high= 6; attron (S_COLOR_STRING ); }
    }
@@ -608,24 +775,23 @@ CURS_cell          (int a_col, int a_row)
       }
    }
    /*---(highlight off)--------------------*/
-   if      (high ==  1) attroff (S_COLOR_CURRENT);
-   else if (high ==  2) attroff (S_COLOR_VISUAL );
-   else if (high == 12) attroff (S_COLOR_ROOT   );
-   else if (high ==  9) attroff (S_COLOR_FLIKE  );
-   else if (high == 15) attroff (S_COLOR_FCOPY  );
-   else if (high ==  3) attroff (S_COLOR_FSIMPLE);
-   else if (high ==  4) attroff (S_COLOR_FDANGER);
-   else if (high == 11) attroff (S_COLOR_FSTRING);
-   else if (high == 16) attroff (S_COLOR_FSTRDAG);
-   else if (high ==  5) attroff (S_COLOR_NUMBER );
-   else if (high ==  6) attroff (S_COLOR_STRING );
-   else if (high == 13) attroff (S_COLOR_LABEL  );
-   else if (high == 14) attroff (S_COLOR_NULL   );
-   else if (high ==  7) attroff (S_COLOR_REQS   );
-   else if (high ==  8) attroff (S_COLOR_PROS   );
-   else if (high == 10) attroff (S_COLOR_LIKE   );
-   else if (high == 31) attroff (S_COLOR_ERROR  );
-   else if (high == 32) attroff (S_COLOR_POINTER);
+   attrset (0);
+   /*> if      (high ==  1) attroff (S_COLOR_CURRENT);                                <* 
+    *> else if (high ==  2) attroff (S_COLOR_VISUAL );                                <* 
+    *> else if (high == 12) attroff (S_COLOR_ROOT   );                                <* 
+    *> else if (high ==  9) attroff (S_COLOR_FLIKE  );                                <* 
+    *> else if (high ==  3) attroff (S_COLOR_FSIMPLE);                                <* 
+    *> else if (high ==  4) attroff (S_COLOR_FDANGER);                                <* 
+    *> else if (high == 11) attroff (S_COLOR_FSTRING);                                <* 
+    *> else if (high == 16) attroff (S_COLOR_FSTRDAG);                                <* 
+    *> else if (high ==  5) attroff (S_COLOR_NUMBER );                                <* 
+    *> else if (high ==  6) attroff (S_COLOR_STRING );                                <* 
+    *> else if (high == 14) attroff (S_COLOR_NULL   );                                <* 
+    *> else if (high ==  7) attroff (S_COLOR_REQS   );                                <* 
+    *> else if (high ==  8) attroff (S_COLOR_PROS   );                                <* 
+    *> else if (high == 10) attroff (S_COLOR_LIKE   );                                <* 
+    *> else if (high == 31) attroff (S_COLOR_ERROR  );                                <* 
+    *> else if (high == 32) attroff (S_COLOR_POINTER);                                <*/
    /*---(complete)-------------------------*/
    return 0;
 }
@@ -753,60 +919,7 @@ CURS_begin         (void)
    /*---(colors)----------------------*/
    start_color ();
    use_default_colors();
-   /*---(transparent)--------------------*/
-   init_pair (70, COLOR_BLACK  , -1           );   /* null/blank             */
-   init_pair (71, COLOR_RED    , -1           );   /* dangerous formulas     */
-   init_pair (72, COLOR_GREEN  , -1           );   /* numeric formulas       */
-   init_pair (73, COLOR_YELLOW , -1           );   /* strings                */
-   init_pair (74, COLOR_BLUE   , -1           );   /* numbers                */
-   init_pair (75, COLOR_MAGENTA, -1           );   /* string formulas        */
-   init_pair (76, COLOR_CYAN   , -1           );   /* pointers               */
-   init_pair (77, COLOR_WHITE  , -1           );
-   /*---(same color)---------------------*/
-   init_pair (20, COLOR_BLACK  , COLOR_BLACK  );
-   init_pair (21, COLOR_RED    , COLOR_RED    );
-   init_pair (22, COLOR_GREEN  , COLOR_GREEN  );   /* provides dependencies  */
-   init_pair (23, COLOR_YELLOW , COLOR_YELLOW );   /* visual selection       */
-   init_pair (24, COLOR_BLUE   , COLOR_BLUE   );   /* like     dependencies  */
-   init_pair (25, COLOR_MAGENTA, COLOR_MAGENTA);   /* requires dependencies  */
-   init_pair (26, COLOR_CYAN   , COLOR_CYAN   );
-   init_pair (27, COLOR_WHITE  , COLOR_WHITE  );
-   /*---(color on black)-----------------*/
-   init_pair (30, COLOR_BLACK  , COLOR_BLACK  );
-   init_pair (31, COLOR_RED    , COLOR_BLACK  );
-   init_pair (32, COLOR_GREEN  , COLOR_BLACK  );
-   init_pair (33, COLOR_YELLOW , COLOR_BLACK  );
-   init_pair (34, COLOR_BLUE   , COLOR_BLACK  );
-   init_pair (35, COLOR_MAGENTA, COLOR_BLACK  );
-   init_pair (36, COLOR_CYAN   , COLOR_BLACK  );
-   init_pair (37, COLOR_WHITE  , COLOR_BLACK  );
-   /*---(black on color)-----------------*/
-   init_pair (40, COLOR_BLACK  , COLOR_BLACK  );
-   init_pair (41, COLOR_BLACK  , COLOR_RED    );
-   init_pair (42, COLOR_BLACK  , COLOR_GREEN  );
-   init_pair (43, COLOR_BLACK  , COLOR_YELLOW );
-   init_pair (44, COLOR_BLACK  , COLOR_BLUE   );
-   init_pair (45, COLOR_BLACK  , COLOR_MAGENTA);
-   init_pair (46, COLOR_BLACK  , COLOR_CYAN   );
-   init_pair (47, COLOR_BLACK  , COLOR_WHITE  );
-   /*---(color on white)-----------------*/
-   init_pair (50, COLOR_BLACK  , COLOR_WHITE  );
-   init_pair (51, COLOR_RED    , COLOR_WHITE  );
-   init_pair (52, COLOR_GREEN  , COLOR_WHITE  );
-   init_pair (53, COLOR_YELLOW , COLOR_WHITE  );
-   init_pair (54, COLOR_BLUE   , COLOR_WHITE  );
-   init_pair (55, COLOR_MAGENTA, COLOR_WHITE  );
-   init_pair (56, COLOR_CYAN   , COLOR_WHITE  );
-   init_pair (57, COLOR_WHITE  , COLOR_WHITE  );
-   /*---(white on color)-----------------*/
-   init_pair (60, COLOR_WHITE  , COLOR_BLACK  );
-   init_pair (61, COLOR_WHITE  , COLOR_RED    );
-   init_pair (62, COLOR_WHITE  , COLOR_GREEN  );
-   init_pair (63, COLOR_WHITE  , COLOR_YELLOW );
-   init_pair (64, COLOR_WHITE  , COLOR_BLUE   );
-   init_pair (65, COLOR_WHITE  , COLOR_MAGENTA);
-   init_pair (66, COLOR_WHITE  , COLOR_CYAN   );
-   init_pair (67, COLOR_WHITE  , COLOR_WHITE  );
+   COLOR_init  ();
    /*---(complete)--------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;

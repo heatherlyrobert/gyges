@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1v"
-#define     VER_TXT   "switched color constants to static variables"
+#define     VER_NUM   "1.2a"
+#define     VER_TXT   "all colors now in a table and easily managed ;))"
 
 
 
