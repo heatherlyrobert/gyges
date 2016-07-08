@@ -91,6 +91,62 @@ tMENU       menus       [MAX_MENU] = {
 };
 
 
+/*  k=black, r=red, g=green, y=yellow, b=blue, m=magenta, c=cyan, w=grey */
+
+struct cCOLORS {
+   char        terse       [10];            /* short description              */
+   char        ctype;                       /* cell type, if it applies       */
+   char        desc        [50];            /* description/reason             */
+   char        bg_color;                    /* background color               */
+   char        fg_color;                    /* foreground color               */
+   char        bold;                        /* bold y/n                       */
+} s_color_info [MAX_COLORS] = {
+   /*---terse--- -ty- ---description---------------------------------------- -bg-- -fg-- --b- */
+   /*---(title/status)---*/
+   { "t_norm"   , ' ', "normal title color"                                 , '-' , '-' , '-' },
+   { "t_err"    , ' ', "title color when in error"                          , '-' , '-' , '-' },
+   { "s_norm"   , ' ', "normal status color"                                , '-' , '-' , '-' },
+   { "s_err"    , ' ', "status color when in error"                         , '-' , '-' , '-' },
+   { "key"      , ' ', "current keystoke display"                           , '-' , '-' , '-' },
+   { "msg"      , ' ', "message line"                                       , '-' , '-' , '-' },
+   /*---(modes)----------*/
+   { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , '-' , '-' , '-' },
+   { "m_src"    , ' ', "source mode (single cell review)"                   , '-' , '-' , '-' },
+   { "m_input"  , ' ', "input mode"                                         , '-' , '-' , '-' },
+   { "m_wand"   , ' ', "wander mode"                                        , '-' , '-' , '-' },
+   /*---(row/col header)-*/
+   { "h_cur"    , ' ', "current row/column header"                          , '-' , '-' , '-' },
+   { "h_loc"    , ' ', "locked row/column header"                           , '-' , '-' , '-' },
+   { "h_use"    , ' ', "row/column with entries"                            , '-' , '-' , '-' },
+   { "h_not"    , ' ', "row/column with no entries"                         , '-' , '-' , '-' },
+   /*---(selection)------*/
+   { "curr"     , ' ', "current cell"                                       , '-' , '-' , '-' },
+   { "root"     , ' ', "root of visual selection"                           , '-' , '-' , '-' },
+   { "visu"     , ' ', "selected, not root/curr"                            , '-' , '-' , '-' },
+   /*---(dep type)-------*/
+   { "reqs"     , ' ', "value required from cell"                           , '-' , '-' , '-' },
+   { "pros"     , ' ', "value provided to cell"                             , '-' , '-' , '-' },
+   { "like"     , ' ', "formula is copy/variation"                          , '-' , '-' , '-' },
+   /*---(warnings)-------*/
+   { "fdang"    , 'f', "complex numeric formula"                            , '-' , '-' , '-' },
+   { "mdang"    , 'm', "complex string formula"                             , '-' , '-' , '-' },
+   /*---(cell types)-----*/
+   { "num"      , 'n', "numeric literal"                                    , '-' , '-' , '-' },
+   { "for"      , 'f', "numeric formula"                                    , '-' , '-' , '-' },
+   { "flike"    , 'l', "numeric formula (copy)"                             , '-' , '-' , '-' },
+   { "str"      , 's', "string literal"                                     , '-' , '-' , '-' },
+   { "mod"      , 'm', "string formula"                                     , '-' , '-' , '-' },
+   { "mlike"    , 'L', "string formula (copy)"                              , '-' , '-' , '-' },
+   { "range"    , 'p', "range pointer"                                      , '-' , '-' , '-' },
+   { "addr"     , 'p', "address pointer"                                    , '-' , '-' , '-' },
+   { "warn"     , 'w', "cell warning"                                       , '-' , '-' , '-' },
+   { "error"    , 'E', "cell error"                                         , '-' , '-' , '-' },
+   { "blank"    , '-', "blank cell"                                         , '-' , '-' , '-' },
+   /*---(deps)-----------*/
+   
+}
+
+
 
 /*===[[ COLOR DEFINITIONS ]]==================================================*/
 /*---(window)-------------------------*/

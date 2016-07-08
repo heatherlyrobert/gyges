@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.1s"
-#define     VER_TXT   "fixed numeric LIKE formatting options"
+#define     VER_NUM   "1.1t"
+#define     VER_TXT   "add color table to load and maintain colors better"
 
 
 
