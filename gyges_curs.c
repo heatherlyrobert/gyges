@@ -152,51 +152,51 @@ struct cCOLOR_INFO {
 
 /*===[[ COLOR DEFINITIONS ]]==================================================*/
 /*---(window)-------------------------*/
-#define     S_COLOR_TITLE      COLOR_PAIR(40) | A_BOLD
-#define     S_COLOR_TITLEE     COLOR_PAIR(61)
-#define     S_COLOR_STATUS     COLOR_PAIR(40) | A_BOLD
-#define     S_COLOR_STATUSE    COLOR_PAIR(61)
-#define     S_COLOR_KEYS       COLOR_PAIR(71) | A_BOLD
-#define     S_COLOR_MESSAGE    COLOR_PAIR(77)
+static int  S_COLOR_TITLE      = COLOR_PAIR(40) | A_BOLD;
+static int  S_COLOR_TITLEE     = COLOR_PAIR(61);
+static int  S_COLOR_STATUS     = COLOR_PAIR(40) | A_BOLD;
+static int  S_COLOR_STATUSE    = COLOR_PAIR(61);
+static int  S_COLOR_KEYS       = COLOR_PAIR(71) | A_BOLD;
+static int  S_COLOR_MESSAGE    = COLOR_PAIR(77);
 /*---(edit modes)---------------------*/
-#define     S_COLOR_CONTENT    COLOR_PAIR(43) | A_BLINK
-#define     S_COLOR_SOURCE     COLOR_PAIR(42) | A_BLINK
-#define     S_COLOR_INPUT      COLOR_PAIR(47) | A_BLINK
-#define     S_COLOR_WANDER     COLOR_PAIR(41) | A_BLINK
+static int  S_COLOR_CONTENT    = COLOR_PAIR(43) | A_BLINK;
+static int  S_COLOR_SOURCE     = COLOR_PAIR(42) | A_BLINK;
+static int  S_COLOR_INPUT      = COLOR_PAIR(47) | A_BLINK;
+static int  S_COLOR_WANDER     = COLOR_PAIR(41) | A_BLINK;
 /*---(cells)--------------------------*/
-#define     S_COLOR_CURRENT    COLOR_PAIR(43) | A_BLINK
-#define     S_COLOR_VISUAL     COLOR_PAIR(23) | A_BOLD
-#define     S_COLOR_ROOT       COLOR_PAIR(33) | A_BOLD
+static int  S_COLOR_CURRENT    = COLOR_PAIR(43) | A_BLINK;
+static int  S_COLOR_VISUAL     = COLOR_PAIR(23) | A_BOLD;
+static int  S_COLOR_ROOT       = COLOR_PAIR(33) | A_BOLD;
 
-#define     S_COLOR_REQS       COLOR_PAIR(25) | A_BOLD
-#define     S_COLOR_PROS       COLOR_PAIR(22) | A_BOLD
-#define     S_COLOR_LIKE       COLOR_PAIR(24) | A_BOLD
+static int  S_COLOR_REQS       = COLOR_PAIR(25) | A_BOLD;
+static int  S_COLOR_PROS       = COLOR_PAIR(22) | A_BOLD;
+static int  S_COLOR_LIKE       = COLOR_PAIR(24) | A_BOLD;
 
-#define     S_COLOR_ERROR      COLOR_PAIR(61) | A_BOLD
+static int  S_COLOR_ERROR      = COLOR_PAIR(61) | A_BOLD;
 
-#define     S_COLOR_POINTER    COLOR_PAIR(76) | A_BOLD
+static int  S_COLOR_POINTER    = COLOR_PAIR(76) | A_BOLD;
 
-#define     S_COLOR_FSIMPLE    COLOR_PAIR(72) | A_BOLD
-#define     S_COLOR_FDANGER    COLOR_PAIR(71) | A_BOLD
-#define     S_COLOR_FLIKE      COLOR_PAIR(72)           
+static int  S_COLOR_FSIMPLE    = COLOR_PAIR(72) | A_BOLD;
+static int  S_COLOR_FDANGER    = COLOR_PAIR(71) | A_BOLD;
+static int  S_COLOR_FLIKE      = COLOR_PAIR(72)           ;
 
-#define     S_COLOR_STRING     COLOR_PAIR(73) | A_BOLD
-#define     S_COLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
-#define     S_COLOR_FSTRDAG    COLOR_PAIR(75) | A_BOLD
-#define     S_COLOR_MLIKE      COLOR_PAIR(75)          
+static int  S_COLOR_STRING     = COLOR_PAIR(73) | A_BOLD;
+static int  S_COLOR_FSTRING    = COLOR_PAIR(75) | A_BOLD;
+static int  S_COLOR_FSTRDAG    = COLOR_PAIR(75) | A_BOLD;
+static int  S_COLOR_MLIKE      = COLOR_PAIR(75)          ;
 
-#define     S_COLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
+static int  S_COLOR_FCOPY      = COLOR_PAIR(34) | A_BOLD | A_BLINK;
 
-#define     S_COLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
-#define     S_COLOR_LABEL      COLOR_PAIR(73)
-#define     S_COLOR_NULL       COLOR_PAIR(70) | A_BOLD
+static int  S_COLOR_NUMBER     = COLOR_PAIR(74) | A_BOLD;
+static int  S_COLOR_LABEL      = COLOR_PAIR(73);
+static int  S_COLOR_NULL       = COLOR_PAIR(70) | A_BOLD;
 
-#define     S_COLOR_NORMAL      COLOR_PAIR(73) | A_BOLD
+static int  S_COLOR_NORMAL     =  COLOR_PAIR(73) | A_BOLD;
 /*---(row and column headers)---------*/
-#define     S_COLOR_HEADY      COLOR_PAIR(33) | A_BOLD
-#define     S_COLOR_HEADL      COLOR_PAIR(43) | A_BOLD
-#define     S_COLOR_HEADF      COLOR_PAIR(73)
-#define     S_COLOR_HEADN      COLOR_PAIR(74)
+static int  S_COLOR_HEADY      = COLOR_PAIR(33) | A_BOLD;
+static int  S_COLOR_HEADL      = COLOR_PAIR(43) | A_BOLD;
+static int  S_COLOR_HEADF      = COLOR_PAIR(73);
+static int  S_COLOR_HEADN      = COLOR_PAIR(74);
 
 
 char        msg_type  = '-';
