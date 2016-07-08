@@ -93,106 +93,110 @@ tMENU       menus       [MAX_MENU] = {
 
 /*  k=black, r=red, g=green, y=yellow, b=blue, m=magenta, c=cyan, w=grey */
 
-struct cCOLORS {
+#define     MAX_COLORS      100
+struct cCOLOR_INFO {
    char        terse       [10];            /* short description              */
    char        ctype;                       /* cell type, if it applies       */
    char        desc        [50];            /* description/reason             */
    char        bg_color;                    /* background color               */
    char        fg_color;                    /* foreground color               */
    char        bold;                        /* bold y/n                       */
+   int         value;                       /* curses attribute value         */
 } s_color_info [MAX_COLORS] = {
-   /*---terse--- -ty- ---description---------------------------------------- -bg-- -fg-- --b- */
-   /*---(title/status)---*/
-   { "t_norm"   , ' ', "normal title color"                                 , '-' , '-' , '-' },
-   { "t_err"    , ' ', "title color when in error"                          , '-' , '-' , '-' },
-   { "s_norm"   , ' ', "normal status color"                                , '-' , '-' , '-' },
-   { "s_err"    , ' ', "status color when in error"                         , '-' , '-' , '-' },
-   { "key"      , ' ', "current keystoke display"                           , '-' , '-' , '-' },
-   { "msg"      , ' ', "message line"                                       , '-' , '-' , '-' },
+   /*---terse--- -ty- ---description---------------------------------------- -bg-- -fg-- --b- --v- */
+   /*---(window)---------*/
+   { "t_norm"   , ' ', "normal title color"                                 , '-' , '-' , '-',   0 },
+   { "t_err"    , ' ', "title color when in error"                          , '-' , '-' , '-',   0 },
+   { "s_norm"   , ' ', "normal status color"                                , '-' , '-' , '-',   0 },
+   { "s_err"    , ' ', "status color when in error"                         , '-' , '-' , '-',   0 },
+   { "w_keys"   , ' ', "window keystoke display"                            , '-' , '-' , '-',   0 },
+   { "w_mesg"   , ' ', "window message"                                     , '-' , '-' , '-',   0 },
    /*---(modes)----------*/
-   { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , '-' , '-' , '-' },
-   { "m_src"    , ' ', "source mode (single cell review)"                   , '-' , '-' , '-' },
-   { "m_input"  , ' ', "input mode"                                         , '-' , '-' , '-' },
-   { "m_wand"   , ' ', "wander mode"                                        , '-' , '-' , '-' },
+   { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , '-' , '-' , '-',   0 },
+   { "m_src"    , ' ', "source mode (single cell review)"                   , '-' , '-' , '-',   0 },
+   { "m_input"  , ' ', "input mode"                                         , '-' , '-' , '-',   0 },
+   { "m_wand"   , ' ', "wander mode"                                        , '-' , '-' , '-',   0 },
    /*---(row/col header)-*/
-   { "h_cur"    , ' ', "current row/column header"                          , '-' , '-' , '-' },
-   { "h_loc"    , ' ', "locked row/column header"                           , '-' , '-' , '-' },
-   { "h_use"    , ' ', "row/column with entries"                            , '-' , '-' , '-' },
-   { "h_not"    , ' ', "row/column with no entries"                         , '-' , '-' , '-' },
+   { "h_cur"    , ' ', "current row/column header"                          , '-' , '-' , '-',   0 },
+   { "h_loc"    , ' ', "locked row/column header"                           , '-' , '-' , '-',   0 },
+   { "h_use"    , ' ', "row/column with entries"                            , '-' , '-' , '-',   0 },
+   { "h_not"    , ' ', "row/column with no entries"                         , '-' , '-' , '-',   0 },
    /*---(selection)------*/
-   { "curr"     , ' ', "current cell"                                       , '-' , '-' , '-' },
-   { "root"     , ' ', "root of visual selection"                           , '-' , '-' , '-' },
-   { "visu"     , ' ', "selected, not root/curr"                            , '-' , '-' , '-' },
+   { "curr"     , ' ', "current cell"                                       , '-' , '-' , '-',   0 },
+   { "root"     , ' ', "root of visual selection"                           , '-' , '-' , '-',   0 },
+   { "visu"     , ' ', "selected, not root/curr"                            , '-' , '-' , '-',   0 },
    /*---(dep type)-------*/
-   { "reqs"     , ' ', "value required from cell"                           , '-' , '-' , '-' },
-   { "pros"     , ' ', "value provided to cell"                             , '-' , '-' , '-' },
-   { "like"     , ' ', "formula is copy/variation"                          , '-' , '-' , '-' },
-   /*---(warnings)-------*/
-   { "fdang"    , 'f', "complex numeric formula"                            , '-' , '-' , '-' },
-   { "mdang"    , 'm', "complex string formula"                             , '-' , '-' , '-' },
+   { "reqs"     , ' ', "value required from cell"                           , '-' , '-' , '-',   0 },
+   { "pros"     , ' ', "value provided to cell"                             , '-' , '-' , '-',   0 },
+   { "like"     , ' ', "formula is copy/variation"                          , '-' , '-' , '-',   0 },
+   /*---(danger signs)---*/
+   { "fdang"    , 'f', "complex numeric formula"                            , '-' , '-' , '-',   0 },
+   { "mdang"    , 'm', "complex string formula"                             , '-' , '-' , '-',   0 },
    /*---(cell types)-----*/
-   { "num"      , 'n', "numeric literal"                                    , '-' , '-' , '-' },
-   { "for"      , 'f', "numeric formula"                                    , '-' , '-' , '-' },
-   { "flike"    , 'l', "numeric formula (copy)"                             , '-' , '-' , '-' },
-   { "str"      , 's', "string literal"                                     , '-' , '-' , '-' },
-   { "mod"      , 'm', "string formula"                                     , '-' , '-' , '-' },
-   { "mlike"    , 'L', "string formula (copy)"                              , '-' , '-' , '-' },
-   { "range"    , 'p', "range pointer"                                      , '-' , '-' , '-' },
-   { "addr"     , 'p', "address pointer"                                    , '-' , '-' , '-' },
-   { "warn"     , 'w', "cell warning"                                       , '-' , '-' , '-' },
-   { "error"    , 'E', "cell error"                                         , '-' , '-' , '-' },
-   { "blank"    , '-', "blank cell"                                         , '-' , '-' , '-' },
-   /*---(deps)-----------*/
-   
-}
-
+   { "num"      , 'n', "numeric literal"                                    , '-' , '-' , '-',   0 },
+   { "for"      , 'f', "numeric formula"                                    , '-' , '-' , '-',   0 },
+   { "flike"    , 'l', "numeric formula (copy)"                             , '-' , '-' , '-',   0 },
+   { "str"      , 's', "string literal"                                     , '-' , '-' , '-',   0 },
+   { "mod"      , 'm', "string formula"                                     , '-' , '-' , '-',   0 },
+   { "mlike"    , 'L', "string formula (copy)"                              , '-' , '-' , '-',   0 },
+   { "range"    , 'p', "range pointer"                                      , '-' , '-' , '-',   0 },
+   { "addr"     , 'p', "address pointer"                                    , '-' , '-' , '-',   0 },
+   { "blank"    , '-', "blank cell"                                         , '-' , '-' , '-',   0 },
+   { "def"      , '-', "default for unidentified cells"                     , '-' , '-' , '-',   0 },
+   /*---(other)----------*/
+   { "warn"     , 'w', "cell warning"                                       , '-' , '-' , '-',   0 },
+   { "error"    , 'E', "cell error"                                         , '-' , '-' , '-',   0 },
+   { "found"    , '-', "cell found in most recent search"                   , '-' , '-' , '-',   0 },
+};
 
 
 /*===[[ COLOR DEFINITIONS ]]==================================================*/
 /*---(window)-------------------------*/
-#define     NCOLOR_TITLE      COLOR_PAIR(40) | A_BOLD
-#define     NCOLOR_TITLEE     COLOR_PAIR(61)
-#define     NCOLOR_STATUS     COLOR_PAIR(40) | A_BOLD
-#define     NCOLOR_STATUSE    COLOR_PAIR(61)
-#define     NCOLOR_KEYS       COLOR_PAIR(71) | A_BOLD
-#define     NCOLOR_MESSAGE    COLOR_PAIR(77)
+#define     S_COLOR_TITLE      COLOR_PAIR(40) | A_BOLD
+#define     S_COLOR_TITLEE     COLOR_PAIR(61)
+#define     S_COLOR_STATUS     COLOR_PAIR(40) | A_BOLD
+#define     S_COLOR_STATUSE    COLOR_PAIR(61)
+#define     S_COLOR_KEYS       COLOR_PAIR(71) | A_BOLD
+#define     S_COLOR_MESSAGE    COLOR_PAIR(77)
 /*---(edit modes)---------------------*/
-#define     NCOLOR_CONTENT    COLOR_PAIR(43) | A_BLINK
-#define     NCOLOR_SOURCE     COLOR_PAIR(42) | A_BLINK
-#define     NCOLOR_INPUT      COLOR_PAIR(47) | A_BLINK
-#define     NCOLOR_WANDER     COLOR_PAIR(41) | A_BLINK
+#define     S_COLOR_CONTENT    COLOR_PAIR(43) | A_BLINK
+#define     S_COLOR_SOURCE     COLOR_PAIR(42) | A_BLINK
+#define     S_COLOR_INPUT      COLOR_PAIR(47) | A_BLINK
+#define     S_COLOR_WANDER     COLOR_PAIR(41) | A_BLINK
 /*---(cells)--------------------------*/
-#define     NCOLOR_CURRENT    COLOR_PAIR(43) | A_BLINK
-#define     NCOLOR_VISUAL     COLOR_PAIR(23) | A_BOLD
-#define     NCOLOR_ROOT       COLOR_PAIR(33) | A_BOLD
+#define     S_COLOR_CURRENT    COLOR_PAIR(43) | A_BLINK
+#define     S_COLOR_VISUAL     COLOR_PAIR(23) | A_BOLD
+#define     S_COLOR_ROOT       COLOR_PAIR(33) | A_BOLD
 
-#define     NCOLOR_REQS       COLOR_PAIR(25) | A_BOLD
-#define     NCOLOR_PROS       COLOR_PAIR(22) | A_BOLD
-#define     NCOLOR_LIKE       COLOR_PAIR(24) | A_BOLD
+#define     S_COLOR_REQS       COLOR_PAIR(25) | A_BOLD
+#define     S_COLOR_PROS       COLOR_PAIR(22) | A_BOLD
+#define     S_COLOR_LIKE       COLOR_PAIR(24) | A_BOLD
 
-#define     NCOLOR_ERROR      COLOR_PAIR(61) | A_BOLD
+#define     S_COLOR_ERROR      COLOR_PAIR(61) | A_BOLD
 
-#define     NCOLOR_POINTER    COLOR_PAIR(76) | A_BOLD
+#define     S_COLOR_POINTER    COLOR_PAIR(76) | A_BOLD
 
-#define     NCOLOR_FSIMPLE    COLOR_PAIR(72) | A_BOLD
-#define     NCOLOR_FDANGER    COLOR_PAIR(71) | A_BOLD
-#define     NCOLOR_FLIKE      COLOR_PAIR(72)           
+#define     S_COLOR_FSIMPLE    COLOR_PAIR(72) | A_BOLD
+#define     S_COLOR_FDANGER    COLOR_PAIR(71) | A_BOLD
+#define     S_COLOR_FLIKE      COLOR_PAIR(72)           
 
-#define     NCOLOR_STRING     COLOR_PAIR(73) | A_BOLD
-#define     NCOLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
-#define     NCOLOR_FSTRDAG    COLOR_PAIR(75) | A_BOLD
-#define     NCOLOR_MLIKE      COLOR_PAIR(75)          
+#define     S_COLOR_STRING     COLOR_PAIR(73) | A_BOLD
+#define     S_COLOR_FSTRING    COLOR_PAIR(75) | A_BOLD
+#define     S_COLOR_FSTRDAG    COLOR_PAIR(75) | A_BOLD
+#define     S_COLOR_MLIKE      COLOR_PAIR(75)          
 
-#define     NCOLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
+#define     S_COLOR_FCOPY      COLOR_PAIR(34) | A_BOLD | A_BLINK
 
-#define     NCOLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
-#define     NCOLOR_LABEL      COLOR_PAIR(73)
-#define     NCOLOR_NULL       COLOR_PAIR(70) | A_BOLD
+#define     S_COLOR_NUMBER     COLOR_PAIR(74) | A_BOLD
+#define     S_COLOR_LABEL      COLOR_PAIR(73)
+#define     S_COLOR_NULL       COLOR_PAIR(70) | A_BOLD
+
+#define     S_COLOR_NORMAL      COLOR_PAIR(73) | A_BOLD
 /*---(row and column headers)---------*/
-#define     NCOLOR_HEADY      COLOR_PAIR(33) | A_BOLD
-#define     NCOLOR_HEADL      COLOR_PAIR(43) | A_BOLD
-#define     NCOLOR_HEADF      COLOR_PAIR(73)
-#define     NCOLOR_HEADN      COLOR_PAIR(74)
+#define     S_COLOR_HEADY      COLOR_PAIR(33) | A_BOLD
+#define     S_COLOR_HEADL      COLOR_PAIR(43) | A_BOLD
+#define     S_COLOR_HEADF      COLOR_PAIR(73)
+#define     S_COLOR_HEADN      COLOR_PAIR(74)
 
 
 char        msg_type  = '-';
@@ -214,8 +218,8 @@ CURS_formula       (tCELL *a_curr)
    int       len       = 0;
    int       w         = 0;
    /*---(clear line)---------------------*/
-   if (sta_error == 'y')  attron (NCOLOR_TITLEE);
-   else                   attron (NCOLOR_TITLE);
+   if (sta_error == 'y')  attron (S_COLOR_TITLEE);
+   else                   attron (S_COLOR_TITLE);
    mvprintw (row_formula, 0, "%*.*s", my.x_full, my.x_full, empty);
    /*---(location)-----------------------*/
    /*> strcpy(label, tab->cols[CCOL].l);                                         <* 
@@ -235,13 +239,13 @@ CURS_formula       (tCELL *a_curr)
    /*---(length)-----------------------------*/
    len = strlen(contents);
    mvprintw (row_formula, 25, "%4d:", len);
-   if (sta_error == 'y')  attroff(NCOLOR_TITLEE);
-   else                   attroff(NCOLOR_TITLE);
+   if (sta_error == 'y')  attroff(S_COLOR_TITLEE);
+   else                   attroff(S_COLOR_TITLE);
    /*---(set color)--------------------------*/
-   if      (mode == MODE_SOURCE)  attron (NCOLOR_SOURCE );
-   else if (mode == MODE_INPUT )  attron (NCOLOR_INPUT  );
-   else if (mode == MODE_WANDER)  attron (NCOLOR_WANDER );
-   else                           attron (NCOLOR_CONTENT);
+   if      (mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
+   else if (mode == MODE_INPUT )  attron (S_COLOR_INPUT  );
+   else if (mode == MODE_WANDER)  attron (S_COLOR_WANDER );
+   else                           attron (S_COLOR_CONTENT);
    /*---(contents)---------------------------*/
    w  = my.apos - strlen(contents);
    if (w < 0) w = 0;
@@ -250,10 +254,10 @@ CURS_formula       (tCELL *a_curr)
    if (w == 0) snprintf(msg, 500, "[%*.*s]", my.apos, my.apos, contents + my.bpos);
    mvprintw (row_formula, 30, "%s%*.*s", msg, w, w, empty);
    /*---(clear color)--------------------*/
-   if      (mode == MODE_SOURCE)  attroff(NCOLOR_SOURCE );
-   else if (mode == MODE_INPUT )  attroff(NCOLOR_INPUT  );
-   else if (mode == MODE_WANDER)  attroff(NCOLOR_WANDER );
-   else                           attroff(NCOLOR_CONTENT);
+   if      (mode == MODE_SOURCE)  attroff(S_COLOR_SOURCE );
+   else if (mode == MODE_INPUT )  attroff(S_COLOR_INPUT  );
+   else if (mode == MODE_WANDER)  attroff(S_COLOR_WANDER );
+   else                           attroff(S_COLOR_CONTENT);
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -301,12 +305,12 @@ CURS_status        (tCELL *a_curr)
       else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", f_name, tab->ncol, tab->nrow);
       break;
    }
-   if (sta_error == 'y')  attron (NCOLOR_STATUSE);
-   else                   attron (NCOLOR_STATUS);
+   if (sta_error == 'y')  attron (S_COLOR_STATUSE);
+   else                   attron (S_COLOR_STATUS);
    mvprintw(row_status, 0, "%*.*s", my.x_full, my.x_full, empty);
    mvprintw(row_status, 0, msg);
-   if (sta_error == 'y')  attroff(NCOLOR_STATUSE);
-   else                   attroff(NCOLOR_STATUS);
+   if (sta_error == 'y')  attroff(S_COLOR_STATUSE);
+   else                   attroff(S_COLOR_STATUS);
    sta_error = '-';
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -316,10 +320,10 @@ char
 CURS_message       (void)
 {
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   attron  (NCOLOR_MESSAGE);
+   attron  (S_COLOR_MESSAGE);
    mvprintw (row_message, 0, "%*.*s", my.x_full, my.x_full, empty);
    mvprintw (row_message, 0, message);
-   attroff (NCOLOR_MESSAGE);
+   attroff (S_COLOR_MESSAGE);
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -347,15 +351,15 @@ CURS_colhead       (void)
          strcpy(label, tab->cols[i].l);
          /*---(output)----------------------*/
          snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, dashes, label);
-         if      (i == CCOL          )  attron  (NCOLOR_HEADY   );
-         else if (i <= tab->froz_ecol)  attron  (NCOLOR_HEADL   );
-         else if (tab->cols[i].c >  0)  attron  (NCOLOR_HEADF   );
-         else                           attron  (NCOLOR_HEADN   );
+         if      (i == CCOL          )  attron  (S_COLOR_HEADY   );
+         else if (i <= tab->froz_ecol)  attron  (S_COLOR_HEADL   );
+         else if (tab->cols[i].c >  0)  attron  (S_COLOR_HEADF   );
+         else                           attron  (S_COLOR_HEADN   );
          mvprintw (row_chead, tab->cols[i].x, msg);
-         if      (i == CCOL          )  attroff (NCOLOR_HEADY   );
-         else if (i <= tab->froz_ecol)  attroff (NCOLOR_HEADL   );
-         else if (tab->cols[i].c >  0)  attroff (NCOLOR_HEADF   );
-         else                           attroff (NCOLOR_HEADN   );
+         if      (i == CCOL          )  attroff (S_COLOR_HEADY   );
+         else if (i <= tab->froz_ecol)  attroff (S_COLOR_HEADL   );
+         else if (tab->cols[i].c >  0)  attroff (S_COLOR_HEADF   );
+         else                           attroff (S_COLOR_HEADN   );
       }
    }
    /*---(process oolumns)----------------*/
@@ -368,13 +372,13 @@ CURS_colhead       (void)
       strcpy(label, tab->cols[i].l);
       /*---(output)----------------------*/
       snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, dashes, label);
-      if      (i == CCOL          )  attron  (NCOLOR_HEADY   );
-      else if (tab->cols[i].c >  0)  attron  (NCOLOR_HEADF   );
-      else                           attron  (NCOLOR_HEADN   );
+      if      (i == CCOL          )  attron  (S_COLOR_HEADY   );
+      else if (tab->cols[i].c >  0)  attron  (S_COLOR_HEADF   );
+      else                           attron  (S_COLOR_HEADN   );
       mvprintw (row_chead, tab->cols[i].x, msg);
-      if      (i == CCOL          )  attroff (NCOLOR_HEADY   );
-      else if (tab->cols[i].c >  0)  attroff (NCOLOR_HEADF   );
-      else                           attroff (NCOLOR_HEADN   );
+      if      (i == CCOL          )  attroff (S_COLOR_HEADY   );
+      else if (tab->cols[i].c >  0)  attroff (S_COLOR_HEADF   );
+      else                           attroff (S_COLOR_HEADN   );
    }
    /*---(fill in right side)-------------*/
    if (cw < (my.x_full - my.x_right)) {
@@ -387,9 +391,9 @@ CURS_colhead       (void)
          else if (w == 3) snprintf(msg, 500, "\[->");
          else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, dashes, label);
       } else              snprintf(msg, 500, "%*.*s ", w, w, empty);
-      if (tab->cols[ECOL + 1].c == 0)  attron  (NCOLOR_HEADN   );
+      if (tab->cols[ECOL + 1].c == 0)  attron  (S_COLOR_HEADN   );
       mvprintw (row_chead, cw, msg);
-      if (tab->cols[ECOL + 1].c == 0)  attroff (NCOLOR_HEADN   );
+      if (tab->cols[ECOL + 1].c == 0)  attroff (S_COLOR_HEADN   );
    }
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -413,10 +417,10 @@ CURS_rowhead       (void)
          /*---(prepare)----------------------------*/
          h     = tab->rows[i].h;
          ch   += h;
-         if      (i == CROW          )  attron  (NCOLOR_HEADY   );
-         else if (i <= tab->froz_erow)  attron  (NCOLOR_HEADL   );
-         else if (tab->rows[i].c >  0)  attron  (NCOLOR_HEADF   );
-         else                           attron  (NCOLOR_HEADN   );
+         if      (i == CROW          )  attron  (S_COLOR_HEADY   );
+         else if (i <= tab->froz_erow)  attron  (S_COLOR_HEADL   );
+         else if (tab->rows[i].c >  0)  attron  (S_COLOR_HEADF   );
+         else                           attron  (S_COLOR_HEADN   );
          for (j = 0; j < h; ++j) {
             /*> if (ch + j > my.y_avail)  break;                                         <*/
             switch (j) {
@@ -424,10 +428,10 @@ CURS_rowhead       (void)
             default : mvprintw (tab->rows[i].y + j, 0, "   .");         break;
             }
          }
-         if      (i == CROW          )  attroff (NCOLOR_HEADY   );
-         else if (i <= tab->froz_erow)  attroff (NCOLOR_HEADL   );
-         else if (tab->rows[i].c >  0)  attroff (NCOLOR_HEADF   );
-         else                           attroff (NCOLOR_HEADN   );
+         if      (i == CROW          )  attroff (S_COLOR_HEADY   );
+         else if (i <= tab->froz_erow)  attroff (S_COLOR_HEADL   );
+         else if (tab->rows[i].c >  0)  attroff (S_COLOR_HEADF   );
+         else                           attroff (S_COLOR_HEADN   );
       }
    }
    /*---(process rows)-----------------------*/
@@ -436,9 +440,9 @@ CURS_rowhead       (void)
       /*---(prepare)----------------------------*/
       h     = tab->rows[i].h;
       ch   += h;
-      if      (i == CROW          )  attron  (NCOLOR_HEADY   );
-      else if (tab->rows[i].c >  0)  attron  (NCOLOR_HEADF   );
-      else                           attron  (NCOLOR_HEADN   );
+      if      (i == CROW          )  attron  (S_COLOR_HEADY   );
+      else if (tab->rows[i].c >  0)  attron  (S_COLOR_HEADF   );
+      else                           attron  (S_COLOR_HEADN   );
       for (j = 0; j < h; ++j) {
          /*> if (ch + j > my.y_avail)  break;                                         <*/
          switch (j) {
@@ -446,9 +450,9 @@ CURS_rowhead       (void)
          default : mvprintw (tab->rows[i].y + j, 0, "   .");         break;
          }
       }
-      if      (i == CROW          )  attroff (NCOLOR_HEADY   );
-      else if (tab->rows[i].c >  0)  attroff (NCOLOR_HEADF   );
-      else                           attroff (NCOLOR_HEADN   );
+      if      (i == CROW          )  attroff (S_COLOR_HEADY   );
+      else if (tab->rows[i].c >  0)  attroff (S_COLOR_HEADF   );
+      else                           attroff (S_COLOR_HEADN   );
    }
    /*---(complete)---------------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -480,9 +484,9 @@ CURS_main          (void)
    CURS_rowhead   ();
    CURS_page      ();
    /*---(command)------------------------*/
-   attron   (NCOLOR_KEYS);
+   attron   (S_COLOR_KEYS);
    mvprintw (row_chead, 0, cmd);
-   attroff  (NCOLOR_KEYS);
+   attroff  (S_COLOR_KEYS);
    /*---(cursor pos)---------------------*/
    if (mode != MODE_SOURCE && mode != MODE_INPUT)
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
@@ -527,41 +531,41 @@ CURS_cell          (int a_col, int a_row)
       sprintf    (label, ",%s,", l);
    }
    /*---(current)--------------------------*/
-   if      (a_col == CCOL && a_row == CROW)     { high= 1; attron (NCOLOR_CURRENT); }
+   if      (a_col == CCOL && a_row == CROW)     { high= 1; attron (S_COLOR_CURRENT); }
    /*---(visual-range)---------------------*/
-   /*> else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (NCOLOR_ROOT   ); }   <*/
-   else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (NCOLOR_VISUAL ); }
-   else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (NCOLOR_VISUAL ); }
+   /*> else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_ROOT   ); }   <*/
+   else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_VISUAL ); }
+   else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (S_COLOR_VISUAL ); }
    /*---(content-based)--------------------*/
    else if (curr != NULL) {
       /*---(trouble)--------------------------*/
-      if      (curr->t == CTYPE_ERROR)          { high=31; attron (NCOLOR_ERROR  ); }
-      else if (curr->t == CTYPE_WARN )          { high=31; attron (NCOLOR_ERROR  ); }
+      if      (curr->t == CTYPE_ERROR)          { high=31; attron (S_COLOR_ERROR  ); }
+      else if (curr->t == CTYPE_WARN )          { high=31; attron (S_COLOR_ERROR  ); }
       /*---(related)--------------------------*/
-      else if (strstr (reqs, label) != NULL)    { high= 7; attron (NCOLOR_REQS   ); }
-      else if (strstr (deps, label) != NULL)    { high= 8; attron (NCOLOR_PROS   ); }
-      else if (strstr (like, label) != NULL)    { high=10; attron (NCOLOR_LIKE   ); }
+      else if (strstr (reqs, label) != NULL)    { high= 7; attron (S_COLOR_REQS   ); }
+      else if (strstr (deps, label) != NULL)    { high= 8; attron (S_COLOR_PROS   ); }
+      else if (strstr (like, label) != NULL)    { high=10; attron (S_COLOR_LIKE   ); }
       /*---(pointers)-------------------------*/
-      else if (curr->t == CTYPE_RANGE)          { high=32; attron (NCOLOR_POINTER); }
-      else if (curr->t == CTYPE_ADDR )          { high=32; attron (NCOLOR_POINTER); }
+      else if (curr->t == CTYPE_RANGE)          { high=32; attron (S_COLOR_POINTER); }
+      else if (curr->t == CTYPE_ADDR )          { high=32; attron (S_COLOR_POINTER); }
       /*---(numbers)--------------------------*/
-      else if (curr->t == CTYPE_NUM  )          { high= 5; attron (NCOLOR_NUMBER ); }
+      else if (curr->t == CTYPE_NUM  )          { high= 5; attron (S_COLOR_NUMBER ); }
       else if (curr->t == CTYPE_FORM ) {
-         if   (curr->nrequire < 3)              { high= 3; attron (NCOLOR_FSIMPLE); }
-         else                                   { high= 4; attron (NCOLOR_FDANGER); }
+         if   (curr->nrequire < 3)              { high= 3; attron (S_COLOR_FSIMPLE); }
+         else                                   { high= 4; attron (S_COLOR_FDANGER); }
       }
-      else if (curr->t == CTYPE_FLIKE)          { high= 9; attron (NCOLOR_FLIKE  ); }
+      else if (curr->t == CTYPE_FLIKE)          { high= 9; attron (S_COLOR_FLIKE  ); }
       /*---(strings)--------------------------*/
-      else if (curr->t == CTYPE_STR  )          { high= 6; attron (NCOLOR_STRING ); }
+      else if (curr->t == CTYPE_STR  )          { high= 6; attron (S_COLOR_STRING ); }
       else if (curr->t == CTYPE_MOD  ) {
-         if      (curr->nrequire < 3)           { high=16; attron (NCOLOR_FSTRDAG); }
-         else                                   { high=11; attron (NCOLOR_FSTRING); }
+         if      (curr->nrequire < 3)           { high=16; attron (S_COLOR_FSTRDAG); }
+         else                                   { high=11; attron (S_COLOR_FSTRING); }
       }
-      else if (curr->t == CTYPE_MLIKE)          { high= 9; attron (NCOLOR_MLIKE  ); }
+      else if (curr->t == CTYPE_MLIKE)          { high= 9; attron (S_COLOR_MLIKE  ); }
       /*---(constants)------------------------*/
-      /*> else if (curr->t == 'l')                  { high=13; attron (NCOLOR_LABEL  ); }   <*/
-      else if (curr->t == CTYPE_BLANK)          { high=14; attron (NCOLOR_NULL   ); }
-      else                                      { high= 6; attron (NCOLOR_STRING ); }
+      /*> else if (curr->t == 'l')                  { high=13; attron (S_COLOR_LABEL  ); }   <*/
+      else if (curr->t == CTYPE_BLANK)          { high=14; attron (S_COLOR_NULL   ); }
+      else                                      { high= 6; attron (S_COLOR_STRING ); }
    }
    /*---(check max width)------------------*/
    xmax = tab->cols[a_col].w;
@@ -582,7 +586,7 @@ CURS_cell          (int a_col, int a_row)
          if (next->a != '+') break;
          if (xcol == CCOL) {
             high = 1;
-            attron (NCOLOR_CURRENT);
+            attron (S_COLOR_CURRENT);
             break;
          }
          ++xcol;
@@ -604,24 +608,24 @@ CURS_cell          (int a_col, int a_row)
       }
    }
    /*---(highlight off)--------------------*/
-   if      (high ==  1) attroff (NCOLOR_CURRENT);
-   else if (high ==  2) attroff (NCOLOR_VISUAL );
-   else if (high == 12) attroff (NCOLOR_ROOT   );
-   else if (high ==  9) attroff (NCOLOR_FLIKE  );
-   else if (high == 15) attroff (NCOLOR_FCOPY  );
-   else if (high ==  3) attroff (NCOLOR_FSIMPLE);
-   else if (high ==  4) attroff (NCOLOR_FDANGER);
-   else if (high == 11) attroff (NCOLOR_FSTRING);
-   else if (high == 16) attroff (NCOLOR_FSTRDAG);
-   else if (high ==  5) attroff (NCOLOR_NUMBER );
-   else if (high ==  6) attroff (NCOLOR_STRING );
-   else if (high == 13) attroff (NCOLOR_LABEL  );
-   else if (high == 14) attroff (NCOLOR_NULL   );
-   else if (high ==  7) attroff (NCOLOR_REQS   );
-   else if (high ==  8) attroff (NCOLOR_PROS   );
-   else if (high == 10) attroff (NCOLOR_LIKE   );
-   else if (high == 31) attroff (NCOLOR_ERROR  );
-   else if (high == 32) attroff (NCOLOR_POINTER);
+   if      (high ==  1) attroff (S_COLOR_CURRENT);
+   else if (high ==  2) attroff (S_COLOR_VISUAL );
+   else if (high == 12) attroff (S_COLOR_ROOT   );
+   else if (high ==  9) attroff (S_COLOR_FLIKE  );
+   else if (high == 15) attroff (S_COLOR_FCOPY  );
+   else if (high ==  3) attroff (S_COLOR_FSIMPLE);
+   else if (high ==  4) attroff (S_COLOR_FDANGER);
+   else if (high == 11) attroff (S_COLOR_FSTRING);
+   else if (high == 16) attroff (S_COLOR_FSTRDAG);
+   else if (high ==  5) attroff (S_COLOR_NUMBER );
+   else if (high ==  6) attroff (S_COLOR_STRING );
+   else if (high == 13) attroff (S_COLOR_LABEL  );
+   else if (high == 14) attroff (S_COLOR_NULL   );
+   else if (high ==  7) attroff (S_COLOR_REQS   );
+   else if (high ==  8) attroff (S_COLOR_PROS   );
+   else if (high == 10) attroff (S_COLOR_LIKE   );
+   else if (high == 31) attroff (S_COLOR_ERROR  );
+   else if (high == 32) attroff (S_COLOR_POINTER);
    /*---(complete)-------------------------*/
    return 0;
 }
