@@ -512,7 +512,8 @@ CELL_init          (void)
       if (s_cell_info [i].rpn     == 'y') {
          strcat  (G_CELL_RPN , t);
          sprintf (t, "%c", s_cell_info [i].prefix);
-         if (strchr (G_CELL_FPRE, s_cell_info [i].prefix) == 0) {
+         if   (s_cell_info [i].prefix != ' ' && 
+               strchr (G_CELL_FPRE, s_cell_info [i].prefix) == 0) {
             strcat  (G_CELL_FPRE , t);
          }
       }
