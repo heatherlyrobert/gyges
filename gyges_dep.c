@@ -1023,6 +1023,7 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    char        rce         = -10;
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
+   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
    --rce;  if (a_me    == NULL)  return rce;
    /*---(walk the list)------------------*/
    strncpy (a_list, ",", MAX_STR);
@@ -1048,6 +1049,7 @@ DEP_provides       (tCELL  *a_me, char *a_list)
    char        rce         = -10;
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
+   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
    --rce;  if (a_me    == NULL)  return rce;
    /*---(walk the list)---------------*/
    strncpy (a_list, ",", MAX_STR);
@@ -1075,6 +1077,7 @@ DEP_like           (tCELL  *a_me, char *a_list)
    char        rce         = -10;
    /*---(defenses)-------s---------------*/
    --rce;  if (a_list  == NULL)  return rce;
+   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
    --rce;  if (a_me    == NULL)  return rce;
    /*---(walk the list)---------------*/
    strncpy (a_list, ",", MAX_STR);
