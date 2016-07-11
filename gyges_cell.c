@@ -2131,7 +2131,7 @@ char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
 CELL__unit         (char *a_question, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
-   int         rc          = -1;
+   char        x_found     = '-';
    int         i           =  0;
    tCELL      *x_curr      = NULL;
    int         x_fore      = 0;
@@ -2142,13 +2142,16 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    x_curr  = hcell;
    for (i = 0; i < NCEL; ++i) {
       if (x_curr == NULL)     break;
-      if (x_curr == a_cell) { rc = 0; break; }
+      if (x_curr == a_cell) {
+         x_found = 'y';
+         break;
+      }
       x_curr = x_curr->next;
    }
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "cell_where")    == 0) {
-      if (rc == 0)  snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
-      else          snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", NULL  , -1         , -1         , -1         );
+      if (x_found == 'y')  snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      else                 snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10s, tab=%4d, col=%4d, row=%4d", "not-exist"  , -10        , -10        , -10        );
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
       snprintf(unit_answer, LEN_TEXT, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);

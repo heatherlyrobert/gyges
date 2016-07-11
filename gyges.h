@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2e"
-#define     VER_TXT   "converted unit test with koios, passed scripts 12-15"
+#define     VER_NUM   "1.2f"
+#define     VER_TXT   "converted unit test with koios, passed scripts 16-22"
 
 
 
