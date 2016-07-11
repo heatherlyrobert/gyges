@@ -4487,11 +4487,11 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the sheet location             unit_accessor         "sheet_who",     tabs[1].sheet[ 6][ 2]                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  check cell locations                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_1st, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  add first cell to sheet                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4522,9 +4522,9 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
    COND       v21  check cell locations                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_1st,  0          ,  5,  5);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  add second cell to sheet                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4557,7 +4557,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd,  0          ,  7,  5);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  unhook the second cell from the sheet                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4589,7 +4589,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, -1          , -1, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the second cell to the buffer                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4625,7 +4625,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS    , 0, -1);                                                        
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the second cell (again)                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4657,7 +4657,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS    , 0, -1);                                                        
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the first cell (still on sheet)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4689,7 +4689,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS    , 0, -1);                                                        
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  unhook the first cell from the sheet                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4721,7 +4721,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS    ,  0, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the first cell to the buffer                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4753,7 +4753,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS    ,  0, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the first cell to a different buffer (still hooked)     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.048))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4780,7 +4780,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS    ,  0, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  unhook the second cell from buffer                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.052))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4807,7 +4807,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, -1          , -1, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the second cell to an illegal buffer                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4834,7 +4834,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, -1          , -1, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the second cell to a different buffer                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.060))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4861,7 +4861,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS + 1,  0, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the second cell back to the sheet (still in reg)        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.064))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4888,7 +4888,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, MAX_TABS + 1,  0, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  unhook the second cell from buffer                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.068))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4915,7 +4915,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, -1          , -1, -1);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  hook the second cell back to the sheet                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.072))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4942,7 +4942,7 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, 1           ,  6,  2);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  unhook the first cell from buffer                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.076))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4972,12 +4972,12 @@ SCRP          v21  (s_reg ) hooking and unhooking cells in registers          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_1st                                                  s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_2nd, 1           ,  6,  2);                                                       
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_2nd                                                  s_equal     [[ CUSTOM ]]                                                           
-     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_3rd, -1          , -1, -1);                                                       
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr= not-exist, tab= -10, col= -10, row= -10" );                                                                          
      get      v21  check the cell's location            CELL__unit            "cell_where",    x_3rd                                                  s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.081))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=      (nil), tail=      (nil)        
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((23.082))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -4991,7 +4991,7 @@ SCRP          v21  (s_sel ) basic cut, copy, and paste using base register    
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((24.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=      (nil), tail=      (nil)        
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       v21  setup sheet values                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((24.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -6327,7 +6327,7 @@ SCRP          v21  (s_sel ) basic cut, copy, and paste using base register    
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((24.099))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=      (nil), tail=      (nil)        
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
 
@@ -6338,7 +6338,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=      (nil), tail=      (nil)        
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -6582,7 +6582,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=      (nil), tail=      (nil)        
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
 

@@ -1257,7 +1257,7 @@ CELL_format        (char a_mode, char a_type)
                if (x_count == 0)  HIST_format ("format", x_tab, x_col, x_row, x_next->f, a_type);
                else               HIST_format ("FORMAT", x_tab, x_col, x_row, x_next->f, a_type);
             }
-            if      (strchr (G_CELL_STR , x_next->t) != NULL)
+            if      (strchr (G_CELL_STR , x_next->t) != 0 && strchr (sv_fillers, a_type) != NULL)
                x_next->f = a_type;
             else if (strchr (G_CELL_NUM , x_next->t) != 0 && strchr (sv_fillers, a_type) == NULL)
                x_next->f = a_type;
