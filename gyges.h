@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2k"
-#define     VER_TXT   "added proper setting of current mark to marks"
+#define     VER_NUM   "1.2l"
+#define     VER_TXT   "created and passed unit testing on marks"
 
 
 
@@ -886,6 +886,7 @@ char      SEL_range          (int*, int*, int*, int*, int*);
 char      SEL_makelike       (void);
 
 char      MARK_init          (void);
+char      MARK_unset         (char  a_mark);
 char      MARK_set           (char  a_mark);
 char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);

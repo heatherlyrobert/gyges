@@ -150,19 +150,6 @@ SEL_clear          (void)
    return 0;
 }
 
-char
-MARK_init          (void)
-{
-   int         i           = 0;
-   for (i = 0; i < MAX_MARK; ++i) {
-      strlcpy (s_mark_info [i].label, "", 10);
-      s_mark_info [i].tab  = -1;
-      s_mark_info [i].col  = -1;
-      s_mark_info [i].row  = -1;
-   }
-   return 0;
-}
-
 
 
 /*====================------------------------------------====================*/
@@ -332,112 +319,6 @@ SEL_set            (
    /*---(locations)----------------------*/
    sel.home  = sel.curr  = tabs[sel.otab].sheet[sel.bcol][sel.brow];
    sel.curr  = sel.home;
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-MARK_set           (char a_mark)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
-   char        rce         = -10;
-   char       *x_mark      = NULL;
-   int         x_index     =   0;
-   char        x_label     [10];
-   /*---(check mark)---------------------*/
-   x_mark = strchr (S_MARK_LIST, a_mark);
-   --rce;  if (x_mark == NULL) {
-      return rce;
-   }
-   /*---(get mark index)-----------------*/
-   x_index = (int) (x_mark - S_MARK_LIST);
-   --rce;  if (x_index >= MAX_MARK) {
-      return rce;
-   }
-   /*---(set mark)-----------------------*/
-   s_mark_info [x_index].tab = CTAB;
-   s_mark_info [x_index].col = CCOL;
-   s_mark_info [x_index].row = CROW;
-   /*---(mark label)---------------------*/
-   rc = LOC_ref  (CTAB, CCOL, CROW, 0, x_label);
-   --rce;  if (rc < 0) {
-      return rce;
-   }
-   strlcpy (s_mark_info [x_index].label, x_label, 10);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-MARK_return        (char a_mark)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char       *x_mark      = NULL;
-   int         x_index     =   0;
-   int         x_tab       = CTAB;
-   int         x_col       = CCOL;
-   int         x_row       = CROW;
-   char        x_label     [10];
-   /*---(check mark)---------------------*/
-   x_mark = strchr (S_MARK_LIST, a_mark);
-   --rce;  if (x_mark == NULL) {
-      return rce;
-   }
-   /*---(get mark index)-----------------*/
-   x_index = (int) (x_mark - S_MARK_LIST);
-   --rce;  if (x_index >= MAX_MARK) {
-      return rce;
-   }
-   /*---(check for existance)------------*/
-   --rce;  if (strcmp (s_mark_info [x_index].label, "") == 0) {
-      return rce;
-   }
-   /*---(handle current)-----------------*/
-   if (a_mark == '\'') {
-      x_tab = s_mark_info [x_index].tab;
-      x_col = s_mark_info [x_index].col;
-      x_row = s_mark_info [x_index].row;
-      strlcpy (x_label, s_mark_info [x_index].label, 10);
-      MARK_set ('\'');
-      CTAB = x_tab;
-      CCOL = x_col;
-      CROW = x_row;
-   }
-   /*---(use mark)-----------------------*/
-   else {
-      MARK_set ('\'');
-      CTAB = s_mark_info [x_index].tab;
-      CCOL = s_mark_info [x_index].col;
-      CROW = s_mark_info [x_index].row;
-   }
-   /*---(update screen)------------------*/
-   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ("z,");
-   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ("z.");
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-MARK_list          (char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   char        rce         = -10;
-   char        x_entry     [20];
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_list  == NULL)  return rce;
-   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
-   /*---(walk the list)------------------*/
-   strncpy (a_list, ",", MAX_STR);
-   for (i = 0; i < MAX_MARK; ++i) {
-      if (strcmp (s_mark_info [i].label, "") == 0) continue;
-      sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
-      strncat    (a_list, x_entry, MAX_STR);
-   }
-   /*---(catch empty)--------------------*/
-   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -641,6 +522,185 @@ SEL_makelike       (void)
 
 
 /*====================------------------------------------====================*/
+/*===----                      location marks                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___MARKS___________o () { return; }
+
+char
+MARK_init          (void)
+{
+   int         i           = 0;
+   for (i = 0; i < MAX_MARK; ++i) {
+      MARK_unset (S_MARK_LIST [i]);
+   }
+   return 0;
+}
+
+char
+MARK_unset         (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   char        rce         = -10;
+   char       *x_mark      = NULL;
+   int         x_index     =   0;
+   char        x_label     [10];
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, a_mark);
+   --rce;  if (x_mark == NULL) {
+      return rce;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return rce;
+   }
+   /*---(clear mark)---------------------*/
+   strlcpy (s_mark_info [x_index].label, "", 10);
+   s_mark_info [x_index].tab  = -1;
+   s_mark_info [x_index].col  = -1;
+   s_mark_info [x_index].row  = -1;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_which         (void)
+{
+   int         i           = 0;
+   for (i = 0; i < MAX_MARK; ++i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      if (s_mark_info [i].tab != CTAB)             continue;
+      if (s_mark_info [i].col != CCOL)             continue;
+      if (s_mark_info [i].row != CROW)             continue;
+      return S_MARK_LIST [i];
+   }
+   return -1;
+}
+
+char
+MARK_set           (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   char        rce         = -10;
+   char       *x_mark      = NULL;
+   int         x_index     =   0;
+   char        x_label     [10];
+   /*---(check for clear all)------------*/
+   if (a_mark == '*') {
+      MARK_init ();
+      return 0;
+   }
+   /*---(check for clear current)--------*/
+   --rce;  if (a_mark == '#') {
+      rc = MARK_which ();
+      if (rc < 0) {
+         return rce;
+      }
+      MARK_unset (rc);
+      return 0;
+   }
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, a_mark);
+   --rce;  if (x_mark == NULL) {
+      return rce;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return rce;
+   }
+   /*---(set mark)-----------------------*/
+   s_mark_info [x_index].tab = CTAB;
+   s_mark_info [x_index].col = CCOL;
+   s_mark_info [x_index].row = CROW;
+   /*---(mark label)---------------------*/
+   rc = LOC_ref  (CTAB, CCOL, CROW, 0, x_label);
+   --rce;  if (rc < 0) {
+      return rce;
+   }
+   strlcpy (s_mark_info [x_index].label, x_label, 10);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_return        (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char       *x_mark      = NULL;
+   int         x_index     =   0;
+   int         x_tab       = CTAB;
+   int         x_col       = CCOL;
+   int         x_row       = CROW;
+   char        x_label     [10];
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, a_mark);
+   --rce;  if (x_mark == NULL) {
+      return rce;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return rce;
+   }
+   /*---(check for existance)------------*/
+   --rce;  if (strcmp (s_mark_info [x_index].label, "") == 0) {
+      return rce;
+   }
+   /*---(handle current)-----------------*/
+   if (a_mark == '\'') {
+      x_tab = s_mark_info [x_index].tab;
+      x_col = s_mark_info [x_index].col;
+      x_row = s_mark_info [x_index].row;
+      strlcpy (x_label, s_mark_info [x_index].label, 10);
+      MARK_set ('\'');
+      CTAB = x_tab;
+      CCOL = x_col;
+      CROW = x_row;
+   }
+   /*---(use mark)-----------------------*/
+   else {
+      MARK_set ('\'');
+      CTAB = s_mark_info [x_index].tab;
+      CCOL = s_mark_info [x_index].col;
+      CROW = s_mark_info [x_index].row;
+   }
+   /*---(update screen)------------------*/
+   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ("z,");
+   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ("z.");
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_list          (char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        rce         = -10;
+   char        x_entry     [20];
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_list  == NULL)  return rce;
+   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
+   /*---(walk the list)------------------*/
+   strncpy (a_list, ",", MAX_STR);
+   for (i = 0; i < MAX_MARK; ++i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
+      strncat    (a_list, x_entry, MAX_STR);
+   }
+   /*---(catch empty)--------------------*/
+   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
@@ -665,6 +725,11 @@ SEL_unit           (char *a_question, char a_reg)
       } else {
          snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", sel.otab, sel.ccol, sel.crow, DONE_DONE);
       }
+   }
+   /*---(marks)--------------------------*/
+   else if (strcmp (a_question, "mark_list")      == 0) {
+      MARK_list   (marks);
+      snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.35s", marks);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

@@ -310,6 +310,8 @@ PROG_begin         (void)
    char        tmp         [100];
    /*---(clear cells)--------------------*/
    CELL_init ();
+   /*---(clear masks)--------------------*/
+   MARK_init ();
    /*---(overall tab settings)-----------*/
    DEBUG_PROG  yLOG_note  ("clean tab settings");
    NTAB    = 1;
