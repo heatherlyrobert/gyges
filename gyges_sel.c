@@ -97,6 +97,16 @@ tSEL        sel_save;
 #define     SEL_NOT         0
 #define     SEL_YES         1
 
+#define     MAX_MARK        50
+typedef  struct cMARK  tMARK;
+struct cMARK {
+   char        label       [10];
+   short       tab;
+   short       col;
+   short       row;
+};
+tMARK       s_mark_info [MAX_MARK];
+static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyz-";
 
 
 /*====================------------------------------------====================*/
@@ -137,6 +147,19 @@ SEL_clear          (void)
    /*---(locations)----------------------*/
    sel.home  = sel.curr  = NULL;
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_init          (void)
+{
+   int         i           = 0;
+   for (i = 0; i < MAX_MARK; ++i) {
+      strlcpy (s_mark_info [i].label, "", 10);
+      s_mark_info [i].tab  = -1;
+      s_mark_info [i].col  = -1;
+      s_mark_info [i].row  = -1;
+   }
    return 0;
 }
 
@@ -313,6 +336,92 @@ SEL_set            (
    return 0;
 }
 
+char
+MARK_set           (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   char        rce         = -10;
+   char       *x_mark      = NULL;
+   int         x_index     =   0;
+   char        x_label     [10];
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, a_mark);
+   --rce;  if (x_mark == NULL) {
+      return rce;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return rce;
+   }
+   /*---(set mark)-----------------------*/
+   s_mark_info [x_index].tab = CTAB;
+   s_mark_info [x_index].col = CCOL;
+   s_mark_info [x_index].row = CROW;
+   /*---(mark label)---------------------*/
+   rc = LOC_ref  (CTAB, CCOL, CROW, 0, x_label);
+   --rce;  if (rc < 0) {
+      return rce;
+   }
+   strlcpy (s_mark_info [x_index].label, x_label, 10);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_return        (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char       *x_mark      = NULL;
+   int         x_index     =   0;
+   int         x_tab       = CTAB;
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, a_mark);
+   --rce;  if (x_mark == NULL) {
+      return rce;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return rce;
+   }
+   /*---(save current)-------------------*/
+   if (a_mark != '\'')   MARK_set ('\'');
+   /*---(use mark)-----------------------*/
+   CTAB = s_mark_info [x_index].tab;
+   CCOL = s_mark_info [x_index].col;
+   CROW = s_mark_info [x_index].row;
+   /*---(update screen)------------------*/
+   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ("z,");
+   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ("z.");
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_list          (char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        rce         = -10;
+   char        x_entry     [20];
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_list  == NULL)  return rce;
+   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
+   /*---(walk the list)------------------*/
+   strncpy (a_list, ",", MAX_STR);
+   for (i = 0; i < MAX_MARK; ++i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
+      strncat    (a_list, x_entry, MAX_STR);
+   }
+   /*---(catch empty)--------------------*/
+   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
+   /*---(complete)-----------------------*/
+   return 0;
+}
 
 
 /*====================------------------------------------====================*/

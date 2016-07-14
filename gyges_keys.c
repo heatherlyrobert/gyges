@@ -86,6 +86,7 @@ KEYS_normal        (
    if (a_prev == ' ') {
       /*---(multikey prefixes)-----------*/
       if (strchr ("gzced\\\"", a_curr) != 0)          return a_curr;
+      if (strchr ("m\'"      , a_curr) != 0)          return a_curr;
       switch (a_curr) {
          /*> case 'Q'      : done = 0;                       break;                      <*/
       case 'F'      : mode = MODE_FORMAT;             break;
@@ -147,6 +148,16 @@ KEYS_normal        (
       case 'W'      : REG_bufwrite(creg);             break;
       default       : return rce;                     break;
       }
+      return 0;
+   }
+   /*---(marks)---------------------------------*/
+   --rce;
+   if (a_prev == 'm') {
+      MARK_set    (a_curr);
+      return 0;
+   }
+   if (a_prev == '\'') {
+      MARK_return (a_curr);
       return 0;
    }
    /*---(special family)------------------------*/

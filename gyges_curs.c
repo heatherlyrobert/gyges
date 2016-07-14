@@ -476,6 +476,9 @@ CURS_status        (tCELL *a_curr)
    case 'u' :
       snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
       break;
+   case 'm' :
+      snprintf (msg, 500, "[ marks %-60.60s ]", marks);
+      break;
    case 'v' : /* file version */
    default  :
       if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", f_name, tab->ncol, tab->nrow, ver_num, ver_txt);
@@ -654,12 +657,14 @@ CURS_main          (void)
    /*---(initialize)---------------------*/
    my.apos = my.x_full - 30 - 15 - 2;
    curr    = tab->sheet[CCOL][CROW];
-   strncpy (reqs, "+", MAX_STR);
-   strncpy (deps, "+", MAX_STR);
-   strncpy (like, "+", MAX_STR);
-   DEP_requires (curr, reqs);
-   DEP_provides (curr, deps);
-   DEP_like     (curr, like);
+   strncpy (reqs , "+", MAX_STR);
+   strncpy (deps , "+", MAX_STR);
+   strncpy (like , "+", MAX_STR);
+   strncpy (marks, "+", MAX_STR);
+   DEP_requires   (curr, reqs);
+   DEP_provides   (curr, deps);
+   DEP_like       (curr, like);
+   MARK_list      (marks);
    /*---(update cells)-------------------*/
    CURS_formula   (curr);
    CURS_status    (curr);

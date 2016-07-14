@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2i"
-#define     VER_TXT   "converted unit test with koios, passed scripts 36-43"
+#define     VER_NUM   "1.2j"
+#define     VER_TXT   "implemented location marks, but not unit tested yet"
 
 
 
@@ -194,6 +194,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 char        reqs        [MAX_STR];
 char        deps        [MAX_STR];
 char        like        [MAX_STR];
+char        marks       [MAX_STR];
 char        rpn         [MAX_STR];
 char        keys        [MAX_STR];
 char        buf0        [MAX_STR];
@@ -883,6 +884,11 @@ tCELL*    SEL_first          (int*, int*, int*);
 tCELL*    SEL_next           (int*, int*, int*);
 char      SEL_range          (int*, int*, int*, int*, int*);
 char      SEL_makelike       (void);
+
+char      MARK_init          (void);
+char      MARK_set           (char  a_mark);
+char      MARK_return        (char  a_mark);
+char      MARK_list          (char *a_list);
 
 char      REG_init           (void);
 char      REG_clear          (char a_reg, char a_init);
