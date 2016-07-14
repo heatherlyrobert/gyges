@@ -147,6 +147,7 @@ static tCOLOR_INFO  s_color_info [MAX_COLOR_INFO] = {
    { "curr"     , ' ', "current cell"                                       , 'b' , 'y' , 'b',   0 },
    { "root"     , ' ', "root of visual selection"                           , 'y' , 'k' , 'y',   0 },
    { "visu"     , ' ', "selected, not root/curr"                            , 'y' , 'y' , 'y',   0 },
+   { "mark"     , ' ', "location marks"                                     , 'w' , 'c' , 'y',   0 },
    /*---(dep type)-------*/
    { "reqs"     , ' ', "value required from cell"                           , 'm' , 'm' , 'b',   0 },
    { "pros"     , ' ', "value provided to cell"                             , 'g' , 'g' , 'b',   0 },
@@ -192,6 +193,7 @@ static int  S_COLOR_WANDER     = COLOR_PAIR(41) | A_BLINK;
 static int  S_COLOR_CURRENT    = COLOR_PAIR(43) | A_BLINK;
 static int  S_COLOR_VISUAL     = COLOR_PAIR(23) | A_BOLD;
 static int  S_COLOR_ROOT       = COLOR_PAIR(33) | A_BOLD;
+static int  S_COLOR_MARK       = COLOR_PAIR(33) | A_BOLD;
 
 static int  S_COLOR_REQS       = COLOR_PAIR(25) | A_BOLD;
 static int  S_COLOR_PROS       = COLOR_PAIR(22) | A_BOLD;
@@ -346,6 +348,7 @@ COLOR_init                (void)
    S_COLOR_CURRENT    = COLOR_assign ("curr"   );
    S_COLOR_ROOT       = COLOR_assign ("root"   );
    S_COLOR_VISUAL     = COLOR_assign ("visu"   );
+   S_COLOR_MARK       = COLOR_assign ("mark"   );
    /*---(deps)---------------------------*/
    S_COLOR_REQS       = COLOR_assign ("reqs"   );
    S_COLOR_PROS       = COLOR_assign ("pros"   );
@@ -477,7 +480,7 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
       break;
    case 'm' :
-      snprintf (msg, 500, "[ marks %-60.60s ]", marks);
+      snprintf (msg, 500, "[ marks (%c) %-60.60s ]", my.show_marks, marks);
       break;
    case 'v' : /* file version */
    default  :
@@ -718,6 +721,9 @@ CURS_cell          (int a_col, int a_row)
    if (curr != NULL) {
       LOC_label  (curr, l);
       sprintf    (label, ",%s,", l);
+   } else {
+      LOC_ref    (CTAB, a_col, a_row, 0, l);
+      sprintf    (label, ",%s,", l);
    }
    /*---(current)--------------------------*/
    if      (a_col == CCOL && a_row == CROW)     { high= 1; attron (S_COLOR_CURRENT); }
@@ -725,6 +731,9 @@ CURS_cell          (int a_col, int a_row)
    /*> else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_ROOT   ); }   <*/
    else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_VISUAL ); }
    else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (S_COLOR_VISUAL ); }
+   /*---(marks)----------------------------*/
+   else if (my.show_marks == 'y' && strstr (marks, label) != NULL)    { high=12; attron (S_COLOR_MARK     ); }
+   /*> else if (my.show_marks == 'y')  { high=12; attron (S_COLOR_VISUAL   ); }       <*/
    /*---(content-based)--------------------*/
    else if (curr != NULL) {
       /*---(trouble)--------------------------*/

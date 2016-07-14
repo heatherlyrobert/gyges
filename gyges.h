@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2l"
-#define     VER_TXT   "created and passed unit testing on marks"
+#define     VER_NUM   "1.2m"
+#define     VER_TXT   "added optional location mark highlighting"
 
 
 
@@ -312,16 +312,18 @@ struct cACCESSOR {
    int       y_bottom;       // number of chars for status/info at bottom
    int       y_avail;        // number of chars availible for cells
    /*---(row working vars)---------------*/
-   int       row1;           /* top side of range                                */
-   int       row2;           /* bottom side of range                             */
-   int       row1_save;      /* top side of range                                */
-   int       row2_save;      /* bottom side of range                             */
+   int       row1;           /* top side of range                             */
+   int       row2;           /* bottom side of range                          */
+   int       row1_save;      /* top side of range                             */
+   int       row2_save;      /* bottom side of range                          */
    /*---(char vars)-------*/
-   int       npos;           /* number of characters in current cell             */
-   int       cpos;           /* current position                                 */
-   int       bpos;           /* beginning position in field                      */
-   int       epos;           /* ending position in field                         */
-   int       apos;           /* number of positions available for field          */
+   int       npos;           /* number of characters in current cell          */
+   int       cpos;           /* current position                              */
+   int       bpos;           /* beginning position in field                   */
+   int       epos;           /* ending position in field                      */
+   int       apos;           /* number of positions available for field       */
+   /*---(flags)-----------*/
+   char      show_marks;     /* show temporary marks (y/n)                    */
 };
 extern    struct cACCESSOR my;
 
@@ -890,6 +892,7 @@ char      MARK_unset         (char  a_mark);
 char      MARK_set           (char  a_mark);
 char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);
+char      MARK_listplus      (char *a_list);
 
 char      REG_init           (void);
 char      REG_clear          (char a_reg, char a_init);

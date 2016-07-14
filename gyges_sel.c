@@ -533,6 +533,7 @@ MARK_init          (void)
    for (i = 0; i < MAX_MARK; ++i) {
       MARK_unset (S_MARK_LIST [i]);
    }
+   my.show_marks = '-';
    return 0;
 }
 
@@ -599,6 +600,15 @@ MARK_set           (char a_mark)
          return rce;
       }
       MARK_unset (rc);
+      return 0;
+   }
+   /*---(check for highlighting)---------*/
+   if (a_mark == '+') {
+      my.show_marks = 'y';
+      return 0;
+   }
+   if (a_mark == '-') {
+      my.show_marks = '-';
       return 0;
    }
    /*---(check mark)---------------------*/
@@ -689,6 +699,29 @@ MARK_list          (char *a_list)
    strncpy (a_list, ",", MAX_STR);
    for (i = 0; i < MAX_MARK; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      sprintf    (x_entry, "%s,", s_mark_info [i].label);
+      strncat    (a_list, x_entry, MAX_STR);
+   }
+   /*---(catch empty)--------------------*/
+   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_listplus      (char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        rce         = -10;
+   char        x_entry     [20];
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_list  == NULL)  return rce;
+   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
+   /*---(walk the list)------------------*/
+   strncpy (a_list, ",", MAX_STR);
+   for (i = 0; i < MAX_MARK; ++i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
       sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
       strncat    (a_list, x_entry, MAX_STR);
    }
@@ -728,7 +761,7 @@ SEL_unit           (char *a_question, char a_reg)
    }
    /*---(marks)--------------------------*/
    else if (strcmp (a_question, "mark_list")      == 0) {
-      MARK_list   (marks);
+      MARK_listplus (marks);
       snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.35s", marks);
    }
    /*---(complete)-----------------------*/
