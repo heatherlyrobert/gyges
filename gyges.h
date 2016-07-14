@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2j"
-#define     VER_TXT   "implemented location marks, but not unit tested yet"
+#define     VER_NUM   "1.2k"
+#define     VER_TXT   "added proper setting of current mark to marks"
 
 
 

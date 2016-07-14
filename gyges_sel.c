@@ -377,6 +377,9 @@ MARK_return        (char a_mark)
    char       *x_mark      = NULL;
    int         x_index     =   0;
    int         x_tab       = CTAB;
+   int         x_col       = CCOL;
+   int         x_row       = CROW;
+   char        x_label     [10];
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_mark == NULL) {
@@ -387,12 +390,28 @@ MARK_return        (char a_mark)
    --rce;  if (x_index >= MAX_MARK) {
       return rce;
    }
-   /*---(save current)-------------------*/
-   if (a_mark != '\'')   MARK_set ('\'');
+   /*---(check for existance)------------*/
+   --rce;  if (strcmp (s_mark_info [x_index].label, "") == 0) {
+      return rce;
+   }
+   /*---(handle current)-----------------*/
+   if (a_mark == '\'') {
+      x_tab = s_mark_info [x_index].tab;
+      x_col = s_mark_info [x_index].col;
+      x_row = s_mark_info [x_index].row;
+      strlcpy (x_label, s_mark_info [x_index].label, 10);
+      MARK_set ('\'');
+      CTAB = x_tab;
+      CCOL = x_col;
+      CROW = x_row;
+   }
    /*---(use mark)-----------------------*/
-   CTAB = s_mark_info [x_index].tab;
-   CCOL = s_mark_info [x_index].col;
-   CROW = s_mark_info [x_index].row;
+   else {
+      MARK_set ('\'');
+      CTAB = s_mark_info [x_index].tab;
+      CCOL = s_mark_info [x_index].col;
+      CROW = s_mark_info [x_index].row;
+   }
    /*---(update screen)------------------*/
    if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ("z,");
    if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ("z.");
