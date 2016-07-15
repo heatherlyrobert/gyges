@@ -619,31 +619,24 @@ MARK_prev          (void)
    char        rce         =  -10;
    char       *x_mark      = NULL;
    int         x_index     =    0;
-   char        x_last      =    0;
    int         i           =    0;
-   /*---(find last)----------------------*/
-   x_last = 'a';
-   for (i = MAX_MARK - 1; i >= 0; --i) {
-      if (strcmp (s_mark_info [i].label, "") == 0) continue;
-      x_last = S_MARK_LIST [i];
-   }
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, my.mark_save);
    --rce;  if (x_mark == NULL) {
-      return x_last;
+      return my.mark_tail;
    }
    /*---(get mark index)-----------------*/
    x_index = (int) (x_mark - S_MARK_LIST);
    --rce;  if (x_index >= MAX_MARK) {
-      return x_last;
+      return my.mark_tail;
    }
    /*---(find next)----------------------*/
-   for (i = x_index - 1; i >= 0; --i) {
+   for (i = x_index - 1; i > 0; --i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       return S_MARK_LIST [i];
    }
    /*---(complete)-----------------------*/
-   return x_last;
+   return my.mark_tail;
 }
 
 char
@@ -657,12 +650,12 @@ MARK_next          (void)
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, my.mark_save);
    --rce;  if (x_mark == NULL) {
-      return 'a';
+      return my.mark_head;
    }
    /*---(get mark index)-----------------*/
    x_index = (int) (x_mark - S_MARK_LIST);
    --rce;  if (x_index >= MAX_MARK) {
-      return 'a';
+      return my.mark_head;
    }
    /*---(find next)----------------------*/
    for (i = x_index + 1; i < MAX_MARK; ++i) {
@@ -670,7 +663,7 @@ MARK_next          (void)
       return S_MARK_LIST [i];
    }
    /*---(complete)-----------------------*/
-   return 'a';
+   return my.mark_head;
 }
 
 char
@@ -869,8 +862,8 @@ SEL_unit           (char *a_question, char a_reg)
    }
    /*---(marks)--------------------------*/
    else if (strcmp (a_question, "mark_list")      == 0) {
-      MARK_listplus (marks);
-      snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.35s", marks);
+      MARK_listplus (my.mark_plus);
+      snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.35s", my.mark_plus);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

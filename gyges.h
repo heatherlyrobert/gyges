@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2o"
-#define     VER_TXT   "m-bang (!) now turns on mark status line"
+#define     VER_NUM   "1.2p"
+#define     VER_TXT   "added and tested mark next and prev cycling"
 
 
 
@@ -193,7 +193,6 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 char        reqs        [MAX_STR];
 char        deps        [MAX_STR];
 char        like        [MAX_STR];
-char        marks       [MAX_STR];
 char        rpn         [MAX_STR];
 char        keys        [MAX_STR];
 char        buf0        [MAX_STR];
@@ -322,10 +321,12 @@ struct cACCESSOR {
    int       epos;           /* ending position in field                      */
    int       apos;           /* number of positions available for field       */
    /*---(flags)-----------*/
-   char      mark_show;      /* show temporary marks (y/n)                    */
-   char      mark_head;      /* first sequential mark                         */
-   char      mark_save;      /* last mark requested or used                   */
-   char      mark_tail;      /* last sequential mark                          */
+   char        mark_show;      /* show temporary marks (y/n)                    */
+   char        mark_head;      /* first sequential mark                         */
+   char        mark_save;      /* last mark requested or used                   */
+   char        mark_tail;      /* last sequential mark                          */
+   char        mark_list   [MAX_STR];       /* current marks                  */
+   char        mark_plus   [MAX_STR];       /* current marks with mark id     */
 };
 extern    struct cACCESSOR my;
 
