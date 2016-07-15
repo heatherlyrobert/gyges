@@ -744,8 +744,10 @@ MARK_return        (char a_mark)
    int         x_row       = CROW;
    char        x_label     [10];
    /*---(look for sequences)-------------*/
+   if (a_mark == '[')  a_mark = my.mark_head;
    if (a_mark == '>')  a_mark = MARK_next ();
    if (a_mark == '<')  a_mark = MARK_prev ();
+   if (a_mark == ']')  a_mark = my.mark_tail;
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_mark == NULL) {

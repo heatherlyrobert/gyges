@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2p"
-#define     VER_TXT   "added and tested mark next and prev cycling"
+#define     VER_NUM   "1.2q"
+#define     VER_TXT   "added and tested going to first and last mark"
 
 
 
