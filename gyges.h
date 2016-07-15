@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2m"
-#define     VER_TXT   "added optional location mark highlighting"
+#define     VER_NUM   "1.2n"
+#define     VER_TXT   "marks now tracks the range of legal marks"
 
 
 
@@ -188,7 +188,6 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     LEN_STR     200
 /*---(registers)----------------------*/
 #define     MAX_REG     100
-
 
 
 char        reqs        [MAX_STR];
@@ -323,7 +322,10 @@ struct cACCESSOR {
    int       epos;           /* ending position in field                      */
    int       apos;           /* number of positions available for field       */
    /*---(flags)-----------*/
-   char      show_marks;     /* show temporary marks (y/n)                    */
+   char      mark_show;      /* show temporary marks (y/n)                    */
+   char      mark_head;      /* first sequential mark                         */
+   char      mark_save;      /* last mark requested or used                   */
+   char      mark_tail;      /* last sequential mark                          */
 };
 extern    struct cACCESSOR my;
 
@@ -889,6 +891,8 @@ char      SEL_makelike       (void);
 
 char      MARK_init          (void);
 char      MARK_unset         (char  a_mark);
+char      MARK_prev          (void);
+char      MARK_next          (void);
 char      MARK_set           (char  a_mark);
 char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);

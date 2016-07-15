@@ -480,7 +480,7 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
       break;
    case 'm' :
-      snprintf (msg, 500, "[ marks (%c) %-60.60s ]", my.show_marks, marks);
+      snprintf (msg, 500, "[ marks (%c,%c,%c,%c) %-60.60s ]", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, marks);
       break;
    case 'v' : /* file version */
    default  :
@@ -732,8 +732,7 @@ CURS_cell          (int a_col, int a_row)
    else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_VISUAL ); }
    else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (S_COLOR_VISUAL ); }
    /*---(marks)----------------------------*/
-   else if (my.show_marks == 'y' && strstr (marks, label) != NULL)    { high=12; attron (S_COLOR_MARK     ); }
-   /*> else if (my.show_marks == 'y')  { high=12; attron (S_COLOR_VISUAL   ); }       <*/
+   else if (my.mark_show  == 'y' && strstr (marks, label) != NULL)    { high=12; attron (S_COLOR_MARK     ); }
    /*---(content-based)--------------------*/
    else if (curr != NULL) {
       /*---(trouble)--------------------------*/

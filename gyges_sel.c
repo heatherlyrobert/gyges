@@ -94,19 +94,20 @@ tSEL        sel_save;
 /*
  *   macros for indicating whether the selection is active or not
  */
-#define     SEL_NOT         0
-#define     SEL_YES         1
+#define     SEL_NOT        0
+#define     SEL_YES        1
 
-#define     MAX_MARK        50
+#define     MAX_MARK       100
 typedef  struct cMARK  tMARK;
 struct cMARK {
    char        label       [10];
    short       tab;
    short       col;
    short       row;
+   tCELL      *ref;
 };
 tMARK       s_mark_info [MAX_MARK];
-static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyz-";
+static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
 /*====================------------------------------------====================*/
@@ -533,7 +534,10 @@ MARK_init          (void)
    for (i = 0; i < MAX_MARK; ++i) {
       MARK_unset (S_MARK_LIST [i]);
    }
-   my.show_marks = '-';
+   my.mark_show = '-';
+   my.mark_save = '-';
+   my.mark_head = '-';
+   my.mark_tail = '-';
    return 0;
 }
 
@@ -561,6 +565,7 @@ MARK_unset         (char a_mark)
    s_mark_info [x_index].tab  = -1;
    s_mark_info [x_index].col  = -1;
    s_mark_info [x_index].row  = -1;
+   s_mark_info [x_index].ref  = NULL;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -576,7 +581,96 @@ MARK_which         (void)
       if (s_mark_info [i].row != CROW)             continue;
       return S_MARK_LIST [i];
    }
+   /*---(complete)-----------------------*/
    return -1;
+}
+
+char
+MARK_range         (void)
+{
+   /*---(design notes)-------------------*/
+   /*
+    *  do not include single quote register #0 in searches 
+    */
+   /*---(locals)-----------+-----------+-*/
+   int         i           =    0;
+   /*---(find next)----------------------*/
+   my.mark_head = '-';
+   for (i = 1; i < MAX_MARK; ++i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      my.mark_head = S_MARK_LIST [i];
+      break;
+   }
+   /*---(find last)----------------------*/
+   my.mark_tail = '-';
+   for (i = MAX_MARK - 1; i >  0; --i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      my.mark_tail = S_MARK_LIST [i];
+      break;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_prev          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char       *x_mark      = NULL;
+   int         x_index     =    0;
+   char        x_last      =    0;
+   int         i           =    0;
+   /*---(find last)----------------------*/
+   x_last = 'a';
+   for (i = MAX_MARK - 1; i >= 0; --i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      x_last = S_MARK_LIST [i];
+   }
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, my.mark_save);
+   --rce;  if (x_mark == NULL) {
+      return x_last;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return x_last;
+   }
+   /*---(find next)----------------------*/
+   for (i = x_index - 1; i >= 0; --i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      return S_MARK_LIST [i];
+   }
+   /*---(complete)-----------------------*/
+   return x_last;
+}
+
+char
+MARK_next          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char       *x_mark      = NULL;
+   int         x_index     =    0;
+   int         i           =    0;
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, my.mark_save);
+   --rce;  if (x_mark == NULL) {
+      return 'a';
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      return 'a';
+   }
+   /*---(find next)----------------------*/
+   for (i = x_index + 1; i < MAX_MARK; ++i) {
+      if (strcmp (s_mark_info [i].label, "") == 0) continue;
+      return S_MARK_LIST [i];
+   }
+   /*---(complete)-----------------------*/
+   return 'a';
 }
 
 char
@@ -600,15 +694,16 @@ MARK_set           (char a_mark)
          return rce;
       }
       MARK_unset (rc);
+      MARK_range ();
       return 0;
    }
    /*---(check for highlighting)---------*/
    if (a_mark == '+') {
-      my.show_marks = 'y';
+      my.mark_show = 'y';
       return 0;
    }
    if (a_mark == '-') {
-      my.show_marks = '-';
+      my.mark_show = '-';
       return 0;
    }
    /*---(check mark)---------------------*/
@@ -622,6 +717,7 @@ MARK_set           (char a_mark)
       return rce;
    }
    /*---(set mark)-----------------------*/
+   if (a_mark != '\'')  my.mark_save = a_mark;
    s_mark_info [x_index].tab = CTAB;
    s_mark_info [x_index].col = CCOL;
    s_mark_info [x_index].row = CROW;
@@ -631,6 +727,8 @@ MARK_set           (char a_mark)
       return rce;
    }
    strlcpy (s_mark_info [x_index].label, x_label, 10);
+   /*---(update range)-------------------*/
+   MARK_range ();
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -640,12 +738,16 @@ MARK_return        (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
+   char        rc          =   0;
    char       *x_mark      = NULL;
    int         x_index     =   0;
    int         x_tab       = CTAB;
    int         x_col       = CCOL;
    int         x_row       = CROW;
    char        x_label     [10];
+   /*---(look for sequences)-------------*/
+   if (a_mark == '>')  a_mark = MARK_next ();
+   if (a_mark == '<')  a_mark = MARK_prev ();
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_mark == NULL) {
@@ -673,6 +775,7 @@ MARK_return        (char a_mark)
    }
    /*---(use mark)-----------------------*/
    else {
+      my.mark_save = a_mark;
       MARK_set ('\'');
       CTAB = s_mark_info [x_index].tab;
       CCOL = s_mark_info [x_index].col;
