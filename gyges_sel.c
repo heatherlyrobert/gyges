@@ -706,6 +706,11 @@ MARK_set           (char a_mark)
       my.mark_show = '-';
       return 0;
    }
+   /*---(check for status line)----------*/
+   if (a_mark == '!') {
+      sta_type = 'm';
+      return 0;
+   }
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_mark == NULL) {

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2n"
-#define     VER_TXT   "marks now tracks the range of legal marks"
+#define     VER_NUM   "1.2o"
+#define     VER_TXT   "m-bang (!) now turns on mark status line"
 
 
 
