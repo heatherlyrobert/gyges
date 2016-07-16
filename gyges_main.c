@@ -19,6 +19,7 @@ main (int argc, char *argv[])
    char        msg_buffer   [500] = "(B) buffer   : select=0...9  modes={ret}(esc}";
    char        msg_input    [500] = "(I) input    : mod={esc}";
    char        msg_wander   [500] = "(W) wander   : modes={ret}{esc}";
+   char        msg_register [500] = "(R) register : regs=\"a-z  pull=yYxXdD+vV  push=pPaAiOoObB  info=?!  abort={esc}";
    /*---(working)---------*/
    int         updates     = 0;
    int         cch         = 0;        /* current keystroke                   */
@@ -71,6 +72,7 @@ main (int argc, char *argv[])
       case MODE_INPUT    : rc = KEYS_input    (sch, cch); break;
       case MODE_WANDER   : rc = KEYS_wander   (' ', cch); break;
       case MODE_COMMAND  : rc = KEYS_command  (' ', cch); break;
+      case MODE_REGISTER : rc = REG_keys      (sch, cch); break;
       default            : rc = KEYS_normal   (sch, cch); break;
       }
       /*---(setup for next keystroke)----*/
@@ -87,6 +89,7 @@ main (int argc, char *argv[])
       case MODE_INPUT    : strncpy (message, msg_input   , MAX_STR); break;
       case MODE_WANDER   : strncpy (message, msg_wander  , MAX_STR); break;
       case MODE_COMMAND  : strncpy (message, command     , MAX_STR); break;
+      case MODE_REGISTER : strncpy (message, msg_register, MAX_STR); break;
       default            : strncpy (message, msg_normal  , MAX_STR); break;
       }
       /*---(translate unprintable)-------*/

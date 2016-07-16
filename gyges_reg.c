@@ -346,6 +346,33 @@ REG_set            (char a_reg)
 
 
 /*====================------------------------------------====================*/
+/*===----                       keyboard input                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___KEYS____________o () { return; }
+
+char          /* PURPOSE : process keys for register actions -----------------*/
+REG_keys           (int a_prev, int a_curr)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   /*---(defenses)-----------------------*/
+   if (mode != MODE_REGISTER)             return -1;   /* wrong mode                    */
+   /*---(check for control keys)---------*/
+   --rce;  if (a_prev == '"') {
+      if (strchr (s_regnames, a_curr) != 0) {
+         REG_set    (a_curr);
+         return 0;
+      }
+      return rce;
+   }
+   mode = MODE_NORMAL;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                             moving                           ----===*/
 /*====================------------------------------------====================*/
 static void  o___MOVING__________o () { return; }

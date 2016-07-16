@@ -85,11 +85,44 @@ KEYS_normal        (
    --rce;
    if (a_prev == ' ') {
       /*---(multikey prefixes)-----------*/
-      if (strchr ("gzced\\\"", a_curr) != 0)          return a_curr;
+      if (strchr ("gzced\\"  , a_curr) != 0)          return a_curr;
       if (strchr ("m\'"      , a_curr) != 0)          return a_curr;
       switch (a_curr) {
          /*> case 'Q'      : done = 0;                       break;                      <*/
-      case 'F'      : mode = MODE_FORMAT;             break;
+      case 'F'      : mode    = MODE_FORMAT;
+                      break;
+      case ','      : mode    = MODE_BUFFER;
+                      break;
+      case '"'      : mode    = MODE_REGISTER;
+                      break;
+      case ':'      : strncpy (command , ":", MAX_STR);
+                      mode    = MODE_COMMAND;
+                      break;
+      case 's'      : strncpy (contents, ""  , MAX_STR);
+                      my.npos = 0;
+                      my.cpos = 0;
+                      mode    = MODE_INPUT;
+                      break;
+      case '='      : strncpy (contents, "=" , MAX_STR);
+                      my.npos = 0;
+                      my.cpos = 1;
+                      mode    = MODE_INPUT;
+                      break;
+      case '#'      : strncpy (contents, "#" , MAX_STR);
+                      my.npos = 0;
+                      my.cpos = 1;
+                      mode    = MODE_INPUT;
+                      break;
+      case '+'      : strncpy (contents, "+" , MAX_STR);
+                      my.npos = 0;
+                      my.cpos = 1;
+                      mode    = MODE_INPUT;
+                      break;
+      case '-'      : strncpy (contents, "-" , MAX_STR);
+                      my.npos = 0;
+                      my.cpos = 1;
+                      mode    = MODE_INPUT;
+                      break;
                       /*---(basic horizontal)---------*/
       case '0'      : KEYS_col (" 0");                break;
       case 'H'      : KEYS_col (" H");                break;
@@ -129,19 +162,7 @@ KEYS_normal        (
       case 'p'      : REG_paste ('y');                break;
                       /*---(modes and multikey)-------*/
       case '@'      : DEP_recalc();                   break;
-      case ':'      : strncpy (command , ":", MAX_STR); mode = MODE_COMMAND; break;
-      case ','      : mode = MODE_BUFFER;             break;
                       /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/
-      /*> case 'C'      : strncpy (contents, ""  , MAX_STR); my.npos = 0; my.cpos = 0; mode = MODE_INPUT; break;   <*/
-      case 's'      : strncpy (contents, ""  , MAX_STR); my.npos = 0; my.cpos = 0; mode = MODE_INPUT; break;
-      /*> case 'S'      : strncpy (contents, "\"", MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <*/
-      case '='      : strncpy (contents, "=" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
-      /*> case '~'      : strncpy (contents, "~" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '&'      : strncpy (contents, "&" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <* 
-       *> case '!'      : strncpy (contents, "!" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;   <*/
-      case '#'      : strncpy (contents, "#" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
-      case '+'      : strncpy (contents, "+" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
-      case '-'      : strncpy (contents, "-" , MAX_STR); my.npos = 0; my.cpos = 1; mode = MODE_INPUT; break;
                       /*---(new stuff)----------------*/
       case 'u'      : HIST_undo ();                   break;
       case 'U'      : HIST_redo ();                   break;
@@ -254,11 +275,11 @@ KEYS_normal        (
       return 0;
    }
    /*---(register family)-----------------------*/
-   --rce;
-   if (a_prev == '"') {
-      rc = REG_set (a_curr);
-      return rc;
-   }
+   /*> --rce;                                                                         <* 
+    *> if (a_prev == '"') {                                                           <* 
+    *>    rc = REG_set (a_curr);                                                      <* 
+    *>    return rc;                                                                  <* 
+    *> }                                                                              <*/
    /*---(delete family)-------------------------*/
    --rce;
    if (a_prev == '\\') {
@@ -331,7 +352,6 @@ BUF_switch         (int a_tab)
    }
    return 0;
 }
-
 
 char          /* PURPOSE : process keys for buffer movement ------------------*/
 KEYS_buffer   (int a_prev, int a_curr)

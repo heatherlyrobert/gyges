@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2s"
-#define     VER_TXT   "fixed a register literal reference to cell types"
+#define     VER_NUM   "1.2t"
+#define     VER_TXT   "added a register mode with support text"
 
 
 
@@ -765,6 +765,7 @@ tCELL       denada;
 #define     MODE_INPUT     'I'
 #define     MODE_WANDER    'W'
 #define     MODE_COMMAND   'C'
+#define     MODE_REGISTER  'R'
 
 
 #define     MENU_FORMAT    'F'
@@ -899,12 +900,16 @@ char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);
 char      MARK_listplus      (char *a_list);
 
+
+/*===[ REG  ]=================================================================*/
 char      REG_init           (void);
 char      REG_clear          (char a_reg, char a_init);
 char      REG_purge          (char a_init);
 
 char      REG__hook          (tCELL *a_curr, char a_buf, char a_note);
 char      REG__unhook        (tCELL *a_curr);
+
+char      REG_keys           (int a_prev , int a_curr);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
@@ -922,6 +927,8 @@ char      REG_bufwrite       (char a_buf);
 int       REG__reg2index     (char a_reg);
 int       REG__reg2tab       (char a_reg);
 int       REG__tab2index     (int  a_tab);
+
+
 
 char      KEYS_init          (void);
 char      KEYS_record        (int a_curr);
