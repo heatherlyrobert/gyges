@@ -322,7 +322,7 @@ REG_set            (char a_reg)
       my.reg_lock = ' ';
       return  0;
    } else if (a_reg == '"') {
-      my.reg_curr      = '-';
+      my.reg_curr      = '"';
       my.reg_lock = ' ';
       return  0;
    } else if (a_reg == ',') {
@@ -617,7 +617,7 @@ REG_paste          (char a_adapt)
       DEBUG_SEL    yLOG_info    ("source"    , x_curr->s);
       DEBUG_SEL    yLOG_char    ("type"      , x_curr->t);
       strcpy (x_source, "");
-      if (strchr ("fmlL", x_curr->t) != 0) {
+      if (strchr (G_CELL_RPN, x_curr->t) != 0) {
          DEBUG_SEL    yLOG_note    ("formula, calling yRPN_adjust");
          rc = RPN_adjust (x_curr, x_toff, x_xoff, x_yoff, x_source);
          DEBUG_SEL    yLOG_value   ("rc"        , rc);

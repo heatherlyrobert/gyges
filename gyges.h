@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2r"
-#define     VER_TXT   "fix register status and globalize register vars"
+#define     VER_NUM   "1.2s"
+#define     VER_TXT   "fixed a register literal reference to cell types"
 
 
 
