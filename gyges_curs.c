@@ -407,7 +407,7 @@ CURS_formula       (tCELL *a_curr)
    /*> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (SEL_islive()) ? 'v' : ' ', label, CROW + 1);   <*/
    if (a_curr != NULL)    strcpy  (label, a_curr->label);
    else                   LOC_ref (CTAB, CCOL, CROW, 0, label);
-   mvprintw (row_formula,  0, "%c%c %c%c %-6.6s", mode, (SEL_islive()) ? 'v' : ' ', creg, creg_lock, label);
+   mvprintw (row_formula,  0, "%c%c %c%c %-6.6s", mode, (SEL_islive()) ? 'v' : ' ', my.reg_curr, my.reg_lock, label);
    /*---(version)------------------------*/
    mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
    /*---(characteristics)--------------------*/
@@ -469,9 +469,9 @@ CURS_status        (tCELL *a_curr)
       else                                       strncpy (rpn, "((null))", MAX_STR);
       snprintf (msg, 500, "[ %-100.100s ]", rpn);
       break;
-   case 'R' : /* buffer contents */
-      REG_list     (creg  , bufc);
-      snprintf (msg, 500, "[ %-100.100s ]", bufc);
+   case '"' : /* register contents */
+      REG_list     (my.reg_curr  , bufc);
+      snprintf (msg, 500, "[ reg %-100.100s ]", bufc);
       break;
    case 'k' : /* keylog */
       KEYS_status (msg);
@@ -712,7 +712,6 @@ CURS_cell          (int a_col, int a_row)
    tCELL    *next      = NULL;
    char      label[MAX_STR] = "zzz";
    char      l[MAX_STR]  = "";
-   char      high      = 0;
    int       i         = 0;
    uint      xmax      = 0;
    int       xcol      = 0;
@@ -728,42 +727,41 @@ CURS_cell          (int a_col, int a_row)
       sprintf    (label, ",%s,", l);
    }
    /*---(current)--------------------------*/
-   if      (a_col == CCOL && a_row == CROW)     { high= 1; attron (S_COLOR_CURRENT); }
+   if      (a_col == CCOL && a_row == CROW)     attron (S_COLOR_CURRENT);
    /*---(visual-range)---------------------*/
-   /*> else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_ROOT   ); }   <*/
-   else if (SEL_root     (CTAB, a_col, a_row))  { high=12; attron (S_COLOR_VISUAL ); }
-   else if (SEL_selected (CTAB, a_col, a_row))  { high= 2; attron (S_COLOR_VISUAL ); }
+   else if (SEL_root     (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
+   else if (SEL_selected (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
    /*---(marks)----------------------------*/
-   else if (my.mark_show  == 'y' && strstr (my.mark_list, label) != NULL)    { high=12; attron (S_COLOR_MARK     ); }
+   else if (my.mark_show  == 'y' && strstr (my.mark_list, label) != NULL)  attron (S_COLOR_MARK     );
    /*---(content-based)--------------------*/
    else if (curr != NULL) {
       /*---(trouble)--------------------------*/
-      if      (curr->t == CTYPE_ERROR)          { high=31; attron (S_COLOR_ERROR  ); }
-      else if (curr->t == CTYPE_WARN )          { high=31; attron (S_COLOR_ERROR  ); }
+      if      (curr->t == CTYPE_ERROR)          attron (S_COLOR_ERROR  );
+      else if (curr->t == CTYPE_WARN )          attron (S_COLOR_ERROR  );
       /*---(related)--------------------------*/
-      else if (strstr (reqs, label) != NULL)    { high= 7; attron (S_COLOR_REQS   ); }
-      else if (strstr (deps, label) != NULL)    { high= 8; attron (S_COLOR_PROS   ); }
-      else if (strstr (like, label) != NULL)    { high=10; attron (S_COLOR_LIKE   ); }
+      else if (strstr (reqs, label) != NULL)    attron (S_COLOR_REQS   );
+      else if (strstr (deps, label) != NULL)    attron (S_COLOR_PROS   );
+      else if (strstr (like, label) != NULL)    attron (S_COLOR_LIKE   );
       /*---(pointers)-------------------------*/
-      else if (curr->t == CTYPE_RANGE)          { high=32; attron (S_COLOR_POINTER); }
-      else if (curr->t == CTYPE_ADDR )          { high=32; attron (S_COLOR_POINTER); }
+      else if (curr->t == CTYPE_RANGE)          attron (S_COLOR_POINTER);
+      else if (curr->t == CTYPE_ADDR )          attron (S_COLOR_POINTER);
       /*---(numbers)--------------------------*/
-      else if (curr->t == CTYPE_NUM  )          { high= 5; attron (S_COLOR_NUMBER ); }
+      else if (curr->t == CTYPE_NUM  )          attron (S_COLOR_NUMBER );
       else if (curr->t == CTYPE_FORM ) {
-         if   (curr->nrequire < 5)              { high= 3; attron (S_COLOR_FSIMPLE); }
-         else                                   { high= 4; attron (S_COLOR_FDANGER); }
+         if   (curr->nrequire < 5)              attron (S_COLOR_FSIMPLE);
+         else                                   attron (S_COLOR_FDANGER);
       }
-      else if (curr->t == CTYPE_FLIKE)          { high= 9; attron (S_COLOR_FLIKE  ); }
+      else if (curr->t == CTYPE_FLIKE)          attron (S_COLOR_FLIKE  );
       /*---(strings)--------------------------*/
-      else if (curr->t == CTYPE_STR  )          { high= 6; attron (S_COLOR_STRING ); }
+      else if (curr->t == CTYPE_STR  )          attron (S_COLOR_STRING );
       else if (curr->t == CTYPE_MOD  ) {
-         if   (curr->nrequire < 5)              { high=16; attron (S_COLOR_FSTRING); }
-         else                                   { high=11; attron (S_COLOR_FSTRDAG); }
+         if   (curr->nrequire < 5)              attron (S_COLOR_FSTRING);
+         else                                   attron (S_COLOR_FSTRDAG);
       }
-      else if (curr->t == CTYPE_MLIKE)          { high= 9; attron (S_COLOR_MLIKE  ); }
+      else if (curr->t == CTYPE_MLIKE)          attron (S_COLOR_MLIKE  );
       /*---(constants)------------------------*/
-      else if (curr->t == CTYPE_BLANK)          { high=14; attron (S_COLOR_NULL   ); }
-      else                                      { high= 6; attron (S_COLOR_STRING ); }
+      else if (curr->t == CTYPE_BLANK)          attron (S_COLOR_NULL   );
+      else                                      attron (S_COLOR_STRING );
    }
    /*---(check max width)------------------*/
    xmax = tab->cols[a_col].w;
@@ -783,7 +781,6 @@ CURS_cell          (int a_col, int a_row)
       while  (next != NULL) {
          if (next->a != '+') break;
          if (xcol == CCOL) {
-            high = 1;
             attron (S_COLOR_CURRENT);
             break;
          }
@@ -807,22 +804,6 @@ CURS_cell          (int a_col, int a_row)
    }
    /*---(highlight off)--------------------*/
    attrset (0);
-   /*> if      (high ==  1) attroff (S_COLOR_CURRENT);                                <* 
-    *> else if (high ==  2) attroff (S_COLOR_VISUAL );                                <* 
-    *> else if (high == 12) attroff (S_COLOR_ROOT   );                                <* 
-    *> else if (high ==  9) attroff (S_COLOR_FLIKE  );                                <* 
-    *> else if (high ==  3) attroff (S_COLOR_FSIMPLE);                                <* 
-    *> else if (high ==  4) attroff (S_COLOR_FDANGER);                                <* 
-    *> else if (high == 11) attroff (S_COLOR_FSTRING);                                <* 
-    *> else if (high == 16) attroff (S_COLOR_FSTRDAG);                                <* 
-    *> else if (high ==  5) attroff (S_COLOR_NUMBER );                                <* 
-    *> else if (high ==  6) attroff (S_COLOR_STRING );                                <* 
-    *> else if (high == 14) attroff (S_COLOR_NULL   );                                <* 
-    *> else if (high ==  7) attroff (S_COLOR_REQS   );                                <* 
-    *> else if (high ==  8) attroff (S_COLOR_PROS   );                                <* 
-    *> else if (high == 10) attroff (S_COLOR_LIKE   );                                <* 
-    *> else if (high == 31) attroff (S_COLOR_ERROR  );                                <* 
-    *> else if (high == 32) attroff (S_COLOR_POINTER);                                <*/
    /*---(complete)-------------------------*/
    return 0;
 }

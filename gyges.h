@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2q"
-#define     VER_TXT   "added and tested going to first and last mark"
+#define     VER_NUM   "1.2r"
+#define     VER_TXT   "fix register status and globalize register vars"
 
 
 
@@ -320,13 +320,16 @@ struct cACCESSOR {
    int       bpos;           /* beginning position in field                   */
    int       epos;           /* ending position in field                      */
    int       apos;           /* number of positions available for field       */
-   /*---(flags)-----------*/
+   /*---(marks)-----------*/
    char        mark_show;      /* show temporary marks (y/n)                    */
    char        mark_head;      /* first sequential mark                         */
    char        mark_save;      /* last mark requested or used                   */
    char        mark_tail;      /* last sequential mark                          */
    char        mark_list   [MAX_STR];       /* current marks                  */
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
+   /*---(registers)-------*/
+   char        reg_curr;                    /* name of current register       */
+   char        reg_lock;                    /* multi-use (y/n)                */
 };
 extern    struct cACCESSOR my;
 
@@ -750,8 +753,6 @@ extern    int       ndep;
 tCELL       denada;
 #define     DONE_DONE    &denada
 
-char        creg;
-char        creg_lock;
 
 
 
@@ -770,7 +771,6 @@ char        creg_lock;
 #define     MENU_SIZING    'S'
 
 
-#define     REG_NAMES      "0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+"
 
 
 extern int     save;

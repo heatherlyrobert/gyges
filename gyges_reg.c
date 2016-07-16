@@ -100,6 +100,8 @@ static      tREG        s_reg       [MAX_REG];
 
 
 
+/*> #define     REG_NAMES      "0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+"   <*/
+#define     REG_NAMES      "\"abcdefghijklmnopqrstuvwxyz"
 
 static      char        s_regnames     [MAX_REG] = REG_NAMES;
 
@@ -116,8 +118,8 @@ REG_init           (void)
    /*---(registers)----------------------*/
    strlcpy (s_regnames, REG_NAMES, MAX_REG);
    REG_purge   ('y');
-   creg        = '-';
-   creg_lock   = ' ';
+   my.reg_curr = '"';
+   my.reg_lock = ' ';
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -316,22 +318,25 @@ char         /*--> changes the default register ----------[ leaf   [ ------ ]-*/
 REG_set            (char a_reg)
 {
    if (strchr (s_regnames, a_reg) != 0) {
-      creg      = a_reg;
-      creg_lock = ' ';
+      my.reg_curr      = a_reg;
+      my.reg_lock = ' ';
       return  0;
    } else if (a_reg == '"') {
-      creg      = '-';
-      creg_lock = ' ';
+      my.reg_curr      = '-';
+      my.reg_lock = ' ';
       return  0;
    } else if (a_reg == ',') {
-      creg      = '+';
-      creg_lock = ' ';
+      my.reg_curr      = '+';
+      my.reg_lock = ' ';
       return  0;
    } else if (a_reg == '.') {
-      creg_lock = '+';
+      my.reg_lock = '+';
       return  0;
    } else if (a_reg == '#') {
-      REG_clear (creg, '-');
+      REG_clear (my.reg_curr, '-');
+      return  0;
+   } else if (a_reg == '!') {
+      sta_type = '"';
       return  0;
    }
    /*---(complete)-----------------------*/
@@ -373,7 +378,7 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    a_curr->u   = a_stamp;
    DEBUG_SEL    yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
    /*---(place in buffer)----------------*/
-   rc = REG__hook   (x_copy, creg, 'd');
+   rc = REG__hook   (x_copy, my.reg_curr, 'd');
    --rce;  if (rc < 0)                   return rce;
    ++(*a_seq);
    /*---(complete)-----------------------*/
@@ -437,10 +442,10 @@ REG_save           (char a_type)
    int         x_count     = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_reg"     , creg);
+   DEBUG_REGS   yLOG_char    ("a_reg"     , my.reg_curr);
    DEBUG_REGS   yLOG_char    ("a_type"    , a_type);
    /*---(buffer number)------------------*/
-   x_reg  = REG__reg2index  (creg);
+   x_reg  = REG__reg2index  (my.reg_curr);
    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
    --rce;  if (x_reg < 0)  {
       DEBUG_REGS   yLOG_note    ("bad register requested");
@@ -450,7 +455,7 @@ REG_save           (char a_type)
    /*---(clear existing buffer)----------*/
    if (a_type != 'a') {
       DEBUG_REGS   yLOG_note    ("clear and initialize register");
-      REG_clear (creg, '-');
+      REG_clear (my.reg_curr, '-');
       SEL_range (&s_reg[x_reg].otab,
             &s_reg[x_reg].begc, &s_reg[x_reg].begr,
             &s_reg[x_reg].endc, &s_reg[x_reg].endr);
@@ -493,7 +498,7 @@ REG_save           (char a_type)
       x_copy->d   = curr->d;
       x_copy->a   = curr->a;
       x_copy->u = x_stamp;
-      REG__hook   (x_copy, creg, '-');
+      REG__hook   (x_copy, my.reg_curr, '-');
       ++x_seq;
       DEBUG_REGS   yLOG_note    ("copied");
       curr  = SEL_next (&x_tab, &x_col, &x_row);
@@ -590,9 +595,9 @@ REG_paste          (char a_adapt)
    int         x_count     = 0;
    /*---(header)-------------------------*/
    DEBUG_SEL    yLOG_enter   (__FUNCTION__);
-   DEBUG_SEL    yLOG_char    ("a_buf"     , creg);
+   DEBUG_SEL    yLOG_char    ("a_buf"     , my.reg_curr);
    /*---(buffer number)------------------*/
-   x_reg  = REG__reg2index  (creg);
+   x_reg  = REG__reg2index  (my.reg_curr);
    --rce;  if (x_reg < 0)      return rce;
    /*---(figure offsets)-----------------*/
    x_toff = CTAB - s_reg[x_reg].otab;
@@ -812,7 +817,7 @@ REG__setter        (char *a_request, char *a_data)
    } else if (strcmp (a_request, "reg_names_def"      ) == 0) {
       strlcpy (s_regnames, REG_NAMES, MAX_REG);
    } else if (strcmp (a_request, "reg_curr"           ) == 0) {
-      creg = a_data [0];
+      my.reg_curr = a_data [0];
    } else {
       return -1;
    }

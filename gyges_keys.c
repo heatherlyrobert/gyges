@@ -145,7 +145,7 @@ KEYS_normal        (
                       /*---(new stuff)----------------*/
       case 'u'      : HIST_undo ();                   break;
       case 'U'      : HIST_redo ();                   break;
-      case 'W'      : REG_bufwrite(creg);             break;
+      case 'W'      : REG_bufwrite (my.reg_curr);     break;
       default       : return rce;                     break;
       }
       return 0;

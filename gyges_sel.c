@@ -691,11 +691,11 @@ MARK_set           (char a_mark)
       return 0;
    }
    /*---(check for highlighting)---------*/
-   if (a_mark == '+') {
+   if (a_mark == '@') {
       my.mark_show = 'y';
       return 0;
    }
-   if (a_mark == '-') {
+   if (a_mark == ' ') {
       my.mark_show = '-';
       return 0;
    }
@@ -865,7 +865,7 @@ SEL_unit           (char *a_question, char a_reg)
    /*---(marks)--------------------------*/
    else if (strcmp (a_question, "mark_list")      == 0) {
       MARK_listplus (my.mark_plus);
-      snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.35s", my.mark_plus);
+      snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.40s", my.mark_plus);
    }
    /*---(complete)-----------------------*/
    return unit_answer;
