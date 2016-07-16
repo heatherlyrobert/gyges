@@ -11,7 +11,7 @@
  *   base_system   : gnu/linux   (powerful, ubiquitous, technical, and hackable)
  *   lang_name     : ansi-c      (wicked, limitless, universal, and everlasting)
  *   dependencies  : ncurses, yLOG, yRPN
- *   size goal     : toolish (less than 10,000 slocL)
+ *   size goal     : toolish (around 10,000 slocL)
  * 
  *   author        : the_heatherlys
  *   created       : 2010-09
@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2t"
-#define     VER_TXT   "added a register mode with support text"
+#define     VER_NUM   "1.2u"
+#define     VER_TXT   "added reg copy and past to register mode"
 
 
 
@@ -328,8 +328,8 @@ struct cACCESSOR {
    char        mark_list   [MAX_STR];       /* current marks                  */
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
    /*---(registers)-------*/
+   char        reg_mesg    [MAX_STR];       /* register message line          */
    char        reg_curr;                    /* name of current register       */
-   char        reg_lock;                    /* multi-use (y/n)                */
 };
 extern    struct cACCESSOR my;
 

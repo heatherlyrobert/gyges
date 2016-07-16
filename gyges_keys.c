@@ -94,6 +94,7 @@ KEYS_normal        (
       case ','      : mode    = MODE_BUFFER;
                       break;
       case '"'      : mode    = MODE_REGISTER;
+                      return 1;  /* make sure double quote goes in prev char */
                       break;
       case ':'      : strncpy (command , ":", MAX_STR);
                       mode    = MODE_COMMAND;

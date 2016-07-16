@@ -407,7 +407,7 @@ CURS_formula       (tCELL *a_curr)
    /*> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (SEL_islive()) ? 'v' : ' ', label, CROW + 1);   <*/
    if (a_curr != NULL)    strcpy  (label, a_curr->label);
    else                   LOC_ref (CTAB, CCOL, CROW, 0, label);
-   mvprintw (row_formula,  0, "%c%c %c%c %-6.6s", mode, (SEL_islive()) ? 'v' : ' ', my.reg_curr, my.reg_lock, label);
+   mvprintw (row_formula,  0, "%c  %c%c %-6.6s", mode, (SEL_islive()) ? 'v' : ' ', my.reg_curr, label);
    /*---(version)------------------------*/
    mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
    /*---(characteristics)--------------------*/
