@@ -505,7 +505,7 @@ CURS_message       (void)
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    attron  (S_COLOR_MESSAGE);
    mvprintw (row_message, 0, "%*.*s", my.x_full, my.x_full, empty);
-   mvprintw (row_message, 0, message);
+   mvprintw (row_message, 0, my.message);
    attroff (S_COLOR_MESSAGE);
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;

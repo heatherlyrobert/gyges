@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2u"
-#define     VER_TXT   "added reg copy and past to register mode"
+#define     VER_NUM   "1.2v"
+#define     VER_TXT   "added table for modes and messages to simplify mtce"
 
 
 
@@ -328,8 +328,8 @@ struct cACCESSOR {
    char        mark_list   [MAX_STR];       /* current marks                  */
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
    /*---(registers)-------*/
-   char        reg_mesg    [MAX_STR];       /* register message line          */
-   char        reg_curr;                    /* name of current register       */
+   char        message     [MAX_STR];       /* message line                    */
+   char        reg_curr;
 };
 extern    struct cACCESSOR my;
 
@@ -756,20 +756,29 @@ tCELL       denada;
 
 
 
-
-#define     MODE_NORMAL    'N'
-#define     MODE_FORMAT    'F'    /* data formatting */
+/*===[ MODES ]================================================================*/
+/*---(major modes)-----------------------*/
+#define     MODE_GOD       'G'
+#define     MODE_MAP       'M'
 #define     MODE_VISUAL    'V'
 #define     MODE_SOURCE    'S'
-#define     MODE_BUFFER    'B'
 #define     MODE_INPUT     'I'
-#define     MODE_WANDER    'W'
-#define     MODE_COMMAND   'C'
-#define     MODE_REGISTER  'R'
-
-
-#define     MENU_FORMAT    'F'
-#define     MENU_SIZING    'S'
+#define     MODE_COMMAND   ':'
+/*---(sub-modes)-------------------------*/
+#define     MODE_REPLACE   'r'    /* replacing characters in source mode      */
+#define     MODE_REGISTER  '"'    /* register actions                         */
+#define     MODE_BUFFER    ','    /* selecting buffers                        */
+#define     MODE_WANDER    '@'    /* formula creation by pointing             */
+#define     MODE_FORMAT    '$'    /* content formatting                       */
+#define     MODE_OBJECT    'o'    /* object formatting                        */
+/*---(mode messages)------*/
+extern char G_MESG_GOD      [MAX_STR];
+extern char G_MESG_MAP      [MAX_STR];
+extern char G_MESG_VISUAL   [MAX_STR];
+extern char G_MESG_SOURCE   [MAX_STR];
+extern char G_MESG_INPUT    [MAX_STR];
+extern char G_MESG_COMMAND  [MAX_STR];
+extern char G_MESG_REPLACE  [MAX_STR];
 
 
 
@@ -931,24 +940,26 @@ int       REG__tab2index     (int  a_tab);
 
 
 char      KEYS_init          (void);
-char      KEYS_record        (int a_curr);
+char      KEYS_record        (int   a_curr);
 char      KEYS_status        (char *msg);
-char      KEYS_normal        (int a_major, int a_minor);
-char      KEYS_buffer        (int a_major, int a_minor);
-char      KEYS_source        (int a_major, int a_minor);
-char      KEYS_format        (int a_major, int a_minor);
-char      KEYS_input         (int a_major, int a_minor);
-char      KEYS_command       (int a_major, int a_minor);
-char      KEYS_wander        (int a_major, int a_minor);
-char      KEYS_col           (char* a_keys);
+char      MODE_message       (char  a_mode);
+char      MODE_god           (int   a_major, int a_minor);
+char      MODE_map           (int   a_major, int a_minor);
+char      KEYS_buffer        (int   a_major, int a_minor);
+char      KEYS_source        (int   a_major, int a_minor);
+char      KEYS_format        (int   a_major, int a_minor);
+char      KEYS_input         (int   a_major, int a_minor);
+char      KEYS_command       (int   a_major, int a_minor);
+char      KEYS_wander        (int   a_major, int a_minor);
+char      KEYS_col           (char *a_keys);
 char      KEYS_bcol          (int);
 char      KEYS_ecol          (int);
 char      KEYS_pcol          (void);
-char      KEYS_row           (char* a_keys);
+char      KEYS_row           (char *a_keys);
 char      KEYS_brow          (int);
 char      KEYS_erow          (int);
 char      KEYS_prow          (void);
-char      MOVE__edge         (char a_dir);
+char      MOVE__edge         (char  a_dir);
 
 
 /*---(ncurses)----------------------------------*/

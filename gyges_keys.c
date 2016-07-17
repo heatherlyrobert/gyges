@@ -3,6 +3,35 @@
 #include   "gyges.h"
 
 
+#define     MAX_MODES       30
+struct cMODE_INFO {
+   char        abbr;                   /* single character abbreviation       */
+   char        major;                  /* major mode (y/n)                    */
+   char        show;                   /* show a message line (y/n)           */
+   char        terse       [10];       /* short name                          */
+   char        desc        [50];       /* description of mode                 */
+   int         count;                  /* number of times used                */
+   char        mesg        [MAX_STR];  /* informative message for display     */
+} g_mode_info [MAX_MODES] = {
+   /*-a- --m- ---terse----- ------------------------------------------------------ ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
+   /*---(major modes)--------------------*/
+   { 'G', 'y', 'y', "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
+   { 'M', 'y', 'y', "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'V', 'y', 'y', "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
+   { 'S', 'y', 'y', "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
+   { 'I', 'y', 'y', "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
+   { ':', 'y', '-', "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
+   /*---(sub-modes)----------------------*/
+   { 'r', '-', 'y', "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
+   { '"', '-', 'y', "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
+   { ',', '-', 'y', "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
+   { '@', '-', 'y', "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
+   { '$', '-', 'y', "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
+   { 'o', '-', 'y', "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
+   /*---(done)---------------------------*/
+   { '-', '-', 'y', "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
+};
+
 
 /*====================------------------------------------====================*/
 /*===----                           key handling                       ----===*/
@@ -16,6 +45,25 @@ static int    wpos;
 static char   wref  [20];
 static char   wref2 [20];
 static char   wsave [MAX_STR];
+
+
+
+char
+MODE_message       (char a_mode)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   for (i = 0; i < MAX_MODES; ++i) {
+      if (g_mode_info[i].abbr == '-'   )  break;
+      if (g_mode_info[i].abbr == a_mode)  break;
+   }
+   if (g_mode_info[i].show == 'y') {
+      sprintf (my.message, "(%c) %-10.10s: %s\n", a_mode, g_mode_info[i].terse, g_mode_info[i].mesg);
+   } else {
+      sprintf (my.message, "%s\n", command);
+   }
+   return 0;
+}
 
 
 
@@ -63,7 +111,7 @@ KEYS_modes         (
 }
 
 char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
-KEYS_normal        (
+MODE_map           (
       /*----------+-----------+-----------------------------------------------*/
       int         a_prev,     /* prev key in multikey sequence                */
       int         a_curr)     /* curr key in multikey sequence                */
@@ -365,7 +413,7 @@ KEYS_buffer   (int a_prev, int a_curr)
    if (mode != MODE_BUFFER)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    BUF_switch (a_curr);
-   mode = MODE_NORMAL;
+   mode = MODE_MAP;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -385,9 +433,9 @@ KEYS_source   (int a_prev, int a_curr)
    if (mode != MODE_SOURCE)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
-   case  10  : mode = MODE_NORMAL; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
+   case  10  : mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
    case  27  : 
-   case  'U' : mode = MODE_NORMAL; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy(contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
+   case  'U' : mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy(contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
    }
    /*---(locals)-------------------------*/
    char    update_cols  = 0;
@@ -461,7 +509,7 @@ KEYS_input         (int  a_prev, int  a_curr)
    if (mode != MODE_INPUT)            return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
-   case  10  : mode = MODE_NORMAL; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
+   case  10  : mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
    case  27  : mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
    case  '@' : mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
    }
@@ -490,6 +538,12 @@ KEYS_input         (int  a_prev, int  a_curr)
    return  0;
 }
 
+char       /*----: process keys for god mode ---------------------------------*/
+MODE_god           (int  a_prev, int  a_curr)
+{
+   return 0;
+}
+
 
 char       /*----: process keys for formatting mode --------------------------*/
 KEYS_format        (int  a_prev, int  a_curr)
@@ -498,8 +552,8 @@ KEYS_format        (int  a_prev, int  a_curr)
    tCELL   *curr = tab->sheet[CCOL][CROW];
    /*---(check for control keys)----------------*/
    switch (a_curr) {
-   case   27 : mode = MODE_NORMAL; SEL_clear (); return 0;   /* escape  */
-   case   10 : mode = MODE_NORMAL; SEL_clear (); return 0;   /* return  */
+   case   27 : mode = MODE_MAP; SEL_clear (); return 0;   /* escape  */
+   case   10 : mode = MODE_MAP; SEL_clear (); return 0;   /* return  */
    }
    /*---(check for alignment prefixes)----------*/
    switch (a_curr) {
@@ -720,8 +774,8 @@ KEYS_command  (int  a_prev, int  a_curr)
    /*---(check for control keys)---------*/
    x_len = strlen (command);
    switch (a_curr) {
-   case   27 : mode = MODE_NORMAL; return 0;   /* escape  */
-   case   10 : mode = MODE_NORMAL; cmd_exec (command); return 0;   /* return  */
+   case   27 : mode = MODE_MAP; return 0;   /* escape  */
+   case   10 : mode = MODE_MAP; cmd_exec (command); return 0;   /* return  */
    }
    /*---(check for backspace)------------*/
    if (a_curr == 8 || a_curr == 127) {

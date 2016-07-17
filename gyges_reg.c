@@ -102,7 +102,6 @@ static      tREG        s_reg       [MAX_REG];
 
 /*> #define     REG_NAMES      "0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+"   <*/
 #define     REG_NAMES      "\"abcdefghijklmnopqrstuvwxyz"
-#define     REG_MESG       "(R) register : regs=\"a-z  pull=yYxXdD+vV  push=pPaAiOoObB  othr=#?!  abrt={esc}"
 
 static      char        s_regnames     [MAX_REG] = REG_NAMES;
 
@@ -118,7 +117,6 @@ REG_init           (void)
 {
    /*---(registers)----------------------*/
    strlcpy (s_regnames , REG_NAMES, MAX_REG);
-   strlcpy (my.reg_mesg, REG_MESG , MAX_STR);
    my.reg_curr = '"';
    REG_purge   ('y');
    /*---(complete)-----------------------*/
@@ -352,6 +350,10 @@ REG_keys           (int a_prev, int a_curr)
    char        rce         = -10;
    /*---(defenses)-----------------------*/
    if (mode != MODE_REGISTER)             return -1;   /* wrong mode                    */
+   if (a_curr == K_ESCAPE)  {
+      mode = MODE_MAP;
+      return  0;
+   }
    /*---(check for control keys)---------*/
    --rce;  if (a_prev == '"') {
       if (strchr (s_regnames, a_curr) != 0) {
@@ -359,7 +361,7 @@ REG_keys           (int a_prev, int a_curr)
          return 0;
       } else if (a_curr == '!') {
          sta_type = '"';
-         mode = MODE_NORMAL;
+         mode = MODE_MAP;
          REG_set ('"');
          return  0;
       }
@@ -375,22 +377,25 @@ REG_keys           (int a_prev, int a_curr)
                   break;
       case  'Y' : REG_valuesout();
                   break;
-      case  'x' : REG_cut   ();
+      case  'd' :
+      case  'D' :
+      case  'x' :
+      case  'X' : REG_cut   ();
                   break;
       case  'W' : REG_bufwrite (my.reg_curr);
                   break;
-      default   : mode = MODE_NORMAL;
+      default   : mode = MODE_MAP;
                   REG_set ('"');
                   return rce;
                   break;
       }
-      mode = MODE_NORMAL;
+      mode = MODE_MAP;
       REG_set ('"');
       return 0;
    }
    /*---(failure)------------------------*/
    --rce;
-   mode = MODE_NORMAL;
+   mode = MODE_MAP;
    REG_set ('"');
    return rce;
 }

@@ -11,7 +11,8 @@ main (int argc, char *argv[])
 {
    /*---(locals)-----------+-----------+-*/
    /*---(formats)---------*/
-   char        msg_normal   [500] = "(N) normal   : horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}";
+   char        msg_god      [500] = "(G) god      : ";
+   char        msg_map      [500] = "(N) normal   : horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}";
    /*> char        msg_format   [500] = "(O) format   : ali=<|>[^]  fmt=ifpeE,acs#%%xXbBoOtdT  fil= _-=.+  w=mhHlLnNwW h=jk  dec=0123456789  mrg=MU  modes={esc}{ret}";   <*/
    char        msg_format   [500] = "(f) format   : ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+";
    char        msg_visual   [500] = "(V) visual   : dxy  !: ~uU /nN oO sS";
@@ -24,6 +25,7 @@ main (int argc, char *argv[])
    int         cch         = 0;        /* current keystroke                   */
    int         sch         = 0;        /* saved keystroke                     */
    char        rc          = 0;
+   char        x_savemode  = '-';
    /*---(initialize)---------------------*/
    if (rc == 0)  rc = PROG_logger  (argc, argv);
    if (rc == 0)  rc = PROG_init    ();
@@ -35,7 +37,6 @@ main (int argc, char *argv[])
       exit (-1);
    }
    /*---(post-initialization)------------*/
-   strncpy (message, msg_normal, MAX_STR);
    if (rc == 0)  rc = CURS_begin ();
    if (rc != 0)  {
       PROG_end     ();
@@ -47,6 +48,7 @@ main (int argc, char *argv[])
    KEYS_col (" r");
    KEYS_row (" r");
    sch = ' ';
+   MODE_message (mode);
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
@@ -63,8 +65,10 @@ main (int argc, char *argv[])
        *> else if (sch == '%') snprintf (cmd,   9, "%%%c ", cch);                     <* 
        *> else                 snprintf (cmd,   9, "%c%c ", sch, cch);                <*/
       /*---(handle keystroke)------------*/
+      x_savemode = mode;
       switch (mode) {
-      case MODE_NORMAL   : rc = KEYS_normal   (sch, cch); break;
+      case MODE_GOD      : rc = MODE_god      (sch, cch); break;
+      case MODE_MAP      : rc = MODE_map      (sch, cch); break;
       case MODE_FORMAT   : rc = KEYS_format   (' ', cch); break;
       case MODE_SOURCE   : rc = KEYS_source   (sch, cch); break;
       case MODE_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
@@ -72,24 +76,15 @@ main (int argc, char *argv[])
       case MODE_WANDER   : rc = KEYS_wander   (' ', cch); break;
       case MODE_COMMAND  : rc = KEYS_command  (' ', cch); break;
       case MODE_REGISTER : rc = REG_keys      (sch, cch); break;
-      default            : rc = KEYS_normal   (sch, cch); break;
+      default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(setup for next keystroke)----*/
       if      (rc == 0)    sch = ' ';
       else if (rc >  0)    sch = cch;
       else               { sch = ' ';  sta_error = 'y'; }
       /*---(setup status line)-----------*/
-      switch (mode) {
-      case MODE_NORMAL   : strncpy (message, msg_normal  , MAX_STR); break;
-      case MODE_FORMAT   : strncpy (message, msg_format  , MAX_STR); break;
-      case MODE_VISUAL   : strncpy (message, msg_visual  , MAX_STR); break;
-      case MODE_SOURCE   : strncpy (message, msg_source  , MAX_STR); break;
-      case MODE_BUFFER   : strncpy (message, msg_buffer  , MAX_STR); break;
-      case MODE_INPUT    : strncpy (message, msg_input   , MAX_STR); break;
-      case MODE_WANDER   : strncpy (message, msg_wander  , MAX_STR); break;
-      case MODE_COMMAND  : strncpy (message, command     , MAX_STR); break;
-      case MODE_REGISTER : strncpy (message, my.reg_mesg , MAX_STR); break;
-      default            : strncpy (message, msg_normal  , MAX_STR); break;
+      if   (x_savemode != mode || mode == MODE_COMMAND) {
+         MODE_message (mode);
       }
       /*---(translate unprintable)-------*/
       if      (cch ==  0) strcpy  (cmd,   "n/a");
