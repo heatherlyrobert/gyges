@@ -103,6 +103,7 @@ PROG_init          (void)
    hist_active = '-';
    nhist =  0;
    chist = -1;
+   my.mode = MODE_MAP;
    return 0;
 }
 
@@ -427,7 +428,7 @@ unit_accessor(char *a_question, void *a_thing)
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
       snprintf(unit_answer, LEN_TEXT, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
    } else if (strcmp(a_question, "mode")           == 0) {
-      snprintf(unit_answer, LEN_TEXT, "Mode             : %c", mode);
+      snprintf(unit_answer, LEN_TEXT, "Mode             : %c", my.mode);
    }
    /*---(cell focus)---------------------*/
    else if   (strcmp(a_question, "cell_where")     == 0) {

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2v"
-#define     VER_TXT   "added table for modes and messages to simplify mtce"
+#define     VER_NUM   "1.2w"
+#define     VER_TXT   "add mode variable to global accessor"
 
 
 
@@ -287,6 +287,9 @@ struct cACCESSOR {
    char      quiet;          /* bool : 0=normal, 1=quiet                      */
    int       logger;         /* log file so that we don't close it            */
    char      autocalc;       /* 0=manual, 1=auto                              */
+   /*---(mode)------------*/
+   char        mode;                        /* gyges mode                      */
+   char        message     [MAX_STR];       /* message line                    */
    /*---(file input)------*/
    char      recd          [MAX_STR];
    /*---(tab vars)--------*/
@@ -328,7 +331,6 @@ struct cACCESSOR {
    char        mark_list   [MAX_STR];       /* current marks                  */
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
    /*---(registers)-------*/
-   char        message     [MAX_STR];       /* message line                    */
    char        reg_curr;
 };
 extern    struct cACCESSOR my;
@@ -812,7 +814,6 @@ extern char    message    [MAX_STR];
 extern char    sta_type;
 extern char    sta_error;
 extern char    command    [MAX_STR];
-extern char    mode;
 extern char    special;
 
 extern char      empty    [200];

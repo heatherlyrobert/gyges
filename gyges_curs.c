@@ -407,7 +407,7 @@ CURS_formula       (tCELL *a_curr)
    /*> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (SEL_islive()) ? 'v' : ' ', label, CROW + 1);   <*/
    if (a_curr != NULL)    strcpy  (label, a_curr->label);
    else                   LOC_ref (CTAB, CCOL, CROW, 0, label);
-   mvprintw (row_formula,  0, "%c  %c%c %-6.6s", mode, (SEL_islive()) ? 'v' : ' ', my.reg_curr, label);
+   mvprintw (row_formula,  0, "%c  %c%c %-6.6s", my.mode, (SEL_islive()) ? 'v' : ' ', my.reg_curr, label);
    /*---(version)------------------------*/
    mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
    /*---(characteristics)--------------------*/
@@ -422,9 +422,9 @@ CURS_formula       (tCELL *a_curr)
    if (sta_error == 'y')  attroff(S_COLOR_TITLEE);
    else                   attroff(S_COLOR_TITLE);
    /*---(set color)--------------------------*/
-   if      (mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
-   else if (mode == MODE_INPUT )  attron (S_COLOR_INPUT  );
-   else if (mode == MODE_WANDER)  attron (S_COLOR_WANDER );
+   if      (my.mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
+   else if (my.mode == MODE_INPUT )  attron (S_COLOR_INPUT  );
+   else if (my.mode == MODE_WANDER)  attron (S_COLOR_WANDER );
    else                           attron (S_COLOR_CONTENT);
    /*---(contents)---------------------------*/
    w  = my.apos - strlen(contents);
@@ -434,9 +434,9 @@ CURS_formula       (tCELL *a_curr)
    if (w == 0) snprintf(msg, 500, "[%*.*s]", my.apos, my.apos, contents + my.bpos);
    mvprintw (row_formula, 30, "%s%*.*s", msg, w, w, empty);
    /*---(clear color)--------------------*/
-   if      (mode == MODE_SOURCE)  attroff(S_COLOR_SOURCE );
-   else if (mode == MODE_INPUT )  attroff(S_COLOR_INPUT  );
-   else if (mode == MODE_WANDER)  attroff(S_COLOR_WANDER );
+   if      (my.mode == MODE_SOURCE)  attroff(S_COLOR_SOURCE );
+   else if (my.mode == MODE_INPUT )  attroff(S_COLOR_INPUT  );
+   else if (my.mode == MODE_WANDER)  attroff(S_COLOR_WANDER );
    else                           attroff(S_COLOR_CONTENT);
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -682,7 +682,7 @@ CURS_main          (void)
    mvprintw (row_chead, 0, cmd);
    attroff  (S_COLOR_KEYS);
    /*---(cursor pos)---------------------*/
-   if (mode != MODE_SOURCE && mode != MODE_INPUT)
+   if (my.mode != MODE_SOURCE && my.mode != MODE_INPUT)
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
    else
       move (row_formula, 31 + my.cpos - my.bpos);

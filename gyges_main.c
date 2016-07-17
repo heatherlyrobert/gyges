@@ -48,7 +48,7 @@ main (int argc, char *argv[])
    KEYS_col (" r");
    KEYS_row (" r");
    sch = ' ';
-   MODE_message (mode);
+   MODE_message (my.mode);
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
@@ -65,8 +65,8 @@ main (int argc, char *argv[])
        *> else if (sch == '%') snprintf (cmd,   9, "%%%c ", cch);                     <* 
        *> else                 snprintf (cmd,   9, "%c%c ", sch, cch);                <*/
       /*---(handle keystroke)------------*/
-      x_savemode = mode;
-      switch (mode) {
+      x_savemode = my.mode;
+      switch (my.mode) {
       case MODE_GOD      : rc = MODE_god      (sch, cch); break;
       case MODE_MAP      : rc = MODE_map      (sch, cch); break;
       case MODE_FORMAT   : rc = KEYS_format   (' ', cch); break;
@@ -83,8 +83,8 @@ main (int argc, char *argv[])
       else if (rc >  0)    sch = cch;
       else               { sch = ' ';  sta_error = 'y'; }
       /*---(setup status line)-----------*/
-      if   (x_savemode != mode || mode == MODE_COMMAND) {
-         MODE_message (mode);
+      if   (x_savemode != my.mode || my.mode == MODE_COMMAND) {
+         MODE_message (my.mode);
       }
       /*---(translate unprintable)-------*/
       if      (cch ==  0) strcpy  (cmd,   "n/a");

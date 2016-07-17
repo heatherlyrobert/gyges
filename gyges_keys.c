@@ -121,7 +121,7 @@ MODE_map           (
    char        rc          = 0;
    /*---(major mode changes)-------------*/
    if (a_curr == K_RETURN) {
-      mode   = MODE_SOURCE;
+      my.mode   = MODE_SOURCE;
       pos_move ('0');
       return  0;
    }
@@ -137,40 +137,40 @@ MODE_map           (
       if (strchr ("m\'"      , a_curr) != 0)          return a_curr;
       switch (a_curr) {
          /*> case 'Q'      : done = 0;                       break;                      <*/
-      case 'F'      : mode    = MODE_FORMAT;
+      case 'F'      : my.mode    = MODE_FORMAT;
                       break;
-      case ','      : mode    = MODE_BUFFER;
+      case ','      : my.mode    = MODE_BUFFER;
                       break;
-      case '"'      : mode    = MODE_REGISTER;
+      case '"'      : my.mode    = MODE_REGISTER;
                       return 1;  /* make sure double quote goes in prev char */
                       break;
       case ':'      : strncpy (command , ":", MAX_STR);
-                      mode    = MODE_COMMAND;
+                      my.mode    = MODE_COMMAND;
                       break;
       case 's'      : strncpy (contents, ""  , MAX_STR);
                       my.npos = 0;
                       my.cpos = 0;
-                      mode    = MODE_INPUT;
+                      my.mode    = MODE_INPUT;
                       break;
       case '='      : strncpy (contents, "=" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
-                      mode    = MODE_INPUT;
+                      my.mode    = MODE_INPUT;
                       break;
       case '#'      : strncpy (contents, "#" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
-                      mode    = MODE_INPUT;
+                      my.mode    = MODE_INPUT;
                       break;
       case '+'      : strncpy (contents, "+" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
-                      mode    = MODE_INPUT;
+                      my.mode    = MODE_INPUT;
                       break;
       case '-'      : strncpy (contents, "-" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
-                      mode    = MODE_INPUT;
+                      my.mode    = MODE_INPUT;
                       break;
                       /*---(basic horizontal)---------*/
       case '0'      : KEYS_col (" 0");                break;
@@ -333,7 +333,7 @@ MODE_map           (
    --rce;
    if (a_prev == '\\') {
       switch (a_curr) {
-      case 'o'      : mode = MODE_FORMAT;             break;
+      case 'o'      : my.mode = MODE_FORMAT;             break;
       default  : return rce;                          break;
       }
       return 0;
@@ -410,10 +410,10 @@ KEYS_buffer   (int a_prev, int a_curr)
     *   this should imitate our RBUF capability in vimm
     */
    /*---(defenses)-----------------------*/
-   if (mode != MODE_BUFFER)             return -1;   /* wrong mode                    */
+   if (my.mode != MODE_BUFFER)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    BUF_switch (a_curr);
-   mode = MODE_MAP;
+   my.mode = MODE_MAP;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -430,12 +430,12 @@ KEYS_source   (int a_prev, int a_curr)
     *   forget wordwrap, 'g', and 'z' commands.
     */
    /*---(defenses)-----------------------*/
-   if (mode != MODE_SOURCE)             return -1;   /* wrong mode                    */
+   if (my.mode != MODE_SOURCE)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
-   case  10  : mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
+   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
    case  27  : 
-   case  'U' : mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy(contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
+   case  'U' : my.mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy(contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
    }
    /*---(locals)-------------------------*/
    char    update_cols  = 0;
@@ -468,16 +468,16 @@ KEYS_source   (int a_prev, int a_curr)
       case 'x' : KEYS__del('x');   break;
       case 'X' : KEYS__del('X');   break;
       case 'D' : contents[my.cpos] = '\0';     my.npos = strlen(contents);    break;
-      case 'S' : strncpy(contents, "", MAX_STR); my.npos = 0; mode = MODE_INPUT; break;
+      case 'S' : strncpy(contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;
       }
       /*---(going to input)--------------*/
       switch (a_curr) {
-      case 'I' : pos_move('0'); mode = MODE_INPUT;          break;
-      case 'i' : mode = MODE_INPUT;                         break;
-      case 'a' : pos_move('+'); if (my.cpos + 1 == my.npos) ++my.cpos; mode = MODE_INPUT;          break;
-      case 'A' : my.cpos = my.npos;        mode = 'A';  break;
-      case '.' : mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
-      case ':' : mode = MODE_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+      case 'I' : pos_move('0'); my.mode = MODE_INPUT;          break;
+      case 'i' : my.mode = MODE_INPUT;                         break;
+      case 'a' : pos_move('+'); if (my.cpos + 1 == my.npos) ++my.cpos; my.mode = MODE_INPUT;          break;
+      case 'A' : my.cpos = my.npos;        my.mode = 'A';  break;
+      case '.' : my.mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+      case ':' : my.mode = MODE_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
       }
       /*---(multikey)--------------------*/
    } else if (a_prev == 'r') {
@@ -488,7 +488,7 @@ KEYS_source   (int a_prev, int a_curr)
    if (my.npos  >= MAX_STR  )          my.npos = MAX_STR - 1;
    if (my.cpos  <  0      )          my.cpos = 0;
    if (my.cpos  >= my.npos) {
-      if (mode == 'A') { my.cpos = my.npos; mode = MODE_INPUT; }
+      if (my.mode == 'A') { my.cpos = my.npos; my.mode = MODE_INPUT; }
       else               my.cpos = my.npos - 1;
    }
    /*> if (my.cpos  == (my.npos  == 0))  my.cpos = -1;                                <*/
@@ -506,12 +506,12 @@ KEYS_input         (int  a_prev, int  a_curr)
     *   all characters, ignoring new line, and popping out with escape
     */
    /*---(defenses)-----------------------*/
-   if (mode != MODE_INPUT)            return -1;   /* wrong mode                    */
+   if (my.mode != MODE_INPUT)            return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
-   case  10  : mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
-   case  27  : mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
-   case  '@' : mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
+   case  27  : my.mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
+   case  '@' : my.mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
    }
    /*---(range corrections)--------------*/
    my.npos  = strlen(contents);
@@ -552,8 +552,8 @@ KEYS_format        (int  a_prev, int  a_curr)
    tCELL   *curr = tab->sheet[CCOL][CROW];
    /*---(check for control keys)----------------*/
    switch (a_curr) {
-   case   27 : mode = MODE_MAP; SEL_clear (); return 0;   /* escape  */
-   case   10 : mode = MODE_MAP; SEL_clear (); return 0;   /* return  */
+   case   27 : my.mode = MODE_MAP; SEL_clear (); return 0;   /* escape  */
+   case   10 : my.mode = MODE_MAP; SEL_clear (); return 0;   /* return  */
    }
    /*---(check for alignment prefixes)----------*/
    switch (a_curr) {
@@ -774,8 +774,8 @@ KEYS_command  (int  a_prev, int  a_curr)
    /*---(check for control keys)---------*/
    x_len = strlen (command);
    switch (a_curr) {
-   case   27 : mode = MODE_MAP; return 0;   /* escape  */
-   case   10 : mode = MODE_MAP; cmd_exec (command); return 0;   /* return  */
+   case   27 : my.mode = MODE_MAP; return 0;   /* escape  */
+   case   10 : my.mode = MODE_MAP; cmd_exec (command); return 0;   /* return  */
    }
    /*---(check for backspace)------------*/
    if (a_curr == 8 || a_curr == 127) {
@@ -802,13 +802,13 @@ KEYS_wander        (int  a_prev, int  a_curr)
     */
    char    post = ' ';
    /*---(defenses)-----------------------*/
-   if (mode != MODE_WANDER)            return -1;   /* wrong mode                    */
+   if (my.mode != MODE_WANDER)            return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
    case  ',' :
    case  ')' : post = a_curr;
    case  10  :
-   case  27  : mode = MODE_INPUT;
+   case  27  : my.mode = MODE_INPUT;
                SEL_clear ();
                LOC_ref (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref);
                CTAB = wtab;

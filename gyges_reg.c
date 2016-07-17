@@ -349,9 +349,9 @@ REG_keys           (int a_prev, int a_curr)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    /*---(defenses)-----------------------*/
-   if (mode != MODE_REGISTER)             return -1;   /* wrong mode                    */
+   if (my.mode != MODE_REGISTER)             return -1;   /* wrong mode                    */
    if (a_curr == K_ESCAPE)  {
-      mode = MODE_MAP;
+      my.mode = MODE_MAP;
       return  0;
    }
    /*---(check for control keys)---------*/
@@ -361,7 +361,7 @@ REG_keys           (int a_prev, int a_curr)
          return 0;
       } else if (a_curr == '!') {
          sta_type = '"';
-         mode = MODE_MAP;
+         my.mode = MODE_MAP;
          REG_set ('"');
          return  0;
       }
@@ -384,18 +384,18 @@ REG_keys           (int a_prev, int a_curr)
                   break;
       case  'W' : REG_bufwrite (my.reg_curr);
                   break;
-      default   : mode = MODE_MAP;
+      default   : my.mode = MODE_MAP;
                   REG_set ('"');
                   return rce;
                   break;
       }
-      mode = MODE_MAP;
+      my.mode = MODE_MAP;
       REG_set ('"');
       return 0;
    }
    /*---(failure)------------------------*/
    --rce;
-   mode = MODE_MAP;
+   my.mode = MODE_MAP;
    REG_set ('"');
    return rce;
 }

@@ -9513,7 +9513,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
 
    COND       v21  set the mode to input                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'I';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
    COND       v21  add a first character                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -9571,7 +9571,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input in the middle                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'I';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9594,7 +9594,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input before the beginning                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'I';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = -20;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9609,7 +9609,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'I';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9624,7 +9624,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'I';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9660,7 +9660,7 @@ SCRP          v21  test vi_source mode                                        
    COND       v21  initialize contents                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  copy a string to contents            - - - - - - - - - -   strncpy(contents, "testing the source mode", MAX_STR);                                                                                                         
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 0:23) :testing the source mode:                   
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'S';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'S';                                                                                                                                                 
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (    0) :(null):                                    
 
@@ -9707,7 +9707,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : N                                                   
 
    COND       v21  call source in right mode                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'S';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'S';                                                                                                                                                    
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      exec     v21  send a character to source           KEYS_source           ' ', 'l'                                                                i_equal     0                                                                      
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (e) : ( 1:23) :testing the source mode:                   
@@ -9789,7 +9789,7 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  more complex content                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  copy a string to contents            - - - - - - - - - -   strncpy(contents, " testing   the/ . s-mode ", MAX_STR);                                                                                                       
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'S';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'S';                                                                                                                                                    
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:25) : testing   the/ . s-mode :                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) :testing the source mode:                   
@@ -9865,7 +9865,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   25) : testing   the/ . s-mode :                 
 
    COND       v21  get back in there                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'S';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'S';                                                                                                                                                    
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:25) : testing   the/ . s-mode :                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   25) : testing   the/ . s-mode :                 
@@ -9891,7 +9891,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) : testin  the/ . s-mode :                   
 
    COND       v21  get back in there                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   mode = 'S';                                                                                                                                                    
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'S';                                                                                                                                                    
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:23) : testin  the/ . s-mode :                   
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) : testin  the/ . s-mode :                   

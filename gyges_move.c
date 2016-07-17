@@ -14,7 +14,6 @@ char    saved   [MAX_STR] = "";
 char    cmd[10] = "";
 char    message [MAX_STR] = "";
 char    command [MAX_STR] = "";
-char    mode       = MODE_MAP;
 char    special = 0;
 
 
