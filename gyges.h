@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2w"
-#define     VER_TXT   "add mode variable to global accessor"
+#define     VER_NUM   "1.2x"
+#define     VER_TXT   "shorten desc of modes to get more room for info"
 
 
 

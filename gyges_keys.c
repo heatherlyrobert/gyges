@@ -8,28 +8,29 @@ struct cMODE_INFO {
    char        abbr;                   /* single character abbreviation       */
    char        major;                  /* major mode (y/n)                    */
    char        show;                   /* show a message line (y/n)           */
+   char        three       [ 5];       /* very short name                     */
    char        terse       [10];       /* short name                          */
    char        desc        [50];       /* description of mode                 */
    int         count;                  /* number of times used                */
    char        mesg        [MAX_STR];  /* informative message for display     */
 } g_mode_info [MAX_MODES] = {
-   /*-a- --m- ---terse----- ------------------------------------------------------ ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
+   /*-a- -maj show --tla- ---terse----- ---description---------------------------------------- ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
    /*---(major modes)--------------------*/
-   { 'G', 'y', 'y', "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
-   { 'M', 'y', 'y', "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
-   { 'V', 'y', 'y', "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
-   { 'S', 'y', 'y', "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
-   { 'I', 'y', 'y', "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
-   { ':', 'y', '-', "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
+   { 'G', 'y', 'y', "god", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
+   { 'M', 'y', 'y', "map", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'V', 'y', 'y', "vis", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
+   { 'S', 'y', 'y', "src", "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
+   { 'I', 'y', 'y', "inp", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
+   { ':', 'y', '-', "cmd", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
-   { 'r', '-', 'y', "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
-   { '"', '-', 'y', "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
-   { ',', '-', 'y', "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
-   { '@', '-', 'y', "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
-   { '$', '-', 'y', "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
-   { 'o', '-', 'y', "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
+   { 'r', '-', 'y', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
+   { '"', '-', 'y', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
+   { ',', '-', 'y', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
+   { '@', '-', 'y', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
+   { '$', '-', 'y', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
+   { 'o', '-', 'y', "obj", "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
    /*---(done)---------------------------*/
-   { '-', '-', 'y', "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
+   { '-', '-', 'y', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
 };
 
 
@@ -58,7 +59,7 @@ MODE_message       (char a_mode)
       if (g_mode_info[i].abbr == a_mode)  break;
    }
    if (g_mode_info[i].show == 'y') {
-      sprintf (my.message, "(%c) %-10.10s: %s\n", a_mode, g_mode_info[i].terse, g_mode_info[i].mesg);
+      sprintf (my.message, "(%c) %-3.3s : %s\n", a_mode, g_mode_info[i].three, g_mode_info[i].mesg);
    } else {
       sprintf (my.message, "%s\n", command);
    }
