@@ -10446,7 +10446,8 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
      get      v21  check current marks                  SEL_unit              "mark_list"            , 0                                              s_equal     s_sel marks      : ,a:0k11,d:0f11,                                     
 
    COND       v21  clear all marks                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  clear marks                          MARK_set              '*'                                                                     i_equal     0                                                                      
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = SMOD_MARK;                                                                                                                                           
+     exec     v21  clear marks                          MARK_mode             'm'                    , '*'                                            i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   5, row=  10                        
      get      v21  check current marks                  SEL_unit              "mark_list"            , 0                                              s_equal     s_sel marks      : .                                                   
 
@@ -10488,7 +10489,8 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
      exec     v21  return to a mark                     MARK_return           'g'                                                                     i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   6, row=  10                        
      get      v21  check current marks                  SEL_unit              "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0a1,g:0g11,m:0p12,q:0a1,                         
-     exec     v21  clear current mark                   MARK_set              '#'                                                                     i_equal     0                                                                      
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = SMOD_MARK;                                                                                                                                           
+     exec     v21  clear current mark                   MARK_mode             'm'                    , '#'                                            i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   6, row=  10                        
      get      v21  check current marks                  SEL_unit              "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0a1,m:0p12,q:0a1,                                
 
@@ -10559,7 +10561,8 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
      exec     v21  return to a mark                     MARK_return           'm'                                                                     i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  15, row=  11                        
      get      v21  check current marks                  SEL_unit              "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0p22,b:0f2,m:0p12,p:0p22,q:0a1,z:0b6,            
-     exec     v21  clear current mark                   MARK_set              '#'                                                                     i_equal     0                                                                      
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = SMOD_MARK;                                                                                                                                           
+     exec     v21  clear current mark                   MARK_mode             'm'                    , '#'                                            i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  15, row=  11                        
      get      v21  check current marks                  SEL_unit              "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0p22,b:0f2,p:0p22,q:0a1,z:0b6,                   
 

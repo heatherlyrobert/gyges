@@ -64,11 +64,11 @@ main (int argc, char *argv[])
       case MODE_INPUT    : rc = KEYS_input    (sch, cch); break;
       case MODE_COMMAND  : rc = KEYS_command  (' ', cch); break;
          /*---(submodes)-----------------*/
-      case MODE_FORMAT   : rc = KEYS_format   (' ', cch); break;
-      case MODE_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
-      case MODE_WANDER   : rc = KEYS_wander   (' ', cch); break;
-      case MODE_REGISTER : rc = REG_keys      (sch, cch); break;
-      case MODE_MARK     : rc = MARK_mode     (sch, cch); break;
+      case SMOD_FORMAT   : rc = KEYS_format   (' ', cch); break;
+      case SMOD_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
+      case SMOD_WANDER   : rc = KEYS_wander   (' ', cch); break;
+      case SMOD_REGISTER : rc = REG_keys      (sch, cch); break;
+      case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(setup for next keystroke)----*/

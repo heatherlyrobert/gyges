@@ -176,17 +176,17 @@ MODE_map           (
       }
       /*---(submodes)--------------------*/
       switch (a_curr) {
-      case 'F'      : my.mode    = MODE_FORMAT;
+      case 'F'      : my.mode    = SMOD_FORMAT;
                       return 0;
                       break;
-      case ','      : my.mode    = MODE_BUFFER;
+      case ','      : my.mode    = SMOD_BUFFER;
                       return 0;
                       break;
-      case '"'      : my.mode    = MODE_REGISTER;
+      case '"'      : my.mode    = SMOD_REGISTER;
                       return 1;  /* make sure double quote goes in prev char */
                       break;
       case 'm'      : 
-      case '\''     : my.mode    = MODE_MARK;
+      case '\''     : my.mode    = SMOD_MARK;
                       return 1;  /* make sure single quote goes in prev char */
                       break;
       }
@@ -343,7 +343,7 @@ MODE_map           (
    --rce;
    if (a_prev == '\\') {
       switch (a_curr) {
-      case 'o'      : my.mode = MODE_FORMAT;             break;
+      case 'o'      : my.mode = SMOD_FORMAT;             break;
       default  : return rce;                          break;
       }
       return 0;
@@ -420,7 +420,7 @@ KEYS_buffer   (int a_prev, int a_curr)
     *   this should imitate our RBUF capability in vimm
     */
    /*---(defenses)-----------------------*/
-   if (my.mode != MODE_BUFFER)             return -1;   /* wrong mode                    */
+   if (my.mode != SMOD_BUFFER)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    BUF_switch (a_curr);
    my.mode = MODE_MAP;
@@ -486,8 +486,8 @@ KEYS_source   (int a_prev, int a_curr)
       case 'i' : my.mode = MODE_INPUT;                         break;
       case 'a' : pos_move('+'); if (my.cpos + 1 == my.npos) ++my.cpos; my.mode = MODE_INPUT;          break;
       case 'A' : my.cpos = my.npos;        my.mode = 'A';  break;
-      case '.' : my.mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
-      case ':' : my.mode = MODE_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+      case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+      case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
       }
       /*---(multikey)--------------------*/
    } else if (a_prev == 'r') {
@@ -521,7 +521,7 @@ KEYS_input         (int  a_prev, int  a_curr)
    switch (a_curr) {
    case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
    case  27  : my.mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
-   case  '@' : my.mode = MODE_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+   case  '@' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
    }
    /*---(range corrections)--------------*/
    my.npos  = strlen(contents);
@@ -816,7 +816,7 @@ KEYS_wander        (int  a_prev, int  a_curr)
     */
    char    post = ' ';
    /*---(defenses)-----------------------*/
-   if (my.mode != MODE_WANDER)            return -1;   /* wrong mode                    */
+   if (my.mode != SMOD_WANDER)            return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
    case  ',' :

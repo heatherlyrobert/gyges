@@ -107,7 +107,7 @@ struct cMARK {
    tCELL      *ref;
 };
 tMARK       s_mark_info [MAX_MARK];
-static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ()";
 
 
 /*====================------------------------------------====================*/
@@ -675,35 +675,6 @@ MARK_set           (char a_mark)
    char       *x_mark      = NULL;
    int         x_index     =   0;
    char        x_label     [10];
-   /*---(check for clear all)------------*/
-   if (a_mark == '*') {
-      MARK_init ();
-      return 0;
-   }
-   /*---(check for clear current)--------*/
-   --rce;  if (a_mark == '#') {
-      rc = MARK_which ();
-      if (rc < 0) {
-         return rce;
-      }
-      MARK_unset (rc);
-      MARK_range ();
-      return 0;
-   }
-   /*---(check for highlighting)---------*/
-   if (a_mark == '@') {
-      my.mark_show = 'y';
-      return 0;
-   }
-   if (a_mark == ' ') {
-      my.mark_show = '-';
-      return 0;
-   }
-   /*---(check for status line)----------*/
-   if (a_mark == '!') {
-      sta_type = 'm';
-      return 0;
-   }
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_mark == NULL) {
@@ -848,7 +819,7 @@ MARK_mode          (char a_major, char a_minor)
    char        rce         = -10;
    char        rc          =   0;
    /*---(defenses)-----------------------*/
-   if (my.mode != MODE_MARK)             return -1;   /* wrong mode                    */
+   if (my.mode != SMOD_MARK)             return -1;   /* wrong mode                    */
    if (a_minor == K_ESCAPE)  {
       my.mode  = MODE_MAP;
       return  0;
@@ -859,7 +830,10 @@ MARK_mode          (char a_major, char a_minor)
       case '*' : MARK_init ();
                  break;
       case '#' : rc = MARK_which ();
-                 if (rc < 0)   return rce;
+                 if (rc < 0) {
+                    my.mode = MODE_MAP;
+                    return rce;
+                 }
                  MARK_unset (rc);
                  MARK_range ();
                  break;
@@ -870,13 +844,20 @@ MARK_mode          (char a_major, char a_minor)
       case '!' : sta_type = 'm';
                  break;
       default  : rc = MARK_set (a_minor);
-                 if (rc < 0)   return rce;
+                 if (rc < 0) {
+                    my.mode = MODE_MAP;
+                    return rce;
+                 }
                  break;
       }
    }
    /*---(check for returning)------------*/
    --rce;  if (a_major == '\'') {
-      MARK_return (a_minor);
+      rc = MARK_return (a_minor);
+      if (rc < 0)  {
+         my.mode = MODE_MAP;
+         return rce;
+      }
    }
    /*---(failure)------------------------*/
    my.mode = MODE_MAP;

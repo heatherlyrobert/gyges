@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3d"
-#define     VER_TXT   "simplify the marks status line"
+#define     VER_NUM   "1.3e"
+#define     VER_TXT   "updated marks to pass unit test with MARK_mode()"
 
 
 
@@ -768,13 +768,13 @@ tCELL       denada;
 #define     MODE_INPUT     'I'
 #define     MODE_COMMAND   ':'
 /*---(sub-modes)-------------------------*/
-#define     MODE_REPLACE   'r'    /* replacing characters in source mode      */
-#define     MODE_REGISTER  '"'    /* register actions                         */
-#define     MODE_BUFFER    ','    /* selecting buffers                        */
-#define     MODE_WANDER    '@'    /* formula creation by pointing             */
-#define     MODE_FORMAT    '$'    /* content formatting                       */
-#define     MODE_OBJECT    'o'    /* object formatting                        */
-#define     MODE_MARK      '\''   /* location and object marking              */
+#define     SMOD_REPLACE   'r'    /* replacing characters in source mode      */
+#define     SMOD_REGISTER  '"'    /* register actions                         */
+#define     SMOD_BUFFER    ','    /* selecting buffers                        */
+#define     SMOD_WANDER    '@'    /* formula creation by pointing             */
+#define     SMOD_FORMAT    '$'    /* content formatting                       */
+#define     SMOD_OBJECT    'o'    /* object formatting                        */
+#define     SMOD_MARK      '\''   /* location and object marking              */
 /*---(display modes)---------------------*/
 #define     SCRN_TINY      't'    /* top line shows only source               */
 #define     SCRN_SMALL     's'    /* top line shows very little but source    */

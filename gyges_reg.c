@@ -349,7 +349,7 @@ REG_keys           (int a_prev, int a_curr)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    /*---(defenses)-----------------------*/
-   if (my.mode != MODE_REGISTER)             return -1;   /* wrong mode                    */
+   if (my.mode != SMOD_REGISTER)             return -1;   /* wrong mode                    */
    if (a_curr == K_ESCAPE)  {
       my.mode = MODE_MAP;
       return  0;

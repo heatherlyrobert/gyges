@@ -437,7 +437,7 @@ CURS_formula       (tCELL *a_curr)
    attrset (0);
    if      (my.mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
    else if (my.mode == MODE_INPUT )  attron (S_COLOR_INPUT  );
-   else if (my.mode == MODE_WANDER)  attron (S_COLOR_WANDER );
+   else if (my.mode == SMOD_WANDER)  attron (S_COLOR_WANDER );
    else                              attron (S_COLOR_CONTENT);
    /*---(contents)---------------------------*/
    w  = s_space - len;
