@@ -837,6 +837,55 @@ MARK_listplus      (char *a_list)
 
 
 /*====================------------------------------------====================*/
+/*===----                       keyboard input                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___KEYS____________o () { return; }
+
+char          /* PURPOSE : process keys for marks ----------------------------*/
+MARK_mode          (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          =   0;
+   /*---(defenses)-----------------------*/
+   if (my.mode != MODE_MARK)             return -1;   /* wrong mode                    */
+   if (a_minor == K_ESCAPE)  {
+      my.mode  = MODE_MAP;
+      return  0;
+   }
+   /*---(check for setting)--------------*/
+   --rce;  if (a_major == 'm') {
+      switch (a_minor) {
+      case '*' : MARK_init ();
+                 break;
+      case '#' : rc = MARK_which ();
+                 if (rc < 0)   return rce;
+                 MARK_unset (rc);
+                 MARK_range ();
+                 break;
+      case '@' : my.mark_show = 'y';
+                 break;
+      case '_' : my.mark_show = '-';
+                 break;
+      case '!' : sta_type = 'm';
+                 break;
+      default  : rc = MARK_set (a_minor);
+                 if (rc < 0)   return rce;
+                 break;
+      }
+   }
+   /*---(check for returning)------------*/
+   --rce;  if (a_major == '\'') {
+      MARK_return (a_minor);
+   }
+   /*---(failure)------------------------*/
+   my.mode = MODE_MAP;
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }

@@ -8,29 +8,31 @@ struct cMODE_INFO {
    char        abbr;                   /* single character abbreviation       */
    char        major;                  /* major mode (y/n)                    */
    char        show;                   /* show a message line (y/n)           */
+   char        sub;                    /* submode of which mode               */
    char        three       [ 5];       /* very short name                     */
    char        terse       [10];       /* short name                          */
    char        desc        [50];       /* description of mode                 */
    int         count;                  /* number of times used                */
    char        mesg        [MAX_STR];  /* informative message for display     */
 } g_mode_info [MAX_MODES] = {
-   /*-a- -maj show --tla- ---terse----- ---description---------------------------------------- ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
+   /*-a-- -maj show -sub --tla- ---terse----- ---description---------------------------------------- ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
    /*---(major modes)--------------------*/
-   { 'G', 'y', 'y', "god", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
-   { 'M', 'y', 'y', "map", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
-   { 'V', 'y', 'y', "vis", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
-   { 'S', 'y', 'y', "src", "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
-   { 'I', 'y', 'y', "inp", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
-   { ':', 'y', '-', "cmd", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
+   { 'G' , 'y', 'y', ' ', "god", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
+   { 'M' , 'y', 'y', ' ', "map", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'V' , 'y', 'y', ' ', "vis", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
+   { 'S' , 'y', 'y', ' ', "src", "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
+   { 'I' , 'y', 'y', ' ', "inp", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
+   { ':' , 'y', '-', ' ', "cmd", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
-   { 'r', '-', 'y', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
-   { '"', '-', 'y', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
-   { ',', '-', 'y', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
-   { '@', '-', 'y', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
-   { '$', '-', 'y', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
-   { 'o', '-', 'y', "obj", "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
+   { 'r' , '-', 'y', ' ', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
+   { '"' , '-', 'y', ' ', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
+   { ',' , '-', 'y', ' ', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
+   { '@' , '-', 'y', ' ', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
+   { '$' , '-', 'y', ' ', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
+   { 'o' , '-', 'y', ' ', "obj", "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
+   { '\'', '-', 'y', 'M', "mrk", "mark"      , "object and location marking"                        ,    0, "set=a-zA-Z()  del=#*  hlp=?!@_  go='a-zA-Z()[<>]  not={esc}"                             },
    /*---(done)---------------------------*/
-   { '-', '-', 'y', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
+   { '-' , '-', 'y', ' ', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
 };
 
 
@@ -135,45 +137,62 @@ MODE_map           (
    if (a_prev == ' ') {
       /*---(multikey prefixes)-----------*/
       if (strchr ("gzced\\"  , a_curr) != 0)          return a_curr;
-      if (strchr ("m\'"      , a_curr) != 0)          return a_curr;
+      /*---(mode switch)-----------------*/
       switch (a_curr) {
-         /*> case 'Q'      : done = 0;                       break;                      <*/
-      case 'F'      : my.mode    = MODE_FORMAT;
-                      break;
-      case ','      : my.mode    = MODE_BUFFER;
-                      break;
-      case '"'      : my.mode    = MODE_REGISTER;
-                      return 1;  /* make sure double quote goes in prev char */
-                      break;
       case ':'      : strncpy (command , ":", MAX_STR);
                       my.mode    = MODE_COMMAND;
+                      return 0;
                       break;
       case 's'      : strncpy (contents, ""  , MAX_STR);
                       my.npos = 0;
                       my.cpos = 0;
                       my.mode    = MODE_INPUT;
+                      return 0;
                       break;
       case '='      : strncpy (contents, "=" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
+                      return 0;
                       break;
       case '#'      : strncpy (contents, "#" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
+                      return 0;
                       break;
       case '+'      : strncpy (contents, "+" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
+                      return 0;
                       break;
       case '-'      : strncpy (contents, "-" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
+                      return 0;
                       break;
-                      /*---(basic horizontal)---------*/
+      }
+      /*---(submodes)--------------------*/
+      switch (a_curr) {
+      case 'F'      : my.mode    = MODE_FORMAT;
+                      return 0;
+                      break;
+      case ','      : my.mode    = MODE_BUFFER;
+                      return 0;
+                      break;
+      case '"'      : my.mode    = MODE_REGISTER;
+                      return 1;  /* make sure double quote goes in prev char */
+                      break;
+      case 'm'      : 
+      case '\''     : my.mode    = MODE_MARK;
+                      return 1;  /* make sure single quote goes in prev char */
+                      break;
+      }
+      /*---(normal)----------------------*/
+      switch (a_curr) {
+         /*---(basic horizontal)---------*/
       case '0'      : KEYS_col (" 0");                break;
       case 'H'      : KEYS_col (" H");                break;
       case 'h'      : KEYS_col (" h");                break;
@@ -219,16 +238,6 @@ MODE_map           (
       case 'W'      : REG_bufwrite (my.reg_curr);     break;
       default       : return rce;                     break;
       }
-      return 0;
-   }
-   /*---(marks)---------------------------------*/
-   --rce;
-   if (a_prev == 'm') {
-      MARK_set    (a_curr);
-      return 0;
-   }
-   if (a_prev == '\'') {
-      MARK_return (a_curr);
       return 0;
    }
    /*---(special family)------------------------*/
@@ -630,7 +639,7 @@ KEYS_format        (int  a_prev, int  a_curr)
    case  '+' : CELL_format   (CHG_INPUT, '+');  break;  /* filled plus     */
    case  ' ' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
 
-   /*> case  '"' : CELL_format   (CHG_INPUT, '"'); CELL_align    (CHG_INPUT, '"'); CELL_decimals (CHG_INPUT, '"');  break;  /+ filled empty    +/   <*/
+               /*> case  '"' : CELL_format   (CHG_INPUT, '"'); CELL_align    (CHG_INPUT, '"'); CELL_decimals (CHG_INPUT, '"');  break;  /+ filled empty    +/   <*/
    }
    return 0;
 }
@@ -694,14 +703,18 @@ cmd_exec           (char *a_command)
       sta_type = x_work [8];
       return 0;
    }
+   if (x_len == 9 && strcmp (p, ":screen") == 0) {
+      my.scrn = x_work [8];
+      return 0;
+   }
    if   (strncmp(p, ":q"        , MAX_STR) == 0 ||
          strncmp(p, ":qa"       , MAX_STR) == 0) {
       done = 0;
       return 0;
    }
    if (strcmp (p, ":lock")  == 0 ||
-       strcmp (p, ":lockr") == 0 ||
-       strcmp (p, ":lockc") == 0) {
+         strcmp (p, ":lockr") == 0 ||
+         strcmp (p, ":lockc") == 0) {
       x_flag = '-';
       if (strlen (p) == 6)  x_flag = p[5];
       KEYS_unlock ();

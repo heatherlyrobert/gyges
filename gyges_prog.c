@@ -104,6 +104,7 @@ PROG_init          (void)
    nhist =  0;
    chist = -1;
    my.mode = MODE_MAP;
+   my.scrn = SCRN_DEBUG;
    return 0;
 }
 

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.2x"
-#define     VER_TXT   "shorten desc of modes to get more room for info"
+#define     VER_NUM   "1.3a"
+#define     VER_TXT   "created a mark submode and function to simplify"
 
 
 
@@ -288,6 +288,7 @@ struct cACCESSOR {
    int       logger;         /* log file so that we don't close it            */
    char      autocalc;       /* 0=manual, 1=auto                              */
    /*---(mode)------------*/
+   char        scrn;                        /* screen display mode             */
    char        mode;                        /* gyges mode                      */
    char        message     [MAX_STR];       /* message line                    */
    /*---(file input)------*/
@@ -773,14 +774,11 @@ tCELL       denada;
 #define     MODE_WANDER    '@'    /* formula creation by pointing             */
 #define     MODE_FORMAT    '$'    /* content formatting                       */
 #define     MODE_OBJECT    'o'    /* object formatting                        */
-/*---(mode messages)------*/
-extern char G_MESG_GOD      [MAX_STR];
-extern char G_MESG_MAP      [MAX_STR];
-extern char G_MESG_VISUAL   [MAX_STR];
-extern char G_MESG_SOURCE   [MAX_STR];
-extern char G_MESG_INPUT    [MAX_STR];
-extern char G_MESG_COMMAND  [MAX_STR];
-extern char G_MESG_REPLACE  [MAX_STR];
+#define     MODE_MARK      '\''   /* location and object marking              */
+/*---(display modes)---------------------*/
+#define     SCRN_TINY      't'    /* top line shows only source               */
+#define     SCRN_SMALL     's'    /* top line shows very little but source    */
+#define     SCRN_DEBUG     'n'    /* top line has lots of stuff to debug      */
 
 
 
@@ -901,6 +899,7 @@ tCELL*    SEL_next           (int*, int*, int*);
 char      SEL_range          (int*, int*, int*, int*, int*);
 char      SEL_makelike       (void);
 
+char      MARK_mode          (char  a_major, char a_minor);
 char      MARK_init          (void);
 char      MARK_unset         (char  a_mark);
 char      MARK_prev          (void);
@@ -944,14 +943,14 @@ char      KEYS_init          (void);
 char      KEYS_record        (int   a_curr);
 char      KEYS_status        (char *msg);
 char      MODE_message       (char  a_mode);
-char      MODE_god           (int   a_major, int a_minor);
-char      MODE_map           (int   a_major, int a_minor);
-char      KEYS_buffer        (int   a_major, int a_minor);
-char      KEYS_source        (int   a_major, int a_minor);
-char      KEYS_format        (int   a_major, int a_minor);
-char      KEYS_input         (int   a_major, int a_minor);
-char      KEYS_command       (int   a_major, int a_minor);
-char      KEYS_wander        (int   a_major, int a_minor);
+char      MODE_god           (int   a_major, int  a_minor);
+char      MODE_map           (int   a_major, int  a_minor);
+char      KEYS_buffer        (int   a_major, int  a_minor);
+char      KEYS_source        (int   a_major, int  a_minor);
+char      KEYS_format        (int   a_major, int  a_minor);
+char      KEYS_input         (int   a_major, int  a_minor);
+char      KEYS_command       (int   a_major, int  a_minor);
+char      KEYS_wander        (int   a_major, int  a_minor);
 char      KEYS_col           (char *a_keys);
 char      KEYS_bcol          (int);
 char      KEYS_ecol          (int);

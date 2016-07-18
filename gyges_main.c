@@ -10,17 +10,6 @@ int
 main (int argc, char *argv[])
 {
    /*---(locals)-----------+-----------+-*/
-   /*---(formats)---------*/
-   char        msg_god      [500] = "(G) god      : ";
-   char        msg_map      [500] = "(N) normal   : horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}";
-   /*> char        msg_format   [500] = "(O) format   : ali=<|>[^]  fmt=ifpeE,acs#%%xXbBoOtdT  fil= _-=.+  w=mhHlLnNwW h=jk  dec=0123456789  mrg=MU  modes={esc}{ret}";   <*/
-   char        msg_format   [500] = "(f) format   : ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+";
-   char        msg_visual   [500] = "(V) visual   : dxy  !: ~uU /nN oO sS";
-   char        msg_source   [500] = "(S) source   : horz(a)=0HhlL$  words=wbe  find=f;  undo=u  modes=IiaA{esc}{ret}";
-   char        msg_buffer   [500] = "(B) buffer   : select=0...9  modes={ret}(esc}";
-   char        msg_input    [500] = "(I) input    : mod={esc}";
-   char        msg_wander   [500] = "(W) wander   : modes={ret}{esc}";
-   /*---(working)---------*/
    int         updates     = 0;
    int         cch         = 0;        /* current keystroke                   */
    int         sch         = 0;        /* saved keystroke                     */
@@ -67,15 +56,19 @@ main (int argc, char *argv[])
       /*---(handle keystroke)------------*/
       x_savemode = my.mode;
       switch (my.mode) {
+         /*---(major)--------------------*/
       case MODE_GOD      : rc = MODE_god      (sch, cch); break;
       case MODE_MAP      : rc = MODE_map      (sch, cch); break;
-      case MODE_FORMAT   : rc = KEYS_format   (' ', cch); break;
+      case MODE_VISUAL   : rc = MODE_map      (sch, cch); break;
       case MODE_SOURCE   : rc = KEYS_source   (sch, cch); break;
-      case MODE_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
       case MODE_INPUT    : rc = KEYS_input    (sch, cch); break;
-      case MODE_WANDER   : rc = KEYS_wander   (' ', cch); break;
       case MODE_COMMAND  : rc = KEYS_command  (' ', cch); break;
+         /*---(submodes)-----------------*/
+      case MODE_FORMAT   : rc = KEYS_format   (' ', cch); break;
+      case MODE_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
+      case MODE_WANDER   : rc = KEYS_wander   (' ', cch); break;
       case MODE_REGISTER : rc = REG_keys      (sch, cch); break;
+      case MODE_MARK     : rc = MARK_mode     (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(setup for next keystroke)----*/

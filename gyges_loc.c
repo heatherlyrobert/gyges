@@ -3,7 +3,7 @@
 #include   "gyges.h"
 
 
-char        s_label     [MAX_STR]   = "";
+static char    s_label     [MAX_STR]   = "";
 
 
 /*====================------------------------------------====================*/
