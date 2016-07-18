@@ -687,7 +687,7 @@ CURS_main          (void)
    CURS_rowhead   ();
    CURS_page      ();
    /*---(command)------------------------*/
-   if (my.scrn == SCRN_DEBUG) {
+   if (my.scrn == SCRN_DEBUG || my.scrn == SCRN_SMALL) {
       attron   (S_COLOR_KEYS);
       mvprintw (row_chead, 0, cmd);
       attroff  (S_COLOR_KEYS);

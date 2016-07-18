@@ -289,6 +289,9 @@ PROG_args          (int argc, char *argv[])
       if      (strncmp(a, "-f"        ,10) == 0)  strncpy (f_name , argv[++i], MAX_STR);
       else if (strncmp(a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp(a, "--help"    ,10) == 0)  PROG_usage();
+      else if (strncmp(a, "--tiny"    ,10) == 0)  my.scrn = SCRN_TINY;
+      else if (strncmp(a, "--small"   ,10) == 0)  my.scrn = SCRN_SMALL;
+      else if (strncmp(a, "--debug"   ,10) == 0)  my.scrn = SCRN_DEBUG;
       else if (a[0] != '-'                     )  strncpy (f_name , argv[i]  , MAX_STR);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3b"
-#define     VER_TXT   "fixed cursor position for tiny and small screen formats"
+#define     VER_NUM   "1.3c"
+#define     VER_TXT   "added command line options for small and tiny formats"
 
 
 

@@ -445,7 +445,7 @@ KEYS_source   (int a_prev, int a_curr)
    switch (a_curr) {
    case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
    case  27  : 
-   case  'U' : my.mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy(contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
+   case  'U' : my.mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy (contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
    }
    /*---(locals)-------------------------*/
    char    update_cols  = 0;
@@ -460,23 +460,23 @@ KEYS_source   (int a_prev, int a_curr)
       if (strchr ("rcdgz", a_curr) != 0)  return a_curr;
       /*---(basic movement)--------------*/
       switch (a_curr) {
-      case '0' : pos_move('0');    break;
-      case 'H' : pos_move('l');    break;
-      case 'h' : pos_move('-');    break;
-      case 'l' : pos_move('+');    break;
-      case 'L' : pos_move('m');    break;
-      case '$' : pos_move('$');    break;
+      case '0' : pos_move ('0');    break;
+      case 'H' : pos_move ('l');    break;
+      case 'h' : pos_move ('-');    break;
+      case 'l' : pos_move ('+');    break;
+      case 'L' : pos_move ('m');    break;
+      case '$' : pos_move ('$');    break;
       }
       /*---(word movement)---------------*/
       switch (a_curr) {
-      case 'w' : pos_move('w');    break;
-      case 'b' : pos_move('W');    break;
-      case 'e' : pos_move('e');    break;
+      case 'w' : pos_move ('w');    break;
+      case 'b' : pos_move ('W');    break;
+      case 'e' : pos_move ('e');    break;
       }
       /*---(changes)---------------------*/
       switch (a_curr) {
-      case 'x' : KEYS__del('x');   break;
-      case 'X' : KEYS__del('X');   break;
+      case 'x' : KEYS__del ('x');   break;
+      case 'X' : KEYS__del ('X');   break;
       case 'D' : contents[my.cpos] = '\0';     my.npos = strlen(contents);    break;
       case 'S' : strncpy(contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;
       }
