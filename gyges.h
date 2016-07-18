@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3a"
-#define     VER_TXT   "created a mark submode and function to simplify"
+#define     VER_NUM   "1.3b"
+#define     VER_TXT   "fixed cursor position for tiny and small screen formats"
 
 
 

@@ -229,6 +229,8 @@ char        sta_type  = 'v';
 char        sta_error = '-';
 
 static char s_label   [10]  = "";
+static int  s_start         = 0;
+static int  s_space         = 0;
 
 
 /*====================------------------------------------====================*/
@@ -396,8 +398,6 @@ CURS_formula       (tCELL *a_curr)
    /*---(locals)-----------------------------*/
    char      msg[500]  = "";                   /* temporary display message   */
    int       len       = 0;
-   int       x_start   = 0;
-   int       x_space   = 0;
    int       w         = 0;
    /*---(clear line)---------------------*/
    if (sta_error == 'y')  attron (S_COLOR_TITLEE);
@@ -420,18 +420,18 @@ CURS_formula       (tCELL *a_curr)
       else                 mvprintw (row_formula, 12, " %02d                []", tab->cols[CCOL].w);
       mvprintw (row_formula, 25, "%4d:", len);
       mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
-      x_start  = 30;
-      x_space  = my.apos;
+      s_start  = 30;
+      s_space  = my.apos;
       break;
    case SCRN_SMALL :
       mvprintw (row_formula,  0, "%-6.6s", s_label);
       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);
-      x_start  =  6;
-      x_space  = my.apos + (30 - 6) + (15 - 5) + 2;
+      s_start  =  6;
+      s_space  = my.apos + (30 - 6) + (15 - 5) + 2;
       break;
    case SCRN_TINY  :
-      x_start  =  0;
-      x_space  = my.apos + (30 - 0) + (15 - 0) + 2;
+      s_start  =  0;
+      s_space  = my.apos + (30 - 0) + (15 - 0) + 2;
    }
    /*---(set color)--------------------------*/
    attrset (0);
@@ -440,16 +440,11 @@ CURS_formula       (tCELL *a_curr)
    else if (my.mode == MODE_WANDER)  attron (S_COLOR_WANDER );
    else                              attron (S_COLOR_CONTENT);
    /*---(contents)---------------------------*/
-   w  = x_space - len;
+   w  = s_space - len;
    if (w < 0) w = 0;
-   mvprintw (row_formula, x_start, "%*.*s", x_space, x_space, empty);
-   if (my.scrn == SCRN_DEBUG) {
-      if (w >  0) snprintf(msg, 500, "[%s]",    contents);
-      if (w == 0) snprintf(msg, 500, "[%*.*s]", x_space, x_space, contents + my.bpos);
-   } else {
-      snprintf (msg, 500, "%s",    contents);
-   }
-   mvprintw (row_formula, x_start, "%s%*.*s", msg, w, w, empty);
+   mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, empty);
+   snprintf (msg, 500, "%s",    contents);
+   mvprintw (row_formula, s_start, "%s%*.*s", msg, w, w, empty);
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-----------------------*/
@@ -697,13 +692,14 @@ CURS_main          (void)
       mvprintw (row_chead, 0, cmd);
       attroff  (S_COLOR_KEYS);
    } else {
-      mvprintw (row_chead, 0, s_label);
+      mvprintw (row_chead, 0, s_label + 1);
    }
    /*---(cursor pos)---------------------*/
    if (my.mode != MODE_SOURCE && my.mode != MODE_INPUT)
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
-   else
-      move (row_formula, 31 + my.cpos - my.bpos);
+   else {
+      move (row_formula, s_start + my.cpos - my.bpos);
+   }
    /*---(refresh)------------------------*/
    refresh ();
    ch = getch ();
