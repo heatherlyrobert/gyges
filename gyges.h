@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3c"
-#define     VER_TXT   "added command line options for small and tiny formats"
+#define     VER_NUM   "1.3d"
+#define     VER_TXT   "simplify the marks status line"
 
 
 

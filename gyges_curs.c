@@ -489,7 +489,7 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
       break;
    case 'm' :
-      snprintf (msg, 500, "[ marks (%c,%c,%c,%c) %-60.60s ]", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, my.mark_plus);
+      snprintf (msg, 500, "marks (%c,%c,%c,%c) %s", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, my.mark_plus);
       break;
    case 'v' : /* file version */
    default  :
