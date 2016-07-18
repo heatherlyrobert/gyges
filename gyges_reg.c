@@ -344,7 +344,7 @@ REG_set            (char a_reg)
 static void  o___KEYS____________o () { return; }
 
 char          /* PURPOSE : process keys for register actions -----------------*/
-REG_keys           (int a_prev, int a_curr)
+REG_mode           (int a_prev, int a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;

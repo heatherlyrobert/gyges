@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3e"
-#define     VER_TXT   "updated marks to pass unit test with MARK_mode()"
+#define     VER_NUM   "1.3f"
+#define     VER_TXT   "clean up mode messages to make mode/submode clearer"
 
 
 
@@ -918,7 +918,7 @@ char      REG_purge          (char a_init);
 char      REG__hook          (tCELL *a_curr, char a_buf, char a_note);
 char      REG__unhook        (tCELL *a_curr);
 
-char      REG_keys           (int a_prev , int a_curr);
+char      REG_mode           (int a_prev , int a_curr);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);

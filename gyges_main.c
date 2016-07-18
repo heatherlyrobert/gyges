@@ -67,7 +67,7 @@ main (int argc, char *argv[])
       case SMOD_FORMAT   : rc = KEYS_format   (' ', cch); break;
       case SMOD_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
       case SMOD_WANDER   : rc = KEYS_wander   (' ', cch); break;
-      case SMOD_REGISTER : rc = REG_keys      (sch, cch); break;
+      case SMOD_REGISTER : rc = REG_mode      (sch, cch); break;
       case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
       }

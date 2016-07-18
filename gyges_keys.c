@@ -17,22 +17,22 @@ struct cMODE_INFO {
 } g_mode_info [MAX_MODES] = {
    /*-a-- -maj show -sub --tla- ---terse----- ---description---------------------------------------- ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
    /*---(major modes)--------------------*/
-   { 'G' , 'y', 'y', ' ', "god", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
-   { 'M' , 'y', 'y', ' ', "map", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
-   { 'V' , 'y', 'y', ' ', "vis", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
-   { 'S' , 'y', 'y', ' ', "src", "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
-   { 'I' , 'y', 'y', ' ', "inp", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
-   { ':' , 'y', '-', ' ', "cmd", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
+   { 'G' , 'y', 'y', ' ', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
+   { 'M' , 'y', 'y', ' ', "MAP", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'V' , 'y', 'y', ' ', "VIS", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
+   { 'S' , 'y', 'y', ' ', "SRC", "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
+   { 'I' , 'y', 'y', ' ', "INP", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
+   { ':' , 'y', '-', ' ', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
    { 'r' , '-', 'y', ' ', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
-   { '"' , '-', 'y', ' ', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
-   { ',' , '-', 'y', ' ', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
+   { '"' , '-', 'y', 'V', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
+   { ',' , '-', 'y', 'M', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
    { '@' , '-', 'y', ' ', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
    { '$' , '-', 'y', ' ', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
    { 'o' , '-', 'y', ' ', "obj", "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
-   { '\'', '-', 'y', 'M', "mrk", "mark"      , "object and location marking"                        ,    0, "set=a-zA-Z()  del=#*  hlp=?!@_  go='a-zA-Z()[<>]  not={esc}"                             },
+   { '\'', '-', 'y', 'M', "mrk", "mark"      , "object and location marking"                        ,    0, "set=a-zA-Z()  del=#*  hlp=?!@_  go='a-zA-Z()[<>]"                                        },
    /*---(done)---------------------------*/
-   { '-' , '-', 'y', ' ', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
+   { '-' , '-', 'y', '-', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
 };
 
 
@@ -56,12 +56,20 @@ MODE_message       (char a_mode)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
+   char        x_major     = ' ';
+   char        x_minor     = ' ';
    for (i = 0; i < MAX_MODES; ++i) {
       if (g_mode_info[i].abbr == '-'   )  break;
       if (g_mode_info[i].abbr == a_mode)  break;
    }
+   if (g_mode_info [i].major == 'y')  {
+      x_major = a_mode;
+   } else {
+      x_major = g_mode_info [i].sub;
+      x_minor = a_mode;
+   }
    if (g_mode_info[i].show == 'y') {
-      sprintf (my.message, "(%c) %-3.3s : %s\n", a_mode, g_mode_info[i].three, g_mode_info[i].mesg);
+      sprintf (my.message, "[%c%c] %-3.3s : %s\n", x_major, x_minor, g_mode_info[i].three, g_mode_info[i].mesg);
    } else {
       sprintf (my.message, "%s\n", command);
    }
