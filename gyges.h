@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3h"
-#define     VER_TXT   "cell_init clean out global strings first for unit test"
+#define     VER_NUM   "1.3i"
+#define     VER_TXT   "fixed six unit testing issues from mode changes"
 
 
 
