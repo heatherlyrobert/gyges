@@ -2138,7 +2138,7 @@ CELL_printable     (tCELL *a_curr) {
    } else {
       wa = 0;
       for (i = 0; i <= x_merge; ++i) {
-         w     = tabs[a_curr->tab].cols[i].w;
+         w     = tabs[a_curr->tab].cols[a_curr->col + i].w;
          DEBUG_CELL  yLOG_svalue ("#w", w);
          while (pp == NULL)  pp = (char*) malloc(w + 1);
          sprintf (pp, "%-*.*s", w, w, p + wa);
