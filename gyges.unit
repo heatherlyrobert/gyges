@@ -1579,7 +1579,7 @@ SCRP          v21  (s_dep ) one-way dependency creation and destruction       
 SCRP          v21  (s_dep ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testloud                                                                                 i_equal     0                                                                      
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
@@ -4378,8 +4378,8 @@ SCRP          v21  (s_reg ) verify register naming                            
 
    COND       v21  update reg name list for testing                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((22.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      set      v21  change the register names            REG__setter           "reg_names"      , "abcde"                                              i_equal     0                                                                      
-     get      v21  check update                         REG__getter           "reg_names"                                                             s_equal     s_reg names      : abcde                                               
-     get      v21  check count                          REG__getter           "reg_count"                                                             s_equal     s_reg count      : 5                                                   
+     get      v21  check update                         REG__getter           "reg_names"      , 'a'                                                  s_equal     s_reg names      : abcde                                               
+     get      v21  check count                          REG__getter           "reg_count"      , 'a'                                                  s_equal     s_reg count      : 5                                                   
 
    COND       v21  look up registers based on their names                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((22.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  look up a register (first)           REG__reg2index        'a'                                                                     i_equal     0                                                                      

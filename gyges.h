@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3i"
-#define     VER_TXT   "fixed six unit testing issues from mode changes"
+#define     VER_NUM   "1.3j"
+#define     VER_TXT   "fixed unit testing curiousity due to missing prototypes"
 
 
 
@@ -937,6 +937,8 @@ int       REG__reg2index     (char a_reg);
 int       REG__reg2tab       (char a_reg);
 int       REG__tab2index     (int  a_tab);
 
+char      REG__setter        (char *a_request, char *a_data);
+char*     REG__getter        (char *a_question, char a_reg);
 
 
 char      KEYS_init          (void);
