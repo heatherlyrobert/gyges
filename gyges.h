@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3f"
-#define     VER_TXT   "clean up mode messages to make mode/submode clearer"
+#define     VER_NUM   "1.3g"
+#define     VER_TXT   "saves and loads merged cell correctly now"
 
 
 

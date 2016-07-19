@@ -20,7 +20,7 @@ struct cMODE_INFO {
    { 'G' , 'y', 'y', ' ', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
    { 'M' , 'y', 'y', ' ', "MAP", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
    { 'V' , 'y', 'y', ' ', "VIS", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
-   { 'S' , 'y', 'y', ' ', "SRC", "source"    , "linewise review of textual content"                 ,    0, ""                                                                                        },
+   { 'S' , 'y', 'y', ' ', "SRC", "source"    , "linewise review of textual content"                 ,    0, "hor=0HhlL$  sel=vV\"  pul=yYdDxX  put=rRiIaA  pP"                                        },
    { 'I' , 'y', 'y', ' ', "INP", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
    { ':' , 'y', '-', ' ', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
@@ -459,7 +459,7 @@ KEYS_source   (int a_prev, int a_curr)
    char    update_cols  = 0;
    char    update_rows  = 0;
    /*---(range corrections)--------------*/
-   my.npos  = strlen(contents);
+   my.npos  = strlen (contents);
    if (my.cpos <    0)    my.cpos = 0;
    if (my.cpos > my.npos) my.cpos = my.npos;
    /*---(single letter)------------------*/

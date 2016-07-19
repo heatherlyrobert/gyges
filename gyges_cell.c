@@ -986,6 +986,7 @@ CELL__interpret    (
    int         x_row       =   0;
    tCELL      *x_like      = NULL;
    tCELL      *x_merged    = NULL;
+   tCELL      *x_next      = NULL;
    /*---(heading)------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(defense: null cell)-------------*/
@@ -1001,7 +1002,7 @@ CELL__interpret    (
    --rce;
    if (a_cell->s == NULL) {
       DEBUG_CELL   yLOG_note    ("cell contents are null");
-      a_cell->t = '-';
+      a_cell->t = CTYPE_BLANK;
       a_cell->s = strndup ("", MAX_STR);
       a_cell->l = 0;
       a_cell->a = '?';
@@ -1011,7 +1012,7 @@ CELL__interpret    (
    /*---(check for blank)----------------*/
    DEBUG_CELL   yLOG_point   ("length"    , a_cell->l);
    if      (strcmp (a_cell->s, "") == 0) {
-      a_cell->t = '-';
+      a_cell->t = CTYPE_BLANK;
       a_cell->l = 0;
       a_cell->a = '?';
       DEBUG_CELL   yLOG_complex ("type"      , "empty which is an %c", a_cell->t);
@@ -1031,13 +1032,12 @@ CELL__interpret    (
     */
    if (a_cell->l > 1 && x_pre == '0') {
       rc = CELL__altbase (a_cell->s, &x_value);
-      a_cell->t     = 's';
       if (rc >= 0) {
-         a_cell->t     = 'n';
+         a_cell->t     = CTYPE_NUM;
          a_cell->v_num = x_value;
+         DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+         return 0;
       }
-      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-      return 0;
    }
    /*---(check for merge)----------------*/
    if (a_cell->l == 1 && x_pre == '<') {
@@ -1045,15 +1045,16 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
       a_cell->a = '+';
       a_cell->f = '+';
-      for (i = a_cell->col; i >= 0; --i) {
+      for (i = a_cell->col - 1; i >= 0; --i) {
          x_merged = LOC_cell (a_cell->tab, i, a_cell->row);
          if (x_merged == NULL)  {
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
             return 0; /* base not there yet */
          }
-         if (x_merged->t == CTYPE_MERGE)  continue;
+         if (x_merged->t != CTYPE_MERGE)  continue;
          break;
       }
+      a_cell->t = CTYPE_MERGE;
       rc = DEP_create (DEP_MERGED, x_merged, a_cell);
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
@@ -1064,12 +1065,6 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
       a_cell->t = CELL__ftype (x_pre);
       DEBUG_CELL   yLOG_char    ("ftype"     , a_cell->t);
-      /*> switch (x_pre) {                                                            <* 
-       *> case '=' : a_cell->t = CTYPE_FORM;    break;                                <* 
-       *> case '&' : a_cell->t = CTYPE_RANGE;   break;                                <* 
-       *> case '#' : a_cell->t = CTYPE_MOD;     break;                                <* 
-       *> case '~' : a_cell->t = CTYPE_FLIKE;   break;                                <* 
-       *> }                                                                           <*/
       strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
       DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
       a_cell->l = strlen  (a_cell->s);
@@ -1133,7 +1128,7 @@ CELL__interpret    (
          DEBUG_CELL   yLOG_info    ("CALC"      , "call calc eval");
          rc = CALC_eval   (a_cell);
          if (rc < 0) {
-            a_cell->t = 'E';
+            a_cell->t = CTYPE_ERROR;
             a_cell->v_str = strndup ("#.eval", MAX_STR);
             CALC_free   (a_cell);
             DEP_cleanse (a_cell);
@@ -1145,14 +1140,14 @@ CELL__interpret    (
       return 0;
    }
    /*---(check for non-numbers)----------*/
-   a_cell->t = 'n';
+   a_cell->t = CTYPE_NUM;
    for (i = 0; i < len; ++i) {
       if (strchr(sv_numeric, temp[i])  != 0) continue;
-      a_cell->t = 's';
+      a_cell->t = CTYPE_STR;
    }
    /*---(therefore, number)-----------*/
-   if (a_cell->t == 'n') {
-      a_cell->v_num = atof(a_cell->s);
+   if (a_cell->t == CTYPE_NUM) {
+      a_cell->v_num = atof (a_cell->s);
       if (a_cell->a == '?')  a_cell->a = '>';
       DEBUG_CELL   yLOG_complex ("type"      , "numeric which is an %c", a_cell->t);
    }
@@ -1160,6 +1155,14 @@ CELL__interpret    (
    else {
       if (a_cell->a == '?')  a_cell->a = '<';
       DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
+      x_col   = a_cell->col + 1;
+      x_next = tab->sheet[x_col][a_cell->row];
+      while (x_next != NULL && x_col <= ECOL && x_next->a == '+') {
+         ++x_col;
+         x_next->t = CTYPE_MERGE;
+         rc = DEP_create (DEP_MERGED, a_cell, x_next);
+         x_next = tab->sheet[x_col][a_cell->row];
+      }
    }
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);

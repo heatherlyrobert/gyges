@@ -782,7 +782,7 @@ CURS_cell          (int a_col, int a_row)
    if (curr != NULL) {
       xcol = curr->col + 1;
       next = tab->sheet[xcol][a_row];
-      while (next != NULL && xcol <= ECOL && next->a == '+') {
+      while (next != NULL && xcol <= ECOL && next->t == CTYPE_MERGE) {
          xmax += tab->cols[next->col].w;
          ++xcol;
          next = tab->sheet[xcol][a_row];
@@ -793,7 +793,7 @@ CURS_cell          (int a_col, int a_row)
       xcol = curr->col + 1;
       next = tab->sheet[xcol][a_row];
       while  (next != NULL) {
-         if (next->a != '+') break;
+         if (next->t != CTYPE_MERGE) break;
          if (xcol == CCOL) {
             attron (S_COLOR_CURRENT);
             break;
