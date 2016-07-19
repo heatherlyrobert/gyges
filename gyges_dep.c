@@ -201,6 +201,8 @@ DEP_init           (void)
    dhead  = NULL;
    dtail  = NULL;
    ndep   = 0;
+   strlcpy (S_DEP_REQS, "", 10);
+   strlcpy (S_DEP_PROS, "", 10);
    /*---(complete info table)------------*/
    --rce;
    for (i = 0; i < MAX_DEPTYPE; ++i) {

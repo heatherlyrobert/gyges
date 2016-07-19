@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3g"
-#define     VER_TXT   "saves and loads merged cell correctly now"
+#define     VER_NUM   "1.3h"
+#define     VER_TXT   "cell_init clean out global strings first for unit test"
 
 
 

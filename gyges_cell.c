@@ -491,7 +491,14 @@ CELL_init          (void)
    strcat (sv_formats, sv_special);
    strcat (sv_formats, sv_times);
    strcat (sv_formats, sv_fillers);
-
+   strlcpy (G_CELL_ALL , "", 20);
+   strlcpy (G_CELL_RPN , "", 20);
+   strlcpy (G_CELL_CALC, "", 20);
+   strlcpy (G_CELL_DEPS, "", 20);
+   strlcpy (G_CELL_NUM , "", 20);
+   strlcpy (G_CELL_STR , "", 20);
+   strlcpy (G_CELL_ERR , "", 20);
+   strlcpy (G_CELL_FPRE, "", 20);
    /*---(complete info table)------------*/
    --rce;
    for (i = 0; i < MAX_CELLTYPE; ++i) {
