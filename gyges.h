@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3j"
-#define     VER_TXT   "fixed unit testing curiousity due to missing prototypes"
+#define     VER_NUM   "1.3k"
+#define     VER_TXT   "broke out merged cell printables to make easier to handle"
 
 
 

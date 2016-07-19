@@ -731,7 +731,7 @@ CURS_cell          (int a_col, int a_row)
    int       xcol      = 0;
    char      xdisp [MAX_STR];
    /*---(check for merges)-----------------*/
-   if (curr != NULL && curr->a == '+')  return 0;
+   /*> if (curr != NULL && curr->a == '+')  return 0;                                 <*/
    /*---(identify cell)--------------------*/
    if (curr != NULL) {
       LOC_label  (curr, l);
@@ -778,44 +778,48 @@ CURS_cell          (int a_col, int a_row)
       else                                      attron (S_COLOR_STRING );
    }
    /*---(check max width)------------------*/
-   xmax = tab->cols[a_col].w;
-   if (curr != NULL) {
-      xcol = curr->col + 1;
-      next = tab->sheet[xcol][a_row];
-      while (next != NULL && xcol <= ECOL && next->t == CTYPE_MERGE) {
-         xmax += tab->cols[next->col].w;
-         ++xcol;
-         next = tab->sheet[xcol][a_row];
-      }
-   }
+   /*> xmax = tab->cols[a_col].w;                                                     <* 
+    *> if (curr != NULL) {                                                            <* 
+    *>    xcol = curr->col + 1;                                                       <* 
+    *>    next = tab->sheet[xcol][a_row];                                             <* 
+    *>    while (next != NULL && xcol <= ECOL && next->t == CTYPE_MERGE) {            <* 
+    *>       xmax += tab->cols[next->col].w;                                          <* 
+    *>       ++xcol;                                                                  <* 
+    *>       next = tab->sheet[xcol][a_row];                                          <* 
+    *>    }                                                                           <* 
+    *> }                                                                              <*/
    /*---(check for current)----------------*/
-   if (curr!= NULL && a_row == CROW) {
-      xcol = curr->col + 1;
-      next = tab->sheet[xcol][a_row];
-      while  (next != NULL) {
-         if (next->t != CTYPE_MERGE) break;
-         if (xcol == CCOL) {
-            attron (S_COLOR_CURRENT);
-            break;
-         }
-         ++xcol;
-         next = tab->sheet[xcol][a_row];
-      }
-   }
+   /*> if (curr!= NULL && a_row == CROW) {                                            <* 
+    *>    xcol = curr->col + 1;                                                       <* 
+    *>    next = tab->sheet[xcol][a_row];                                             <* 
+    *>    while  (next != NULL) {                                                     <* 
+    *>       if (next->t != CTYPE_MERGE) break;                                       <* 
+    *>       if (xcol == CCOL) {                                                      <* 
+    *>          attron (S_COLOR_CURRENT);                                             <* 
+    *>          break;                                                                <* 
+    *>       }                                                                        <* 
+    *>       ++xcol;                                                                  <* 
+    *>       next = tab->sheet[xcol][a_row];                                          <* 
+    *>    }                                                                           <* 
+    *> }                                                                              <*/
    /*---(display cell)---------------------*/
-   for (i = 0; i < tab->rows[a_row].h; ++i) {
-      if (curr == NULL || curr->p == NULL) {
-         mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);
-      } else {
-         if (i == 0) {
-            sprintf (xdisp, "%-*.*s", xmax, xmax, curr->p);
-            if (xmax < strlen(curr->p)) xdisp[xmax - 1] = '>';
-            mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, xdisp);
-         } else {
-            mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);
-         }
-      }
-   }
+   if (curr == NULL || curr->p == NULL) 
+      mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);
+   else
+      mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, curr->p);
+   /*> for (i = 0; i < tab->rows[a_row].h; ++i) {                                                                                <* 
+    *>    if (curr == NULL || curr->p == NULL) {                                                                                 <* 
+    *>       mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);      <* 
+    *>    } else {                                                                                                               <* 
+    *>       if (i == 0) {                                                                                                       <* 
+    *>          sprintf (xdisp, "%-*.*s", xmax, xmax, curr->p);                                                                  <* 
+    *>          if (xmax < strlen(curr->p)) xdisp[xmax - 1] = '>';                                                               <* 
+    *>          mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, xdisp);                                                    <* 
+    *>       } else {                                                                                                            <* 
+    *>          mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);   <* 
+    *>       }                                                                                                                   <* 
+    *>    }                                                                                                                      <* 
+    *> }                                                                                                                         <*/
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-------------------------*/

@@ -1983,16 +1983,20 @@ CELL__print_number (
 char               /* PURPOSE : create a curses printable image of the cell --*/
 CELL_printable     (tCELL *a_curr) {
    /*---(locals)-------------------------*/
-   int       len   = 0;                 /* string length                      */
-   int       w     = 0;                 /* available printing width           */
-   int       wa    = 0;                 /* adjusted width                     */
-   int       pad1  = 0;                 /* leading edge padding               */
-   int       pad2  = 0;                 /* trailing edge padding              */
-   int       start = 0;                 /* starting character to print        */
-   char      x_temp  [MAX_STR] = "";    /* temp working string                */
-   char      x_final [MAX_STR] = "";    /* temp working string                */
-   char     *p   = NULL;                /* final printable string             */
-   char     *x_filler = empty;
+   int         len         = 0;             /* string length                  */
+   int         w           = 0;             /* available printing width       */
+   int         wa          = 0;             /* adjusted width                 */
+   int         pad1        = 0;             /* leading edge padding           */
+   int         pad2        = 0;             /* trailing edge padding          */
+   int         start       = 0;             /* starting character to print    */
+   char        x_temp      [MAX_STR] = "";  /* temp working string            */
+   char        x_final     [MAX_STR] = "";  /* temp working string            */
+   char       *p           = NULL;          /* final printable string         */
+   char       *x_filler    = empty;
+   int         x_merge     = 0;             /* merged cells to right          */
+   tCELL      *x_next      = NULL;
+   int         i           = 0;
+   char       *pp          = NULL;
    /*---(defense)------------------------*/
    if (a_curr    == NULL) return 0;     /* cell does not exist                */
    if (a_curr->s == NULL) return 0;     /* nothing to do without source       */
@@ -2003,9 +2007,9 @@ CELL_printable     (tCELL *a_curr) {
    DEBUG_CELL  yLOG_schar  (a_curr->t);
    DEBUG_CELL  yLOG_schar  (a_curr->f);
    /*---(check for hidden)---------------*/
-   if (a_curr->t == CTYPE_MERGE) {             /* merged cell, nothing to show       */
-      if (a_curr->p != NULL)  free (a_curr->p);
-      a_curr->p = NULL;
+   if (a_curr->a == '+') {
+      DEBUG_CELL  yLOG_snote  ("merged cell");
+      DEBUG_CELL  yLOG_sexit  (__FUNCTION__);
       return 0;
    }
    /*---(numbers)------------------------*/
@@ -2030,8 +2034,11 @@ CELL_printable     (tCELL *a_curr) {
       else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
       else if (a_curr->t == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);
       else {
-         if (a_curr->p != NULL)  free (a_curr->p);
-         a_curr->p = NULL;
+         if (a_curr->p != NULL) {
+            free (a_curr->p);
+            a_curr->p = NULL;
+         }
+         DEBUG_CELL  yLOG_sexit  (__FUNCTION__);
          return 0;
       }
    }
@@ -2060,13 +2067,13 @@ CELL_printable     (tCELL *a_curr) {
    /*---(indented formats)---------------*/
    DEBUG_CELL  yLOG_sinfo  ("x", x_temp);
    /*---(merge formats)------------------*/
-   int i;
    w = tabs[a_curr->tab].cols[a_curr->col].w;
    /*> w = tab->cols[a_curr->col].w;                                                  <*/
    for (i = a_curr->col + 1; i < tabs[a_curr->tab].ncol; ++i) {
       if (tabs[a_curr->tab].sheet[i][a_curr->row]    == NULL)         break;
       if (tabs[a_curr->tab].sheet[i][a_curr->row]->t != CTYPE_MERGE)  break;
       w    += tabs[a_curr->tab].cols[i].w;
+      ++x_merge;
    }
    DEBUG_CELL  yLOG_svalue ("w", w);
    wa    = w - 1;
@@ -2090,7 +2097,10 @@ CELL_printable     (tCELL *a_curr) {
    start = (len / 2) - ((wa - 1) / 2);
    /*---(make printable)-----------------*/
    /*---(prepare)------*/
-   if (a_curr->p != NULL) free (a_curr->p);
+   if (a_curr->p != NULL) {
+      free (a_curr->p);
+      a_curr->p = NULL;
+   }
    while (p == NULL)  p = (char*) malloc(w + 1);
    /*---(lefty)--------*/
    if      (strchr("<[{",   a_curr->a) != 0) {
@@ -2121,12 +2131,32 @@ CELL_printable     (tCELL *a_curr) {
       else          snprintf(p, w + 1, "<%*.*s> ",                     wa - 2, wa - 2, x_final + start);
    }
    /*---(save)---------*/
-   a_curr->p = p;
-   /*> DEBUG_CELL  printf("prt=%s\n", a_curr->p);                                     <*/
-   DEBUG_CELL  yLOG_sinfo  (">=", p);
+   DEBUG_CELL  yLOG_svalue ("x_merge", x_merge);
+   DEBUG_CELL  yLOG_sinfo  ("p"      , p);
+   if (x_merge == 0) {
+      a_curr->p = p;
+   } else {
+      wa = 0;
+      for (i = 0; i <= x_merge; ++i) {
+         w     = tabs[a_curr->tab].cols[i].w;
+         DEBUG_CELL  yLOG_svalue ("#w", w);
+         while (pp == NULL)  pp = (char*) malloc(w + 1);
+         sprintf (pp, "%-*.*s", w, w, p + wa);
+         DEBUG_CELL  yLOG_sinfo  ("#1p", pp);
+         x_next = tabs[a_curr->tab].sheet[a_curr->col + i][a_curr->row];
+         if (x_next->p != NULL) {
+            free (x_next->p);
+            x_next->p = NULL;
+         }
+         x_next->p = pp;
+         pp    = NULL;
+         wa   += w;
+      }
+      free (p);
+      p = NULL;
+   }
    /*---(ending)-------------------------*/
    DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
-   /*> DEBUG_CELL  printf("CELL_printable :: end\n");                                 <*/
    /*---(complete)-----------------------*/
    return 0;
 }
