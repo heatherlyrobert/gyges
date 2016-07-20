@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3m"
-#define     VER_TXT   "added finding merged cells to the right during interpret"
+#define     VER_NUM   "1.3n"
+#define     VER_TXT   "many changes for deleting and changing merges"
 
 
 
@@ -507,9 +507,10 @@ extern char G_CELL_FPRE   [20];     /* formula prefixes                       */
 #define     CTYPE_MLIKE  'L'        /* like another cell's modified string    */
 #define     CTYPE_RANGE  'p'        /* range pointer                          */
 #define     CTYPE_ADDR   'a'        /* address pointer                        */
+#define     CTYPE_SOURCE '>'        /* source of merged cells content         */
+#define     CTYPE_MERGE  '+'        /* merged cell (type of blank)            */
 #define     CTYPE_WARN   'w'        /* warning status                         */
 #define     CTYPE_ERROR  'E'        /* error status                           */
-#define     CTYPE_MERGE  '+'        /* merged cell (type of blank)            */
 
 
 
@@ -1016,6 +1017,8 @@ char      DEP_purge          /* ------ */  (void);
 char      DEP_create         /* ------ */  (char a_type, tCELL *a_source, tCELL *a_target);
 char      DEP_delete         /* ------ */  (char a_type, tCELL *a_me, tCELL *a_other);
 char      DEP_delcalcref     (tCELL *a_source);
+tCELL    *DEP_delmerge       (tCELL *a_source);
+char      DEP_delmergeroot   (tCELL *a_target);
 
 char      DEP_range          /* ------ */  (tCELL *a_from, int a_btab, int a_bcol, int a_brow, int a_etab, int a_ecol, int a_erow);
 char      DEP_cleanse        /* ------ */  (tCELL *a_curr);

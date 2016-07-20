@@ -646,11 +646,89 @@ DEP_create         (
    return 0;
 }
 
-char         /*--> remove a merged cell dependency -------[ ------ [ ------ ]-*/
+char         /*--> remove source of merge ----------------[ ------ [ ------ ]-*/
+DEP_delmergeroot   (tCELL *a_target)
+{
+   /*---(header)-------------------------*//*---------------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tCELL      *x_source    = NULL;
+   /*---(defense: null pointers)---------*/
+   DEBUG_DEPS   yLOG_info    ("DEFENSES"  , "make sure this is processable");
+   DEBUG_DEPS   yLOG_point   ("target"    , a_target);
+   --rce;  if (a_target     == NULL)   {
+      DEBUG_DEPS   yLOG_value   ("FAILED"    , rce);
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_info    ("label"     , a_target->label);
+   x_source = LOC_cell (a_target->tab, a_target->col + 1, a_target->row);
+   --rce;  if (x_source    == NULL       )  return rce;
+   --rce;  if (x_source->t != CTYPE_MERGE)  return rce;
+   DEP_delmerge (x_source);
+   return 0;
+}
+
+tCELL*       /*--> remove a merged cell dependency -------[ ------ [ ------ ]-*/
 DEP_delmerge       (
       /*----------+-----------+-----------------------------------------------*/
-      tCELL      *a_target)   /* cell with the calculation                    */
+      tCELL      *a_source)   /* cell with the calculation                    */
 {  /*---(design notes)--------------------------------------------------------*/
+   /*---(header)-------------------------*//*---------------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   tDEP       *x_next      = NULL;
+   char        rc          =    0;
+   int         i           = 0;
+   tCELL      *x_target    = NULL;
+   tCELL      *x_testing   = NULL;
+   /*---(defense: null pointers)---------*/
+   DEBUG_DEPS   yLOG_info    ("DEFENSES"  , "make sure this is processable");
+   DEBUG_DEPS   yLOG_point   ("source"    , a_source);
+   --rce;  if (a_source     == NULL)   {
+      DEBUG_DEPS   yLOG_value   ("FAILED"    , rce);
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
+   DEBUG_DEPS   yLOG_info    ("label"     , a_source->label);
+   /*---(find merge source)--------------*/
+   --rce;
+   x_next = a_source->provides;
+   DEBUG_DEPS   yLOG_point   ("next"      , x_next);
+   while (x_next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("target"    , x_next->target->label);
+      DEBUG_DEPS   yLOG_char    ("type"      , x_next->type);
+      if (x_next->type != DEP_EMPTY) {
+         DEBUG_DEPS   yLOG_note    ("wrong type, skipping");
+         x_next = x_next->next;
+         DEBUG_DEPS   yLOG_point   ("next"      , x_next);
+         continue;
+      }
+      DEBUG_DEPS   yLOG_note    ("FOUND TARGET");
+      x_target = x_next->target;
+      break;
+   }
+   if (x_target == NULL)  return NULL;
+   /*---(delete ref and to right)--------*/
+   for (i = a_source->col; i < NCOL; ++i) {
+      DEBUG_DEPS   yLOG_value   ("check col" , i);
+      x_testing = LOC_cell (a_source->tab, i, a_source->row);
+      DEBUG_DEPS   yLOG_point   ("cell"      , x_testing);
+      if (x_testing            == NULL       )  break;
+      DEBUG_DEPS   yLOG_info    ("label"     , x_testing->label);
+      DEBUG_DEPS   yLOG_char    ("type"      , x_testing->t);
+      if (x_testing->t != CTYPE_MERGE)  break;
+      DEBUG_DEPS   yLOG_note    ("wack connection");
+      DEP_delete (DEP_MERGED, x_target, x_testing);
+      x_testing->t = 's';
+      CELL_printable (x_testing);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return x_target;
 }
 
 char         /*--> remove a two-way dependency -----------[ ------ [ ------ ]-*/

@@ -162,6 +162,7 @@ struct cCELL_INFO {
    {  'L', "mlike"     , '~', 'y', 'y', 'y', '#', "string formula derived from another cell"           ,    0 },
    {  'p', "range"     , '&', 'y', 'y', 'y', '-', "range pointer to use in other formulas"             ,    0 },
    {  'a', "address"   , '&', 'y', 'y', 'y', '-', "address pointer to use in other formulas"           ,    0 },
+   {  '>', "source"    , ' ', '-', '-', 'y', '-', "content used to fill merged cells"                  ,    0 },
    {  '+', "merged"    , '<', '-', '-', 'y', '-', "empty cell used to present merged information"      ,    0 },
    {  'w', "warning"   , ' ', '-', '-', '-', 'e', "cell contains a warning"                            ,    0 },
    {  'E', "error"     , ' ', 'y', 'y', 'y', 'e', "cell contains an error"                             ,    0 },
@@ -600,6 +601,7 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    char        rce         = -10;
    char        rc          = 0;
    tCELL      *curr        = NULL;
+   tCELL      *x_other     = NULL;
    char        x_before    [MAX_STR]   = "[<{(null)}>]";
    char        x_after     [MAX_STR]   = "[<{(null)}>]";
    /*---(defenses)-----------------------*/
@@ -618,6 +620,16 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    /*---(history)------------------------*/
    if (a_mode == CHG_INPUT   )  HIST_change ("delete", a_tab, a_col, a_row, x_before, x_after);
    if (a_mode == CHG_INPUTAND)  HIST_change ("DELETE", a_tab, a_col, a_row, x_before, x_after);
+   /*---(check on merges)-------------*/
+   if (curr->t == CTYPE_MERGE) {
+      DEBUG_SEL    yLOG_note    ("remove merge dependencies");
+      x_other = DEP_delmerge (curr);
+      curr->a = '<';
+      curr->f = '?';
+   } else  {
+      DEBUG_SEL    yLOG_note    ("remove merge root");
+      DEP_delmergeroot (curr);
+   }
    /*---(clear it out)----------------*/
    DEBUG_SEL    yLOG_complex ("details"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, curr->tab, curr->col, curr->row, curr->t, curr->u);
    rc = CELL__wipe   (curr);
@@ -645,6 +657,8 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
       DEBUG_SEL    yLOG_value   ("change rc" , rc);
       if (curr == NULL)    return rce - 2;
    }
+   /*---(update former merges)-----------*/
+   if (x_other != NULL)  CELL_printable (x_other);
    /*---(complete)--------------------*/
    DEBUG_SEL    yLOG_exit    (__FUNCTION__);
    return 0;
@@ -688,6 +702,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    int         len         =    0;
    char        rce         =  -10;
    char        rc          =    0;
+   tCELL      *x_other     = NULL;
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_complex ("location"  , "tab %4d, col %4d, row %4d", a_tab, a_col, a_row);
@@ -712,6 +727,16 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(cell present)-------------------*/
    curr = tabs[a_tab].sheet[a_col][a_row];
    DEBUG_CELL   yLOG_point   ("curr cell" , curr);
+   /*---(check merge)--------------------*/
+   if (curr != NULL) {
+      if (curr->t == CTYPE_MERGE) {
+         x_other = DEP_delmerge (curr);
+         curr->a = '<';
+         curr->f = '?';
+      } else if (a_source == NULL || strlen (a_source) == 0) {
+         DEP_delmergeroot (curr);
+      }
+   }
    /*---(wipe or create)-----------------*/
    strcpy (s_bsource, "[<{(null)}>]");
    strcpy (s_bformat, "???");
@@ -742,6 +767,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    DEBUG_CELL   yLOG_note    ("change source and length values");
    curr->s = strndup (a_source, MAX_STR);
    curr->l = strlen  (curr->s);
+   /*---(interpret)----------------------*/
    DEBUG_CELL   yLOG_note    ("interpret new contents");
    rc = CELL__interpret (curr);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
@@ -768,6 +794,8 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    }
    /*---(process likes)------------------*/
    DEP_updatelikes (curr);
+   /*---(update former merges)-----------*/
+   if (x_other != NULL)  CELL_printable (x_other);
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return curr;
@@ -1057,10 +1085,11 @@ CELL__interpret    (
       for (i = a_cell->col - 1; i >= 0; --i) {
          x_merged = LOC_cell (a_cell->tab, i, a_cell->row);
          if (x_merged == NULL)  {
+            a_cell->t = CTYPE_STR;
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
             return 0; /* base not there yet */
          }
-         if (x_merged->t != CTYPE_MERGE)  break;
+         if (x_merged->a != '+')  break;
       }
       /*---(update)----------------------*/
       a_cell->t = CTYPE_MERGE;
@@ -1070,7 +1099,6 @@ CELL__interpret    (
          x_next = LOC_cell (a_cell->tab, i, a_cell->row);
          if (x_next    == NULL       )  break;
          if (x_next->a != '+'        )  break;
-         if (x_next->t == CTYPE_MERGE)  break;
          x_next->t = CTYPE_MERGE;
          rc = DEP_create (DEP_MERGED, x_merged, x_next);
       }
@@ -2018,7 +2046,7 @@ CELL_printable     (tCELL *a_curr) {
    DEBUG_CELL  yLOG_schar  (a_curr->t);
    DEBUG_CELL  yLOG_schar  (a_curr->f);
    /*---(check for hidden)---------------*/
-   if (a_curr->a == '+') {
+   if (a_curr->t == CTYPE_MERGE) {
       DEBUG_CELL  yLOG_snote  ("merged cell");
       DEBUG_CELL  yLOG_sexit  (__FUNCTION__);
       return 0;
@@ -2140,6 +2168,9 @@ CELL_printable     (tCELL *a_curr) {
          else                                 snprintf(p, w + 1, "%.*s%-*.*s%.*s ",  pad1, x_filler, len, len, x_final, pad2, x_filler);
       }
       else          snprintf(p, w + 1, "<%*.*s> ",                     wa - 2, wa - 2, x_final + start);
+      /*---(unclaimed merge cell)------*/
+   } else if (strchr("+", a_curr->a) != 0) {
+      snprintf(p, w + 1, "%s%.*s ",   x_final, wa - len, empty);
    }
    /*---(save)---------*/
    DEBUG_CELL  yLOG_svalue ("x_merge", x_merge);
