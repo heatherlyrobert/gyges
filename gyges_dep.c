@@ -646,6 +646,13 @@ DEP_create         (
    return 0;
 }
 
+char         /*--> remove a merged cell dependency -------[ ------ [ ------ ]-*/
+DEP_delmerge       (
+      /*----------+-----------+-----------------------------------------------*/
+      tCELL      *a_target)   /* cell with the calculation                    */
+{  /*---(design notes)--------------------------------------------------------*/
+}
+
 char         /*--> remove a two-way dependency -----------[ ------ [ ------ ]-*/
 DEP_delcalcref     (
       /*----------+-----------+-----------------------------------------------*/

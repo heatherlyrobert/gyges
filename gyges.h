@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3l"
-#define     VER_TXT   "fixed merged cell adjustment to column width changes"
+#define     VER_NUM   "1.3m"
+#define     VER_TXT   "added finding merged cells to the right during interpret"
 
 
 

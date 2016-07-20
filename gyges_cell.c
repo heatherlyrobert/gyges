@@ -712,6 +712,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(cell present)-------------------*/
    curr = tabs[a_tab].sheet[a_col][a_row];
    DEBUG_CELL   yLOG_point   ("curr cell" , curr);
+   /*---(wipe or create)-----------------*/
    strcpy (s_bsource, "[<{(null)}>]");
    strcpy (s_bformat, "???");
    if (curr != NULL) {
@@ -1052,17 +1053,27 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
       a_cell->a = '+';
       a_cell->f = '+';
+      /*---(look to the left)------------*/
       for (i = a_cell->col - 1; i >= 0; --i) {
          x_merged = LOC_cell (a_cell->tab, i, a_cell->row);
          if (x_merged == NULL)  {
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
             return 0; /* base not there yet */
          }
-         if (x_merged->t != CTYPE_MERGE)  continue;
-         break;
+         if (x_merged->t != CTYPE_MERGE)  break;
       }
+      /*---(update)----------------------*/
       a_cell->t = CTYPE_MERGE;
       rc = DEP_create (DEP_MERGED, x_merged, a_cell);
+      /*---(look to the right)-----------*/
+      for (i = a_cell->col + 1; i < ECOL; ++i) {
+         x_next = LOC_cell (a_cell->tab, i, a_cell->row);
+         if (x_next    == NULL       )  break;
+         if (x_next->a != '+'        )  break;
+         if (x_next->t == CTYPE_MERGE)  break;
+         x_next->t = CTYPE_MERGE;
+         rc = DEP_create (DEP_MERGED, x_merged, x_next);
+      }
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }

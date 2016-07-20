@@ -7536,6 +7536,7 @@ SCRP          v21  (s_cell) verify cell width setting                         
      get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0m11"                                               s_equal     s_celln print    : (   8) :second  :                                   
      get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (   8) :a_long> :                                   
 
+
    COND       v21  select the first cell                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 
@@ -8022,6 +8023,96 @@ SCRP          v21  single cell string formatting                              
      exec     v21  change the format                    CELL_format           CHG_INPUT, 'r'                                                          i_equal     0                                                                      
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=_ d=0 a=} c=  0 r=  0 d=  0                   
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[_______________super calaf__]:             
+
+   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.053))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.054))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (s_cell) verify merged cell formatting                       CELL_printable                                                          ((28.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
+
+   COND       v21  add a long cell                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10, 10, "testing one, two, three"                         p_exists    0                                                                      
+
+   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0l11"                                               s_equal     s_celln source   : (----) ::                                           
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0m11"                                               s_equal     s_celln source   : (----) ::                                           
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0n11"                                               s_equal     s_celln source   : (----) ::                                           
+
+   COND       v21  check cell formatting                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0k11"                                               s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0l11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0m11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0n11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   COND       v21  check cell printables                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (   8) :testin> :                                   
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0l11"                                               s_equal     s_celln print    : (----) ::                                           
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0m11"                                               s_equal     s_celln print    : (----) ::                                           
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
+
+   COND       v21  add a merge marker on next cell                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 10, "<"                                               p_exists    0                                                                      
+
+   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0l11"                                               s_equal     s_celln source   : (   1) :<:                                          
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0m11"                                               s_equal     s_celln source   : (----) ::                                           
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0n11"                                               s_equal     s_celln source   : (----) ::                                           
+
+   COND       v21  check cell formatting                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0k11"                                               s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0l11"                                               s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0m11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0n11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   COND       v21  check cell printables                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (   8) :testing :                                   
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0l11"                                               s_equal     s_celln print    : (   8) :one, t> :                                   
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0m11"                                               s_equal     s_celln print    : (----) ::                                           
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
+
+   COND       v21  take away merge marker, add other content                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 10, "NOPE"                                            p_exists    0                                                                      
+
+   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0l11"                                               s_equal     s_celln source   : (   4) :NOPE:                                       
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0m11"                                               s_equal     s_celln source   : (----) ::                                           
+     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0n11"                                               s_equal     s_celln source   : (----) ::                                           
+
+   COND       v21  check cell formatting                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0k11"                                               s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0l11"                                               s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0m11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0n11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   COND       v21  check cell printables                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (   8) :testin> :                                   
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0l11"                                               s_equal     s_celln print    : (   8) :NOPE    :                                   
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0m11"                                               s_equal     s_celln print    : (----) ::                                           
+     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
+
+
+
 
    COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.053))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
