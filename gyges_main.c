@@ -48,11 +48,6 @@ main (int argc, char *argv[])
       /*---(log)-------------------------*/
       ++updates;
       DEBUG_LOOP  yLOG_complex ("update"    , "loop = %6d, val = %4d, cch = %c", updates, cch, (cch > 32) ? cch : '-');
-      /*---(create command display)------*/
-      snprintf (cmd,   9, "%02x", cch);
-      /*> if      (cch == '%') snprintf (cmd,   9, "  %% ");                          <* 
-       *> else if (sch == '%') snprintf (cmd,   9, "%%%c ", cch);                     <* 
-       *> else                 snprintf (cmd,   9, "%c%c ", sch, cch);                <*/
       /*---(handle keystroke)------------*/
       x_savemode = my.mode;
       switch (my.mode) {
@@ -71,6 +66,13 @@ main (int argc, char *argv[])
       case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
       }
+      /*---(translate unprintable)-------*/
+      if      (cch ==  0 )  strcpy   (cmd,   "n/a");
+      else if (cch == 10 )  strcpy   (cmd,   "ret");
+      else if (cch == 27 )  strcpy   (cmd,   "esc");
+      else if (cch <= 32 )  snprintf (cmd,   9, "x%02x", cch);
+      else if (sch == ' ')  snprintf (cmd,   9, "%c   ", cch);
+      else                  snprintf (cmd,   9, "%c%c ", sch, cch);
       /*---(setup for next keystroke)----*/
       if      (rc == 0)    sch = ' ';
       else if (rc >  0)    sch = cch;
@@ -79,10 +81,6 @@ main (int argc, char *argv[])
       if   (x_savemode != my.mode || my.mode == MODE_COMMAND) {
          MODE_message (my.mode);
       }
-      /*---(translate unprintable)-------*/
-      if      (cch ==  0) strcpy  (cmd,   "n/a");
-      else if (cch == 10) strcpy  (cmd,   "ret");
-      else if (cch == 27) strcpy  (cmd,   "esc");
       /*---(done)------------------------*/
    }
    DEBUG_TOPS  yLOG_break   ();
