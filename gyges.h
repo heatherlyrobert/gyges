@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3n"
-#define     VER_TXT   "many changes for deleting and changing merges"
+#define     VER_NUM   "1.3o"
+#define     VER_TXT   "updates to merged cells in unit testing"
 
 
 
