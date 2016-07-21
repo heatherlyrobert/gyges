@@ -373,6 +373,8 @@ REG_mode           (int a_prev, int a_curr)
                   break;
       case  'V' : REG_valuesout('y');
                   break;
+      case  ',' : REG_valuesout(',');
+                  break;
       default   : my.mode = MODE_MAP;
                   REG_set ('"');
                   return rce;
@@ -748,19 +750,26 @@ REG_valuesout     (char a_trim)
       if (x_row != x_rowsave)  fprintf (f, "\n");
       /*---(fill in blank cells)---------*/
       if (curr == NULL) {
-         if (a_trim != 'y') {
-            w = tabs [x_tab].cols [x_col].w;
-            fprintf (f, "%*.*s", w, w, empty);
+         w = tabs [x_tab].cols [x_col].w;
+         switch (a_trim) {
+         case '-' : fprintf (f, "%*.*s", w, w, empty);
+                    break;
+         case ',' : fprintf (f, "\"\",");
+                    break;
+         case 'y' : break;
          }
       }
       /*---(write filled cells)----------*/
       else {
-         if (a_trim != 'y') {
-            fprintf (f, "%s", curr->p);
-         } else {
-            strlcpy  (x_temp, curr->p, MAX_STR);
-            strltrim (x_temp, ySTR_BOTH, MAX_STR);
-            fprintf (f, "%s ", x_temp);
+         strlcpy  (x_temp, curr->p, MAX_STR);
+         strltrim (x_temp, ySTR_BOTH, MAX_STR);
+         switch (a_trim) {
+         case '-' : fprintf (f, "%s", curr->p);
+                    break;
+         case ',' : fprintf (f, "\"%s\",", x_temp);
+                    break;
+         case 'y' : fprintf (f, "%s ", x_temp);
+                    break;
          }
       }
       x_rowsave = x_row;

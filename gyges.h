@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3q"
-#define     VER_TXT   "added register writing values to vi_clip.txt file"
+#define     VER_NUM   "1.3r"
+#define     VER_TXT   "added register writing values as csv format"
 
 
 
