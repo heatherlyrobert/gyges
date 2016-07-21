@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3p"
-#define     VER_TXT   "better keypress reporting on screen for debugging"
+#define     VER_NUM   "1.3q"
+#define     VER_TXT   "added register writing values to vi_clip.txt file"
 
 
 
@@ -187,7 +187,6 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     LEN_RECD    2000
 #define     LEN_STR     200
 /*---(registers)----------------------*/
-#define     MAX_REG     100
 
 
 char        reqs        [MAX_STR];
@@ -909,6 +908,8 @@ char      MARK_set           (char  a_mark);
 char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);
 char      MARK_listplus      (char *a_list);
+char      MARK_write         (FILE *a_file);
+char      MARK_read          (char *a_recd);
 
 
 /*===[ REG  ]=================================================================*/
@@ -929,7 +930,7 @@ char      REG_copy           (void);
 char      REG_cut            (void);
 char      REG_append         (void);
 char      REG_paste          (char a_adapt);
-char      REG_valuesout      (void);
+char      REG_valuesout      (char a_trim);
 
 char      REG_file           (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);

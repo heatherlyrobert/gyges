@@ -25,7 +25,7 @@ struct cMODE_INFO {
    { ':' , 'y', '-', ' ', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
    { 'r' , '-', 'y', ' ', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
-   { '"' , '-', 'y', 'V', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z  pull=yYxXdD+vV  push=pPrRaAiIoObB  mtce=#?!  abrt={esc}"                     },
+   { '"' , '-', 'y', 'V', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-z-+  pull=yYxXdD  -/+=vV,sSfF  push=pPrRaAiIoObB  mtce=#?!"                     },
    { ',' , '-', 'y', 'M', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
    { '@' , '-', 'y', ' ', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
    { '$' , '-', 'y', ' ', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
@@ -235,7 +235,6 @@ MODE_map           (
       case 'v'      : SEL_start (CTAB, CCOL, CROW, SEL_FROM);   break;
       case 'V'      : SEL_start (CTAB, CCOL, CROW, SEL_CUM);    break;
       case 'y'      : REG_copy  ();                   break;
-      case 'Y'      : REG_valuesout();                break;
       case 'p'      : REG_paste ('y');                break;
                       /*---(modes and multikey)-------*/
       case '@'      : DEP_recalc();                   break;

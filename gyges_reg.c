@@ -55,7 +55,8 @@
  *   reintegrate the cells into a new location.
  *
  */
-#define     MAX_BUF       1000
+#define     MAX_REG     100
+#define     MAX_BUF    1000
 struct cREG {
    /*---(#1, ORIGIN TAB)-----------------*/
    /*   stores the tab number of the original selection so that cell          */
@@ -100,8 +101,7 @@ static      tREG        s_reg       [MAX_REG];
 
 
 
-/*> #define     REG_NAMES      "0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+"   <*/
-#define     REG_NAMES      "\"abcdefghijklmnopqrstuvwxyz"
+#define     REG_NAMES      "\"abcdefghijklmnopqrstuvwxyz-+"
 
 static      char        s_regnames     [MAX_REG] = REG_NAMES;
 
@@ -367,6 +367,21 @@ REG_mode           (int a_prev, int a_curr)
       }
       return rce;
    }
+   --rce;  if (a_prev == ' ' && strchr ("+-", my.reg_curr) != 0) {
+      switch (a_curr) {
+      case  'v' : REG_valuesout('-');
+                  break;
+      case  'V' : REG_valuesout('y');
+                  break;
+      default   : my.mode = MODE_MAP;
+                  REG_set ('"');
+                  return rce;
+                  break;
+      }
+      my.mode = MODE_MAP;
+      REG_set ('"');
+      return 0;
+   }
    --rce;  if (a_prev == ' ') {
       switch (a_curr) {
       case  '#' : REG_clear (my.reg_curr, '-');
@@ -374,8 +389,6 @@ REG_mode           (int a_prev, int a_curr)
       case  'y' : REG_copy  ();
                   break;
       case  'p' : REG_paste ('y');
-                  break;
-      case  'Y' : REG_valuesout();
                   break;
       case  'd' :
       case  'D' :
@@ -708,7 +721,7 @@ REG_paste          (char a_adapt)
 }
 
 char
-REG_valuesout     (void)
+REG_valuesout     (char a_trim)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -720,6 +733,7 @@ REG_valuesout     (void)
    int         x_rowsave   = 0;
    FILE       *f           = NULL;
    int         w           = 0;
+   int         x_temp      [MAX_STR];
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(open output file)---------------*/
@@ -734,12 +748,20 @@ REG_valuesout     (void)
       if (x_row != x_rowsave)  fprintf (f, "\n");
       /*---(fill in blank cells)---------*/
       if (curr == NULL) {
-         w = tabs [x_tab].cols [x_col].w;
-         fprintf (f, "%*.*s", w, w, "                                          ");
+         if (a_trim != 'y') {
+            w = tabs [x_tab].cols [x_col].w;
+            fprintf (f, "%*.*s", w, w, empty);
+         }
       }
       /*---(write filled cells)----------*/
       else {
-         fprintf (f, "%s", curr->p);
+         if (a_trim != 'y') {
+            fprintf (f, "%s", curr->p);
+         } else {
+            strlcpy  (x_temp, curr->p, MAX_STR);
+            strltrim (x_temp, ySTR_BOTH, MAX_STR);
+            fprintf (f, "%s ", x_temp);
+         }
       }
       x_rowsave = x_row;
       curr  = SEL_next (&x_tab, &x_col, &x_row);
