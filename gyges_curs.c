@@ -651,6 +651,46 @@ CURS_rowhead       (void)
    return 0;
 }
 
+char
+CURS_listmark      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_line      [MAX_STR];
+   char        x_label     [10];
+   /*---(header)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw   ( 3, 15, " -m- --fixed---      -m- --moving-- ");
+   attrset (0);
+   for (i = 'a'; i <= 'z'; ++i) {
+      /*---(lower case)------------------*/
+      MARK_label (i, x_label);
+      sprintf    (x_line, "  %c : %-8.8s  ", i, x_label);
+      if (x_label [0] != '\0')  attron (S_COLOR_CURRENT);
+      else                      attron (S_COLOR_VISUAL);
+      mvprintw   ( 4 + (i - 'a'), 15, x_line);
+      attrset (0);
+      /*---(separator)-------------------*/
+      attron (S_COLOR_TITLE);
+      mvprintw   ( 4 + (i - 'a'), 31, "    ");
+      attrset (0);
+      /*---(upper case)------------------*/
+      MARK_label (toupper (i), x_label);
+      sprintf    (x_line, "  %c : %-8.8s  ", toupper (i), x_label);
+      if (x_label [0] != '\0')  attron (S_COLOR_CURRENT);
+      else                      attron (S_COLOR_VISUAL);
+      mvprintw   ( 4 + (i - 'a'), 35, x_line);
+      attrset (0);
+      /*---(done)------------------------*/
+   }
+   /*---(footer)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw   ( 3 + 27, 15, " -m- --fixed---      -m- --moving-- ");
+   attrset (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -686,6 +726,10 @@ CURS_main          (void)
    CURS_colhead   ();
    CURS_rowhead   ();
    CURS_page      ();
+   switch (my.info_win) {
+   case '\'' : CURS_listmark ();
+               break;
+   }
    /*---(command)------------------------*/
    if (my.scrn == SCRN_DEBUG || my.scrn == SCRN_SMALL) {
       attron   (S_COLOR_KEYS);
@@ -695,12 +739,14 @@ CURS_main          (void)
       mvprintw (row_chead, 0, s_label + 1);
    }
    /*---(cursor pos)---------------------*/
-   if (my.mode != MODE_SOURCE && my.mode != MODE_INPUT)
-      move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
-   else {
+   if (my.info_win != '-') 
+      move ( 3, 15);
+   else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT)
       move (row_formula, s_start + my.cpos - my.bpos);
-   }
+   else
+      move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
    /*---(refresh)------------------------*/
+   my.info_win = '-';
    refresh ();
    ch = getch ();
    DEBUG_GRAF  yLOG_value   ("key"       , ch);

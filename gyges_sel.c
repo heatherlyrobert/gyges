@@ -703,6 +703,32 @@ MARK_set           (char a_mark)
 }
 
 char
+MARK_label         (char a_mark, char *a_label)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char       *x_mark      = NULL;
+   int         x_index     =   0;
+   /*---(defense)------------------------*/
+   --rce;  if (a_label == NULL)  return rce;
+   /*---(check mark)---------------------*/
+   x_mark = strchr (S_MARK_LIST, a_mark);
+   --rce;  if (x_mark == NULL) {
+      strlcpy (a_label, empty, 10);
+      return rce;
+   }
+   /*---(get mark index)-----------------*/
+   x_index = (int) (x_mark - S_MARK_LIST);
+   --rce;  if (x_index >= MAX_MARK) {
+      strlcpy (a_label, empty, 10);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   strlcpy (a_label, s_mark_info [x_index].label, 10);
+   return 0;
+}
+
+char
 MARK_return        (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1010,6 +1036,8 @@ MARK_mode          (char a_major, char a_minor)
       case '_' : my.mark_show = '-';
                  break;
       case '!' : sta_type = 'm';
+                 break;
+      case '?' : my.info_win = '\'';
                  break;
       default  : rc = MARK_set (a_minor);
                  if (rc < 0) {

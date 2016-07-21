@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3t"
-#define     VER_TXT   "added register writing values file format entries"
+#define     VER_NUM   "1.4a"
+#define     VER_TXT   "added mark inventory presentation using m?"
 
 
 
@@ -332,6 +332,8 @@ struct cACCESSOR {
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
    /*---(registers)-------*/
    char        reg_curr;
+   /*---(cursus)----------*/
+   char        info_win;
 };
 extern    struct cACCESSOR my;
 
@@ -905,6 +907,7 @@ char      MARK_unset         (char  a_mark);
 char      MARK_prev          (void);
 char      MARK_next          (void);
 char      MARK_set           (char  a_mark);
+char      MARK_label         (char  a_mark, char *a_label);
 char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);
 char      MARK_listplus      (char *a_list);

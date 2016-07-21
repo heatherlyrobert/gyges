@@ -101,10 +101,11 @@ char       /*----: very first setup ------------------s-----------------------*/
 PROG_init          (void)
 {
    hist_active = '-';
-   nhist =  0;
-   chist = -1;
-   my.mode = MODE_MAP;
-   my.scrn = SCRN_DEBUG;
+   nhist       =  0;
+   chist       = -1;
+   my.mode     = MODE_MAP;
+   my.scrn     = SCRN_DEBUG;
+   my.info_win = '-';
    return 0;
 }
 
