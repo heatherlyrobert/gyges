@@ -369,11 +369,17 @@ REG_mode           (int a_prev, int a_curr)
    }
    --rce;  if (a_prev == ' ' && strchr ("+-", my.reg_curr) != 0) {
       switch (a_curr) {
-      case  'v' : REG_valuesout('-');
+      case  'v' : REG_valuesout('v');
                   break;
-      case  'V' : REG_valuesout('y');
+      case  'V' : REG_valuesout('V');
                   break;
-      case  ',' : REG_valuesout(',');
+      case  'c' : REG_valuesout('c');
+                  break;
+      case  'C' : REG_valuesout('C');
+                  break;
+      case  's' : REG_valuesout('s');
+                  break;
+      case  'S' : REG_valuesout('S');
                   break;
       default   : my.mode = MODE_MAP;
                   REG_set ('"');
@@ -723,7 +729,7 @@ REG_paste          (char a_adapt)
 }
 
 char
-REG_valuesout     (char a_trim)
+REG_valuesout     (char a_style)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -747,28 +753,40 @@ REG_valuesout     (char a_trim)
    while (curr != DONE_DONE) {
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
       /*---(look for line break)---------*/
-      if (x_row != x_rowsave)  fprintf (f, "\n");
+      if (strchr ("vVcC", a_style) != 0 && x_row != x_rowsave) {
+         fprintf (f, "\n");
+      }
       /*---(fill in blank cells)---------*/
       if (curr == NULL) {
          w = tabs [x_tab].cols [x_col].w;
-         switch (a_trim) {
-         case '-' : fprintf (f, "%*.*s", w, w, empty);
+         switch (a_style) {
+         case 'v' : fprintf (f, "%*.*s", w, w, empty);
                     break;
-         case ',' : fprintf (f, "\"\",");
+         case 'V' : break;
+         case 'c' : fprintf (f, "\"\",");
                     break;
-         case 'y' : break;
+         case 'C' : fprintf (f, "\"\",");
+                    break;
+         case 's' : break;
+         case 'S' : break;
          }
       }
       /*---(write filled cells)----------*/
       else {
          strlcpy  (x_temp, curr->p, MAX_STR);
          strltrim (x_temp, ySTR_BOTH, MAX_STR);
-         switch (a_trim) {
-         case '-' : fprintf (f, "%s", curr->p);
+         switch (a_style) {
+         case 'v' : fprintf (f, "%s", curr->p);
                     break;
-         case ',' : fprintf (f, "\"%s\",", x_temp);
+         case 'V' : fprintf (f, "%s ", x_temp);
                     break;
-         case 'y' : fprintf (f, "%s ", x_temp);
+         case 'c' : fprintf (f, "\"%s\",", x_temp);
+                    break;
+         case 'C' : fprintf (f, "\"%s\",", curr->s);
+                    break;
+         case 's' : fprintf (f, "%s\n", curr->s);
+                    break;
+         case 'S' : fprintf (f, "%s:%s\n", curr->label, curr->s);
                     break;
          }
       }
