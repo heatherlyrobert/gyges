@@ -244,6 +244,7 @@ CELL__new          (char a_linked)     /* cell goes into the linked list ?    */
    x_curr->d         = '0';
    x_curr->f         = '?';
    x_curr->p         = NULL;
+   x_curr->n         = '-';
    /*---(calculations)-------------------*/
    x_curr->rpn       = NULL;
    x_curr->nrpn      = 0;

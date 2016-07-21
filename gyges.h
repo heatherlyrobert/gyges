@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.3s"
-#define     VER_TXT   "added register writing values as source values"
+#define     VER_NUM   "1.3t"
+#define     VER_TXT   "added register writing values file format entries"
 
 
 

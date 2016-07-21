@@ -381,6 +381,10 @@ REG_mode           (int a_prev, int a_curr)
                   break;
       case  'S' : REG_valuesout('S');
                   break;
+      case  'f' : REG_valuesout('f');
+                  break;
+      case  'F' : REG_valuesout('F');
+                  break;
       default   : my.mode = MODE_MAP;
                   REG_set ('"');
                   return rce;
@@ -742,6 +746,7 @@ REG_valuesout     (char a_style)
    FILE       *f           = NULL;
    int         w           = 0;
    int         x_temp      [MAX_STR];
+   int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(open output file)---------------*/
@@ -752,6 +757,7 @@ REG_valuesout     (char a_style)
    x_rowsave = x_row;
    while (curr != DONE_DONE) {
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
+      ++c;
       /*---(look for line break)---------*/
       if (strchr ("vVcC", a_style) != 0 && x_row != x_rowsave) {
          fprintf (f, "\n");
@@ -769,6 +775,8 @@ REG_valuesout     (char a_style)
                     break;
          case 's' : break;
          case 'S' : break;
+         case 'f' : break;
+         case 'F' : break;
          }
       }
       /*---(write filled cells)----------*/
@@ -787,6 +795,13 @@ REG_valuesout     (char a_style)
          case 's' : fprintf (f, "%s\n", curr->s);
                     break;
          case 'S' : fprintf (f, "%s:%s\n", curr->label, curr->s);
+                    break;
+         case 'f' : fprintf (f, "%-10.10s  %s\n", curr->label, curr->s);
+                    break;
+         case 'F' : fprintf (f, "cell_reg    -D-                %5d  %-8.8s  %c %c %c %c %c  %s\n",
+                          c, curr->label,
+                          curr->t, curr->f, curr->d, curr->a, curr->n,
+                          curr->s);
                     break;
          }
       }

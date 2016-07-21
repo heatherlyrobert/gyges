@@ -1854,7 +1854,7 @@ FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
       fprintf (a_file, "#--------- %c ver %c ---level---- %c -seq- %c ---loc--", 31, 31, 31);
       fprintf (a_file, " %c t-f-d-a-m %c ---source--------------------------------------\n", 31, 31);
    }
-   fprintf (a_file, "cell_dep   %c %s %c %-12.12s%c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",
+   fprintf (a_file, "cell_dep   %c %s %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",
          31, "-D-", 31, x_pre, 31, *a_seq, 31, a_curr->label,
          31, a_curr->t, a_curr->f, a_curr->d, a_curr->a, '-',
          31, a_curr->s);
