@@ -848,16 +848,17 @@ MARK_write         (FILE *a_file)
    char        x_mark      = ' ';
    char       *x_point     = NULL;
    int         x_index     = -1;
-   x_mark = my.mark_head;
+   /*---(header)-------------------------*/
    fprintf (a_file, "\n\n\n");
    fprintf (a_file, "#===[[ LOCATION and OBJECT MARKS ]]==========================================================================\n");
-   while (1) {
+   /*---(walk through marks)-------------*/
+   x_mark = my.mark_head;
+   while (x_mark != '-') {
       my.mark_save = x_mark;
       /*---(breaks)-----------------------*/
       if (c % 5 == 0) {
          fprintf (a_file, "#---------  ver  mark  ---loc-- \n");
       }
-      ++c;
       /*---(check mark)---------------------*/
       x_point = strchr (S_MARK_LIST, x_mark);
       --rce;  if (x_point == NULL) {
@@ -871,9 +872,15 @@ MARK_write         (FILE *a_file)
       fprintf (a_file, "mark        -A-   %c    %-8.8s \n",
             S_MARK_LIST [x_index] ,
             s_mark_info [x_index].label);
+      ++c;
       x_mark = MARK_next ();
       if (x_mark == my.mark_head)  break;
    }
+   /*---(footer)-------------------------*/
+   if (c == 0)
+      fprintf (a_file, "# no marks have been set in file\n");
+   else
+      fprintf (a_file, "# marks complete, count = %d\n", c);
    /*---(complete)-----------------------*/
    fflush (a_file);
    return 0;

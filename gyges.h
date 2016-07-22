@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4c"
-#define     VER_TXT   "added register goto visual selection feature"
+#define     VER_NUM   "1.4d"
+#define     VER_TXT   "fixed mark writing to and reading from file"
 
 
 
