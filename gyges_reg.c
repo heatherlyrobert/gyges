@@ -932,7 +932,7 @@ REG_file           (FILE *a_file, int  *a_seq, char a_buf)
       /*---(breaks)-----------------------*/
       if (*a_seq % 5 == 0) {
          fprintf (a_file, "#---------  ver  ---regid----  -seq-  ---loc-- ");
-         fprintf (a_file, " t-f-d-a  ---source--------------------------------------\n");
+         fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
       }
       /*---(prepare)----------------------*/
       x_curr = s_reg[x_buf].buf[i];

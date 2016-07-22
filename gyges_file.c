@@ -1829,6 +1829,31 @@ FILE_rows          (FILE *a_file, int *a_seq, int a_tab, int a_brow, int a_erow)
    return 0;
 }
 
+char         /*--> write a single cell to a file ---------[ leaf   [ ------ ]-*/
+OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file  == NULL)   return rce;
+   --rce;  if (a_type  == NULL)   return rce;
+   --rce;  if (a_level == NULL)   return rce;
+   --rce;  if (a_curr  == NULL)   return rce;
+   /*---(header)-------------------------*/
+   if ((a_seq % 5) == 0) {
+      fprintf (a_file, "#---------  ver  ---lvl/reg--  -seq-  ---loc-- ");
+      fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
+   }
+   /*---(write entry)--------------------*/
+   fprintf (a_file, "%-10.10s  -D-  %-12.12s  %5d  %-8.8s  %c %c %c %c %c  %s\n",
+         a_type, a_level, a_seq,
+         a_curr->label,
+         a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n,
+         a_curr->s);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 char         /*--> write file dependent cells ------------[ leaf   [ ------ ]-*/
 FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp)
 {
@@ -1847,17 +1872,18 @@ FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    /*---(prepare)------------------------*/
    if      (a_level == 0 )   sprintf (x_pre, "root         ");
    else if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s",
-         a_level, a_level, "------------", a_level, " ");
+         a_level - 1, a_level - 1, "------------", a_level, " ");
    else                      sprintf (x_pre, "            +");
    /*---(print)--------------------------*/
-   if (*a_seq % 5 == 0 || a_level == 0) {
-      fprintf (a_file, "#---------  ver  ---level----  -seq-  ---loc-- ");
-      fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
-   }
-   fprintf (a_file, "cell_dep   %c %s %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",
-         31, "-D-", 31, x_pre, 31, *a_seq, 31, a_curr->label,
-         31, a_curr->t, a_curr->f, a_curr->d, a_curr->a, '-',
-         31, a_curr->s);
+   OUTP_cell (a_file, "cell_dep", *a_seq, x_pre, a_curr);
+   /*> if (*a_seq % 5 == 0 || a_level == 0) {                                                        <* 
+    *>    fprintf (a_file, "#---------  ver  ---level----  -seq-  ---loc-- ");                   <* 
+    *>    fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");       <* 
+    *> }                                                                                             <* 
+    *> fprintf (a_file, "cell_dep   %c %s %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",   <* 
+    *>       31, "-D-", 31, x_pre, 31, *a_seq, 31, a_curr->label,                                    <* 
+    *>       31, a_curr->t, a_curr->f, a_curr->d, a_curr->a, '-',                                    <* 
+    *>       31, a_curr->s);                                                                         <*/
    ++(*a_seq);
    /*---(update)-------------------------*/
    a_curr->u = a_stamp;
