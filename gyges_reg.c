@@ -931,16 +931,16 @@ REG_file           (FILE *a_file, int  *a_seq, char a_buf)
    for (i = 0; i < s_reg[x_buf].nbuf; ++i) {
       /*---(breaks)-----------------------*/
       if (*a_seq % 5 == 0) {
-         fprintf (a_file, "#--------- %c ---buffer--- %c -seq- %c ---loc--", 31, 31, 31);
-         fprintf (a_file, " %c t-f-d-a %c ---source--------------------------------------\n", 31, 31);
+         fprintf (a_file, "#---------  ver  ---regid----  -seq-  ---loc-- ");
+         fprintf (a_file, " t-f-d-a  ---source--------------------------------------\n");
       }
       /*---(prepare)----------------------*/
       x_curr = s_reg[x_buf].buf[i];
       /*---(print)------------------------*/
-      fprintf (a_file, "buffer     %c %c            %c %5d %c %-8.8s %c %c %c %c %c %c %s\n",
-            31, a_buf, 31, *a_seq, 31, x_curr->label,
-            31, x_curr->t, x_curr->f, x_curr->d, x_curr->a,
-            31, x_curr->s);
+      fprintf (a_file, "cell_reg    -D-  %c             %5d  %-8.8s  %c %c %c %c %c  %s\n",
+            a_buf, *a_seq, x_curr->label,
+            x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->n,
+            x_curr->s);
       ++(*a_seq);
    }
    /*---(complete)-----------------------*/

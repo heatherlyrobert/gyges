@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4d"
-#define     VER_TXT   "fixed mark writing to and reading from file"
+#define     VER_NUM   "1.4f"
+#define     VER_TXT   "make cell register cell write correctly to file"
 
 
 
