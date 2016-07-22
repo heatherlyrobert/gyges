@@ -660,32 +660,60 @@ CURS_listmark      (void)
    char        x_label     [10];
    /*---(header)-------------------------*/
    attron (S_COLOR_TITLE);
-   mvprintw   ( 3, 15, " -m- --fixed---      -m- --moving-- ");
+   mvprintw   ( 3, 10, " -m- --fixed---      -m- --moving-- ");
    attrset (0);
+   /*---(show marks)---------------------*/
    for (i = 'a'; i <= 'z'; ++i) {
       /*---(lower case)------------------*/
       MARK_label (i, x_label);
       sprintf    (x_line, "  %c : %-8.8s  ", i, x_label);
       if (x_label [0] != '\0')  attron (S_COLOR_CURRENT);
       else                      attron (S_COLOR_VISUAL);
-      mvprintw   ( 4 + (i - 'a'), 15, x_line);
+      mvprintw   ( 4 + (i - 'a'), 10, x_line);
       attrset (0);
       /*---(separator)-------------------*/
       attron (S_COLOR_TITLE);
-      mvprintw   ( 4 + (i - 'a'), 31, "    ");
+      mvprintw   ( 4 + (i - 'a'), 26, "    ");
       attrset (0);
       /*---(upper case)------------------*/
       MARK_label (toupper (i), x_label);
       sprintf    (x_line, "  %c : %-8.8s  ", toupper (i), x_label);
       if (x_label [0] != '\0')  attron (S_COLOR_CURRENT);
       else                      attron (S_COLOR_VISUAL);
-      mvprintw   ( 4 + (i - 'a'), 35, x_line);
+      mvprintw   ( 4 + (i - 'a'), 30, x_line);
       attrset (0);
       /*---(done)------------------------*/
    }
    /*---(footer)-------------------------*/
    attron (S_COLOR_TITLE);
-   mvprintw   ( 3 + 27, 15, " -m- --fixed---      -m- --moving-- ");
+   mvprintw   ( 3 + 27, 10, " -m- --fixed---      -m- --moving-- ");
+   attrset (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+CURS_listreg       (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_line      [MAX_STR];
+   /*---(header)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw   ( 3 +  0, 10, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
+   attrset (0);
+   /*---(show registers)-----------------*/
+   for (i = 'a'; i <= 'z'; ++i) {
+      /*---(lower case)------------------*/
+      REG_entry  (i, x_line);
+      if (x_line  [6] != '-')  attron (S_COLOR_CURRENT);
+      else                     attron (S_COLOR_VISUAL);
+      mvprintw   ( 4 + (i - 'a'), 10, x_line);
+      attrset (0);
+   }
+   /*---(footer)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw   ( 3 + 27, 10, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
    attrset (0);
    /*---(complete)-----------------------*/
    return 0;
@@ -729,6 +757,8 @@ CURS_main          (void)
    switch (my.info_win) {
    case '\'' : CURS_listmark ();
                break;
+   case '"'  : CURS_listreg  ();
+               break;
    }
    /*---(command)------------------------*/
    if (my.scrn == SCRN_DEBUG || my.scrn == SCRN_SMALL) {
@@ -740,7 +770,7 @@ CURS_main          (void)
    }
    /*---(cursor pos)---------------------*/
    if (my.info_win != '-') 
-      move ( 3, 15);
+      move ( 3, 10);
    else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else

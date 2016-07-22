@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4a"
-#define     VER_TXT   "added mark inventory presentation using m?"
+#define     VER_NUM   "1.4b"
+#define     VER_TXT   "added register inventory presentation using \"?"
 
 
 
@@ -977,6 +977,8 @@ char      CURS_colhead       (void);
 char      CURS_rowhead       (void);
 char      CURS_cell          (int  a_col, int a_row);
 char      CURS_size          (void);
+char      CURS_listmark      (void);
+char      CURS_listreg       (void);
 
 char      CALC_init          (void);
 char      CALC_cleanse       (tCELL *a_cell);
@@ -985,6 +987,7 @@ char      CALC_free          (tCELL *a_curr);
 char      CALC_eval          (tCELL *a_curr);
 char      calc_show          (void);
 char*     CALC_strtok        (char *a_str);
+
 
 char      RPN_adjust         (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
 char      RPN_convert        (tCELL *a_curr);

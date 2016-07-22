@@ -359,6 +359,11 @@ REG_mode           (int a_prev, int a_curr)
       if (strchr (s_regnames, a_curr) != 0) {
          REG_set    (a_curr);
          return 0;
+      } else if (a_curr == '?') {
+         my.info_win = '"';
+         my.mode = MODE_MAP;
+         REG_set ('"');
+         return  0;
       } else if (a_curr == '!') {
          sta_type = '"';
          my.mode = MODE_MAP;
@@ -464,6 +469,71 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    --rce;  if (rc < 0)                   return rce;
    ++(*a_seq);
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+REG_entry          (char a_buf, char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         x_buf       = 0;
+   char        x_line      [MAX_STR];
+   char        x_toplef    [10];
+   char        x_botrig    [10];
+   char        x_min       [10];
+   char        x_max       [10];
+   char        x_size      [10];
+   char        x_reach     [10];
+   int         x_cells     = 0;
+   /*---(beginning)----------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_buf"     , a_buf);
+   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
+   /*---(defenses)--------------------*/
+   --rce;  if (a_list  == NULL) {
+      DEBUG_REGS   yLOG_note    ("list is null, no point");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      strlcpy (a_list, empty, 80);
+      return rce;
+   }
+   /*---(buffer number)------------------*/
+   x_buf  = REG__reg2index  (a_buf);
+   DEBUG_REGS   yLOG_value   ("x_buf"     , x_buf);
+   --rce;  if (x_buf < 0)  {
+      DEBUG_REGS   yLOG_note    ("register is no good");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      strlcpy (a_list, empty, 80);
+      return rce;
+   }
+   /*---(write line)------------------*/
+   if (s_reg [x_buf].nbuf == 0) {
+      sprintf (x_line, "  %c   -                                                      -  ", a_buf);
+      strlcpy (a_list, x_line, 80);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(write line)------------------*/
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].minc, s_reg [x_buf].minr, 0, x_min   );
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].begc, s_reg [x_buf].begr, 0, x_toplef);
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].endc, s_reg [x_buf].endr, 0, x_botrig);
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].maxc, s_reg [x_buf].maxr, 0, x_max   );
+   x_cells = (s_reg [x_buf].endc - s_reg [x_buf].begc + 1) *
+      (s_reg [x_buf].endr - s_reg [x_buf].begr + 1);
+   sprintf (x_size , "%dx%d",
+         s_reg [x_buf].endc - s_reg [x_buf].begc + 1,
+         s_reg [x_buf].endr - s_reg [x_buf].begr + 1);
+   sprintf (x_reach, "%dx%d",
+         s_reg [x_buf].maxc - s_reg [x_buf].minc + 1,
+         s_reg [x_buf].maxr - s_reg [x_buf].minr + 1);
+   sprintf (x_line , "  %c   %1d  %-5s  %3d  %3d   %-5.5s  %-5.5s %-5s  %-5.5s  %-5.5s  %c  ",
+         a_buf, s_reg[x_buf].otab,
+         x_size, x_cells, s_reg[x_buf].nbuf, x_toplef + 1, x_botrig + 1,
+         x_reach, x_min + 1, x_max + 1,
+         s_reg[x_buf].type);
+   strlcpy (a_list, x_line, 80);
+   /*---(complete)--------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
