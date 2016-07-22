@@ -348,6 +348,7 @@ REG_mode           (int a_prev, int a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
+   int         x_buf       =  -1;
    /*---(defenses)-----------------------*/
    if (my.mode != SMOD_REGISTER)             return -1;   /* wrong mode                    */
    if (a_curr == K_ESCAPE)  {
@@ -413,6 +414,24 @@ REG_mode           (int a_prev, int a_curr)
       case  'X' : REG_cut   ();
                   break;
       case  'W' : REG_bufwrite (my.reg_curr);
+                  break;
+      case  'g' : x_buf  = REG__reg2index  (my.reg_curr);
+                  if (x_buf < 0) {
+                     REG_set ('"');
+                     return rce;
+                     break;
+                  }
+                  if (s_reg[x_buf].nbuf <= 0) {
+                     REG_set ('"');
+                     return rce;
+                     break;
+                  }
+                  SEL_set   (s_reg[x_buf].otab,
+                        s_reg[x_buf].begc, s_reg[x_buf].begr,
+                        s_reg[x_buf].endc, s_reg[x_buf].endr);
+                  CTAB = s_reg[x_buf].otab;
+                  CCOL = s_reg[x_buf].begc;
+                  CROW = s_reg[x_buf].begr;
                   break;
       default   : my.mode = MODE_MAP;
                   REG_set ('"');

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4b"
-#define     VER_TXT   "added register inventory presentation using \"?"
+#define     VER_NUM   "1.4c"
+#define     VER_TXT   "added register goto visual selection feature"
 
 
 
