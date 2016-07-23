@@ -1512,6 +1512,30 @@ INPT_open          (char *a_name)
 }
 
 char         /* file reading driver ----------------------[--------[--------]-*/
+INPT_close         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   /*---(close file)---------------------*/
+   DEBUG_INPT  yLOG_note    ("close file");
+   fclose  (my.f_file);
+   /*---(screen)-------------------------*/
+   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
+   KEYS_bcol (BCOL);
+   CURS_colhead();
+   KEYS_brow (BROW);
+   CURS_rowhead();
+   /*---(calculate)----------------------*/
+   DEBUG_INPT  yLOG_note    ("recalc");
+   DEP_recalc();
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /* file reading driver ----------------------[--------[--------]-*/
 FILE_read          (char *a_name)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1694,21 +1718,11 @@ FILE_read          (char *a_name)
        *>    /+---(complete)-----------------+/                                             <* 
        *> }                                                                                 <*/
    }
-   /*---(close file)---------------------*/
-   DEBUG_INPT  yLOG_note    ("close file");
-   fclose  (my.f_file);
    /*---(summary)------------------------*/
    DEBUG_INPT  yLOG_value   ("cell_try"  , x_celltry);
    DEBUG_INPT  yLOG_value   ("cell_bad"  , x_cellbad);
-   /*---(screen)-------------------------*/
-   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
-   KEYS_bcol (BCOL);
-   CURS_colhead();
-   KEYS_brow (BROW);
-   CURS_rowhead();
-   /*---(calculate)----------------------*/
-   DEBUG_INPT  yLOG_note    ("recalc");
-   DEP_recalc();
+   /*---(close file)---------------------*/
+   INPT_close ();
    /*---(complete)-------------------------*/
    DEBUG_INPT yLOG_exit    (__FUNCTION__);
    return 0;

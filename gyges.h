@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4k"
-#define     VER_TXT   "break out file reading preparation into function"
+#define     VER_NUM   "1.4l"
+#define     VER_TXT   "break out file reading wrapup into function"
 
 
 
