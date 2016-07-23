@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4h"
-#define     VER_TXT   "move dep, indep, and reg to common cell writing function"
+#define     VER_NUM   "1.4i"
+#define     VER_TXT   "repair issue reading merged cells from file properly"
 
 
 

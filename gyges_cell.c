@@ -1202,13 +1202,17 @@ CELL__interpret    (
    else {
       if (a_cell->a == '?')  a_cell->a = '<';
       DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
+      DEBUG_CELL   yLOG_note    ("check for merges in cells to right");
       x_col   = a_cell->col + 1;
-      x_next = tab->sheet[x_col][a_cell->row];
-      while (x_next != NULL && x_col <= ECOL && x_next->a == '+') {
-         ++x_col;
+      while (x_col >= ECOL) {
+         x_next = tab->sheet[x_col][a_cell->row];
+         DEBUG_CELL   yLOG_point   ("next cell" , x_next);
+         if (x_next    == NULL)  break;
+         DEBUG_CELL   yLOG_char    ("type"      , x_next->a);
+         if (x_next->a != '+' )  break;
          x_next->t = CTYPE_MERGE;
          rc = DEP_create (DEP_MERGED, a_cell, x_next);
-         x_next = tab->sheet[x_col][a_cell->row];
+         ++x_col;
       }
    }
    /*---(complete)-----------------------*/
