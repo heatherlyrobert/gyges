@@ -1864,11 +1864,6 @@ FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    if (a_curr->s == NULL)        return;     /* nothing to write              */
    if (a_curr->u == a_stamp)     return;     /* already written               */
    if (a_curr->t == '-')         return;     /* don't write, recreate on read */
-   /*---(header)-------------------------*/
-   if (*a_seq == 0) {
-      fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ DEPENDENCY TREE, in reverse order ]]==========================================================================#\n");
-   }
    /*---(prepare)------------------------*/
    if      (a_level == 0 )   sprintf (x_pre, "root         ");
    else if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s",
@@ -1876,14 +1871,6 @@ FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    else                      sprintf (x_pre, "            +");
    /*---(print)--------------------------*/
    OUTP_cell (a_file, "cell_dep", *a_seq, x_pre, a_curr);
-   /*> if (*a_seq % 5 == 0 || a_level == 0) {                                                        <* 
-    *>    fprintf (a_file, "#---------  ver  ---level----  -seq-  ---loc-- ");                   <* 
-    *>    fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");       <* 
-    *> }                                                                                             <* 
-    *> fprintf (a_file, "cell_dep   %c %s %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",   <* 
-    *>       31, "-D-", 31, x_pre, 31, *a_seq, 31, a_curr->label,                                    <* 
-    *>       31, a_curr->t, a_curr->f, a_curr->d, a_curr->a, '-',                                    <* 
-    *>       31, a_curr->s);                                                                         <*/
    ++(*a_seq);
    /*---(update)-------------------------*/
    a_curr->u = a_stamp;
@@ -1916,28 +1903,15 @@ FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
    --rce;  if (a_erow <  a_brow)                 return rce;
    --rce;  if (a_erow <  0)                      return rce;
    --rce;  if (a_erow >= tabs[a_tab].nrow)       return rce;
-   /*---(header)-------------------------*/
-   if (*a_seq == 0) {
-      fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
-   }
    /*---(cells)--------------------------*/
    for (x = a_bcol; x <= a_ecol; ++x) {
       for (y = a_brow; y <= a_erow; ++y) {
-         /*> CROW  = y;                                                          <*/
          if (tabs[a_tab].sheet[x][y]    == NULL)        continue;
          if (tabs[a_tab].sheet[x][y]->s == NULL)        continue;
          if (tabs[a_tab].sheet[x][y]->t == '-'    )     continue;
          if (tabs[a_tab].sheet[x][y]->t == 'l'    )     continue;
          if (tabs[a_tab].sheet[x][y]->u == a_stamp)     continue;
-         if (*a_seq % 5 == 0) {
-            fprintf (a_file, "#---------  ver  ------------  -seq-  ---loc-- ");
-            fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
-         }
-         fprintf (a_file, "cell_free  %c %s %c              %c %5d %c %-8.8s %c %c %c %c %c %c %c %s\n",
-               31, "-D-", 31, 31, *a_seq, 31, tabs[a_tab].sheet[x][y]->label, 31,
-               tabs[a_tab].sheet[x][y]->t, tabs[a_tab].sheet[x][y]->f, tabs[a_tab].sheet[x][y]->d,
-               tabs[a_tab].sheet[x][y]->a, '-', 31, tabs[a_tab].sheet[x][y]->s);
+         OUTP_cell (a_file, "cell_free", *a_seq, "", tabs[a_tab].sheet[x][y]);
          ++(*a_seq);
       }
    }
@@ -1989,28 +1963,38 @@ FILE_write         (char *a_name)
    }
    if (x_seq == 0)  fprintf (f, "# no row heights vary from default\n");
    /*---(dependent cells)------------------*/
-   x_stamp = rand ();
+   fprintf (f, "\n\n\n#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");
+   x_stamp   = rand ();
    x_seq     = 0;
    rc = DEP_tail (f, '-', &x_seq, 0, dtree, x_stamp, FILE_dep);
    if (x_seq == 0)  fprintf (f, "# no cells in dependency tree\n");
+   else             fprintf (f, "# dependent cells complete, count = %d\n", x_seq);
    /*---(non-dependency cells)-------------*/
-   x_seq = 0;
+   fprintf (f, "\n\n\n#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
+   x_seq     = 0;
    for (i = 0; i < NTAB; ++i) {
       rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, tabs[i].ncol - 1, 0, tabs[i].nrow - 1);
    }
-   if (x_seq == 0)  fprintf (f, "# no cells in outside dependency tree\n");
+   if (x_seq == 0)  fprintf (f, "# no independent (non-dependency tree) cells\n");
+   else             fprintf (f, "# independent cells complete, count = %d\n", x_seq);
    /*---(buffer contents)------------------*/
-   x_seq = 0;
-   x_len = strlen (x_bufs);
+   fprintf (f, "\n\n\n#===[[ REGISTER CELLS, in proper order ]]============================================================================#\n");
+   x_seq     = 0;
+   x_len     = strlen (x_bufs);
    for (i = 0; i < x_len; ++i) {
       rc = REG_file     (f, &x_seq, x_bufs [i]);
    }
-   if (x_seq == 0)  fprintf (f, "# no cells in any lettered buffers\n");
+   if (x_seq == 0)  fprintf (f, "# no cells in any lettered registers\n");
+   else             fprintf (f, "# register cells complete, count = %d\n", x_seq);
    /*---(marks)----------------------------*/
-   MARK_write (f);
+   fprintf (f, "\n\n\n#===[[ LOCATION and OBJECT MARKS ]]==================================================================================#\n");
+   x_seq     = 0;
+   rc = MARK_write (f, &x_seq);
+   if      (rc    <  0)  fprintf (f, "# ERROR writing marks\n");
+   else if (x_seq == 0)  fprintf (f, "# no lettered marks\n");
+   else                  fprintf (f, "# lettered marks complete, count = %d\n", x_seq);
    /*---(footer data)----------------------*/
-   fprintf (f, "\n\n\n");
-   fprintf (f, "# done, finito, complete\n");
+   fprintf (f, "\n\n\n# done, finito, complete\n");
    /*---(close file)-----------------------*/
    fclose  (f);
    /*---(make version)---------------------*/

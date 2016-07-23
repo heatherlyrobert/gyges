@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4g"
-#define     VER_TXT   "create cell writing shared routine to simplify"
+#define     VER_NUM   "1.4h"
+#define     VER_TXT   "move dep, indep, and reg to common cell writing function"
 
 
 
@@ -911,7 +911,7 @@ char      MARK_label         (char  a_mark, char *a_label);
 char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);
 char      MARK_listplus      (char *a_list);
-char      MARK_write         (FILE *a_file);
+char      MARK_write         (FILE *a_file, int *a_seq);
 char      MARK_read          (char *a_recd);
 
 

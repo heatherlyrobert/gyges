@@ -839,7 +839,7 @@ MARK_listplus      (char *a_list)
 static void  o___FILE____________o () { return; }
 
 char
-MARK_write         (FILE *a_file)
+MARK_write         (FILE *a_file, int *a_seq)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
@@ -848,15 +848,12 @@ MARK_write         (FILE *a_file)
    char        x_mark      = ' ';
    char       *x_point     = NULL;
    int         x_index     = -1;
-   /*---(header)-------------------------*/
-   fprintf (a_file, "\n\n\n");
-   fprintf (a_file, "#===[[ LOCATION and OBJECT MARKS ]]==========================================================================\n");
    /*---(walk through marks)-------------*/
    x_mark = my.mark_head;
    while (x_mark != '-') {
       my.mark_save = x_mark;
       /*---(breaks)-----------------------*/
-      if (c % 5 == 0) {
+      if (*a_seq % 5 == 0) {
          fprintf (a_file, "#---------  ver  mark  ---loc-- \n");
       }
       /*---(check mark)---------------------*/
@@ -872,15 +869,10 @@ MARK_write         (FILE *a_file)
       fprintf (a_file, "mark        -A-   %c    %-8.8s \n",
             S_MARK_LIST [x_index] ,
             s_mark_info [x_index].label);
-      ++c;
+      ++(*a_seq);
       x_mark = MARK_next ();
       if (x_mark == my.mark_head)  break;
    }
-   /*---(footer)-------------------------*/
-   if (c == 0)
-      fprintf (a_file, "# no marks have been set in file\n");
-   else
-      fprintf (a_file, "# marks complete, count = %d\n", c);
    /*---(complete)-----------------------*/
    fflush (a_file);
    return 0;

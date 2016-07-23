@@ -922,11 +922,6 @@ REG_file           (FILE *a_file, int  *a_seq, char a_buf)
    x_buf  = REG__reg2index  (a_buf);
    --rce;  if (x_buf < 0)                   return rce;
    --rce;  if (s_reg[x_buf].nbuf <= 0)        return rce;
-   /*---(header)-------------------------*/
-   if (*a_seq == 0) {
-      fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ BUFFER CELLS, in proper order ]]======================================================================\n");
-   }
    /*---(cells)--------------------------*/
    for (i = 0; i < s_reg[x_buf].nbuf; ++i) {
       /*---(breaks)-----------------------*/
