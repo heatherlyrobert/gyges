@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4n"
-#define     VER_TXT   "break out row height input handling"
+#define     VER_NUM   "1.4o"
+#define     VER_TXT   "register cells now read from input file"
 
 
 
@@ -1134,7 +1134,7 @@ char      FILE_bump          (char a_type, char *a_ver);
 
 char      INPT_cell          (cchar *a_recd);
 char      INPT_tab           (cchar *a_recd);
-char      FILE_read          (char *a_name);
+char      INPT_main          (char *a_name);
 
 char      FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
 char      FILE_write         (char *a_name);

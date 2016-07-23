@@ -31,7 +31,7 @@ main (int argc, char *argv[])
       PROG_end     ();
       exit (-1);
    }
-   if (strcmp (my.f_name, FILE_BLANK) != 0)  FILE_read (my.f_title);
+   if (strcmp (my.f_name, FILE_BLANK) != 0)  INPT_main (my.f_title);
    hist_active = 'y';
    /*---(process)------------------------*/
    KEYS_col (" r");

@@ -1156,6 +1156,162 @@ FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
 /*====================------------------------------------====================*/
 PRIV void  o___SIZES___________o () { return; }
 
+#define     FIELD_LVL      1
+#define     FIELD_SEQ      2
+#define     FIELD_LOC      3
+#define     FIELD_FOR      4
+#define     FIELD_SRC      5
+
+char         /* parse a cell entry -----------------------[--------[--------]-*/
+INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_source)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   tCELL      *x_new       = NULL;
+   tCELL      *x_merge     = NULL;
+   int         i           = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(create)-------------------------*/
+   x_new = CELL_overwrite (CHG_NOHIST, a_tab, a_col, a_row, a_source, a_format);
+   DEBUG_INPT  yLOG_point   ("new"       , x_new);
+   --rce;  if (x_new == NULL) {
+      DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(activate tab)-------------*/
+   DEBUG_INPT   yLOG_note    ("activate tab");
+   tabs [a_tab].active = 'y';
+   /*---(check for a merged cell)--*/
+   DEBUG_INPT   yLOG_note    ("check for rightward merged cells");
+   for (i = x_new->col + 1; i < tabs [a_tab].ncol; i++) {
+      x_merge = LOC_cell (a_tab, i, a_row);
+      if (x_merge == NULL)    break;
+      if (x_merge->a != '+')  break;
+      DEP_create (DEP_MERGED, x_new, x_merge);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+}
+
+char         /* parse a cell entry -----------------------[--------[--------]-*/
+INPT_cellreg       (char a_reg, char *a_label, char *a_format, char *a_source)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          =   0;                /* generic return code       */
+   tCELL      *x_new       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(create)-------------------------*/
+   x_new = CELL__new (LINKED);
+   DEBUG_INPT  yLOG_point   ("new"       , x_new);
+   --rce;  if (x_new == NULL) {
+      DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(hook to register)---------------*/
+   rc = REG__hook  (x_new, a_reg, '-');
+   DEBUG_INPT  yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_INPT  yLOG_warn    ("reg_hook"  , "could not hook to register");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(update fields)------------------*/
+   x_new->f = a_format [0];
+   x_new->a = a_format [1];
+   x_new->d = a_format [2];
+   strlcpy (x_new->label, a_label, 10);
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+}
+
+char         /* parse a cell entry -----------------------[--------[--------]-*/
+INPT_cell_new      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;
+   char       *p           = NULL;
+   int         i           = 0;
+   int         x_len       = 0;
+   char        x_label     [10]        = "";
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   char        x_format    = '-';
+   char        x_decs      = '0';
+   char        x_align     = '-';
+   char        x_bformat   [10]        = "";
+   char        x_regid     = '-';
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(read fields)--------------------*/
+   for (i = FIELD_LVL; i <= FIELD_SRC ; ++i) {
+      /*---(parse field)-----------------*/
+      DEBUG_INPT   yLOG_note    ("read next field");
+      p = strtok_r (NULL  , s_q, &s_context);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
+         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+         break;
+      }
+      if (i != FIELD_SRC) strltrim (p, ySTR_BOTH, LEN_RECD);
+      x_len = strlen (p);
+      DEBUG_INPT  yLOG_info    ("field"     , p);
+      /*---(handle)----------------------*/
+      switch (i) {
+      case  FIELD_LVL :  /*--------------*/
+         if (x_len == 1)  {
+            x_regid = p[0];
+            DEBUG_INPT  yLOG_char    ("regid"     , x_regid);
+         }
+         break;
+      case  FIELD_SEQ :  /*--------------*/
+         break;
+      case  FIELD_LOC :  /*--------------*/
+         strlcpy (x_label, p, MAX_STR);
+         rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
+         DEBUG_INPT  yLOG_value   ("rc"        , rc);
+         --rce;  if (rc < 0) {
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", x_tab, x_col, x_row);
+         break;
+      case  FIELD_FOR :  /*--------------*/
+         --rce;  if (x_len != 9) {
+            DEBUG_INPT  yLOG_warn    ("format len", "len wrong");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         x_format = p [2];
+         x_decs   = p [4];
+         x_align  = p [6];
+         sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);
+         DEBUG_INPT  yLOG_info    ("format"    , x_bformat);
+         break;
+      case  FIELD_SRC :  /*--------------*/
+         DEBUG_INPT  yLOG_info    ("source"    , p + 1);
+         if      (strcmp ("cell_dep", my.f_type) == 0) 
+            INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
+         else if (strcmp ("cell_free", my.f_type) == 0) 
+            INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
+         else if (strcmp ("cell_reg" , my.f_type) == 0) 
+            INPT_cellreg  (x_regid, x_label, x_bformat, p + 1);
+         break;
+      }
+      DEBUG_INPT   yLOG_note    ("done with loop");
+   } 
+   DEBUG_INPT   yLOG_note    ("done parsing fields");
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /* parse a cell entry -----------------------[--------[--------]-*/
 INPT_cellD         (cchar *a_recd)
 {
@@ -1511,7 +1667,7 @@ INPT_open          (char *a_name)
    return 0;
 }
 
-char         /*--> close file for reading and wrap -------[ ------ [ ------ ]-*/
+char         /*--> close file for reading and wrap -------[ flower [ ------ ]-*/
 INPT_close         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1535,7 +1691,7 @@ INPT_close         (void)
    return 0;
 }
 
-char         /*--> process a column width record ---------[ ------ [ ------ ]-*/
+char         /*--> process a column width record ---------[ leaf   [ ------ ]-*/
 INPT_width         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1558,7 +1714,7 @@ INPT_width         (void)
    return 0;
 }
 
-char         /*--> process a column width record ---------[ ------ [ ------ ]-*/
+char         /*--> process a row height record -----------[ leaf   [ ------ ]-*/
 INPT_height        (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1582,30 +1738,14 @@ INPT_height        (void)
 }
 
 char         /* file reading driver ----------------------[--------[--------]-*/
-FILE_read          (char *a_name)
+INPT_main          (char *a_name)
 {
    /*---(locals)-----------+-----------+-*/
-   FILE       *f           = NULL;
+   char        rce         = -10;
+   int         rc          = 0;
    char        x_temp      [MAX_STR];            /* strtok version of input   */
-   char        x_verb      [20];                 /* record type/verb          */
    int         x_len       = 0;                  /* string length             */
    char       *p;
-   char       *q           = ";";
-   char       *r;
-   tCELL      *new         = NULL;
-   int         rc          = 0;
-   char        rce         = -10;
-   char        x_format    = '-';
-   int         x_decs      = 0;
-   char        x_align     = '-';
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_ver       = 0;
-   int         i           = 0;
-   char        x_beg       [10] = "";
-   char        x_end       [10] = "";
-   char        x_bformat   [10];
    int         x_celltry   = 0;
    int         x_cellbad   = 0;
    /*---(header)-------------------------*/
@@ -1665,13 +1805,12 @@ FILE_read          (char *a_name)
                  break;
       case 'h' : INPT_height  ();
                  break;
-      case 't' : INPT_tab  (x_temp);
+      case 't' : INPT_tabF    ();
                  break;
-      case 'm' : MARK_read (x_temp);
-                 break;
-      case 'c' : ++x_celltry;
-                 rc = INPT_cell (x_temp);
-                 if (rc < 0)  ++x_cellbad;
+      /*> case 'm' : MARK_read (x_temp);                                              <* 
+       *>            break;                                                           <*/
+      case 'c' : if (strcmp ("-D-", my.f_vers) == 0)  rc = INPT_cell_new ();
+                    if (rc < 0)  ++x_cellbad;
                  break;
       case 'r' : /* register    */ break;
       }
@@ -1694,9 +1833,6 @@ FILE_read          (char *a_name)
           *> ;;                                                                       <*/
       }
    }
-   /*---(summary)------------------------*/
-   DEBUG_INPT  yLOG_value   ("cell_try"  , x_celltry);
-   DEBUG_INPT  yLOG_value   ("cell_bad"  , x_cellbad);
    /*---(close file)---------------------*/
    INPT_close ();
    /*---(complete)-------------------------*/

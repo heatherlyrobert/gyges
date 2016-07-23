@@ -778,7 +778,7 @@ cmd_exec           (char *a_command)
    /*> if        (strncmp(p, "o"        , MAX_STR) == 0) {                            <* 
     *>    p = strtok(NULL, q);                                                        <* 
     *>    if (p == NULL) return 0;                                                    <* 
-    *>    FILE_read (p);                                                              <* 
+    *>    INPT_main (p);                                                              <* 
     *> } else if (strncmp(p, "q"        , MAX_STR) == 0) {                            <* 
     *>    done = 0;                                                                   <* 
     *> }                                                                              <*/
