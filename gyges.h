@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4j"
-#define     VER_TXT   "get file names into global accessor"
+#define     VER_NUM   "1.4k"
+#define     VER_TXT   "break out file reading preparation into function"
 
 
 
@@ -283,18 +283,20 @@ tDEBUG      debug;
 
 struct cACCESSOR {
    /*---(files)----------------*/
-   char        quiet;          /* bool : 0=normal, 1=quiet                      */
-   int         logger;         /* log file so that we don't close it            */
-   char        autocalc;       /* 0=manual, 1=auto                              */
+   char        quiet;          /* bool : 0=normal, 1=quiet                    */
+   int         logger;         /* log file so that we don't close it          */
+   char        autocalc;       /* 0=manual, 1=auto                            */
    /*---(mode)------------*/
-   char        scrn;                        /* screen display mode             */
-   char        mode;                        /* gyges mode                      */
-   char        message     [MAX_STR];       /* message line                    */
-   /*---(file input)------*/
-   char        f_title     [MAX_STR];
-   char        f_name      [MAX_STR];
-   char        f_title     [MAX_STR];
-   char        recd        [MAX_STR];
+   char        scrn;                        /* screen display mode            */
+   char        mode;                        /* gyges mode                     */
+   char        message     [MAX_STR];       /* message line                   */
+   /*---(file hanndling)--*/
+   char        f_title     [MAX_STR];       /* specific file base name        */
+   char        f_suffix    [MAX_STR];       /* file suffix for spreadsheet    */
+   char        f_name      [MAX_STR];       /* full file name                 */
+   FILE       *f_file;                      /* file pointer                   */
+   int         f_lines;                     /* file line number               */
+   char        f_recd      [MAX_STR];       /* current file record            */
    /*---(tab vars)--------*/
    int         ntab;           /* number of worksheet tabs                         */
    int         ctab;           /* current tab                                      */
@@ -795,7 +797,6 @@ extern int     save;
 #define     FILE_BUF    "/var/run/buffer.gyges"
 
 char        f_maker     [MAX_STR];
-int         f_lines;
 
 
 /*---(strchr validation strings)-----------*/

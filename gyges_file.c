@@ -57,7 +57,6 @@ char        ver_ctrl    = '-';
 char        ver_num     [10]        = "----";
 char        ver_txt     [100]       = "----------";
 
-FILE       *s_file      = NULL;
 char        s_vers      [MAX_STR]   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 char        s_recd      [LEN_RECD];
 int         s_len       = 0;
@@ -771,7 +770,7 @@ INPT_tab           (
       return rce;
    }
    DEBUG_INPT  yLOG_info    ("a_recd"    , a_recd);
-   strncpy (my.recd, a_recd, LEN_RECD);   /* globally saved version            */
+   strncpy (my.f_recd, a_recd, LEN_RECD);   /* globally saved version            */
    /*---(defense: a_recd length)---------*/
    s_len = strlen (a_recd);
    DEBUG_INPT  yLOG_value   ("length"    , s_len);
@@ -1477,19 +1476,36 @@ INPT_cell          (
 static void   o___READ____________o (void) { return; }
 
 char         /* file reading driver ----------------------[--------[--------]-*/
-FILE_open          (char *a_name)
+INPT_open          (char *a_name)
 {
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT  yLOG_point   ("filename"  , a_name);
+   /*---(defense)------------------------*/
+   --rce;  if (a_name == NULL) {
+      DEBUG_INPT  yLOG_note    ("file name can not be null");
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   }
    /*---(open file)----------------------*/
    DEBUG_INPT  yLOG_info    ("filename"  , a_name);
-   f = fopen (a_name, "r");
-   DEBUG_INPT  yLOG_point   ("file"      , f);
-   --rce;  if (f == NULL) {
+   my.f_file = fopen (a_name, "r");
+   DEBUG_INPT  yLOG_point   ("f_file"    , my.f_file);
+   --rce;  if (my.f_file == NULL) {
+      DEBUG_INPT  yLOG_note    ("file could not be openned");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
    DEBUG_INPT  yLOG_note    ("file successfully opened");
+   /*---(initialize)---------------------*/
+   DEBUG_INPT  yLOG_note    ("initializing new environment");
+   strncpy (f_maker, "unknown", MAX_STR);
+   my.f_lines = 0;
+   NCOL = DEF_COLS;
+   BCOL = ECOL = 0;
+   NROW = DEF_ROWS;
+   BROW = EROW = 0;
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1526,29 +1542,19 @@ FILE_read          (char *a_name)
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(open file)----------------------*/
-   DEBUG_INPT  yLOG_info    ("filename"  , a_name);
-   f = fopen (a_name, "r");
-   DEBUG_INPT  yLOG_point   ("file"      , f);
-   --rce;  if (f == NULL) {
+   rc = INPT_open   (a_name);
+   --rce;  if (rc < 0) {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   /*---(initialize)---------------------*/
-   DEBUG_INPT  yLOG_note    ("initializing");
-   strncpy (f_maker, "unknown", MAX_STR);
-   f_lines = 0;
-   NCOL = DEF_COLS;
-   BCOL = ECOL = 0;
-   NROW = DEF_ROWS;
-   BROW = EROW = 0;
    /*---(read lines)---------------------*/
    DEBUG_INPT  yLOG_note    ("read lines");
    while (1) {
       /*---(read and clean)--------------*/
-      ++f_lines;
-      DEBUG_INPT  yLOG_value   ("line"      , f_lines);
-      fgets (x_recd, MAX_STR, f);
-      if (feof(f))           break;
+      ++my.f_lines;
+      DEBUG_INPT  yLOG_value   ("line"      , my.f_lines);
+      fgets (x_recd, MAX_STR, my.f_file);
+      if (feof(my.f_file))           break;
       x_len = strlen (x_recd);
       if (x_len <= 0)          continue;
       x_recd [--x_len] = '\0';
@@ -1690,7 +1696,7 @@ FILE_read          (char *a_name)
    }
    /*---(close file)---------------------*/
    DEBUG_INPT  yLOG_note    ("close file");
-   fclose  (f);
+   fclose  (my.f_file);
    /*---(summary)------------------------*/
    DEBUG_INPT  yLOG_value   ("cell_try"  , x_celltry);
    DEBUG_INPT  yLOG_value   ("cell_bad"  , x_cellbad);
