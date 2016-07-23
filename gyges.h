@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4m"
-#define     VER_TXT   "break out column width input handling"
+#define     VER_NUM   "1.4n"
+#define     VER_TXT   "break out row height input handling"
 
 
 

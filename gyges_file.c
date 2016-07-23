@@ -1558,6 +1558,29 @@ INPT_width         (void)
    return 0;
 }
 
+char         /*--> process a column width record ---------[ ------ [ ------ ]-*/
+INPT_height        (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char       *p;
+   int         rc          = 0;
+   int         x_tab       = 0;
+   int         x_row       = 0;
+   /*---(parse address)------------*/
+   rc = LOC_parse (my.f_vers, &x_tab, NULL, &x_row, NULL);
+   --rce;  if (rc < 0)         return rce;
+   /*---(parse height)-------------*/
+   p = strtok_r (NULL, s_q, &s_context);
+   --rce;  if (p == NULL)      return rce;
+   strltrim (p, ySTR_BOTH, MAX_STR);
+   /*---(update column)------------*/
+   tabs[x_tab].rows [x_row].h = atoi (p);
+   tabs[x_tab].active         = 'y';
+   /*---(complete)-----------------*/
+   return 0;
+}
+
 char         /* file reading driver ----------------------[--------[--------]-*/
 FILE_read          (char *a_name)
 {
@@ -1640,14 +1663,16 @@ FILE_read          (char *a_name)
       case 'v' : /* versioned   */ break;
       case 'w' : INPT_width   ();
                  break;
-      case 'h' : /* row height  */ break;
+      case 'h' : INPT_height  ();
+                 break;
       case 't' : INPT_tab  (x_temp);
-                 continue;
                  break;
       case 'm' : MARK_read (x_temp);
-                 continue;
                  break;
-      case 'c' : /* cell        */ break;
+      case 'c' : ++x_celltry;
+                 rc = INPT_cell (x_temp);
+                 if (rc < 0)  ++x_cellbad;
+                 break;
       case 'r' : /* register    */ break;
       }
       /*---(versioned)-------------------*/
@@ -1668,102 +1693,6 @@ FILE_read          (char *a_name)
           *> DEBUG_INPT  yLOG_info    ("ver_txt"   , ver_txt);                        <* 
           *> ;;                                                                       <*/
       }
-      /*---(process tab)-----------------*/
-      if (strcmp (my.f_type, "tab") == 0) {
-         INPT_tab (x_temp);
-         continue;
-      }
-      /*---(process tab)-----------------*/
-      if (strcmp (my.f_type, "mark") == 0) {
-         MARK_read (x_temp);
-         continue;
-      }
-      /*---(process size)----------------*/
-      /*---(process width)---------------*/
-      if (strcmp (my.f_type, "width") == 0) {
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         strltrim (p, ySTR_BOTH, MAX_STR);
-         rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
-         if (rc < 0)         continue;
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         strltrim (p, ySTR_BOTH, MAX_STR);
-         tabs[x_tab].cols [x_col].w = atoi (p);
-         tabs[x_tab].active = 'y';
-         continue;
-      }
-      /*---(process height)--------------*/
-      if (strcmp (my.f_type, "height") == 0) {
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         strltrim (p, ySTR_BOTH, MAX_STR);
-         rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
-         if (rc < 0)         continue;
-         p = strtok (NULL, "\x1F");
-         if (p == NULL)      continue;
-         strltrim (p, ySTR_BOTH, MAX_STR);
-         tabs[x_tab].rows[x_row].h = atoi (p);
-         tabs[x_tab].active = 'y';
-         continue;
-      }
-      /*---(process cell)----------------*/
-      if (strncmp (my.f_type, "cell_", 5) == 0) {
-         ++x_celltry;
-         rc = INPT_cell (x_temp);
-         if (rc < 0)  ++x_cellbad;
-      }
-      /*> if (strncmp (p, "cell_", 5) == 0) {                                               <* 
-       *>    /+---(clear level field)--------+/                                             <* 
-       *>    if (x_ver > 6 || strcmp (p, "cell_dep") == 0) {                                <* 
-       *>       p = strtok (NULL, "\x1F");                                                  <* 
-       *>       DEBUG_INPT  yLOG_info    ("level"     , p);                                 <* 
-       *>       if (p == NULL)      continue;                                               <* 
-       *>    }                                                                              <* 
-       *>    /+---(clear seq field)----------+/                                             <* 
-       *>    p = strtok (NULL, "\x1F");                                                     <* 
-       *>    DEBUG_INPT  yLOG_info    ("seq"       , p);                                    <* 
-       *>    if (p == NULL)      continue;                                                  <* 
-       *>    /+---(get location)-------------+/                                             <* 
-       *>    p = strtok (NULL, "\x1F");                                                     <* 
-       *>    DEBUG_INPT  yLOG_info    ("loc"       , p);                                    <* 
-       *>    if (p == NULL)      continue;                                                  <* 
-       *>    rc = LOC_parse (strltrim (p, ySTR_BOTH, MAX_STR), &x_tab, &x_col, &x_row, NULL);       <* 
-       *>    DEBUG_INPT  yLOG_value   ("rc"        , rc);                                   <* 
-       *>    DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);                                <* 
-       *>    DEBUG_INPT  yLOG_value   ("x_col"     , x_col);                                <* 
-       *>    DEBUG_INPT  yLOG_value   ("x_row"     , x_row);                                <* 
-       *>    if (rc < 0)         continue;                                                  <* 
-       *>    /+---(formatting)---------------+/                                             <* 
-       *>    p = strtok (NULL, "\x1F");                                                     <* 
-       *>    if (p == NULL)      continue;                                                  <* 
-       *>    strltrim (p, ySTR_BOTH, MAX_STR);                                                      <* 
-       *>    DEBUG_INPT  yLOG_info    ("formatting", p);                                    <* 
-       *>    if (strlen (p) != 7)  continue;                                                <* 
-       *>    x_format = p[2];                                                               <* 
-       *>    x_decs   = p[4];                                                               <* 
-       *>    x_align  = p[6];                                                               <* 
-       *>    DEBUG_INPT  yLOG_char    ("x_format"  , x_format);                             <* 
-       *>    DEBUG_INPT  yLOG_value   ("x_decs"    , x_decs);                               <* 
-       *>    DEBUG_INPT  yLOG_char    ("x_align"   , x_align);                              <* 
-       *>    sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);                      <* 
-       *>    /+---(contents)-----------------+/                                             <* 
-       *>    p = strtok (NULL, "\x1F");                                                     <* 
-       *>    if (p == NULL)      continue;                                                  <* 
-       *>    x_len = strlen (p);                                                            <* 
-       *>    if (x_len > 1) {                                                               <* 
-       *>       DEBUG_INPT  yLOG_info    ("source"    , p + 1);                             <* 
-       *>       new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, p + 1, x_bformat);   <* 
-       *>       if (new == NULL)    continue;                                               <* 
-       *>    } else {                                                                       <* 
-       *>       DEBUG_INPT  yLOG_info    ("source"    , "(nada)");                          <* 
-       *>       new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, ""   , x_bformat);   <* 
-       *>       if (new == NULL)    continue;                                               <* 
-       *>    }                                                                              <* 
-       *>    /+---(sort it out)--------------+/                                             <* 
-       *>    tabs[x_tab].active = 'y';                                                      <* 
-       *>    /+---(complete)-----------------+/                                             <* 
-       *> }                                                                                 <*/
    }
    /*---(summary)------------------------*/
    DEBUG_INPT  yLOG_value   ("cell_try"  , x_celltry);
