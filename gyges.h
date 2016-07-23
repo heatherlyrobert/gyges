@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4l"
-#define     VER_TXT   "break out file reading wrapup into function"
+#define     VER_NUM   "1.4m"
+#define     VER_TXT   "break out column width input handling"
 
 
 
@@ -297,6 +297,8 @@ struct cACCESSOR {
    FILE       *f_file;                      /* file pointer                   */
    int         f_lines;                     /* file line number               */
    char        f_recd      [MAX_STR];       /* current file record            */
+   char        f_type      [MAX_STR];       /* current record verb            */
+   char        f_vers      [MAX_STR];       /* current record version         */
    /*---(tab vars)--------*/
    int         ntab;           /* number of worksheet tabs                         */
    int         ctab;           /* current tab                                      */

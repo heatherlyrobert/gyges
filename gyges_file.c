@@ -1475,7 +1475,7 @@ INPT_cell          (
 /*====================------------------------------------====================*/
 static void   o___READ____________o (void) { return; }
 
-char         /* file reading driver ----------------------[--------[--------]-*/
+char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
 INPT_open          (char *a_name)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1511,7 +1511,7 @@ INPT_open          (char *a_name)
    return 0;
 }
 
-char         /* file reading driver ----------------------[--------[--------]-*/
+char         /*--> close file for reading and wrap -------[ ------ [ ------ ]-*/
 INPT_close         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1535,12 +1535,34 @@ INPT_close         (void)
    return 0;
 }
 
+char         /*--> process a column width record ---------[ ------ [ ------ ]-*/
+INPT_width         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char       *p;
+   int         rc          = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   /*---(parse address)------------*/
+   rc = LOC_parse (my.f_vers, &x_tab, &x_col, NULL, NULL);
+   --rce;  if (rc < 0)         return rce;
+   /*---(parse width)--------------*/
+   p = strtok_r (NULL, s_q, &s_context);
+   --rce;  if (p == NULL)      return rce;
+   strltrim (p, ySTR_BOTH, MAX_STR);
+   /*---(update column)------------*/
+   tabs[x_tab].cols [x_col].w = atoi (p);
+   tabs[x_tab].active         = 'y';
+   /*---(complete)-----------------*/
+   return 0;
+}
+
 char         /* file reading driver ----------------------[--------[--------]-*/
 FILE_read          (char *a_name)
 {
    /*---(locals)-----------+-----------+-*/
    FILE       *f           = NULL;
-   char        x_recd      [MAX_STR];            /* input record              */
    char        x_temp      [MAX_STR];            /* strtok version of input   */
    char        x_verb      [20];                 /* record type/verb          */
    int         x_len       = 0;                  /* string length             */
@@ -1577,34 +1599,59 @@ FILE_read          (char *a_name)
       /*---(read and clean)--------------*/
       ++my.f_lines;
       DEBUG_INPT  yLOG_value   ("line"      , my.f_lines);
-      fgets (x_recd, MAX_STR, my.f_file);
-      if (feof(my.f_file))           break;
-      x_len = strlen (x_recd);
-      if (x_len <= 0)          continue;
-      x_recd [--x_len] = '\0';
-      DEBUG_INPT  yLOG_info    ("fixed"     , x_recd);
-      /*---(prepare working variables)---*/
-      strncpy   (x_temp, x_recd, MAX_STR);
-      strncpy   (x_verb, x_recd, 10     );
-      strltrim  (x_verb, ySTR_BOTH, MAX_STR);
-      /*---(get recd type)---------------*/
-      p = strtok (x_recd, "\x1F");
-      if (p == NULL)         continue;
-      x_len = strlen (p);
-      if (x_len <= 0)          continue;
-      if (p[0] == '#')       continue;
-      strltrim  (p, ySTR_BOTH, MAX_STR);
-      /*---(process size)----------------*/
-      if (strcmp (p, "format") == 0) {
-         ;;
-         /*> p = strtok (NULL, "\x1F");                                               <* 
-          *> if (p == NULL)      continue;                                            <* 
-          *> x_ver = atoi (strltrim (p, ySTR_BOTH, MAX_STR));                         <* 
-          *> continue;                                                                <*/
+      fgets (my.f_recd, MAX_STR, my.f_file);
+      if (feof (my.f_file))  {
+         DEBUG_INPT  yLOG_note    ("end of file reached");
+         break;
+      }
+      x_len = strlen (my.f_recd);
+      if (x_len <= 0)  {
+         DEBUG_INPT  yLOG_note    ("record empty");
          continue;
       }
+      my.f_recd [--x_len] = '\0';
+      DEBUG_INPT  yLOG_value   ("length"    , x_len);
+      DEBUG_INPT  yLOG_info    ("fixed"     , my.f_recd);
+      if (my.f_recd [0] == '#') {
+         DEBUG_INPT  yLOG_note    ("comment line, skipping");
+         continue;
+      }
+      /*---(get recd type)---------------*/
+      p = strtok_r (my.f_recd, s_q, &s_context);
+      if (p == NULL) {
+         DEBUG_INPT  yLOG_note    ("can not parse type field");
+         continue;
+      }
+      strltrim  (p, ySTR_BOTH, MAX_STR);
+      strncpy   (my.f_type, p,  10);
+      DEBUG_INPT  yLOG_info    ("type"      , my.f_type);
+      /*---(get version)-----------------*/
+      p = strtok_r (NULL     , s_q, &s_context);
+      if (p == NULL) {
+         DEBUG_INPT  yLOG_note    ("can not parse version field");
+         continue;
+      }
+      strltrim  (p, ySTR_BOTH, MAX_STR);
+      strncpy   (my.f_vers, p,  10);
+      DEBUG_INPT  yLOG_info    ("version"   , my.f_vers);
+      /*---(handle types)----------------*/
+      switch (my.f_type [0]) {
+      case 'f' : /* format      */ break;
+      case 'v' : /* versioned   */ break;
+      case 'w' : INPT_width   ();
+                 break;
+      case 'h' : /* row height  */ break;
+      case 't' : INPT_tab  (x_temp);
+                 continue;
+                 break;
+      case 'm' : MARK_read (x_temp);
+                 continue;
+                 break;
+      case 'c' : /* cell        */ break;
+      case 'r' : /* register    */ break;
+      }
       /*---(versioned)-------------------*/
-      if (strcmp (p, "versioned") == 0) {
+      if (strcmp (my.f_type, "versioned") == 0) {
          continue;
          /*> ;;                                                                       <* 
           *> DEBUG_INPT  yLOG_note    ("found version entry");                        <* 
@@ -1622,18 +1669,18 @@ FILE_read          (char *a_name)
           *> ;;                                                                       <*/
       }
       /*---(process tab)-----------------*/
-      if (strcmp (p, "tab") == 0) {
+      if (strcmp (my.f_type, "tab") == 0) {
          INPT_tab (x_temp);
          continue;
       }
       /*---(process tab)-----------------*/
-      if (strcmp (p, "mark") == 0) {
+      if (strcmp (my.f_type, "mark") == 0) {
          MARK_read (x_temp);
          continue;
       }
       /*---(process size)----------------*/
       /*---(process width)---------------*/
-      if (strcmp (p, "width") == 0) {
+      if (strcmp (my.f_type, "width") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
          strltrim (p, ySTR_BOTH, MAX_STR);
@@ -1647,7 +1694,7 @@ FILE_read          (char *a_name)
          continue;
       }
       /*---(process height)--------------*/
-      if (strcmp (p, "height") == 0) {
+      if (strcmp (my.f_type, "height") == 0) {
          p = strtok (NULL, "\x1F");
          if (p == NULL)      continue;
          strltrim (p, ySTR_BOTH, MAX_STR);
@@ -1661,7 +1708,7 @@ FILE_read          (char *a_name)
          continue;
       }
       /*---(process cell)----------------*/
-      if (strncmp (p, "cell_", 5) == 0) {
+      if (strncmp (my.f_type, "cell_", 5) == 0) {
          ++x_celltry;
          rc = INPT_cell (x_temp);
          if (rc < 0)  ++x_cellbad;
