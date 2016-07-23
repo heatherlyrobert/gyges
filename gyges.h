@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4i"
-#define     VER_TXT   "repair issue reading merged cells from file properly"
+#define     VER_NUM   "1.4j"
+#define     VER_TXT   "get file names into global accessor"
 
 
 
@@ -283,46 +283,49 @@ tDEBUG      debug;
 
 struct cACCESSOR {
    /*---(files)----------------*/
-   char      quiet;          /* bool : 0=normal, 1=quiet                      */
-   int       logger;         /* log file so that we don't close it            */
-   char      autocalc;       /* 0=manual, 1=auto                              */
+   char        quiet;          /* bool : 0=normal, 1=quiet                      */
+   int         logger;         /* log file so that we don't close it            */
+   char        autocalc;       /* 0=manual, 1=auto                              */
    /*---(mode)------------*/
    char        scrn;                        /* screen display mode             */
    char        mode;                        /* gyges mode                      */
    char        message     [MAX_STR];       /* message line                    */
    /*---(file input)------*/
-   char      recd          [MAX_STR];
+   char        f_title     [MAX_STR];
+   char        f_name      [MAX_STR];
+   char        f_title     [MAX_STR];
+   char        recd        [MAX_STR];
    /*---(tab vars)--------*/
-   int       ntab;           /* number of worksheet tabs                         */
-   int       ctab;           /* current tab                                      */
-   int       tab1;           /* tab of source                                    */
-   int       tab2;           /* tab of destination                               */
+   int         ntab;           /* number of worksheet tabs                         */
+   int         ctab;           /* current tab                                      */
+   int         tab1;           /* tab of source                                    */
+   int         tab2;           /* tab of destination                               */
    /*---(horizontal size)----------------*/
-   int       x_full;         // total screen size in chars
-   int       x_left;         // number of chars for row labels to left
-   int       x_right;        // number of chars for text to right
-   int       x_avail;        // number of chars availible for cells
+   int         x_full;         // total screen size in chars
+   int         x_left;         // number of chars for row labels to left
+   int         x_right;        // number of chars for text to right
+   int         x_avail;        // number of chars availible for cells
    /*---(column working vars)------------*/
-   int       col1;           /* left side of range                               */
-   int       col2;           /* right side of range                              */
-   int       col1_save;      /* left side of range                               */
-   int       col2_save;      /* right side of range                              */
+   int         col1;           /* left side of range                               */
+   int         col2;           /* right side of range                              */
+   int         col1_save;      /* left side of range                               */
+   int         col2_save;      /* right side of range                              */
    /*---(row vars)--------*/
-   int       y_full;         // total screen size in chars
-   int       y_top;          // number of chars for info/labels at top
-   int       y_bottom;       // number of chars for status/info at bottom
-   int       y_avail;        // number of chars availible for cells
+   int         y_full;         // total screen size in chars
+   int         y_top;          // number of chars for info/labels at top
+   int         y_bottom;       // number of chars for status/info at bottom
+   int         y_avail;        // number of chars availible for cells
    /*---(row working vars)---------------*/
-   int       row1;           /* top side of range                             */
-   int       row2;           /* bottom side of range                          */
-   int       row1_save;      /* top side of range                             */
-   int       row2_save;      /* bottom side of range                          */
+   int         row1;           /* top side of range                             */
+   int         row2;           /* bottom side of range                          */
+   int         row1_save;      /* top side of range                             */
+   int         row2_save;      /* bottom side of range                          */
    /*---(char vars)-------*/
-   int       npos;           /* number of characters in current cell          */
-   int       cpos;           /* current position                              */
-   int       bpos;           /* beginning position in field                   */
-   int       epos;           /* ending position in field                      */
-   int       apos;           /* number of positions available for field       */
+   int         npos;           /* number of characters in current cell          */
+   int         cpos;           /* current position                              */
+   int         bpos;           /* beginning position in field                   */
+   int         epos;           /* ending position in field                      */
+   int         apos;           /* number of positions available for field       */
    /*---(marks)-----------*/
    char        mark_show;      /* show temporary marks (y/n)                    */
    char        mark_head;      /* first sequential mark                         */
@@ -789,9 +792,6 @@ extern int     save;
 
 #define     FILE_BLANK  "untitled"
 #define     FILE_SUFFIX "gyges"
-char        f_title     [MAX_STR];
-char        f_name      [MAX_STR];
-char        f_suffix    [MAX_STR];
 #define     FILE_BUF    "/var/run/buffer.gyges"
 
 char        f_maker     [MAX_STR];
@@ -935,7 +935,7 @@ char      REG_append         (void);
 char      REG_paste          (char a_adapt);
 char      REG_valuesout      (char a_trim);
 
-char      REG_file           (FILE *a_file, int  *a_seq, char a_buf);
+char      REG_write          (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);
 
 int       REG__reg2index     (char a_reg);

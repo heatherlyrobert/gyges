@@ -1746,12 +1746,12 @@ DEP_writeall       (void)
    int         x_count     = 0;
    int         x_total     = 0;
    /*---(open)---------------------------*/
-   snprintf (x_name, 95, "%s.deps", f_title);
+   snprintf (x_name, 95, "%s.deps", my.f_title);
    x_file = fopen(x_name, "w");
    --rce;  if (x_file == NULL)      return rce;
    /*---(totals)-------------------------*/
    fprintf (x_file, "#!/usr/local/bin/gyges\n");
-   fprintf (x_file, "#  file     : %s\n", f_title);
+   fprintf (x_file, "#  file     : %s\n", my.f_title);
    fprintf (x_file, "#  report   : dependency audit file\n");
    fprintf (x_file, "\nsummary statistics\n\n");
    fprintf (x_file, "idx  ty  ma  idx  desc----------------------------------------------  count  total\n");

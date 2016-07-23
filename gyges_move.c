@@ -606,7 +606,7 @@ KEYS_pcol          (void)
    char        rce         = -10;
    FILE       *x_file      = NULL;
    /*---(open)---------------------------*/
-   snprintf (x_name, 95, "%s.cols", f_title);
+   snprintf (x_name, 95, "%s.cols", my.f_title);
    x_file = fopen(x_name, "w");
    --rce;
    if (x_file == NULL)      return rce;
@@ -1058,7 +1058,7 @@ KEYS_prow          (void)
    char        rce         = -10;
    FILE       *x_file      = NULL;
    /*---(open)---------------------------*/
-   snprintf (x_name, 95, "%s.rows", f_title);
+   snprintf (x_name, 95, "%s.rows", my.f_title);
    x_file = fopen(x_name, "w");
    --rce;
    if (x_file == NULL)      return rce;

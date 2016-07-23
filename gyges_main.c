@@ -31,7 +31,7 @@ main (int argc, char *argv[])
       PROG_end     ();
       exit (-1);
    }
-   if (strcmp (f_name, FILE_BLANK) != 0)  FILE_read (f_title);
+   if (strcmp (my.f_name, FILE_BLANK) != 0)  FILE_read (my.f_title);
    hist_active = 'y';
    /*---(process)------------------------*/
    KEYS_col (" r");
@@ -86,7 +86,7 @@ main (int argc, char *argv[])
    DEBUG_TOPS  yLOG_break   ();
    DEBUG_TOPS  yLOG_note    ("exiting main processing loop");
    /*---(wrap-up)------------------------*/
-   /*> FILE_write   (f_title);                                                        <*/
+   /*> FILE_write   (my.f_title);                                                        <*/
    CURS_end     ();
    PROG_end     ();
    /*---(complete)-----------------------*/

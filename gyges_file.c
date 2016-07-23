@@ -57,6 +57,7 @@ char        ver_ctrl    = '-';
 char        ver_num     [10]        = "----";
 char        ver_txt     [100]       = "----------";
 
+FILE       *s_file      = NULL;
 char        s_vers      [MAX_STR]   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 char        s_recd      [LEN_RECD];
 int         s_len       = 0;
@@ -534,7 +535,7 @@ HIST_list          (void)
    char        rce         = -10;
    FILE       *x_file      = NULL;
    /*---(open)---------------------------*/
-   snprintf (x_name, 95, "%s.hist", f_title);
+   snprintf (x_name, 95, "%s.hist", my.f_title);
    x_file = fopen(x_name, "w");
    --rce;
    if (x_file == NULL)      return rce;
@@ -1157,10 +1158,8 @@ FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
 PRIV void  o___SIZES___________o () { return; }
 
 char         /* parse a cell entry -----------------------[--------[--------]-*/
-INPT_cellD         (
-      /*----------+-----------+-----------------------------------------------*/
-      cchar      *a_recd)     /* input record (const)                         */
-{  /*---(design notes)--------------------------------------------------------*/
+INPT_cellD         (cchar *a_recd)
+{
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;                /* return code for errors    */
    char        rc          = 0;
@@ -1195,53 +1194,50 @@ INPT_cellD         (
          break;
       case  3 :  /*---(location)----------*/
          rc = LOC_parse (s_p, &x_tab, &x_col, &x_row, NULL);
-         DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
-         DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
-         DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
-         if (rc < 0) {
-            DEBUG_INPT  yLOG_value   ("rc"        , rc);
+         DEBUG_INPT  yLOG_value   ("rc"        , rc);
+         --rce;  if (rc < 0) {
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce - i;
+            return rce;
          }
-         if (rc < 0) {
-            DEBUG_INPT  yLOG_value   ("rc"        , rc);
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce - i;
-         }
+         DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", x_tab, x_col, x_row);
          break;
       case  4 :  /*---(formatting)--------*/
-         if (x_len != 9) return rce - i;
+         --rce;  if (x_len != 9) {
+            DEBUG_INPT  yLOG_warn    ("format len", "len wrong");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
          x_format = s_p [2];
          x_decs   = s_p [4];
          x_align  = s_p [6];
-         DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
-         DEBUG_INPT  yLOG_char    ("x_decs"    , x_decs);
-         DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
          sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);
+         DEBUG_INPT  yLOG_info    ("format"    , x_bformat);
          break;
       case  5 :  /*---(source)------------*/
          DEBUG_INPT  yLOG_info    ("source"    , s_p + 1);
          x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, s_p + 1, x_bformat);
          DEBUG_INPT  yLOG_point   ("new"       , x_new);
-         if (x_new == NULL) {
+         --rce;  if (x_new == NULL) {
             DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce - i;
+            return rce;
+         }
+         /*---(activate tab)-------------*/
+         DEBUG_INPT   yLOG_note    ("activate tab");
+         tabs [x_tab].active = 'y';
+         /*---(check for a merged cell)--*/
+         DEBUG_INPT   yLOG_note    ("check for rightward merged cells");
+         for (i = x_new->col + 1; i < tabs [x_tab].ncol; i++) {
+            x_merge = LOC_cell (x_tab, i, x_row);
+            if (x_merge == NULL)    break;
+            if (x_merge->a != '+')  break;
+            DEP_create (DEP_MERGED, x_new, x_merge);
          }
          break;
       }
       DEBUG_INPT   yLOG_note    ("done with loop");
    } 
    DEBUG_INPT   yLOG_note    ("done parsing fields");
-   DEBUG_INPT   yLOG_note    ("activate tab");
-   tabs [x_tab].active = 'y';
-   /*---(check for a merged cell)--------*/
-   for (i = x_new->col + 1; i < tabs [x_tab].ncol; i++) {
-      x_merge = LOC_cell (x_tab, i, x_row);
-      if (x_merge == NULL)            break;
-      if (x_merge->t != CTYPE_MERGE)  break;
-      DEP_create (DEP_MERGED, x_new, x_merge);
-   }
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1479,6 +1475,25 @@ INPT_cell          (
 /*===----                          reading files                       ----===*/
 /*====================------------------------------------====================*/
 static void   o___READ____________o (void) { return; }
+
+char         /* file reading driver ----------------------[--------[--------]-*/
+FILE_open          (char *a_name)
+{
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   /*---(open file)----------------------*/
+   DEBUG_INPT  yLOG_info    ("filename"  , a_name);
+   f = fopen (a_name, "r");
+   DEBUG_INPT  yLOG_point   ("file"      , f);
+   --rce;  if (f == NULL) {
+      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_note    ("file successfully opened");
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char         /* file reading driver ----------------------[--------[--------]-*/
 FILE_read          (char *a_name)
@@ -1938,10 +1953,10 @@ FILE_write         (char *a_name)
    /*---(defense: name)------------------*/
    if (a_name == NULL) return -1;
    /*---(prepare versioning)-------------*/
-   strcpy (f_name, a_name);
-   p = strchr (f_name, '.');
+   strcpy (my.f_name, a_name);
+   p = strchr (my.f_name, '.');
    if (p != NULL)  p[0] = '\0';
-   strcpy (f_suffix, "gyges");
+   strcpy (my.f_suffix, "gyges");
    /*---(open file)----------------------*/
    f = fopen(a_name, "w");
    if (f == NULL)      return -2;
@@ -1982,7 +1997,7 @@ FILE_write         (char *a_name)
    x_seq     = 0;
    x_len     = strlen (x_bufs);
    for (i = 0; i < x_len; ++i) {
-      rc = REG_file     (f, &x_seq, x_bufs [i]);
+      rc = REG_write    (f, &x_seq, x_bufs [i]);
    }
    if (x_seq == 0)  fprintf (f, "# no cells in any lettered registers\n");
    else             fprintf (f, "# register cells complete, count = %d\n", x_seq);
@@ -1999,7 +2014,7 @@ FILE_write         (char *a_name)
    fclose  (f);
    /*---(make version)---------------------*/
    if (ver_ctrl == 'y') {
-      sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", a_name, f_name, ver_num[0], ver_num[1], ver_num + 3);
+      sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", a_name, my.f_name, ver_num[0], ver_num[1], ver_num + 3);
       system (x_temp);
    }
    /*---(complete)-------------------------*/

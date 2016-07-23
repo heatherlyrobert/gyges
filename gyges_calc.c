@@ -1946,14 +1946,14 @@ CALC__me            (void)
 PRIV void
 CALC__filename      (void)
 {
-   CALC_pushstr (f_title);
+   CALC_pushstr (my.f_title);
    return;
 }
 
 PRIV void
 CALC__filebase      (void)
 {
-   CALC_pushstr (f_name);
+   CALC_pushstr (my.f_name);
    return;
 }
 

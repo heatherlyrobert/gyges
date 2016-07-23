@@ -683,7 +683,7 @@ cmd_exec           (char *a_command)
          strncmp(p, ":wq"       , MAX_STR) == 0 ||
          strncmp(p, ":wqa"      , MAX_STR) == 0 ||
          strncmp(p, ":write"    , MAX_STR) == 0) {
-      FILE_write (f_title);
+      FILE_write (my.f_title);
       if (p [2] == 'q')  done = 0;
       return 0;
    }

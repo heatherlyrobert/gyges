@@ -911,31 +911,36 @@ REG_valuesout     (char a_style)
 static void  o___FILES___________o () { return; }
 
 char
-REG_file           (FILE *a_file, int  *a_seq, char a_buf)
+REG_write          (FILE *a_file, int  *a_seq, char a_buf)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
    int         i           = 0;             /* iterator -- buffer entry       */
    int         x_buf       = 0;
    tCELL      *x_curr      = NULL;
+   char        x_regid     [20];
+   char        x_toplef    [10];
+   char        x_botrig    [10];
+   char        x_min       [10];
+   char        x_max       [10];
    /*---(buffer number)------------------*/
    x_buf  = REG__reg2index  (a_buf);
    --rce;  if (x_buf < 0)                   return rce;
    --rce;  if (s_reg[x_buf].nbuf <= 0)        return rce;
-   /*---(cells)--------------------------*/
+   /*---(register entry)-----------------*/
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].minc, s_reg [x_buf].minr, 0, x_min   );
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].begc, s_reg [x_buf].begr, 0, x_toplef);
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].endc, s_reg [x_buf].endr, 0, x_botrig);
+   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].maxc, s_reg [x_buf].maxr, 0, x_max   );
+   sprintf (x_regid, "%c", a_buf);
+   fprintf (a_file, "#---------  ver  ---lvl/reg--  -tab-  --beg---  --end---  --min---  --max---  t \n");
+   fprintf (a_file, "register    -A-  %-12.12s    %1d    %-8.8s  %-8.8s  %-8.8s  %-8.8s  %c \n",
+         x_regid, s_reg [x_buf].otab,
+         x_toplef, x_botrig, x_min, x_max, s_reg [x_buf].type);
+   /*---(cell entries)-------------------*/
    for (i = 0; i < s_reg[x_buf].nbuf; ++i) {
-      /*---(breaks)-----------------------*/
-      if (*a_seq % 5 == 0) {
-         fprintf (a_file, "#---------  ver  ---regid----  -seq-  ---loc-- ");
-         fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
-      }
-      /*---(prepare)----------------------*/
       x_curr = s_reg[x_buf].buf[i];
-      /*---(print)------------------------*/
-      fprintf (a_file, "cell_reg    -D-  %c             %5d  %-8.8s  %c %c %c %c %c  %s\n",
-            a_buf, *a_seq, x_curr->label,
-            x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->n,
-            x_curr->s);
+      OUTP_cell (a_file, "cell_reg", *a_seq, x_regid, x_curr);
       ++(*a_seq);
    }
    /*---(complete)-----------------------*/

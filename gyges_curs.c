@@ -493,8 +493,8 @@ CURS_status        (tCELL *a_curr)
       break;
    case 'v' : /* file version */
    default  :
-      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", f_name, tab->ncol, tab->nrow, ver_num, ver_txt);
-      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", f_name, tab->ncol, tab->nrow);
+      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", my.f_name, tab->ncol, tab->nrow, ver_num, ver_txt);
+      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", my.f_name, tab->ncol, tab->nrow);
       break;
    }
    if (sta_error == 'y')  attron (S_COLOR_STATUSE);
