@@ -406,7 +406,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(location)-----------------------*/
    /*> strcpy(label, tab->cols[CCOL].l);                                         <* 
     *> if (label[0] == '-') label[0] = ' ';                                           <*/
-   /*> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (SEL_islive()) ? 'v' : ' ', label, CROW + 1);   <*/
+   /*> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (VISU_islive()) ? 'v' : ' ', label, CROW + 1);   <*/
    /*---(label)------------------------------*/
    if (a_curr != NULL)    strcpy  (s_label, a_curr->label);
    else                   LOC_ref (CTAB, CCOL, CROW, 0, s_label);
@@ -415,7 +415,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(display)----------------------------*/
    switch (my.scrn) {
    case SCRN_DEBUG :
-      mvprintw (row_formula,  0, "%c  %c%c %-6.6s", my.mode, (SEL_islive()) ? 'v' : ' ', my.reg_curr, s_label);
+      mvprintw (row_formula,  0, "%c  %c%c %-6.6s", my.mode, (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "   , tab->cols[CCOL].w, a_curr->t, a_curr->f, a_curr->d, a_curr->a);
       else                 mvprintw (row_formula, 12, " %02d                []", tab->cols[CCOL].w);
       mvprintw (row_formula, 25, "%4d:", len);
@@ -819,8 +819,8 @@ CURS_cell          (int a_col, int a_row)
    /*---(current)--------------------------*/
    if      (a_col == CCOL && a_row == CROW)     attron (S_COLOR_CURRENT);
    /*---(visual-range)---------------------*/
-   else if (SEL_root     (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
-   else if (SEL_selected (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
+   else if (VISU_root     (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
+   else if (VISU_selected (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
    /*---(marks)----------------------------*/
    else if (my.mark_show  == 'y' && strstr (my.mark_list, label) != NULL)  attron (S_COLOR_MARK     );
    /*---(content-based)--------------------*/

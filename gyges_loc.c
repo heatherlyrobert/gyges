@@ -248,7 +248,7 @@ LOC_jump           (
    CCOL          = a_col;
    CROW          = a_row;
    /*---(selection)----------------------*/
-   SEL_update (a_tab, a_col, a_row);
+   VISU_update (a_tab, a_col, a_row);
    /*---(complete)-----------------------*/
    return 0;
 }

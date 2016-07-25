@@ -1249,13 +1249,13 @@ CELL_erase         (void)
     *> rc = DEP__tail (NULL, '-', &x_seq, 0, dtree, x_stamp, CELL_depwipe);            <* 
     *> DEBUG_SEL    yLOG_value   ("x_seq"     , x_seq);                               <*/
    /*---(process independent cells)----------*/
-   x_next = SEL_first(NULL, &x_col, &x_row);
+   x_next = VISU_first(NULL, &x_col, &x_row);
    do {
       if (x_count == 0)  CELL__delete (CHG_INPUT   , CTAB, x_col, x_row);
       else               CELL__delete (CHG_INPUTAND, CTAB, x_col, x_row);
       /*> CELL_printable (x_next);                                                      <*/
       ++x_count;
-      x_next  = SEL_next(NULL, &x_col, &x_row);
+      x_next  = VISU_next(NULL, &x_col, &x_row);
    } while (x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    return 0;
@@ -1269,7 +1269,7 @@ CELL_merge         (char a_type)
    if (strchr(valid, a_type) == 0) return -1;
    int       xcol, xrow;
    /*---(process range)----------------------*/
-   tCELL   *first = SEL_first(NULL, &xcol, &xrow);
+   tCELL   *first = VISU_first(NULL, &xcol, &xrow);
    tCELL   *next  = first;
    do {
       if (a_type == 'm') {
@@ -1279,7 +1279,7 @@ CELL_merge         (char a_type)
          if (first->col != next->col) next->a = '+';
       } else if (next != NULL) next->a = a_type;
       CELL_printable (next);
-      next  = SEL_next(NULL, &xcol, &xrow);
+      next  = VISU_next(NULL, &xcol, &xrow);
    } while (next != DONE_DONE);
    /*---(complete)---------------------------*/
    return 0;
@@ -1302,7 +1302,7 @@ CELL_format        (char a_mode, char a_type)
    /*---(defenses)-----------------------*/
    if (strchr (sv_formats, a_type)  == 0) return -1;
    /*---(prepare)------------------------*/
-   x_next  = SEL_first (&x_tab, &x_col, &x_row);
+   x_next  = VISU_first (&x_tab, &x_col, &x_row);
    if (a_type == '"')  a_type = x_next->f;
    /*---(process range)------------------*/
    do {
@@ -1320,7 +1320,7 @@ CELL_format        (char a_mode, char a_type)
          }
          CELL_printable (x_next);
       }
-      x_next  = SEL_next (&x_tab, &x_col, &x_row);
+      x_next  = VISU_next (&x_tab, &x_col, &x_row);
    } while (x_next != DONE_DONE);
    /*---(complete)-----------------------*/
    return 0;
@@ -1344,7 +1344,7 @@ CELL_align         (char a_mode, char a_align)
    /*---(defense: bad alignment code)----*/
    if (strchr (sv_align, a_align) == 0) return -1;
    /*---(prepare)------------------------*/
-   x_next  = SEL_first (&x_tab, &x_col, &x_row);
+   x_next  = VISU_first (&x_tab, &x_col, &x_row);
    if (a_align == '"')  a_align = x_next->a;
    /*---(process all cells in range)-----*/
    do {
@@ -1362,7 +1362,7 @@ CELL_align         (char a_mode, char a_align)
          }
          CELL_printable (x_next);
       }
-      x_next  = SEL_next (&x_tab, &x_col, &x_row);
+      x_next  = VISU_next (&x_tab, &x_col, &x_row);
    } while (x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    return 0;
@@ -1387,7 +1387,7 @@ CELL_decimals      (char a_mode, char a_num)
    char     *valid = "0123456789\"";
    if (strchr(valid, a_num)   == 0) return -1;
    /*---(process range)----------------------*/
-   x_next  = SEL_first (&x_tab, &x_col, &x_row);
+   x_next  = VISU_first (&x_tab, &x_col, &x_row);
    x_decs  = a_num;
    if (x_decs < '0') x_decs = '0';
    if (x_decs > '9') x_decs = '9';
@@ -1403,7 +1403,7 @@ CELL_decimals      (char a_mode, char a_num)
          ++x_count;
          CELL_printable (x_next);
       }
-      x_next  = SEL_next (&x_tab, &x_col, &x_row);
+      x_next  = VISU_next (&x_tab, &x_col, &x_row);
    } while (x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    return 0;
@@ -1438,7 +1438,7 @@ CELL_width         (char a_mode, char a_num)
       return -1;
    }
    /*---(process range)----------------------*/
-   x_entry  = SEL_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
+   x_entry  = VISU_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
    for (i = x_bcol; i <= x_ecol; ++i) {
       DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d", x_tab, x_col);
       x_col = &tabs[x_tab].cols[i];
@@ -1516,7 +1516,7 @@ CELL_height        (char a_mode, char a_num)
       return -1;
    }
    /*---(get sentinel column)----------------*/
-   first = SEL_first (&x_tab, &x_col, &x_row);
+   first = VISU_first (&x_tab, &x_col, &x_row);
    s_col    = x_col;
    DEBUG_CELL  yLOG_value  ("row"  , x_row);
    /*---(process range)----------------------*/
@@ -1559,7 +1559,7 @@ CELL_height        (char a_mode, char a_num)
          ++x_count;
       }
       /*---(update printable)-------------*/
-      next  = SEL_next (&x_tab, &x_col, &x_row);
+      next  = VISU_next (&x_tab, &x_col, &x_row);
    } while (next != DONE_DONE);
    /*---(complete)---------------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);

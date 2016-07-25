@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4s"
-#define     VER_TXT   "marks now read and write again ;)"
+#define     VER_NUM   "1.5a"
+#define     VER_TXT   "rename all SEL_ functions to VISU_ for clarity"
 
 
 
@@ -884,27 +884,32 @@ char      cmd_exec           (char*);
 char      row_print          (void);
 char      pos_move           (char);
 
-char      SEL_init           (void);
-char      SEL_save           (void);
-char      SEL_restore        (void);
-char      SEL_clear          (void);
-char      SEL_start          (int a_tab, int a_col, int a_row, char a_mode);
-char      SEL_increase       (int a_tab, int a_col, int a_row);
-char      SEL_update         (int a_tab, int a_col, int a_row);
-char      SEL_root           (int a_tab, int a_col, int a_row);
-char      SEL_selected       (int a_tab, int a_col, int a_row);
-char      SEL_set            (int a_tab, int a_bcol, int a_brow, int a_ecol, int a_erow);
-char      SEL_islive         (void);
 
 
-char      SEL_from           (void);
-char      SEL_col            (void);
-char      SEL_row            (void);
-
-tCELL*    SEL_first          (int*, int*, int*);
-tCELL*    SEL_next           (int*, int*, int*);
-char      SEL_range          (int*, int*, int*, int*, int*);
-char      SEL_makelike       (void);
+/*===[ GYGES_VISU.C ]]========================================================*/
+/*---(init)-----------------*/
+char      VISU_init          (void);
+char      VISU_clear         (void);
+/*---(history)--------------*/
+char      VISU_save          (void);
+char      VISU_restore       (void);
+/*---(setting)--------------*/
+char      VISU_start         (int a_tab, int a_col, int a_row, char a_mode);
+char      VISU_increase      (int a_tab, int a_col, int a_row);
+char      VISU_update        (int a_tab, int a_col, int a_row);
+/*---(display)--------------*/
+char      VISU_root          (int a_tab, int a_col, int a_row);
+char      VISU_selected      (int a_tab, int a_col, int a_row);
+char      VISU_set           (int a_tab, int a_bcol, int a_brow, int a_ecol, int a_erow);
+/*---(simplifiers)----------*/
+char      VISU_islive        (void);
+char      VISU_from          (void);
+char      VISU_col           (void);
+char      VISU_row           (void);
+/*---(retrieval)------------*/
+char      VISU_range         (int*, int*, int*, int*, int*);
+tCELL*    VISU_first         (int*, int*, int*);
+tCELL*    VISU_next          (int*, int*, int*);
 
 char      MARK_mode          (char  a_major, char a_minor);
 char      MARK_init          (void);

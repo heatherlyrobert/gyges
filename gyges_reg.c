@@ -442,7 +442,7 @@ REG_mode           (int a_prev, int a_curr)
                      return rce;
                      break;
                   }
-                  SEL_set   (s_reg[x_buf].otab,
+                  VISU_set   (s_reg[x_buf].otab,
                         s_reg[x_buf].begc, s_reg[x_buf].begr,
                         s_reg[x_buf].endc, s_reg[x_buf].endr);
                   CTAB = s_reg[x_buf].otab;
@@ -485,7 +485,7 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    --rce;  if (a_curr->u == a_stamp)     return rce;     /* already written               */
    --rce;  if (a_curr->t == '-')         return rce;     /* don't write, recreate on read */
    /*---(check for bounds)---------------*/
-   rc = SEL_selected (a_curr->tab, a_curr->col, a_curr->row);
+   rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);
    --rce;  if (rc == 0)                  return rce;
    /*---(make a copy)--------------------*/
    x_copy = CELL_dup (a_curr);
@@ -644,7 +644,7 @@ REG_save           (char a_type)
    if (a_type != 'a') {
       DEBUG_REGS   yLOG_note    ("clear and initialize register");
       REG_clear (my.reg_curr, '-');
-      SEL_range (&s_reg[x_reg].otab,
+      VISU_range (&s_reg[x_reg].otab,
             &s_reg[x_reg].begc, &s_reg[x_reg].begr,
             &s_reg[x_reg].endc, &s_reg[x_reg].endr);
    }
@@ -659,7 +659,7 @@ REG_save           (char a_type)
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
    /*---(process independent cells)------*/
    DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
-   curr  = SEL_first (&x_tab, &x_col, &x_row);
+   curr  = VISU_first (&x_tab, &x_col, &x_row);
    /*> s_reg[x_reg].scol = x_col;                                                       <* 
     *> s_reg[x_reg].srow = x_row;                                                       <*/
    while (curr != DONE_DONE) {
@@ -668,14 +668,14 @@ REG_save           (char a_type)
       if (curr == NULL) {
          DEBUG_REGS   yLOG_note    ("skipping, nobody home");
          ++x_skipped;
-         curr  = SEL_next (&x_tab, &x_col, &x_row);
+         curr  = VISU_next (&x_tab, &x_col, &x_row);
          continue;
       }
       DEBUG_REGS   yLOG_complex ("current"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, x_tab, x_col, x_row, curr->t, curr->u);
       if (curr->u == x_stamp) {
          DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");
          ++x_skipped;
-         curr  = SEL_next (&x_tab, &x_col, &x_row);
+         curr  = VISU_next (&x_tab, &x_col, &x_row);
          continue;
       }
       ++x_processed;
@@ -689,7 +689,7 @@ REG_save           (char a_type)
       REG__hook   (x_copy, my.reg_curr, '-');
       ++x_seq;
       DEBUG_REGS   yLOG_note    ("copied");
-      curr  = SEL_next (&x_tab, &x_col, &x_row);
+      curr  = VISU_next (&x_tab, &x_col, &x_row);
    };
    DEBUG_REGS   yLOG_value   ("x_seq"     , x_seq);
    DEBUG_REGS   yLOG_value   ("x_total"   , x_total);
@@ -725,7 +725,7 @@ REG_save           (char a_type)
    }
    rce -= 1; /* extra code inside loop */
    /*---(clear selection)----------------*/
-   SEL_clear ();
+   VISU_clear ();
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -859,7 +859,7 @@ REG_valuesout     (char a_style)
    f = fopen("/root/z_gehye/vi_clip.txt", "w");
    --rce;  if (f == NULL)      return rce;
    /*---(process independent cells)------*/
-   curr  = SEL_first (&x_tab, &x_col, &x_row);
+   curr  = VISU_first (&x_tab, &x_col, &x_row);
    x_rowsave = x_row;
    while (curr != DONE_DONE) {
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
@@ -912,7 +912,7 @@ REG_valuesout     (char a_style)
          }
       }
       x_rowsave = x_row;
-      curr  = SEL_next (&x_tab, &x_col, &x_row);
+      curr  = VISU_next (&x_tab, &x_col, &x_row);
    };
    /*---(close file)---------------------*/
    fclose  (f);

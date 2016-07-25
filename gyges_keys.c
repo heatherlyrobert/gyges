@@ -137,7 +137,7 @@ MODE_map           (
       return  0;
    }
    if (a_curr == K_ESCAPE) {
-      SEL_clear ();
+      VISU_clear ();
       return  0;
    }
    /*---(single key)---------------------*/
@@ -217,8 +217,8 @@ MODE_map           (
                       /*---(special)------------------*/
       case K_CTRL_L : clear ();                       break;
       case 'P'      : DEP_writeall (); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;
-      case 'c'      : SEL_col ();                     break;
-      case 'r'      : SEL_row ();                     break;
+      case 'c'      : VISU_col ();                    break;
+      case 'r'      : VISU_row ();                    break;
                       /*---(clearing cells)-----------*/
       case 'x'      : REG_cut   ();                   break;
       case 'd'      : CELL_erase ();                  break;
@@ -232,8 +232,8 @@ MODE_map           (
       case '|'      : CELL_align (CHG_INPUT, '|');               break;
       case '>'      : CELL_align (CHG_INPUT, '>');               break;
                       /*---(selection)----------------*/
-      case 'v'      : SEL_start (CTAB, CCOL, CROW, SEL_FROM);   break;
-      case 'V'      : SEL_start (CTAB, CCOL, CROW, SEL_CUM);    break;
+      case 'v'      : VISU_start (CTAB, CCOL, CROW, SEL_FROM);   break;
+      case 'V'      : VISU_start (CTAB, CCOL, CROW, SEL_CUM);    break;
       case 'y'      : REG_copy  ();                   break;
       case 'p'      : REG_paste ('y');                break;
                       /*---(modes and multikey)-------*/
@@ -288,7 +288,7 @@ MODE_map           (
       case '_' : /* go to frozen header rows */          break;
       case '0' : /* go to frozen cols        */          break;
                                                          /*---(selection)----------------*/
-      case 'v' : SEL_restore ();                         break;
+      case 'v' : VISU_restore ();                       break;
       default  : return rce;    break;
       }
       return 0;
@@ -569,8 +569,8 @@ KEYS_format        (int  a_prev, int  a_curr)
    tCELL   *curr = tab->sheet[CCOL][CROW];
    /*---(check for control keys)----------------*/
    switch (a_curr) {
-   case   27 : my.mode = MODE_MAP; SEL_clear (); return 0;   /* escape  */
-   case   10 : my.mode = MODE_MAP; SEL_clear (); return 0;   /* return  */
+   case   27 : my.mode = MODE_MAP; VISU_clear (); return 0;   /* escape  */
+   case   10 : my.mode = MODE_MAP; VISU_clear (); return 0;   /* return  */
    }
    /*---(check for alignment prefixes)----------*/
    switch (a_curr) {
@@ -830,7 +830,7 @@ KEYS_wander        (int  a_prev, int  a_curr)
    case  ')' : post = a_curr;
    case  10  :
    case  27  : my.mode = MODE_INPUT;
-               SEL_clear ();
+               VISU_clear ();
                LOC_ref (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref);
                CTAB = wtab;
                tabs[CTAB].ccol = wcol;
@@ -871,12 +871,12 @@ KEYS_wander        (int  a_prev, int  a_curr)
    case '$'      : KEYS_col (" $");     break;
    case 'b'      : KEYS_col ("es");     break;
    case 'e'      : KEYS_col ("ee");     break;
-   case 'c'      : SEL_col();         break;
-   case 'r'      : SEL_row();         break;
+   case 'c'      : VISU_col();          break;
+   case 'r'      : VISU_row();          break;
    }
    if (a_curr == ':') {
       LOC_ref   (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref2);
-      SEL_start (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, SEL_FROM);
+      VISU_start (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, SEL_FROM);
    }
    /*---(complete)-----------------------*/
    return  0;

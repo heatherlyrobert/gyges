@@ -381,7 +381,7 @@ PROG_begin         (void)
       /*---(done)------------------------*/
    }
    /*---(locals)-------------------------*/
-   SEL_init  ();
+   VISU_init  ();
    REG_init  ();
    KEYS_init ();
    /*---(column settings)----------------*/

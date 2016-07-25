@@ -432,7 +432,7 @@ KEYS_col           (char *a_keys)
    }
    /*---(check for selection)---------*/
    DEBUG_USER  yLOG_note    ("update selection if necessary");
-   if (x_key   != 'w')  SEL_update   (CTAB, CCOL, CROW);
+   if (x_key   != 'w')  VISU_update   (CTAB, CCOL, CROW);
    /*---(check for update)------------*/
    DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
    DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
@@ -865,7 +865,7 @@ KEYS_row           (char *a_keys)
    }
    /*---(check for selection)---------*/
    DEBUG_USER  yLOG_note    ("update selection if necessary");
-   SEL_update  (CTAB, CCOL, CROW);
+   VISU_update  (CTAB, CCOL, CROW);
    /*---(check for update)------------*/
    DEBUG_USER  yLOG_note    ("update row headings if necessary");
    if      (BROW != s_beg) { KEYS_brow (BROW); CURS_rowhead(); }

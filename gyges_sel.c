@@ -116,17 +116,17 @@ static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNO
 static void  o___INIT____________o () { return; }
 
 char             /* clear all selections -----------------[ ------ [ ------ ]-*/
-SEL_init           (void)
+VISU_init          (void)
 {
    /*---(selection)----------------------*/
-   SEL_clear   ();
-   SEL_save    ();
+   VISU_clear   ();
+   VISU_save    ();
    /*---(complete)-----------------------*/
    return 0;
 }
 
 char         /*--> clear the selection -------------------[ leaf   [ ------ ]-*/
-SEL_clear          (void)
+VISU_clear          (void)
 {
    /*---(back to original cell)----------*/
    if (sel.live == SEL_YES) {
@@ -135,7 +135,7 @@ SEL_clear          (void)
       CROW = sel.orow;
    }
    /*---(backup)-------------------------*/
-   SEL_save  ();
+   VISU_save   ();
    /*---(status)-------------------------*/
    sel.live  = SEL_NOT;
    sel.mode  = SEL_NONE;
@@ -159,7 +159,7 @@ SEL_clear          (void)
 static void  o___HISTORY_________o () { return; }
 
 char         /*--> save the selection --------------------[ leaf   [ ------ ]-*/
-SEL_save           (void)
+VISU_save          (void)
 {
    /*---(status)-------------------------*/
    sel_save.live  = SEL_NOT;
@@ -184,7 +184,7 @@ SEL_save           (void)
 }
 
 char         /*--> restore the selection -----------------[ leaf   [ ------ ]-*/
-SEL_restore        (void)
+VISU_restore       (void)
 {
    /*---(status)-------------------------*/
    sel.live  = SEL_YES;
@@ -220,7 +220,7 @@ SEL_restore        (void)
 static void  o___SETTING_________o () { return; }
 
 char             /* start the visual selection -----------[ twig   [ 121y9x ]-*/
-SEL_start          (int a_tab, int a_col, int a_row, char a_mode)
+VISU_start         (int a_tab, int a_col, int a_row, char a_mode)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -242,7 +242,7 @@ SEL_start          (int a_tab, int a_col, int a_row, char a_mode)
 }
 
 char             /* adjust the visual selection ----------[ twig   [ 231y9x ]-*/
-SEL_increase       (int a_tab, int a_col, int a_row)
+VISU_increase      (int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -274,14 +274,14 @@ SEL_increase       (int a_tab, int a_col, int a_row)
 }
 
 char             /* cursor update to visual selection ----[ twig   [ 121n0x ]-*/
-SEL_update         (int a_tab, int a_col, int a_row)
+VISU_update        (int a_tab, int a_col, int a_row)
 {
    if (sel.live == SEL_NOT)                               return -1;
-   return  SEL_increase (CTAB, CCOL, CROW);
+   return  VISU_increase (CTAB, CCOL, CROW);
 }
 
 char         /*--> apply a specific selection ------------[ ------ [ ------ ]-*/
-SEL_set            (
+VISU_set           (
       /*----------+-----------+-----------------------------------------------*/
       int         a_tab,      /* tab of selection                             */
       int         a_bcol,     /* beginning col of selection                   */
@@ -296,7 +296,7 @@ SEL_set            (
    char        rce         = -10;
    /*---(prepare)------------------------*/
    sel.live  = SEL_NOT;
-   SEL_clear ();
+   VISU_clear ();
    /*---(defense: beginning legal)-------*/
    --rce;
    rc          = LOC_legal (a_tab, a_bcol, a_brow, CELL_FIXED);
@@ -331,7 +331,7 @@ SEL_set            (
 static void  o___DISPLAY_________o () { return; }
 
 char             /* indicate whether cell is the root ----[ leaf   [ 170n0x ]-*/
-SEL_root           (int a_tab, int a_col, int a_row)
+VISU_root          (int a_tab, int a_col, int a_row)
 {
    if (sel.live == SEL_NOT)    return 0;
    if (a_tab != sel.otab)      return 0;
@@ -341,7 +341,7 @@ SEL_root           (int a_tab, int a_col, int a_row)
 }
 
 char             /* indicate whether cell is selected ----[ leaf   [ 170n0x ]-*/
-SEL_selected       (int a_tab, int a_col, int a_row)
+VISU_selected      (int a_tab, int a_col, int a_row)
 {
    if (sel.live == SEL_NOT)    return 0;
    if (a_tab != sel.otab)      return 0;
@@ -360,16 +360,16 @@ SEL_selected       (int a_tab, int a_col, int a_row)
 static void  o___SIMPLIFIERS_____o () { return; }
 
 char       /*----: indicate whether a selection is active/live ---------------*/
-SEL_islive         (void) { if (sel.live == SEL_YES)  return 1; return 0; }
+VISU_islive        (void) { if (sel.live == SEL_YES)  return 1; return 0; }
 
 char       /*----: simplifier for starting at current point ------------------*/
-SEL_from           (void) { return SEL_start  (CTAB, CCOL, CROW, SEL_CUM); }
+VISU_from          (void) { return VISU_start  (CTAB, CCOL, CROW, SEL_CUM); }
 
 char       /*----: convert to whole-column selection -------------------------*/
-SEL_col            (void) { sel.brow = 0; sel.erow = tabs[sel.otab].nrow - 1; return 0; }
+VISU_col           (void) { sel.brow = 0; sel.erow = tabs[sel.otab].nrow - 1; return 0; }
 
 char       /*----: convert to whole-row selection ----------------------------*/
-SEL_row            (void) { sel.bcol = 0; sel.ecol = tabs[sel.otab].ncol - 1; return 0; }
+VISU_row           (void) { sel.bcol = 0; sel.ecol = tabs[sel.otab].ncol - 1; return 0; }
 
 
 
@@ -385,7 +385,7 @@ static void  o___RETRIEVAL_______o () { return; }
  */
 
 char         /*--> return selection range borders --------[ ------ [ ------ ]-*/
-SEL_range          (
+VISU_range          (
       /*----------+-----------+-----------------------------------------------*/
       int        *a_tab,      /* return variable for tab                      */
       int        *a_bcol,     /* return variable for beginning col            */
@@ -416,7 +416,7 @@ SEL_range          (
 }
 
 tCELL*       /*--> return top-left cell in selection -----[-leaf---[--------]-*/
-SEL_first          (
+VISU_first         (
       /*----------+-----------+-----------------------------------------------*/
       int        *a_tab,      /* return holder for tab of first cell          */
       int        *a_col,      /* return holder for col of first cell          */
@@ -445,7 +445,7 @@ SEL_first          (
 }
 
 tCELL*       /*--> return next cell in selection ---------[-leaf---[--------]-*/
-SEL_next           (
+VISU_next          (
       /*----------+-----------+-----------------------------------------------*/
       int        *a_tab,      /* return holder for tab of next cell           */
       int        *a_col,      /* return holder for col of next cell           */
@@ -486,38 +486,6 @@ SEL_next           (
    sel.curr  = tabs[sel.otab].sheet[sel.ccol][sel.crow];
    /*---(complete)-----------------------*/
    return sel.curr;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                          specialty                           ----===*/
-/*====================------------------------------------====================*/
-static void  o___SPECIALTY_______o () { return; }
-
-char               /* PURPOSE : make lower cells like top ones ---------------*/
-SEL_makelike       (void)
-{
-   /*> endwin();                                                                      <*/
-   /*---(process range)----------------------*/
-   /*> int       i    = 0;                       /+ loop iterator -- cols         +/            <* 
-    *> int       j    = 0;                       /+ loop iterator -- rows         +/            <* 
-    *> char     *label;                                                                         <* 
-    *> char      new_contents[100];                                                             <* 
-    *> /+> CELL_change(1, 28, "arstoiarenst");                                            <+/   <* 
-    *> for (i = BCOL; i <= ECOL; ++i) {                                                   <* 
-    *>    /+> printf("col = %3d\n", i);                                                   <+/   <* 
-    *>    label = LOC_label(tab->sheet[i][BROW]);                                           <* 
-    *>    snprintf(new_contents, 90, "~%s", label);                                             <* 
-    *>    /+> CELL_change (i, 28, new_contents);                                          <+/   <* 
-    *>    for (j = BROW + 1; j <= EROW; ++j) {                                            <* 
-    *>       /+> printf("   row = %3d\n", j);                                             <+/   <* 
-    *>       CELL_change (CTAB, i, j, new_contents);                                         <* 
-    *>    }                                                                                     <* 
-    *> }                                                                                        <*/
-   /*---(complete)---------------------------*/
-   /*> exit(-1);                                                                      <*/
-   return 0;
 }
 
 

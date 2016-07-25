@@ -404,7 +404,7 @@ HIST_undo          (void)
    DEBUG_HIST  yLOG_info    ("upper"     , x_upper);
    /*---(get to right location)----------*/
    DEBUG_HIST  yLOG_note    ("clear any existing selection");
-   SEL_clear ();
+   VISU_clear ();
    DEBUG_HIST  yLOG_complex ("jump to"   , "t=%4d, c=%4d, r=%4d", hist[chist].btab, hist[chist].bcol, hist[chist].brow);
    LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
    /*---(handle request)-----------------*/
@@ -488,7 +488,7 @@ HIST_redo          (void)
    for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
    /*---(get to right location)----------*/
    LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
-   SEL_clear ();
+   VISU_clear ();
    /*---(handle request)-----------------*/
    if        (strcmp ("change"  , x_lower) == 0) {
       if (strcmp (hist[chist].after , "[<{(null)}>]") == 0) {
