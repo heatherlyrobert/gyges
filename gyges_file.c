@@ -642,6 +642,206 @@ INPT_rowcol        (
    return 0;
 }
 
+#define     FIELD_RREG     1
+#define     FIELD_RTAB     2
+#define     FIELD_RBEG     3
+#define     FIELD_REND     4
+#define     FIELD_RMIN     5
+#define     FIELD_RMAX     6
+#define     FIELD_RTYPE    7
+
+char         /*--> parse a register entry ----------------[ flower [--------]-*/
+INPT_register      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;
+   int         i           = 0;
+   char       *p           = NULL;               /* strtok return pointer     */
+   int         x_len       = 0;
+   int         x_tab       = 0;
+   char        x_regid     = ' ';
+   char        x_beg       [10];
+   char        x_end       [10];
+   char        x_min       [10];
+   char        x_max       [10];
+   char        x_type      = ' ';
+   char        x_regtest   [MAX_STR];
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(read fields)--------------------*/
+   for (i = FIELD_RREG; i <= FIELD_RTYPE; ++i) {
+      DEBUG_INPT   yLOG_note    ("read next field");
+      p = strtok_r (NULL  , s_q, &s_context);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
+         break;
+      }
+      strltrim (p, ySTR_BOTH, LEN_RECD);
+      /*> if (p [0] == '-')  p[0] = '\0';                                             <*/
+      x_len = strlen (p);
+      switch (i) {
+      case  FIELD_RREG :  /*--------------*/
+         --rce;  if (x_len != 1)  {
+            DEBUG_INPT  yLOG_note    ("reg id not correct");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         x_regid = p[0];
+         DEBUG_INPT  yLOG_char    ("regid"     , x_regid);
+         break;
+      case  FIELD_RTAB  : /*-------------*/
+         x_tab = atoi (p);
+         DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
+         --rce;  if (x_tab == 0 && strcmp (p, "0") != 0) {
+            DEBUG_INPT  yLOG_note    ("tab number not correct");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         --rce;  if (x_tab >= 10) {
+            DEBUG_INPT  yLOG_note    ("tab number too large");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_INPT   yLOG_note    ("initializing tab");
+         break;
+      case  FIELD_RBEG  : /*-------------*/
+         strlcpy (x_beg, p, 10);
+         break;
+      case  FIELD_REND  : /*-------------*/
+         strlcpy (x_end, p, 10);
+         break;
+      case  FIELD_RMIN  : /*-------------*/
+         strlcpy (x_min, p, 10);
+         break;
+      case  FIELD_RMAX  : /*-------------*/
+         strlcpy (x_max, p, 10);
+         break;
+      case  FIELD_RTYPE : /*-------------*/
+         --rce;  if (x_len != 1)  {
+            DEBUG_INPT  yLOG_note    ("reg type not correct");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         x_type = p[0];
+         DEBUG_INPT  yLOG_char    ("type"      , x_type);
+         REG_read (x_regid, x_tab, x_beg, x_end, x_min, x_max, x_type);
+         break;
+      }
+      DEBUG_INPT   yLOG_note    ("done with loop");
+   } 
+   DEBUG_INPT   yLOG_note    ("done parsing fields");
+   REG_entry (x_regid, x_regtest);
+   DEBUG_INPT   yLOG_info    ("regtest"   , x_regtest);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+#define     FIELD_TAB      1
+#define     FIELD_MAX      2
+#define     FIELD_TOP      3
+#define     FIELD_CUR      4
+#define     FIELD_FTYPE    5
+#define     FIELD_FBEG     6
+#define     FIELD_FEND     7
+#define     FIELD_NAME     8
+
+char         /*--> parse a tab entry ---------------------[ flower [--------]-*/
+INPT_tab_new       (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;
+   int         i           = 0;
+   char       *p           = NULL;               /* strtok return pointer     */
+   char       *q           = "";               /* strtok delimeters         */
+   int         x_len       = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   char        x_type      = 0;
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(read fields)--------------------*/
+   for (i = FIELD_TAB; i <= FIELD_NAME; ++i) {
+      DEBUG_INPT   yLOG_note    ("read next field");
+      p = strtok_r (NULL  , q, &s_context);
+      --rce;  if (p == NULL) {
+         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
+         break;
+      }
+      strltrim (p, ySTR_BOTH, LEN_RECD);
+      /*> if (p [0] == '-')  p[0] = '\0';                                             <*/
+      x_len = strlen (p);
+      switch (i) {
+      case  FIELD_TAB   :  /*---(tab number)-------*/
+         x_tab = atoi (p);
+         DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
+         if (x_tab == 0 && strcmp (p, "0") != 0) {
+            DEBUG_INPT  yLOG_note    ("tab number not correct");
+            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+            return rce + i;
+         }
+         DEBUG_INPT   yLOG_note    ("initializing tab");
+         TAB_init (x_tab);
+         break;
+      case  FIELD_MAX   : /*---(size of sheet)-----*/
+         rc = INPT_rowcol (p, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
+               1, DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);
+         break;
+      case  FIELD_TOP   : /*---(top of screen)-----*/
+         rc = INPT_rowcol (p, &(tabs[x_tab].bcol), &(tabs[x_tab].brow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         DEBUG_INPT   yLOG_value   ("bcol"      , tabs[x_tab].bcol);
+         DEBUG_INPT   yLOG_value   ("brow"      , tabs[x_tab].brow);
+         break;
+      case  FIELD_CUR   : /*---(cur position)------*/
+         rc = INPT_rowcol (p, &(tabs[x_tab].ccol), &(tabs[x_tab].crow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         tabs[x_tab].ecol = tabs[x_tab].ccol;
+         tabs[x_tab].erow = tabs[x_tab].crow;
+         break;
+      case  FIELD_FTYPE : /*---(freeze type)-------*/
+         DEBUG_INPT   yLOG_char    ("freeze"    , p[0]);
+         switch (p[0]) {
+         case  '-' : tabs[x_tab].froz_col  = '-';
+                     tabs[x_tab].froz_row  = '-';
+                     break;
+         case  'r' : tabs[x_tab].froz_col  = '-';
+                     tabs[x_tab].froz_row  = 'y';
+                     break;
+         case  'c' : tabs[x_tab].froz_col  = 'y';
+                     tabs[x_tab].froz_row  = '-';
+                     break;
+         case  'b' : tabs[x_tab].froz_col  = 'y';
+                     tabs[x_tab].froz_row  = 'y';
+                     break;
+         default   : tabs[x_tab].froz_col  = '-';
+                     tabs[x_tab].froz_row  = '-';
+                     break;
+         }
+         break;
+      case  FIELD_FBEG  : /*---(freeze beg)--------*/
+         rc = INPT_rowcol (p, &(tabs[x_tab].froz_bcol), &(tabs[x_tab].froz_brow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         break;
+      case  FIELD_FEND  : /*---(freeze end)--------*/
+         rc = INPT_rowcol (p, &(tabs[x_tab].froz_ecol), &(tabs[x_tab].froz_erow),
+               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         break;
+      case  FIELD_NAME  : /*---(name)--------------*/
+         if (x_len > 0)  strlcpy (tabs[x_tab].name, p, LEN_STR);
+         DEBUG_INPT   yLOG_info    ("name"      , p);
+         tabs[x_tab].active = 'y';
+         NTAB               = x_tab + 1;
+         break;
+      }
+      DEBUG_INPT   yLOG_note    ("done with loop");
+   } 
+   DEBUG_INPT   yLOG_note    ("done parsing fields");
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*--> parse a tab entry ---------------------[ flower [--------]-*/
 INPT_tabF          (void)
 {
@@ -1805,14 +2005,15 @@ INPT_main          (char *a_name)
                  break;
       case 'h' : INPT_height  ();
                  break;
-      case 't' : INPT_tabF    ();
+      case 't' : INPT_tab_new ();
                  break;
-      /*> case 'm' : MARK_read (x_temp);                                              <* 
-       *>            break;                                                           <*/
+                 /*> case 'm' : MARK_read (x_temp);                                              <* 
+                  *>            break;                                                           <*/
       case 'c' : if (strcmp ("-D-", my.f_vers) == 0)  rc = INPT_cell_new ();
                     if (rc < 0)  ++x_cellbad;
                  break;
-      case 'r' : /* register    */ break;
+      case 'r' : INPT_register ();
+                 break;
       }
       /*---(versioned)-------------------*/
       if (strcmp (my.f_type, "versioned") == 0) {

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4o"
-#define     VER_TXT   "register cells now read from input file"
+#define     VER_NUM   "1.4p"
+#define     VER_TXT   "register entry reads correctly and shows in help"
 
 
 
@@ -938,6 +938,8 @@ char      REG_append         (void);
 char      REG_paste          (char a_adapt);
 char      REG_valuesout      (char a_trim);
 
+char      REG_entry          (char a_reg, char *a_list);
+char      REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min, char *a_max, char a_type);
 char      REG_write          (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);
 

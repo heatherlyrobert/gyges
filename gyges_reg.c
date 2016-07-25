@@ -142,35 +142,51 @@ char         /*--> clear out a register ------------------[ ------ [ ------ ]-*/
 REG_clear          (char a_reg, char a_init)
 {
    /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
    int         x_reg       = 0;
    int         i           = 0;
    tCELL      *x_curr      = NULL;
-   char        rce         = -10;
    char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);
+   DEBUG_REGS   yLOG_char    ("a_init"    , a_init);
    /*---(get register number)------------*/
    x_reg  = REG__reg2index  (a_reg);
-   --rce;  if (x_reg < 0)         return rce;
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0) {
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(boundaries)---------------------*/
+   DEBUG_REGS   yLOG_note    ("reset all values to zero");
    s_reg [x_reg].otab  = 0;
    s_reg [x_reg].minc  = s_reg [x_reg].minr  = 0;
    s_reg [x_reg].begc  = s_reg [x_reg].begr  = 0;
    s_reg [x_reg].endc  = s_reg [x_reg].endr  = 0;
    s_reg [x_reg].maxc  = s_reg [x_reg].maxr  = 0;
    s_reg [x_reg].type  = '-';
-   /*---(cells)--------------------------*/
    s_reg [x_reg].nbuf  = 0;
    s_reg [x_reg].real  = 0;
+   /*---(cells)--------------------------*/
+   DEBUG_REGS   yLOG_note    ("clear all register positions");
    --rce;
    for (i = 0; i < MAX_BUF; ++i) {
       x_curr = s_reg [x_reg].buf [i];
       if (a_init != 'y' && x_curr != NULL) {
          rc = CELL_regdel (x_curr);
-         if (rc < 0)              return rce;
+         if (rc < 0) {
+            DEBUG_REGS   yLOG_note    ("found a bad register position");
+            DEBUG_REGS   yLOG_value   ("posid"     , i);
+            DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
       }
       s_reg[x_reg].buf  [i] = NULL;
       s_reg[x_reg].notes[i] = '-';
    }
    /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -492,11 +508,11 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
 }
 
 char
-REG_entry          (char a_buf, char *a_list)
+REG_entry          (char a_reg, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   int         x_buf       = 0;
+   int         x_reg       = 0;
    char        x_line      [MAX_STR];
    char        x_toplef    [10];
    char        x_botrig    [10];
@@ -507,7 +523,7 @@ REG_entry          (char a_buf, char *a_list)
    int         x_cells     = 0;
    /*---(beginning)----------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_buf"     , a_buf);
+   DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);
    DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
    /*---(defenses)--------------------*/
    --rce;  if (a_list  == NULL) {
@@ -517,39 +533,40 @@ REG_entry          (char a_buf, char *a_list)
       return rce;
    }
    /*---(buffer number)------------------*/
-   x_buf  = REG__reg2index  (a_buf);
-   DEBUG_REGS   yLOG_value   ("x_buf"     , x_buf);
-   --rce;  if (x_buf < 0)  {
+   x_reg  = REG__reg2index  (a_reg);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0)  {
       DEBUG_REGS   yLOG_note    ("register is no good");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       strlcpy (a_list, empty, 80);
       return rce;
    }
    /*---(write line)------------------*/
-   if (s_reg [x_buf].nbuf == 0) {
-      sprintf (x_line, "  %c   -                                                      -  ", a_buf);
+   if (s_reg [x_reg].nbuf == 0) {
+      sprintf (x_line, "  %c   -                                                      -  ", a_reg);
       strlcpy (a_list, x_line, 80);
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(write line)------------------*/
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].minc, s_reg [x_buf].minr, 0, x_min   );
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].begc, s_reg [x_buf].begr, 0, x_toplef);
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].endc, s_reg [x_buf].endr, 0, x_botrig);
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].maxc, s_reg [x_buf].maxr, 0, x_max   );
-   x_cells = (s_reg [x_buf].endc - s_reg [x_buf].begc + 1) *
-      (s_reg [x_buf].endr - s_reg [x_buf].begr + 1);
+   DEBUG_INPT  yLOG_complex ("address"   , "r=%4d, t=%4d, c=%4d, r=%4d", x_reg, s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr);
+   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].minc, s_reg [x_reg].minr, 0, x_min   );
+   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr, 0, x_toplef);
+   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].endc, s_reg [x_reg].endr, 0, x_botrig);
+   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].maxc, s_reg [x_reg].maxr, 0, x_max   );
+   x_cells = (s_reg [x_reg].endc - s_reg [x_reg].begc + 1) *
+      (s_reg [x_reg].endr - s_reg [x_reg].begr + 1);
    sprintf (x_size , "%dx%d",
-         s_reg [x_buf].endc - s_reg [x_buf].begc + 1,
-         s_reg [x_buf].endr - s_reg [x_buf].begr + 1);
+         s_reg [x_reg].endc - s_reg [x_reg].begc + 1,
+         s_reg [x_reg].endr - s_reg [x_reg].begr + 1);
    sprintf (x_reach, "%dx%d",
-         s_reg [x_buf].maxc - s_reg [x_buf].minc + 1,
-         s_reg [x_buf].maxr - s_reg [x_buf].minr + 1);
+         s_reg [x_reg].maxc - s_reg [x_reg].minc + 1,
+         s_reg [x_reg].maxr - s_reg [x_reg].minr + 1);
    sprintf (x_line , "  %c   %1d  %-5s  %3d  %3d   %-5.5s  %-5.5s %-5s  %-5.5s  %-5.5s  %c  ",
-         a_buf, s_reg[x_buf].otab,
-         x_size, x_cells, s_reg[x_buf].nbuf, x_toplef + 1, x_botrig + 1,
+         a_reg, s_reg[x_reg].otab,
+         x_size, x_cells, s_reg[x_reg].nbuf, x_toplef + 1, x_botrig + 1,
          x_reach, x_min + 1, x_max + 1,
-         s_reg[x_buf].type);
+         s_reg[x_reg].type);
    strlcpy (a_list, x_line, 80);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -909,6 +926,56 @@ REG_valuesout     (char a_style)
 /*===----                           files                              ----===*/
 /*====================------------------------------------====================*/
 static void  o___FILES___________o () { return; }
+
+char
+REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min, char *a_max, char a_type)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;           /* return code for errors         */
+   char        rc          =   0;           /* generic return code            */
+   int         x_reg       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_char    ("a_reg"     , a_reg);
+   /*---(buffer number)------------------*/
+   x_reg  = REG__reg2index  (a_reg);
+   DEBUG_INPT   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0) {
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(beg)----------------------------*/
+   rc = LOC_parse (a_beg, NULL, &x_col, &x_row, NULL);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   s_reg [x_reg].begc = x_col;
+   s_reg [x_reg].begr = x_row;
+   DEBUG_INPT  yLOG_complex ("address"   , "r=%4d, t=%4d, c=%4d, r=%4d", x_reg, s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr);
+   /*---(end)----------------------------*/
+   rc = LOC_parse (a_end, NULL, &x_col, &x_row, NULL);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   s_reg [x_reg].endc = x_col;
+   s_reg [x_reg].endr = x_row;
+   DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", a_tab, s_reg [x_reg].endc, s_reg [x_reg].endr);
+   /*---(min)----------------------------*/
+   rc = LOC_parse (a_min, NULL, &x_col, &x_row, NULL);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   s_reg [x_reg].minc = x_col;
+   s_reg [x_reg].minr = x_row;
+   DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", a_tab, s_reg [x_reg].minc, s_reg [x_reg].minr);
+   /*---(max)----------------------------*/
+   rc = LOC_parse (a_max, NULL, &x_col, &x_row, NULL);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   s_reg [x_reg].maxc = x_col;
+   s_reg [x_reg].maxr = x_row;
+   DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", a_tab, s_reg [x_reg].maxc, s_reg [x_reg].maxr);
+   /*---(type)---------------------------*/
+   s_reg [x_reg].type = a_type;
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char
 REG_write          (FILE *a_file, int  *a_seq, char a_buf)
