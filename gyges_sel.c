@@ -879,108 +879,21 @@ MARK_write         (FILE *a_file, int *a_seq)
 }
 
 char
-MARK_read          (char *a_recd)
+MARK_read          (char a_mark, char *a_label)
 {
-   char        x_recd      [LEN_RECD];
+   /*---(locals)-----------+-----------+-*/
    char        rce         = -11;
    char        rc          = 0;
-   int         x_len       = 0;
-   char       *p           = NULL;
-   char       *q           = "";               /* strtok delimeters         */
-   char       *s           = NULL;               /* strtok context variable   */
-   char        x_ver       = '-';
-   char        x_mark      = ' ';
-   char        x_label     [10];
    int         x_tab       = 0;
    int         x_col       = 0;
    int         x_row       = 0;
    char       *x_point     = NULL;
-   int         x_index     = -1;
+   int         x_index     = 0;
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(defense: a_recd null)-----------*/
-   DEBUG_INPT  yLOG_point   ("a_recd"    , a_recd);
-   --rce;  if (a_recd == NULL) {
-      DEBUG_INPT  yLOG_note    ("record pointer can not be null");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_info    ("a_recd"    , a_recd);
-   /*---(defense: a_recd length)---------*/
-   x_len = strlen (a_recd);
-   DEBUG_INPT  yLOG_value   ("length"    , x_len);
-   --rce;  if (x_len <   30) {
-      DEBUG_INPT  yLOG_note    ("length shorter than minimum (30)");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   --rce;  if (x_len >   50)  {
-      DEBUG_INPT  yLOG_note    ("length longer than maximum (50)");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(defense: type/verb)-------------*/
-   strncpy (x_recd , a_recd, LEN_RECD);   /* working version                   */
-   p = strtok_r (x_recd, q, &s);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strltrim  (p, ySTR_BOTH, LEN_RECD);
-   DEBUG_INPT  yLOG_info    ("verb"      , p);
-   --rce;  if (strcmp (p, "mark") != 0) {
-      DEBUG_INPT  yLOG_note    ("not a mark record");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(ver number)---------------------*/
-   p = strtok_r (NULL, q, &s);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strltrim  (p, ySTR_BOTH, LEN_RECD);
-   --rce;  if (strlen (p) != 3) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   --rce;  if (p[0] != '-')  {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   --rce;  if (p[2] != '-') {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   x_ver = p[1];
-   DEBUG_INPT  yLOG_char    ("ver num"   , x_ver);
-   --rce;  if (x_ver != 'A') {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(mark)---------------------------*/
-   p = strtok_r (NULL, q, &s);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strltrim  (p, ySTR_BOTH, LEN_RECD);
-   --rce;  if (strlen (p) != 1) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   x_mark = p[0];
-   DEBUG_INPT  yLOG_char    ("mark"      , x_mark);
-   /*---(location)-----------------------*/
-   p = strtok_r (NULL, q, &s);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strltrim  (p, ySTR_BOTH, LEN_RECD);
-   rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
+   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
    /*---(check mark)---------------------*/
-   x_point = strchr (S_MARK_LIST, x_mark);
+   x_point = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_point == NULL) {
       return rce;
    }
@@ -993,10 +906,12 @@ MARK_read          (char *a_recd)
    s_mark_info [x_index].tab = x_tab;
    s_mark_info [x_index].col = x_col;
    s_mark_info [x_index].row = x_row;
-   strlcpy (s_mark_info [x_index].label, p, 10);
+   strlcpy (s_mark_info [x_index].label, a_label, 10);
    /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
 
 
 

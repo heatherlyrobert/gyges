@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4q"
-#define     VER_TXT   "register cells save then read, then paste correctly"
+#define     VER_NUM   "1.4r"
+#define     VER_TXT   "added mark debugging flag to isolate testing"
 
 
 
@@ -245,6 +245,7 @@ struct cDEBUG
    char        dtree;          /* displays the dependency tree and exits        */
    char        loc;
    char        sel;                    /* s_sel  : visual selection           */
+   char        mark;                   /* s_sel  : location/object marks      */
    char        regs;                   /* s_sel  : copy and paste registers   */
    char        ystr;                   /* s_file : ystr functions             */
 };
@@ -275,6 +276,7 @@ tDEBUG      debug;
 #define     DEBUG_GNOME         if (debug.gnome     == 'y')
 #define     DEBUG_LOC           if (debug.loc       == 'y')
 #define     DEBUG_SEL           if (debug.sel       == 'y')
+#define     DEBUG_MARK          if (debug.sel       == 'y')
 #define     DEBUG_REGS          if (debug.regs      == 'y')
 #define     DEBUG_YSTR          if (debug.ystr      == 'y')
 
@@ -915,7 +917,7 @@ char      MARK_return        (char  a_mark);
 char      MARK_list          (char *a_list);
 char      MARK_listplus      (char *a_list);
 char      MARK_write         (FILE *a_file, int *a_seq);
-char      MARK_read          (char *a_recd);
+char      MARK_read          (char a_mark, char *a_label);
 
 
 /*===[ REG  ]=================================================================*/
