@@ -147,6 +147,9 @@ MODE_map           (
       if (strchr ("gzced\\"  , a_curr) != 0)          return a_curr;
       /*---(mode switch)-----------------*/
       switch (a_curr) {
+      case 'v'      : my.mode    = MODE_VISUAL;
+                      return 0;
+                      break;
       case ':'      : strncpy (command , ":", MAX_STR);
                       my.mode    = MODE_COMMAND;
                       return 0;

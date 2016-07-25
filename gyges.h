@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5a"
-#define     VER_TXT   "rename all SEL_ functions to VISU_ for clarity"
+#define     VER_NUM   "1.5b"
+#define     VER_TXT   "rename all SEL_ functions to VISU_ for clarity (DONE)"
 
 
 

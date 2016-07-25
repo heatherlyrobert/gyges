@@ -54,7 +54,7 @@ main (int argc, char *argv[])
          /*---(major)--------------------*/
       case MODE_GOD      : rc = MODE_god      (sch, cch); break;
       case MODE_MAP      : rc = MODE_map      (sch, cch); break;
-      case MODE_VISUAL   : rc = MODE_map      (sch, cch); break;
+      case MODE_VISUAL   : rc = VISU_mode     (sch, cch); break;
       case MODE_SOURCE   : rc = KEYS_source   (sch, cch); break;
       case MODE_INPUT    : rc = KEYS_input    (sch, cch); break;
       case MODE_COMMAND  : rc = KEYS_command  (' ', cch); break;
