@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4p"
-#define     VER_TXT   "register entry reads correctly and shows in help"
+#define     VER_NUM   "1.4q"
+#define     VER_TXT   "register cells save then read, then paste correctly"
 
 
 

@@ -1424,7 +1424,8 @@ INPT_cellreg       (char a_reg, char *a_label, char *a_format, char *a_source)
    x_new->f = a_format [0];
    x_new->a = a_format [1];
    x_new->d = a_format [2];
-   strlcpy (x_new->label, a_label, 10);
+   strlcpy (x_new->label, a_label , 10);
+   x_new->s = strndup (a_source, MAX_STR);
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
 }
