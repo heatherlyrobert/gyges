@@ -235,8 +235,8 @@ MODE_map           (
       case '|'      : CELL_align (CHG_INPUT, '|');               break;
       case '>'      : CELL_align (CHG_INPUT, '>');               break;
                       /*---(selection)----------------*/
-      case 'v'      : VISU_start (CTAB, CCOL, CROW, SEL_FROM);   break;
-      case 'V'      : VISU_start (CTAB, CCOL, CROW, SEL_CUM);    break;
+      case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;
+      case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;
       case 'y'      : REG_copy  ();                   break;
       case 'p'      : REG_paste ('y');                break;
                       /*---(modes and multikey)-------*/
@@ -879,7 +879,7 @@ KEYS_wander        (int  a_prev, int  a_curr)
    }
    if (a_curr == ':') {
       LOC_ref   (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref2);
-      VISU_start (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, SEL_FROM);
+      VISU_start (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, VISU_FROM);
    }
    /*---(complete)-----------------------*/
    return  0;

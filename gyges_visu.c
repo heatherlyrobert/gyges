@@ -49,8 +49,8 @@
  *   on the source cells and flags about the mode of selection.
  *
  */
-typedef     struct cSEL    tSEL;
-struct cSEL {
+typedef     struct cVISU    tVISU;
+struct cVISU {
    /*---(#1, FLAGS)----------------------*/
    /*   these couple flags track whether the selection is currently underway  */
    /*   and which of several modes of selection is in operation.  please see  */
@@ -88,14 +88,16 @@ struct cSEL {
    tCELL      *curr;
    /*---(end)----------------------------*/
 };
-tSEL        sel;
-tSEL        sel_save;
+static tVISU  s_visu;
+static tVISU  s_save;
 
 /*
  *   macros for indicating whether the selection is active or not
  */
-#define     SEL_NOT        0
-#define     SEL_YES        1
+#define     VISU_NOT       0
+#define     VISU_YES       1
+
+
 
 #define     MAX_MARK       100
 typedef  struct cMARK  tMARK;
@@ -129,24 +131,24 @@ char         /*--> clear the selection -------------------[ leaf   [ ------ ]-*/
 VISU_clear          (void)
 {
    /*---(back to original cell)----------*/
-   if (sel.live == SEL_YES) {
-      CTAB = sel.otab;
-      CCOL = sel.ocol;
-      CROW = sel.orow;
+   if (s_visu.live == VISU_YES) {
+      CTAB = s_visu.otab;
+      CCOL = s_visu.ocol;
+      CROW = s_visu.orow;
    }
    /*---(backup)-------------------------*/
    VISU_save   ();
    /*---(status)-------------------------*/
-   sel.live  = SEL_NOT;
-   sel.mode  = SEL_NONE;
+   s_visu.live  = VISU_NOT;
+   s_visu.mode  = VISU_NONE;
    /*---(clear saved locations)----------*/
-   sel.otab  = sel.ocol  = sel.orow  = 0;
-   sel.bcol  = sel.brow  = 0;
-   sel.ecol  = sel.erow  = 0;
-   sel.ccol  = sel.crow  = 0;
-   sel.scol  = sel.srow  = 0;
+   s_visu.otab  = s_visu.ocol  = s_visu.orow  = 0;
+   s_visu.bcol  = s_visu.brow  = 0;
+   s_visu.ecol  = s_visu.erow  = 0;
+   s_visu.ccol  = s_visu.crow  = 0;
+   s_visu.scol  = s_visu.srow  = 0;
    /*---(locations)----------------------*/
-   sel.home  = sel.curr  = NULL;
+   s_visu.home  = s_visu.curr  = NULL;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -162,23 +164,23 @@ char         /*--> save the selection --------------------[ leaf   [ ------ ]-*/
 VISU_save          (void)
 {
    /*---(status)-------------------------*/
-   sel_save.live  = SEL_NOT;
-   sel_save.mode  = sel.mode;
+   s_save.live  = VISU_NOT;
+   s_save.mode  = s_visu.mode;
    /*---(clear saved locations)----------*/
-   sel_save.otab  = sel.otab;
-   sel_save.ocol  = sel.ocol;
-   sel_save.orow  = sel.orow;
-   sel_save.bcol  = sel.bcol;
-   sel_save.brow  = sel.brow;
-   sel_save.ecol  = sel.ecol;
-   sel_save.erow  = sel.erow;
-   sel_save.ccol  = sel.ccol;
-   sel_save.crow  = sel.crow;
-   sel_save.scol  = sel.scol;
-   sel_save.srow  = sel.srow;
+   s_save.otab  = s_visu.otab;
+   s_save.ocol  = s_visu.ocol;
+   s_save.orow  = s_visu.orow;
+   s_save.bcol  = s_visu.bcol;
+   s_save.brow  = s_visu.brow;
+   s_save.ecol  = s_visu.ecol;
+   s_save.erow  = s_visu.erow;
+   s_save.ccol  = s_visu.ccol;
+   s_save.crow  = s_visu.crow;
+   s_save.scol  = s_visu.scol;
+   s_save.srow  = s_visu.srow;
    /*---(locations)----------------------*/
-   sel_save.home  = NULL;
-   sel_save.curr  = NULL;
+   s_save.home  = NULL;
+   s_save.curr  = NULL;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -187,27 +189,27 @@ char         /*--> restore the selection -----------------[ leaf   [ ------ ]-*/
 VISU_restore       (void)
 {
    /*---(status)-------------------------*/
-   sel.live  = SEL_YES;
-   sel.mode  = sel_save.mode;
+   s_visu.live  = VISU_YES;
+   s_visu.mode  = s_save.mode;
    /*---(clear saved locations)----------*/
-   sel.otab  = sel_save.otab;
-   sel.ocol  = sel_save.ocol;
-   sel.orow  = sel_save.orow;
-   sel.bcol  = sel_save.bcol;
-   sel.brow  = sel_save.brow;
-   sel.ecol  = sel_save.ecol;
-   sel.erow  = sel_save.erow;
-   sel.ccol  = sel_save.ccol;
-   sel.crow  = sel_save.crow;
-   sel.scol  = sel_save.scol;
-   sel.srow  = sel_save.srow;
+   s_visu.otab  = s_save.otab;
+   s_visu.ocol  = s_save.ocol;
+   s_visu.orow  = s_save.orow;
+   s_visu.bcol  = s_save.bcol;
+   s_visu.brow  = s_save.brow;
+   s_visu.ecol  = s_save.ecol;
+   s_visu.erow  = s_save.erow;
+   s_visu.ccol  = s_save.ccol;
+   s_visu.crow  = s_save.crow;
+   s_visu.scol  = s_save.scol;
+   s_visu.srow  = s_save.srow;
    /*---(locations)----------------------*/
-   sel.home  = sel_save.home;
-   sel.curr  = sel_save.curr;
+   s_visu.home  = s_save.home;
+   s_visu.curr  = s_save.curr;
    /*---(go to the right place)----------*/
-   CTAB = sel.otab;
-   CCOL = sel.ccol;
-   CROW = sel.crow;
+   CTAB = s_visu.otab;
+   CCOL = s_visu.ccol;
+   CROW = s_visu.crow;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -229,14 +231,14 @@ VISU_start         (int a_tab, int a_col, int a_row, char a_mode)
    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    --rce;  if (rc < 0)                           return rce;
    /*---(status)-------------------------*/
-   sel.live  = SEL_YES;
-   sel.mode  = a_mode;
+   s_visu.live  = VISU_YES;
+   s_visu.mode  = a_mode;
    /*---(locations)----------------------*/
-   sel.otab                                                  = a_tab;
-   sel.ocol  = sel.bcol  = sel.ecol  = sel.ccol  = sel.scol  = a_col;
-   sel.orow  = sel.brow  = sel.erow  = sel.crow  = sel.srow  = a_row;
+   s_visu.otab                                                  = a_tab;
+   s_visu.ocol  = s_visu.bcol  = s_visu.ecol  = s_visu.ccol  = s_visu.scol  = a_col;
+   s_visu.orow  = s_visu.brow  = s_visu.erow  = s_visu.crow  = s_visu.srow  = a_row;
    /*---(locations)----------------------*/
-   sel.home  = sel.curr  = tabs[sel.otab].sheet[sel.bcol][sel.brow];
+   s_visu.home  = s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.bcol][s_visu.brow];
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -248,27 +250,27 @@ VISU_increase      (int a_tab, int a_col, int a_row)
    char        rce         = -10;
    char        rc          = 0;
    /*---(defenses)-----------------------*/
-   --rce;  if (sel.live == SEL_NOT )             return rce;
-   --rce;  if (a_tab    != sel.otab)             return rce;
+   --rce;  if (s_visu.live == VISU_NOT )             return rce;
+   --rce;  if (a_tab    != s_visu.otab)             return rce;
    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    --rce;  if (rc < 0)                           return rce;
    /*---(process)------------------------*/
-   if (sel.mode == SEL_CUM) {
-      if (a_col > sel.ecol)    sel.ecol = a_col;
-      if (a_col < sel.bcol)    sel.bcol = a_col;
-      if (a_row > sel.erow)    sel.erow = a_row;
-      if (a_row < sel.brow)    sel.brow = a_row;
+   if (s_visu.mode == VISU_CUM) {
+      if (a_col > s_visu.ecol)    s_visu.ecol = a_col;
+      if (a_col < s_visu.bcol)    s_visu.bcol = a_col;
+      if (a_row > s_visu.erow)    s_visu.erow = a_row;
+      if (a_row < s_visu.brow)    s_visu.brow = a_row;
    } else {
-      if (a_col >= sel.ocol)  { sel.bcol = sel.ocol; sel.ecol = a_col   ; }
-      if (a_row >= sel.orow)  { sel.brow = sel.orow; sel.erow = a_row   ; }
-      if (a_col <  sel.ocol)  { sel.bcol = a_col   ; sel.ecol = sel.ocol; }
-      if (a_row <  sel.orow)  { sel.brow = a_row   ; sel.erow = sel.orow; }
+      if (a_col >= s_visu.ocol)  { s_visu.bcol = s_visu.ocol; s_visu.ecol = a_col   ; }
+      if (a_row >= s_visu.orow)  { s_visu.brow = s_visu.orow; s_visu.erow = a_row   ; }
+      if (a_col <  s_visu.ocol)  { s_visu.bcol = a_col   ; s_visu.ecol = s_visu.ocol; }
+      if (a_row <  s_visu.orow)  { s_visu.brow = a_row   ; s_visu.erow = s_visu.orow; }
    }
    /*---(current)------------------------*/
-   sel.ccol  = a_col;
-   sel.crow  = a_row;
+   s_visu.ccol  = a_col;
+   s_visu.crow  = a_row;
    /*---(locations)----------------------*/
-   sel.home  = sel.curr  = tabs[sel.otab].sheet[sel.bcol][sel.brow];
+   s_visu.home  = s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.bcol][s_visu.brow];
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -276,7 +278,7 @@ VISU_increase      (int a_tab, int a_col, int a_row)
 char             /* cursor update to visual selection ----[ twig   [ 121n0x ]-*/
 VISU_update        (int a_tab, int a_col, int a_row)
 {
-   if (sel.live == SEL_NOT)                               return -1;
+   if (s_visu.live == VISU_NOT)                               return -1;
    return  VISU_increase (CTAB, CCOL, CROW);
 }
 
@@ -295,7 +297,7 @@ VISU_set           (
    char        rc          = 0;
    char        rce         = -10;
    /*---(prepare)------------------------*/
-   sel.live  = SEL_NOT;
+   s_visu.live  = VISU_NOT;
    VISU_clear ();
    /*---(defense: beginning legal)-------*/
    --rce;
@@ -309,17 +311,17 @@ VISU_set           (
    --rce;  if (a_bcol > a_ecol)     return rce;
    --rce;  if (a_brow > a_erow)     return rce;
    /*---(set range)----------------------*/
-   sel.live  = SEL_YES;
-   sel.mode  = SEL_CUM;
+   s_visu.live  = VISU_YES;
+   s_visu.mode  = VISU_CUM;
    /*---(locations)----------------------*/
-   sel.otab                          = a_tab;
-   sel.ocol  = sel.bcol  = sel.ccol  = a_bcol;
-   sel.ecol                          = a_ecol;
-   sel.orow  = sel.brow  = sel.crow  = a_brow;
-   sel.erow                          = a_erow;
+   s_visu.otab                          = a_tab;
+   s_visu.ocol  = s_visu.bcol  = s_visu.ccol  = a_bcol;
+   s_visu.ecol                          = a_ecol;
+   s_visu.orow  = s_visu.brow  = s_visu.crow  = a_brow;
+   s_visu.erow                          = a_erow;
    /*---(locations)----------------------*/
-   sel.home  = sel.curr  = tabs[sel.otab].sheet[sel.bcol][sel.brow];
-   sel.curr  = sel.home;
+   s_visu.home  = s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.bcol][s_visu.brow];
+   s_visu.curr  = s_visu.home;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -333,22 +335,22 @@ static void  o___DISPLAY_________o () { return; }
 char             /* indicate whether cell is the root ----[ leaf   [ 170n0x ]-*/
 VISU_root          (int a_tab, int a_col, int a_row)
 {
-   if (sel.live == SEL_NOT)    return 0;
-   if (a_tab != sel.otab)      return 0;
-   if (a_col != sel.ocol)      return 0;
-   if (a_row != sel.orow)      return 0;
+   if (s_visu.live == VISU_NOT)    return 0;
+   if (a_tab != s_visu.otab)      return 0;
+   if (a_col != s_visu.ocol)      return 0;
+   if (a_row != s_visu.orow)      return 0;
    return 1;
 }
 
 char             /* indicate whether cell is selected ----[ leaf   [ 170n0x ]-*/
 VISU_selected      (int a_tab, int a_col, int a_row)
 {
-   if (sel.live == SEL_NOT)    return 0;
-   if (a_tab != sel.otab)      return 0;
-   if (a_col <  sel.bcol)      return 0;
-   if (a_col >  sel.ecol)      return 0;
-   if (a_row <  sel.brow)      return 0;
-   if (a_row >  sel.erow)      return 0;
+   if (s_visu.live == VISU_NOT)    return 0;
+   if (a_tab != s_visu.otab)      return 0;
+   if (a_col <  s_visu.bcol)      return 0;
+   if (a_col >  s_visu.ecol)      return 0;
+   if (a_row <  s_visu.brow)      return 0;
+   if (a_row >  s_visu.erow)      return 0;
    return 1;
 }
 
@@ -360,17 +362,16 @@ VISU_selected      (int a_tab, int a_col, int a_row)
 static void  o___SIMPLIFIERS_____o () { return; }
 
 char       /*----: indicate whether a selection is active/live ---------------*/
-VISU_islive        (void) { if (sel.live == SEL_YES)  return 1; return 0; }
+VISU_islive        (void) { if (s_visu.live == VISU_YES)  return 1; return 0; }
 
 char       /*----: simplifier for starting at current point ------------------*/
-VISU_from          (void) { return VISU_start  (CTAB, CCOL, CROW, SEL_CUM); }
+VISU_from          (void) { return VISU_start  (CTAB, CCOL, CROW, VISU_CUM); }
 
 char       /*----: convert to whole-column selection -------------------------*/
-VISU_col           (void) { sel.brow = 0; sel.erow = tabs[sel.otab].nrow - 1; return 0; }
+VISU_col           (void) { s_visu.brow = 0; s_visu.erow = tabs[s_visu.otab].nrow - 1; return 0; }
 
 char       /*----: convert to whole-row selection ----------------------------*/
-VISU_row           (void) { sel.bcol = 0; sel.ecol = tabs[sel.otab].ncol - 1; return 0; }
-
+VISU_row           (void) { s_visu.bcol = 0; s_visu.ecol = tabs[s_visu.otab].ncol - 1; return 0; }
 
 
 
@@ -396,7 +397,7 @@ VISU_range          (
    /* returns the borders of the entire current selection.  if nothing is     */
    /* selected, it returns the current cell as a selection.                   */
    /*---(no selection)-------------------*//*---------------------------------*/
-   if (sel.live == 0) {
+   if (s_visu.live == 0) {
       if (a_tab  != NULL) *a_tab  = CTAB;
       if (a_bcol != NULL) *a_bcol = CCOL;
       if (a_brow != NULL) *a_brow = CROW;
@@ -405,11 +406,11 @@ VISU_range          (
    }
    /*---(live selection)-----------------*/
    else {
-      if (a_tab  != NULL) *a_tab  = sel.otab;
-      if (a_bcol != NULL) *a_bcol = sel.bcol;
-      if (a_brow != NULL) *a_brow = sel.brow;
-      if (a_ecol != NULL) *a_ecol = sel.ecol;
-      if (a_erow != NULL) *a_erow = sel.erow;
+      if (a_tab  != NULL) *a_tab  = s_visu.otab;
+      if (a_bcol != NULL) *a_bcol = s_visu.bcol;
+      if (a_brow != NULL) *a_brow = s_visu.brow;
+      if (a_ecol != NULL) *a_ecol = s_visu.ecol;
+      if (a_erow != NULL) *a_erow = s_visu.erow;
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -426,22 +427,22 @@ VISU_first         (
    /* valid.  if selection active, return top-left cell.  this function       */
    /* returns four values -- pointer, tab, col, and row of top-left cell.     */
    /*---(no selection active)------------*//*---------------------------------*/
-   if (sel.live == 0) {
+   if (s_visu.live == 0) {
       if (a_tab != NULL)  *a_tab = CTAB;
       if (a_col != NULL)  *a_col = CCOL;
       if (a_row != NULL)  *a_row = CROW;
       return tabs[CTAB].sheet[CCOL][CROW];
    }
    /*---(set to beginning)---------------*/
-   sel.ccol  = sel.bcol;
-   sel.crow  = sel.brow;
-   sel.curr  = tabs[sel.otab].sheet[sel.ccol][sel.crow];
+   s_visu.ccol  = s_visu.bcol;
+   s_visu.crow  = s_visu.brow;
+   s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow];
    /*---(set the return)-----------------*/
-   if (a_tab != NULL)  *a_tab = sel.otab;
-   if (a_col != NULL)  *a_col = sel.ccol;
-   if (a_row != NULL)  *a_row = sel.crow;
+   if (a_tab != NULL)  *a_tab = s_visu.otab;
+   if (a_col != NULL)  *a_col = s_visu.ccol;
+   if (a_row != NULL)  *a_row = s_visu.crow;
    /*---(complete)-----------------------*/
-   return sel.curr;
+   return s_visu.curr;
 }
 
 tCELL*       /*--> return next cell in selection ---------[-leaf---[--------]-*/
@@ -457,35 +458,35 @@ VISU_next          (
    /* down.  at end, return a sentinel to indicate end of processing.         */
    /* returns four values -- pointer, tab, col, and row of next cell.         */
    /*---(no selection active)------------*//*---------------------------------*/
-   if (sel.live == 0 || sel.ccol == -1) {
+   if (s_visu.live == 0 || s_visu.ccol == -1) {
       if (a_tab != NULL) *a_tab = -1;
       if (a_col != NULL) *a_col = -1;
       if (a_row != NULL) *a_row = -1;
       return  DONE_DONE;
    }
    /*---(update position)----------------*/
-   ++sel.ccol;
-   if (sel.ccol > sel.ecol) {
-      sel.ccol = sel.bcol;
-      ++sel.crow;
+   ++s_visu.ccol;
+   if (s_visu.ccol > s_visu.ecol) {
+      s_visu.ccol = s_visu.bcol;
+      ++s_visu.crow;
    }
    /*---(check for end)------------------*/
-   if (sel.crow > sel.erow) {
-      sel.ccol     = -1;
-      sel.crow     = -1;
-      sel.curr     = DONE_DONE;
+   if (s_visu.crow > s_visu.erow) {
+      s_visu.ccol     = -1;
+      s_visu.crow     = -1;
+      s_visu.curr     = DONE_DONE;
       if (a_tab != NULL) *a_tab = -1;
       if (a_col != NULL) *a_col = -1;
       if (a_row != NULL) *a_row = -1;
       return  DONE_DONE;
    }
    /*---(set the return)-----------------*/
-   if (a_tab != NULL) *a_tab = sel.otab;
-   if (a_col != NULL) *a_col = sel.ccol;
-   if (a_row != NULL) *a_row = sel.crow;
-   sel.curr  = tabs[sel.otab].sheet[sel.ccol][sel.crow];
+   if (a_tab != NULL) *a_tab = s_visu.otab;
+   if (a_col != NULL) *a_col = s_visu.ccol;
+   if (a_row != NULL) *a_row = s_visu.crow;
+   s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow];
    /*---(complete)-----------------------*/
-   return sel.curr;
+   return s_visu.curr;
 }
 
 
@@ -1012,16 +1013,16 @@ VISU__unit         (char *a_question, char a_reg)
    strcpy  (unit_answer, "s_sel            : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "sel_range"    )  == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_sel range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", sel.mode, sel.otab, sel.bcol, sel.brow, sel.ecol, sel.erow);
+      snprintf (unit_answer, LEN_TEXT, "s_sel range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
    }
    else if (strcmp (a_question, "sel_curr")       == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_sel current    : tab=%4d, col=%4d, row=%4d", sel.otab, sel.ccol, sel.crow);
+      snprintf (unit_answer, LEN_TEXT, "s_sel current    : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
    }
    else if (strcmp (a_question, "sel_full")       == 0) {
-      if (sel.curr != DONE_DONE) {
-         snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);
+      if (s_visu.curr != DONE_DONE) {
+         snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow]);
       } else {
-         snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", sel.otab, sel.ccol, sel.crow, DONE_DONE);
+         snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
       }
    }
    /*---(marks)--------------------------*/

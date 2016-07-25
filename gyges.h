@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5c"
-#define     VER_TXT   "fixed stupid cell merge issue in CELL_interpret"
+#define     VER_NUM   "1.5d"
+#define     VER_TXT   "rename main visual selection file gyges_visu.c"
 
 
 
@@ -756,10 +756,10 @@ extern    int       ndep;
  *   used by range actions and formulas
  *
  */
-#define     SEL_FROM       'f'
-#define     SEL_CUM        'c'
-#define     SEL_3D         '3'
-#define     SEL_NONE       '-'
+#define     VISU_FROM       'f'
+#define     VISU_CUM        'c'
+#define     VISU_3D         '3'
+#define     VISU_NONE       '-'
 /*
  *
  *
@@ -778,6 +778,7 @@ tCELL       denada;
 #define     MODE_SOURCE    'S'
 #define     MODE_INPUT     'I'
 #define     MODE_COMMAND   ':'
+#define     MODE_SEARCH    '/'
 /*---(sub-modes)-------------------------*/
 #define     SMOD_REPLACE   'r'    /* replacing characters in source mode      */
 #define     SMOD_REGISTER  '"'    /* register actions                         */

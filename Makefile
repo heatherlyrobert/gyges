@@ -28,9 +28,9 @@ LIBU    = ${LIBDIR}         -lncurses         -lySTR            -lyRPN          
 #===(file lists)============================================================================================================================================================================#
 #------   (0)-------------- (1)-------------- (2)-------------- (3)-------------- (4)-------------- (5)-------------- (6)-------------- (7)-------------- (8)-------------- (9)-------------- (A)-------------- (B)-------------- (C)-------------- (D)-------------- (5)--------------
 HEADS   = ${BASE}.h
-OBJS    = ${BASE}_main.os   ${BASE}_prog.os   ${BASE}_move.os   ${BASE}_keys.os   ${BASE}_sel.os    ${BASE}_reg.os    ${BASE}_calc.os   ${BASE}_rpn.os    ${BASE}_dep.os    ${BASE}_cell.os   ${BASE}_curs.os   ${BASE}_file.os   ${BASE}_loc.os
-OBJD    = ${BASE}_main.o    ${BASE}_prog.o    ${BASE}_move.o    ${BASE}_keys.o    ${BASE}_sel.o     ${BASE}_reg.o     ${BASE}_calc.o    ${BASE}_rpn.o     ${BASE}_dep.o     ${BASE}_cell.o    ${BASE}_curs.o    ${BASE}_file.o    ${BASE}_loc.o 
-OBJU    = ${BASE}_unit.o    ${BASE}_prog.o    ${BASE}_move.o    ${BASE}_keys.o    ${BASE}_sel.o     ${BASE}_reg.o     ${BASE}_calc.o    ${BASE}_rpn.o     ${BASE}_dep.o     ${BASE}_cell.o    ${BASE}_curs.o    ${BASE}_file.o    ${BASE}_loc.o
+OBJS    = ${BASE}_main.os   ${BASE}_prog.os   ${BASE}_move.os   ${BASE}_keys.os   ${BASE}_visu.os   ${BASE}_reg.os    ${BASE}_calc.os   ${BASE}_rpn.os    ${BASE}_dep.os    ${BASE}_cell.os   ${BASE}_curs.os   ${BASE}_file.os   ${BASE}_loc.os
+OBJD    = ${BASE}_main.o    ${BASE}_prog.o    ${BASE}_move.o    ${BASE}_keys.o    ${BASE}_visu.o    ${BASE}_reg.o     ${BASE}_calc.o    ${BASE}_rpn.o     ${BASE}_dep.o     ${BASE}_cell.o    ${BASE}_curs.o    ${BASE}_file.o    ${BASE}_loc.o 
+OBJU    = ${BASE}_unit.o    ${BASE}_prog.o    ${BASE}_move.o    ${BASE}_keys.o    ${BASE}_visu.o    ${BASE}_reg.o     ${BASE}_calc.o    ${BASE}_rpn.o     ${BASE}_dep.o     ${BASE}_cell.o    ${BASE}_curs.o    ${BASE}_file.o    ${BASE}_loc.o
 
 #===(make variables)====================================================================================================================================================#
 COPY    = cp -f
@@ -113,10 +113,10 @@ ${BASE}_keys.o     : ${HEADS}       ${BASE}_keys.c
 	${STRIP}   ${BASE}_keys.c      > ${BASE}_keys.cs
 	${COMP}    ${BASE}_keys.cs    -o ${BASE}_keys.os    ${INC}
 
-${BASE}_sel.o      : ${HEADS}       ${BASE}_sel.c
-	${COMP}    ${BASE}_sel.c                            ${INC}
-	${STRIP}   ${BASE}_sel.c       > ${BASE}_sel.cs
-	${COMP}    ${BASE}_sel.cs     -o ${BASE}_sel.os     ${INC}
+${BASE}_visu.o     : ${HEADS}       ${BASE}_visu.c
+	${COMP}    ${BASE}_visu.c                           ${INC}
+	${STRIP}   ${BASE}_visu.c      > ${BASE}_visu.cs
+	${COMP}    ${BASE}_visu.cs    -o ${BASE}_visu.os    ${INC}
 
 ${BASE}_reg.o      : ${HEADS}       ${BASE}_reg.c
 	${COMP}    ${BASE}_reg.c                            ${INC}

@@ -3637,7 +3637,7 @@ SCRP          v21  (s_sel ) set range selections directly from functions      
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     0                                                                      
 
    COND       v21  start range selection in CUM mode                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((18.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the selection                   VISU_start            0,    5,    5, SEL_CUM                                                  i_equal     0                                                                      
+     exec     v21  call the selection                   VISU_start            0,    5,    5,  VISU_CUM                                                i_equal     0                                                                      
      get      v21  review the selection                 VISU__unit            "sel_range"    , 0                                                      s_equal     s_sel range      : c, ta=   0, bc=   5, br=   5, ec=   5, er=   5      
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     1                                                                      
 
@@ -3712,7 +3712,7 @@ SCRP          v21  (s_sel ) set range selections directly from functions      
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     0                                                                      
 
    COND       v21  start range selection in FROM mode                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((18.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the selection                   VISU_start            1,    5,    5, SEL_FROM                                                 i_equal     0                                                                      
+     exec     v21  call the selection                   VISU_start            1,    5,    5,  VISU_FROM                                               i_equal     0                                                                      
      get      v21  review the selection                 VISU__unit            "sel_range"    , 0                                                      s_equal     s_sel range      : f, ta=   1, bc=   5, br=   5, ec=   5, er=   5      
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     1                                                                      
 
@@ -3861,7 +3861,7 @@ SCRP          v21  (s_sel ) validate whether cells are in current selection   
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     0                                                                      
 
    COND       v21  start range selection in FROM mode                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((19.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the selection                   VISU_start            0,    5,    5, SEL_FROM                                                 i_equal     0                                                                      
+     exec     v21  call the selection                   VISU_start            0,    5,    5,  VISU_FROM                                               i_equal     0                                                                      
      get      v21  review the selection                 VISU__unit            "sel_range"    , 0                                                      s_equal     s_sel range      : f, ta=   0, bc=   5, br=   5, ec=   5, er=   5      
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     1                                                                      
 
@@ -4021,7 +4021,7 @@ SCRP          v21  (s_sel ) range selection retrieval for range functions     
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     0                                                                      
 
    COND       v21  start range selection in CUM mode                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((20.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the selection                   VISU_start            0,    5,    5, SEL_CUM                                                  i_equal     0                                                                      
+     exec     v21  call the selection                   VISU_start            0,    5,    5,  VISU_CUM                                                i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_cur"      , NULL                                                   s_equal     s_move tab cur   : tab=   0, col=   0, row=   0                        
      get      v21  review the selection                 VISU__unit            "sel_range"    , 0                                                      s_equal     s_sel range      : c, ta=   0, bc=   5, br=   5, ec=   5, er=   5      
      exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     1                                                                      
@@ -4195,7 +4195,7 @@ SCRP          v21  (s_sel ) range selection retrieval for range functions     
      get      v21  review the selection                 VISU__unit            "sel_range"    , 0                                                      s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  start range selection, over                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((20.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the selection                   VISU_start            0, 10, 10, SEL_CUM                                                      i_equal     0                                                                      
+     exec     v21  call the selection                   VISU_start            0, 10, 10,  VISU_CUM                                                    i_equal     0                                                                      
      get      v21  review the current position          move_unit             "tab_cur"      , NULL                                                   s_equal     s_move tab cur   : tab=   0, col=   0, row=   0                        
      get      v21  review the selection                 VISU__unit            "sel_range"    , 0                                                      s_equal     s_sel range      : c, ta=   0, bc=  10, br=  10, ec=  10, er=  10      
 
