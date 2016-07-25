@@ -1204,7 +1204,9 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
       DEBUG_CELL   yLOG_note    ("check for merges in cells to right");
       x_col   = a_cell->col + 1;
-      while (x_col >= ECOL) {
+      DEBUG_CELL   yLOG_value   ("x_col"     , x_col);
+      DEBUG_CELL   yLOG_value   ("NCOL"      , NCOL);
+      while (x_col <  NCOL) {
          x_next = tab->sheet[x_col][a_cell->row];
          DEBUG_CELL   yLOG_point   ("next cell" , x_next);
          if (x_next    == NULL)  break;

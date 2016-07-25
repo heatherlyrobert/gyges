@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5b"
-#define     VER_TXT   "rename all SEL_ functions to VISU_ for clarity (DONE)"
+#define     VER_NUM   "1.5c"
+#define     VER_TXT   "fixed stupid cell merge issue in CELL_interpret"
 
 
 
