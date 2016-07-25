@@ -146,9 +146,11 @@ PROG_urgsmass      (char a_set, char a_extra)
       debug.rpn    = a_set;
       debug.calc   = a_set;
       debug.exec   = a_set;
-      /*---(registers)------------------*/
-      debug.sel    = a_set;
+      /*---(gyges_visu.c)---------------*/
+      debug.visu   = a_set;
+      debug.ssel   = a_set;
       debug.mark   = a_set;
+      /*---(registers)------------------*/
       debug.regs   = a_set;
       debug.ystr   = a_set;
    }
@@ -223,7 +225,8 @@ PROG_urgs          (int argc, char *argv[])
       else if (strncmp(a, "@@deps"    ,10) == 0)  debug.tops = debug.deps  = 'y';
       else if (strncmp(a, "@@gnome"   ,10) == 0)  debug.tops = debug.gnome = 'y';
       else if (strncmp(a, "@@loc"     ,10) == 0)  debug.tops = debug.loc   = 'y';
-      else if (strncmp(a, "@@sel"     ,10) == 0)  debug.tops = debug.sel   = 'y';
+      else if (strncmp(a, "@@visu"    ,10) == 0)  debug.tops = debug.visu  = 'y';
+      else if (strncmp(a, "@@ssel"    ,10) == 0)  debug.tops = debug.ssel  = 'y';
       else if (strncmp(a, "@@mark"    ,10) == 0)  debug.tops = debug.mark  = 'y';
       else if (strncmp(a, "@@regs"    ,10) == 0)  debug.tops = debug.regs  = 'y';
       else if (strncmp(a, "@@ystr"    ,10) == 0)  debug.tops = debug.ystr  = 'y';
@@ -262,7 +265,8 @@ PROG_urgs          (int argc, char *argv[])
    DEBUG_ARGS  yLOG_char   ("@@deps"    , debug.deps);
    DEBUG_ARGS  yLOG_char   ("@@gnome"   , debug.gnome);
    DEBUG_ARGS  yLOG_char   ("@@loc"     , debug.loc);
-   DEBUG_ARGS  yLOG_char   ("@@sel"     , debug.sel);
+   DEBUG_ARGS  yLOG_char   ("@@visu"    , debug.visu);
+   DEBUG_ARGS  yLOG_char   ("@@ssel"    , debug.ssel);
    DEBUG_ARGS  yLOG_char   ("@@mark"    , debug.mark);
    DEBUG_ARGS  yLOG_char   ("@@regs"    , debug.regs);
    DEBUG_ARGS  yLOG_char   ("@@ystr"    , debug.ystr);

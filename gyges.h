@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5d"
-#define     VER_TXT   "rename main visual selection file gyges_visu.c"
+#define     VER_NUM   "1.5e"
+#define     VER_TXT   "change debugging urgents to VISU, SSEL, and MARK"
 
 
 
@@ -242,10 +242,11 @@ struct cDEBUG
    char        cell;
    char        deps;
    char        gnome;
-   char        dtree;          /* displays the dependency tree and exits        */
+   char        dtree;          /* displays the dependency tree and exits      */
    char        loc;
-   char        sel;                    /* s_sel  : visual selection           */
-   char        mark;                   /* s_sel  : location/object marks      */
+   char        visu;                   /* gyges_visu : visual selection       */
+   char        ssel;                   /* gyges_visu : source selection       */
+   char        mark;                   /* gyges_visu : location/object marks  */
    char        regs;                   /* s_sel  : copy and paste registers   */
    char        ystr;                   /* s_file : ystr functions             */
 };
@@ -275,9 +276,13 @@ tDEBUG      debug;
 #define     DEBUG_DEPS          if (debug.deps      == 'y')
 #define     DEBUG_GNOME         if (debug.gnome     == 'y')
 #define     DEBUG_LOC           if (debug.loc       == 'y')
-#define     DEBUG_SEL           if (debug.sel       == 'y')
-#define     DEBUG_MARK          if (debug.sel       == 'y')
+/*---(gyges_visu.c)----------------------*/
+#define     DEBUG_VISU          if (debug.visu      == 'y')
+#define     DEBUG_SSEL          if (debug.ssel      == 'y')
+#define     DEBUG_MARK          if (debug.mark      == 'y')
+/*---(gyges_reg.c)-----------------------*/
 #define     DEBUG_REGS          if (debug.regs      == 'y')
+/*---(ySTR)------------------------------*/
 #define     DEBUG_YSTR          if (debug.ystr      == 'y')
 
 

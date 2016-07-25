@@ -606,15 +606,15 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    char        x_before    [MAX_STR]   = "[<{(null)}>]";
    char        x_after     [MAX_STR]   = "[<{(null)}>]";
    /*---(defenses)-----------------------*/
-   DEBUG_SEL    yLOG_enter   (__FUNCTION__);
-   DEBUG_SEL    yLOG_value   ("a_tab"     , a_tab);
-   DEBUG_SEL    yLOG_value   ("a_col"     , a_col);
-   DEBUG_SEL    yLOG_value   ("a_row"     , a_row);
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_CELL   yLOG_value   ("a_col"     , a_col);
+   DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
    rc          = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
-   DEBUG_SEL    yLOG_value   ("LOC_legal" , rc);
+   DEBUG_CELL   yLOG_value   ("LOC_legal" , rc);
    --rce;  if (rc < 0)             return rce;
    curr        = tabs[a_tab].sheet[a_col][a_row];
-   DEBUG_SEL    yLOG_point   ("curr"      , curr);
+   DEBUG_CELL   yLOG_point   ("curr"      , curr);
    --rce;  if (curr == NULL)       return rce;
    /*---(save before)-----------------*/
    if (curr->s != NULL)  strcpy (x_before, curr->s);
@@ -623,45 +623,45 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    if (a_mode == CHG_INPUTAND)  HIST_change ("DELETE", a_tab, a_col, a_row, x_before, x_after);
    /*---(check on merges)-------------*/
    if (curr->t == CTYPE_MERGE) {
-      DEBUG_SEL    yLOG_note    ("remove merge dependencies");
+      DEBUG_CELL   yLOG_note    ("remove merge dependencies");
       x_other = DEP_delmerge (curr);
       curr->a = '<';
       curr->f = '?';
    } else  {
-      DEBUG_SEL    yLOG_note    ("remove merge root");
+      DEBUG_CELL   yLOG_note    ("remove merge root");
       DEP_delmergeroot (curr);
    }
    /*---(clear it out)----------------*/
-   DEBUG_SEL    yLOG_complex ("details"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, curr->tab, curr->col, curr->row, curr->t, curr->u);
+   DEBUG_CELL   yLOG_complex ("details"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, curr->tab, curr->col, curr->row, curr->t, curr->u);
    rc = CELL__wipe   (curr);
-   DEBUG_SEL    yLOG_value   ("wipe rc"   , rc);
+   DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
    --rce;  if (rc < 0)             return rce;
    /*---(see if its still there)------*/
    curr        = tabs[a_tab].sheet[a_col][a_row];
    if (curr == NULL) {
-      DEBUG_SEL    yLOG_note    ("cell already removed, moving on");
-      DEBUG_SEL    yLOG_exit    (__FUNCTION__);
+      DEBUG_CELL   yLOG_note    ("cell already removed, moving on");
+      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(remove)----------------------*/
    --rce;
-   DEBUG_SEL    yLOG_point   ("provides"  , curr->provides);
+   DEBUG_CELL   yLOG_point   ("provides"  , curr->provides);
    if (curr->provides == NULL) {
       rc = LOC_unhook  (curr);
-      DEBUG_SEL    yLOG_value   ("unhook rc" , rc);
+      DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
       if (rc < 0)          return rce;
       rc = CELL__free   (curr, LINKED);
-      DEBUG_SEL    yLOG_value   ("free rc"   , rc);
+      DEBUG_CELL   yLOG_value   ("free rc"   , rc);
       if (rc < 0)          return rce - 1;
    } else {
       curr = CELL_change (CHG_INPUT, a_tab, a_col, a_row, "");
-      DEBUG_SEL    yLOG_value   ("change rc" , rc);
+      DEBUG_CELL   yLOG_value   ("change rc" , rc);
       if (curr == NULL)    return rce - 2;
    }
    /*---(update former merges)-----------*/
    if (x_other != NULL)  CELL_printable (x_other);
    /*---(complete)--------------------*/
-   DEBUG_SEL    yLOG_exit    (__FUNCTION__);
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1244,12 +1244,12 @@ CELL_erase         (void)
    int         x_count     = 0;
    /*---(process dedependent cells)----------*/
    /*> x_stamp = rand ();                                                             <* 
-    *> DEBUG_SEL    yLOG_llong   ("x_stamp"   , x_stamp);                             <* 
+    *> DEBUG_CELL   yLOG_llong   ("x_stamp"   , x_stamp);                             <* 
     *> x_seq   = 0;                                                                   <* 
-    *> DEBUG_SEL    yLOG_note    ("dependent cells");                                 <* 
-    *> DEBUG_SEL    yLOG_value   ("x_seq"     , x_seq);                               <* 
+    *> DEBUG_CELL   yLOG_note    ("dependent cells");                                 <* 
+    *> DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);                               <* 
     *> rc = DEP__tail (NULL, '-', &x_seq, 0, dtree, x_stamp, CELL_depwipe);            <* 
-    *> DEBUG_SEL    yLOG_value   ("x_seq"     , x_seq);                               <*/
+    *> DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);                               <*/
    /*---(process independent cells)----------*/
    x_next = VISU_first(NULL, &x_col, &x_row);
    do {
