@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.4r"
-#define     VER_TXT   "added mark debugging flag to isolate testing"
+#define     VER_NUM   "1.4s"
+#define     VER_TXT   "marks now read and write again ;)"
 
 
 
