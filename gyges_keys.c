@@ -148,6 +148,7 @@ MODE_map           (
       /*---(mode switch)-----------------*/
       switch (a_curr) {
       case 'v'      : my.mode    = MODE_VISUAL;
+                      VISU_start (CTAB, CCOL, CROW, VISU_FROM);
                       return 0;
                       break;
       case ':'      : strncpy (command , ":", MAX_STR);

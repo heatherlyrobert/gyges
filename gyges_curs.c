@@ -819,7 +819,7 @@ CURS_cell          (int a_col, int a_row)
    /*---(current)--------------------------*/
    if      (a_col == CCOL && a_row == CROW)     attron (S_COLOR_CURRENT);
    /*---(visual-range)---------------------*/
-   else if (VISU_root     (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
+   else if (VISU_root     (CTAB, a_col, a_row))  attron (S_COLOR_ROOT   );
    else if (VISU_selected (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
    /*---(marks)----------------------------*/
    else if (my.mark_show  == 'y' && strstr (my.mark_list, label) != NULL)  attron (S_COLOR_MARK     );

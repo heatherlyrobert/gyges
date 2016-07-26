@@ -498,7 +498,7 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    x_copy->a   = a_curr->a;
    x_copy->u   = a_stamp;
    a_curr->u   = a_stamp;
-   DEBUG_REG    yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
+   DEBUG_REGS   yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
    /*---(place in buffer)----------------*/
    rc = REG__hook   (x_copy, my.reg_curr, 'd');
    --rce;  if (rc < 0)                   return rce;
@@ -782,8 +782,8 @@ REG_paste          (char a_adapt)
    char        rce         = -10;
    int         x_count     = 0;
    /*---(header)-------------------------*/
-   DEBUG_REG    yLOG_enter   (__FUNCTION__);
-   DEBUG_REG    yLOG_char    ("a_buf"     , my.reg_curr);
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_buf"     , my.reg_curr);
    /*---(buffer number)------------------*/
    x_reg  = REG__reg2index  (my.reg_curr);
    --rce;  if (x_reg < 0)      return rce;
@@ -791,37 +791,37 @@ REG_paste          (char a_adapt)
    x_toff = CTAB - s_reg[x_reg].otab;
    x_xoff = CCOL - s_reg[x_reg].begc;
    x_yoff = CROW - s_reg[x_reg].begr;
-   DEBUG_REG    yLOG_value   ("x_xoff"    , x_xoff);
-   DEBUG_REG    yLOG_value   ("x_yoff"    , x_yoff);
+   DEBUG_REGS   yLOG_value   ("x_xoff"    , x_xoff);
+   DEBUG_REGS   yLOG_value   ("x_yoff"    , x_yoff);
    /*---(move cells in)------------------*/
-   DEBUG_REG    yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
+   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
    for (i = 0; i < s_reg[x_reg].nbuf; ++i) {
       x_curr = s_reg[x_reg].buf[i];
       if (x_curr == NULL)  continue;
-      DEBUG_REG    yLOG_complex ("entry"     , "i=%3d, %p, %s", i, x_curr, x_curr->label);
+      DEBUG_REGS   yLOG_complex ("entry"     , "i=%3d, %p, %s", i, x_curr, x_curr->label);
       rc = LOC_parse (x_curr->label, &x_tab, &x_col, &x_row, NULL);
-      DEBUG_REG    yLOG_complex ("parsed"    , "tab=%4d, col=%4d, row=%4d", x_tab, x_col, x_row);
-      DEBUG_REG    yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", CTAB, x_col + x_xoff, x_row + x_yoff);
-      DEBUG_REG    yLOG_info    ("source"    , x_curr->s);
-      DEBUG_REG    yLOG_char    ("type"      , x_curr->t);
+      DEBUG_REGS   yLOG_complex ("parsed"    , "tab=%4d, col=%4d, row=%4d", x_tab, x_col, x_row);
+      DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", CTAB, x_col + x_xoff, x_row + x_yoff);
+      DEBUG_REGS   yLOG_info    ("source"    , x_curr->s);
+      DEBUG_REGS   yLOG_char    ("type"      , x_curr->t);
       strcpy (x_source, "");
       if (strchr (G_CELL_RPN, x_curr->t) != 0) {
-         DEBUG_REG    yLOG_note    ("formula, calling yRPN_adjust");
+         DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
          rc = RPN_adjust (x_curr, x_toff, x_xoff, x_yoff, x_source);
-         DEBUG_REG    yLOG_value   ("rc"        , rc);
+         DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc < 0) {
-            DEBUG_REG    yLOG_note    ("formual could not be parsed");
+            DEBUG_REGS   yLOG_note    ("formual could not be parsed");
             strcpy (x_source, "not_translatable");
          }
       } else {
-         DEBUG_REG    yLOG_note    ("just copy straight across");
+         DEBUG_REGS   yLOG_note    ("just copy straight across");
          strcpy (x_source, x_curr->s);
       }
-      DEBUG_REG    yLOG_info    ("x_source"  , x_source);
+      DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
       sprintf (x_bformat, "%c%c%c", x_curr->f, x_curr->a, x_curr->d);
-      DEBUG_REG    yLOG_info    ("x_bformat" , x_bformat);
-      DEBUG_REG    yLOG_value   ("len"       , strlen (x_bformat));
-      DEBUG_REG    yLOG_value   ("x_count"   , x_count);
+      DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
+      DEBUG_REGS   yLOG_value   ("len"       , strlen (x_bformat));
+      DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
       if (x_count == 0)  x_copy = CELL_overwrite (CHG_OVER   , CTAB, x_col + x_xoff, x_row + x_yoff, x_source, x_bformat);
       else               x_copy = CELL_overwrite (CHG_OVERAND, CTAB, x_col + x_xoff, x_row + x_yoff, x_source, x_bformat);
       if (x_copy == NULL)    continue;
@@ -834,7 +834,7 @@ REG_paste          (char a_adapt)
     *> EROW  = my.erow_save + row_off;                                                <* 
     *> s_reg[x_buf].live = 1;                                                                  <*/
    /*---(complete)-----------------------*/
-   DEBUG_REG    yLOG_exit    (__FUNCTION__);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

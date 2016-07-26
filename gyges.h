@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5e"
-#define     VER_TXT   "change debugging urgents to VISU, SSEL, and MARK"
+#define     VER_NUM   "1.5f"
+#define     VER_TXT   "very basic visual mode in place"
 
 
 

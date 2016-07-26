@@ -899,47 +899,36 @@ VISU_mode          (char a_major, char a_minor)
    if (my.mode != MODE_VISUAL)             return -1;   /* wrong mode                    */
    if (a_minor == K_ESCAPE)  {
       my.mode  = MODE_MAP;
+      VISU_clear ();
       return  0;
    }
    /*---(check for setting)--------------*/
-   --rce;  if (a_major == 'm') {
+   --rce;  if (a_major == ' ') {
+      /*---(submodes)--------------------*/
       switch (a_minor) {
-      case '*' : MARK_init ();
-                 break;
-      case '#' : rc = MARK_which ();
-                 if (rc < 0) {
-                    my.mode = MODE_MAP;
-                    return rce;
-                 }
-                 MARK_unset (rc);
-                 MARK_range ();
-                 break;
-      case '@' : my.mark_show = 'y';
-                 break;
-      case '_' : my.mark_show = '-';
-                 break;
-      case '!' : sta_type = 'm';
-                 break;
-      case '?' : my.info_win = '\'';
-                 break;
-      default  : rc = MARK_set (a_minor);
-                 if (rc < 0) {
-                    my.mode = MODE_MAP;
-                    return rce;
-                 }
-                 break;
+      case '"'      : my.mode    = SMOD_REGISTER;
+                      return 1;  /* make sure double quote goes in prev char */
+                      break;
+      }
+      /*---(normal)----------------------*/
+      switch (a_minor) {
+         /*---(basic horizontal)---------*/
+      case '0'      : KEYS_col (" 0");                break;
+      case 'H'      : KEYS_col (" H");                break;
+      case 'h'      : KEYS_col (" h");                break;
+      case 'l'      : KEYS_col (" l");                break;
+      case 'L'      : KEYS_col (" L");                break;
+      case '$'      : KEYS_col (" $");                break;
+                      /*---(basic vertical)-----------*/
+      case '_'      : KEYS_row (" _");                break;
+      case 'K'      : KEYS_row (" K");                break;
+      case 'k'      : KEYS_row (" k");                break;
+      case 'j'      : KEYS_row (" j");                break;
+      case 'J'      : KEYS_row (" J");                break;
+      case 'G'      : KEYS_row (" G");                break;
       }
    }
-   /*---(check for returning)------------*/
-   --rce;  if (a_major == '\'') {
-      rc = MARK_return (a_minor);
-      if (rc < 0)  {
-         my.mode = MODE_MAP;
-         return rce;
-      }
-   }
-   /*---(failure)------------------------*/
-   my.mode = MODE_MAP;
+   /*---(complete)-----------------------*/
    return 0;
 }
 

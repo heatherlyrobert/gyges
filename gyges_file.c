@@ -1356,11 +1356,14 @@ FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
 /*====================------------------------------------====================*/
 PRIV void  o___SIZES___________o () { return; }
 
-#define     FIELD_LVL      1
-#define     FIELD_SEQ      2
-#define     FIELD_LOC      3
-#define     FIELD_FOR      4
-#define     FIELD_SRC      5
+
+/* initial version
+ *
+ *   A   #---------  ver  mark  ---loc-- 
+ *       mark        -A-   a    0b16     
+ *
+ *
+ */
 
 char
 INPT_mark          (void)
@@ -1436,6 +1439,13 @@ INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_sou
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
 }
+
+
+#define     FIELD_LVL      1
+#define     FIELD_SEQ      2
+#define     FIELD_LOC      3
+#define     FIELD_FOR      4
+#define     FIELD_SRC      5
 
 char         /* parse a cell entry -----------------------[--------[--------]-*/
 INPT_cellreg       (char a_reg, char *a_label, char *a_format, char *a_source)
