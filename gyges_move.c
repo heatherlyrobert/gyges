@@ -17,10 +17,13 @@ char    command [MAX_STR] = "";
 char    special = 0;
 
 
+static  int   s_begc  = 0;
+static  int   s_begr  = 0;
+static  int   s_endc  = 0;
+static  int   s_endr  = 0;
+
 
 /*===[[ local prototypes ]]=====================*/
-char        KEYS__end          (char a_dir);
-char        KEYS__horz         (char a_type, char a_move);
 
 
 
@@ -42,14 +45,95 @@ save_saved    (void)
 
 
 
+/*====================------------------------------------====================*/
+/*===----                        prep and wrapup                       ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___WRAPPERS________o () { return; }
+
+char
+MOVE_prep          (void)
+{
+   /*---(save positions)-----------------*/
+   s_begc  = BCOL;
+   s_begr  = BROW;
+   s_endc  = ECOL;
+   s_endr  = EROW;
+   /*---(dislay to debugging)------------*/
+   DEBUG_USER   yLOG_note    ("save initial position values");
+   DEBUG_USER   yLOG_value   ("bcol/begc" , s_begc);
+   DEBUG_USER   yLOG_value   ("brow/begr" , s_begr);
+   DEBUG_USER   yLOG_value   ("ecol/endc" , s_endc);
+   DEBUG_USER   yLOG_value   ("erow/endr" , s_endr);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MOVE_wrap          (void)
+{
+   /*---(show updated)----------------*/
+   DEBUG_USER   yLOG_note    ("show updated position values");
+   DEBUG_USER   yLOG_value   ("bcol/begc" , s_begc);
+   DEBUG_USER   yLOG_value   ("brow/begr" , s_begr);
+   DEBUG_USER   yLOG_value   ("ecol/endc" , s_endc);
+   DEBUG_USER   yLOG_value   ("erow/endr" , s_endr);
+   /*---(check current)---------------*/
+   DEBUG_USER  yLOG_note    ("correct for min/max violations");
+   if (CCOL <  0   )    CCOL   =    0;
+   if (CCOL >= NCOL)    CCOL   = NCOL - 1;
+   if (CROW <  0   )    CROW   =    0;
+   if (CROW >= NROW)    CROW   = NROW - 1;
+   /*---(check beginning)-------------*/
+   DEBUG_USER  yLOG_note    ("correct for beginning violations");
+   if (BCOL <  0   )    BCOL   =    0;
+   if (BCOL >= NCOL)    BCOL   = NCOL - 1;
+   if (BROW <  0   )    BROW   =    0;
+   if (BROW >= NROW)    BROW   = NROW - 1;
+   /*---(check ending)----------------*/
+   DEBUG_USER  yLOG_note    ("correct for ending violations");
+   if (ECOL <  0   )    ECOL   =    0;
+   if (ECOL >= NCOL)    ECOL   = NCOL - 1;
+   if (EROW <     0)    EROW   =    0;
+   if (EROW >= NROW)    EROW   = NROW - 1;
+   /*---(adjust screen)---------------*/
+   DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");
+   if (CCOL <  BCOL)    BCOL   = CCOL;
+   if (CCOL >  ECOL)    ECOL   = CCOL;
+   if (CROW <  BROW)    BROW   = CROW;
+   if (CROW >  EROW)    EROW   = CROW;
+   /*---(update selection)------------*/
+   VISU_update  (CTAB, CCOL, CROW);
+   /*---(update contents)-------------*/
+   DEBUG_USER  yLOG_note    ("update current contents");
+   if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {
+      strncpy (contents, tab->sheet[CCOL][CROW]->s, MAX_STR);
+   } else {
+      strncpy (contents, ""                       , MAX_STR);
+   }
+   /*---(update screen)---------------*/
+   if      (BCOL != s_begc) { KEYS_bcol (BCOL); CURS_colhead(); }
+   else if (ECOL != s_endc) { KEYS_ecol (ECOL); CURS_colhead(); }
+   if      (BROW != s_begr) { KEYS_brow (BROW); CURS_rowhead(); }
+   else if (EROW != s_endr) { KEYS_erow (EROW); CURS_rowhead(); }
+   /*---(show final)------------------*/
+   DEBUG_USER   yLOG_note    ("show final positions values");
+   DEBUG_USER   yLOG_value   ("bcol/begc" , s_begc);
+   DEBUG_USER   yLOG_value   ("brow/begr" , s_begr);
+   DEBUG_USER   yLOG_value   ("ecol/endc" , s_endc);
+   DEBUG_USER   yLOG_value   ("erow/endr" , s_endr);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
 
 /*====================------------------------------------====================*/
-/*===----                       ncurses related                        ----===*/
+/*===----                        ends and edges                        ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___ODD_MOVES_______o () { return; }
+PRIV void  o___ENDS____________o () { return; }
 
 char         /*-->-move-to-the-very-edge-of-used-space----[-leaf---[--------]-*/
-MOVE__edge         (
+MOVE_edges         (
       /*----------+-----------+-----------------------------------------------*/
       char        a_dir)      /* direction code (see design notes)            */
 {  /*---(design notes)--------------------------------------------------------*/
@@ -122,7 +206,7 @@ MOVE__edge         (
 }
 
 char
-KEYS__end          (char a_dir)
+MOVE_ends          (char a_dir)
 {
    /*---(locals)-----------+-----------+-*/
    char        x_type      = '-';      /* '-' = empty, 'f' = filled           */
@@ -139,10 +223,10 @@ KEYS__end          (char a_dir)
    DEBUG_USER  yLOG_char    ("a_dir"     , a_dir);
    /*---(set up direction)---------------*/
    switch (a_dir) {
-   case 'r' :  x_inc =  1;  y_inc =  0; break;
-   case 'l' :  x_inc = -1;  y_inc =  0; break;
-   case 'd' :  x_inc =  0;  y_inc =  1; break;
-   case 'u' :  x_inc =  0;  y_inc = -1; break;
+   case 'l' :  x_inc =  1;  y_inc =  0; break;
+   case 'h' :  x_inc = -1;  y_inc =  0; break;
+   case 'j' :  x_inc =  0;  y_inc =  1; break;
+   case 'k' :  x_inc =  0;  y_inc = -1; break;
    default  :
                DEBUG_USER  yLOG_note    ("invalid move code passed to function");
                DEBUG_USER  yLOG_exit    (__FUNCTION__);
@@ -204,110 +288,151 @@ KEYS__end          (char a_dir)
    return 0;
 }
 
-char         /*--> move left or right by columns ---------[--------[--------]-*/
-KEYS__horz         (char a_type, char a_move)
+
+
+/*====================------------------------------------====================*/
+/*===----                        horizontal moves                      ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___HORIZONTAL______o () { return; }
+
+char         /*--> move left or right by columns ---------[ leaf   [ ------ ]-*/
+MOVE_gz_horz       (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
+   char        rce         = -10;           /* return code for error          */
    int         i           = 0;             /* iterator -- horizontal pos     */
    int         x_target    = 0;
    int         x_cum       = 0;
    int         x_col       = 0;
-   char        rce         = -10;           /* return code for error          */
+   char        x_valid     [MAX_STR]  = "shcle";
    /*---(header)-------------------------*/
-   DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   DEBUG_USER  yLOG_char    ("a_type"    , a_type);
-   DEBUG_USER  yLOG_char    ("a_move"    , a_move);
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defense)------------------------*/
+   --rce;  if (a_major != 'g' && a_major != 'z') {
+      DEBUG_USER   yLOG_note    ("can only process g and z family moves");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("can only process g and z horizontal (shcle) moves");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(set target)---------------------*/
    --rce;
-   DEBUG_USER  yLOG_value   ("my.x_avail", my.x_avail);
+   DEBUG_USER   yLOG_value   ("my.x_avail", my.x_avail);
    x_target = my.x_left;
-   switch (a_move) {
+   switch (a_minor) {
    case 's' :  x_target += 0;                        break;
    case 'h' :  x_target += my.x_avail / 4;           break;
-   case ',' :  x_target += my.x_avail / 2;           break;
+   case 'c' :  x_target += my.x_avail / 2;           break;
    case 'l' :  x_target += (my.x_avail / 4) * 3;     break;
    case 'e' :  x_target += my.x_avail;               break;
-   default  :
-               DEBUG_USER  yLOG_note    ("invalid move code passed to function");
-               DEBUG_USER  yLOG_exit    (__FUNCTION__);
-               return rce;
    }
-   DEBUG_USER  yLOG_value   ("x_target"  , x_target);
-   /*---(find column containing target)--*/
-   if (a_type == 'g') {
-      x_col = 0;
-      for (i = BCOL; i <= ECOL; ++i) {
-         DEBUG_USER  yLOG_complex ("checking"  , "col %3d at %3d", i, tab->cols[i].x);
-         if (tab->cols[i].x <= x_target)  {
-            x_col = i;
-            continue;
+   DEBUG_USER   yLOG_value   ("x_target"  , x_target);
+   /*---(process gotos)------------------*/
+   if (a_major == 'g') {
+      DEBUG_USER   yLOG_note    ("handle a g=goto type");
+      if      (a_minor == 's')  CCOL = BCOL;
+      else if (a_minor == 'e')  CCOL = ECOL;
+      else {
+         x_col = 0;
+         for (i = BCOL; i <= ECOL; ++i) {
+            DEBUG_USER   yLOG_complex ("checking"  , "col %3d at %3d", i, tab->cols[i].x);
+            if (tab->cols[i].x <= x_target)  {
+               x_col = i;
+               continue;
+            }
+            DEBUG_USER   yLOG_note    ("just passed");
+            break;
          }
-         DEBUG_USER  yLOG_note    ("just passed");
-         break;
+         CCOL = x_col;
       }
-      CCOL = x_col;
    }
-   if (a_type == 'z') {
-      if      (a_move == 's')  BCOL = CCOL;
-      else if (a_move == 'e')  ECOL = CCOL;
+   /*---(process scrolls)----------------*/
+   else if (a_major == 'z') {
+      DEBUG_USER   yLOG_note    ("handle a z=scroll type");
+      if      (a_minor == 's')  BCOL = CCOL;
+      else if (a_minor == 'e')  ECOL = CCOL;
       else {
          BCOL = CCOL;
          x_cum   = x_target - (tab->cols[CCOL].w / 2);
          x_col   = 0;
          for (i = CCOL - 1; i >= 0; --i) {
             x_cum -= tab->cols[i].w;
-            DEBUG_USER  yLOG_complex ("checking"  , "col %3d wid %3d cum %3d", i, tab->cols[i].w, x_cum);
+            DEBUG_USER   yLOG_complex ("checking"  , "col %3d wid %3d cum %3d", i, tab->cols[i].w, x_cum);
             if (x_cum > 0) {
                x_col = i;
                continue;
             }
-            DEBUG_USER  yLOG_note    ("just passed");
+            DEBUG_USER   yLOG_note    ("just passed");
             break;
          }
          BCOL = x_col;
       }
    }
    /*---(update current colunn)----------*/
-   DEBUG_USER  yLOG_value   ("my.bcol"   , BCOL);
-   DEBUG_USER  yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER  yLOG_value   ("my.ecol"   , ECOL);
+   DEBUG_USER   yLOG_value   ("my.bcol"   , BCOL);
+   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
+   DEBUG_USER   yLOG_value   ("my.ecol"   , ECOL);
    /*---(complete)-----------------------*/
-   DEBUG_USER  yLOG_exit    (__FUNCTION__);
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
-KEYS_col           (char *a_keys)
+MOVE_horz          (char a_minor)
+{
+   /*---(locals)-------------------------*/
+   char        rce         = -10;           /* return code for error          */
+   char        x_valid     [MAX_STR]  = "0HhlL$r";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defense)------------------------*/
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("not a valid movement key");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(process keys)-------------------*/
+   switch (a_minor) {
+   case '0' : CCOL  = 0;              break;
+   case 'H' : CCOL -= 5;              break;
+   case 'h' : CCOL -= 1;              break;
+   case 'l' : CCOL += 1;              break;
+   case 'L' : CCOL += 5;              break;
+   case '$' : CCOL  = NCOL - 1;       break;
+   case 'r' : 
+              if      (CCOL > ECOL)   ECOL = CCOL;
+              else if (CCOL < BCOL)   BCOL = CCOL;
+              break;
+   }
+   /*---(update current colunn)----------*/
+   DEBUG_USER   yLOG_value   ("my.bcol"   , BCOL);
+   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
+   DEBUG_USER   yLOG_value   ("my.ecol"   , ECOL);
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+KEYS_col           (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
    int         s_beg       = 0;             /* save the beginning col         */
    int         s_end       = 0;             /* save the ending col            */
-   char        x_mod       = ' ';           /* modifier, such as 'g' or 'z'   */
-   char        x_key       = ' ';           /* actual key                     */
    char        rce         = -10;           /* return code for error          */
    /*---(header)-------------------------*/
    DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   DEBUG_USER  yLOG_point   ("a_keys"    , a_keys);
-   /*---(defense: keystrokes)------------*/
-   --rce;  // null input string (maximum dangerous)
-   if (a_keys == NULL) {
-      DEBUG_USER  yLOG_note    ("null key string passed to function");
-      DEBUG_USER  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER  yLOG_info    ("a_keys"    , a_keys);
-   --rce;  // wrong number of characters (tight input)
-   if (strlen (a_keys) != 2) {
-      DEBUG_USER  yLOG_note    ("wrong length key string passed to function");
-      DEBUG_USER  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   x_mod   = a_keys[0];
-   x_key   = a_keys[1];
-   DEBUG_USER  yLOG_complex ("key combo" , "modifier %c (%3d), key %c (%3d)", x_mod, x_mod, x_key, x_key);
+   DEBUG_USER  yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
    /*---(defense: modifier)--------------*/
    --rce;  // illegal value for modifier (tight input)
-   if (strchr (" cgze", x_mod) == NULL) {
+   if (strchr (" cgze", a_major) == NULL) {
       DEBUG_USER  yLOG_note    ("unrecognized modifier passed to function");
       DEBUG_USER  yLOG_exit    (__FUNCTION__);
       return rce;
@@ -319,7 +444,7 @@ KEYS_col           (char *a_keys)
    DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
    /*---(adjust curr)-----------------*/
    --rce;  // bad basic request
-   if (x_mod == ' ') switch (x_key) {
+   if (a_major == ' ') switch (a_minor) {
    case '0' : CCOL = 0;                     break;
    case 'H' : CCOL -= 5;                    break;
    case 'h' : --CCOL;                       break;
@@ -334,10 +459,10 @@ KEYS_col           (char *a_keys)
               else if (CCOL < BCOL)
                  BCOL = CCOL;
               /*> else                                                                <*/
-                 /*> s_beg = -1;                                                      <*/
+              /*> s_beg = -1;                                                      <*/
               break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
@@ -346,56 +471,56 @@ KEYS_col           (char *a_keys)
    DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
    /*---(page moves)---------------------*/
    --rce;  // bad page request
-   if (x_mod == 'c') switch (x_key) {
+   if (a_major == 'c') switch (a_minor) {
    case 's' : ECOL = CCOL = BCOL;          break;
-   case 'h' : KEYS__horz ('c', 'h');       break;
-   case 'l' : KEYS__horz ('c', 'l');       break;
+   case 'h' : MOVE_gz_horz ('c', 'h');       break;
+   case 'l' : MOVE_gz_horz ('c', 'l');       break;
    case 'e' : BCOL = CCOL = ECOL;          break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(screen moves)-------------------*/
    --rce;  // bad goto request
-   if (x_mod == 'g') switch (x_key) {
-   case 's' : KEYS__horz (x_mod, x_key);              break;
-   case 'h' : KEYS__horz (x_mod, x_key);              break;
-   case ',' : KEYS__horz (x_mod, x_key);              break;
-   case 'l' : KEYS__horz (x_mod, x_key);              break;
-   case 'e' : KEYS__horz (x_mod, x_key);              break;
+   if (a_major == 'g') switch (a_minor) {
+   case 's' : MOVE_gz_horz (a_major, a_minor);              break;
+   case 'h' : MOVE_gz_horz (a_major, a_minor);              break;
+   case ',' : MOVE_gz_horz (a_major, a_minor);              break;
+   case 'l' : MOVE_gz_horz (a_major, a_minor);              break;
+   case 'e' : MOVE_gz_horz (a_major, a_minor);              break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(scrolling)----------------------*/
    --rce;  // bad scroll request
-   if (x_mod == 'z') switch (x_key) {
-   case 's' : KEYS__horz (x_mod, x_key);              break;
-   case 'h' : KEYS__horz (x_mod, x_key);              break;
-   case ',' : KEYS__horz (x_mod, x_key);              break;
-   case 'l' : KEYS__horz (x_mod, x_key);              break;
-   case 'e' : KEYS__horz (x_mod, x_key);              break;
+   if (a_major == 'z') switch (a_minor) {
+   case 's' : MOVE_gz_horz (a_major, a_minor);              break;
+   case 'h' : MOVE_gz_horz (a_major, a_minor);              break;
+   case ',' : MOVE_gz_horz (a_major, a_minor);              break;
+   case 'l' : MOVE_gz_horz (a_major, a_minor);              break;
+   case 'e' : MOVE_gz_horz (a_major, a_minor);              break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(end)----------------------------*/
    --rce;  // bad end request
-   if (x_mod == 'e') switch (x_key) {
-   case 'h' : KEYS__end  ('l');                       break;
-   case 'l' : KEYS__end  ('r');                       break;
-   case 'H' : MOVE__edge ('H');                       break;
-   case 's' : MOVE__edge ('s');                       break;
-   case 'L' : MOVE__edge ('L');                       break;
-   case 'e' : MOVE__edge ('e');                       break;
+   if (a_major == 'e') switch (a_minor) {
+   case 'h' : MOVE_ends  ('l');                       break;
+   case 'l' : MOVE_ends  ('r');                       break;
+   case 'H' : MOVE_edges ('H');                       break;
+   case 's' : MOVE_edges ('s');                       break;
+   case 'L' : MOVE_edges ('L');                       break;
+   case 'e' : MOVE_edges ('e');                       break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
@@ -407,38 +532,40 @@ KEYS_col           (char *a_keys)
       if (CCOL <= tab->froz_ecol)   CCOL   = tab->froz_ecol + 1;
       if (ECOL <= tab->froz_ecol)   ECOL   = tab->froz_ecol + 1;
    }
-   /*---(check min/max)---------------*/
-   DEBUG_USER  yLOG_note    ("correct for min/max violations");
-   if (CCOL <  0        )    CCOL =    0;
-   if (CCOL >= NCOL)    CCOL = NCOL - 1;
-   /*---(check bcol)------------------*/
-   DEBUG_USER  yLOG_note    ("correct for beginning violations");
-   if (BCOL <  0        )      BCOL   =    0;
-   if (BCOL >= NCOL)      BCOL   = NCOL - 1;
-   /*---(check ecol)------------------*/
-   DEBUG_USER  yLOG_note    ("correct for ending violations");
-   if (ECOL <  0        )      ECOL   =    0;
-   if (ECOL >= NCOL)      ECOL   = NCOL - 1;
-   /*---(adjust screen)---------------*/
-   DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");
-   if (CCOL < BCOL)       BCOL = CCOL;
-   if (CCOL > ECOL)       ECOL = CCOL;
-   /*---(update contents)-------------*/
-   DEBUG_USER  yLOG_note    ("update current contents");
-   if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {
-      strncpy (contents, tab->sheet[CCOL][CROW]->s, MAX_STR);
-   } else {
-      strncpy (contents, ""                  , MAX_STR);
-   }
-   /*---(check for selection)---------*/
-   DEBUG_USER  yLOG_note    ("update selection if necessary");
-   if (x_key   != 'w')  VISU_update   (CTAB, CCOL, CROW);
-   /*---(check for update)------------*/
-   DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
-   DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
-   DEBUG_USER  yLOG_note    ("update column headings if necessary");
-   if      (BCOL != s_beg) { KEYS_bcol (BCOL); CURS_colhead(); }
-   else if (ECOL != s_end) { KEYS_ecol (ECOL); CURS_colhead(); }
+   /*---(update screen)---------------*/
+   MOVE_wrap   ();
+   /*> /+---(check min/max)---------------+/                                          <* 
+    *> DEBUG_USER  yLOG_note    ("correct for min/max violations");                   <* 
+    *> if (CCOL <  0        )    CCOL =    0;                                         <* 
+    *> if (CCOL >= NCOL)    CCOL = NCOL - 1;                                          <* 
+    *> /+---(check bcol)------------------+/                                          <* 
+    *> DEBUG_USER  yLOG_note    ("correct for beginning violations");                 <* 
+    *> if (BCOL <  0        )      BCOL   =    0;                                     <* 
+    *> if (BCOL >= NCOL)      BCOL   = NCOL - 1;                                      <* 
+    *> /+---(check ecol)------------------+/                                          <* 
+    *> DEBUG_USER  yLOG_note    ("correct for ending violations");                    <* 
+    *> if (ECOL <  0        )      ECOL   =    0;                                     <* 
+    *> if (ECOL >= NCOL)      ECOL   = NCOL - 1;                                      <* 
+    *> /+---(adjust screen)---------------+/                                          <* 
+    *> DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");               <* 
+    *> if (CCOL < BCOL)       BCOL = CCOL;                                            <* 
+    *> if (CCOL > ECOL)       ECOL = CCOL;                                            <* 
+    *> /+---(update contents)-------------+/                                          <* 
+    *> DEBUG_USER  yLOG_note    ("update current contents");                          <* 
+    *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {     <* 
+    *>    strncpy (contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                     <* 
+    *> } else {                                                                       <* 
+    *>    strncpy (contents, ""                  , MAX_STR);                          <* 
+    *> }                                                                              <* 
+    *> /+---(check for selection)---------+/                                          <* 
+    *> DEBUG_USER  yLOG_note    ("update selection if necessary");                    <* 
+    *> if (a_minor   != 'w')  VISU_update   (CTAB, CCOL, CROW);                       <* 
+    *> /+---(check for update)------------+/                                          <* 
+    *> DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);                                <* 
+    *> DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);                                <* 
+    *> DEBUG_USER  yLOG_note    ("update column headings if necessary");              <* 
+    *> if      (BCOL != s_beg) { KEYS_bcol (BCOL); CURS_colhead(); }                  <* 
+    *> else if (ECOL != s_end) { KEYS_ecol (ECOL); CURS_colhead(); }                  <*/
    /*---(complete)--------------------*/
    DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -631,8 +758,15 @@ KEYS_pcol          (void)
    return 0;
 }
 
+
+
+/*====================------------------------------------====================*/
+/*===----                          vertical moves                      ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___VERTICAL________o () { return; }
+
 char         /*--> move up or down by rows ---------------[--------[--------]-*/
-KEYS__vert         (char a_type, char a_move)
+MOVE_gz_vert       (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
    int         i           = 0;             /* iterator -- horizontal pos     */
@@ -642,13 +776,13 @@ KEYS__vert         (char a_type, char a_move)
    char        rce         = -10;           /* return code for error          */
    /*---(header)-------------------------*/
    DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   DEBUG_USER  yLOG_char    ("a_type"    , a_type);
-   DEBUG_USER  yLOG_char    ("a_move"    , a_move);
+   DEBUG_USER  yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
    /*---(set target)---------------------*/
    --rce;
    DEBUG_USER  yLOG_value   ("my.y_avail", my.y_avail);
    y_target = row_main;
-   switch (a_move) {
+   switch (a_minor) {
    case 't' :  y_target += 0;                        break;
    case 'k' :  y_target += my.y_avail / 4;           break;
    case '.' :  y_target += (my.y_avail / 2) - 1;     break;
@@ -661,7 +795,7 @@ KEYS__vert         (char a_type, char a_move)
    }
    DEBUG_USER  yLOG_value   ("y_target"  , y_target);
    /*---(find column containing target)--*/
-   if (a_type == 'g') {
+   if (a_major == 'g') {
       y_row = 0;
       for (i = BROW; i <= EROW; ++i) {
          DEBUG_USER  yLOG_complex ("checking"  , "row %3d at %3d", i, tab->rows[i].y);
@@ -674,9 +808,9 @@ KEYS__vert         (char a_type, char a_move)
       }
       CROW = y_row;
    }
-   if (a_type == 'z') {
-      if      (a_move == 't')  BROW = CROW;
-      else if (a_move == 'b')  EROW = CROW;
+   if (a_major == 'z') {
+      if      (a_minor == 't')  BROW = CROW;
+      else if (a_minor == 'b')  EROW = CROW;
       else {
          BROW = CROW;
          y_cum   = y_target - (tab->rows[CROW].h / 2);
@@ -703,52 +837,71 @@ KEYS__vert         (char a_type, char a_move)
    return 0;
 }
 
-char             /* [------] handle row movement input -----------------------*/
-KEYS_row           (char *a_keys)
+char
+MOVE_vert          (char a_minor)
 {
    /*---(locals)-------------------------*/
-   char        x_mod       = ' ';           /* modifier, such as 'g' or 'z'   */
-   char        x_key       = ' ';           /* actual key                     */
+   char        rce         = -10;           /* return code for error          */
+   char        x_valid     [MAX_STR]  = "_KkjJGr";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defense)------------------------*/
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("not a valid movement key");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(process keys)-------------------*/
+   switch (a_minor) {
+   case '_' : CROW  = 0;               break;    /* line moves              */
+   case 'K' : CROW -= 5;               break;
+   case 'k' : CROW -= 1;               break;
+   case 'j' : CROW += 1;               break;
+   case 'J' : CROW += 5;               break;
+   case 'G' : CROW  = NROW - 1;        break;
+   case 'r' :
+              if      (CROW > EROW) EROW = CROW;
+              else if (CROW < BROW) BROW = CROW;
+              break;
+   }
+   /*---(update current colunn)----------*/
+   DEBUG_USER   yLOG_value   ("my.brow"   , BROW);
+   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
+   DEBUG_USER   yLOG_value   ("my.erow"   , EROW);
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char             /* [------] handle row movement input -----------------------*/
+KEYS_row           (char a_major, char a_minor)
+{
+   /*---(locals)-------------------------*/
    int         s_beg       = BROW;       /* save the beginning row         */
    int         s_end       = EROW;       /* save the ending row            */
    int         s_cur       = CROW;          /* save the current row           */
    char        rce         = -10;           /* return code for error          */
    /*---(header)-------------------------*/
    DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   DEBUG_USER  yLOG_point   ("a_keys"    , a_keys);
-   /*---(defenses)-----------------------*/
-   --rce;  // null input string (maximum dangerous)
-   if (a_keys == NULL) {
-      DEBUG_USER  yLOG_note    ("null key string passed to function");
-      DEBUG_USER  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER  yLOG_info    ("a_keys"    , a_keys);
-   --rce;  // wrong number of characters (tight input)
-   if (strlen (a_keys) != 2) {
-      DEBUG_USER  yLOG_note    ("wrong length key string passed to function");
-      DEBUG_USER  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   x_mod   = a_keys[0];
-   x_key   = a_keys[1];
-   DEBUG_USER  yLOG_complex ("key combo" , "modifier %c (%3d), key %c (%3d)", x_mod, x_mod, x_key, x_key);
+   DEBUG_USER  yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
    /*---(defense: modifier)--------------*/
    --rce;  // illegal value for modifier (tight input)
-   if (strchr (" cgze", x_mod) == NULL) {
+   if (strchr (" cgze", a_major) == NULL) {
       DEBUG_USER  yLOG_note    ("unrecognized modifier passed to function");
       DEBUG_USER  yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(check adds)------------------*/
    --rce;  // bad add request
-   if        (x_key == 'o') {
+   if        (a_minor == 'o') {
       ++NROW;
       if (NROW <     1) NROW =    1;
       if (NROW >  MAX_ROWS) NROW = MAX_ROWS;
       s_end = -1;
       CROW  = NROW;
-   } else if (x_key == 'x') {
+   } else if (a_minor == 'x') {
       --NROW;
       if (NROW <     1) NROW =    1;
       if (NROW >  MAX_ROWS) NROW = MAX_ROWS;
@@ -757,7 +910,7 @@ KEYS_row           (char *a_keys)
    }
    /*---(adjust curr)-----------------*/
    --rce;  // bad basic request
-   if (x_mod == ' ') switch (x_key) {
+   if (a_major == ' ') switch (a_minor) {
    case '_' : CROW = 0;                     break;    /* line moves              */
    case 'K' : CROW -= 5;                    break;
    case 'k' : --CROW;                       break;
@@ -774,61 +927,61 @@ KEYS_row           (char *a_keys)
                  s_beg = -1;
               break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(screen moves)-------------------*/
    --rce;  // bad goto request
-   if (x_mod == 'g') switch (x_key) {
-   case 't' : KEYS__vert (x_mod, x_key);              break;
-   case 'k' : KEYS__vert (x_mod, x_key);              break;
-   case '.' : KEYS__vert (x_mod, x_key);              break;
-   case 'j' : KEYS__vert (x_mod, x_key);              break;
-   case 'b' : KEYS__vert (x_mod, x_key);              break;
+   if (a_major == 'g') switch (a_minor) {
+   case 't' : MOVE_gz_vert (a_major, a_minor);              break;
+   case 'k' : MOVE_gz_vert (a_major, a_minor);              break;
+   case '.' : MOVE_gz_vert (a_major, a_minor);              break;
+   case 'j' : MOVE_gz_vert (a_major, a_minor);              break;
+   case 'b' : MOVE_gz_vert (a_major, a_minor);              break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(scrolling)----------------------*/
    --rce;  // bad scroll request
-   if (x_mod == 'z') switch (x_key) {
-   case 't' : KEYS__vert (x_mod, x_key);              break;
-   case 'k' : KEYS__vert (x_mod, x_key);              break;
-   case '.' : KEYS__vert (x_mod, x_key);              break;
-   case 'j' : KEYS__vert (x_mod, x_key);              break;
-   case 'b' : KEYS__vert (x_mod, x_key);              break;
+   if (a_major == 'z') switch (a_minor) {
+   case 't' : MOVE_gz_vert (a_major, a_minor);              break;
+   case 'k' : MOVE_gz_vert (a_major, a_minor);              break;
+   case '.' : MOVE_gz_vert (a_major, a_minor);              break;
+   case 'j' : MOVE_gz_vert (a_major, a_minor);              break;
+   case 'b' : MOVE_gz_vert (a_major, a_minor);              break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(control keys)---------s---------*/
    --rce;  // bad control request
-   if (x_mod == 'c') switch (x_key) {
+   if (a_major == 'c') switch (a_minor) {
    case 't' : EROW =  CROW = BROW;         break;
    case 'b' : BROW =  CROW = EROW;         break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
    }
    /*---(control keys)---------s---------*/
    --rce;  // bad control request
-   if (x_mod == 'e') switch (x_key) {
-   case 'k' : KEYS__end  ('u');                       break;
-   case 'j' : KEYS__end  ('d');                       break;
-   case 'K' : MOVE__edge ('K');                       break;
-   case 't' : MOVE__edge ('t');                       break;
-   case 'J' : MOVE__edge ('J');                       break;
-   case 'b' : MOVE__edge ('b');                       break;
+   if (a_major == 'e') switch (a_minor) {
+   case 'k' : MOVE_ends  ('u');                       break;
+   case 'j' : MOVE_ends  ('d');                       break;
+   case 'K' : MOVE_edges ('K');                       break;
+   case 't' : MOVE_edges ('t');                       break;
+   case 'J' : MOVE_edges ('J');                       break;
+   case 'b' : MOVE_edges ('b');                       break;
    default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", x_key, x_key);
+              DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", a_minor, a_minor);
               DEBUG_USER  yLOG_exit    (__FUNCTION__);
               return rce;
               break;
@@ -840,37 +993,39 @@ KEYS_row           (char *a_keys)
       if (CROW <= tab->froz_erow)   CROW   = tab->froz_erow + 1;
       if (EROW <= tab->froz_erow)   EROW   = tab->froz_erow + 1;
    }
-   /*---(check min/max)---------------*/
-   DEBUG_USER  yLOG_note    ("correct for min/max violations");
-   if (CROW <     0     )    CROW =    0;
-   if (CROW >= NROW)    CROW = NROW - 1;
-   /*---(check brow)------------------*/
-   DEBUG_USER  yLOG_note    ("correct for beginning violations");
-   if (BROW <     0     )      BROW   =    0;
-   if (BROW >= NROW)      BROW   = NROW - 1;
-   /*---(check erow)------------------*/
-   DEBUG_USER  yLOG_note    ("correct for ending violations");
-   if (EROW <     0     )      EROW   =    0;
-   if (EROW >= NROW)      EROW   = NROW - 1;
-   /*---(adjust screen)---------------*/
-   DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");
-   if (CROW < BROW)       BROW   = CROW;
-   if (CROW > EROW)       EROW   = CROW;
-   /*---(update contents)-------------*/
-   DEBUG_USER  yLOG_note    ("update current contents");
-   if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {
-      strncpy(contents, tab->sheet[CCOL][CROW]->s, MAX_STR);
-   } else {
-      strncpy(contents, ""                  , MAX_STR);
-   }
-   /*---(check for selection)---------*/
-   DEBUG_USER  yLOG_note    ("update selection if necessary");
-   VISU_update  (CTAB, CCOL, CROW);
-   /*---(check for update)------------*/
-   DEBUG_USER  yLOG_note    ("update row headings if necessary");
-   if      (BROW != s_beg) { KEYS_brow (BROW); CURS_rowhead(); }
-   else if (EROW != s_end) { KEYS_erow (EROW); CURS_rowhead(); }
-   /*> else if (CROW != s_cur) CURS_rowhead();                                   <*/
+   /*---(update screen)---------------*/
+   MOVE_wrap   ();
+   /*> /+---(check min/max)---------------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("correct for min/max violations");                        <* 
+    *> if (CROW <     0     )    CROW =    0;                                              <* 
+    *> if (CROW >= NROW)    CROW = NROW - 1;                                               <* 
+    *> /+---(check brow)------------------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("correct for beginning violations");                      <* 
+    *> if (BROW <     0     )      BROW   =    0;                                          <* 
+    *> if (BROW >= NROW)      BROW   = NROW - 1;                                           <* 
+    *> /+---(check erow)------------------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("correct for ending violations");                         <* 
+    *> if (EROW <     0     )      EROW   =    0;                                          <* 
+    *> if (EROW >= NROW)      EROW   = NROW - 1;                                           <* 
+    *> /+---(adjust screen)---------------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");                    <* 
+    *> if (CROW < BROW)       BROW   = CROW;                                               <* 
+    *> if (CROW > EROW)       EROW   = CROW;                                               <* 
+    *> /+---(update contents)-------------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("update current contents");                               <* 
+    *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {          <* 
+    *>    strncpy(contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                           <* 
+    *> } else {                                                                            <* 
+    *>    strncpy(contents, ""                  , MAX_STR);                                <* 
+    *> }                                                                                   <* 
+    *> /+---(check for selection)---------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("update selection if necessary");                         <* 
+    *> VISU_update  (CTAB, CCOL, CROW);                                                    <* 
+    *> /+---(check for update)------------+/                                               <* 
+    *> DEBUG_USER  yLOG_note    ("update row headings if necessary");                      <* 
+    *> if      (BROW != s_beg) { KEYS_brow (BROW); CURS_rowhead(); }                       <* 
+    *> else if (EROW != s_end) { KEYS_erow (EROW); CURS_rowhead(); }                       <* 
+    *> /+> else if (CROW != s_cur) CURS_rowhead();                                   <+/   <*/
    /*---(complete)--------------------*/
    DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1082,6 +1237,13 @@ KEYS_prow          (void)
    /*---(complete)-----------------------*/
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                          source moves                        ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___SOURCE__________o () { return; }
 
 char       /*----: move forward by a word ------------------------------------*/
 word_fore          (void)

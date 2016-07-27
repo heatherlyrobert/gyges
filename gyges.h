@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5f"
-#define     VER_TXT   "very basic visual mode in place"
+#define     VER_NUM   "1.5g"
+#define     VER_TXT   "cleaning up keystroke to movement handling"
 
 
 
@@ -968,23 +968,42 @@ char      KEYS_init          (void);
 char      KEYS_record        (int   a_curr);
 char      KEYS_status        (char *msg);
 char      MODE_message       (char  a_mode);
-char      MODE_god           (int   a_major, int  a_minor);
-char      MODE_map           (int   a_major, int  a_minor);
-char      KEYS_buffer        (int   a_major, int  a_minor);
-char      KEYS_source        (int   a_major, int  a_minor);
-char      KEYS_format        (int   a_major, int  a_minor);
-char      KEYS_input         (int   a_major, int  a_minor);
-char      KEYS_command       (int   a_major, int  a_minor);
-char      KEYS_wander        (int   a_major, int  a_minor);
-char      KEYS_col           (char *a_keys);
+char      MODE_god           (char  a_major, char  a_minor);
+char      KEYS_z_family      (char  a_major, char  a_minor);
+char      MODE_map           (char  a_major, char  a_minor);
+char      KEYS_buffer        (char  a_major, char  a_minor);
+char      KEYS_source        (char  a_major, char  a_minor);
+char      KEYS_format        (char  a_major, char  a_minor);
+char      KEYS_input         (char  a_major, char  a_minor);
+char      KEYS_command       (char  a_major, char  a_minor);
+char      KEYS_wander        (char  a_major, char  a_minor);
+char      KEYS_col           (char  a_major, char  a_minor);
 char      KEYS_bcol          (int);
 char      KEYS_ecol          (int);
 char      KEYS_pcol          (void);
-char      KEYS_row           (char *a_keys);
+char      KEYS_row           (char  a_major, char  a_minor);
 char      KEYS_brow          (int);
 char      KEYS_erow          (int);
 char      KEYS_prow          (void);
-char      MOVE__edge         (char  a_dir);
+
+/*---(key movements)--------*/
+char      MOVE_prep          (void);
+char      MOVE_wrap          (void);
+
+char      KEYS_basics        (char  a_major, char  a_minor);
+char      MOVE_horz          (char  a_major);
+char      MOVE_vert          (char  a_major);
+
+char      KEYS_gz_family     (char  a_major, char  a_minor);
+char      MOVE_gz_horz       (char  a_major, char  a_minor);
+char      MOVE_gz_vert       (char  a_major, char  a_minor);
+
+char      KEYS_e_family      (char  a_major, char  a_minor);
+char      MOVE_ends          (char  a_minor);
+char      MOVE_edges         (char  a_minor);
+
+char      KEYS_c_family      (char  a_major, char  a_minor);
+
 
 
 /*---(ncurses)----------------------------------*/

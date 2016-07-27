@@ -19,7 +19,7 @@ struct cMODE_INFO {
    /*---(major modes)--------------------*/
    { 'G' , 'y', 'y', ' ', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
    { 'M' , 'y', 'y', ' ', "MAP", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
-   { 'V' , 'y', 'y', ' ', "VIS", "visual"    , "visual selection of objects for collection action"  ,    0, "dxy  !: ~uU /nN oO sS"                                                                   },
+   { 'V' , 'y', 'y', ' ', "VIS", "visual"    , "visual selection of objects for collection action"  ,    0, "0HhlL$_KkjJG  gz=sh,letk.jb  dxy  !: ~uU /nN oO sS"                                      },
    { 'S' , 'y', 'y', ' ', "SRC", "source"    , "linewise review of textual content"                 ,    0, "hor=0HhlL$  sel=vV\"  pul=yYdDxX  put=rRiIaA  pP"                                        },
    { 'I' , 'y', 'y', ' ', "INP", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
    { ':' , 'y', '-', ' ', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
@@ -121,11 +121,211 @@ KEYS_modes         (
 {
 }
 
+char         /*--> process basic movements ---------------[--------[--------]-*/
+KEYS_basics        (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_valid     [MAX_STR]  = "0HhlL$_KkjJG";
+   /*---(defense)------------------------*/
+   --rce;  if (a_major != ' ') {
+      return rce;
+   }
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   MOVE_prep    ();
+   /*---(basic horizontal)---------------*/
+   switch (a_minor) {
+   case '0'      : MOVE_horz ('0');       break;
+   case 'H'      : MOVE_horz ('H');       break;
+   case 'h'      : MOVE_horz ('h');       break;
+   case 'l'      : MOVE_horz ('l');       break;
+   case 'L'      : MOVE_horz ('L');       break;
+   case '$'      : MOVE_horz ('$');       break;
+   }
+   /*---(basic vertical)-----------------*/
+   switch (a_minor) {
+   case '_'      : MOVE_vert ('_');       break;
+   case 'K'      : MOVE_vert ('K');       break;
+   case 'k'      : MOVE_vert ('k');       break;
+   case 'j'      : MOVE_vert ('j');       break;
+   case 'J'      : MOVE_vert ('J');       break;
+   case 'G'      : MOVE_vert ('G');       break;
+   }
+   /*---(clean-up)-----------------------*/
+   MOVE_wrap    ();
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+KEYS_gz_family     (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          =   0;                /* generic return code       */
+   char        x_valid     [MAX_STR]  = "shcletkmjbaonf.AONF";
+   /*---(defense)------------------------*/
+   --rce;  if (a_major != 'g' && a_major != 'z') {
+      return rce;
+   }
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   MOVE_prep    ();
+   /*---(horizontal)---------------------*/
+   switch (a_minor) {
+   case 's' : rc = MOVE_gz_horz (a_major, a_minor);   break;
+   case 'h' : rc = MOVE_gz_horz (a_major, a_minor);   break;
+   case 'c' : rc = MOVE_gz_horz (a_major, a_minor);   break;
+   case 'l' : rc = MOVE_gz_horz (a_major, a_minor);   break;
+   case 'e' : rc = MOVE_gz_horz (a_major, a_minor);   break;
+   }
+   /*---(vertical)-----------------------*/
+   switch (a_minor) {
+   case 't' : rc = MOVE_gz_vert (a_major, a_minor);   break;
+   case 'k' : rc = MOVE_gz_vert (a_major, a_minor);   break;
+   case 'm' : rc = MOVE_gz_vert (a_major, a_minor);   break;
+   case 'j' : rc = MOVE_gz_vert (a_major, a_minor);   break;
+   case 'b' : rc = MOVE_gz_vert (a_major, a_minor);   break;
+   }
+   /*---(combination)--------------------*/
+   switch (a_minor) {
+   case 'a' : rc = MOVE_gz_horz (a_major, 's');   /* alpha = top-left    */
+              rc = MOVE_gz_vert (a_major, 't');
+              break;
+   case 'o' : rc = MOVE_gz_horz (a_major, 'e');   /* omega = bot-right   */
+              rc = MOVE_gz_vert (a_major, 'b');
+              break;
+   case 'n' : rc = MOVE_gz_horz (a_major, 'e');   /* near  = top-right   */
+              rc = MOVE_gz_vert (a_major, 't');
+              break;
+   case 'f' : rc = MOVE_gz_horz (a_major, 's');   /* far   = bot-left    */
+              rc = MOVE_gz_vert (a_major, 'b');
+              break;
+   case '.' : rc = MOVE_gz_horz (a_major, 'c');   /* core  = cen-mid     */
+              rc = MOVE_gz_vert (a_major, 'm');
+              break;
+   }
+   /*---(maximums)-----------------------*/
+   if (a_major == 'g') {
+      switch (a_minor) {
+      case 'A' : rc = MOVE_horz    ('0');            /* ALPHA = origin      */
+                 rc = MOVE_vert    ('_');
+                 break;
+      case 'O' : rc = MOVE_horz    ('$');            /* OMEGA = maximum     */
+                 rc = MOVE_vert    ('G');
+                 break;
+      case 'N' : rc = MOVE_horz    ('$');            /* NEAR  = maximum     */
+                 rc = MOVE_vert    ('_');
+                 break;
+      case 'F' : rc = MOVE_horz    ('0');            /* FAR   = maximum     */
+                 rc = MOVE_vert    ('G');
+                 break;
+      }
+   }
+   /*---(frozen)-------------------------*/
+   switch (a_minor) {
+      /*> case '_' : /+ go to frozen header rows +/     break;                           <* 
+       *> case '0' : /+ go to frozen cols        +/     break;                           <*/
+   }
+   /*---(clean-up)-----------------------*/
+   MOVE_wrap    ();
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+KEYS_e_family      (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_valid     [MAX_STR]  = "tKkjJbsHhlLeaonf";
+   char        x_col       [10] = "  ";
+   char        x_row       [10] = "  ";
+   /*---(defense)------------------------*/
+   --rce;  if (a_major != 'e') {
+      return rce;
+   }
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   MOVE_prep    ();
+   /*---(simple ends)--------------------*/
+   switch (a_minor) {
+   case 'k' : MOVE_ends  (a_minor);     break;
+   case 'j' : MOVE_ends  (a_minor);     break;
+   case 'h' : MOVE_ends  (a_minor);     break;
+   case 'l' : MOVE_ends  (a_minor);     break;
+   }
+   /*---(vertical edges)-----------------*/
+   switch (a_minor) {
+   case 't' : MOVE_edges (a_minor);     break;
+   case 'K' : MOVE_edges (a_minor);     break;
+   case 'J' : MOVE_edges (a_minor);     break;
+   case 'b' : MOVE_edges (a_minor);     break;
+   }
+   /*---(horizontal edges)---------------*/
+   switch (a_minor) {
+   case 's' : MOVE_edges (a_minor);     break;
+   case 'H' : MOVE_edges (a_minor);     break;
+   case 'L' : MOVE_edges (a_minor);     break;
+   case 'e' : MOVE_edges (a_minor);     break;
+   }
+   /*---(combination)--------------------*/
+   switch (a_minor) {
+   case 'a' : MOVE_edges ('s');
+              MOVE_edges ('t');
+              break;
+   case 'o' : MOVE_edges ('e');
+              MOVE_edges ('b');
+              break;
+   case 'n' : MOVE_edges ('e');
+              MOVE_edges ('t');
+              break;
+   case 'f' : MOVE_edges ('s');
+              MOVE_edges ('b');
+              break;
+   }
+   /*---(clean-up)-----------------------*/
+   MOVE_wrap    ();
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+KEYS_c_family      (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_valid     [MAX_STR]  = "";
+   char        x_col       [10] = "  ";
+   char        x_row       [10] = "  ";
+   /*---(defense)------------------------*/
+   --rce;  if (a_major != 'e') {
+      return rce;
+   }
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   MOVE_prep    ();
+   /*---(process)------------------------*/
+   /*---(clean-up)-----------------------*/
+   MOVE_wrap    ();
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
 MODE_map           (
       /*----------+-----------+-----------------------------------------------*/
-      int         a_prev,     /* prev key in multikey sequence                */
-      int         a_curr)     /* curr key in multikey sequence                */
+      char        a_prev,     /* prev key in multikey sequence                */
+      char        a_curr)     /* curr key in multikey sequence                */
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -203,34 +403,15 @@ MODE_map           (
                       break;
       }
       /*---(normal)----------------------*/
+      rc = KEYS_basics (a_prev, a_curr);
+      if (rc == 0) return 0;
+      /*---(special)------------------*/
       switch (a_curr) {
-         /*---(basic horizontal)---------*/
-      case '0'      : KEYS_col (" 0");                break;
-      case 'H'      : KEYS_col (" H");                break;
-      case 'h'      : KEYS_col (" h");                break;
-      case 'l'      : KEYS_col (" l");                break;
-      case 'L'      : KEYS_col (" L");                break;
-      case '$'      : KEYS_col (" $");                break;
-                      /*---(basic vertical)-----------*/
-      case '_'      : KEYS_row (" _");                break;
-      case 'K'      : KEYS_row (" K");                break;
-      case 'k'      : KEYS_row (" k");                break;
-      case 'j'      : KEYS_row (" j");                break;
-      case 'J'      : KEYS_row (" J");                break;
-      case 'G'      : KEYS_row (" G");                break;
-                      /*---(special)------------------*/
       case K_CTRL_L : clear ();                       break;
       case 'P'      : DEP_writeall (); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;
-      case 'c'      : VISU_col ();                    break;
-      case 'r'      : VISU_row ();                    break;
                       /*---(clearing cells)-----------*/
       case 'x'      : REG_cut   ();                   break;
       case 'd'      : CELL_erase ();                  break;
-                      /*---(adding rows and cols)-----*/
-                      /*> case 'o' : KEYS_row('o');    break;                                         <* 
-                       *> case 'O' : KEYS_row('o');    break;                                         <*/
-                      /*> case 'a'      : KEYS_col ('o');                 break;                      <* 
-                       *> case 'A'      : KEYS_col ('o');                 break;                      <*/
                       /*---(formatting)---------------*/
       case '<'      : CELL_align (CHG_INPUT, '<');               break;
       case '|'      : CELL_align (CHG_INPUT, '|');               break;
@@ -252,123 +433,57 @@ MODE_map           (
       return 0;
    }
    /*---(special family)------------------------*/
-   --rce;
-   if (a_prev == 'c') {
-      switch (a_curr) {
-      case 's'      : KEYS_col ("cs");                break;
-      case 'h'      : KEYS_col ("ch");                break;
-      case 'l'      : KEYS_col ("cl");                break;
-      case 'e'      : KEYS_col ("ce");                break;
-      case 't'      : KEYS_row ("ct");                break;
-      case 'b'      : KEYS_row ("cb");                break;
-      default       : return rce;                     break;
-      }
-      return 0;
-   }
+   /*> --rce;                                                                         <* 
+    *> if (a_prev == 'c') {                                                           <* 
+    *>    switch (a_curr) {                                                           <* 
+    *>    case 's'      : KEYS_col ("cs");                break;                      <* 
+    *>    case 'h'      : KEYS_col ("ch");                break;                      <* 
+    *>    case 'l'      : KEYS_col ("cl");                break;                      <* 
+    *>    case 'e'      : KEYS_col ("ce");                break;                      <* 
+    *>    case 't'      : KEYS_row ("ct");                break;                      <* 
+    *>    case 'b'      : KEYS_row ("cb");                break;                      <* 
+    *>    default       : return rce;                     break;                      <* 
+    *>    }                                                                           <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
    /*> else if (a_prev == 'x') {                                                      <* 
     *>    sch = ' ';                                                                  <* 
     *>    ch  = 24;                                                                   <* 
     *> }                                                                              <*/
-   /*---(goto family)---------------------------*/
-   --rce;
-   if (a_prev == 'g') {  /*  _bc_ef_h_jklmn____st_v____ ._0   */
-      switch (a_curr) {
-         /*---(normal)-------------------*/
-      case 't' : KEYS_row ("gt");                       break;
-      case 'k' : KEYS_row ("gk");                       break;
-      case 'm' : KEYS_row ("g.");                       break;
-      case 'j' : KEYS_row ("gj");                       break;
-      case 'b' : KEYS_row ("gb");                       break;
-      case 's' : KEYS_col ("gs");                        break;
-      case 'h' : KEYS_col ("gh");                        break;
-      case 'c' : KEYS_col ("g,");                        break;
-      case 'l' : KEYS_col ("gl");                        break;
-      case 'e' : KEYS_col ("ge");                        break;
-                 /*---(two-direction)------------*/
-      case 'n' : KEYS_col ("gs"); KEYS_row ("gt");       break;
-      case 'f' : KEYS_row ("gb"); KEYS_col ("ge");       break;
-      case '.' : KEYS_row ("g."); KEYS_col ("g,");       break;
-                 /*---(frozen row/col)-----------*/
-      case '_' : /* go to frozen header rows */          break;
-      case '0' : /* go to frozen cols        */          break;
-                                                         /*---(selection)----------------*/
-      case 'v' : VISU_restore ();                       break;
-      default  : return rce;    break;
-      }
+   /*---(goto family)--------------------*/
+   if (a_prev == 'g') {
+      rc = KEYS_gz_family  (a_prev, a_curr);
+      return 0;
+   }
+   /*---(scroll family)------------------*/
+   if (a_prev == 'z') {
+      rc = KEYS_gz_family  (a_prev, a_curr);
       return 0;
    }
    /*---(end family)---------------------*/
-   --rce;
    if (a_prev == 'e') {
-      switch (a_curr) {
-      case  0  : break;
-                 /*---(vertical)-----------------*/
-      case 't' : KEYS_row ("et");                     break;
-      case 'K' : KEYS_row ("eK");                     break;
-      case 'k' : KEYS_row ("ek");                     break;
-      case 'j' : KEYS_row ("ej");                     break;
-      case 'J' : KEYS_row ("eJ");                     break;
-      case 'b' : KEYS_row ("eb");                     break;
-                 /*---(horizontal)---------------*/
-      case 's' : KEYS_col ("es");                     break;
-      case 'H' : KEYS_col ("eH");                     break;
-      case 'h' : KEYS_col ("eh");                     break;
-      case 'l' : KEYS_col ("el");                     break;
-      case 'L' : KEYS_col ("eL");                     break;
-      case 'e' : KEYS_col ("ee");                     break;
-                 /*---(two-direction)------------*/
-      case 'a' : KEYS_col ("es"); KEYS_row ("et");    break;
-      case 'n' : KEYS_col ("eh"); KEYS_row ("ek");    break;
-      case 'f' : KEYS_row ("ej"); KEYS_col ("el");    break;
-      case 'o' : KEYS_row ("eb"); KEYS_col ("ee");    break;
-                 /*---(no matches)---------------*/
-      default  : return rce;    break;
-      }
+      rc = KEYS_e_family   (a_prev, a_curr);
       return 0;
    }
-   /*---(special family)------------------------*/
-   --rce;
-   if (a_prev == 'z') {
-      switch (a_curr) {
-      case 't' : KEYS_row ("zt");                     break;
-      case 'k' : KEYS_row ("zk");                     break;
-      case '.' : KEYS_row ("z.");                     break;
-      case 'j' : KEYS_row ("zj");                     break;
-      case 'b' : KEYS_row ("zb");                     break;
-      case 's' : KEYS_col ("zs");                     break;
-      case 'h' : KEYS_col ("zh");                     break;
-      case ',' : KEYS_col ("z,");                     break;
-      case 'l' : KEYS_col ("zl");                     break;
-      case 'e' : KEYS_col ("ze");                     break;
-      default  : return rce;                          break;
-      }
-      return 0;
-   }
-   /*---(register family)-----------------------*/
+   /*---(delete family)-------------------------*/
    /*> --rce;                                                                         <* 
-    *> if (a_prev == '"') {                                                           <* 
-    *>    rc = REG_set (a_curr);                                                      <* 
-    *>    return rc;                                                                  <* 
+    *> if (a_prev == '\\') {                                                          <* 
+    *>    switch (a_curr) {                                                           <* 
+    *>    case 'o'      : my.mode = SMOD_FORMAT;             break;                   <* 
+    *>    default  : return rce;                          break;                      <* 
+    *>    }                                                                           <* 
+    *>    return 0;                                                                   <* 
     *> }                                                                              <*/
    /*---(delete family)-------------------------*/
-   --rce;
-   if (a_prev == '\\') {
-      switch (a_curr) {
-      case 'o'      : my.mode = SMOD_FORMAT;             break;
-      default  : return rce;                          break;
-      }
-      return 0;
-   }
-   /*---(delete family)-------------------------*/
-   --rce;
-   if (a_prev == 'd') {
-      switch (a_curr) {
-      case 'd' : --NROW;          break;
-      case 'w' : --NCOL;     break;
-      default  : return rce;                         break;
-      }
-      return 0;
-   }
+   /*> --rce;                                                                         <* 
+    *> if (a_prev == 'd') {                                                           <* 
+    *>    switch (a_curr) {                                                           <* 
+    *>    case 'd' : --NROW;          break;                                          <* 
+    *>    case 'w' : --NCOL;     break;                                               <* 
+    *>    default  : return rce;                         break;                       <* 
+    *>    }                                                                           <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
    /*---(complete)------------------------------*/
    return 0;
 }
@@ -414,17 +529,17 @@ BUF_switch         (int a_tab)
       ECOL = 0;
       BROW = 0;
       EROW = 0;
-      KEYS_col (" r");
-      KEYS_row (" r");
-      KEYS_col (" 0");
-      KEYS_row (" 0");
+      MOVE_horz ('r');
+      MOVE_vert ('r');
+      MOVE_horz ('0');
+      MOVE_vert ('_');
       CURS_size ();
    }
    return 0;
 }
 
 char          /* PURPOSE : process keys for buffer movement ------------------*/
-KEYS_buffer   (int a_prev, int a_curr)
+KEYS_buffer   (char a_prev, char a_curr)
 {
    /*---(design notes)-------------------*/
    /*
@@ -441,7 +556,7 @@ KEYS_buffer   (int a_prev, int a_curr)
 
 
 char          /* PURPOSE : process keys for cell edit mode -------------------*/
-KEYS_source   (int a_prev, int a_curr)
+KEYS_source   (char a_prev, char a_curr)
 {
    /*---(design notes)-------------------*/
    /*
@@ -519,7 +634,7 @@ KEYS_source   (int a_prev, int a_curr)
 
 
 char               /* PURPOSE : process keys for input mode ------------------*/
-KEYS_input         (int  a_prev, int  a_curr)
+KEYS_input         (char  a_prev, char  a_curr)
 {
    /*---(design notes)-------------------*/
    /*
@@ -560,14 +675,14 @@ KEYS_input         (int  a_prev, int  a_curr)
 }
 
 char       /*----: process keys for god mode ---------------------------------*/
-MODE_god           (int  a_prev, int  a_curr)
+MODE_god           (char a_prev, char a_curr)
 {
    return 0;
 }
 
 
 char       /*----: process keys for formatting mode --------------------------*/
-KEYS_format        (int  a_prev, int  a_curr)
+KEYS_format        (char a_prev, char a_curr)
 {
    /*---(current cell -- whether good or not)---*/
    tCELL   *curr = tab->sheet[CCOL][CROW];
@@ -661,11 +776,11 @@ KEYS_unlock        (void)
    tab->froz_col  = '-';
    tab->froz_bcol = 0;
    tab->froz_ecol = 0;
-   KEYS_col (" r");
+   MOVE_horz ('r');
    tab->froz_row  = '-';
    tab->froz_brow = 0;
    tab->froz_erow = 0;
-   KEYS_row (" r");
+   MOVE_vert ('r');
 }
 
 char
@@ -770,8 +885,8 @@ cmd_exec           (char *a_command)
       default   : KEYS_unlock ();
                   break;
       }
-      KEYS_col (" r");
-      KEYS_row (" r");
+      MOVE_horz ('r');
+      MOVE_vert ('r');
       return 0;
    }
    if   (strncmp(p, ":!"        , 2      ) == 0) {
@@ -791,7 +906,7 @@ cmd_exec           (char *a_command)
 }
 
 char       /*----: process keys for input/append mode ------------------------*/
-KEYS_command  (int  a_prev, int  a_curr)
+KEYS_command  (char a_prev, char a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_len       = 0;
@@ -818,7 +933,7 @@ KEYS_command  (int  a_prev, int  a_curr)
 
 
 char       /*----: process keys for wander mode ------------------------------*/
-KEYS_wander        (int  a_prev, int  a_curr)
+KEYS_wander        (char a_prev, char a_curr)
 {
    /*---(design notes)-------------------*/
    /*
@@ -856,30 +971,30 @@ KEYS_wander        (int  a_prev, int  a_curr)
                return  0;   /* escape -- back to source mode */
    }
    /*---(basic movement)-----------*/
-   switch (a_curr) {
-   case '_'      : KEYS_row(" _");    break;
-   case 'K'      : KEYS_row(" K");    break;
-   case 'k'      : KEYS_row(" k");    break;
-   case 'j'      : KEYS_row(" j");    break;
-   case 'J'      : KEYS_row(" J");    break;
-   case 'G'      : KEYS_row(" G");    break;
-   case '{'      : KEYS_row(" {");    break;
-   case '}'      : KEYS_row(" }");    break;
-   case K_CTRL_B : KEYS_row("^b"); clear(); break;
-   case K_CTRL_F : KEYS_row("^f"); clear(); break;
-   case '0'      : KEYS_col (" 0");     break;
-   case 'H'      : KEYS_col (" H");     break;
-   case 'h'      : KEYS_col (" h");     break;
-   case 'l'      : KEYS_col (" l");     break;
-   case 'L'      : KEYS_col (" L");     break;
-   case '$'      : KEYS_col (" $");     break;
-   case 'b'      : KEYS_col ("es");     break;
-   case 'e'      : KEYS_col ("ee");     break;
-   case 'c'      : VISU_col();          break;
-   case 'r'      : VISU_row();          break;
-   }
+   /*> switch (a_curr) {                                                              <* 
+    *> case '_'      : KEYS_row(" _");    break;                                      <* 
+    *> case 'K'      : KEYS_row(" K");    break;                                      <* 
+    *> case 'k'      : KEYS_row(" k");    break;                                      <* 
+    *> case 'j'      : KEYS_row(" j");    break;                                      <* 
+    *> case 'J'      : KEYS_row(" J");    break;                                      <* 
+    *> case 'G'      : KEYS_row(" G");    break;                                      <* 
+    *> case '{'      : KEYS_row(" {");    break;                                      <* 
+    *> case '}'      : KEYS_row(" }");    break;                                      <* 
+    *> case K_CTRL_B : KEYS_row("^b"); clear(); break;                                <* 
+    *> case K_CTRL_F : KEYS_row("^f"); clear(); break;                                <* 
+    *> case '0'      : KEYS_col (" 0");     break;                                    <* 
+    *> case 'H'      : KEYS_col (" H");     break;                                    <* 
+    *> case 'h'      : KEYS_col (" h");     break;                                    <* 
+    *> case 'l'      : KEYS_col (" l");     break;                                    <* 
+    *> case 'L'      : KEYS_col (" L");     break;                                    <* 
+    *> case '$'      : KEYS_col (" $");     break;                                    <* 
+    *> case 'b'      : KEYS_col ("es");     break;                                    <* 
+    *> case 'e'      : KEYS_col ("ee");     break;                                    <* 
+    *> case 'c'      : VISU_col();          break;                                    <* 
+    *> case 'r'      : VISU_row();          break;                                    <* 
+    *> }                                                                              <*/
    if (a_curr == ':') {
-      LOC_ref   (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref2);
+      LOC_ref    (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref2);
       VISU_start (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, VISU_FROM);
    }
    /*---(complete)-----------------------*/

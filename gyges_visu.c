@@ -748,8 +748,8 @@ MARK_return        (char a_mark)
       CROW = s_mark_info [x_index].row;
    }
    /*---(update screen)------------------*/
-   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ("z,");
-   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ("z.");
+   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ('z', ',');
+   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ('z', '.');
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -910,22 +910,27 @@ VISU_mode          (char a_major, char a_minor)
                       return 1;  /* make sure double quote goes in prev char */
                       break;
       }
+      /*---(actions)---------------------*/
+      switch (a_minor) {
+      case 'c'      : VISU_col ();                    break;
+      case 'r'      : VISU_row ();                    break;
+      }
       /*---(normal)----------------------*/
       switch (a_minor) {
          /*---(basic horizontal)---------*/
-      case '0'      : KEYS_col (" 0");                break;
-      case 'H'      : KEYS_col (" H");                break;
-      case 'h'      : KEYS_col (" h");                break;
-      case 'l'      : KEYS_col (" l");                break;
-      case 'L'      : KEYS_col (" L");                break;
-      case '$'      : KEYS_col (" $");                break;
+      case '0'      : KEYS_col (' ', '0');                break;
+      case 'H'      : KEYS_col (' ', 'H');                break;
+      case 'h'      : KEYS_col (' ', 'h');                break;
+      case 'l'      : KEYS_col (' ', 'l');                break;
+      case 'L'      : KEYS_col (' ', 'L');                break;
+      case '$'      : KEYS_col (' ', '$');                break;
                       /*---(basic vertical)-----------*/
-      case '_'      : KEYS_row (" _");                break;
-      case 'K'      : KEYS_row (" K");                break;
-      case 'k'      : KEYS_row (" k");                break;
-      case 'j'      : KEYS_row (" j");                break;
-      case 'J'      : KEYS_row (" J");                break;
-      case 'G'      : KEYS_row (" G");                break;
+      case '_'      : KEYS_row (' ', '_');                break;
+      case 'K'      : KEYS_row (' ', 'K');                break;
+      case 'k'      : KEYS_row (' ', 'k');                break;
+      case 'j'      : KEYS_row (' ', 'j');                break;
+      case 'J'      : KEYS_row (' ', 'J');                break;
+      case 'G'      : KEYS_row (' ', 'G');                break;
       }
    }
    /*---(complete)-----------------------*/

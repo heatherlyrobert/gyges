@@ -786,8 +786,8 @@ CURS_main          (void)
     *> }                                                                              <*/
    if (ch == KEY_RESIZE) {
       CURS_size ();
-      KEYS_col  (" r");
-      KEYS_row  (" r");
+      MOVE_horz  ('r');
+      MOVE_vert  ('r');
    }
    /*---(complete)--------------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
