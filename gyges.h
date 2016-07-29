@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5g"
-#define     VER_TXT   "cleaning up keystroke to movement handling"
+#define     VER_NUM   "1.5h"
+#define     VER_TXT   "unit testing on ends and edges complete and successful"
 
 
 
@@ -907,6 +907,7 @@ char      VISU_update        (int a_tab, int a_col, int a_row);
 char      VISU_root          (int a_tab, int a_col, int a_row);
 char      VISU_selected      (int a_tab, int a_col, int a_row);
 char      VISU_set           (int a_tab, int a_bcol, int a_brow, int a_ecol, int a_erow);
+char      VISU_reverse       (void);
 /*---(simplifiers)----------*/
 char      VISU_islive        (void);
 char      VISU_from          (void);

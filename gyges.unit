@@ -10480,7 +10480,7 @@ SCRP          v21  verify row movement                                        
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_move) verify edge movements                               MOVE_edges                                                              ((43.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (s_move) verify end and edge movements (MAP mode)            KEYS_e_family, MOVE_ends, MOVE_edges                                    ((43.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -10530,9 +10530,173 @@ SCRP          v21  (s_move) verify edge movements                             
 
    COND       v21  place a couple of outliers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  2,  1, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 30,  5, "+10"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 15, "+10"                                             p_exists    0                                                                      
      exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5, 30, "+10"                                             p_exists    0                                                                      
      get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=  27, f=  27, b=  27                              
+
+   COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  10,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  10                        
+
+   COND       v21  go to the furthest horizontal edges of worksheet             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'S'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   0, row=  10                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'E'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  39, row=  10                        
+
+   COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  10,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  10                        
+
+   COND       v21  go to the furthest vertical edges of the worksheet           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'T'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=   0                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'B'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  39                        
+
+   COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  10,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  10                        
+
+   COND       v21  go to the furthest four corner edges of worksheet            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'A'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'O'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  39, row=  39                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'N'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  39, row=   0                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'F'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   0, row=  39                        
+
+   COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  10,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  10                        
+
+   COND       v21  go to the furthest horizontal edges of used space            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 's'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   2, row=  10                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'e'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  22, row=  10                        
+
+   COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  10,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  10                        
+
+   COND       v21  go to the furthest vertical edges of used space              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 't'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=   1                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'b'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  30                        
+
+   COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  10,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=  10                        
+
+   COND       v21  go to the furthest four corner edges of used space           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'a'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   2, row=   1                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'o'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  22, row=  30                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'n'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  22, row=   1                        
+     exec     v21  preform an edge move                 KEYS_e_family         'e', 'f'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   2, row=  30                        
+
+   COND       v21  move to center of center grouping                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  11,   5                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=   5                        
+
+   COND       v21  make a series of leftward end moves                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'l'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  12, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'l'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  20, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'l'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  22, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'l'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  39, row=   5                        
+
+   COND       v21  come back using rightward end moves                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'h'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  22, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'h'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  20, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'h'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  12, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'h'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  10, row=   5                        
+
+   COND       v21  move to center of center grouping                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  11,   5                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=   5                        
+
+   COND       v21  make a series of downward end moves                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'j'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=   6                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'j'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=  15                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'j'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=  39                        
+
+   COND       v21  come back using upward end moves                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'k'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=  15                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'k'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=   6                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'k'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=   4                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'k'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  11, row=   0                        
+
+   COND       v21  move to a neutral place                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  14,   5                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  14, row=   5                        
+
+   COND       v21  move to furthest horizontal occupied spaces                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'H'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   3, row=   5                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'L'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  22, row=   5                        
+
+   COND       v21  move to a shorter row                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  14,   3                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  14, row=   3                        
+
+   COND       v21  move to furthest horizontal occupied spaces                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'H'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   3, row=   3                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'L'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   5, row=   3                        
+
+   COND       v21  move to an empty row                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,  14,   0                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  14, row=   0                        
+
+   COND       v21  move to furthest horizontal occupied spaces                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'H'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  14, row=   0                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'L'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  14, row=   0                        
+
+   COND       v21  move to a neutral place                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,   5,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   5, row=  10                        
+
+   COND       v21  move to furthest vertical occupied spaces                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'K'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   5, row=   3                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'J'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   5, row=  30                        
+
+   COND       v21  move to an empty column                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  jump to an cell                      LOC_jump              0,   0,  10                                                             i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   0, row=  10                        
+
+   COND       v21  move to furthest vertical occupied spaces                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'K'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   0, row=  10                        
+     exec     v21  preform an end move                  KEYS_e_family         'e', 'J'                                                                i_equal     0                                                                      
+     get      v21  review the current position          move_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   0, row=  10                        
 
    COND       v21  wrap-up testing                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      

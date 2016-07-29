@@ -127,11 +127,20 @@ KEYS_basics        (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        x_valid     [MAX_STR]  = "0HhlL$_KkjJG";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defense)------------------------*/
    --rce;  if (a_major != ' ') {
+      DEBUG_USER   yLOG_note    ("a_major is not a space");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
    --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("a_minor is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(prepare)------------------------*/
@@ -157,6 +166,7 @@ KEYS_basics        (char a_major, char a_minor)
    /*---(clean-up)-----------------------*/
    MOVE_wrap    ();
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -167,11 +177,20 @@ KEYS_gz_family     (char a_major, char a_minor)
    char        rce         = -10;                /* return code for errors    */
    char        rc          =   0;                /* generic return code       */
    char        x_valid     [MAX_STR]  = "shcletkmjbaonf.AONF";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defense)------------------------*/
    --rce;  if (a_major != 'g' && a_major != 'z') {
+      DEBUG_USER   yLOG_note    ("a_major is not g or z");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
    --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("a_minor is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(prepare)------------------------*/
@@ -210,23 +229,6 @@ KEYS_gz_family     (char a_major, char a_minor)
               rc = MOVE_gz_vert (a_major, 'm');
               break;
    }
-   /*---(maximums)-----------------------*/
-   if (a_major == 'g') {
-      switch (a_minor) {
-      case 'A' : rc = MOVE_horz    ('0');            /* ALPHA = origin      */
-                 rc = MOVE_vert    ('_');
-                 break;
-      case 'O' : rc = MOVE_horz    ('$');            /* OMEGA = maximum     */
-                 rc = MOVE_vert    ('G');
-                 break;
-      case 'N' : rc = MOVE_horz    ('$');            /* NEAR  = maximum     */
-                 rc = MOVE_vert    ('_');
-                 break;
-      case 'F' : rc = MOVE_horz    ('0');            /* FAR   = maximum     */
-                 rc = MOVE_vert    ('G');
-                 break;
-      }
-   }
    /*---(frozen)-------------------------*/
    switch (a_minor) {
       /*> case '_' : /+ go to frozen header rows +/     break;                           <* 
@@ -235,6 +237,7 @@ KEYS_gz_family     (char a_major, char a_minor)
    /*---(clean-up)-----------------------*/
    MOVE_wrap    ();
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -243,57 +246,92 @@ KEYS_e_family      (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_valid     [MAX_STR]  = "tKkjJbsHhlLeaonf";
-   char        x_col       [10] = "  ";
-   char        x_row       [10] = "  ";
+   char        rc          =   0;
+   char        x_valid     [MAX_STR]  = "tKkjJbsHhlLeaonfSETBAONF";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defense)------------------------*/
    --rce;  if (a_major != 'e') {
+      DEBUG_USER   yLOG_note    ("a_major is not e");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
    --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("a_minor is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(prepare)------------------------*/
    MOVE_prep    ();
    /*---(simple ends)--------------------*/
    switch (a_minor) {
-   case 'k' : MOVE_ends  (a_minor);     break;
-   case 'j' : MOVE_ends  (a_minor);     break;
-   case 'h' : MOVE_ends  (a_minor);     break;
-   case 'l' : MOVE_ends  (a_minor);     break;
+   case 'k' : rc = MOVE_ends  (a_minor);     break;
+   case 'j' : rc = MOVE_ends  (a_minor);     break;
+   case 'h' : rc = MOVE_ends  (a_minor);     break;
+   case 'l' : rc = MOVE_ends  (a_minor);     break;
    }
    /*---(vertical edges)-----------------*/
    switch (a_minor) {
-   case 't' : MOVE_edges (a_minor);     break;
-   case 'K' : MOVE_edges (a_minor);     break;
-   case 'J' : MOVE_edges (a_minor);     break;
-   case 'b' : MOVE_edges (a_minor);     break;
+   case 't' : rc = MOVE_edges (a_minor);     break;
+   case 'K' : rc = MOVE_edges (a_minor);     break;
+   case 'J' : rc = MOVE_edges (a_minor);     break;
+   case 'b' : rc = MOVE_edges (a_minor);     break;
    }
    /*---(horizontal edges)---------------*/
    switch (a_minor) {
-   case 's' : MOVE_edges (a_minor);     break;
-   case 'H' : MOVE_edges (a_minor);     break;
-   case 'L' : MOVE_edges (a_minor);     break;
-   case 'e' : MOVE_edges (a_minor);     break;
+   case 's' : rc = MOVE_edges (a_minor);     break;
+   case 'H' : rc = MOVE_edges (a_minor);     break;
+   case 'L' : rc = MOVE_edges (a_minor);     break;
+   case 'e' : rc = MOVE_edges (a_minor);     break;
    }
    /*---(combination)--------------------*/
    switch (a_minor) {
-   case 'a' : MOVE_edges ('s');
-              MOVE_edges ('t');
+   case 'a' : rc = MOVE_edges ('s');
+              rc = MOVE_edges ('t');
               break;
-   case 'o' : MOVE_edges ('e');
-              MOVE_edges ('b');
+   case 'o' : rc = MOVE_edges ('e');
+              rc = MOVE_edges ('b');
               break;
-   case 'n' : MOVE_edges ('e');
-              MOVE_edges ('t');
+   case 'n' : rc = MOVE_edges ('e');
+              rc = MOVE_edges ('t');
               break;
-   case 'f' : MOVE_edges ('s');
-              MOVE_edges ('b');
+   case 'f' : rc = MOVE_edges ('s');
+              rc = MOVE_edges ('b');
+              break;
+   }
+   /*---(maximums)-----------------------*/
+   switch (a_minor) {
+   case 'S' : rc = MOVE_horz    ('0');
+              break;
+   case 'E' : rc = MOVE_horz    ('$');
+              break;
+   case 'T' : rc = MOVE_vert    ('_');
+              break;
+   case 'B' : rc = MOVE_vert    ('G');
+              break;
+   }
+   /*---(max combos)---------------------*/
+   switch (a_minor) {
+   case 'A' : rc = MOVE_horz    ('0');            /* ALPHA = origin      */
+              rc = MOVE_vert    ('_');
+              break;
+   case 'O' : rc = MOVE_horz    ('$');            /* OMEGA = maximum     */
+              rc = MOVE_vert    ('G');
+              break;
+   case 'N' : rc = MOVE_horz    ('$');            /* NEAR  = maximum     */
+              rc = MOVE_vert    ('_');
+              break;
+   case 'F' : rc = MOVE_horz    ('0');            /* FAR   = maximum     */
+              rc = MOVE_vert    ('G');
               break;
    }
    /*---(clean-up)-----------------------*/
    MOVE_wrap    ();
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -302,14 +340,21 @@ KEYS_c_family      (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_valid     [MAX_STR]  = "";
-   char        x_col       [10] = "  ";
-   char        x_row       [10] = "  ";
+   char        x_valid     [MAX_STR]  = "hljkHLJKaonfAONF";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defense)------------------------*/
-   --rce;  if (a_major != 'e') {
+   --rce;  if (a_major != 'c') {
+      DEBUG_USER   yLOG_note    ("a_major is not c");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
    --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("a_minor is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(prepare)------------------------*/
@@ -318,6 +363,7 @@ KEYS_c_family      (char a_major, char a_minor)
    /*---(clean-up)-----------------------*/
    MOVE_wrap    ();
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

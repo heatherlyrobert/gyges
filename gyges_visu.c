@@ -326,6 +326,25 @@ VISU_set           (
    return 0;
 }
 
+char         /*--> swap the corners ----------------------[ ------ [ ------ ]-*/
+VISU_reverse       (void)
+{
+   /*---(change root)--------------------*/
+   if (s_visu.ccol == s_visu.ecol && s_visu.crow == s_visu.erow) {
+      s_visu.ocol = s_visu.ecol;
+      s_visu.orow = s_visu.erow;
+      CCOL = s_visu.ccol = s_visu.bcol;
+      CROW = s_visu.crow = s_visu.brow;
+   } else {
+      s_visu.ocol = s_visu.bcol;
+      s_visu.orow = s_visu.brow;
+      CCOL = s_visu.ccol = s_visu.ecol;
+      CROW = s_visu.crow = s_visu.erow;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 
 /*====================------------------------------------====================*/
 /*===----                            display                           ----===*/
@@ -902,36 +921,48 @@ VISU_mode          (char a_major, char a_minor)
       VISU_clear ();
       return  0;
    }
-   /*---(check for setting)--------------*/
+   /*---(check for simple keys-----------*/
    --rce;  if (a_major == ' ') {
+      /*---(multikey prefixes)-----------*/
+      if (strchr ("gze"   , a_minor) != 0)       return a_minor;
       /*---(submodes)--------------------*/
       switch (a_minor) {
       case '"'      : my.mode    = SMOD_REGISTER;
-                      return 1;  /* make sure double quote goes in prev char */
+                      return a_minor;  /* make sure double quote goes in prev char */
+                      break;
+      case ':'      : strncpy (command , ":", MAX_STR);
+                      my.mode    = MODE_COMMAND;
+                      return 0;
                       break;
       }
       /*---(actions)---------------------*/
       switch (a_minor) {
-      case 'c'      : VISU_col ();                    break;
-      case 'r'      : VISU_row ();                    break;
+      case 'v'      : VISU_reverse ();
+                      break;
       }
+      /*---(actions)---------------------*/
+      /*> switch (a_minor) {                                                          <* 
+       *> case 'c'      : VISU_col ();               break;                           <* 
+       *> case 'r'      : VISU_row ();               break;                           <* 
+       *> }                                                                           <*/
       /*---(normal)----------------------*/
-      switch (a_minor) {
-         /*---(basic horizontal)---------*/
-      case '0'      : KEYS_col (' ', '0');                break;
-      case 'H'      : KEYS_col (' ', 'H');                break;
-      case 'h'      : KEYS_col (' ', 'h');                break;
-      case 'l'      : KEYS_col (' ', 'l');                break;
-      case 'L'      : KEYS_col (' ', 'L');                break;
-      case '$'      : KEYS_col (' ', '$');                break;
-                      /*---(basic vertical)-----------*/
-      case '_'      : KEYS_row (' ', '_');                break;
-      case 'K'      : KEYS_row (' ', 'K');                break;
-      case 'k'      : KEYS_row (' ', 'k');                break;
-      case 'j'      : KEYS_row (' ', 'j');                break;
-      case 'J'      : KEYS_row (' ', 'J');                break;
-      case 'G'      : KEYS_row (' ', 'G');                break;
-      }
+      rc = KEYS_basics (a_major, a_minor);
+      if (rc == 0) return 0;
+   }
+   /*---(goto family)--------------------*/
+   if (a_major == 'g') {
+      rc = KEYS_gz_family  (a_major, a_minor);
+      return 0;
+   }
+   /*---(scroll family)------------------*/
+   if (a_major == 'z') {
+      rc = KEYS_gz_family  (a_major, a_minor);
+      return 0;
+   }
+   /*---(end family)---------------------*/
+   if (a_major == 'e') {
+      rc = KEYS_e_family   (a_major, a_minor);
+      return 0;
    }
    /*---(complete)-----------------------*/
    return 0;

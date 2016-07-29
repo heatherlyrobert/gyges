@@ -144,6 +144,8 @@ MOVE_edges         (
     *   maximum extent in curr row or col is shown with  K  J     H     L
     */
    /*---(locals)-----------+-----------+-*/
+   int         y_beg       = 0;
+   int         x_beg       = 0;
    int         y_fin       = 0;
    int         x_fin       = 0;
    char        rce         = -10;                /* return code for errors    */
@@ -153,8 +155,8 @@ MOVE_edges         (
    /*---(defense)------------------------*/
    if (strchr ("tbseKJHL", a_dir) == 0)                         return rce;
    /*---(prepare)------------------------*/
-   y_fin = CROW;
-   x_fin = CCOL;
+   y_fin = y_beg = CROW;
+   x_fin = x_beg = CCOL;
    /*---(execute)------------------------*/
    switch (a_dir) {
    case 't' : case 'K' :
@@ -164,6 +166,7 @@ MOVE_edges         (
          if (a_dir == 'K' && tab->sheet[CCOL][y_fin] == NULL)   continue;
          break;
       }
+      if (y_fin == NROW)  y_fin = y_beg;
       break;
    case 'b' : case 'J' :
       /*---(bottom)----------------------*/
@@ -172,6 +175,7 @@ MOVE_edges         (
          if (a_dir == 'J' && tab->sheet[CCOL][y_fin] == NULL)   continue;
          break;
       }
+      if (y_fin <  0   )  y_fin = y_beg;
       break;
    case 's' : case 'H' :
       /*---(left)------------------------*/
@@ -180,14 +184,16 @@ MOVE_edges         (
          if (a_dir == 'H' && tab->sheet[x_fin][CROW] == NULL)   continue;
          break;
       }
+      if (x_fin == NCOL)  x_fin = x_beg;
       break;
    case 'e' : case 'L' :
-      /*---(bottom)----------------------*/
+      /*---(right)-----------------------*/
       for (x_fin = NCOL - 1; x_fin >= 0; --x_fin) {
          if (a_dir == 'e' && tab->cols [x_fin].c == 0)          continue;
          if (a_dir == 'L' && tab->sheet[x_fin][CROW] == NULL)   continue;
          break;
       }
+      if (x_fin <  0   )  x_fin = x_beg;
       break;
    }
    /*---(fix overruns)-------------------*/
@@ -785,7 +791,7 @@ MOVE_gz_vert       (char a_major, char a_minor)
    switch (a_minor) {
    case 't' :  y_target += 0;                        break;
    case 'k' :  y_target += my.y_avail / 4;           break;
-   case '.' :  y_target += (my.y_avail / 2) - 1;     break;
+   case 'm' :  y_target += (my.y_avail / 2) - 1;     break;
    case 'j' :  y_target += (my.y_avail / 4) * 3;     break;
    case 'b' :  y_target += my.y_avail;               break;
    default  :
@@ -829,9 +835,9 @@ MOVE_gz_vert       (char a_major, char a_minor)
       }
    }
    /*---(update current colunn)----------*/
-   DEBUG_USER  yLOG_value   ("tab->brow"   , BROW);
-   DEBUG_USER  yLOG_value   ("tab->crow" , CROW);
-   DEBUG_USER  yLOG_value   ("tab->erow"   , EROW);
+   DEBUG_USER   yLOG_value   ("tab->brow" , BROW);
+   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
+   DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
    /*---(complete)-----------------------*/
    DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
