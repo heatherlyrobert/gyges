@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5h"
-#define     VER_TXT   "unit testing on ends and edges complete and successful"
+#define     VER_NUM   "1.5i"
+#define     VER_TXT   "create first couple 'c' family moves"
 
 
 
@@ -1005,6 +1005,7 @@ char      MOVE_edges         (char  a_minor);
 
 char      KEYS_c_family      (char  a_major, char  a_minor);
 
+char      KEYS_regbasic      (char  a_major, char  a_minor);
 
 
 /*---(ncurses)----------------------------------*/

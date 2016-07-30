@@ -340,7 +340,8 @@ KEYS_c_family      (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_valid     [MAX_STR]  = "hljkHLJKaonfAONF";
+   char        rc          =   0;
+   char        x_valid     [MAX_STR]  = "hljksetbaonfAONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -359,9 +360,118 @@ KEYS_c_family      (char a_major, char a_minor)
    }
    /*---(prepare)------------------------*/
    MOVE_prep    ();
-   /*---(process)------------------------*/
+   /*---(move cursor)--------------------*/
+   switch (a_minor) {
+   case 's' : rc = MOVE_gz_horz ('g', 's');
+              break;
+   case 'e' : rc = MOVE_gz_horz ('g', 'e');
+              break;
+   case 'h' :
+   case 'l' : rc = MOVE_gz_horz ('g', 'c');
+              break;
+   case 't' : rc = MOVE_gz_vert ('g', 't');
+              break;
+   case 'b' : rc = MOVE_gz_vert ('g', 'b');
+              break;
+   case 'j' :
+   case 'k' : rc = MOVE_gz_vert ('g', 'm');
+              break;
+   case 'A' : rc = MOVE_gz_horz ('g', 's');
+              rc = MOVE_gz_vert ('g', 't');
+              break;
+   case 'a' :
+   case 'o' :
+   case 'n' :
+   case 'f' : rc = MOVE_gz_horz ('g', 'c');
+              rc = MOVE_gz_vert ('g', 'm');
+              break;
+   }
+   /*---(horz/vert)----------------------*/
+   switch (a_minor) {
+   case 's' :
+   case 'h' : rc = MOVE_gz_horz ('z', 'e');
+              break;
+   case 'e' :
+   case 'l' : rc = MOVE_gz_horz ('z', 's');
+              break;
+   case 'b' :
+   case 'j' : rc = MOVE_gz_vert ('z', 't');
+              break;
+   case 't' :
+   case 'k' : rc = MOVE_gz_vert ('z', 'b');
+              break;
+   }
+   /*---(half diagonals)-----------------*/
+   switch (a_minor) {
+   case 'a' : rc = MOVE_gz_horz ('z', 'e');
+              rc = MOVE_gz_vert ('z', 'b');
+              break;
+   case 'o' : rc = MOVE_gz_horz ('z', 's');
+              rc = MOVE_gz_vert ('z', 't');
+              break;
+   case 'n' : rc = MOVE_gz_horz ('z', 's');
+              rc = MOVE_gz_vert ('z', 'b');
+              break;
+   case 'f' : rc = MOVE_gz_horz ('z', 'e');
+              rc = MOVE_gz_vert ('z', 't');
+              break;
+   }
+   /*---(update)-------------------------*/
+   MOVE_wrap    ();
+   MOVE_prep    ();
+   /*---(move cursor)--------------------*/
+   switch (a_minor) {
+   case 's' : case 'e' :
+   case 'h' : case 'l' : rc = MOVE_gz_horz ('g', 'c');
+                         break;
+   case 't' : case 'b' :
+   case 'j' : case 'k' : rc = MOVE_gz_vert ('g', 'm');
+                         break;
+   case 'a' : case 'o' :
+   case 'n' : case 'f' : rc = MOVE_gz_horz ('g', 'c');
+                         rc = MOVE_gz_vert ('g', 'm');
+                         break;
+   }
    /*---(clean-up)-----------------------*/
    MOVE_wrap    ();
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
+KEYS_regbasic       (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          =   0;
+   char        x_valid     [MAX_STR]  = "ypdx";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defense)------------------------*/
+   --rce;  if (a_major != ' ') {
+      DEBUG_USER   yLOG_note    ("a_major is not empty");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
+   --rce;  if (strchr (x_valid, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("a_minor is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(process)------------------------*/
+   switch (a_minor) {
+   case  'y' : REG_copy  ();
+               break;
+   case  'p' : REG_paste ('y');
+               break;
+   case  'd' :
+   case  'x' : REG_cut   ();
+               break;
+   }
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -449,31 +559,33 @@ MODE_map           (
                       break;
       }
       /*---(normal)----------------------*/
-      rc = KEYS_basics (a_prev, a_curr);
+      rc = KEYS_basics   (a_prev, a_curr);
+      if (rc == 0) return 0;
+      rc = KEYS_regbasic (a_prev, a_curr);
       if (rc == 0) return 0;
       /*---(special)------------------*/
       switch (a_curr) {
       case K_CTRL_L : clear ();                       break;
       case 'P'      : DEP_writeall (); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;
                       /*---(clearing cells)-----------*/
-      case 'x'      : REG_cut   ();                   break;
-      case 'd'      : CELL_erase ();                  break;
+      /*> case 'x'      : REG_cut   ();                   break;                      <*/
+      /*> case 'd'      : CELL_erase ();                  break;                      <*/
                       /*---(formatting)---------------*/
       case '<'      : CELL_align (CHG_INPUT, '<');               break;
       case '|'      : CELL_align (CHG_INPUT, '|');               break;
       case '>'      : CELL_align (CHG_INPUT, '>');               break;
                       /*---(selection)----------------*/
-      case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;
-      case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;
-      case 'y'      : REG_copy  ();                   break;
-      case 'p'      : REG_paste ('y');                break;
+      /*> case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;          <*/
+      /*> case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;          <*/
+      /*> case 'y'      : REG_copy  ();                   break;                      <*/
+      /*> case 'p'      : REG_paste ('y');                break;                      <*/
                       /*---(modes and multikey)-------*/
       case '@'      : DEP_recalc();                   break;
                       /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/
                       /*---(new stuff)----------------*/
       case 'u'      : HIST_undo ();                   break;
       case 'U'      : HIST_redo ();                   break;
-      case 'W'      : REG_bufwrite (my.reg_curr);     break;
+      /*> case 'W'      : REG_bufwrite (my.reg_curr);     break;                      <*/
       default       : return rce;                     break;
       }
       return 0;
@@ -509,6 +621,11 @@ MODE_map           (
    /*---(end family)---------------------*/
    if (a_prev == 'e') {
       rc = KEYS_e_family   (a_prev, a_curr);
+      return 0;
+   }
+   /*---(end family)---------------------*/
+   if (a_prev == 'c') {
+      rc = KEYS_c_family   (a_prev, a_curr);
       return 0;
    }
    /*---(delete family)-------------------------*/
