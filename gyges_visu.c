@@ -767,8 +767,8 @@ MARK_return        (char a_mark)
       CROW = s_mark_info [x_index].row;
    }
    /*---(update screen)------------------*/
-   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_col ('z', ',');
-   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_row ('z', '.');
+   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_gz_family ('z', 'm');
+   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_gz_family ('z', 'c');
    /*---(complete)-----------------------*/
    return 0;
 }

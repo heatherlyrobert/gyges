@@ -59,11 +59,14 @@ MOVE_prep          (void)
    s_endc  = ECOL;
    s_endr  = EROW;
    /*---(dislay to debugging)------------*/
-   DEBUG_USER   yLOG_note    ("save initial position values");
-   DEBUG_USER   yLOG_value   ("bcol/begc" , s_begc);
-   DEBUG_USER   yLOG_value   ("brow/begr" , s_begr);
-   DEBUG_USER   yLOG_value   ("ecol/endc" , s_endc);
-   DEBUG_USER   yLOG_value   ("erow/endr" , s_endr);
+   DEBUG_USER   yLOG_note    ("save initial col pos...");
+   DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
+   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
+   DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);
+   DEBUG_USER   yLOG_note    ("save initial row pos...");
+   DEBUG_USER   yLOG_value   ("tab->brow" , BROW);
+   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
+   DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -72,11 +75,14 @@ char
 MOVE_wrap          (void)
 {
    /*---(show updated)----------------*/
-   DEBUG_USER   yLOG_note    ("show updated position values");
-   DEBUG_USER   yLOG_value   ("bcol/begc" , s_begc);
-   DEBUG_USER   yLOG_value   ("brow/begr" , s_begr);
-   DEBUG_USER   yLOG_value   ("ecol/endc" , s_endc);
-   DEBUG_USER   yLOG_value   ("erow/endr" , s_endr);
+   DEBUG_USER   yLOG_note    ("show updated col pos...");
+   DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
+   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
+   DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);
+   DEBUG_USER   yLOG_note    ("show updated row pos...");
+   DEBUG_USER   yLOG_value   ("tab->brow" , BROW);
+   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
+   DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
    /*---(check current)---------------*/
    DEBUG_USER  yLOG_note    ("correct for min/max violations");
    if (CCOL <  0   )    CCOL   =    0;
@@ -116,11 +122,14 @@ MOVE_wrap          (void)
    if      (BROW != s_begr) { KEYS_brow (BROW); CURS_rowhead(); }
    else if (EROW != s_endr) { KEYS_erow (EROW); CURS_rowhead(); }
    /*---(show final)------------------*/
-   DEBUG_USER   yLOG_note    ("show final positions values");
-   DEBUG_USER   yLOG_value   ("bcol/begc" , s_begc);
-   DEBUG_USER   yLOG_value   ("brow/begr" , s_begr);
-   DEBUG_USER   yLOG_value   ("ecol/endc" , s_endc);
-   DEBUG_USER   yLOG_value   ("erow/endr" , s_endr);
+   DEBUG_USER   yLOG_note    ("show final col pos...");
+   DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
+   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
+   DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);
+   DEBUG_USER   yLOG_note    ("show final row pos...");
+   DEBUG_USER   yLOG_value   ("tab->brow" , BROW);
+   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
+   DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1144,9 +1153,9 @@ KEYS_erow          (int a_end)
    if (EROW <     0) EROW = 0;
    if (EROW >= NROW) EROW = NROW - 1;
    BROW = EROW;
-   DEBUG_USER  yLOG_value   ("tab->brow"   , BROW);
+   DEBUG_USER  yLOG_value   ("tab->brow" , BROW);
    DEBUG_USER  yLOG_value   ("tab->crow" , CROW);
-   DEBUG_USER  yLOG_value   ("tab->erow"   , EROW);
+   DEBUG_USER  yLOG_value   ("tab->erow" , EROW);
    DEBUG_USER  yLOG_value   ("y_avail"   , my.y_avail);
    /*---(process ending row)-------------*/
    if (tab->froz_row == 'y')  x_1st = tab->froz_erow + 1;
@@ -1170,7 +1179,7 @@ KEYS_erow          (int a_end)
          tab->rows[j].y  = my.y_avail - ch + row_main;
          BROW       = j;
          /*---(check for just right)-----*/
-         if (ch == my.x_avail) {
+         if (ch == my.y_avail) {
             DEBUG_USER  yLOG_note    ("exact match");
             x_done = 'y';
             break;
@@ -1185,9 +1194,9 @@ KEYS_erow          (int a_end)
       /*---(bottom)----------------------*/
    }
    /*---(show values)------------------------*/
-   DEBUG_USER  yLOG_value   ("tab->brow"   , BROW);
+   DEBUG_USER  yLOG_value   ("tab->brow" , BROW);
    DEBUG_USER  yLOG_value   ("tab->crow" , CROW);
-   DEBUG_USER  yLOG_value   ("tab->erow"   , EROW);
+   DEBUG_USER  yLOG_value   ("tab->erow" , EROW);
    /*---(fix y values)-----------------------*/
    ch = KEYS_lrow ();
    for (i = BROW; i <= EROW; ++i) {

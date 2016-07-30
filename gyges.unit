@@ -8041,7 +8041,7 @@ SCRP          v21  single cell string formatting                              
 SCRP          v21  (s_cell) verify merged cell formatting                       CELL_printable                                                          ((28.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testloud                                                                                 i_equal     0                                                                      
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 

@@ -34,8 +34,8 @@ main (int argc, char *argv[])
    if (strcmp (my.f_name, FILE_BLANK) != 0)  INPT_main (my.f_title);
    hist_active = 'y';
    /*---(process)------------------------*/
-   KEYS_col (' ', 'r');
-   KEYS_row (' ', 'r');
+   MOVE_vert ('r');
+   MOVE_horz ('r');
    sch = ' ';
    MODE_message (my.mode);
    /*---(main-loop)----------------------*/
