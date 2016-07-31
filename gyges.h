@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5j"
-#define     VER_TXT   "fixed off-by-one issue with vertical 'z' commands"
+#define     VER_NUM   "1.5k"
+#define     VER_TXT   "updated register display to include unnamed (and easier)"
 
 
 

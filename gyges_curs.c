@@ -698,23 +698,34 @@ CURS_listreg       (void)
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
    char        x_line      [MAX_STR];
+   char        x_reg       = ' ';
+   char        x_reglist   [MAX_STR] = "\"abcdefghijklmnopqrstuvwxyz";
+   int         x_count     = 0;
+   int         x_row       = 4;
+   int         x_col       = 10;
    /*---(header)-------------------------*/
-   attron (S_COLOR_TITLE);
-   mvprintw   ( 3 +  0, 10, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
-   attrset (0);
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
+   attrset   (0);
+   /*---(prepare)------------------------*/
+   x_count = strlen (x_reglist);
+   /*---(show unnamed)-------------------*/
    /*---(show registers)-----------------*/
-   for (i = 'a'; i <= 'z'; ++i) {
+   for (i = 0; i < x_count; ++i) {
+      ++x_row;
       /*---(lower case)------------------*/
-      REG_entry  (i, x_line);
+      x_reg = x_reglist [i];
+      REG_entry  (x_reg, x_line);
       if (x_line  [6] != '-')  attron (S_COLOR_CURRENT);
       else                     attron (S_COLOR_VISUAL);
-      mvprintw   ( 4 + (i - 'a'), 10, x_line);
-      attrset (0);
+      mvprintw  (x_row, x_col, x_line);
+      attrset   (0);
    }
+   ++x_row;
    /*---(footer)-------------------------*/
-   attron (S_COLOR_TITLE);
-   mvprintw   ( 3 + 27, 10, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
-   attrset (0);
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
+   attrset   (0);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -770,7 +781,7 @@ CURS_main          (void)
    }
    /*---(cursor pos)---------------------*/
    if (my.info_win != '-') 
-      move ( 3, 10);
+      move ( 4, 10);
    else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
