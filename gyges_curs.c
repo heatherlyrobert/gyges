@@ -658,6 +658,8 @@ CURS_listmark      (void)
    int         i           = 0;
    char        x_line      [MAX_STR];
    char        x_label     [10];
+   char        x_mark      = ' ';
+   char        x_marklist  [MAX_STR] = "'abcdefghijklmnopqrstuvwxyz";
    /*---(header)-------------------------*/
    attron (S_COLOR_TITLE);
    mvprintw   ( 3, 10, " -m- --fixed---      -m- --moving-- ");

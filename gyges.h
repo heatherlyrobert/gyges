@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5k"
-#define     VER_TXT   "updated register display to include unnamed (and easier)"
+#define     VER_NUM   "1.5l"
+#define     VER_TXT   "added a tab-delimited option for writing to vi_clip.txt"
 
 
 

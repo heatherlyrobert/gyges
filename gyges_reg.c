@@ -399,6 +399,10 @@ REG_mode           (int a_prev, int a_curr)
                   break;
       case  'C' : REG_valuesout('C');
                   break;
+      case  't' : REG_valuesout('t');
+                  break;
+      case  'T' : REG_valuesout('T');
+                  break;
       case  's' : REG_valuesout('s');
                   break;
       case  'S' : REG_valuesout('S');
@@ -839,6 +843,12 @@ REG_paste          (char a_adapt)
 }
 
 char
+REG_valuesin      (char a_style)
+{
+   return 0;
+}
+
+char
 REG_valuesout     (char a_style)
 {
    /*---(locals)-----------+-----------+-*/
@@ -865,7 +875,7 @@ REG_valuesout     (char a_style)
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
       ++c;
       /*---(look for line break)---------*/
-      if (strchr ("vVcC", a_style) != 0 && x_row != x_rowsave) {
+      if (strchr ("vVcCtT", a_style) != 0 && x_row != x_rowsave) {
          fprintf (f, "\n");
       }
       /*---(fill in blank cells)---------*/
@@ -875,14 +885,16 @@ REG_valuesout     (char a_style)
          case 'v' : fprintf (f, "%*.*s", w, w, empty);
                     break;
          case 'V' : break;
-         case 'c' : fprintf (f, "\"\",");
+         case 'c' : case 'C' :
+                    fprintf (f, "\"\",");
                     break;
-         case 'C' : fprintf (f, "\"\",");
+         case 't' : case 'T' :
+                    fprintf (f, "\t");
                     break;
-         case 's' : break;
-         case 'S' : break;
-         case 'f' : break;
-         case 'F' : break;
+         case 's' : case 'S' :
+                    break;
+         case 'f' : case 'F' :
+                    break;
          }
       }
       /*---(write filled cells)----------*/
@@ -898,9 +910,13 @@ REG_valuesout     (char a_style)
                     break;
          case 'C' : fprintf (f, "\"%s\",", curr->s);
                     break;
+         case 't' : fprintf (f, "%s\t", x_temp);
+                    break;
+         case 'T' : fprintf (f, "%s\t", curr->s);
+                    break;
          case 's' : fprintf (f, "%s\n", curr->s);
                     break;
-         case 'S' : fprintf (f, "%s:%s\n", curr->label, curr->s);
+         case 'S' : fprintf (f, "(%s) %s\n", curr->label, curr->s);
                     break;
          case 'f' : fprintf (f, "%-10.10s  %s\n", curr->label, curr->s);
                     break;
