@@ -411,6 +411,9 @@ REG_mode           (int a_prev, int a_curr)
                   break;
       case  'F' : REG_valuesout('F');
                   break;
+      case  'p' : case  'P' :
+                  REG_valuesin ('-');
+                  break;
       default   : my.mode = MODE_MAP;
                   REG_set ('"');
                   return rce;
@@ -845,6 +848,71 @@ REG_paste          (char a_adapt)
 char
 REG_valuesin      (char a_style)
 {
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          = 0;
+   FILE       *f           = NULL;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   int         x_lines     = 0;
+   char        x_recd      [MAX_STR];
+   int         x_len       = 0;
+   char       *p           = NULL;
+   char       *q           = "\t";
+   char       *s           = NULL;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(open output file)---------------*/
+   f = fopen("/root/z_gehye/vi_clip.txt", "r");
+   DEBUG_REGS   yLOG_point   ("f (file)"  , f);
+   --rce;  if (f == NULL) {
+      DEBUG_REGS   yLOG_note    ("can not open clip file");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   x_col = CCOL;
+   x_row = CROW;
+   /*---(process lines)------------------*/
+   while (1) {
+      /*---(read and clean)--------------*/
+      ++x_lines;
+      DEBUG_INPT  yLOG_value   ("line"      , x_lines);
+      fgets (x_recd, MAX_STR, f);
+      if (feof (f))  {
+         DEBUG_INPT  yLOG_note    ("end of file reached");
+         break;
+      }
+      x_len = strlen (x_recd);
+      if (x_len <= 0)  {
+         DEBUG_INPT  yLOG_note    ("record empty");
+         continue;
+      }
+      x_recd [--x_len] = '\0';
+      DEBUG_INPT  yLOG_value   ("length"    , x_len);
+      DEBUG_INPT  yLOG_info    ("fixed"     , x_recd);
+      /*---(process cells)------------------*/
+      p = strtok_r (x_recd, q, &s);
+      DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
+      while (p != NULL) {
+         DEBUG_INPT  yLOG_point   ("p"         , p);
+         strltrim (p, ySTR_BOTH, MAX_STR);
+         DEBUG_INPT  yLOG_info    ("value"     , p);
+         DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
+         x_curr = CELL_change (CHG_INPUT, CTAB, x_col, x_row, p);
+         DEBUG_INPT  yLOG_point   ("x_curr"    , x_curr);
+         ++x_col;
+         p = strtok_r (NULL, q, &s);
+      }
+      x_col = CCOL;
+      ++x_row;
+   }
+   /*---(close file)---------------------*/
+   DEBUG_REGS   yLOG_note    ("closing file");
+   fclose  (f);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -854,12 +922,12 @@ REG_valuesout     (char a_style)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          = 0;
+   FILE       *f           = NULL;
    tCELL      *curr        = NULL;
    int         x_tab       = 0;
    int         x_col       = 0;
    int         x_row       = 0;
    int         x_rowsave   = 0;
-   FILE       *f           = NULL;
    int         w           = 0;
    int         x_temp      [MAX_STR];
    int         c           = 0;
@@ -867,7 +935,12 @@ REG_valuesout     (char a_style)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(open output file)---------------*/
    f = fopen("/root/z_gehye/vi_clip.txt", "w");
-   --rce;  if (f == NULL)      return rce;
+   DEBUG_REGS   yLOG_point   ("f (file)"  , f);
+   --rce;  if (f == NULL) {
+      DEBUG_REGS   yLOG_note    ("can not open clip file");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(process independent cells)------*/
    curr  = VISU_first (&x_tab, &x_col, &x_row);
    x_rowsave = x_row;
@@ -931,8 +1004,11 @@ REG_valuesout     (char a_style)
       curr  = VISU_next (&x_tab, &x_col, &x_row);
    };
    /*---(close file)---------------------*/
+   DEBUG_REGS   yLOG_note    ("closing file");
+   fprintf (f, "\n");
    fclose  (f);
    /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

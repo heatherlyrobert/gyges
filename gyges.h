@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5l"
-#define     VER_TXT   "added a tab-delimited option for writing to vi_clip.txt"
+#define     VER_NUM   "1.5m"
+#define     VER_TXT   "added a tab-delimited option for reading from vi_clip.txt"
 
 
 
@@ -950,6 +950,7 @@ char      REG_copy           (void);
 char      REG_cut            (void);
 char      REG_append         (void);
 char      REG_paste          (char a_adapt);
+char      REG_valuesin       (char a_trim);
 char      REG_valuesout      (char a_trim);
 
 char      REG_entry          (char a_reg, char *a_list);
