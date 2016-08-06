@@ -444,7 +444,7 @@ CURS_formula       (tCELL *a_curr)
    if (w < 0) w = 0;
    mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, empty);
    snprintf (msg, 500, "%s",    contents);
-   mvprintw (row_formula, s_start, "%s%*.*s", msg, w, w, empty);
+   mvprintw (row_formula, s_start, "%*.*s%*.*s", s_space, s_space, msg, w, w, empty);
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-----------------------*/
