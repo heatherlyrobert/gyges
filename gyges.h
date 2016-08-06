@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5p"
-#define     VER_TXT   "fix cell content display on formula line to truncate"
+#define     VER_NUM   "1.5q"
+#define     VER_TXT   "fix source mode available width"
 
 
 

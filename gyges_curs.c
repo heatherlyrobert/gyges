@@ -421,18 +421,17 @@ CURS_formula       (tCELL *a_curr)
       mvprintw (row_formula, 25, "%4d:", len);
       mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
       s_start  = 30;
-      s_space  = my.apos;
       break;
    case SCRN_SMALL :
       mvprintw (row_formula,  0, "%-6.6s", s_label);
       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);
       s_start  =  6;
-      s_space  = my.apos + (30 - 6) + (15 - 5) + 2;
       break;
    case SCRN_TINY  :
       s_start  =  0;
-      s_space  = my.apos + (30 - 0) + (15 - 0) + 2;
+      break;
    }
+   s_space  = my.apos;
    /*---(set color)--------------------------*/
    attrset (0);
    if      (my.mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
@@ -444,7 +443,7 @@ CURS_formula       (tCELL *a_curr)
    if (w < 0) w = 0;
    mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, empty);
    snprintf (msg, 500, "%s",    contents);
-   mvprintw (row_formula, s_start, "%*.*s%*.*s", s_space, s_space, msg, w, w, empty);
+   mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg);
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-----------------------*/
@@ -748,7 +747,14 @@ CURS_main          (void)
    /*---(header)-------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
-   my.apos = my.x_full - 30 - 15 - 2;
+   switch (my.scrn) {
+   case SCRN_DEBUG : my.apos = my.x_full - 30 - 15 - 2;
+                     break;
+   case SCRN_SMALL : my.apos = my.x_full -  6 -  5;
+                     break;
+   case SCRN_TINY  : my.apos = my.x_full;
+                     break;
+   }
    curr    = tab->sheet[CCOL][CROW];
    strncpy (reqs , "+", MAX_STR);
    strncpy (deps , "+", MAX_STR);

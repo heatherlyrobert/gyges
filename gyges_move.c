@@ -1366,7 +1366,6 @@ pos_move           (char a_dir)
    int  half  = avail / 2;           /* half the viewable positions           */
    int  qtr   = avail / 4;           /* quarter the viewable positions        */
    /*---(adjust curr)-----------------*/
-   my.apos     = my.x_full - 25 - 9 - 3;
    my.npos     = strlen(contents);
    switch (a_dir) {
 
@@ -1412,8 +1411,8 @@ pos_move           (char a_dir)
       my.epos = my.bpos + my.npos - 1;
    }
    /*---(adjust screen)---------------*/
-   /*> if (cpos < bpos)     cpos = bpos;                                              <* 
-    *> if (cpos > epos)     epos = cpos;                                              <*/
+   if (my.cpos < my.bpos)     my.cpos = my.bpos;
+   if (my.cpos > my.epos)     my.epos = my.cpos;
    /*---(complete)--------------------*/
    DEBUG_S  printf("pos_move       :: end\n");
    return 0;
