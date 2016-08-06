@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5m"
-#define     VER_TXT   "added a tab-delimited option for reading from vi_clip.txt"
+#define     VER_NUM   "1.5n"
+#define     VER_TXT   "translate key control chars for vi_clip in and out"
 
 
 

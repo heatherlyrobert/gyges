@@ -897,7 +897,10 @@ REG_valuesin      (char a_style)
       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
       while (p != NULL) {
          DEBUG_INPT  yLOG_point   ("p"         , p);
-         strltrim (p, ySTR_BOTH, MAX_STR);
+         strldchg (p, 29, 166, MAX_STR);   /* group     */
+         strldchg (p, 31, 167, MAX_STR);   /* field     */
+         strldchg (p,  9, 187, MAX_STR);   /* tab       */
+         strldchg (p, 27, 234, MAX_STR);   /* escape    */
          DEBUG_INPT  yLOG_info    ("value"     , p);
          DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
          x_curr = CELL_change (CHG_INPUT, CTAB, x_col, x_row, p);
@@ -929,7 +932,9 @@ REG_valuesout     (char a_style)
    int         x_row       = 0;
    int         x_rowsave   = 0;
    int         w           = 0;
-   int         x_temp      [MAX_STR];
+   int         x_print     [MAX_STR];
+   int         x_trim      [MAX_STR];
+   int         x_source    [MAX_STR];
    int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -972,31 +977,44 @@ REG_valuesout     (char a_style)
       }
       /*---(write filled cells)----------*/
       else {
-         strlcpy  (x_temp, curr->p, MAX_STR);
-         strltrim (x_temp, ySTR_BOTH, MAX_STR);
+         /*---(printable)----------------*/
+         strlcpy  (x_print , curr->p, MAX_STR);
+         strldchg (x_print , 166, 29, MAX_STR);   /* group     */
+         strldchg (x_print , 167, 31, MAX_STR);   /* field     */
+         strldchg (x_print , 187,  9, MAX_STR);   /* tab       */
+         strldchg (x_print , 234, 27, MAX_STR);   /* escape    */
+         strlcpy  (x_trim  , x_print, MAX_STR);
+         /*---(trimmed printable)--------*/
+         strltrim (x_trim, ySTR_BOTH, MAX_STR);
+         /*---(source)-------------------*/
+         strlcpy  (x_source, curr->s, MAX_STR);
+         strldchg (x_source, 166, 29, MAX_STR);   /* group     */
+         strldchg (x_source, 167, 31, MAX_STR);   /* field     */
+         strldchg (x_source, 187,  9, MAX_STR);   /* tab       */
+         strldchg (x_source, 234, 27, MAX_STR);   /* escape    */
          switch (a_style) {
-         case 'v' : fprintf (f, "%s", curr->p);
+         case 'v' : fprintf (f, "%s"                  , x_print);
                     break;
-         case 'V' : fprintf (f, "%s ", x_temp);
+         case 'V' : fprintf (f, "%s "                 , x_trim);
                     break;
-         case 'c' : fprintf (f, "\"%s\",", x_temp);
+         case 'c' : fprintf (f, "\"%s\","             , x_trim);
                     break;
-         case 'C' : fprintf (f, "\"%s\",", curr->s);
+         case 'C' : fprintf (f, "\"%s\","             , x_source);
                     break;
-         case 't' : fprintf (f, "%s\t", x_temp);
+         case 't' : fprintf (f, "%s\t"                , x_trim);
                     break;
-         case 'T' : fprintf (f, "%s\t", curr->s);
+         case 'T' : fprintf (f, "%s\t"                , x_source);
                     break;
-         case 's' : fprintf (f, "%s\n", curr->s);
+         case 's' : fprintf (f, "%s\n"                , x_source);
                     break;
-         case 'S' : fprintf (f, "(%s) %s\n", curr->label, curr->s);
+         case 'S' : fprintf (f, "(%s) %s\n"           , curr->label, x_source);
                     break;
-         case 'f' : fprintf (f, "%-10.10s  %s\n", curr->label, curr->s);
+         case 'f' : fprintf (f, "%-10.10s  %s\n"    , curr->label, x_source);
                     break;
-         case 'F' : fprintf (f, "cell_reg    -D-                %5d  %-8.8s  %c %c %c %c %c  %s\n",
-                          c, curr->label,
-                          curr->t, curr->f, curr->d, curr->a, curr->n,
-                          curr->s);
+         case 'F' : fprintf (f, "cell_reg    -D-                ");
+                    fprintf (f, "%5d  %-8.8s  "   , c, curr->label);
+                    fprintf (f, "%c %c %c %c %c  "  , curr->t, curr->f, curr->d, curr->a, curr->n);
+                    fprintf (f, "%s\n"                , x_source);
                     break;
          }
       }
