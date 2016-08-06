@@ -930,6 +930,9 @@ VISU_mode          (char a_major, char a_minor)
       case '"'      : my.mode    = SMOD_REGISTER;
                       return a_minor;  /* make sure double quote goes in prev char */
                       break;
+      case 'F'      : my.mode    = SMOD_FORMAT;
+                      return 0;
+                      break;
       case ':'      : strncpy (command , ":", MAX_STR);
                       my.mode    = MODE_COMMAND;
                       return 0;
@@ -938,6 +941,14 @@ VISU_mode          (char a_major, char a_minor)
       /*---(actions)---------------------*/
       switch (a_minor) {
       case 'v'      : VISU_reverse ();
+                      break;
+      case '<'      : CELL_align (CHG_INPUT, '<');
+                      break;
+      case '|'      : CELL_align (CHG_INPUT, '|');
+                      break;
+      case '>'      : CELL_align (CHG_INPUT, '>');
+                      break;
+      case 'x'      : REG_cut   ();
                       break;
       }
       /*---(actions)---------------------*/
