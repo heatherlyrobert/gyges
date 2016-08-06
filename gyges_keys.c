@@ -741,8 +741,8 @@ KEYS_source   (char a_prev, char a_curr)
    char    update_rows  = 0;
    /*---(range corrections)--------------*/
    my.npos  = strlen (contents);
-   if (my.cpos <    0)    my.cpos = 0;
-   if (my.cpos > my.npos) my.cpos = my.npos;
+   if (my.cpos <  0      )   my.cpos = 0;
+   if (my.cpos >= my.npos)   my.cpos = my.npos - 1;
    /*---(single letter)------------------*/
    if (a_prev == ' ') {
       /*---(multikey prefixes)-----------*/

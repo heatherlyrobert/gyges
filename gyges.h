@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5q"
-#define     VER_TXT   "fix source mode available width"
+#define     VER_NUM   "1.5r"
+#define     VER_TXT   "show special chars in keystroke output on screen"
 
 
 

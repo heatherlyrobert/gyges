@@ -67,12 +67,12 @@ main (int argc, char *argv[])
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(translate unprintable)-------*/
-      if      (cch ==  0 )  strcpy   (cmd,   "n/a");
-      else if (cch == 10 )  strcpy   (cmd,   "ret");
-      else if (cch == 27 )  strcpy   (cmd,   "esc");
-      else if (cch <= 32 )  snprintf (cmd,   9, "x%02x", cch);
-      else if (sch == ' ')  snprintf (cmd,   9, "%c   ", cch);
-      else                  snprintf (cmd,   9, "%c%c ", sch, cch);
+      if      (cch ==  0 )  snprintf (cmd,   9, " %c %c " , sch, 216);
+      else if (cch == 10 )  snprintf (cmd,   9, " %c %c " , sch, 182);
+      else if (cch == 27 )  snprintf (cmd,   9, " %c %c " , sch, 234);
+      else if (cch == 32 )  snprintf (cmd,   9, " %c %c " , sch, 223);
+      else if (cch <= 32 )  snprintf (cmd,   9, " %c %02x", sch, cch);
+      else                  snprintf (cmd,   9, " %c %c " , sch, cch);
       /*---(setup for next keystroke)----*/
       if      (rc == 0)    sch = ' ';
       else if (rc >  0)    sch = cch;
