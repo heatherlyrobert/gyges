@@ -71,6 +71,7 @@ main (int argc, char *argv[])
       else if (cch == 10 )  snprintf (cmd,   9, " %c %c " , sch, 182);
       else if (cch == 27 )  snprintf (cmd,   9, " %c %c " , sch, 234);
       else if (cch == 32 )  snprintf (cmd,   9, " %c %c " , sch, 223);
+      else if (cch == 127)  snprintf (cmd,   9, " %c %c " , sch, 171);
       else if (cch <= 32 )  snprintf (cmd,   9, " %c %02x", sch, cch);
       else                  snprintf (cmd,   9, " %c %c " , sch, cch);
       /*---(setup for next keystroke)----*/

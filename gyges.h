@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5s"
-#define     VER_TXT   "add delimiters on source line for contents"
+#define     VER_NUM   "1.5t"
+#define     VER_TXT   "added g-family horizontal actions to source mode"
 
 
 

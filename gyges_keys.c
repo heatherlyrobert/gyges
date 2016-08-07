@@ -572,24 +572,24 @@ MODE_map           (
       case K_CTRL_L : clear ();                       break;
       case 'P'      : DEP_writeall (); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;
                       /*---(clearing cells)-----------*/
-      /*> case 'x'      : REG_cut   ();                   break;                      <*/
-      /*> case 'd'      : CELL_erase ();                  break;                      <*/
+                      /*> case 'x'      : REG_cut   ();                   break;                      <*/
+                      /*> case 'd'      : CELL_erase ();                  break;                      <*/
                       /*---(formatting)---------------*/
       case '<'      : CELL_align (CHG_INPUT, '<');               break;
       case '|'      : CELL_align (CHG_INPUT, '|');               break;
       case '>'      : CELL_align (CHG_INPUT, '>');               break;
                       /*---(selection)----------------*/
-      /*> case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;          <*/
-      /*> case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;          <*/
-      /*> case 'y'      : REG_copy  ();                   break;                      <*/
-      /*> case 'p'      : REG_paste ('y');                break;                      <*/
+                      /*> case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;          <*/
+                      /*> case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;          <*/
+                      /*> case 'y'      : REG_copy  ();                   break;                      <*/
+                      /*> case 'p'      : REG_paste ('y');                break;                      <*/
                       /*---(modes and multikey)-------*/
       case '@'      : DEP_recalc();                   break;
                       /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/
                       /*---(new stuff)----------------*/
       case 'u'      : HIST_undo ();                   break;
       case 'U'      : HIST_redo ();                   break;
-      /*> case 'W'      : REG_bufwrite (my.reg_curr);     break;                      <*/
+                      /*> case 'W'      : REG_bufwrite (my.reg_curr);     break;                      <*/
       default       : return rce;                     break;
       }
       return 0;
@@ -785,6 +785,14 @@ KEYS_source   (char a_prev, char a_curr)
       /*---(multikey)--------------------*/
    } else if (a_prev == 'r') {
       g_contents[my.cpos] = a_curr;
+   } else if (a_prev == 'g') {
+      switch (a_curr) {
+      case 's' : pos_move('T');    break;
+      case 'h' : pos_move('t');    break;
+      case 'c' : pos_move('.');    break;
+      case 'l' : pos_move('b');    break;
+      case 'e' : pos_move('B');    break;
+      }
    }
    /*---(correct if necessary)-----------*/
    if (my.npos  <  0      )          my.npos = 0;

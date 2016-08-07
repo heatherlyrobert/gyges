@@ -897,10 +897,11 @@ REG_valuesin      (char a_style)
       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
       while (p != NULL) {
          DEBUG_INPT  yLOG_point   ("p"         , p);
-         strldchg (p, 29, 166, MAX_STR);   /* group     */
-         strldchg (p, 31, 167, MAX_STR);   /* field     */
-         strldchg (p,  9, 187, MAX_STR);   /* tab       */
-         strldchg (p, 27, 234, MAX_STR);   /* escape    */
+         strldchg (p,  29, 166, MAX_STR);   /* group     */
+         strldchg (p,  31, 167, MAX_STR);   /* field     */
+         strldchg (p,   9, 187, MAX_STR);   /* tab       */
+         strldchg (p,  27, 234, MAX_STR);   /* escape    */
+         strldchg (p, 127, 171, MAX_STR);   /* del       */
          DEBUG_INPT  yLOG_info    ("value"     , p);
          DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
          x_curr = CELL_change (CHG_INPUT, CTAB, x_col, x_row, p);
@@ -979,19 +980,21 @@ REG_valuesout     (char a_style)
       else {
          /*---(printable)----------------*/
          strlcpy  (x_print , curr->p, MAX_STR);
-         strldchg (x_print , 166, 29, MAX_STR);   /* group     */
-         strldchg (x_print , 167, 31, MAX_STR);   /* field     */
-         strldchg (x_print , 187,  9, MAX_STR);   /* tab       */
-         strldchg (x_print , 234, 27, MAX_STR);   /* escape    */
+         strldchg (x_print , 166,  29, MAX_STR);   /* group     */
+         strldchg (x_print , 167,  31, MAX_STR);   /* field     */
+         strldchg (x_print , 187,   9, MAX_STR);   /* tab       */
+         strldchg (x_print , 234,  27, MAX_STR);   /* escape    */
+         strldchg (x_print , 171, 127, MAX_STR);   /* escape    */
          strlcpy  (x_trim  , x_print, MAX_STR);
          /*---(trimmed printable)--------*/
          strltrim (x_trim, ySTR_BOTH, MAX_STR);
          /*---(source)-------------------*/
          strlcpy  (x_source, curr->s, MAX_STR);
-         strldchg (x_source, 166, 29, MAX_STR);   /* group     */
-         strldchg (x_source, 167, 31, MAX_STR);   /* field     */
-         strldchg (x_source, 187,  9, MAX_STR);   /* tab       */
-         strldchg (x_source, 234, 27, MAX_STR);   /* escape    */
+         strldchg (x_source, 166,  29, MAX_STR);   /* group     */
+         strldchg (x_source, 167,  31, MAX_STR);   /* field     */
+         strldchg (x_source, 187,   9, MAX_STR);   /* tab       */
+         strldchg (x_source, 234,  27, MAX_STR);   /* escape    */
+         strldchg (x_source, 171, 127, MAX_STR);   /* escape    */
          switch (a_style) {
          case 'v' : fprintf (f, "%s"                  , x_print);
                     break;
