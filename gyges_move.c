@@ -9,7 +9,7 @@ struct cACCESSOR my;
 int     save = 0;
 
 int     done = 1;
-char    contents[MAX_STR] = "";
+char    g_contents      [MAX_STR] = "";
 char    saved   [MAX_STR] = "";
 char    cmd[10] = "";
 char    message [MAX_STR] = "";
@@ -30,16 +30,16 @@ static  int   s_endr  = 0;
 char          /* PURPOSE : clear out recent editing --------------------------*/
 clear_input   (void)
 {
-   strncpy(saved   , contents, MAX_STR);
-   strncpy(contents, ""      , MAX_STR);
+   strncpy(saved   , g_contents, MAX_STR);
+   strncpy(g_contents, ""      , MAX_STR);
    return 0;
 }
 
 char          /* PURPOSE : place recent input into the right cell ------------*/
 save_saved    (void)
 {
-   strncpy(contents, saved, MAX_STR);
-   CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);
+   strncpy(g_contents, saved, MAX_STR);
+   CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
    return 0;
 }
 
@@ -112,10 +112,15 @@ MOVE_wrap          (void)
    /*---(update contents)-------------*/
    DEBUG_USER  yLOG_note    ("update current contents");
    if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {
-      strncpy (contents, tab->sheet[CCOL][CROW]->s, MAX_STR);
+      strncpy (g_contents, tab->sheet[CCOL][CROW]->s, MAX_STR);
    } else {
-      strncpy (contents, ""                       , MAX_STR);
+      strncpy (g_contents, ""                       , MAX_STR);
    }
+   my.npos = strlen (g_contents);
+   my.bpos = 0;
+   if (my.npos >= my.apos)  my.epos = my.apos;
+   else                     my.epos = my.npos - 1;
+   my.cpos = 0;
    /*---(update screen)---------------*/
    if      (BCOL != s_begc) { KEYS_bcol (BCOL); CURS_colhead(); }
    else if (ECOL != s_endc) { KEYS_ecol (ECOL); CURS_colhead(); }
@@ -568,9 +573,9 @@ KEYS_col           (char a_major, char a_minor)
     *> /+---(update contents)-------------+/                                          <* 
     *> DEBUG_USER  yLOG_note    ("update current contents");                          <* 
     *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {     <* 
-    *>    strncpy (contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                     <* 
+    *>    strncpy (g_contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                     <* 
     *> } else {                                                                       <* 
-    *>    strncpy (contents, ""                  , MAX_STR);                          <* 
+    *>    strncpy (g_contents, ""                  , MAX_STR);                          <* 
     *> }                                                                              <* 
     *> /+---(check for selection)---------+/                                          <* 
     *> DEBUG_USER  yLOG_note    ("update selection if necessary");                    <* 
@@ -1029,9 +1034,9 @@ KEYS_row           (char a_major, char a_minor)
     *> /+---(update contents)-------------+/                                               <* 
     *> DEBUG_USER  yLOG_note    ("update current contents");                               <* 
     *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {          <* 
-    *>    strncpy(contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                           <* 
+    *>    strncpy(g_contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                           <* 
     *> } else {                                                                            <* 
-    *>    strncpy(contents, ""                  , MAX_STR);                                <* 
+    *>    strncpy(g_contents, ""                  , MAX_STR);                                <* 
     *> }                                                                                   <* 
     *> /+---(check for selection)---------+/                                               <* 
     *> DEBUG_USER  yLOG_note    ("update selection if necessary");                         <* 
@@ -1267,15 +1272,15 @@ word_fore          (void)
    int    i;
    /*---(get to end of word)-------------*/
    for (i = my.cpos; i < my.npos; ++i) {
-      if (contents[i]     == '\0')  break;
+      if (g_contents[i]     == '\0')  break;
       my.cpos = i;
-      if (contents[i]     != ' ' )  continue;
+      if (g_contents[i]     != ' ' )  continue;
       break;
    }
    /*---(get to end of gap)--------------*/
    for (i = my.cpos; i < my.npos; ++i) {
-      if (contents[i]     == ' ' )  continue;
-      if (contents[i]     == '\0')  break;
+      if (g_contents[i]     == ' ' )  continue;
+      if (g_contents[i]     == '\0')  break;
       my.cpos = i;
       break;
    }
@@ -1303,24 +1308,24 @@ word_back          (void)
    int    i;
    int    save = my.cpos;
    /*---(get to beg of word)-------------*/
-   /*> printf("start 1 at %2d (%c)\n", save, contents[save]);                         <*/
+   /*> printf("start 1 at %2d (%c)\n", save, g_contents[save]);                         <*/
    for (i = save - 1; i >= 0; --i) {
-      if (contents[i]     == ' ' )  continue;
+      if (g_contents[i]     == ' ' )  continue;
       save = i;
       break;
    }
    /*---(get to end of gap)--------------*/
-   /*> printf("start 2 at %2d (%c)\n", save, contents[save]);                         <*/
+   /*> printf("start 2 at %2d (%c)\n", save, g_contents[save]);                         <*/
    for (i = save; i >= 0; --i) {
-      if (i == 0 && contents[i] != ' ') {
+      if (i == 0 && g_contents[i] != ' ') {
          my.cpos = 0;
          break;
       }
-      if (contents[i]     != ' ' )  continue;
+      if (g_contents[i]     != ' ' )  continue;
       my.cpos = i + 1;
       break;
    }
-   /*> printf("done    at %2d (%c)\n", cpos, contents[cpos]);                         <*/
+   /*> printf("done    at %2d (%c)\n", cpos, g_contents[cpos]);                         <*/
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1333,19 +1338,19 @@ word_end           (void)
    int    save = my.cpos;
    /*---(get to end of gap)--------------*/
    for (i = save + 1; i < my.npos; ++i) {
-      if (contents[i]     == ' ' )  continue;
-      if (contents[i]     == '\0')  break;
+      if (g_contents[i]     == ' ' )  continue;
+      if (g_contents[i]     == '\0')  break;
       save = i;
       break;
    }
    /*---(get to end of word)-------------*/
    for (i = save; i < my.npos; ++i) {
-      if (i == my.npos - 1 && contents[i] != ' ') {
+      if (i == my.npos - 1 && g_contents[i] != ' ') {
          my.cpos = i;
          break;
       }
-      if (contents[i]     != ' ' )  continue;
-      if (contents[i]     == '\0')  break;
+      if (g_contents[i]     != ' ' )  continue;
+      if (g_contents[i]     == '\0')  break;
       my.cpos = i - 1;
       break;
    }
@@ -1366,7 +1371,7 @@ pos_move           (char a_dir)
    int  half  = avail / 2;           /* half the viewable positions           */
    int  qtr   = avail / 4;           /* quarter the viewable positions        */
    /*---(adjust curr)-----------------*/
-   my.npos     = strlen(contents);
+   my.npos     = strlen(g_contents);
    switch (a_dir) {
 
    case '0' : my.bpos  = my.cpos = 0;          break;    /* pos moves               */

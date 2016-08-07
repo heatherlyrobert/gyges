@@ -411,40 +411,53 @@ CURS_formula       (tCELL *a_curr)
    if (a_curr != NULL)    strcpy  (s_label, a_curr->label);
    else                   LOC_ref (CTAB, CCOL, CROW, 0, s_label);
    /*---(length)-----------------------------*/
-   len = strlen (contents);
+   len = strlen (g_contents);
    /*---(display)----------------------------*/
    switch (my.scrn) {
    case SCRN_DEBUG :
+      /*---(1st 12 chars)---*/
       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", my.mode, (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
+      /*---(2nd 13 chars)---*/
       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "   , tab->cols[CCOL].w, a_curr->t, a_curr->f, a_curr->d, a_curr->a);
       else                 mvprintw (row_formula, 12, " %02d                []", tab->cols[CCOL].w);
-      mvprintw (row_formula, 25, "%4d:", len);
-      mvprintw (row_formula, my.x_full - 15, " %s of gyges", VER_NUM);
+      /*---(3rd  5 chars)---*/
+      mvprintw (row_formula, 25, "%4d", len);
+      /*---(4th 14 chars)---*/
+      mvprintw (row_formula, my.x_full - 14, " %s of gyges", VER_NUM);
       s_start  = 30;
       break;
    case SCRN_SMALL :
+      /*---(1st  6 chars)---*/
       mvprintw (row_formula,  0, "%-6.6s", s_label);
+      /*---(2nd  5 chars)---*/
       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);
-      s_start  =  6;
+      s_start  =  7;
       break;
    case SCRN_TINY  :
-      s_start  =  0;
+      s_start  =  1;
       break;
    }
    s_space  = my.apos;
-   /*---(set color)--------------------------*/
+   /*---(set color)------------------------*/
    attrset (0);
    if      (my.mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
    else if (my.mode == MODE_INPUT )  attron (S_COLOR_INPUT  );
    else if (my.mode == SMOD_WANDER)  attron (S_COLOR_WANDER );
    else                              attron (S_COLOR_CONTENT);
-   /*---(contents)---------------------------*/
+   /*---(contents)-------------------------*/
    w  = s_space - len;
    if (w < 0) w = 0;
    mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, empty);
-   snprintf (msg, 500, "%s",    contents);
-   mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg);
-   /*---(highlight off)--------------------*/
+   snprintf (msg, 500, "%s",    g_contents);
+   mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg + my.bpos);
+   /*---(highlight off)------------------*/
+   attrset (0);
+   /*---(boundary markers)---------------*/
+   attron (S_COLOR_VISUAL );
+   if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");
+   else                         mvprintw (row_formula, s_start - 1, "<");
+   if (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");
+   else                         mvprintw (row_formula, s_start + s_space, ">");
    attrset (0);
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -748,11 +761,11 @@ CURS_main          (void)
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
    switch (my.scrn) {
-   case SCRN_DEBUG : my.apos = my.x_full - 30 - 15 - 2;
+   case SCRN_DEBUG : my.apos = my.x_full - 29 - 15 -  2;
                      break;
-   case SCRN_SMALL : my.apos = my.x_full -  6 -  5;
+   case SCRN_SMALL : my.apos = my.x_full -  6 -  5 -  2;
                      break;
-   case SCRN_TINY  : my.apos = my.x_full;
+   case SCRN_TINY  : my.apos = my.x_full -  0 -  0 -  2;
                      break;
    }
    curr    = tab->sheet[CCOL][CROW];

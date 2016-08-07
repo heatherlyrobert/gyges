@@ -462,7 +462,7 @@ unit_accessor(char *a_question, void *a_thing)
       /*> snprintf(unit_answer, LEN_TEXT, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->p), x_curr->p);   <*/
       snprintf(unit_answer, LEN_TEXT, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->p), x_curr->p);
    } else if (strcmp(a_question, "cell_contents")  == 0) {
-      snprintf(unit_answer, LEN_TEXT, "Contents     (%c) : (%2d:%2d) :%-.40s:", (contents[my.cpos] >= ' ' && contents[my.cpos] <= '~') ? contents[my.cpos] : ' ', my.cpos, (int) strlen(contents), contents);
+      snprintf(unit_answer, LEN_TEXT, "Contents     (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    /*---(cell contents)------------------*/
    else if   (strcmp(a_question, "cell_rpn")       == 0) {

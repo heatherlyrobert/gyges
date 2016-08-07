@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5r"
-#define     VER_TXT   "show special chars in keystroke output on screen"
+#define     VER_NUM   "1.5s"
+#define     VER_TXT   "add delimiters on source line for contents"
 
 
 
@@ -817,7 +817,7 @@ extern      char     *g_rcops;
 
 
 extern int     done;
-extern char    contents   [MAX_STR];
+extern char    g_contents [MAX_STR];
 extern char    saved      [MAX_STR];
 extern char    cmd        [10];
 extern char    msg_type;

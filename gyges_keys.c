@@ -126,7 +126,7 @@ KEYS_basics        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_valid     [MAX_STR]  = "0HhlL$_KkjJG";
+   char        x_valid     [MAX_STR]  = "0HhlL$_KkjJGr";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -162,6 +162,10 @@ KEYS_basics        (char a_major, char a_minor)
    case 'j'      : MOVE_vert ('j');       break;
    case 'J'      : MOVE_vert ('J');       break;
    case 'G'      : MOVE_vert ('G');       break;
+   }
+   /*---(special)------------------------*/
+   switch (a_minor) {
+   case 'r'      : break;
    }
    /*---(clean-up)-----------------------*/
    MOVE_wrap    ();
@@ -511,31 +515,31 @@ MODE_map           (
                       my.mode    = MODE_COMMAND;
                       return 0;
                       break;
-      case 's'      : strncpy (contents, ""  , MAX_STR);
+      case 's'      : strncpy (g_contents, ""  , MAX_STR);
                       my.npos = 0;
                       my.cpos = 0;
                       my.mode    = MODE_INPUT;
                       return 0;
                       break;
-      case '='      : strncpy (contents, "=" , MAX_STR);
+      case '='      : strncpy (g_contents, "=" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
                       return 0;
                       break;
-      case '#'      : strncpy (contents, "#" , MAX_STR);
+      case '#'      : strncpy (g_contents, "#" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
                       return 0;
                       break;
-      case '+'      : strncpy (contents, "+" , MAX_STR);
+      case '+'      : strncpy (g_contents, "+" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
                       return 0;
                       break;
-      case '-'      : strncpy (contents, "-" , MAX_STR);
+      case '-'      : strncpy (g_contents, "-" , MAX_STR);
                       my.npos = 0;
                       my.cpos = 1;
                       my.mode    = MODE_INPUT;
@@ -669,7 +673,7 @@ KEYS__del          (char a_key)
    }
    /*---(pull back text)-----------------*/
    for (i = my.cpos; i <= my.npos; ++i) {
-      contents[i] = contents[i + 1];
+      g_contents[i] = g_contents[i + 1];
    }
    --my.npos;
    /*---(adjust for delete)--------------*/
@@ -732,15 +736,15 @@ KEYS_source   (char a_prev, char a_curr)
    if (my.mode != MODE_SOURCE)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
-   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
+   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);          return 0;   /* escape  */
    case  27  : 
-   case  'U' : my.mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy (contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
+   case  'U' : my.mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
    }
    /*---(locals)-------------------------*/
    char    update_cols  = 0;
    char    update_rows  = 0;
    /*---(range corrections)--------------*/
-   my.npos  = strlen (contents);
+   my.npos  = strlen (g_contents);
    if (my.cpos <  0      )   my.cpos = 0;
    if (my.cpos >= my.npos)   my.cpos = my.npos - 1;
    /*---(single letter)------------------*/
@@ -766,8 +770,8 @@ KEYS_source   (char a_prev, char a_curr)
       switch (a_curr) {
       case 'x' : KEYS__del ('x');   break;
       case 'X' : KEYS__del ('X');   break;
-      case 'D' : contents[my.cpos] = '\0';     my.npos = strlen(contents);    break;
-      case 'S' : strncpy(contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;
+      case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;
+      case 'S' : strncpy(g_contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;
       }
       /*---(going to input)--------------*/
       switch (a_curr) {
@@ -775,12 +779,12 @@ KEYS_source   (char a_prev, char a_curr)
       case 'i' : my.mode = MODE_INPUT;                         break;
       case 'a' : pos_move('+'); if (my.cpos + 1 == my.npos) ++my.cpos; my.mode = MODE_INPUT;          break;
       case 'A' : my.cpos = my.npos;        my.mode = 'A';  break;
-      case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
-      case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+      case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
+      case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
       }
       /*---(multikey)--------------------*/
    } else if (a_prev == 'r') {
-      contents[my.cpos] = a_curr;
+      g_contents[my.cpos] = a_curr;
    }
    /*---(correct if necessary)-----------*/
    if (my.npos  <  0      )          my.npos = 0;
@@ -807,19 +811,19 @@ KEYS_input         (char  a_prev, char  a_curr)
    if (my.mode != MODE_INPUT)            return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
    switch (a_curr) {
-   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, contents);          return 0;   /* escape  */
+   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);          return 0;   /* escape  */
    case  27  : my.mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
-   case  '@' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, contents); break;
+   case  '@' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
    }
    /*---(range corrections)--------------*/
-   my.npos  = strlen(contents);
+   my.npos  = strlen(g_contents);
    if (my.cpos  >  my.npos)  my.cpos = my.npos;
    if (my.cpos  <  0      )  my.cpos = 0;
    /*---(check for backspace)------------*/
    if (a_curr == 8 || a_curr == 127) {
       --my.npos;
       if (my.npos < 0)   my.npos = 0;
-      contents[my.npos] = '\0';
+      g_contents[my.npos] = '\0';
       --my.cpos;
       if (my.cpos < 0) my.cpos = 0;
       return 0;
@@ -827,10 +831,10 @@ KEYS_input         (char  a_prev, char  a_curr)
    /*---(create room)--------------------*/
    int       i    = 0;                       /* loop iterator                 */
    for (i = my.npos; i >= my.cpos; --i) {
-      contents[i + 1] = contents[i];
+      g_contents[i + 1] = g_contents[i];
    }
    /*---(update contests)----------------*/
-   contents [my.cpos] = a_curr;
+   g_contents [my.cpos] = a_curr;
    ++my.cpos;
    /*---(complete)-----------------------*/
    return  0;
@@ -1118,16 +1122,16 @@ KEYS_wander        (char a_prev, char a_curr)
                tabs[CTAB].crow = wrow;
                tab = &tabs[CTAB];
                my.cpos = wpos;
-               strcpy (contents, wsave);
+               strcpy (g_contents, wsave);
                if (strcmp (wref2, "") != 0) {
-                  strcat (contents, wref2);
-                  strcat (contents, ":");
+                  strcat (g_contents, wref2);
+                  strcat (g_contents, ":");
                }
-               strcat (contents, wref);
-               my.npos = strlen(contents);
+               strcat (g_contents, wref);
+               my.npos = strlen(g_contents);
                if (post != ' ') {
-                  contents[my.npos]   = post;
-                  contents[++my.npos] = '\0';
+                  g_contents[my.npos]   = post;
+                  g_contents[++my.npos] = '\0';
                }
                my.cpos = my.npos;
                return  0;   /* escape -- back to source mode */

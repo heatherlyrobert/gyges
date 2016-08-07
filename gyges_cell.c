@@ -2335,7 +2335,7 @@ CELL__unitnew      (
    }
    else if (strcmp(a_question, "cell_contents")  == 0) {
       if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln cont (-) : (--:--) ::");
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (contents[my.cpos] >= ' ' && contents[my.cpos] <= '~') ? contents[my.cpos] : ' ', my.cpos, (int) strlen(contents), contents);
+      else                            snprintf(unit_answer, LEN_TEXT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    else if (strcmp(a_question, "cell_size"    )  == 0) {
       snprintf(unit_answer, LEN_TEXT, "s_celln size     : width=%3d, height=%3d", tabs[x_tab].cols[x_col].w, tabs[x_tab].rows[x_row].h);
