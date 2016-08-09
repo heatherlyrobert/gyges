@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5t"
-#define     VER_TXT   "added g-family horizontal actions to source mode"
+#define     VER_NUM   "1.5v"
+#define     VER_TXT   "replace sub-mode passed a new unit test"
 
 
 
@@ -888,7 +888,7 @@ char      cmd_exec           (char*);
 /*---(screen formatting)------------------------*/
 
 char      row_print          (void);
-char      pos_move           (char);
+char      EDIT_pos           (char);
 
 
 
@@ -966,19 +966,23 @@ char      REG__setter        (char *a_request, char *a_data);
 char*     REG__getter        (char *a_question, char a_reg);
 
 
+/*---(major modes)----------*/
+char      MODE_message       (char  a_mode);
+char      MODE_god           (char  a_major, char  a_minor);
+char      MODE_map           (char  a_major, char  a_minor);
+char      MODE_source        (char  a_major, char  a_minor);
+char      MODE_input         (char  a_major, char  a_minor);
+char      MODE_command       (char  a_major, char  a_minor);
+/*---(sub-modes)------------*/
+char      SMOD_buffer        (char  a_major, char  a_minor);
+char      SMOD_replace       (char  a_major, char  a_minor);
+char      SMOD_format        (char  a_major, char  a_minor);
+char      SMOD_wander        (char  a_major, char  a_minor);
+
 char      KEYS_init          (void);
 char      KEYS_record        (int   a_curr);
 char      KEYS_status        (char *msg);
-char      MODE_message       (char  a_mode);
-char      MODE_god           (char  a_major, char  a_minor);
 char      KEYS_z_family      (char  a_major, char  a_minor);
-char      MODE_map           (char  a_major, char  a_minor);
-char      KEYS_buffer        (char  a_major, char  a_minor);
-char      KEYS_source        (char  a_major, char  a_minor);
-char      KEYS_format        (char  a_major, char  a_minor);
-char      KEYS_input         (char  a_major, char  a_minor);
-char      KEYS_command       (char  a_major, char  a_minor);
-char      KEYS_wander        (char  a_major, char  a_minor);
 char      KEYS_col           (char  a_major, char  a_minor);
 char      KEYS_bcol          (int);
 char      KEYS_ecol          (int);
@@ -990,7 +994,7 @@ char      KEYS_prow          (void);
 
 /*---(key movements)--------*/
 char      MOVE_prep          (void);
-char      MOVE_wrap          (void);
+char      MOVE_done          (void);
 
 char      KEYS_basics        (char  a_major, char  a_minor);
 char      MOVE_horz          (char  a_major);
@@ -1007,6 +1011,8 @@ char      MOVE_edges         (char  a_minor);
 char      KEYS_c_family      (char  a_major, char  a_minor);
 
 char      KEYS_regbasic      (char  a_major, char  a_minor);
+
+char*     MOVE_unit          (char *a_question, int a_num);
 
 
 /*---(ncurses)----------------------------------*/

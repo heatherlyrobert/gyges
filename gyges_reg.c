@@ -360,28 +360,28 @@ REG_set            (char a_reg)
 static void  o___KEYS____________o () { return; }
 
 char          /* PURPOSE : process keys for register actions -----------------*/
-REG_mode           (int a_prev, int a_curr)
+REG_mode           (int a_major, int a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    int         x_buf       =  -1;
    /*---(defenses)-----------------------*/
    if (my.mode != SMOD_REGISTER)             return -1;   /* wrong mode                    */
-   if (a_curr == K_ESCAPE)  {
+   if (a_minor == K_ESCAPE)  {
       my.mode = MODE_MAP;
       return  0;
    }
    /*---(check for control keys)---------*/
-   --rce;  if (a_prev == '"') {
-      if (strchr (s_regnames, a_curr) != 0) {
-         REG_set    (a_curr);
+   --rce;  if (a_major == '"') {
+      if (strchr (s_regnames, a_minor) != 0) {
+         REG_set    (a_minor);
          return 0;
-      } else if (a_curr == '?') {
+      } else if (a_minor == '?') {
          my.info_win = '"';
          my.mode = MODE_MAP;
          REG_set ('"');
          return  0;
-      } else if (a_curr == '!') {
+      } else if (a_minor == '!') {
          sta_type = '"';
          my.mode = MODE_MAP;
          REG_set ('"');
@@ -389,8 +389,8 @@ REG_mode           (int a_prev, int a_curr)
       }
       return rce;
    }
-   --rce;  if (a_prev == ' ' && strchr ("+-", my.reg_curr) != 0) {
-      switch (a_curr) {
+   --rce;  if (a_major == ' ' && strchr ("+-", my.reg_curr) != 0) {
+      switch (a_minor) {
       case  'v' : REG_valuesout('v');
                   break;
       case  'V' : REG_valuesout('V');
@@ -423,8 +423,8 @@ REG_mode           (int a_prev, int a_curr)
       REG_set ('"');
       return 0;
    }
-   --rce;  if (a_prev == ' ') {
-      switch (a_curr) {
+   --rce;  if (a_major == ' ') {
+      switch (a_minor) {
       case  '#' : REG_clear (my.reg_curr, '-');
                   break;
       case  'y' : REG_copy  ();

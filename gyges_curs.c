@@ -440,10 +440,11 @@ CURS_formula       (tCELL *a_curr)
    s_space  = my.apos;
    /*---(set color)------------------------*/
    attrset (0);
-   if      (my.mode == MODE_SOURCE)  attron (S_COLOR_SOURCE );
-   else if (my.mode == MODE_INPUT )  attron (S_COLOR_INPUT  );
-   else if (my.mode == SMOD_WANDER)  attron (S_COLOR_WANDER );
-   else                              attron (S_COLOR_CONTENT);
+   if      (my.mode == MODE_SOURCE )  attron (S_COLOR_SOURCE );
+   else if (my.mode == MODE_INPUT  )  attron (S_COLOR_INPUT  );
+   else if (my.mode == SMOD_WANDER )  attron (S_COLOR_WANDER );
+   else if (my.mode == SMOD_REPLACE)  attron (S_COLOR_VISUAL );
+   else                               attron (S_COLOR_CONTENT);
    /*---(contents)-------------------------*/
    w  = s_space - len;
    if (w < 0) w = 0;
@@ -803,7 +804,7 @@ CURS_main          (void)
    /*---(cursor pos)---------------------*/
    if (my.info_win != '-') 
       move ( 4, 10);
-   else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT)
+   else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT || my.mode == SMOD_REPLACE)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);

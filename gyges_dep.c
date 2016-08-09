@@ -1383,8 +1383,8 @@ DEP__print         (int a_level, tCELL *a_curr)
    /*---(locals)-------------------------*/
    int       i         = 0;
    /*---(recurse)------------------------*/
-   for (i = 0; i < a_level; ++i) printf("   ");
-   printf ("%d %-6.6s = %8.2lf  (t=%2d, c=%3d, r=%3d, s=%s)\n", a_level, a_curr->label, a_curr->v_num, a_curr->tab, a_curr->col, a_curr->row, a_curr->s);
+   /*> for (i = 0; i < a_level; ++i) printf("   ");                                   <*/
+   /*> printf ("%d %-6.6s = %8.2lf  (t=%2d, c=%3d, r=%3d, s=%s)\n", a_level, a_curr->label, a_curr->v_num, a_curr->tab, a_curr->col, a_curr->row, a_curr->s);   <*/
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1571,8 +1571,8 @@ DEP_trace          (int a_level, tCELL *a_curr)
    /*---(process)------------------------*/
    tDEP     *n         = NULL;
    int       i;
-   for (i = 0; i < a_level; ++i) printf("   ");
-   printf ("%d %s\n", a_level, a_curr->label);
+   /*> for (i = 0; i < a_level; ++i) printf("   ");                                   <*/
+   /*> printf ("%d %s\n", a_level, a_curr->label);                                    <*/
    n = a_curr->provides;
    while (n != NULL) {
       DEP_trace (a_level + 1, n->target);
@@ -1648,7 +1648,7 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
    /*---(print current line)-------------*/
    if (a_print == 'y') {
       for (i = 0; i <= a_level; ++i) {
-         printf ("%s ", dep_loop[i]);
+         /*> printf ("%s ", dep_loop[i]);                                             <*/
       }
    }
    /*---(check for duplicate)------------*/
@@ -1661,15 +1661,15 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
          }
       }
    }
-   if (a_print == 'y')  printf ("(%2d)", looped);
+   /*> if (a_print == 'y')  printf ("(%2d)", looped);                                 <*/
    --rce;
    if (looped > 0) {
-      if (a_print == 'y')  printf ("   AHHHHHHHHHHHHHHHHHHHHH\n");
+      /*> if (a_print == 'y')  printf ("   AHHHHHHHHHHHHHHHHHHHHH\n");                <*/
       DEBUG_DEPS   yLOG_info    ("FAILED"    , "loop/cycle found");
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return  rce;
    }
-   if (a_print == 'y')  printf ("\n");
+   /*> if (a_print == 'y')  printf ("\n");                                            <*/
    /*---(update)-------------------------*/
    /*> a_curr->u = a_stamp;                                                           <*/
    /*---(process children)---------------*/
@@ -1696,7 +1696,7 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
       /*---(prepare for next)------------*/
       next = next->next;
    }
-   if (a_print == 'y' && a_level == 0)  printf ("total = %d vs %d\n", dep_count, ndep);
+   /*> if (a_print == 'y' && a_level == 0)  printf ("total = %d vs %d\n", dep_count, ndep);   <*/
    /*---(stamp at end)-------------------*/
    a_curr->u = a_stamp;
    /*---(complete)-----------------------*/
@@ -1786,8 +1786,8 @@ DEP_show           (int a_level, tCELL *a_curr)
    /*---(defenses)-----------------------*/
    if (a_curr       == NULL) return 0;
    /*---(print)--------------------------*/
-   for (i = 0; i < a_level; ++i) printf("   ");
-   printf ("%d %s\n", a_level, a_curr->label);
+   /*> for (i = 0; i < a_level; ++i) printf("   ");                                   <*/
+   /*> printf ("%d %s\n", a_level, a_curr->label);                                    <*/
    /*---(process children)---------------*/
    next = a_curr->requires;
    while (next != NULL) {
@@ -1808,15 +1808,15 @@ DEP_full           (void)
       ++i;
       curr = curr->dnext;
    }
-   printf ("forward   = %d\n", i);
+   /*> printf ("forward   = %d\n", i);                                                <*/
    curr = dtail;
    i = 0;
    while (curr != NULL) {
       ++i;
       curr = curr->dprev;
    }
-   printf ("backward  = %d\n", i);
-   printf ("ndep      = %d\n", ndep);
+   /*> printf ("backward  = %d\n", i);                                                <*/
+   /*> printf ("ndep      = %d\n", ndep);                                             <*/
    curr = dhead;
    i = 0;
    int match     = 0;
@@ -1834,11 +1834,11 @@ DEP_full           (void)
       if (curr->target != curr->match->source) ++no_sym2;
       curr = curr->dprev;
    }
-   printf ("no source = %d\n", no_parent);
-   printf ("no target = %d\n", no_other);
-   printf ("no match  = %d\n", no_match);
-   printf ("no sym1   = %d\n", no_sym1);
-   printf ("no sym2   = %d\n", no_sym2);
+   /*> printf ("no source = %d\n", no_parent);                                        <*/
+   /*> printf ("no target = %d\n", no_other);                                         <*/
+   /*> printf ("no match  = %d\n", no_match);                                         <*/
+   /*> printf ("no sym1   = %d\n", no_sym1);                                          <*/
+   /*> printf ("no sym2   = %d\n", no_sym2);                                          <*/
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1851,16 +1851,16 @@ DEP_dump           (void)
    DEP_show  (0, dtree);
    DEP_trace (0, tabs[0].sheet[2][11]);
    DEP_full  ();
-   printf ("0c12  = %9p\n", tabs[0].sheet[2][11]);
+   /*> printf ("0c12  = %9p\n", tabs[0].sheet[2][11]);                                <*/
    DEP_provides  (tabs[0].sheet[2][11], xlabel);
-   printf ("deps  = %s\n",  xlabel);
+   /*> printf ("deps  = %s\n",  xlabel);                                              <*/
    DEP_requires  (tabs[0].sheet[2][11], xlabel);
-   printf ("reqs  = %s\n",  xlabel);
-   printf ("dtree = %9p\n", dtree);
+   /*> printf ("reqs  = %s\n",  xlabel);                                              <*/
+   /*> printf ("dtree = %9p\n", dtree);                                               <*/
    DEP_provides  (dtree, xlabel);
-   printf ("deps  = %s\n", xlabel);
+   /*> printf ("deps  = %s\n", xlabel);                                               <*/
    DEP_requires  (dtree, xlabel);
-   printf ("reqs  = %s\n", xlabel);
+   /*> printf ("reqs  = %s\n", xlabel);                                               <*/
    DEP_checkall ('y');
    exit (0);
    return 0;

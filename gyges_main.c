@@ -55,13 +55,14 @@ main (int argc, char *argv[])
       case MODE_GOD      : rc = MODE_god      (sch, cch); break;
       case MODE_MAP      : rc = MODE_map      (sch, cch); break;
       case MODE_VISUAL   : rc = VISU_mode     (sch, cch); break;
-      case MODE_SOURCE   : rc = KEYS_source   (sch, cch); break;
-      case MODE_INPUT    : rc = KEYS_input    (sch, cch); break;
-      case MODE_COMMAND  : rc = KEYS_command  (' ', cch); break;
+      case MODE_SOURCE   : rc = MODE_source   (sch, cch); break;
+      case MODE_INPUT    : rc = MODE_input    (sch, cch); break;
+      case MODE_COMMAND  : rc = MODE_command  (' ', cch); break;
          /*---(submodes)-----------------*/
-      case SMOD_FORMAT   : rc = KEYS_format   (' ', cch); break;
-      case SMOD_BUFFER   : rc = KEYS_buffer   (' ', cch); break;
-      case SMOD_WANDER   : rc = KEYS_wander   (' ', cch); break;
+      case SMOD_REPLACE  : rc = SMOD_replace  (sch, cch); break;
+      case SMOD_FORMAT   : rc = SMOD_format   (' ', cch); break;
+      case SMOD_BUFFER   : rc = SMOD_buffer   (' ', cch); break;
+      case SMOD_WANDER   : rc = SMOD_wander   (' ', cch); break;
       case SMOD_REGISTER : rc = REG_mode      (sch, cch); break;
       case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
@@ -76,7 +77,7 @@ main (int argc, char *argv[])
       else                  snprintf (cmd,   9, " %c %c " , sch, cch);
       /*---(setup for next keystroke)----*/
       if      (rc == 0)    sch = ' ';
-      else if (rc >  0)    sch = cch;
+      else if (rc >  0)    sch = rc;
       else               { sch = ' ';  sta_error = 'y'; }
       /*---(setup status line)-----------*/
       if   (x_savemode != my.mode || my.mode == MODE_COMMAND) {

@@ -48,7 +48,7 @@ save_saved    (void)
 /*====================------------------------------------====================*/
 /*===----                        prep and wrapup                       ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___WRAPPERS________o () { return; }
+PRIV void  o___MOVE_WRAPPERS___o () { return; }
 
 char
 MOVE_prep          (void)
@@ -72,7 +72,7 @@ MOVE_prep          (void)
 }
 
 char
-MOVE_wrap          (void)
+MOVE_done          (void)
 {
    /*---(show updated)----------------*/
    DEBUG_USER   yLOG_note    ("show updated col pos...");
@@ -324,7 +324,7 @@ MOVE_gz_horz       (char a_major, char a_minor)
    int         x_target    = 0;
    int         x_cum       = 0;
    int         x_col       = 0;
-   char        x_valid     [MAX_STR]  = "shcle";
+   char        x_minors    [MAX_STR]  = "shcle";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -335,7 +335,7 @@ MOVE_gz_horz       (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("can only process g and z horizontal (shcle) moves");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -407,12 +407,12 @@ MOVE_horz          (char a_minor)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;           /* return code for error          */
-   char        x_valid     [MAX_STR]  = "0HhlL$r";
+   char        x_minors    [MAX_STR]  = "0HhlL$r";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defense)------------------------*/
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("not a valid movement key");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -553,7 +553,7 @@ KEYS_col           (char a_major, char a_minor)
       if (ECOL <= tab->froz_ecol)   ECOL   = tab->froz_ecol + 1;
    }
    /*---(update screen)---------------*/
-   MOVE_wrap   ();
+   MOVE_done   ();
    /*> /+---(check min/max)---------------+/                                          <* 
     *> DEBUG_USER  yLOG_note    ("correct for min/max violations");                   <* 
     *> if (CCOL <  0        )    CCOL =    0;                                         <* 
@@ -862,12 +862,12 @@ MOVE_vert          (char a_minor)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;           /* return code for error          */
-   char        x_valid     [MAX_STR]  = "_KkjJGr";
+   char        x_minors    [MAX_STR]  = "_KkjJGr";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defense)------------------------*/
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("not a valid movement key");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -1014,7 +1014,7 @@ KEYS_row           (char a_major, char a_minor)
       if (EROW <= tab->froz_erow)   EROW   = tab->froz_erow + 1;
    }
    /*---(update screen)---------------*/
-   MOVE_wrap   ();
+   MOVE_done   ();
    /*> /+---(check min/max)---------------+/                                               <* 
     *> DEBUG_USER  yLOG_note    ("correct for min/max violations");                        <* 
     *> if (CROW <     0     )    CROW =    0;                                              <* 
@@ -1263,6 +1263,92 @@ KEYS_prow          (void)
 /*====================------------------------------------====================*/
 /*===----                          source moves                        ----===*/
 /*====================------------------------------------====================*/
+PRIV void  o___EDIT_WRAPPERS___o () { return; }
+
+char         /*--> prepare for source mode move ----------[ leaf   [ ------ ]-*/
+EDIT_prep          (void)
+{
+   /*---(prepare)------------------------*/
+   my.npos     = strlen (g_contents);
+   /*---(display debugging)--------------*/
+   DEBUG_USER   yLOG_value   ("my.npos"   , my.npos);
+   DEBUG_USER   yLOG_value   ("my.apos"   , my.apos);
+   DEBUG_USER   yLOG_value   ("my.bpos"   , my.bpos);
+   DEBUG_USER   yLOG_value   ("my.cpos"   , my.cpos);
+   DEBUG_USER   yLOG_value   ("my.epos"   , my.epos);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> complete a source mode move -----------[ leaf   [ ------ ]-*/
+EDIT_done          (void)
+{
+   /*---(prepare)------------------------*/
+   my.npos     = strlen (g_contents);
+   /*---(display debugging)--------------*/
+   DEBUG_USER   yLOG_value   ("my.npos"   , my.npos);
+   DEBUG_USER   yLOG_value   ("my.apos"   , my.apos);
+   DEBUG_USER   yLOG_value   ("my.bpos"   , my.bpos);
+   DEBUG_USER   yLOG_value   ("my.cpos"   , my.cpos);
+   DEBUG_USER   yLOG_value   ("my.epos"   , my.epos);
+   /*---(check over/underrun)---------*/
+   DEBUG_USER   yLOG_note    ("correct my.npos over/underruns");
+   if (my.npos  >= MAX_STR) {
+      my.npos = MAX_STR - 1;
+      g_contents [my.npos] = '\0';
+   }
+   if (my.npos < 0) {
+      my.npos = 0;
+   }
+   /*---(check min/max)---------------*/
+   DEBUG_USER   yLOG_note    ("correct min/max limits");
+   if (my.cpos >=  my.npos)    my.cpos = my.npos - 1;
+   if (my.cpos <   0      )    my.cpos = 0;
+   if (my.bpos <   0      )    my.bpos = 0;
+   /*---(small strings)---------------*/
+   if (my.npos <= my.apos) {
+      DEBUG_USER   yLOG_note    ("check and handle small string");
+      my.bpos = 0;
+      my.epos = my.npos - 1;
+   }
+   /*---(long strings)----------------*/
+   else {
+      DEBUG_USER   yLOG_note    ("check and handle long string");
+      my.epos = my.bpos + my.apos - 1;
+      /*---(check off left side)------*/
+      DEBUG_USER   yLOG_note    ("check off left side of screen");
+      if (my.cpos <   my.bpos)  {
+         my.bpos = my.cpos;
+         my.epos = my.bpos + my.apos - 1;
+      }
+      /*---(check off right side)-----*/
+      DEBUG_USER   yLOG_note    ("check off right side of screen");
+      if (my.cpos >   my.epos)  {
+         my.epos = my.cpos;
+         my.bpos = my.epos - my.apos + 1;
+      }
+      /*---(check scrolling-----------*/
+      DEBUG_USER   yLOG_note    ("make sure right is locked to end");
+      if (my.epos >=  my.npos)  {
+         my.epos = my.npos - 1;
+         my.bpos = my.epos - my.apos + 1;
+      }
+   }
+   /*---(display debugging)--------------*/
+   DEBUG_USER   yLOG_value   ("my.npos"   , my.npos);
+   DEBUG_USER   yLOG_value   ("my.apos"   , my.apos);
+   DEBUG_USER   yLOG_value   ("my.bpos"   , my.bpos);
+   DEBUG_USER   yLOG_value   ("my.cpos"   , my.cpos);
+   DEBUG_USER   yLOG_value   ("my.epos"   , my.epos);
+   /*---(complete)--------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                          source moves                        ----===*/
+/*====================------------------------------------====================*/
 PRIV void  o___SOURCE__________o () { return; }
 
 char       /*----: move forward by a word ------------------------------------*/
@@ -1295,7 +1381,7 @@ row_print          (void)
    int       i         = 0;                    /* iterator -- rows            */
    /*---(process rows)-----------------------*/
    for (i = BROW; i <= EROW; ++i) {
-      printf("display %3d = row %3d %s\n", tab->rows[i].y, i, (i - BROW + 2 == tab->rows[i].y) ? "good" : "FAILED");
+      /*> printf("display %3d = row %3d %s\n", tab->rows[i].y, i, (i - BROW + 2 == tab->rows[i].y) ? "good" : "FAILED");   <*/
    }
    /*---(complete)---------------------------*/
    return 0;
@@ -1359,67 +1445,66 @@ word_end           (void)
 }
 
 char
-pos_move           (char a_dir)
+EDIT_pos           (char a_minor)
 {
-   DEBUG_S  printf("pos_move       :: begin\n");
-   /*---(locals)-----------------------------*/
+   /*---(locals)-------------------------*/
+   char        rce         = -10;
    int       i    = 0;                       /* loop iterator                 */
-   int  s_beg = my.bpos;                /* save the beginning pos                */
-   int  s_end = my.epos;                /* save the ending pos                   */
-   int  s_cur = my.cpos;                /* save the current pos                  */
    int  avail = my.apos;                /* available positions                   */
    int  half  = avail / 2;           /* half the viewable positions           */
    int  qtr   = avail / 4;           /* quarter the viewable positions        */
-   /*---(adjust curr)-----------------*/
-   my.npos     = strlen(g_contents);
-   switch (a_dir) {
-
-   case '0' : my.bpos  = my.cpos = 0;          break;    /* pos moves               */
-   case 'l' : my.cpos -= 5;                 break;
-   case '-' : --my.cpos;                    break;
-   case '+' : ++my.cpos;                    break;
-   case 'm' : my.cpos += 5;                 break;
-   case '$' : my.cpos  = my.npos - 1; my.bpos = my.epos - my.apos;   break;
-
-   case 'T' : my.cpos  = my.bpos;              break;    /* screen moves            */
+   char        x_minors    [MAX_STR]  = "0L-+m$Tt.bB^k,jvwWer";
+   /*---(header)-------------------------*/
+   DEBUG_USER  yLOG_enter   (__FUNCTION__);
+   DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
+   /*---(defense)------------------------*/
+   DEBUG_USER  yLOG_info    ("x_minors"  , x_minors);
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
+      DEBUG_USER   yLOG_note    ("a_minor was not a valid option");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   EDIT_prep ();
+   /*---(horizontal moves)---------------*/
+   switch (a_minor) {
+   case '0' : my.cpos = 0;                     break;
+   case 'l' : my.cpos -= 5;                    break;
+   case '-' : --my.cpos;                       break;
+   case '+' : ++my.cpos;                       break;
+   case 'm' : my.cpos += 5;                    break;
+   case '$' : my.cpos  = my.npos - 1;          break;
+   }
+   /*---(goto moves)---------------------*/
+   switch (a_minor) {
+   case 'T' : my.cpos  = my.bpos;              break;
    case 't' : my.cpos  = my.bpos + qtr;        break;
    case '.' : my.cpos  = my.bpos + half;       break;
    case 'b' : my.cpos  = my.bpos + half + qtr; break;
    case 'B' : my.cpos  = my.bpos + avail - 1;  break;
-
-   case '^' : my.bpos  = my.cpos;              break;    /* scrolling               */
+   }
+   /*---(scroll moves)-------------------*/
+   switch (a_minor) {
+   case '^' : my.bpos  = my.cpos;              break;
    case 'k' : my.bpos  = my.cpos - qtr;        break;
    case ',' : my.bpos  = my.cpos - half;       break;
    case 'j' : my.bpos  = my.cpos - half - qtr; break;
    case 'v' : my.bpos  = my.cpos - avail + 1;  break;
-
+   }
+   /*---(word moves)---------------------*/
+   switch (a_minor) {
    case 'w' : word_fore ();                    break;
    case 'W' : word_back ();                    break;
    case 'e' : word_end  ();                    break;
-
-   case 'r' : s_beg = -1;                break;    /* size change only        */
-   default  : return 0;                  break;
    }
-   my.epos = my.bpos + my.apos - 1;
-   /*---(check min/max)---------------*/
-   if (my.cpos <   0      )    my.cpos = 0;
-   if (my.cpos >=  my.npos)    my.cpos = my.npos - 1;
-   /*---(check end)-------------------*/
-   if (my.cpos <   my.bpos)    my.bpos = my.cpos;
-   if (my.cpos >   my.epos)  { my.epos = my.cpos; my.bpos = my.epos - my.apos + 1; }
-   if (my.bpos <   0      )    my.bpos = 0;
-   /*> if (epos >= npos)  { epos = npos - 1; bpos = epos - apos + 1; }                <*/
-   my.epos = my.bpos + my.apos - 1;
-   /*---(set boundaries)--------------*/
-   if (my.npos < my.apos) {
-      my.bpos = 0;
-      my.epos = my.bpos + my.npos - 1;
+   /*---(special)------------------------*/
+   switch (a_minor) {
+   case 'r' : my.bpos = -1;                    break;
    }
-   /*---(adjust screen)---------------*/
-   if (my.cpos < my.bpos)     my.cpos = my.bpos;
-   if (my.cpos > my.epos)     my.epos = my.cpos;
+   /*---(wrapup)-------------------------*/
+   EDIT_done ();
    /*---(complete)--------------------*/
-   DEBUG_S  printf("pos_move       :: end\n");
+   DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1431,7 +1516,7 @@ pos_move           (char a_dir)
 static void      o___UNITTEST________________o (void) {;}
 
 char*            /* [------] unit test accessor ------------------------------*/
-move_unit          (char *a_question, int a_num)
+MOVE_unit          (char *a_question, int a_num)
 {
    /*---(prepare)------------------------*/
    strcpy  (unit_answer, "s_move unit      : question not understood");
@@ -1461,6 +1546,12 @@ move_unit          (char *a_question, int a_num)
    }
    else if (strcmp(a_question, "tab_max" )       == 0) {
       snprintf(unit_answer, LEN_TEXT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ncol, tabs [a_num].nrow);
+   }
+   else if (strcmp(a_question, "edit_con")       == 0) {
+      snprintf(unit_answer, LEN_TEXT, "s_move edit con  : :%-*.*s:", my.apos, my.apos, g_contents + my.bpos);
+   }
+   else if (strcmp(a_question, "edit_pos")       == 0) {
+      snprintf(unit_answer, LEN_TEXT, "s_move edit pos  : n=%3d, a=%3d, b=%3d, c=%3d %c, e=%3d", my.npos, my.apos, my.bpos, my.cpos, (g_contents[my.cpos] > ' ') ? g_contents [my.cpos] : ' ', my.epos);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

@@ -126,7 +126,7 @@ KEYS_basics        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_valid     [MAX_STR]  = "0HhlL$_KkjJGr";
+   char        x_minors    [MAX_STR]  = "0HhlL$_KkjJGr";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -137,8 +137,8 @@ KEYS_basics        (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("a_minor is not valid");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -168,7 +168,7 @@ KEYS_basics        (char a_major, char a_minor)
    case 'r'      : break;
    }
    /*---(clean-up)-----------------------*/
-   MOVE_wrap    ();
+   MOVE_done    ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -180,7 +180,7 @@ KEYS_gz_family     (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;                /* return code for errors    */
    char        rc          =   0;                /* generic return code       */
-   char        x_valid     [MAX_STR]  = "shcletkmjbaonf.AONF";
+   char        x_minors    [MAX_STR]  = "shcletkmjbaonf.AONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -191,8 +191,8 @@ KEYS_gz_family     (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("a_minor is not valid");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -239,7 +239,7 @@ KEYS_gz_family     (char a_major, char a_minor)
        *> case '0' : /+ go to frozen cols        +/     break;                           <*/
    }
    /*---(clean-up)-----------------------*/
-   MOVE_wrap    ();
+   MOVE_done    ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -251,7 +251,7 @@ KEYS_e_family      (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_valid     [MAX_STR]  = "tKkjJbsHhlLeaonfSETBAONF";
+   char        x_minors    [MAX_STR]  = "tKkjJbsHhlLeaonfSETBAONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -262,8 +262,8 @@ KEYS_e_family      (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("a_minor is not valid");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -333,7 +333,7 @@ KEYS_e_family      (char a_major, char a_minor)
               break;
    }
    /*---(clean-up)-----------------------*/
-   MOVE_wrap    ();
+   MOVE_done    ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -345,7 +345,7 @@ KEYS_c_family      (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_valid     [MAX_STR]  = "hljksetbaonfAONF";
+   char        x_minors    [MAX_STR]  = "hljksetbaonfAONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -356,8 +356,8 @@ KEYS_c_family      (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("a_minor is not valid");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -421,7 +421,7 @@ KEYS_c_family      (char a_major, char a_minor)
               break;
    }
    /*---(update)-------------------------*/
-   MOVE_wrap    ();
+   MOVE_done    ();
    MOVE_prep    ();
    /*---(move cursor)--------------------*/
    switch (a_minor) {
@@ -437,7 +437,7 @@ KEYS_c_family      (char a_major, char a_minor)
                          break;
    }
    /*---(clean-up)-----------------------*/
-   MOVE_wrap    ();
+   MOVE_done    ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -449,7 +449,7 @@ KEYS_regbasic       (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_valid     [MAX_STR]  = "ypdx";
+   char        x_minors    [MAX_STR]  = "ypdx";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -460,8 +460,8 @@ KEYS_regbasic       (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   DEBUG_USER   yLOG_info    ("x_valid"   , x_valid);
-   --rce;  if (strchr (x_valid, a_minor) == 0) {
+   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
+   --rce;  if (strchr (x_minors, a_minor) == 0) {
       DEBUG_USER   yLOG_note    ("a_minor is not valid");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -493,7 +493,7 @@ MODE_map           (
    /*---(major mode changes)-------------*/
    if (a_curr == K_RETURN) {
       my.mode   = MODE_SOURCE;
-      pos_move ('0');
+      EDIT_pos ('0');
       return  0;
    }
    if (a_curr == K_ESCAPE) {
@@ -555,11 +555,11 @@ MODE_map           (
                       return 0;
                       break;
       case '"'      : my.mode    = SMOD_REGISTER;
-                      return 1;  /* make sure double quote goes in prev char */
+                      return '"';  /* make sure double quote goes in prev char */
                       break;
       case 'm'      : 
       case '\''     : my.mode    = SMOD_MARK;
-                      return 1;  /* make sure single quote goes in prev char */
+                      return '\'';  /* make sure single quote goes in prev char */
                       break;
       }
       /*---(normal)----------------------*/
@@ -706,7 +706,7 @@ BUF_switch         (int a_tab)
 }
 
 char          /* PURPOSE : process keys for buffer movement ------------------*/
-KEYS_buffer   (char a_prev, char a_curr)
+SMOD_buffer   (char a_major, char a_minor)
 {
    /*---(design notes)-------------------*/
    /*
@@ -715,15 +715,89 @@ KEYS_buffer   (char a_prev, char a_curr)
    /*---(defenses)-----------------------*/
    if (my.mode != SMOD_BUFFER)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
-   BUF_switch (a_curr);
+   BUF_switch (a_minor);
    my.mode = MODE_MAP;
    /*---(complete)-----------------------*/
    return 0;
 }
 
+char         /*--> replace sub-mode ----------------------[--------[--------]-*/
+SMOD_replace  (char a_major, char a_minor)
+{  /*---(design notes)-------------------*/
+   /*
+    *   very limited sub-mode of SOURCE mode.  allows a user to "type over"
+    *   existing text including past the end of the line.  there are no
+    *   special keys except ESCAPE to return to SOURCE mode.
+    */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_majors    [MAX_STR]  = "rR";
+   static      x_append    = '-';
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("my.mode"   , my.mode);
+   --rce;  if (my.mode != SMOD_REPLACE) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);
+   --rce;  if (strchr (x_majors, a_major) == 0) {
+      DEBUG_USER   yLOG_note    ("a_major is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   EDIT_prep   ();
+   /*---(mode changes)-------------------*/
+   if (a_minor == 27) {
+      DEBUG_USER   yLOG_note    ("escape, return to source mode");
+      my.mode  = MODE_SOURCE;
+      if (x_append == 'y') {
+         g_contents [my.cpos] = '\0';
+      }
+      x_append = '-';
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(handle keys)--------------------*/
+   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+   DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
+   if (a_major == 'r') {
+      g_contents [my.cpos] = a_minor;
+      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
+      my.mode = MODE_SOURCE;
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_major == 'R') {
+      g_contents [my.cpos] = a_minor;
+      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
+      ++(my.cpos);
+   }
+   /*---(correct current position)-------*/
+   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+   DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
+   if (my.cpos  >= my.npos) {
+      DEBUG_USER   yLOG_note    ("update the end pos");
+      g_contents [my.npos    ] = '_';
+      g_contents [my.npos + 1] = '\0';
+      x_append = 'y';
+   }
+   /*---(wrap up)------------------------*/
+   EDIT_done   ();
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return a_major;
+}
 
 char          /* PURPOSE : process keys for cell edit mode -------------------*/
-KEYS_source   (char a_prev, char a_curr)
+MODE_source   (char a_major, char a_minor)
 {
    /*---(design notes)-------------------*/
    /*
@@ -735,80 +809,96 @@ KEYS_source   (char a_prev, char a_curr)
    /*---(defenses)-----------------------*/
    if (my.mode != MODE_SOURCE)             return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
-   switch (a_curr) {
-   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);          return 0;   /* escape  */
-   case  27  : 
-   case  'U' : my.mode = MODE_MAP; if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); return 0;
-   }
-   /*---(locals)-------------------------*/
-   char    update_cols  = 0;
-   char    update_rows  = 0;
    /*---(range corrections)--------------*/
-   my.npos  = strlen (g_contents);
-   if (my.cpos <  0      )   my.cpos = 0;
-   if (my.cpos >= my.npos)   my.cpos = my.npos - 1;
+   /*> my.npos  = strlen (g_contents);                                                <* 
+    *> if (my.cpos <  0      )   my.cpos = 0;                                         <* 
+    *> if (my.cpos >= my.npos)   my.cpos = my.npos - 1;                               <*/
    /*---(single letter)------------------*/
-   if (a_prev == ' ') {
+   if (a_major == ' ') {
+      /*---(mode changes)----------------*/
+      switch (a_minor) {
+      case  10  : my.mode = MODE_MAP;
+                  CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+                  return 0;   /* escape  */
+                  break;
+      case  27  : 
+      case  'U' : my.mode = MODE_MAP;
+                  if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
+                     strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
+                  }
+                  return 0;
+                  break;
+      case  'r' :
+      case  'R' : my.mode = SMOD_REPLACE;
+                  return a_minor;
+                  break;
+      }
       /*---(multikey prefixes)-----------*/
-      if (strchr ("rcdgz", a_curr) != 0)  return a_curr;
+      if (strchr ("cdgz", a_minor) != 0)  return a_minor;
       /*---(basic movement)--------------*/
-      switch (a_curr) {
-      case '0' : pos_move ('0');    break;
-      case 'H' : pos_move ('l');    break;
-      case 'h' : pos_move ('-');    break;
-      case 'l' : pos_move ('+');    break;
-      case 'L' : pos_move ('m');    break;
-      case '$' : pos_move ('$');    break;
+      switch (a_minor) {
+      case '0' : EDIT_pos ('0');    break;
+      case 'H' : EDIT_pos ('l');    break;
+      case 'h' : EDIT_pos ('-');    break;
+      case 'l' : EDIT_pos ('+');    break;
+      case 'L' : EDIT_pos ('m');    break;
+      case '$' : EDIT_pos ('$');    break;
       }
       /*---(word movement)---------------*/
-      switch (a_curr) {
-      case 'w' : pos_move ('w');    break;
-      case 'b' : pos_move ('W');    break;
-      case 'e' : pos_move ('e');    break;
+      switch (a_minor) {
+      case 'w' : EDIT_pos ('w');    break;
+      case 'b' : EDIT_pos ('W');    break;
+      case 'e' : EDIT_pos ('e');    break;
       }
       /*---(changes)---------------------*/
-      switch (a_curr) {
-      case 'x' : KEYS__del ('x');   break;
-      case 'X' : KEYS__del ('X');   break;
-      case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;
-      case 'S' : strncpy(g_contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;
-      }
+      /*> switch (a_minor) {                                                                       <* 
+       *> case 'x' : KEYS__del ('x');   break;                                                     <* 
+       *> case 'X' : KEYS__del ('X');   break;                                                     <* 
+       *> case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;       <* 
+       *> case 'S' : strncpy(g_contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;   <* 
+       *> }                                                                                        <*/
       /*---(going to input)--------------*/
-      switch (a_curr) {
-      case 'I' : pos_move('0'); my.mode = MODE_INPUT;          break;
-      case 'i' : my.mode = MODE_INPUT;                         break;
-      case 'a' : pos_move('+'); if (my.cpos + 1 == my.npos) ++my.cpos; my.mode = MODE_INPUT;          break;
-      case 'A' : my.cpos = my.npos;        my.mode = 'A';  break;
-      case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
-      case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
-      }
+      /*> switch (a_minor) {                                                                                                                                                                                   <* 
+       *> case 'I' : EDIT_pos('0'); my.mode = MODE_INPUT;          break;                                                                                                                                      <* 
+       *> case 'i' : my.mode = MODE_INPUT;                         break;                                                                                                                                      <* 
+       *> case 'a' : EDIT_pos('+'); if (my.cpos + 1 == my.npos) ++my.cpos; my.mode = MODE_INPUT;          break;                                                                                               <* 
+       *> case 'A' : my.cpos = my.npos;        my.mode = 'A';  break;                                                                                                                                          <* 
+       *> case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
+       *> case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
+       *> }                                                                                                                                                                                                    <*/
       /*---(multikey)--------------------*/
-   } else if (a_prev == 'r') {
-      g_contents[my.cpos] = a_curr;
-   } else if (a_prev == 'g') {
-      switch (a_curr) {
-      case 's' : pos_move('T');    break;
-      case 'h' : pos_move('t');    break;
-      case 'c' : pos_move('.');    break;
-      case 'l' : pos_move('b');    break;
-      case 'e' : pos_move('B');    break;
+   } else if (a_major == 'g') {
+      switch (a_minor) {
+      case 's' : EDIT_pos ('T');    break;
+      case 'h' : EDIT_pos ('t');    break;
+      case 'c' : EDIT_pos ('.');    break;
+      case 'l' : EDIT_pos ('b');    break;
+      case 'e' : EDIT_pos ('B');    break;
+      }
+   } else if (a_major == 'z') {
+      switch (a_minor) {
+      case 's' : EDIT_pos ('^');    break;
+      case 'h' : EDIT_pos ('k');    break;
+      case 'c' : EDIT_pos (',');    break;
+      case 'l' : EDIT_pos ('j');    break;
+      case 'e' : EDIT_pos ('v');    break;
       }
    }
    /*---(correct if necessary)-----------*/
-   if (my.npos  <  0      )          my.npos = 0;
-   if (my.npos  >= MAX_STR  )          my.npos = MAX_STR - 1;
-   if (my.cpos  <  0      )          my.cpos = 0;
-   if (my.cpos  >= my.npos) {
-      if (my.mode == 'A') { my.cpos = my.npos; my.mode = MODE_INPUT; }
-      else               my.cpos = my.npos - 1;
-   }
+   /*> if (my.npos  <  0      )          my.npos = 0;                                 <* 
+    *> if (my.npos  >= MAX_STR)          my.npos = MAX_STR - 1;                       <* 
+    *> if (my.cpos  <  0      )          my.cpos = 0;                                 <* 
+    *> if (my.cpos  >= my.npos) {                                                     <* 
+    *>    if (my.mode == 'A') { my.cpos = my.npos; my.mode = MODE_INPUT; }            <* 
+    *>    else               my.cpos = my.npos - 1;                                   <* 
+    *> }                                                                              <*/
    /*> if (my.cpos  == (my.npos  == 0))  my.cpos = -1;                                <*/
    /*---(complete)-----------------------*/
    return 0;
 }
 
 char               /* PURPOSE : process keys for input mode ------------------*/
-KEYS_input         (char  a_prev, char  a_curr)
+MODE_input         (char  a_major, char  a_minor)
 {
    /*---(design notes)-------------------*/
    /*
@@ -818,7 +908,7 @@ KEYS_input         (char  a_prev, char  a_curr)
    /*---(defenses)-----------------------*/
    if (my.mode != MODE_INPUT)            return -1;   /* wrong mode                    */
    /*---(check for control keys)---------*/
-   switch (a_curr) {
+   switch (a_minor) {
    case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);          return 0;   /* escape  */
    case  27  : my.mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
    case  '@' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
@@ -828,7 +918,7 @@ KEYS_input         (char  a_prev, char  a_curr)
    if (my.cpos  >  my.npos)  my.cpos = my.npos;
    if (my.cpos  <  0      )  my.cpos = 0;
    /*---(check for backspace)------------*/
-   if (a_curr == 8 || a_curr == 127) {
+   if (a_minor == 8 || a_minor == 127) {
       --my.npos;
       if (my.npos < 0)   my.npos = 0;
       g_contents[my.npos] = '\0';
@@ -842,7 +932,7 @@ KEYS_input         (char  a_prev, char  a_curr)
       g_contents[i + 1] = g_contents[i];
    }
    /*---(update contests)----------------*/
-   g_contents [my.cpos] = a_curr;
+   g_contents [my.cpos] = a_minor;
    ++my.cpos;
    /*---(complete)-----------------------*/
    return  0;
@@ -856,17 +946,17 @@ MODE_god           (char a_prev, char a_curr)
 
 
 char       /*----: process keys for formatting mode --------------------------*/
-KEYS_format        (char a_prev, char a_curr)
+SMOD_format        (char a_major, char a_minor)
 {
    /*---(current cell -- whether good or not)---*/
    tCELL   *curr = tab->sheet[CCOL][CROW];
    /*---(check for control keys)----------------*/
-   switch (a_curr) {
+   switch (a_minor) {
    case   27 : my.mode = MODE_MAP; VISU_clear (); return 0;   /* escape  */
    case   10 : my.mode = MODE_MAP; VISU_clear (); return 0;   /* return  */
    }
    /*---(check for alignment prefixes)----------*/
-   switch (a_curr) {
+   switch (a_minor) {
 
    case  'm' : CELL_width    (CHG_INPUT, 'm');  break;  /* smallest    */
    case  'h' : CELL_width    (CHG_INPUT, 'h');  break;  /* less by 1   */
@@ -1080,26 +1170,26 @@ cmd_exec           (char *a_command)
 }
 
 char       /*----: process keys for input/append mode ------------------------*/
-KEYS_command  (char a_prev, char a_curr)
+MODE_command       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_len       = 0;
    char        x_temp      [11]        = "";
    /*---(check for control keys)---------*/
    x_len = strlen (command);
-   switch (a_curr) {
+   switch (a_minor) {
    case   27 : my.mode = MODE_MAP; return 0;   /* escape  */
    case   10 : my.mode = MODE_MAP; cmd_exec (command); return 0;   /* return  */
    }
    /*---(check for backspace)------------*/
-   if (a_curr == 8 || a_curr == 127) {
+   if (a_minor == 8 || a_minor == 127) {
       --x_len;
       if (x_len < 0)   x_len = 0;
       command [x_len] = '\0';
       return 0;
    }
    /*---(normal characters)--------------*/
-   snprintf (x_temp, 10, "%c", a_curr);
+   snprintf (x_temp, 10, "%c", a_minor);
    strcat   (command, x_temp);
    /*---(complete)-----------------------*/
    return 0;
@@ -1107,7 +1197,7 @@ KEYS_command  (char a_prev, char a_curr)
 
 
 char       /*----: process keys for wander mode ------------------------------*/
-KEYS_wander        (char a_prev, char a_curr)
+SMOD_wander        (char a_prev, char a_curr)
 {
    /*---(design notes)-------------------*/
    /*
