@@ -731,8 +731,10 @@ SMOD_replace  (char a_major, char a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [MAX_STR]  = "rR";
+   char        x_majors    [MAX_STR]  = "rRm";
+   static      x_saved     = '\0';
    static      x_append    = '-';
+   char        x_empty     = 164;           /* expansion marker               */
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -758,6 +760,8 @@ SMOD_replace  (char a_major, char a_minor)
       my.mode  = MODE_SOURCE;
       if (x_append == 'y') {
          g_contents [my.cpos] = '\0';
+      } else if (x_saved != '\0') {
+         g_contents [my.cpos] = x_saved;
       }
       x_append = '-';
       EDIT_done   ();
@@ -767,7 +771,16 @@ SMOD_replace  (char a_major, char a_minor)
    /*---(handle keys)--------------------*/
    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
    DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
+   if (a_major == 'm') {
+      DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
+      x_saved = g_contents [my.cpos];
+      g_contents [my.cpos] = x_empty;
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    if (a_major == 'r') {
+      DEBUG_USER   yLOG_note    ("replace the marked character");
       g_contents [my.cpos] = a_minor;
       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
       my.mode = MODE_SOURCE;
@@ -776,6 +789,8 @@ SMOD_replace  (char a_major, char a_minor)
       return 0;
    }
    if (a_major == 'R') {
+      DEBUG_USER   yLOG_note    ("replace the marked character");
+      x_saved = g_contents [my.cpos];
       g_contents [my.cpos] = a_minor;
       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
       ++(my.cpos);
@@ -785,7 +800,7 @@ SMOD_replace  (char a_major, char a_minor)
    DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
    if (my.cpos  >= my.npos) {
       DEBUG_USER   yLOG_note    ("update the end pos");
-      g_contents [my.npos    ] = '_';
+      g_contents [my.npos    ] = x_empty;
       g_contents [my.npos + 1] = '\0';
       x_append = 'y';
    }
@@ -806,8 +821,20 @@ MODE_source   (char a_major, char a_minor)
     *   should be broken up (formulas) or in a database (text).  so,
     *   forget wordwrap, 'g', and 'z' commands.
     */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_multi     [MAX_STR]   = "cdgz";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   if (my.mode != MODE_SOURCE)             return -1;   /* wrong mode                    */
+   DEBUG_USER   yLOG_char    ("my.mode"   , my.mode);
+   --rce;  if (my.mode != MODE_SOURCE) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(check for control keys)---------*/
    /*---(range corrections)--------------*/
    /*> my.npos  = strlen (g_contents);                                                <* 
@@ -819,6 +846,7 @@ MODE_source   (char a_major, char a_minor)
       switch (a_minor) {
       case  10  : my.mode = MODE_MAP;
                   CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
                   return 0;   /* escape  */
                   break;
       case  27  : 
@@ -826,15 +854,22 @@ MODE_source   (char a_major, char a_minor)
                   if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
                      strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
                   }
+                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
                   return 0;
                   break;
       case  'r' :
       case  'R' : my.mode = SMOD_REPLACE;
+                  SMOD_replace ('m', ' ');
+                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
                   return a_minor;
                   break;
       }
       /*---(multikey prefixes)-----------*/
-      if (strchr ("cdgz", a_minor) != 0)  return a_minor;
+      if (strchr (x_multi, a_minor) != 0) {
+         DEBUG_USER   yLOG_note    ("captured a multikey prefix a_minor");
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+      }
       /*---(basic movement)--------------*/
       switch (a_minor) {
       case '0' : EDIT_pos ('0');    break;
@@ -858,14 +893,22 @@ MODE_source   (char a_major, char a_minor)
        *> case 'S' : strncpy(g_contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;   <* 
        *> }                                                                                        <*/
       /*---(going to input)--------------*/
-      /*> switch (a_minor) {                                                                                                                                                                                   <* 
-       *> case 'I' : EDIT_pos('0'); my.mode = MODE_INPUT;          break;                                                                                                                                      <* 
-       *> case 'i' : my.mode = MODE_INPUT;                         break;                                                                                                                                      <* 
-       *> case 'a' : EDIT_pos('+'); if (my.cpos + 1 == my.npos) ++my.cpos; my.mode = MODE_INPUT;          break;                                                                                               <* 
-       *> case 'A' : my.cpos = my.npos;        my.mode = 'A';  break;                                                                                                                                          <* 
-       *> case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
-       *> case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
-       *> }                                                                                                                                                                                                    <*/
+      switch (a_minor) {
+      case 'I' : EDIT_pos   ('0');
+      case 'i' : my.mode  = MODE_INPUT;
+                 MODE_input ('m', tolower (a_minor));
+                 DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                 return tolower (a_minor);
+                 break;
+      case 'A' : EDIT_pos   ('$');
+      case 'a' : my.mode  = MODE_INPUT;
+                 MODE_input ('m', tolower (a_minor));
+                 DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                 return tolower (a_minor);
+                 break;
+                 /*> case '.' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
+                  *> case ':' : my.mode = SMOD_WANDER; wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <*/
+      }
       /*---(multikey)--------------------*/
    } else if (a_major == 'g') {
       switch (a_minor) {
@@ -894,11 +937,100 @@ MODE_source   (char a_major, char a_minor)
     *> }                                                                              <*/
    /*> if (my.cpos  == (my.npos  == 0))  my.cpos = -1;                                <*/
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char               /* PURPOSE : process keys for input mode ------------------*/
 MODE_input         (char  a_major, char  a_minor)
+{
+   /*---(design notes)-------------------*/
+   /*
+    *   this should imitate a very basic vi-input mode by handling
+    *   all characters, ignoring new line, and popping out with escape
+    */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_majors    [MAX_STR]   = "iam";
+   static      x_saved     = '\0';
+   int         i           = 0;             /* loop iterator                  */
+   char        x_empty     = 164;           /* expansion marker               */
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("my.mode"   , my.mode);
+   --rce;  if (my.mode != MODE_INPUT) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);
+   --rce;  if (strchr (x_majors, a_major) == 0) {
+      DEBUG_USER   yLOG_note    ("a_major is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   EDIT_prep   ();
+   /*---(check for initial mark)---------*/
+   if (a_major == 'm') {
+      DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
+      if (a_minor == 'a')  ++(my.cpos);
+      DEBUG_USER   yLOG_value   ("total pos" , my.npos);
+      DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);
+      x_saved = g_contents [my.cpos];
+      for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
+      g_contents [my.cpos] = x_empty;
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_minor;
+   }
+   /*---(mode changes)-------------------*/
+   if (a_minor == 27) {
+      DEBUG_USER   yLOG_note    ("escape, return to source mode");
+      for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
+      if (a_major == 'a')  --(my.cpos);
+      my.mode  = MODE_SOURCE;
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check for backspace)------------*/
+   if (a_minor == 8 || a_minor == 127) {
+      DEBUG_USER   yLOG_note    ("handle a backspace/delete");
+      --(my.cpos);
+      DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+      for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
+   }
+   /*---(handle new character)-----------*/
+   DEBUG_USER   yLOG_note    ("move remaining chars to the right");
+   for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
+   DEBUG_USER   yLOG_note    ("add the character");
+   g_contents [my.cpos] = a_minor;
+   ++(my.cpos);
+   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+   /*---(correct current position)-------*/
+   DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
+   /*> if (my.cpos  >= my.npos) {                                                     <* 
+    *>    DEBUG_USER   yLOG_note    ("update the end pos");                           <* 
+    *>    g_contents [my.npos    ] = x_empty;                                         <* 
+    *>    g_contents [my.npos + 1] = '\0';                                            <* 
+    *>    x_append = 'y';                                                             <* 
+    *> }                                                                              <*/
+   /*---(wrap up)------------------------*/
+   EDIT_done   ();
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return a_major;
+}
+
+char               /* PURPOSE : process keys for input mode ------------------*/
+MODE_input_OLD     (char  a_major, char  a_minor)
 {
    /*---(design notes)-------------------*/
    /*

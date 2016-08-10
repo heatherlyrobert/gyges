@@ -136,7 +136,8 @@ static tCOLOR_INFO  s_color_info [MAX_COLOR_INFO] = {
    /*---(modes)----------*/
    { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , 'k' , 'y' , 'b',   0 },
    { "m_src"    , ' ', "source mode (single cell review)"                   , 'k' , 'g' , 'b',   0 },
-   { "m_input"  , ' ', "input mode"                                         , 'k' , 'w' , 'b',   0 },
+   { "m_input"  , ' ', "input mode"                                         , 'k' , 'b' , 'b',   0 },
+   { "m_repl"   , ' ', "replace sub-mode"                                   , 'k' , 'c' , 'b',   0 },
    { "m_wand"   , ' ', "wander mode"                                        , 'k' , 'r' , 'b',   0 },
    /*---(row/col header)-*/
    { "h_cur"    , ' ', "current row/column header"                          , 'y' , 'k' , 'y',   0 },
@@ -188,6 +189,7 @@ static int  S_COLOR_MENU       = COLOR_PAIR(43) | A_BLINK;
 static int  S_COLOR_CONTENT    = COLOR_PAIR(43) | A_BLINK;
 static int  S_COLOR_SOURCE     = COLOR_PAIR(42) | A_BLINK;
 static int  S_COLOR_INPUT      = COLOR_PAIR(47) | A_BLINK;
+static int  S_COLOR_REPLACE    = COLOR_PAIR(47) | A_BLINK;
 static int  S_COLOR_WANDER     = COLOR_PAIR(41) | A_BLINK;
 /*---(cells)--------------------------*/
 static int  S_COLOR_CURRENT    = COLOR_PAIR(43) | A_BLINK;
@@ -346,6 +348,7 @@ COLOR_init                (void)
    S_COLOR_CONTENT    = COLOR_assign ("m_map"  );
    S_COLOR_SOURCE     = COLOR_assign ("m_src"  );
    S_COLOR_INPUT      = COLOR_assign ("m_input");
+   S_COLOR_REPLACE    = COLOR_assign ("m_repl" );
    S_COLOR_WANDER     = COLOR_assign ("m_wand" );
    /*---(selection)----------------------*/
    S_COLOR_CURRENT    = COLOR_assign ("curr"   );
@@ -443,7 +446,7 @@ CURS_formula       (tCELL *a_curr)
    if      (my.mode == MODE_SOURCE )  attron (S_COLOR_SOURCE );
    else if (my.mode == MODE_INPUT  )  attron (S_COLOR_INPUT  );
    else if (my.mode == SMOD_WANDER )  attron (S_COLOR_WANDER );
-   else if (my.mode == SMOD_REPLACE)  attron (S_COLOR_VISUAL );
+   else if (my.mode == SMOD_REPLACE)  attron (S_COLOR_REPLACE);
    else                               attron (S_COLOR_CONTENT);
    /*---(contents)-------------------------*/
    w  = s_space - len;

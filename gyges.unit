@@ -9706,7 +9706,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
 
    COND       v21  set the mode to input                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
    COND       v21  add a first character                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -9764,7 +9764,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input in the middle                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9787,7 +9787,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input before the beginning                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = -20;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9802,7 +9802,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9817,7 +9817,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = 'I';                                                                                                                                                 
+     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 

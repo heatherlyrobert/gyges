@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5v"
-#define     VER_TXT   "replace sub-mode passed a new unit test"
+#define     VER_NUM   "1.5w"
+#define     VER_TXT   "input mode is working properly with placeholders"
 
 
 
