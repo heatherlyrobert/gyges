@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5w"
-#define     VER_TXT   "input mode is working properly with placeholders"
+#define     VER_NUM   "1.5x"
+#define     VER_TXT   "input mode x and X deletes are working properly"
 
 
 

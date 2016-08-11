@@ -443,7 +443,7 @@ KEYS_c_family      (char a_major, char a_minor)
    return 0;
 }
 
-char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
+char         /*--> process keystrokes in map mode --------[--------[--------]-*/
 KEYS_regbasic       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -667,19 +667,27 @@ KEYS__del          (char a_key)
 {
    int       i    = 0;                       /* loop iterator                 */
    /*---(check room for backspace)-------*/
+   EDIT_prep ();
+   if (my.npos == 0) {
+      return 0;
+   }
+   if (a_key == 'x') {
+      if (my.cpos >= my.npos)  return -2;
+   }
    if (a_key == 'X') {
-      if (my.cpos >  0) --my.cpos;
-      if (my.cpos == 0) return 0;
+      --(my.cpos);
+      if (my.cpos < 0) {
+         my.cpos = 0;
+         return -1;
+      }
    }
    /*---(pull back text)-----------------*/
    for (i = my.cpos; i <= my.npos; ++i) {
       g_contents[i] = g_contents[i + 1];
    }
-   --my.npos;
+   EDIT_done ();
    /*---(adjust for delete)--------------*/
-   if (a_key == 'x') {
-      if (my.cpos >=  my.npos) my.cpos = my.npos - 1;
-   }
+   /*> if (my.cpos >=  my.npos) my.cpos = my.npos - 1;                                <*/
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -886,12 +894,12 @@ MODE_source   (char a_major, char a_minor)
       case 'e' : EDIT_pos ('e');    break;
       }
       /*---(changes)---------------------*/
-      /*> switch (a_minor) {                                                                       <* 
-       *> case 'x' : KEYS__del ('x');   break;                                                     <* 
-       *> case 'X' : KEYS__del ('X');   break;                                                     <* 
-       *> case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;       <* 
-       *> case 'S' : strncpy(g_contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;   <* 
-       *> }                                                                                        <*/
+      switch (a_minor) {
+      case 'x' : KEYS__del ('x');   break;
+      case 'X' : KEYS__del ('X');   break;
+      case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;
+      case 'S' : strncpy(g_contents, "", MAX_STR); my.npos = 0; my.mode = MODE_INPUT; break;
+      }
       /*---(going to input)--------------*/
       switch (a_minor) {
       case 'I' : EDIT_pos   ('0');
@@ -1013,61 +1021,11 @@ MODE_input         (char  a_major, char  a_minor)
    DEBUG_USER   yLOG_note    ("add the character");
    g_contents [my.cpos] = a_minor;
    ++(my.cpos);
-   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-   /*---(correct current position)-------*/
-   DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
-   /*> if (my.cpos  >= my.npos) {                                                     <* 
-    *>    DEBUG_USER   yLOG_note    ("update the end pos");                           <* 
-    *>    g_contents [my.npos    ] = x_empty;                                         <* 
-    *>    g_contents [my.npos + 1] = '\0';                                            <* 
-    *>    x_append = 'y';                                                             <* 
-    *> }                                                                              <*/
    /*---(wrap up)------------------------*/
    EDIT_done   ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return a_major;
-}
-
-char               /* PURPOSE : process keys for input mode ------------------*/
-MODE_input_OLD     (char  a_major, char  a_minor)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   this should imitate a very basic vi-input mode by handling
-    *   all characters, ignoring new line, and popping out with escape
-    */
-   /*---(defenses)-----------------------*/
-   if (my.mode != MODE_INPUT)            return -1;   /* wrong mode                    */
-   /*---(check for control keys)---------*/
-   switch (a_minor) {
-   case  10  : my.mode = MODE_MAP; CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);          return 0;   /* escape  */
-   case  27  : my.mode = MODE_SOURCE;      return  0;   /* escape -- back to source mode */
-   case  '@' : my.mode = SMOD_WANDER; wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;
-   }
-   /*---(range corrections)--------------*/
-   my.npos  = strlen(g_contents);
-   if (my.cpos  >  my.npos)  my.cpos = my.npos;
-   if (my.cpos  <  0      )  my.cpos = 0;
-   /*---(check for backspace)------------*/
-   if (a_minor == 8 || a_minor == 127) {
-      --my.npos;
-      if (my.npos < 0)   my.npos = 0;
-      g_contents[my.npos] = '\0';
-      --my.cpos;
-      if (my.cpos < 0) my.cpos = 0;
-      return 0;
-   }
-   /*---(create room)--------------------*/
-   int       i    = 0;                       /* loop iterator                 */
-   for (i = my.npos; i >= my.cpos; --i) {
-      g_contents[i + 1] = g_contents[i];
-   }
-   /*---(update contests)----------------*/
-   g_contents [my.cpos] = a_minor;
-   ++my.cpos;
-   /*---(complete)-----------------------*/
-   return  0;
 }
 
 char       /*----: process keys for god mode ---------------------------------*/

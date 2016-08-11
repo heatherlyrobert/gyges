@@ -402,6 +402,7 @@ CURS_formula       (tCELL *a_curr)
    char      msg[500]  = "";                   /* temporary display message   */
    int       len       = 0;
    int       w         = 0;
+   char      x_zilch   = 216;
    /*---(clear line)---------------------*/
    if (sta_error == 'y')  attron (S_COLOR_TITLEE);
    else                   attron (S_COLOR_TITLE);
@@ -458,10 +459,12 @@ CURS_formula       (tCELL *a_curr)
    attrset (0);
    /*---(boundary markers)---------------*/
    attron (S_COLOR_VISUAL );
-   if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");
-   else                         mvprintw (row_formula, s_start - 1, "<");
-   if (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");
-   else                         mvprintw (row_formula, s_start + s_space, ">");
+   sprintf (msg, "%c", 216);
+   if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);
+   else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");
+   else                              mvprintw (row_formula, s_start - 1, "<");
+   if      (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");
+   else                              mvprintw (row_formula, s_start + s_space, ">");
    attrset (0);
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
