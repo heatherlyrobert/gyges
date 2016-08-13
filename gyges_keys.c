@@ -24,6 +24,7 @@ struct cMODE_INFO {
    { 'I' , 'y', 'y', ' ', "INP", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
    { ':' , 'y', '-', ' ', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
+   { 's' , '-', 'y', ' ', "sel", "select"    , "visual selection within text content"               ,    0, "0HhlL$"                                                                                  },
    { 'r' , '-', 'y', ' ', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
    { '"' , '-', 'y', 'V', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-zA-Z-+0  pull=yYxXdD  -/+=vVcCtTsSfF  push=pPrRmMaAiIoObB  mtce=#?!g"           },
    { ',' , '-', 'y', 'M', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
@@ -49,6 +50,59 @@ static char   wref  [20];
 static char   wref2 [20];
 static char   wsave [MAX_STR];
 
+
+
+char g_modestack   [MAX_STACK];
+int  n_modestack;
+
+char
+MODE_init          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(validate mode)------------------*/
+   for (i = 0; i < MAX_STACK; ++i) {
+      g_modestack [i] = ' ';
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MODE_push          (char a_mode)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         i           = 0;
+   char        x_mode      = ' ';
+   /*---(validate mode)------------------*/
+   for (i = 0; i < MAX_MODES; ++i) {
+      if (g_mode_info[i].abbr == '-'   )  break;
+      if (g_mode_info[i].abbr != a_mode)  continue;
+      x_mode = a_mode;
+   }
+   --rce;  if (x_mode == ' ')  return rce;
+   /*---(add mode)-----------------------*/
+   --rce;  if (n_modestack >= MAX_STACK)   return rce;
+   g_modestack [n_modestack] = a_mode;
+   ++n_modestack;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MODE_pop           (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_mode      = ' ';
+   /*---(check stack)--------------------*/
+   --rce;  if (n_modestack <= 0)  return rce;
+   x_mode = g_modestack [n_modestack];
+   --n_modestack;
+   /*---(complete)-----------------------*/
+   return x_mode;
+}
 
 
 char
@@ -870,6 +924,11 @@ MODE_source   (char a_major, char a_minor)
                   SMOD_replace ('m', ' ');
                   DEBUG_USER   yLOG_exit    (__FUNCTION__);
                   return a_minor;
+                  break;
+      case  'v' : my.mode = SMOD_SELECT;
+                  SELC_mode    ('m', ' ');
+                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                  return 0;
                   break;
       }
       /*---(multikey prefixes)-----------*/

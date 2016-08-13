@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.5x"
-#define     VER_TXT   "input mode x and X deletes are working properly"
+#define     VER_NUM   "1.6a"
+#define     VER_TXT   "added a simple mode stack to help manage mode changes"
 
 
 
@@ -773,9 +773,11 @@ tCELL       denada;
 #define     DONE_DONE    &denada
 
 
-
-
 /*===[ MODES ]================================================================*/
+/*---(mode stack)------------------------*/
+#define     MAX_STACK   100
+extern char g_modestack   [MAX_STACK];
+extern int  n_modestack;
 /*---(major modes)-----------------------*/
 #define     MODE_GOD       'G'
 #define     MODE_MAP       'M'
@@ -784,14 +786,19 @@ tCELL       denada;
 #define     MODE_INPUT     'I'
 #define     MODE_COMMAND   ':'
 #define     MODE_SEARCH    '/'
-/*---(sub-modes)-------------------------*/
+/*---(sub-modes for source)--------------*/
 #define     SMOD_REPLACE   'r'    /* replacing characters in source mode      */
+#define     SMOD_SELECT    's'    /* visual selection of chars in source mode */
+#define     SMOD_TEXTREG   't'    /* text register actions                    */
+/*---(sub-modes for map)-----------------*/
 #define     SMOD_REGISTER  '"'    /* register actions                         */
 #define     SMOD_BUFFER    ','    /* selecting buffers                        */
 #define     SMOD_WANDER    '@'    /* formula creation by pointing             */
 #define     SMOD_FORMAT    '$'    /* content formatting                       */
 #define     SMOD_OBJECT    'o'    /* object formatting                        */
 #define     SMOD_MARK      '\''   /* location and object marking              */
+
+
 /*---(display modes)---------------------*/
 #define     SCRN_TINY      't'    /* top line shows only source               */
 #define     SCRN_SMALL     's'    /* top line shows very little but source    */
@@ -918,6 +925,17 @@ char      VISU_range         (int*, int*, int*, int*, int*);
 tCELL*    VISU_first         (int*, int*, int*);
 tCELL*    VISU_next          (int*, int*, int*);
 
+char      SELC_clear         (void);
+char      SELC_save          (void);
+char      SELC_restore       (void);
+char      SELC_start         (void);
+char      SELC_increase      (void);
+char      SELC_set           (int   a_bpos , int   a_epos);
+char      SELC_mode          (char  a_major, char  a_minor);
+char      SELC_islive        (void);
+int       SELC_from          (void);
+int       SELC_to            (void);
+
 char      MARK_mode          (char  a_major, char a_minor);
 char      MARK_init          (void);
 char      MARK_unset         (char  a_mark);
@@ -967,6 +985,9 @@ char*     REG__getter        (char *a_question, char a_reg);
 
 
 /*---(major modes)----------*/
+char      MODE_init          (void);
+char      MODE_push          (char  a_mode);
+char      MODE_pop           (void);
 char      MODE_message       (char  a_mode);
 char      MODE_god           (char  a_major, char  a_minor);
 char      MODE_map           (char  a_major, char  a_minor);

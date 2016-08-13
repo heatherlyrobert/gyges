@@ -112,6 +112,16 @@ tMARK       s_mark_info [MAX_MARK];
 static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ()";
 
 
+typedef     struct cSELC    tSELC;
+struct cSELC {
+   char        live;         /* is the selection active: 0=no, 1=yes          */
+   int         root;         /* first selected position                       */
+   int         bpos;         /* start of selection in source                  */
+   int         epos;         /* end of selection in source                    */
+};
+static tSELC  s_selc;
+static tSELC  s_prev;
+
 /*====================------------------------------------====================*/
 /*===----                          initialization                      ----===*/
 /*====================------------------------------------====================*/
@@ -507,6 +517,114 @@ VISU_next          (
    /*---(complete)-----------------------*/
    return s_visu.curr;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      selection on text                       ----===*/
+/*====================------------------------------------====================*/
+static void  o___SELECT__________o () { return; }
+
+char
+SELC_clear         (void)
+{
+   s_selc.live        = VISU_NOT;
+   s_selc.bpos        = -1;
+   s_selc.epos        = -1;
+   return 0;
+}
+
+char
+SELC_save          (void)
+{
+   s_prev.live        = VISU_NOT;
+   s_prev.bpos        = s_selc.bpos;
+   s_prev.epos        = s_selc.epos;
+   return 0;
+}
+
+char
+SELC_restore       (void)
+{
+   s_selc.live        = VISU_YES;
+   s_selc.bpos        = s_prev.bpos;
+   s_selc.epos        = s_prev.epos;
+   return 0;
+}
+
+char             /* start the visual selection -----------[ twig   [ 121y9x ]-*/
+SELC_start         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   --rce;  if (my.cpos <  0      ) {
+      DEBUG_USER   yLOG_note    ("my.cpos before zero/start");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (my.cpos >= my.npos) {
+      DEBUG_USER   yLOG_note    ("my.cpos after end/my.npos");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(change settings)----------------*/
+   s_selc.live  = VISU_YES;
+   s_selc.bpos  = my.cpos;
+   s_selc.epos  = my.cpos;
+   DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
+   DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
+   DEBUG_USER   yLOG_value   ("epos"      , s_selc.bpos);
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char             /* adjust the visual selection ----------[ twig   [ 231y9x ]-*/
+SELC_increase      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   --rce;  if (my.cpos <  0      ) {
+      DEBUG_USER   yLOG_note    ("my.cpos before zero/start");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (my.cpos >= my.npos) {
+      DEBUG_USER   yLOG_note    ("my.cpos after end/my.npos");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(process)------------------------*/
+   DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
+   DEBUG_USER   yLOG_value   ("cpos"      , my.cpos);
+   DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
+   DEBUG_USER   yLOG_value   ("epos"      , s_selc.epos);
+   if      (my.cpos <  s_selc.bpos)   s_selc.bpos = my.cpos;
+   else if (my.cpos >  s_selc.epos)   s_selc.epos = my.cpos;
+   else if (my.cpos >  s_selc.epos)   s_selc.epos = my.cpos;
+   DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
+   DEBUG_USER   yLOG_value   ("epos"      , s_selc.epos);
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char       /*----: indicate whether a selection is active/live ---------------*/
+SELC_islive        (void) { if (s_selc.live == VISU_YES)  return 1; return 0; }
+
+int        /*----: simplifier for beginning ----------------------------------*/
+SELC_from          (void) { return s_selc.bpos; }
+
+int        /*----: simplifier for ending -------------------------------------*/
+SELC_to            (void) { return s_selc.epos; }
 
 
 
@@ -976,6 +1094,73 @@ VISU_mode          (char a_major, char a_minor)
       return 0;
    }
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char      SELC_mode          (char  a_major, char  a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_majors    [MAX_STR]   = "";
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("my.mode"   , my.mode);
+   --rce;  if (my.mode != SMOD_SELECT) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(check for escape)---------------*/
+   if (a_minor == K_ESCAPE)  {
+      my.mode  = MODE_SOURCE;
+      SELC_clear ();
+      DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return  0;
+   }
+   /*---(check for start mark)-----------*/
+   --rce;  if (a_major == 'm') {
+      SELC_start ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check for simple keys-----------*/
+   --rce;  if (a_major == ' ') {
+      /*---(submodes)--------------------*/
+      /*> switch (a_minor) {                                                                <* 
+       *> case '"'      : my.mode    = SMOD_REGISTER;                                       <* 
+       *>                 return a_minor;  /+ make sure double quote goes in prev char +/   <* 
+       *>                 break;                                                            <* 
+       *> }                                                                                 <*/
+      /*---(actions)---------------------*/
+      switch (a_minor) {
+      /*> case 'v'      : VISU_reverse ();                                            <* 
+       *>                 break;                                                      <*/
+      /*> case 'x'      : REG_cut   ();                                               <* 
+       *>                 break;                                                      <*/
+      }
+      /*---(basic movement)--------------*/
+      switch (a_minor) {
+      case '0' : EDIT_pos ('0');    break;
+      case 'H' : EDIT_pos ('l');    break;
+      case 'h' : EDIT_pos ('-');    break;
+      case 'l' : EDIT_pos ('+');    break;
+      case 'L' : EDIT_pos ('m');    break;
+      case '$' : EDIT_pos ('$');    break;
+      }
+      /*---(word movement)---------------*/
+      switch (a_minor) {
+      case 'w' : EDIT_pos ('w');    break;
+      case 'b' : EDIT_pos ('W');    break;
+      case 'e' : EDIT_pos ('e');    break;
+      }
+      /*---(normal)----------------------*/
+      SELC_increase ();
+   }
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

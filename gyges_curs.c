@@ -403,6 +403,10 @@ CURS_formula       (tCELL *a_curr)
    int       len       = 0;
    int       w         = 0;
    char      x_zilch   = 216;
+   int       x_beg     = 0;
+   int       x_end     = 0;
+   int       x_gap     = 0;
+   int       x_len     = 0;
    /*---(clear line)---------------------*/
    if (sta_error == 'y')  attron (S_COLOR_TITLEE);
    else                   attron (S_COLOR_TITLE);
@@ -445,6 +449,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(set color)------------------------*/
    attrset (0);
    if      (my.mode == MODE_SOURCE )  attron (S_COLOR_SOURCE );
+   else if (my.mode == SMOD_SELECT )  attron (S_COLOR_SOURCE );
    else if (my.mode == MODE_INPUT  )  attron (S_COLOR_INPUT  );
    else if (my.mode == SMOD_WANDER )  attron (S_COLOR_WANDER );
    else if (my.mode == SMOD_REPLACE)  attron (S_COLOR_REPLACE);
@@ -457,6 +462,20 @@ CURS_formula       (tCELL *a_curr)
    mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg + my.bpos);
    /*---(highlight off)------------------*/
    attrset (0);
+   /*---(show selection on top)------------*/
+   if (my.mode == SMOD_SELECT && SELC_islive) {
+      x_beg = SELC_from ();
+      x_end = SELC_to   ();
+      if (x_beg < my.epos || x_end > my.bpos) {
+         if (x_beg < my.bpos)  x_beg = my.bpos;
+         if (x_end > my.epos)  x_end = my.epos;
+         x_gap = x_beg - my.bpos;
+         x_len = x_end - x_beg + 1;
+         attron (S_COLOR_VISUAL);
+         mvprintw (row_formula, s_start + x_gap, "%-*.*s", x_len, x_len, msg + x_beg);
+         attrset (0);
+      }
+   }
    /*---(boundary markers)---------------*/
    attron (S_COLOR_VISUAL );
    sprintf (msg, "%c", 216);
@@ -810,7 +829,7 @@ CURS_main          (void)
    /*---(cursor pos)---------------------*/
    if (my.info_win != '-') 
       move ( 4, 10);
-   else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT || my.mode == SMOD_REPLACE)
+   else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT || my.mode == SMOD_REPLACE || my.mode == SMOD_SELECT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);

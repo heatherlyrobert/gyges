@@ -59,6 +59,7 @@ main (int argc, char *argv[])
       case MODE_INPUT    : rc = MODE_input    (sch, cch); break;
       case MODE_COMMAND  : rc = MODE_command  (' ', cch); break;
          /*---(submodes)-----------------*/
+      case SMOD_SELECT   : rc = SELC_mode     (sch, cch); break;
       case SMOD_REPLACE  : rc = SMOD_replace  (sch, cch); break;
       case SMOD_FORMAT   : rc = SMOD_format   (' ', cch); break;
       case SMOD_BUFFER   : rc = SMOD_buffer   (' ', cch); break;
