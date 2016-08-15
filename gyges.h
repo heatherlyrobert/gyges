@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6b"
-#define     VER_TXT   "fully implemented mode stack and hid the variables"
+#define     VER_NUM   "1.6c"
+#define     VER_TXT   "fix some mode change issues due to debugging code"
 
 
 

@@ -9706,7 +9706,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
 
    COND       v21  set the mode to input                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
+     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
    COND       v21  add a first character                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -9764,7 +9764,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input in the middle                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
+     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9787,7 +9787,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input before the beginning                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
+     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = -20;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9802,7 +9802,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
+     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9817,7 +9817,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_INPUT;                                                                                                                                          
+     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9853,7 +9853,7 @@ SCRP          v21  test vi_source mode                                        
    COND       v21  initialize contents                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  copy a string to contents            - - - - - - - - - -   strncpy(g_contents, "testing the source mode", MAX_STR);                                                                                                         
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 0:23) :testing the source mode:                   
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_SOURCE;                                                                                                                                         
+     exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (    0) :(null):                                    
 
@@ -9900,7 +9900,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : M                                                   
 
    COND       v21  call source in right mode                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_SOURCE;                                                                                                                                         
+     exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      exec     v21  send a character to source           MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (e) : ( 1:23) :testing the source mode:                   
@@ -9982,7 +9982,7 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  more complex content                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  copy a string to contents            - - - - - - - - - -   strncpy(g_contents, " testing   the/ . s-mode ", MAX_STR);                                                                                                       
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_SOURCE;                                                                                                                                         
+     exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:25) : testing   the/ . s-mode :                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) :testing the source mode:                   
@@ -10058,7 +10058,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   25) : testing   the/ . s-mode :                 
 
    COND       v21  get back in there                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_SOURCE;                                                                                                                                         
+     exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:25) : testing   the/ . s-mode :                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   25) : testing   the/ . s-mode :                 
@@ -10084,7 +10084,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) : testin  the/ . s-mode :                   
 
    COND       v21  get back in there                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = MODE_SOURCE;                                                                                                                                         
+     exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
      code     v21  set the position                     - - - - - - - - - -   my.cpos =   0;                                                                                                                                                 
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:23) : testin  the/ . s-mode :                   
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) : testin  the/ . s-mode :                   
@@ -10908,7 +10908,7 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
      get      v21  check current marks                  VISU__unit            "mark_list"            , 0                                              s_equal     s_sel marks      : ,a:0k11,d:0f11,                                     
 
    COND       v21  clear all marks                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = SMOD_MARK;                                                                                                                                           
+     exec     v21  set the mode                         MODE_enter            SMOD_MARK                                                               i_equal     0                                                                      
      exec     v21  clear marks                          MARK_mode             'm'                    , '*'                                            i_equal     0                                                                      
      get      v21  review the current position          MOVE_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   5, row=  10                        
      get      v21  check current marks                  VISU__unit            "mark_list"            , 0                                              s_equal     s_sel marks      : .                                                   
@@ -10951,7 +10951,7 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
      exec     v21  return to a mark                     MARK_return           'g'                                                                     i_equal     0                                                                      
      get      v21  review the current position          MOVE_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   6, row=  10                        
      get      v21  check current marks                  VISU__unit            "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0a1,g:0g11,m:0p12,q:0a1,                         
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = SMOD_MARK;                                                                                                                                           
+     exec     v21  set the mode                         MODE_enter            SMOD_MARK                                                               i_equal     0                                                                      
      exec     v21  clear current mark                   MARK_mode             'm'                    , '#'                                            i_equal     0                                                                      
      get      v21  review the current position          MOVE_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=   6, row=  10                        
      get      v21  check current marks                  VISU__unit            "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0a1,m:0p12,q:0a1,                                
@@ -11023,7 +11023,7 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
      exec     v21  return to a mark                     MARK_return           'm'                                                                     i_equal     0                                                                      
      get      v21  review the current position          MOVE_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  15, row=  11                        
      get      v21  check current marks                  VISU__unit            "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0p22,b:0f2,m:0p12,p:0p22,q:0a1,z:0b6,            
-     code     v21  set the mode                         - - - - - - - - - -   my.mode = SMOD_MARK;                                                                                                                                           
+     exec     v21  set the mode                         MODE_enter            SMOD_MARK                                                               i_equal     0                                                                      
      exec     v21  clear current mark                   MARK_mode             'm'                    , '#'                                            i_equal     0                                                                      
      get      v21  review the current position          MOVE_unit             "tab_pos"              , 0                                              s_equal     s_move tab pos   : tab=   0, col=  15, row=  11                        
      get      v21  check current marks                  VISU__unit            "mark_list"            , 0                                              s_equal     s_sel marks      : ,':0p22,b:0f2,p:0p22,q:0a1,z:0b6,                   

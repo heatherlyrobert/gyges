@@ -8,32 +8,31 @@ struct cMODE_INFO {
    char        abbr;                   /* single character abbreviation       */
    char        major;                  /* major mode (y/n)                    */
    char        show;                   /* show a message line (y/n)           */
-   char        sub;                    /* submode of which mode               */
    char        three       [ 5];       /* very short name                     */
    char        terse       [10];       /* short name                          */
    char        desc        [50];       /* description of mode                 */
    int         count;                  /* number of times used                */
    char        mesg        [MAX_STR];  /* informative message for display     */
 } g_mode_info [MAX_MODES] = {
-   /*-a-- -maj show -sub --tla- ---terse----- ---description---------------------------------------- ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
+   /*-a-- -maj show --tla- ---terse----- ---description---------------------------------------- ----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
    /*---(major modes)--------------------*/
-   { 'G' , 'y', 'y', ' ', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
-   { 'M' , 'y', 'y', ' ', "MAP", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
-   { 'V' , 'y', 'y', ' ', "VIS", "visual"    , "visual selection of objects for collection action"  ,    0, "0HhlL$_KkjJG  gz=sh,letk.jb  dxy  !: ~uU /nN oO sS"                                      },
-   { 'S' , 'y', 'y', ' ', "SRC", "source"    , "linewise review of textual content"                 ,    0, "hor=0HhlL$  sel=vV\"  pul=yYdDxX  put=rRiIaA  pP"                                        },
-   { 'I' , 'y', 'y', ' ', "INP", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
-   { ':' , 'y', '-', ' ', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
+   { 'G' , 'y', 'y', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             ,    0, ""                                                                                        },
+   { 'M' , 'y', 'y', "MAP", "map"       , "map-mode providing 2D review of object collections" ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'V' , 'y', 'y', "VIS", "visual"    , "visual selection of objects for collection action"  ,    0, "0HhlL$_KkjJG  gz=sh,letk.jb  dxy  !: ~uU /nN oO sS"                                      },
+   { 'S' , 'y', 'y', "SRC", "source"    , "linewise review of textual content"                 ,    0, "hor=0HhlL$  sel=vV\"  pul=yYdDxX  put=rRiIaA  pP"                                        },
+   { 'I' , 'y', 'y', "INP", "input"     , "linewise creation and editing of textual content"   ,    0, ""                                                                                        },
+   { ':' , 'y', '-', "CMD", "command"   , "command line capability for advanced actions"       ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
-   { 's' , '-', 'y', ' ', "sel", "select"    , "visual selection within text content"               ,    0, "0HhlL$"                                                                                  },
-   { 'r' , '-', 'y', ' ', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, ""                                                                                        },
-   { '"' , '-', 'y', 'V', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-zA-Z-+0  pull=yYxXdD  -/+=vVcCtTsSfF  push=pPrRmMaAiIoObB  mtce=#?!g"           },
-   { ',' , '-', 'y', 'M', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
-   { '@' , '-', 'y', ' ', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
-   { '$' , '-', 'y', ' ', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
-   { 'o' , '-', 'y', ' ', "obj", "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
-   { '\'', '-', 'y', 'M', "mrk", "mark"      , "object and location marking"                        ,    0, "set=a-zA-Z()  del=#*  hlp=?!@_  go='a-zA-Z()[<>]"                                        },
+   { 's' , '-', 'y', "sel", "select"    , "visual selection within text content"               ,    0, "0HhlL$"                                                                                  },
+   { 'r' , '-', 'y', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, "type over character marked with special marker"                                          },
+   { '"' , '-', 'y', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-zA-Z-+0  pull=yYxXdD  -/+=vVcCtTsSfF  push=pPrRmMaAiIoObB  mtce=#?!g"           },
+   { ',' , '-', 'y', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
+   { '@' , '-', 'y', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
+   { '$' , '-', 'y', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
+   { 'o' , '-', 'y', "obj", "object"    , "object formatting and sizing options"               ,    0, ""                                                                                        },
+   { '\'', '-', 'y', "mrk", "mark"      , "object and location marking"                        ,    0, "set=a-zA-Z()  del=#*  hlp=?!@_  go='a-zA-Z()[<>]"                                        },
    /*---(done)---------------------------*/
-   { '-' , '-', 'y', '-', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
+   { '-' , '-', 'y', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
 };
 
 
@@ -979,34 +978,36 @@ MODE_source   (char a_major, char a_minor)
    if (a_major == ' ') {
       /*---(mode changes)----------------*/
       switch (a_minor) {
-      case  10  : DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
-                  CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
-                  MODE_return ();
-                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                  return 0;   /* escape  */
-                  break;
-      case  27  : 
-      case  'U' : DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
-                  if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
-                     strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
-                  }
-                  MODE_return ();
-                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                  return 0;
-                  break;
-      case  'r' :
-      case  'R' : DEBUG_USER   yLOG_note    ("rR keys for replace sub-mode");
-                  MODE_enter  (SMOD_REPLACE);
-                  SMOD_replace ('m', ' ');
-                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                  return a_minor;
-                  break;
-      case  'v' : DEBUG_USER   yLOG_note    ("v key for text select sub-mode");
-                  MODE_enter  (SMOD_SELECT );
-                  SELC_mode    ('m', ' ');
-                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                  return 0;
-                  break;
+      case  10  :
+         DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
+         CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+         MODE_return ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;   /* escape  */
+         break;
+      case  27  : case  'U' :
+         DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
+         if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
+            strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
+         }
+         MODE_return ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case  'r' : case  'R' :
+         DEBUG_USER   yLOG_note    ("rR keys for replace sub-mode");
+         MODE_enter  (SMOD_REPLACE);
+         SMOD_replace ('m', ' ');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+         break;
+      case  'v' :
+         DEBUG_USER   yLOG_note    ("v key for text select sub-mode");
+         MODE_enter  (SMOD_SELECT );
+         SELC_mode    ('m', ' ');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
       }
       /*---(multikey prefixes)-----------*/
       if (strchr (x_multi, a_minor) != 0) {
