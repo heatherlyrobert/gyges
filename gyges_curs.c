@@ -452,6 +452,7 @@ CURS_formula       (tCELL *a_curr)
    case MODE_SOURCE  : attron (S_COLOR_SOURCE );  break;
    case MODE_INPUT   : attron (S_COLOR_INPUT  );  break;
    case SMOD_SELECT  : attron (S_COLOR_SOURCE );  break;
+   case SMOD_TEXTREG : attron (S_COLOR_SOURCE );  break;
    case SMOD_WANDER  : attron (S_COLOR_WANDER );  break;
    case SMOD_REPLACE : attron (S_COLOR_REPLACE);  break;
    default           : attron (S_COLOR_CONTENT);  break;
@@ -465,7 +466,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(highlight off)------------------*/
    attrset (0);
    /*---(show selection on top)------------*/
-   if ((MODE_curr() == SMOD_SELECT) && SELC_islive) {
+   if ((MODE_curr() == SMOD_SELECT || MODE_curr() == SMOD_TEXTREG) && SELC_islive) {
       x_beg = SELC_from ();
       x_end = SELC_to   ();
       if (x_beg < my.epos || x_end > my.bpos) {

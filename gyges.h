@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6c"
-#define     VER_TXT   "fix some mode change issues due to debugging code"
+#define     VER_NUM   "1.6d"
+#define     VER_TXT   "added in very basic text register mode"
 
 
 
@@ -346,6 +346,7 @@ struct cACCESSOR {
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
    /*---(registers)-------*/
    char        reg_curr;
+   char        treg_curr;
    /*---(cursus)----------*/
    char        info_win;
 };
@@ -962,6 +963,7 @@ char      REG__hook          (tCELL *a_curr, char a_buf, char a_note);
 char      REG__unhook        (tCELL *a_curr);
 
 char      REG_mode           (int a_prev , int a_curr);
+char      TREG_mode          (int a_prev , int a_curr);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);

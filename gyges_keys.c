@@ -26,6 +26,7 @@ struct cMODE_INFO {
    { 's' , '-', 'y', "sel", "select"    , "visual selection within text content"               ,    0, "0HhlL$"                                                                                  },
    { 'r' , '-', 'y', "rep", "replace"   , "linewise overtyping of content in source mode"      ,    0, "type over character marked with special marker"                                          },
    { '"' , '-', 'y', "reg", "register"  , "selecting specific registers for data movement"     ,    0, "regs=\"a-zA-Z-+0  pull=yYxXdD  -/+=vVcCtTsSfF  push=pPrRmMaAiIoObB  mtce=#?!g"           },
+   { 't' , '-', 'y', "trg", "text reg"  , "selecting specific registers for text movement"     ,    0, "regs=\"a-zA-Z-+0  pull=yYxXdD  -/+=vVcCtTsSfF  push=pPrRmMaAiIoObB  mtce=#?!g"           },
    { ',' , '-', 'y', "buf", "buffer"    , "moving and selecting between buffers and windows"   ,    0, "select=0...9  modes={ret}(esc}"                                                          },
    { '@' , '-', 'y', "wdr", "wander"    , "formula creation by moving to target cells"         ,    0, "modes={ret}{esc}"                                                                        },
    { '$' , '-', 'y', "frm", "format"    , "content formatting options"                         ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
@@ -35,6 +36,7 @@ struct cMODE_INFO {
    { '-' , '-', 'y', "bad", "bad mode"  , "default message when mode is not understood"        ,    0, "mode not understood"                                                                     },
 };
 
+static      char        s_majors       [MAX_MODES] = "";
 
 
 
@@ -50,6 +52,13 @@ MODE_init          (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
+   char        t           [5]         = "";
+   /*---(check modes)--------------------*/
+   for (i = 0; i < MAX_MODES; ++i) {
+      if (g_mode_info [i].major != 'y')    continue;
+      sprintf (t, "%c", g_mode_info [i].abbr);
+      strlcat (s_majors, t, MAX_MODES);
+   }
    /*---(validate mode)------------------*/
    for (i = 0; i < MAX_STACK; ++i) {
       g_modestack [i] = '-';
@@ -116,6 +125,11 @@ MODE_prev          (void)
    char        x_mode      = '-';
    /*---(check stack)--------------------*/
    if (n_modestack > 1)   x_mode = g_modestack [n_modestack - 2];
+   if (x_mode != '-') {
+      if (strchr (s_majors, x_mode) == NULL) {
+         if (n_modestack > 2)   x_mode = g_modestack [n_modestack - 3];
+      }
+   }
    /*---(complete)-----------------------*/
    return x_mode;
 }

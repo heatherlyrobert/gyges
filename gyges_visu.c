@@ -1132,11 +1132,11 @@ char      SELC_mode          (char  a_major, char  a_minor)
    /*---(check for simple keys-----------*/
    --rce;  if (a_major == ' ') {
       /*---(submodes)--------------------*/
-      /*> switch (a_minor) {                                                                <* 
-       *> case '"'      : MODE_enter (SMOD_REGISTER);                                       <* 
-       *>                 return a_minor;  /+ make sure double quote goes in prev char +/   <* 
-       *>                 break;                                                            <* 
-       *> }                                                                                 <*/
+      switch (a_minor) {
+      case '"'      : MODE_enter (SMOD_TEXTREG );
+                      return a_minor;  /* make sure double quote goes in prev char */
+                      break;
+      }
       /*---(actions)---------------------*/
       switch (a_minor) {
       /*> case 'v'      : VISU_reverse ();                                            <* 

@@ -99,13 +99,20 @@ static      tREG        s_reg       [MAX_REG];
 
 
 
+typedef struct  cTEXTREG  tTEXTREG;
+struct cTEXTREG {
+   char        label       [10];
+   int         bpos;
+   int         epos;
+   int         len;
+   char        data        [MAX_STR];
+};
+static      tTEXTREG    s_textreg   [MAX_REG];
+
 
 
 #define     REG_NAMES      "\"abcdefghijklmnopqrstuvwxyz-+"
-
 static      char        s_regnames     [MAX_REG] = REG_NAMES;
-
-
 
 /*====================------------------------------------====================*/
 /*===----                   initialization and wrapup                  ----===*/
@@ -474,6 +481,53 @@ REG_mode           (int a_major, int a_minor)
    return rce;
 }
 
+char          /* PURPOSE : process keys for register actions -----------------*/
+TREG_mode          (int a_major, int a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         x_buf       =  -1;
+   int         i           =   0;
+   /*---(defenses)-----------------------*/
+   --rce;  if (MODE_not (SMOD_TEXTREG )) {
+      return rce;
+   }
+   if (a_minor == K_ESCAPE)  {
+      MODE_return ();
+      return  0;
+   }
+   /*---(check for control keys)---------*/
+   --rce;  if (a_major == '"') {
+      if (strchr (s_regnames, a_minor) != 0) {
+         my.treg_curr = a_minor;
+         return 0;
+      } else if (a_minor == '?') {
+         my.info_win  = 't';
+         my.treg_curr = '"';
+         MODE_return ();
+         return  0;
+      } else if (a_minor == '!') {
+         sta_type     = 't';
+         my.treg_curr = '"';
+         MODE_return ();
+         return  0;
+      }
+      return rce;
+   }
+   --rce;  if (a_major == ' ') {
+      switch (a_minor) {
+      case  '#' :
+         i = REG__reg2index (my.treg_curr);
+         strlcpy (s_textreg [i].label, "", 10);
+         s_textreg [i].bpos  = -1;
+         s_textreg [i].epos  = -1;
+         s_textreg [i].len   =  0;
+         strlcpy (s_textreg [i].data , "", MAX_STR);
+         break;
+      }
+   }
+   return 0;
+}
 
 
 /*====================------------------------------------====================*/
@@ -1191,6 +1245,34 @@ REG_bufwrite       (char a_buf)
    /*---(close file)-----------------------*/
    fclose  (f);
    /*---(complete)-------------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        text registers                        ----===*/
+/*====================------------------------------------====================*/
+static void  o___TEXT_REGS_______o () { return; }
+
+char             /* clear all selections -----------------[ ------ [ ------ ]-*/
+TREG_init          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(registers)----------------------*/
+   strlcpy (s_regnames , REG_NAMES, MAX_REG);
+   my.treg_curr = '"';
+   REG_purge   ('y');
+   /*---(purge)--------------------------*/
+   for (i = 0; i < MAX_REG; ++i) {
+      strlcpy (s_textreg [i].label, "", 10);
+      s_textreg [i].bpos  = -1;
+      s_textreg [i].epos  = -1;
+      s_textreg [i].len   =  0;
+      strlcpy (s_textreg [i].data , "", MAX_STR);
+   }
+   /*---(complete)-----------------------*/
    return 0;
 }
 
