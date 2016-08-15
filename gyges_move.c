@@ -1265,6 +1265,16 @@ KEYS_prow          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___EDIT_WRAPPERS___o () { return; }
 
+char         /*--> prepare contents for new edit ---------[ leaf   [ ------ ]-*/
+EDIT_start         (char *a_prefix)
+{
+   strlcpy (g_contents, a_prefix , MAX_STR);
+   my.npos = strlen (g_contents);
+   my.cpos = my.npos;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 char         /*--> prepare for source mode move ----------[ leaf   [ ------ ]-*/
 EDIT_prep          (void)
 {

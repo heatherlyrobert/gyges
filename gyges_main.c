@@ -37,7 +37,7 @@ main (int argc, char *argv[])
    MOVE_vert ('r');
    MOVE_horz ('r');
    sch = ' ';
-   MODE_message (my.mode);
+   MODE_message ();
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
@@ -49,8 +49,8 @@ main (int argc, char *argv[])
       ++updates;
       DEBUG_LOOP  yLOG_complex ("update"    , "loop = %6d, val = %4d, cch = %c", updates, cch, (cch > 32) ? cch : '-');
       /*---(handle keystroke)------------*/
-      x_savemode = my.mode;
-      switch (my.mode) {
+      x_savemode = MODE_curr ();
+      switch (MODE_curr ()) {
          /*---(major)--------------------*/
       case MODE_GOD      : rc = MODE_god      (sch, cch); break;
       case MODE_MAP      : rc = MODE_map      (sch, cch); break;
@@ -81,8 +81,8 @@ main (int argc, char *argv[])
       else if (rc >  0)    sch = rc;
       else               { sch = ' ';  sta_error = 'y'; }
       /*---(setup status line)-----------*/
-      if   (x_savemode != my.mode || my.mode == MODE_COMMAND) {
-         MODE_message (my.mode);
+      if   (x_savemode != MODE_curr() || MODE_curr() == MODE_COMMAND) {
+         MODE_message ();
       }
       /*---(done)------------------------*/
    }

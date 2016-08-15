@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6a"
-#define     VER_TXT   "added a simple mode stack to help manage mode changes"
+#define     VER_NUM   "1.6b"
+#define     VER_TXT   "fully implemented mode stack and hid the variables"
 
 
 
@@ -895,6 +895,9 @@ char      cmd_exec           (char*);
 /*---(screen formatting)------------------------*/
 
 char      row_print          (void);
+char      EDIT_start         (char *a_prefix);
+char      EDIT_prep          (void);
+char      EDIT_done          (void);
 char      EDIT_pos           (char);
 
 
@@ -984,11 +987,16 @@ char      REG__setter        (char *a_request, char *a_data);
 char*     REG__getter        (char *a_question, char a_reg);
 
 
-/*---(major modes)----------*/
+/*---(mode handling)--------*/
 char      MODE_init          (void);
 char      MODE_push          (char  a_mode);
-char      MODE_pop           (void);
-char      MODE_message       (char  a_mode);
+char      MODE_return        (void);
+char      MODE_curr          (void);
+char      MODE_prev          (void);
+char      MODE_not           (char  a_mode);
+char      MODE_list          (char *a_list);
+char      MODE_message       (void);
+/*---(major modes)----------*/
 char      MODE_god           (char  a_major, char  a_minor);
 char      MODE_map           (char  a_major, char  a_minor);
 char      MODE_source        (char  a_major, char  a_minor);

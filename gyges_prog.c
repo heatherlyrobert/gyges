@@ -103,7 +103,8 @@ PROG_init          (void)
    hist_active = '-';
    nhist       =  0;
    chist       = -1;
-   my.mode     = MODE_MAP;
+   MODE_init   ();
+   MODE_enter  (MODE_MAP);
    my.scrn     = SCRN_DEBUG;
    my.info_win = '-';
    return 0;
@@ -300,6 +301,7 @@ PROG_args          (int argc, char *argv[])
       else if (strncmp(a, "--tiny"    ,10) == 0)  my.scrn = SCRN_TINY;
       else if (strncmp(a, "--small"   ,10) == 0)  my.scrn = SCRN_SMALL;
       else if (strncmp(a, "--debug"   ,10) == 0)  my.scrn = SCRN_DEBUG;
+      else if (strncmp(a, "--status"  ,10) == 0)  sta_type = argv[++i][0];
       else if (a[0] != '-'                     )  strncpy (my.f_name , argv[i]  , MAX_STR);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);
@@ -321,9 +323,8 @@ PROG_begin         (void)
    /*---(locals)-----------+-----------+-*/
    int         i, j, k;
    char        tmp         [100];
-   /*---(clear cells)--------------------*/
+   /*---(clear)--------------------------*/
    CELL_init ();
-   /*---(clear masks)--------------------*/
    MARK_init ();
    /*---(overall tab settings)-----------*/
    DEBUG_PROG  yLOG_note  ("clean tab settings");
@@ -440,7 +441,7 @@ unit_accessor(char *a_question, void *a_thing)
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
       snprintf(unit_answer, LEN_TEXT, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
    } else if (strcmp(a_question, "mode")           == 0) {
-      snprintf(unit_answer, LEN_TEXT, "Mode             : %c", my.mode);
+      snprintf(unit_answer, LEN_TEXT, "Mode             : %c", MODE_curr ());
    }
    /*---(cell focus)---------------------*/
    else if   (strcmp(a_question, "cell_where")     == 0) {

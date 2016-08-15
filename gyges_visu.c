@@ -1033,10 +1033,12 @@ VISU_mode          (char a_major, char a_minor)
    char        rce         = -10;
    char        rc          =   0;
    /*---(defenses)-----------------------*/
-   if (my.mode != MODE_VISUAL)             return -1;   /* wrong mode                    */
+   --rce;  if (MODE_not (MODE_VISUAL )) {
+      return rce;
+   }
    if (a_minor == K_ESCAPE)  {
-      my.mode  = MODE_MAP;
-      VISU_clear ();
+      VISU_clear  ();
+      MODE_return ();
       return  0;
    }
    /*---(check for simple keys-----------*/
@@ -1045,14 +1047,14 @@ VISU_mode          (char a_major, char a_minor)
       if (strchr ("gze"   , a_minor) != 0)       return a_minor;
       /*---(submodes)--------------------*/
       switch (a_minor) {
-      case '"'      : my.mode    = SMOD_REGISTER;
+      case '"'      : MODE_enter  (SMOD_REGISTER);
                       return a_minor;  /* make sure double quote goes in prev char */
                       break;
-      case 'F'      : my.mode    = SMOD_FORMAT;
+      case 'F'      : MODE_enter  (SMOD_FORMAT);
                       return 0;
                       break;
       case ':'      : strncpy (command , ":", MAX_STR);
-                      my.mode    = MODE_COMMAND;
+                      MODE_enter  (MODE_COMMAND);
                       return 0;
                       break;
       }
@@ -1107,17 +1109,17 @@ char      SELC_mode          (char  a_major, char  a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("my.mode"   , my.mode);
-   --rce;  if (my.mode != SMOD_SELECT) {
+   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr());
+   --rce;  if (MODE_not (SMOD_SELECT)) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(check for escape)---------------*/
    if (a_minor == K_ESCAPE)  {
-      my.mode  = MODE_SOURCE;
       SELC_clear ();
       DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
+      MODE_return ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
@@ -1131,7 +1133,7 @@ char      SELC_mode          (char  a_major, char  a_minor)
    --rce;  if (a_major == ' ') {
       /*---(submodes)--------------------*/
       /*> switch (a_minor) {                                                                <* 
-       *> case '"'      : my.mode    = SMOD_REGISTER;                                       <* 
+       *> case '"'      : MODE_enter (SMOD_REGISTER);                                       <* 
        *>                 return a_minor;  /+ make sure double quote goes in prev char +/   <* 
        *>                 break;                                                            <* 
        *> }                                                                                 <*/
@@ -1171,9 +1173,11 @@ MARK_mode          (char a_major, char a_minor)
    char        rce         = -10;
    char        rc          =   0;
    /*---(defenses)-----------------------*/
-   if (my.mode != SMOD_MARK)             return -1;   /* wrong mode                    */
+   --rce;  if (MODE_not (SMOD_MARK   )) {
+      return rce;
+   }
    if (a_minor == K_ESCAPE)  {
-      my.mode  = MODE_MAP;
+      MODE_return ();
       return  0;
    }
    /*---(check for setting)--------------*/
@@ -1183,7 +1187,7 @@ MARK_mode          (char a_major, char a_minor)
                  break;
       case '#' : rc = MARK_which ();
                  if (rc < 0) {
-                    my.mode = MODE_MAP;
+                    MODE_return ();
                     return rce;
                  }
                  MARK_unset (rc);
@@ -1199,7 +1203,7 @@ MARK_mode          (char a_major, char a_minor)
                  break;
       default  : rc = MARK_set (a_minor);
                  if (rc < 0) {
-                    my.mode = MODE_MAP;
+                    MODE_return ();
                     return rce;
                  }
                  break;
@@ -1209,12 +1213,12 @@ MARK_mode          (char a_major, char a_minor)
    --rce;  if (a_major == '\'') {
       rc = MARK_return (a_minor);
       if (rc < 0)  {
-         my.mode = MODE_MAP;
+         MODE_return ();
          return rce;
       }
    }
    /*---(failure)------------------------*/
-   my.mode = MODE_MAP;
+   MODE_return ();
    return 0;
 }
 

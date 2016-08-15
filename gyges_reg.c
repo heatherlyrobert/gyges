@@ -366,9 +366,11 @@ REG_mode           (int a_major, int a_minor)
    char        rce         = -10;
    int         x_buf       =  -1;
    /*---(defenses)-----------------------*/
-   if (my.mode != SMOD_REGISTER)             return -1;   /* wrong mode                    */
+   --rce;  if (MODE_not (SMOD_REGISTER)) {
+      return rce;
+   }
    if (a_minor == K_ESCAPE)  {
-      my.mode = MODE_MAP;
+      MODE_return ();
       return  0;
    }
    /*---(check for control keys)---------*/
@@ -378,13 +380,13 @@ REG_mode           (int a_major, int a_minor)
          return 0;
       } else if (a_minor == '?') {
          my.info_win = '"';
-         my.mode = MODE_MAP;
          REG_set ('"');
+         MODE_return ();
          return  0;
       } else if (a_minor == '!') {
          sta_type = '"';
-         my.mode = MODE_MAP;
          REG_set ('"');
+         MODE_return ();
          return  0;
       }
       return rce;
@@ -414,13 +416,13 @@ REG_mode           (int a_major, int a_minor)
       case  'p' : case  'P' :
                   REG_valuesin ('-');
                   break;
-      default   : my.mode = MODE_MAP;
-                  REG_set ('"');
+      default   : REG_set ('"');
+                  MODE_return ();
                   return rce;
                   break;
       }
-      my.mode = MODE_MAP;
       REG_set ('"');
+      MODE_return ();
       return 0;
    }
    --rce;  if (a_major == ' ') {
@@ -456,19 +458,19 @@ REG_mode           (int a_major, int a_minor)
                   CCOL = s_reg[x_buf].begc;
                   CROW = s_reg[x_buf].begr;
                   break;
-      default   : my.mode = MODE_MAP;
-                  REG_set ('"');
+      default   : REG_set ('"');
+                  MODE_return ();
                   return rce;
                   break;
       }
-      my.mode = MODE_MAP;
       REG_set ('"');
+      MODE_return ();
       return 0;
    }
    /*---(failure)------------------------*/
    --rce;
-   my.mode = MODE_MAP;
    REG_set ('"');
+   MODE_return ();
    return rce;
 }
 

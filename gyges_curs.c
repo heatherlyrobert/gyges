@@ -424,7 +424,7 @@ CURS_formula       (tCELL *a_curr)
    switch (my.scrn) {
    case SCRN_DEBUG :
       /*---(1st 12 chars)---*/
-      mvprintw (row_formula,  0, "%c  %c%c %-6.6s", my.mode, (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
+      mvprintw (row_formula,  0, "%c  %c%c %-6.6s", MODE_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
       /*---(2nd 13 chars)---*/
       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "   , tab->cols[CCOL].w, a_curr->t, a_curr->f, a_curr->d, a_curr->a);
       else                 mvprintw (row_formula, 12, " %02d                []", tab->cols[CCOL].w);
@@ -448,12 +448,14 @@ CURS_formula       (tCELL *a_curr)
    s_space  = my.apos;
    /*---(set color)------------------------*/
    attrset (0);
-   if      (my.mode == MODE_SOURCE )  attron (S_COLOR_SOURCE );
-   else if (my.mode == SMOD_SELECT )  attron (S_COLOR_SOURCE );
-   else if (my.mode == MODE_INPUT  )  attron (S_COLOR_INPUT  );
-   else if (my.mode == SMOD_WANDER )  attron (S_COLOR_WANDER );
-   else if (my.mode == SMOD_REPLACE)  attron (S_COLOR_REPLACE);
-   else                               attron (S_COLOR_CONTENT);
+   switch (MODE_curr()) {
+   case MODE_SOURCE  : attron (S_COLOR_SOURCE );  break;
+   case MODE_INPUT   : attron (S_COLOR_INPUT  );  break;
+   case SMOD_SELECT  : attron (S_COLOR_SOURCE );  break;
+   case SMOD_WANDER  : attron (S_COLOR_WANDER );  break;
+   case SMOD_REPLACE : attron (S_COLOR_REPLACE);  break;
+   default           : attron (S_COLOR_CONTENT);  break;
+   }
    /*---(contents)-------------------------*/
    w  = s_space - len;
    if (w < 0) w = 0;
@@ -463,7 +465,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(highlight off)------------------*/
    attrset (0);
    /*---(show selection on top)------------*/
-   if (my.mode == SMOD_SELECT && SELC_islive) {
+   if ((MODE_curr() == SMOD_SELECT) && SELC_islive) {
       x_beg = SELC_from ();
       x_end = SELC_to   ();
       if (x_beg < my.epos || x_end > my.bpos) {
@@ -528,6 +530,9 @@ CURS_status        (tCELL *a_curr)
       break;
    case 'm' :
       snprintf (msg, 500, "marks (%c,%c,%c,%c) %s", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, my.mark_plus);
+      break;
+   case 'M' :
+      MODE_list (msg);
       break;
    case 'v' : /* file version */
    default  :
@@ -829,7 +834,7 @@ CURS_main          (void)
    /*---(cursor pos)---------------------*/
    if (my.info_win != '-') 
       move ( 4, 10);
-   else if (my.mode == MODE_SOURCE || my.mode == MODE_INPUT || my.mode == SMOD_REPLACE || my.mode == SMOD_SELECT)
+   else if (MODE_curr() == MODE_SOURCE || MODE_curr() == MODE_INPUT || MODE_curr() == SMOD_REPLACE || MODE_curr() == SMOD_SELECT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
