@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6d"
-#define     VER_TXT   "added in very basic text register mode"
+#define     VER_NUM   "1.6e"
+#define     VER_TXT   "text register overview list is working now"
 
 
 
@@ -963,7 +963,9 @@ char      REG__hook          (tCELL *a_curr, char a_buf, char a_note);
 char      REG__unhook        (tCELL *a_curr);
 
 char      REG_mode           (int a_prev , int a_curr);
+
 char      TREG_mode          (int a_prev , int a_curr);
+char      TREG_entry         (char a_reg, char *a_list);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
@@ -1056,6 +1058,7 @@ char      CURS_cell          (int  a_col, int a_row);
 char      CURS_size          (void);
 char      CURS_listmark      (void);
 char      CURS_listreg       (void);
+char      CURS_listtreg      (void);
 
 char      CALC_init          (void);
 char      CALC_cleanse       (tCELL *a_cell);

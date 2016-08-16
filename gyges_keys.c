@@ -994,8 +994,8 @@ MODE_source   (char a_major, char a_minor)
       switch (a_minor) {
       case  10  :
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
-         CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
-         MODE_return ();
+         CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+         MODE_return  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;   /* escape  */
          break;
@@ -1010,17 +1010,21 @@ MODE_source   (char a_major, char a_minor)
          break;
       case  'r' : case  'R' :
          DEBUG_USER   yLOG_note    ("rR keys for replace sub-mode");
-         MODE_enter  (SMOD_REPLACE);
+         MODE_enter   (SMOD_REPLACE);
          SMOD_replace ('m', ' ');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;
          break;
       case  'v' :
          DEBUG_USER   yLOG_note    ("v key for text select sub-mode");
-         MODE_enter  (SMOD_SELECT );
+         MODE_enter   (SMOD_SELECT );
          SELC_mode    ('m', ' ');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
+         break;
+      case '"'  :
+         MODE_enter  (SMOD_TEXTREG );
+         return a_minor;  /* make sure double quote goes in prev char */
          break;
       }
       /*---(multikey prefixes)-----------*/

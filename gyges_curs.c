@@ -535,6 +535,9 @@ CURS_status        (tCELL *a_curr)
    case 'M' :
       MODE_list (msg);
       break;
+   /*> case 't' : /+ text register +/                                                 <* 
+    *>    TREG_list (msg);                                                            <* 
+    *>    break;                                                                      <*/
    case 'v' : /* file version */
    default  :
       if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", my.f_name, tab->ncol, tab->nrow, ver_num, ver_txt);
@@ -776,6 +779,44 @@ CURS_listreg       (void)
    return 0;
 }
 
+char
+CURS_listtreg      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_line      [MAX_STR];
+   char        x_reg       = ' ';
+   char        x_reglist   [MAX_STR] = "\"abcdefghijklmnopqrstuvwxyz";
+   int         x_count     = 0;
+   int         x_row       = 4;
+   int         x_col       = 10;
+   /*---(header)-------------------------*/
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  ");
+   attrset   (0);
+   /*---(prepare)------------------------*/
+   x_count = strlen (x_reglist);
+   /*---(show unnamed)-------------------*/
+   /*---(show registers)-----------------*/
+   for (i = 0; i < x_count; ++i) {
+      ++x_row;
+      /*---(lower case)------------------*/
+      x_reg = x_reglist [i];
+      TREG_entry  (x_reg, x_line);
+      if (x_line  [6] != '-')  attron (S_COLOR_CURRENT);
+      else                     attron (S_COLOR_VISUAL);
+      mvprintw  (x_row, x_col, x_line);
+      attrset   (0);
+   }
+   ++x_row;
+   /*---(footer)-------------------------*/
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  ");
+   attrset   (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -822,6 +863,8 @@ CURS_main          (void)
    case '\'' : CURS_listmark ();
                break;
    case '"'  : CURS_listreg  ();
+               break;
+   case 't'  : CURS_listtreg ();
                break;
    }
    /*---(command)------------------------*/

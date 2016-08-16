@@ -388,7 +388,7 @@ REG_mode           (int a_major, int a_minor)
       } else if (a_minor == '?') {
          my.info_win = '"';
          REG_set ('"');
-         MODE_return ();
+         /*> MODE_return ();                                                          <*/
          return  0;
       } else if (a_minor == '!') {
          sta_type = '"';
@@ -487,7 +487,11 @@ TREG_mode          (int a_major, int a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    int         x_buf       =  -1;
+   int         x_index     =   0;
    int         i           =   0;
+   char       *x_start     = NULL;
+   int         x_len       =   0;
+   char        x_label     [10]        = "";
    /*---(defenses)-----------------------*/
    --rce;  if (MODE_not (SMOD_TEXTREG )) {
       return rce;
@@ -504,7 +508,7 @@ TREG_mode          (int a_major, int a_minor)
       } else if (a_minor == '?') {
          my.info_win  = 't';
          my.treg_curr = '"';
-         MODE_return ();
+         /*> MODE_return ();                                                          <*/
          return  0;
       } else if (a_minor == '!') {
          sta_type     = 't';
@@ -517,12 +521,26 @@ TREG_mode          (int a_major, int a_minor)
    --rce;  if (a_major == ' ') {
       switch (a_minor) {
       case  '#' :
-         i = REG__reg2index (my.treg_curr);
-         strlcpy (s_textreg [i].label, "", 10);
-         s_textreg [i].bpos  = -1;
-         s_textreg [i].epos  = -1;
-         s_textreg [i].len   =  0;
-         strlcpy (s_textreg [i].data , "", MAX_STR);
+         x_index = REG__reg2index (my.treg_curr);
+         strlcpy (s_textreg [x_index].label, "", 10);
+         s_textreg [x_index].bpos  = -1;
+         s_textreg [x_index].epos  = -1;
+         s_textreg [x_index].len   =  0;
+         strlcpy (s_textreg [x_index].data , "", MAX_STR);
+         MODE_return ();
+         break;
+      case  'y' :
+         x_index = REG__reg2index (my.treg_curr);
+         x_start = g_contents + SELC_from();
+         x_len   = SELC_to() - SELC_from() + 1;
+         strlcpy (s_textreg [x_index].data, x_start, x_len + 1);
+         s_textreg [x_index].len  = x_len;
+         s_textreg [x_index].bpos = SELC_from ();
+         s_textreg [x_index].epos = SELC_to   ();
+         LOC_ref (CTAB, CCOL, CROW, 0, x_label );
+         strlcpy (s_textreg [x_index].label, x_label, 10);
+         SELC_clear  ();
+         MODE_return ();
          break;
       }
    }
@@ -1273,6 +1291,61 @@ TREG_init          (void)
       strlcpy (s_textreg [i].data , "", MAX_STR);
    }
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+TREG_entry         (char a_reg, char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         x_reg       = 0;
+   char        x_line      [MAX_STR];
+   int         x_len       = 0;
+   /*---(beginning)----------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);
+   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
+   /*---(defenses)--------------------*/
+   --rce;  if (a_list  == NULL) {
+      DEBUG_REGS   yLOG_note    ("list is null, no point");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      strlcpy (a_list, empty, 80);
+      return rce;
+   }
+   /*---(buffer number)------------------*/
+   x_reg  = REG__reg2index  (a_reg);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0)  {
+      DEBUG_REGS   yLOG_note    ("register is no good");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      strlcpy (a_list, empty, 80);
+      return rce;
+   }
+   /*---(write empty line)------------*/
+   if (s_textreg [x_reg].len == 0) {
+      sprintf (x_line, "  %c    -                                                      -   -  ", a_reg);
+      strlcpy (a_list, x_line, 80);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(write line)------------------*/
+   sprintf (x_line , "  %c  %3d [%-40.40s  %-7.7s %3d %3d  ",
+         a_reg, 
+         s_textreg [x_reg].len,
+         s_textreg [x_reg].data,
+         s_textreg [x_reg].label,
+         s_textreg [x_reg].bpos,
+         s_textreg [x_reg].epos);
+   x_len = s_textreg [x_reg].len;
+   if (x_len <= 40) {
+      x_line [10 + x_len] = ']';
+   } else if (x_len > 40) {
+      x_line [10 + 40   ] = '>';
+   }
+   strlcpy (a_list, x_line, 80);
+   /*---(complete)--------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
