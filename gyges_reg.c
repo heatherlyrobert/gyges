@@ -482,6 +482,82 @@ REG_mode           (int a_major, int a_minor)
 }
 
 char          /* PURPOSE : process keys for register actions -----------------*/
+TREG_delete        (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_len       =   0;
+   int         x_diff      =   0;
+   int         i           =   0;
+   /*---(set size)-----------------------*/
+   x_len   = strlen (g_contents);
+   x_diff  = SELC_to() - SELC_from() + 1;
+   /*---(delete)-------------------------*/
+   for (i = SELC_to () + 1; i <= x_len; ++i) {
+      g_contents [i - x_diff] = g_contents [i];
+   }
+   my.cpos = SELC_from ();
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char          /* PURPOSE : process keys for register actions -----------------*/
+TREG_copy          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_index     =   0;
+   char       *x_start     = NULL;
+   int         x_len       =   0;
+   char        x_label     [10]        = "";
+   char        rce         = -10;
+   /*---(identify register)--------------*/
+   x_index = REG__reg2index (my.treg_curr);
+   /*---(set size)-----------------------*/
+   x_start = g_contents + SELC_from();
+   x_len   = SELC_to() - SELC_from() + 1;
+   /*---(copy)---------------------------*/
+   strlcpy (s_textreg [x_index].data, x_start, x_len + 1);
+   /*---(fill in details)----------------*/
+   s_textreg [x_index].len  = x_len;
+   s_textreg [x_index].bpos = SELC_from ();
+   s_textreg [x_index].epos = SELC_to   ();
+   LOC_ref (CTAB, CCOL, CROW, 0, x_label );
+   strlcpy (s_textreg [x_index].label, x_label, 10);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char          /* PURPOSE : process keys for register actions -----------------*/
+TREG_paste         (char a_dir)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_index     =   0;
+   int         x_len       =   0;
+   int         x_gap       =   0;
+   int         x_start     =   0;
+   char        x_empty     = 164;           /* expansion marker               */
+   int         i           =   0;
+   /*---(identify register)--------------*/
+   x_index = REG__reg2index (my.treg_curr);
+   /*---(set the start)------------------*/
+   x_start = my.cpos;
+   if (a_dir == '>')   ++x_start;
+   /*---(open)---------------------------*/
+   x_len   = strlen (g_contents);
+   x_gap   = s_textreg [x_index].len;
+   for (i = x_len; i >= x_start; --i) {
+      g_contents [i + x_gap] = g_contents [i];
+      g_contents [i]         = x_empty;
+   }
+   /*---(fill)---------------------------*/
+   x_len   = s_textreg [x_index].len;
+   for (i  = 0; i < x_len; ++i) {
+      g_contents [i + x_start] = s_textreg [x_index].data [i];
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char          /* PURPOSE : process keys for register actions -----------------*/
 TREG_mode          (int a_major, int a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -492,35 +568,52 @@ TREG_mode          (int a_major, int a_minor)
    char       *x_start     = NULL;
    int         x_len       =   0;
    char        x_label     [10]        = "";
+   int         x_diff      =   0;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr());
    --rce;  if (MODE_not (SMOD_TEXTREG )) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(escape)-------------------------*/
    if (a_minor == K_ESCAPE)  {
+      DEBUG_USER   yLOG_note    ("escape and return to previous mode");
       MODE_return ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    /*---(check for control keys)---------*/
    --rce;  if (a_major == '"') {
       if (strchr (s_regnames, a_minor) != 0) {
+         DEBUG_USER   yLOG_note    ("select a text register");
          my.treg_curr = a_minor;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       } else if (a_minor == '?') {
+         DEBUG_USER   yLOG_note    ("show text register inventory");
          my.info_win  = 't';
          my.treg_curr = '"';
-         /*> MODE_return ();                                                          <*/
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return  0;
       } else if (a_minor == '!') {
          sta_type     = 't';
          my.treg_curr = '"';
          MODE_return ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return  0;
       }
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --rce;  if (a_major == ' ') {
       switch (a_minor) {
       case  '#' :
+         DEBUG_USER   yLOG_note    ("wipe text register");
          x_index = REG__reg2index (my.treg_curr);
          strlcpy (s_textreg [x_index].label, "", 10);
          s_textreg [x_index].bpos  = -1;
@@ -530,20 +623,29 @@ TREG_mode          (int a_major, int a_minor)
          MODE_return ();
          break;
       case  'y' :
-         x_index = REG__reg2index (my.treg_curr);
-         x_start = g_contents + SELC_from();
-         x_len   = SELC_to() - SELC_from() + 1;
-         strlcpy (s_textreg [x_index].data, x_start, x_len + 1);
-         s_textreg [x_index].len  = x_len;
-         s_textreg [x_index].bpos = SELC_from ();
-         s_textreg [x_index].epos = SELC_to   ();
-         LOC_ref (CTAB, CCOL, CROW, 0, x_label );
-         strlcpy (s_textreg [x_index].label, x_label, 10);
-         SELC_clear  ();
+         DEBUG_USER   yLOG_note    ("yank selection text");
+         TREG_copy   ();
+         MODE_return ();
+         break;
+      case  'd' :
+         DEBUG_USER   yLOG_note    ("delete selection text");
+         TREG_copy   ();
+         TREG_delete ();
+         MODE_return ();
+         break;
+      case  'p' :
+         DEBUG_USER   yLOG_note    ("paste after selection text");
+         TREG_paste  ('>');
+         MODE_return ();
+         break;
+      case  'P' :
+         DEBUG_USER   yLOG_note    ("paste before selection text");
+         TREG_paste  ('<');
          MODE_return ();
          break;
       }
    }
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

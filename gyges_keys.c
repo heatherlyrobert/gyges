@@ -625,17 +625,22 @@ MODE_map           (char a_major, char a_minor)
    if (a_minor == K_RETURN) {
       MODE_enter  (MODE_SOURCE);
       EDIT_pos    ('0');
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    if (a_minor == K_ESCAPE) {
       VISU_clear ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    /*---(single key)---------------------*/
    --rce;
    if (a_major == ' ') {
       /*---(multikey prefixes)-----------*/
-      if (strchr ("gzced\\"  , a_minor) != 0)          return a_minor;
+      if (strchr ("gzced\\"  , a_minor) != 0) {
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+      }
       /*---(mode switch)-----------------*/
       switch (a_minor) {
       case 'v'      : MODE_enter  (MODE_VISUAL);

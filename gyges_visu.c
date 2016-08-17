@@ -529,6 +529,7 @@ char
 SELC_clear         (void)
 {
    s_selc.live        = VISU_NOT;
+   s_selc.root        = -1;
    s_selc.bpos        = -1;
    s_selc.epos        = -1;
    return 0;
@@ -538,6 +539,7 @@ char
 SELC_save          (void)
 {
    s_prev.live        = VISU_NOT;
+   s_prev.root        = s_selc.root;
    s_prev.bpos        = s_selc.bpos;
    s_prev.epos        = s_selc.epos;
    return 0;
@@ -547,6 +549,7 @@ char
 SELC_restore       (void)
 {
    s_selc.live        = VISU_YES;
+   s_selc.root        = s_prev.root;
    s_selc.bpos        = s_prev.bpos;
    s_selc.epos        = s_prev.epos;
    return 0;
@@ -572,9 +575,10 @@ SELC_start         (void)
       return rce;
    }
    /*---(change settings)----------------*/
-   s_selc.live  = VISU_YES;
+   s_selc.root  = my.cpos;
    s_selc.bpos  = my.cpos;
    s_selc.epos  = my.cpos;
+   s_selc.live  = VISU_YES;
    DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
    DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
    DEBUG_USER   yLOG_value   ("epos"      , s_selc.bpos);
@@ -618,13 +622,25 @@ SELC_increase      (void)
 }
 
 char       /*----: indicate whether a selection is active/live ---------------*/
-SELC_islive        (void) { if (s_selc.live == VISU_YES)  return 1; return 0; }
+SELC_islive        (void)
+{
+   if (s_selc.live == VISU_YES)  return 1;
+   else                          return 0;
+}
 
 int        /*----: simplifier for beginning ----------------------------------*/
-SELC_from          (void) { return s_selc.bpos; }
+SELC_from          (void)
+{
+   if (s_selc.live == VISU_YES)  return s_selc.bpos;
+   else                          return my.cpos;
+}
 
 int        /*----: simplifier for ending -------------------------------------*/
-SELC_to            (void) { return s_selc.epos; }
+SELC_to            (void)
+{ 
+   if (s_selc.live == VISU_YES)  return s_selc.epos;
+   else                          return my.cpos;
+}
 
 
 
@@ -1133,9 +1149,11 @@ char      SELC_mode          (char  a_major, char  a_minor)
    --rce;  if (a_major == ' ') {
       /*---(submodes)--------------------*/
       switch (a_minor) {
-      case '"'      : MODE_enter (SMOD_TEXTREG );
-                      return a_minor;  /* make sure double quote goes in prev char */
-                      break;
+      case '"'      : 
+         MODE_enter (SMOD_TEXTREG );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;  /* make sure double quote goes in prev char */
+         break;
       }
       /*---(actions)---------------------*/
       switch (a_minor) {

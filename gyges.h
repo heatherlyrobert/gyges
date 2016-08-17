@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6e"
-#define     VER_TXT   "text register overview list is working now"
+#define     VER_NUM   "1.6f"
+#define     VER_TXT   "text register cut, copy, and paste are working"
 
 
 
@@ -966,6 +966,9 @@ char      REG_mode           (int a_prev , int a_curr);
 
 char      TREG_mode          (int a_prev , int a_curr);
 char      TREG_entry         (char a_reg, char *a_list);
+char      TREG_delete        (void);
+char      TREG_copy          (void);
+char      TREG_paste         (char a_dir);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);

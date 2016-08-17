@@ -11,8 +11,8 @@ main (int argc, char *argv[])
 {
    /*---(locals)-----------+-----------+-*/
    int         updates     = 0;
-   int         cch         = 0;        /* current keystroke                   */
-   int         sch         = 0;        /* saved keystroke                     */
+   int         cch         = ' ';      /* current keystroke                   */
+   int         sch         = ' ';      /* saved keystroke                     */
    char        rc          = 0;
    char        x_savemode  = '-';
    /*---(initialize)---------------------*/
