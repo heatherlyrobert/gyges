@@ -11033,4 +11033,85 @@ SCRP          v21  (s_sel ) verify temporary marks features                   
 
 
 
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (gyges_keys) verify correct functioning of mode stack        MODE_enter, MODE_return, MODE_curr, MODE_prev, MODE_not                 ((45.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+
+   COND       v21  check initial modes                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     77                                                                     
+     exec     v21  check the previous mode              MODE_prev                                                                                     i_lesser    0                                                                      
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (1) M - - - - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_equal     0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_lesser    0                                                                      
+
+   COND       v21  push a mode                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  enter a mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     83                                                                     
+     exec     v21  check the previous mode              MODE_prev                                                                                     i_equal     77                                                                     
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (2) M S - - - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_equal     0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_lesser    0                                                                      
+
+   COND       v21  pop a mode                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  exit a mode                          MODE_return                                                                                   i_equal     0                                                                      
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     77                                                                     
+     exec     v21  check the previous mode              MODE_prev                                                                                     i_lesser    0                                                                      
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (1) M - - - - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_equal     0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_lesser    0                                                                      
+
+   COND       v21  push the same mode, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  enter a mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     83                                                                     
+     exec     v21  check the previous mode              MODE_prev                                                                                     i_equal     77                                                                     
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (2) M S - - - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_equal     0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_lesser    0                                                                      
+
+   COND       v21  push a sub-mode                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  enter a mode                         MODE_enter            SMOD_SELECT                                                             i_equal     0                                                                      
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     115                                                                    
+     exec     v21  check the previous mode              MODE_prev                                                                                     i_equal     83                                                                     
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (3) M S s - - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_equal     0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_lesser    0                                                                      
+
+   COND       v21  push a another sub-mode                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  enter a mode                         MODE_enter            SMOD_TEXTREG                                                            i_equal     0                                                                      
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     116                                                                    
+     exec     v21  check the previous mode (harder)     MODE_prev                                                                                     i_equal     83                                                                     
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (4) M S s t - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_equal     0                                                                      
+
+   COND       v21  pop twice                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  exit a mode                          MODE_return                                                                                   i_equal     0                                                                      
+     exec     v21  exit a mode                          MODE_return                                                                                   i_equal     0                                                                      
+     exec     v21  check the current mode               MODE_curr                                                                                     i_equal     83                                                                     
+     exec     v21  check the previous mode              MODE_prev                                                                                     i_equal     77                                                                     
+     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (2) M S - - - - - -                           
+     exec     v21  test against a mode                  MODE_not              MODE_MAP                                                                i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              MODE_SOURCE                                                             i_equal     0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_SELECT                                                             i_lesser    0                                                                      
+     exec     v21  test against a mode                  MODE_not              SMOD_TEXTREG                                                            i_lesser    0                                                                      
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+
+
 # end-of-file

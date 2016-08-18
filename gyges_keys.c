@@ -122,14 +122,16 @@ char
 MODE_prev          (void)
 {
    /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
    char        x_mode      = '-';
    /*---(check stack)--------------------*/
-   if (n_modestack > 1)   x_mode = g_modestack [n_modestack - 2];
-   if (x_mode != '-') {
-      if (strchr (s_majors, x_mode) == NULL) {
-         if (n_modestack > 2)   x_mode = g_modestack [n_modestack - 3];
-      }
-   }
+   --rce;  if (n_modestack <= 1)            return rce;
+   /*---(grab previous)------------------*/
+   x_mode = g_modestack [n_modestack - 2];
+   if (strchr (s_majors, x_mode) != NULL)   return x_mode;
+   /*---(go back one more)---------------*/
+   --rce;  if (n_modestack <= 2)            return rce;
+   x_mode = g_modestack [n_modestack - 3];
    /*---(complete)-----------------------*/
    return x_mode;
 }
@@ -1514,6 +1516,29 @@ SMOD_wander        (char a_prev, char a_curr)
    }
    /*---(complete)-----------------------*/
    return  0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___UNIT_TEST_______o () { return; }
+
+char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
+KEYS__unit         (char *a_question)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_list      [MAX_STR];
+   /*---(preprare)-----------------------*/
+   strcpy  (unit_answer, "keys             : question not understood");
+   /*---(selection)----------------------*/
+   if      (strcmp (a_question, "mode_stack"   )  == 0) {
+      MODE_list (x_list);
+      snprintf (unit_answer, LEN_TEXT, "keys mode stack  : %s", x_list);
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
 }
 
 

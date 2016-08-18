@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6f"
-#define     VER_TXT   "text register cut, copy, and paste are working"
+#define     VER_NUM   "1.6g"
+#define     VER_TXT   "added and passed mode stack unit testing"
 
 
 
@@ -1027,6 +1027,7 @@ char      KEYS_row           (char  a_major, char  a_minor);
 char      KEYS_brow          (int);
 char      KEYS_erow          (int);
 char      KEYS_prow          (void);
+char*     KEYS__unit         (char *a_question);
 
 /*---(key movements)--------*/
 char      MOVE_prep          (void);
