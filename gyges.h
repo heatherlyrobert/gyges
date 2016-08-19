@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6i"
-#define     VER_TXT   "localized mode stack in gyges_keys using static vars"
+#define     VER_NUM   "1.6j"
+#define     VER_TXT   "add validation of legal/allowed mode switches"
 
 
 
@@ -991,7 +991,7 @@ char*     REG__getter        (char *a_question, char a_reg);
 
 /*---(mode handling)--------*/
 char      MODE_init          (void);
-char      MODE_push          (char  a_mode);
+char      MODE_enter         (char  a_mode);
 char      MODE_return        (void);
 char      MODE_curr          (void);
 char      MODE_prev          (void);
