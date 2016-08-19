@@ -132,9 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6h"
-#define     VER_TXT   "fixed left and mid function lack of final null"
-
+#define     VER_NUM   "1.6i"
+#define     VER_TXT   "localized mode stack in gyges_keys using static vars"
 
 
 
@@ -295,7 +294,6 @@ struct cACCESSOR {
    char        autocalc;       /* 0=manual, 1=auto                            */
    /*---(mode)------------*/
    char        scrn;                        /* screen display mode            */
-   char        mode;                        /* gyges mode                     */
    char        message     [MAX_STR];       /* message line                   */
    /*---(file hanndling)--*/
    char        f_title     [MAX_STR];       /* specific file base name        */
@@ -776,9 +774,6 @@ tCELL       denada;
 
 /*===[ MODES ]================================================================*/
 /*---(mode stack)------------------------*/
-#define     MAX_STACK   100
-extern char g_modestack   [MAX_STACK];
-extern int  n_modestack;
 /*---(major modes)-----------------------*/
 #define     MODE_GOD       'G'
 #define     MODE_MAP       'M'

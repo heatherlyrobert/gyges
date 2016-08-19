@@ -44,8 +44,10 @@ static      char        s_majors       [MAX_MODES] = "";
 /*===----                      mode stack handling                     ----===*/
 /*====================------------------------------------====================*/
 PRIV void  o___MODE_STACK______o () { return; }
-char g_modestack   [MAX_STACK];
-int  n_modestack;
+#define        MAX_STACK   100
+static char    s_modes    [MAX_STACK];      /* gyges mode stack               */
+static int     s_nmode;                     /* depth of gyges mode stack      */
+static char    s_cmode;                     /* current gyges mode             */
 
 char
 MODE_init          (void)
@@ -61,9 +63,9 @@ MODE_init          (void)
    }
    /*---(validate mode)------------------*/
    for (i = 0; i < MAX_STACK; ++i) {
-      g_modestack [i] = '-';
+      s_modes [i] = '-';
    }
-   n_modestack = 0;
+   s_nmode = 0;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -76,7 +78,7 @@ MODE_enter         (char a_mode)
    int         i           = 0;
    char        x_mode      = '-';
    /*---(check for dup)------------------*/
-   /*> if (g_modestack [n_modestack] == a_mode)  return 1;                            <*/
+   /*> if (s_modes [s_nmode] == a_mode)  return 1;                            <*/
    /*---(validate mode)------------------*/
    for (i = 0; i < MAX_MODES; ++i) {
       if (g_mode_info[i].abbr == '-'   )  break;
@@ -86,11 +88,11 @@ MODE_enter         (char a_mode)
    }
    --rce;  if (x_mode == '-')  return rce;
    /*---(add mode)-----------------------*/
-   --rce;  if (n_modestack >= MAX_STACK)   return rce;
-   g_modestack [n_modestack] = a_mode;
-   ++n_modestack;
+   --rce;  if (s_nmode >= MAX_STACK)   return rce;
+   s_modes [s_nmode] = a_mode;
+   ++s_nmode;
    /*---(set global mode)----------------*/
-   my.mode = a_mode;
+   s_cmode = a_mode;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -102,12 +104,12 @@ MODE_return        (void)
    char        rce         = -10;
    char        x_mode      = '-';
    /*---(check stack)--------------------*/
-   --rce;  if (n_modestack <= 0)  return rce;
-   --n_modestack;
-   g_modestack [n_modestack] = x_mode;
-   x_mode = g_modestack [n_modestack - 1];
+   --rce;  if (s_nmode <= 0)  return rce;
+   --s_nmode;
+   s_modes [s_nmode] = x_mode;
+   x_mode = s_modes [s_nmode - 1];
    /*---(set global mode)----------------*/
-   my.mode = x_mode;
+   s_cmode = x_mode;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -115,7 +117,7 @@ MODE_return        (void)
 char
 MODE_curr          (void)
 {
-   return my.mode;
+   return s_cmode;
 }
 
 char
@@ -125,13 +127,13 @@ MODE_prev          (void)
    char        rce         = -10;
    char        x_mode      = '-';
    /*---(check stack)--------------------*/
-   --rce;  if (n_modestack <= 1)            return rce;
+   --rce;  if (s_nmode <= 1)            return rce;
    /*---(grab previous)------------------*/
-   x_mode = g_modestack [n_modestack - 2];
+   x_mode = s_modes [s_nmode - 2];
    if (strchr (s_majors, x_mode) != NULL)   return x_mode;
    /*---(go back one more)---------------*/
-   --rce;  if (n_modestack <= 2)            return rce;
-   x_mode = g_modestack [n_modestack - 3];
+   --rce;  if (s_nmode <= 2)            return rce;
+   x_mode = s_modes [s_nmode - 3];
    /*---(complete)-----------------------*/
    return x_mode;
 }
@@ -139,7 +141,7 @@ MODE_prev          (void)
 char
 MODE_not           (char a_mode)
 {
-   if (a_mode != g_modestack [n_modestack - 1]) return -1;
+   if (a_mode != s_modes [s_nmode - 1]) return -1;
    return 0;
 }
 
@@ -153,9 +155,9 @@ MODE_list          (char *a_list)
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
    /*---(walk the list)------------------*/
-   sprintf (a_list, "modes (%d)", n_modestack);
+   sprintf (a_list, "modes (%d)", s_nmode);
    for (i = 0; i < 8; ++i) {
-      sprintf (t, " %c", g_modestack [i]);
+      sprintf (t, " %c", s_modes [i]);
       strlcat (a_list, t, MAX_STR);
    }
    /*---(complete)-----------------------*/
@@ -170,14 +172,14 @@ MODE_message       (void)
    char        x_major     = ' ';
    char        x_minor     = ' ';
    for (i = 0; i < MAX_MODES; ++i) {
-      if (g_mode_info[i].abbr == '-'    )  break;
-      if (g_mode_info[i].abbr == my.mode)  break;
+      if (g_mode_info[i].abbr == '-'   )  break;
+      if (g_mode_info[i].abbr == s_cmode)  break;
    }
    if (g_mode_info [i].major == 'y')  {
-      x_major = my.mode;
+      x_major = s_cmode;
    } else {
       x_major = MODE_prev ();
-      x_minor = my.mode;
+      x_minor = s_cmode;
    }
    if (g_mode_info[i].show == 'y') {
       sprintf (my.message, "[%c%c] %-3.3s : %s\n", x_major, x_minor, g_mode_info[i].three, g_mode_info[i].mesg);
