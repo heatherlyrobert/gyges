@@ -535,9 +535,9 @@ CURS_status        (tCELL *a_curr)
    case 'M' :
       MODE_list (msg);
       break;
-   /*> case 't' : /+ text register +/                                                 <* 
-    *>    TREG_list (msg);                                                            <* 
-    *>    break;                                                                      <*/
+   case 't' : /* text register */
+      TREG_entry (my.treg_curr, msg);
+      break;
    case 'v' : /* file version */
    default  :
       if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", my.f_name, tab->ncol, tab->nrow, ver_num, ver_txt);

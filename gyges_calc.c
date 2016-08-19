@@ -700,6 +700,7 @@ CALC__right        (void)
    if (m >= len)  m = len;
    int i;
    for (i = m; i < len; ++i) t[i - m] = r[i];
+   t [m] = '\0';
    /*---(return result)------------------*/
    CALC_pushstr (t);
    /*---(clean up)-----------------------*/
@@ -725,6 +726,7 @@ CALC__mid          (void)
    if (n + m >= len)  m = len - n;
    int i;
    for (i = n; i < n + m; ++i) t[i - n] = r[i];
+   t [m] = '\0';
    /*---(return result)------------------*/
    CALC_pushstr (t);
    /*---(clean up)-----------------------*/

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6g"
-#define     VER_TXT   "added and passed mode stack unit testing"
+#define     VER_NUM   "1.6h"
+#define     VER_TXT   "fixed left and mid function lack of final null"
 
 
 
