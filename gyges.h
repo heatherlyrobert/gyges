@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6k"
-#define     VER_TXT   "fixed problem with being locked in input mode"
+#define     VER_NUM   "1.6l"
+#define     VER_TXT   "reading and writing text registers added"
 
 
 
@@ -978,7 +978,9 @@ char      REG_valuesout      (char a_trim);
 
 char      REG_entry          (char a_reg, char *a_list);
 char      REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min, char *a_max, char a_type);
+char      TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source);
 char      REG_write          (FILE *a_file, int  *a_seq, char a_buf);
+char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);
 
 int       REG__reg2index     (char a_reg);

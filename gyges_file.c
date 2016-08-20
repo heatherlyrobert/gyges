@@ -649,6 +649,7 @@ INPT_rowcol        (
 #define     FIELD_RMIN     5
 #define     FIELD_RMAX     6
 #define     FIELD_RTYPE    7
+#define     FIELD_RDATA    8
 
 char         /*--> parse a register entry ----------------[ flower [--------]-*/
 INPT_register      (void)
@@ -670,14 +671,14 @@ INPT_register      (void)
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(read fields)--------------------*/
-   for (i = FIELD_RREG; i <= FIELD_RTYPE; ++i) {
+   for (i = FIELD_RREG; i <= FIELD_RDATA; ++i) {
       DEBUG_INPT   yLOG_note    ("read next field");
       p = strtok_r (NULL  , s_q, &s_context);
       --rce;  if (p == NULL) {
          DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
          break;
       }
-      strltrim (p, ySTR_BOTH, LEN_RECD);
+      if (i != FIELD_RDATA)  strltrim (p, ySTR_BOTH, LEN_RECD);
       /*> if (p [0] == '-')  p[0] = '\0';                                             <*/
       x_len = strlen (p);
       switch (i) {
@@ -725,7 +726,10 @@ INPT_register      (void)
          }
          x_type = p[0];
          DEBUG_INPT  yLOG_char    ("type"      , x_type);
-         REG_read (x_regid, x_tab, x_beg, x_end, x_min, x_max, x_type);
+         if (x_type != 't')  REG_read (x_regid, x_tab, x_beg, x_end, x_min, x_max, x_type);
+         break;
+      case  FIELD_RDATA : /*-------------*/
+         if (x_type == 't')  TREG_read (x_regid, x_beg, atoi (x_min), atoi (x_max), p + 1);
          break;
       }
       DEBUG_INPT   yLOG_note    ("done with loop");
@@ -2072,6 +2076,9 @@ INPT_main          (char *a_name)
       case 'r' : if (strcmp ("-A-", my.f_vers) == 0)
                     INPT_register ();
                  break;
+      case 's' : if (strcmp ("-A-", my.f_vers) == 0)
+                    INPT_register ();
+                 break;
       }
       /*---(versioned)-------------------*/
       if (strcmp (my.f_type, "versioned") == 0) {
@@ -2389,6 +2396,15 @@ FILE_write         (char *a_name)
    x_len     = strlen (x_bufs);
    for (i = 0; i < x_len; ++i) {
       rc = REG_write    (f, &x_seq, x_bufs [i]);
+   }
+   if (x_seq == 0)  fprintf (f, "# no cells in any lettered registers\n");
+   else             fprintf (f, "# register cells complete, count = %d\n", x_seq);
+   /*---(buffer contents)------------------*/
+   fprintf (f, "\n\n\n#===[[ TEXT REGISTERS ]]=============================================================================================#\n");
+   x_seq     = 0;
+   x_len     = strlen (x_bufs);
+   for (i = 0; i < x_len; ++i) {
+      rc = TREG_write   (f, &x_seq, x_bufs [i]);
    }
    if (x_seq == 0)  fprintf (f, "# no cells in any lettered registers\n");
    else             fprintf (f, "# register cells complete, count = %d\n", x_seq);
