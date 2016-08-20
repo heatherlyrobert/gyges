@@ -672,28 +672,33 @@ MODE_map           (char a_major, char a_minor)
                       break;
       case 's'      : EDIT_start  ("");
                       MODE_enter  (MODE_INPUT  );
+                      MODE_input ('m', 'i');
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
+                      return 'i';
                       break;
       case '='      : EDIT_start  ("=");
                       MODE_enter  (MODE_INPUT  );
+                      MODE_input ('m', 'a');
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
+                      return 'a';
                       break;
       case '#'      : EDIT_start  ("#");
                       MODE_enter  (MODE_INPUT  );
+                      MODE_input ('m', 'a');
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
+                      return 'a';
                       break;
       case '+'      : EDIT_start  ("+");
                       MODE_enter  (MODE_INPUT  );
+                      MODE_input ('m', 'a');
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
+                      return 'a';
                       break;
       case '-'      : EDIT_start  ("-");
                       MODE_enter  (MODE_INPUT  );
+                      MODE_input ('m', 'a');
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
+                      return 'a';
                       break;
       }
       /*---(submodes)--------------------*/
@@ -1077,6 +1082,8 @@ MODE_source   (char a_major, char a_minor)
       case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;
       case 'S' : EDIT_start  ("");
                  MODE_enter  (MODE_INPUT);
+                 MODE_input ('m', 'i');
+                 return 'i';
                  break;
       }
       /*---(going to input)--------------*/
@@ -1129,7 +1136,7 @@ MODE_input         (char  a_major, char  a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [MAX_STR]   = "iam";
+   char        x_majors    [MAX_STR]   = "IiaAm";
    static      x_saved     = '\0';
    int         i           = 0;             /* loop iterator                  */
    char        x_empty     = 164;           /* expansion marker               */

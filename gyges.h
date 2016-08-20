@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6j"
-#define     VER_TXT   "add validation of legal/allowed mode switches"
+#define     VER_NUM   "1.6k"
+#define     VER_TXT   "fixed problem with being locked in input mode"
 
 
 
