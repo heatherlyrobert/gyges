@@ -1022,6 +1022,7 @@ MODE_source   (char a_major, char a_minor)
       case  10  :
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
          CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+         EDIT_pos  ('r');
          MODE_return  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;   /* escape  */
@@ -1031,6 +1032,7 @@ MODE_source   (char a_major, char a_minor)
          if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
             strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
          }
+         EDIT_pos  ('r');
          MODE_return ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
@@ -1070,14 +1072,17 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
+         EDIT_done   ();
          break;
       case  'p' :
          DEBUG_USER   yLOG_note    ("paste after selection text");
          TREG_paste  ('>');
+         EDIT_done   ();
          break;
       case  'P' :
          DEBUG_USER   yLOG_note    ("paste before selection text");
          TREG_paste  ('<');
+         EDIT_done   ();
          break;
       }
       /*---(basic movement)--------------*/

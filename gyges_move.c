@@ -1509,7 +1509,7 @@ EDIT_pos           (char a_minor)
    }
    /*---(special)------------------------*/
    switch (a_minor) {
-   case 'r' : my.bpos = -1;                    break;
+   case 'r' : my.cpos =  0;                    break;
    }
    /*---(wrapup)-------------------------*/
    EDIT_done ();

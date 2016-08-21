@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6p"
-#define     VER_TXT   "added text reg rR replace with selection ability"
+#define     VER_NUM   "1.6q"
+#define     VER_TXT   "fix so source escape returns to beginning of content"
 
 
 
