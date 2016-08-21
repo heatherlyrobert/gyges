@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6n"
-#define     VER_TXT   "added text reg source to actions and curses overview"
+#define     VER_NUM   "1.6o"
+#define     VER_TXT   "added text reg status to fix on selected register"
 
 
 

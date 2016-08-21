@@ -1200,6 +1200,7 @@ REG_bufwrite       (char a_buf)
 static void  o___TEXT_REGS_______o () { return; }
 
 static char  s_treg_curr  = '"';
+static char  s_treg_watch = '"';
 
 typedef struct  cTEXTREG  tTEXTREG;
 struct cTEXTREG {
@@ -1223,7 +1224,8 @@ TREG_init          (void)
    int         i           = 0;
    /*---(registers)----------------------*/
    strlcpy (s_regnames , REG_NAMES, MAX_REG);
-   s_treg_curr = '"';
+   s_treg_curr  = '"';
+   s_treg_watch = '"';
    /*---(purge)--------------------------*/
    for (i = 0; i < MAX_REG; ++i) {
       strlcpy (s_textreg [i].label, "", 10);
@@ -1257,7 +1259,7 @@ TREG_entry         (char a_reg, char *a_list)
       return rce;
    }
    /*---(buffer number)------------------*/
-   if (a_reg == '?')  a_reg = s_treg_curr;   /* if unsure, use current */
+   if (a_reg == REG_CURR)  a_reg = s_treg_watch;  /* for status line */
    x_reg  = REG__reg2index  (a_reg);
    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
    --rce;  if (x_reg < 0)  {
@@ -1414,18 +1416,17 @@ TREG_mode          (int a_major, int a_minor)
          s_treg_curr = '"';
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return  0;
-      } else if (a_minor == '!') {
-         sta_type     = 't';
-         s_treg_curr = '"';
-         MODE_return ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return  0;
       }
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --rce;  if (a_major == ' ') {
       switch (a_minor) {
+      case  '!' :
+         sta_type     = 't';
+         s_treg_watch = s_treg_curr;
+         MODE_return ();
+         break;
       case  '#' :
          DEBUG_USER   yLOG_note    ("wipe text register");
          x_index = REG__reg2index (s_treg_curr);
