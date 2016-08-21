@@ -1060,6 +1060,26 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;
       }
+      /*---(cut/copy/paste)--------------*/
+      switch (a_minor) {
+      case  'y' : case  'Y' :
+         DEBUG_USER   yLOG_note    ("yank selection text");
+         TREG_copy   ();
+         break;
+      case  'd' : case  'D' : case  'x' : case  'X' :
+         DEBUG_USER   yLOG_note    ("delete selection text");
+         TREG_copy   ();
+         TREG_delete ();
+         break;
+      case  'p' :
+         DEBUG_USER   yLOG_note    ("paste after selection text");
+         TREG_paste  ('>');
+         break;
+      case  'P' :
+         DEBUG_USER   yLOG_note    ("paste before selection text");
+         TREG_paste  ('<');
+         break;
+      }
       /*---(basic movement)--------------*/
       switch (a_minor) {
       case '0' : EDIT_pos ('0');    break;

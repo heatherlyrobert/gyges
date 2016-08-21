@@ -536,7 +536,7 @@ CURS_status        (tCELL *a_curr)
       MODE_list (msg);
       break;
    case 't' : /* text register */
-      TREG_entry (my.treg_curr, msg);
+      TREG_entry (REG_CURR, msg);
       break;
    case 'v' : /* file version */
    default  :
@@ -792,7 +792,7 @@ CURS_listtreg      (void)
    int         x_col       = 10;
    /*---(header)-------------------------*/
    attron    (S_COLOR_TITLE);
-   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  ");
+   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  s  ");
    attrset   (0);
    /*---(prepare)------------------------*/
    x_count = strlen (x_reglist);
@@ -811,7 +811,7 @@ CURS_listtreg      (void)
    ++x_row;
    /*---(footer)-------------------------*/
    attron    (S_COLOR_TITLE);
-   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  ");
+   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  s  ");
    attrset   (0);
    /*---(complete)-----------------------*/
    return 0;

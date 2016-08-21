@@ -1154,6 +1154,31 @@ char      SELC_mode          (char  a_major, char  a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;  /* make sure double quote goes in prev char */
          break;
+      case  'y' : case  'Y' :
+         DEBUG_USER   yLOG_note    ("yank selection text");
+         TREG_copy   ();
+         SELC_clear  ();
+         MODE_return ();
+         break;
+      case  'd' : case  'D' : case  'x' : case  'X' :
+         DEBUG_USER   yLOG_note    ("delete selection text");
+         TREG_copy   ();
+         TREG_delete ();
+         SELC_clear  ();
+         MODE_return ();
+         break;
+      case  'p' :
+         DEBUG_USER   yLOG_note    ("paste after selection text");
+         TREG_paste  ('>');
+         SELC_clear  ();
+         MODE_return ();
+         break;
+      case  'P' :
+         DEBUG_USER   yLOG_note    ("paste before selection text");
+         TREG_paste  ('<');
+         SELC_clear  ();
+         MODE_return ();
+         break;
       }
       /*---(actions)---------------------*/
       switch (a_minor) {

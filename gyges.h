@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6l"
-#define     VER_TXT   "reading and writing text registers added"
+#define     VER_NUM   "1.6m"
+#define     VER_TXT   "add text register copy and paste to source mode"
 
 
 
@@ -344,7 +344,6 @@ struct cACCESSOR {
    char        mark_plus   [MAX_STR];       /* current marks with mark id     */
    /*---(registers)-------*/
    char        reg_curr;
-   char        treg_curr;
    /*---(cursus)----------*/
    char        info_win;
 };
@@ -950,6 +949,8 @@ char      MARK_read          (char a_mark, char *a_label);
 
 
 /*===[ REG  ]=================================================================*/
+#define   REG_CURR           '!'
+
 char      REG_init           (void);
 char      REG_clear          (char a_reg, char a_init);
 char      REG_purge          (char a_init);
@@ -959,11 +960,15 @@ char      REG__unhook        (tCELL *a_curr);
 
 char      REG_mode           (int a_prev , int a_curr);
 
-char      TREG_mode          (int a_prev , int a_curr);
-char      TREG_entry         (char a_reg, char *a_list);
+/*---(text registers)-------*/
+char      TREG_init          (void);
+char      TREG_entry         (char  a_reg   , char *a_list);
 char      TREG_delete        (void);
 char      TREG_copy          (void);
-char      TREG_paste         (char a_dir);
+char      TREG_paste         (char  a_dir);
+char      TREG_mode          (int   a_major , int   a_minor);
+char      TREG_read          (char  a_reg, char *a_label, int a_beg, int a_end, char *a_source);
+char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
@@ -978,9 +983,7 @@ char      REG_valuesout      (char a_trim);
 
 char      REG_entry          (char a_reg, char *a_list);
 char      REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min, char *a_max, char a_type);
-char      TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source);
 char      REG_write          (FILE *a_file, int  *a_seq, char a_buf);
-char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_bufwrite       (char a_buf);
 
 int       REG__reg2index     (char a_reg);
