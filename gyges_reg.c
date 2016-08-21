@@ -1356,6 +1356,37 @@ TREG_copy          (void)
 }
 
 char          /* PURPOSE : process keys for register actions -----------------*/
+TREG_replace       (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_index     =   0;
+   int         x_len       =   0;
+   int         x_gap       =   0;
+   int         x_start     =   0;
+   char        x_null      = '-';
+   int         i           =   0;
+   /*---(identify register)--------------*/
+   x_index = REG__reg2index (s_treg_curr);
+   /*---(set the start)------------------*/
+   x_start = my.cpos;
+   /*---(open)---------------------------*/
+   x_len   = strlen (g_contents);
+   x_gap   = s_textreg [x_index].len;
+   if (x_start + x_gap >= x_len)  x_null = 'y';
+   /*---(open)---------------------------*/
+   x_len   = s_textreg [x_index].len;
+   for (i  = 0; i < x_len; ++i) {
+      g_contents [i + x_start] = s_textreg [x_index].data [i];
+   }
+   /*---(final null)---------------------*/
+   if (x_null == 'y') {
+      g_contents [x_start + x_gap + 1] == '\0';
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char          /* PURPOSE : process keys for register actions -----------------*/
 TREG_paste         (char a_dir)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1454,33 +1485,43 @@ TREG_mode          (int a_major, int a_minor)
          DEBUG_USER   yLOG_note    ("yank selection text");
          TREG_copy   ();
          MODE_return ();
-         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'x' : case  'X' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_clear  ();
          MODE_return ();
-         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'd' : case  'D' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
+         EDIT_done ();
          MODE_return ();
-         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         break;
+      case  'r' : case  'R' :
+         DEBUG_USER   yLOG_note    ("replace selection text");
+         TREG_replace();
+         EDIT_done ();
+         MODE_return ();
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'p' :
          DEBUG_USER   yLOG_note    ("paste after selection text");
          TREG_paste  ('>');
+         EDIT_done ();
          MODE_return ();
-         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'P' :
          DEBUG_USER   yLOG_note    ("paste before selection text");
          TREG_paste  ('<');
+         EDIT_done ();
          MODE_return ();
-         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       }
    }

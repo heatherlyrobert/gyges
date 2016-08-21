@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6o"
-#define     VER_TXT   "added text reg xX clear selection ability"
+#define     VER_NUM   "1.6p"
+#define     VER_TXT   "added text reg rR replace with selection ability"
 
 
 
@@ -966,6 +966,7 @@ char      TREG_entry         (char  a_reg   , char *a_list);
 char      TREG_clear         (void);
 char      TREG_delete        (void);
 char      TREG_copy          (void);
+char      TREG_replace       (void);
 char      TREG_paste         (char  a_dir);
 char      TREG_mode          (int   a_major , int   a_minor);
 char      TREG_read          (char  a_reg, char *a_label, int a_beg, int a_end, char *a_source);
