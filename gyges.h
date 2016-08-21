@@ -133,7 +133,7 @@
 
 /* rapidly evolving version number to aid with visual change confirmation     */
 #define     VER_NUM   "1.6o"
-#define     VER_TXT   "added text reg status to fix on selected register"
+#define     VER_TXT   "added text reg xX clear selection ability"
 
 
 
@@ -963,6 +963,7 @@ char      REG_mode           (int a_prev , int a_curr);
 /*---(text registers)-------*/
 char      TREG_init          (void);
 char      TREG_entry         (char  a_reg   , char *a_list);
+char      TREG_clear         (void);
 char      TREG_delete        (void);
 char      TREG_copy          (void);
 char      TREG_paste         (char  a_dir);

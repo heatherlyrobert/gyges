@@ -1297,6 +1297,19 @@ TREG_entry         (char a_reg, char *a_list)
 }
 
 char          /* PURPOSE : process keys for register actions -----------------*/
+TREG_clear         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           =   0;
+   /*---(delete)-------------------------*/
+   for (i = SELC_from (); i <= SELC_to (); ++i) {
+      g_contents [i] = ' ';
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char          /* PURPOSE : process keys for register actions -----------------*/
 TREG_delete        (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1441,22 +1454,33 @@ TREG_mode          (int a_major, int a_minor)
          DEBUG_USER   yLOG_note    ("yank selection text");
          TREG_copy   ();
          MODE_return ();
+         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
-      case  'd' : case  'D' : case  'x' : case  'X' :
+      case  'x' : case  'X' :
+         DEBUG_USER   yLOG_note    ("delete selection text");
+         TREG_copy   ();
+         TREG_clear  ();
+         MODE_return ();
+         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         break;
+      case  'd' : case  'D' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
          MODE_return ();
+         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'p' :
          DEBUG_USER   yLOG_note    ("paste after selection text");
          TREG_paste  ('>');
          MODE_return ();
+         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'P' :
          DEBUG_USER   yLOG_note    ("paste before selection text");
          TREG_paste  ('<');
          MODE_return ();
+         if (MODE_prev == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       }
    }

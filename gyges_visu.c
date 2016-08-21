@@ -1160,7 +1160,14 @@ char      SELC_mode          (char  a_major, char  a_minor)
          SELC_clear  ();
          MODE_return ();
          break;
-      case  'd' : case  'D' : case  'x' : case  'X' :
+      case  'x' : case  'X' :
+         DEBUG_USER   yLOG_note    ("delete selection text");
+         TREG_copy   ();
+         TREG_clear  ();
+         SELC_clear  ();
+         MODE_return ();
+         break;
+      case  'd' : case  'D' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
