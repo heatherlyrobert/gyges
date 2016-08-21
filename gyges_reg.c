@@ -1330,11 +1330,12 @@ TREG_copy          (void)
    /*---(copy)---------------------------*/
    strlcpy (s_textreg [x_index].data, x_start, x_len + 1);
    /*---(fill in details)----------------*/
-   s_textreg [x_index].len  = x_len;
-   s_textreg [x_index].bpos = SELC_from ();
-   s_textreg [x_index].epos = SELC_to   ();
+   s_textreg [x_index].len    = x_len;
+   s_textreg [x_index].bpos   = SELC_from ();
+   s_textreg [x_index].epos   = SELC_to   ();
    LOC_ref (CTAB, CCOL, CROW, 0, x_label );
    strlcpy (s_textreg [x_index].label, x_label, 10);
+   s_textreg [x_index].source = TREG_USER;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1483,10 +1484,11 @@ TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_sou
    }
    /*---(data)---------------------------*/
    strlcpy (s_textreg [x_reg].label, a_label , 10);
-   s_textreg [x_reg].bpos  = a_beg;
-   s_textreg [x_reg].epos  = a_end;
+   s_textreg [x_reg].bpos   = a_beg;
+   s_textreg [x_reg].epos   = a_end;
    strlcpy (s_textreg [x_reg].data , a_source, MAX_STR);
-   s_textreg [x_reg].len   = strllen (s_textreg [x_reg].data, MAX_STR);
+   s_textreg [x_reg].len    = strllen (s_textreg [x_reg].data, MAX_STR);
+   s_textreg [x_reg].source = TREG_FILE;
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;

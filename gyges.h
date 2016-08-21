@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6m"
-#define     VER_TXT   "add text register copy and paste to source mode"
+#define     VER_NUM   "1.6n"
+#define     VER_TXT   "added text reg source to actions and curses overview"
 
 
 

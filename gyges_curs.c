@@ -803,7 +803,7 @@ CURS_listtreg      (void)
       /*---(lower case)------------------*/
       x_reg = x_reglist [i];
       TREG_entry  (x_reg, x_line);
-      if (x_line  [6] != '-')  attron (S_COLOR_CURRENT);
+      if (x_line  [7] != '-')  attron (S_COLOR_CURRENT);
       else                     attron (S_COLOR_VISUAL);
       mvprintw  (x_row, x_col, x_line);
       attrset   (0);
