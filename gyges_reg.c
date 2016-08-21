@@ -1523,6 +1523,22 @@ TREG_mode          (int a_major, int a_minor)
          MODE_return ();
          if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
+      case  'g' :
+         DEBUG_USER   yLOG_note    ("go to beginning selection position");
+         x_index = REG__reg2index (s_treg_curr);
+         my.cpos = s_textreg [x_index].bpos;
+         EDIT_done ();
+         MODE_return ();
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         break;
+      case  'G' :
+         DEBUG_USER   yLOG_note    ("go to ending selection position");
+         x_index = REG__reg2index (s_treg_curr);
+         my.cpos = s_textreg [x_index].epos;
+         EDIT_done ();
+         MODE_return ();
+         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         break;
       }
    }
    DEBUG_USER   yLOG_exit    (__FUNCTION__);

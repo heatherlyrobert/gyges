@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6q"
-#define     VER_TXT   "fix so source escape returns to beginning of content"
+#define     VER_NUM   "1.6r"
+#define     VER_TXT   "add text register gG ability to goto reg beg/end"
 
 
 
