@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6r"
-#define     VER_TXT   "add text register gG ability to goto reg beg/end"
+#define     VER_NUM   "1.6s"
+#define     VER_TXT   "fixed sub_mode replace empty/saved chars and unit test"
 
 
 

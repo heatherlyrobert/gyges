@@ -896,95 +896,12 @@ SMOD_buffer   (char a_major, char a_minor)
    return 0;
 }
 
-char         /*--> replace sub-mode ----------------------[--------[--------]-*/
-SMOD_replace  (char a_major, char a_minor)
-{  /*---(design notes)-------------------*/
-   /*
-    *   very limited sub-mode of SOURCE mode.  allows a user to "type over"
-    *   existing text including past the end of the line.  there are no
-    *   special keys except ESCAPE to return to SOURCE mode.
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_majors    [MAX_STR]  = "rRm";
-   static      x_saved     = '\0';
-   static      x_append    = '-';
-   char        x_empty     = 164;           /* expansion marker               */
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
-   --rce;  if (MODE_not (SMOD_REPLACE)) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);
-   --rce;  if (strchr (x_majors, a_major) == 0) {
-      DEBUG_USER   yLOG_note    ("a_major is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   EDIT_prep   ();
-   /*---(mode changes)-------------------*/
-   if (a_minor == 27) {
-      DEBUG_USER   yLOG_note    ("escape, return to source mode");
-      if (x_append == 'y') {
-         g_contents [my.cpos] = '\0';
-      } else if (x_saved != '\0') {
-         g_contents [my.cpos] = x_saved;
-      }
-      x_append = '-';
-      EDIT_done   ();
-      MODE_return ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(handle keys)--------------------*/
-   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-   DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
-   if (a_major == 'm') {
-      DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
-      x_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = x_empty;
-      EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   if (a_major == 'r') {
-      DEBUG_USER   yLOG_note    ("replace the marked character");
-      g_contents [my.cpos] = a_minor;
-      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
-      MODE_return ();
-      EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   if (a_major == 'R') {
-      DEBUG_USER   yLOG_note    ("replace the marked character");
-      x_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = a_minor;
-      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
-      ++(my.cpos);
-   }
-   /*---(correct current position)-------*/
-   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-   DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
-   if (my.cpos  >= my.npos) {
-      DEBUG_USER   yLOG_note    ("update the end pos");
-      g_contents [my.npos    ] = x_empty;
-      g_contents [my.npos + 1] = '\0';
-      x_append = 'y';
-   }
-   /*---(wrap up)------------------------*/
-   EDIT_done   ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return a_major;
-}
+
+
+/*====================------------------------------------====================*/
+/*===----                        content editing                       ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___CONTENT_________o () { return; }
 
 char          /* PURPOSE : process keys for cell edit mode -------------------*/
 MODE_source   (char a_major, char a_minor)
@@ -1151,6 +1068,99 @@ MODE_source   (char a_major, char a_minor)
    return 0;
 }
 
+static char  s_saved = '\0';
+
+char         /*--> replace sub-mode ----------------------[--------[--------]-*/
+SMOD_replace  (char a_major, char a_minor)
+{  /*---(design notes)-------------------*/
+   /*
+    *   very limited sub-mode of SOURCE mode.  allows a user to "type over"
+    *   existing text including past the end of the line.  there are no
+    *   special keys except ESCAPE to return to SOURCE mode.
+    */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_majors    [MAX_STR]  = "rRm";
+   static      x_append    = '-';
+   char        x_empty     = 164;           /* expansion marker               */
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
+   --rce;  if (MODE_not (SMOD_REPLACE)) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);
+   --rce;  if (strchr (x_majors, a_major) == 0) {
+      DEBUG_USER   yLOG_note    ("a_major is not valid");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   EDIT_prep   ();
+   /*---(mode changes)-------------------*/
+   if (a_minor == 27) {
+      DEBUG_USER   yLOG_note    ("escape, return to source mode");
+      if (x_append == 'y') {
+         g_contents [my.cpos] = '\0';
+      }
+      if (s_saved != '\0') {
+         g_contents [my.cpos] = s_saved;
+      }
+      x_append = '-';
+      EDIT_done   ();
+      MODE_return ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(handle keys)--------------------*/
+   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+   DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
+   if (a_major == 'm') {
+      DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
+      s_saved = g_contents [my.cpos];
+      g_contents [my.cpos] = x_empty;
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_major == 'r') {
+      DEBUG_USER   yLOG_note    ("replace the marked character");
+      g_contents [my.cpos] = a_minor;
+      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
+      MODE_return ();
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_major == 'R') {
+      DEBUG_USER   yLOG_note    ("replace the marked character");
+      g_contents [my.cpos] = a_minor;
+      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
+      ++(my.cpos);
+      s_saved = g_contents [my.cpos];
+      g_contents [my.cpos] = x_empty;;
+   }
+   /*---(correct current position)-------*/
+   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+   DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
+   if (my.cpos  >= my.npos) {
+      DEBUG_USER   yLOG_note    ("update the end pos");
+      g_contents [my.npos    ] = x_empty;
+      g_contents [my.npos + 1] = '\0';
+      x_append = 'y';
+   }
+   /*---(wrap up)------------------------*/
+   EDIT_done   ();
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return a_major;
+}
+
 char               /* PURPOSE : process keys for input mode ------------------*/
 MODE_input         (char  a_major, char  a_minor)
 {
@@ -1162,7 +1172,7 @@ MODE_input         (char  a_major, char  a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        x_majors    [MAX_STR]   = "IiaAm";
-   static      x_saved     = '\0';
+   static      s_saved     = '\0';
    int         i           = 0;             /* loop iterator                  */
    char        x_empty     = 164;           /* expansion marker               */
    /*---(header)-------------------------*/
@@ -1190,7 +1200,7 @@ MODE_input         (char  a_major, char  a_minor)
       if (a_minor == 'a')  ++(my.cpos);
       DEBUG_USER   yLOG_value   ("total pos" , my.npos);
       DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);
-      x_saved = g_contents [my.cpos];
+      s_saved = g_contents [my.cpos];
       for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
       g_contents [my.cpos] = x_empty;
       EDIT_done   ();

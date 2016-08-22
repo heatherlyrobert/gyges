@@ -1561,7 +1561,7 @@ MOVE_unit          (char *a_question, int a_num)
       snprintf(unit_answer, LEN_TEXT, "s_move edit con  : :%-*.*s:", my.apos, my.apos, g_contents + my.bpos);
    }
    else if (strcmp(a_question, "edit_pos")       == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move edit pos  : n=%3d, a=%3d, b=%3d, c=%3d %c, e=%3d", my.npos, my.apos, my.bpos, my.cpos, (g_contents[my.cpos] > ' ') ? g_contents [my.cpos] : ' ', my.epos);
+      snprintf(unit_answer, LEN_TEXT, "s_move edit pos  : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", my.npos, my.apos, my.bpos, my.cpos, my.epos);
    }
    /*---(complete)-----------------------*/
    return unit_answer;
