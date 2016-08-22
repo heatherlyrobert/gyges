@@ -70,11 +70,11 @@ main (int argc, char *argv[])
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(translate unprintable)-------*/
-      if      (cch ==  0 )  snprintf (cmd,   9, " %c %c " , sch, 216);
-      else if (cch == 10 )  snprintf (cmd,   9, " %c %c " , sch, 182);
-      else if (cch == 27 )  snprintf (cmd,   9, " %c %c " , sch, 234);
-      else if (cch == 32 )  snprintf (cmd,   9, " %c %c " , sch, 223);
-      else if (cch == 127)  snprintf (cmd,   9, " %c %c " , sch, 171);
+      if      (cch ==  0 )  snprintf (cmd,   9, " %c %c " , sch, CHAR_NULL );
+      else if (cch == 10 )  snprintf (cmd,   9, " %c %c " , sch, CHAR_ENTER);
+      else if (cch == 27 )  snprintf (cmd,   9, " %c %c " , sch, CHAR_ESC  );
+      else if (cch == 32 )  snprintf (cmd,   9, " %c %c " , sch, CHAR_SPACE);
+      else if (cch == 127)  snprintf (cmd,   9, " %c %c " , sch, CHAR_BS   );
       else if (cch <= 32 )  snprintf (cmd,   9, " %c %02x", sch, cch);
       else                  snprintf (cmd,   9, " %c %c " , sch, cch);
       /*---(setup for next keystroke)----*/

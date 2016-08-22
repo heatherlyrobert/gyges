@@ -1068,7 +1068,6 @@ MODE_source   (char a_major, char a_minor)
    return 0;
 }
 
-static char  s_saved = '\0';
 
 char         /*--> replace sub-mode ----------------------[--------[--------]-*/
 SMOD_replace  (char a_major, char a_minor)
@@ -1081,8 +1080,8 @@ SMOD_replace  (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        x_majors    [MAX_STR]  = "rRm";
-   static      x_append    = '-';
-   char        x_empty     = 164;           /* expansion marker               */
+   static char x_append    = '-';
+   static char x_saved = '\0';
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -1108,8 +1107,8 @@ SMOD_replace  (char a_major, char a_minor)
       if (x_append == 'y') {
          g_contents [my.cpos] = '\0';
       }
-      if (s_saved != '\0') {
-         g_contents [my.cpos] = s_saved;
+      if (x_saved != '\0') {
+         g_contents [my.cpos] = x_saved;
       }
       x_append = '-';
       EDIT_done   ();
@@ -1122,8 +1121,8 @@ SMOD_replace  (char a_major, char a_minor)
    DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
    if (a_major == 'm') {
       DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
-      s_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = x_empty;
+      x_saved = g_contents [my.cpos];
+      g_contents [my.cpos] = CHAR_PLACE;
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
@@ -1142,15 +1141,15 @@ SMOD_replace  (char a_major, char a_minor)
       g_contents [my.cpos] = a_minor;
       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
       ++(my.cpos);
-      s_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = x_empty;;
+      x_saved = g_contents [my.cpos];
+      g_contents [my.cpos] = CHAR_PLACE;
    }
    /*---(correct current position)-------*/
    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
    DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
    if (my.cpos  >= my.npos) {
       DEBUG_USER   yLOG_note    ("update the end pos");
-      g_contents [my.npos    ] = x_empty;
+      g_contents [my.npos    ] = CHAR_PLACE;
       g_contents [my.npos + 1] = '\0';
       x_append = 'y';
    }
@@ -1172,9 +1171,7 @@ MODE_input         (char  a_major, char  a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        x_majors    [MAX_STR]   = "IiaAm";
-   static      s_saved     = '\0';
    int         i           = 0;             /* loop iterator                  */
-   char        x_empty     = 164;           /* expansion marker               */
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -1200,9 +1197,8 @@ MODE_input         (char  a_major, char  a_minor)
       if (a_minor == 'a')  ++(my.cpos);
       DEBUG_USER   yLOG_value   ("total pos" , my.npos);
       DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);
-      s_saved = g_contents [my.cpos];
       for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
-      g_contents [my.cpos] = x_empty;
+      g_contents [my.cpos] = CHAR_PLACE;
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_minor;

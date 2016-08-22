@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6s"
-#define     VER_TXT   "fixed sub_mode replace empty/saved chars and unit test"
+#define     VER_NUM   "1.6t"
+#define     VER_TXT   "change extended display characters to constants (easier)"
 
 
 
@@ -862,6 +862,19 @@ int     col_far;
 
 #define     LEN_TEXT  2000
 extern      char          unit_answer [ LEN_TEXT ];
+
+
+/*---(character constants)------------*/
+#define   CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
+#define   CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
+#define   CHAR_FIELD      167   /* §  field separator  ( 31)   */
+#define   CHAR_BS         171   /* «  backspace        (127)   */
+#define   CHAR_ENTER      182   /* ¶  return/newline   ( 10)   */
+#define   CHAR_TAB        187   /* »  tab              (  9)   */
+#define   CHAR_MARK       215   /* ×  mark             (  -)   */
+#define   CHAR_NULL       216   /* Ø  null             (  0)   */
+#define   CHAR_ESC        234   /* ê  escape           ( 27)   */
+#define   CHAR_SPACE      223   /* ß  space            ( 32)   */
 
 
 /*===[[ PROTOTYPES ]]=====================================*/

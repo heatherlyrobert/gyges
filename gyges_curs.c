@@ -402,7 +402,6 @@ CURS_formula       (tCELL *a_curr)
    char      msg[500]  = "";                   /* temporary display message   */
    int       len       = 0;
    int       w         = 0;
-   char      x_zilch   = 216;
    int       x_beg     = 0;
    int       x_end     = 0;
    int       x_gap     = 0;
@@ -481,7 +480,7 @@ CURS_formula       (tCELL *a_curr)
    }
    /*---(boundary markers)---------------*/
    attron (S_COLOR_VISUAL );
-   sprintf (msg, "%c", 216);
+   sprintf (msg, "%c", CHAR_NULL );
    if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);
    else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");
    else                              mvprintw (row_formula, s_start - 1, "<");

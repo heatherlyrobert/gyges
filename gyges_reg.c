@@ -895,11 +895,11 @@ REG_valuesin      (char a_style)
       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
       while (p != NULL) {
          DEBUG_INPT  yLOG_point   ("p"         , p);
-         strldchg (p,  29, 166, MAX_STR);   /* group     */
-         strldchg (p,  31, 167, MAX_STR);   /* field     */
-         strldchg (p,   9, 187, MAX_STR);   /* tab       */
-         strldchg (p,  27, 234, MAX_STR);   /* escape    */
-         strldchg (p, 127, 171, MAX_STR);   /* del       */
+         strldchg (p,  29, CHAR_GROUP, MAX_STR);   /* group     */
+         strldchg (p,  31, CHAR_FIELD, MAX_STR);   /* field     */
+         strldchg (p,   9, CHAR_TAB  , MAX_STR);   /* tab       */
+         strldchg (p,  27, CHAR_ESC  , MAX_STR);   /* escape    */
+         strldchg (p, 127, CHAR_BS   , MAX_STR);   /* del       */
          DEBUG_INPT  yLOG_info    ("value"     , p);
          DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
          x_curr = CELL_change (CHG_INPUT, CTAB, x_col, x_row, p);
@@ -978,21 +978,21 @@ REG_valuesout     (char a_style)
       else {
          /*---(printable)----------------*/
          strlcpy  (x_print , curr->p, MAX_STR);
-         strldchg (x_print , 166,  29, MAX_STR);   /* group     */
-         strldchg (x_print , 167,  31, MAX_STR);   /* field     */
-         strldchg (x_print , 187,   9, MAX_STR);   /* tab       */
-         strldchg (x_print , 234,  27, MAX_STR);   /* escape    */
-         strldchg (x_print , 171, 127, MAX_STR);   /* escape    */
+         strldchg (x_print , CHAR_GROUP,  29, MAX_STR);   /* group     */
+         strldchg (x_print , CHAR_FIELD,  31, MAX_STR);   /* field     */
+         strldchg (x_print , CHAR_TAB  ,   9, MAX_STR);   /* tab       */
+         strldchg (x_print , CHAR_ESC  ,  27, MAX_STR);   /* escape    */
+         strldchg (x_print , CHAR_BS   , 127, MAX_STR);   /* del       */
          strlcpy  (x_trim  , x_print, MAX_STR);
          /*---(trimmed printable)--------*/
          strltrim (x_trim, ySTR_BOTH, MAX_STR);
          /*---(source)-------------------*/
          strlcpy  (x_source, curr->s, MAX_STR);
-         strldchg (x_source, 166,  29, MAX_STR);   /* group     */
-         strldchg (x_source, 167,  31, MAX_STR);   /* field     */
-         strldchg (x_source, 187,   9, MAX_STR);   /* tab       */
-         strldchg (x_source, 234,  27, MAX_STR);   /* escape    */
-         strldchg (x_source, 171, 127, MAX_STR);   /* escape    */
+         strldchg (x_source, CHAR_GROUP,  29, MAX_STR);   /* group     */
+         strldchg (x_source, CHAR_FIELD,  31, MAX_STR);   /* field     */
+         strldchg (x_source, CHAR_TAB  ,   9, MAX_STR);   /* tab       */
+         strldchg (x_source, CHAR_ESC  ,  27, MAX_STR);   /* escape    */
+         strldchg (x_source, CHAR_BS   , 127, MAX_STR);   /* del       */
          switch (a_style) {
          case 'v' : fprintf (f, "%s"                  , x_print);
                     break;
@@ -1394,7 +1394,6 @@ TREG_paste         (char a_dir)
    int         x_len       =   0;
    int         x_gap       =   0;
    int         x_start     =   0;
-   char        x_empty     = 164;           /* expansion marker               */
    int         i           =   0;
    /*---(identify register)--------------*/
    x_index = REG__reg2index (s_treg_curr);
@@ -1406,7 +1405,7 @@ TREG_paste         (char a_dir)
    x_gap   = s_textreg [x_index].len;
    for (i = x_len; i >= x_start; --i) {
       g_contents [i + x_gap] = g_contents [i];
-      g_contents [i]         = x_empty;
+      g_contents [i]         = CHAR_PLACE;
    }
    /*---(fill)---------------------------*/
    x_len   = s_textreg [x_index].len;
