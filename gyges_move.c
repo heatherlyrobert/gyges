@@ -1463,7 +1463,7 @@ EDIT_pos           (char a_minor)
    int  avail = my.apos;                /* available positions                   */
    int  half  = avail / 2;           /* half the viewable positions           */
    int  qtr   = avail / 4;           /* quarter the viewable positions        */
-   char        x_minors    [MAX_STR]  = "0L-+m$Tt.bB^k,jvwWer";
+   char        x_minors    [MAX_STR]  = "0l-+m$Tt.bB^k,jvwWer";
    /*---(header)-------------------------*/
    DEBUG_USER  yLOG_enter   (__FUNCTION__);
    DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);

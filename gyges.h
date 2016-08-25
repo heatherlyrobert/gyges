@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6t"
-#define     VER_TXT   "change extended display characters to constants (easier)"
+#define     VER_NUM   "1.6u"
+#define     VER_TXT   "added export to vi_clip with full string outcome (mM)"
 
 
 

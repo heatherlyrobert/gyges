@@ -9700,129 +9700,336 @@ SCRP          v21  test vi_input mode                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
+   GROUP      v21  check appending into a null and deleting past beginning      ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
+
    COND       v21  initialize contents to empty                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  copy an empty string to contents     - - - - - - - - - -   strlcpy (g_contents, "", MAX_STR);                                                                                                                              
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
      exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
      exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  reset values                         MODE_source           ' ', '0'                                                                i_equal     0                                                                      
 
    COND       v21  append (not insert) text into null contents                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to source           MODE_source           ' ', 'i'                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to source           MODE_source           ' ', 'a'                                                                i_equal     'a'                                                                    
      exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 1) :¤:                                         
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                         
 
    COND       v21  add a first character                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 't'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 1) :t:                                         
+     exec     v21  send a character to input            MODE_input            'a', 't'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 2) :t¤:                                        
 
    COND       v21  take one away                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                          
 
    COND       v21  try to take another (illegal)                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                          
 
    COND       v21  try to take a third (illegal)                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                          
 
    COND       v21  add in two characters                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 't'                                                                i_equal     0                                                                      
-     exec     v21  send a character to input            MODE_input            'a', 'e'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2: 2) :te:                                        
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+     exec     v21  send a character to input            MODE_input            'a', 't'                                                                i_equal     'a'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 'e'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2: 3) :te¤:                                        
 
    COND       v21  take one away                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 1) :t:                                         
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+     exec     v21  send a character to input            MODE_input            'a', 127                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 2) :t¤:                                         
 
    COND       v21  add a second one back                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'a', 'e'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2: 2) :te:                                        
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+     exec     v21  send a character to input            MODE_input            'a', 'e'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2: 3) :te¤:                                        
 
    COND       v21  add two more                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 's'                                                                i_equal     0                                                                      
-     exec     v21  send a character to input            MODE_input            ' ', 't'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 4: 4) :test:                                      
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+     exec     v21  send a character to input            MODE_input            'a', 's'                                                                i_equal     'a'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 't'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 4: 5) :test¤:                                      
 
    COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 27                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 4: 4) :test:                                      
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 3: 4) :test:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
 
-   COND       v21  try to go back in wrong mode                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
-     exec     v21  send a character to input            MODE_input            ' ', '_'                                                                i_not       0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (s) : ( 2: 4) :test:                                      
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
+   GROUP      v21  check inserting into a null and deleting past beginning      ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
 
-   COND       v21  get back into input in the middle                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  initialize contents to empty                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  copy an empty string to contents     - - - - - - - - - -   strlcpy (g_contents, "", MAX_STR);                                                                                                                              
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  reset values                         MODE_source           ' ', '0'                                                                i_equal     0                                                                      
 
-   COND       v21  add a new character                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', '_'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (s) : ( 3: 5) :te_st:                                     
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  insert (not append) text into null contents                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'i'                                                                i_equal     'i'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                         
 
-   COND       v21  add more characters                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 'j'                                                                i_equal     0                                                                      
-     exec     v21  send a character to input            MODE_input            ' ', 'o'                                                                i_equal     0                                                                      
-     exec     v21  send a character to input            MODE_input            ' ', 'e'                                                                i_equal     0                                                                      
-     exec     v21  send a character to input            MODE_input            ' ', '_'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (s) : ( 7: 9) :te_joe_st:                                 
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  add a first character                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 't'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 2) :t¤:                                        
 
-   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 27                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (s) : ( 7: 9) :te_joe_st:                                 
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
+   COND       v21  take one away                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 127                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                          
 
-   COND       v21  get back into input before the beginning                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = -20;                                                                                                                                                 
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  try to take another (illegal)                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 127                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                          
 
-   COND       v21  add a new character                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 'Z'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 1:10) :Zte_joe_st:                                
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  try to take a third (illegal)                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 127                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 1) :¤:                                          
 
-   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 27                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 1:10) :Zte_joe_st:                                
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
+   COND       v21  add in two characters                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 't'                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 'e'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2: 3) :te¤:                                        
 
-   COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  take one away                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 127                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 1: 2) :t¤:                                         
 
-   COND       v21  add a new character                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 'Y'                                                                i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : (11:11) :Zte_joe_stY:                               
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  add a second one back                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 'e'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2: 3) :te¤:                                        
 
-   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            ' ', 27                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : (11:11) :Zte_joe_stY:                               
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
+   COND       v21  add two more                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 's'                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 't'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 4: 5) :test¤:                                      
 
-   COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
-     get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 3: 4) :test:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+
+   GROUP      v21  check appending several places                               ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
+
+   COND       v21  append text to the end of all contents                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  send a character to source           MODE_source           ' ', 'A'                                                                i_equal     'a'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 4: 5) :test¤:                                      
+
+   COND       v21  add a couple of characters                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'a', '5'                                                                i_equal     'a'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', '7'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 6: 7) :test57¤:                                      
+
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (7) : ( 5: 6) :test57:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+
+   COND       v21  move to the middle of the contents                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  move left                            MODE_source           ' ', 'h'                                                                i_equal     0                                                                      
+     exec     v21  move left                            MODE_source           ' ', 'h'                                                                i_equal     0                                                                      
+     exec     v21  move left                            MODE_source           ' ', 'h'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (s) : ( 2: 6) :test57:                                      
+
+   COND       v21  append text to the current position                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  send a character to source           MODE_source           ' ', 'a'                                                                i_equal     'a'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 3: 7) :tes¤t57:                                      
+
+   COND       v21  add a couple of characters                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'a', ' '                                                                i_equal     'a'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 'I'                                                                i_equal     'a'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 'P'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 6:10) :tes IP¤t57:                                      
+
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (P) : ( 5: 9) :tes IPt57:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+
+   COND       v21  append text to the end of all contents, again                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                  
+     exec     v21  send a character to source           MODE_source           ' ', 'A'                                                                i_equal     'a'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 9:10) :tes IPt57¤:                                      
+
+   COND       v21  add a couple of characters                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'a', '_'                                                                i_equal     'a'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', '$'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : (11:12) :tes IPt57_$¤:                                      
+
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'a', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ($) : (10:11) :tes IPt57_$:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+
+   GROUP      v21  check inserting several places                               ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
+
+   COND       v21  insert text to the beginning of all contents                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  send a character to source           MODE_source           ' ', 'I'                                                                i_equal     'i'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:12) :¤tes IPt57_$:                                      
+
+   COND       v21  add a couple of characters                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', '('                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', '_'                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', ')'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 3:15) :(_)¤tes IPt57_$:                                      
+
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 3:14) :(_)tes IPt57_$:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+
+   COND       v21  move to the right, into the contents                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  move left                            MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
+     exec     v21  move left                            MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
+     exec     v21  move left                            MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
+     exec     v21  move left                            MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (I) : ( 7:14) :(_)tes IPt57_$:                                      
+
+   COND       v21  insert text into the middle                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  send a character to source           MODE_source           ' ', 'i'                                                                i_equal     'i'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 7:15) :(_)tes ¤IPt57_$:                                      
+
+   COND       v21  add a couple of characters                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', '>'                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', '>'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 9:17) :(_)tes >>¤IPt57_$:                                      
+
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (I) : ( 9:16) :(_)tes >>IPt57_$:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+
+   COND       v21  insert text to the beginning, again                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  send a character to source           MODE_source           ' ', 'I'                                                                i_equal     'i'                                                                    
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:17) :¤(_)tes >>IPt57_$:                                      
+
+   COND       v21  add a couple of characters                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to input            MODE_input            'i', 'F'                                                                i_equal     'i'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 'x'                                                                i_equal     'i'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 2:19) :Fx¤(_)tes >>IPt57_$:                                      
+
+   COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'I'                                                                    
+     exec     v21  send a character to input            MODE_input            'i', 27                                                                 i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (() : ( 2:18) :Fx(_)tes >>IPt57_$:                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  test vi_source mode deletes using xX                         MODE_source                                                             ((42.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   GROUP      v21  check deleting with null contents                            ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
+
+   COND       v21  initialize contents to empty                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  copy an empty string to contents     - - - - - - - - - -   strlcpy (g_contents, "", MAX_STR);                                                                                                                              
+     exec     v21  set the mode                         MODE_enter            MODE_SOURCE                                                             i_equal     0                                                                      
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  reset values                         MODE_source           ' ', '0'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+
+   COND       v21  use backspace (X) to try and delete a character              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+
+   COND       v21  use backspace (X), again                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+
+   COND       v21  use delete (x) to try and delete a character                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+
+   COND       v21  use delete (x), again                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
+
+   GROUP      v21  check deleting at the end of a string                        ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
+
+   COND       v21  initialize contents to fuller string                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  copy a fuller string to contents     - - - - - - - - - -   strlcpy (g_contents, "Fx(_)tes >>IPt57_$", MAX_STR);                                                                                                           
+     exec     v21  check the mode                       MODE_curr                                                                                     i_equal     'S'                                                                    
+     exec     v21  reset values                         MODE_source           ' ', '0'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (F) : ( 0:18) :Fx(_)tes >>IPt57_$:                                      
+
+   COND       v21  use backspace (X) at the beginning                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (F) : ( 0:18) :Fx(_)tes >>IPt57_$:                                      
+
+   COND       v21  use delete (x) at the beginning                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (x) : ( 0:17) :x(_)tes >>IPt57_$:                                      
+
+   COND       v21  go to the end of the contents                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  reset position                       MODE_source           ' ', '$'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ($) : (16:17) :x(_)tes >>IPt57_$:                                      
+
+   COND       v21  use backspace (X) at the end                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ($) : (15:16) :x(_)tes >>IPt57$:                                      
+
+   COND       v21  use delete (x) at the end                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (7) : (14:15) :x(_)tes >>IPt57:                                      
+
+   COND       v21  use delete (x), again                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (5) : (13:14) :x(_)tes >>IPt5:                                      
+
+   COND       v21  use backspace (X), again                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (5) : (12:13) :x(_)tes >>IP5:                                      
+
+   GROUP      v21  check deleting from the middle of a string                   ----------------------------------------------------------------------  ----------  ----------------------------------------------------------------------  -  -------------------- 
+
+   COND       v21  go to further into the middle                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  go to the left                       MODE_source           ' ', 'H'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 7:13) :x(_)tes >>IP5:                                      
+
+   COND       v21  use backspace (X)                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 6:12) :x(_)te >>IP5:                                      
+
+   COND       v21  use delete (x)                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (>) : ( 6:11) :x(_)te>>IP5:                                      
+
+   COND       v21  use delete (x), again                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'x'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (>) : ( 6:10) :x(_)te>IP5:                                      
+
+   COND       v21  use backspace (X), again                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', 'X'                                                                i_equal     0                                                                      
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (>) : ( 5: 9) :x(_)t>IP5:                                      
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
 
 
 

@@ -985,7 +985,7 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_note    ("yank selection text");
          TREG_copy   ();
          break;
-      case  'd' : case  'D' : case  'x' : case  'X' :
+      case  'd' : case  'D' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
@@ -1019,8 +1019,14 @@ MODE_source   (char a_major, char a_minor)
       }
       /*---(changes)---------------------*/
       switch (a_minor) {
-      case 'x' : KEYS__del ('x');   break;
-      case 'X' : KEYS__del ('X');   break;
+      case 'x' :
+         TREG_copy   ();
+         KEYS__del   ('x');
+         break;
+      case 'X' :
+         TREG_copy   ();
+         KEYS__del   ('X');
+         break;
       case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;
       case 'S' : EDIT_start  ("");
                  MODE_enter  (MODE_INPUT);
@@ -1194,7 +1200,7 @@ MODE_input         (char  a_major, char  a_minor)
    /*---(check for initial mark)---------*/
    if (a_major == 'm') {
       DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
-      if (a_minor == 'a')  ++(my.cpos);
+      if (a_minor == 'a' && g_contents [my.cpos] != '\0')  ++(my.cpos);
       DEBUG_USER   yLOG_value   ("total pos" , my.npos);
       DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);
       for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
@@ -1216,10 +1222,12 @@ MODE_input         (char  a_major, char  a_minor)
    /*---(check for backspace)------------*/
    if (a_minor == 8 || a_minor == 127) {
       DEBUG_USER   yLOG_note    ("handle a backspace/delete");
-      --(my.cpos);
-      DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-      for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
-      EDIT_done   ();
+      if (my.cpos > 0) {
+         --(my.cpos);
+         DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
+         for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
+         EDIT_done   ();
+      }
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_major;
    }

@@ -394,6 +394,10 @@ REG_mode           (int a_major, int a_minor)
                   break;
       case  'V' : REG_valuesout('V');
                   break;
+      case  'm' : REG_valuesout('m');
+                  break;
+      case  'M' : REG_valuesout('M');
+                  break;
       case  'c' : REG_valuesout('c');
                   break;
       case  'C' : REG_valuesout('C');
@@ -934,6 +938,7 @@ REG_valuesout     (char a_style)
    int         x_print     [MAX_STR];
    int         x_trim      [MAX_STR];
    int         x_source    [MAX_STR];
+   int         x_full      [MAX_STR];
    int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -952,7 +957,7 @@ REG_valuesout     (char a_style)
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
       ++c;
       /*---(look for line break)---------*/
-      if (strchr ("vVcCtT", a_style) != 0 && x_row != x_rowsave) {
+      if (strchr ("vVmMcCtT", a_style) != 0 && x_row != x_rowsave) {
          fprintf (f, "\n");
       }
       /*---(fill in blank cells)---------*/
@@ -986,6 +991,13 @@ REG_valuesout     (char a_style)
          strlcpy  (x_trim  , x_print, MAX_STR);
          /*---(trimmed printable)--------*/
          strltrim (x_trim, ySTR_BOTH, MAX_STR);
+         /*---(full outcome)-------------*/
+         strlcpy  (x_full  , curr->v_str, MAX_STR);
+         strldchg (x_full  , CHAR_GROUP,  29, MAX_STR);   /* group     */
+         strldchg (x_full  , CHAR_FIELD,  31, MAX_STR);   /* field     */
+         strldchg (x_full  , CHAR_TAB  ,   9, MAX_STR);   /* tab       */
+         strldchg (x_full  , CHAR_ESC  ,  27, MAX_STR);   /* escape    */
+         strldchg (x_full  , CHAR_BS   , 127, MAX_STR);   /* del       */
          /*---(source)-------------------*/
          strlcpy  (x_source, curr->s, MAX_STR);
          strldchg (x_source, CHAR_GROUP,  29, MAX_STR);   /* group     */
@@ -997,6 +1009,9 @@ REG_valuesout     (char a_style)
          case 'v' : fprintf (f, "%s"                  , x_print);
                     break;
          case 'V' : fprintf (f, "%s "                 , x_trim);
+                    break;
+         case 'm' : 
+         case 'M' : fprintf (f, "%s"                  , x_full);
                     break;
          case 'c' : fprintf (f, "\"%s\","             , x_trim);
                     break;
