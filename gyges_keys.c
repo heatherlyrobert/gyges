@@ -1108,8 +1108,8 @@ SMOD_replace  (char a_major, char a_minor)
    /*---(prepare)------------------------*/
    EDIT_prep   ();
    /*---(mode changes)-------------------*/
-   if (a_minor == 27) {
-      DEBUG_USER   yLOG_note    ("escape, return to source mode");
+   if (a_minor == 27 || a_minor == 10) {
+      DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
       if (x_append == 'y') {
          g_contents [my.cpos] = '\0';
       }
@@ -1210,12 +1210,23 @@ MODE_input         (char  a_major, char  a_minor)
       return a_minor;
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == 27) {
-      DEBUG_USER   yLOG_note    ("escape, return to source mode");
+   if (a_minor == 27 || a_minor == 10) {
+      DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
       for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
       if (a_major == 'a')  --(my.cpos);
-      MODE_return ();
       EDIT_done   ();
+      if (a_minor == 10 && MODE_prev() == MODE_MAP) {
+         CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+      }
+      if (a_minor == 27 && MODE_prev() == MODE_MAP) {
+         if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
+            strlcpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
+         } else {
+            strlcpy (g_contents, ""                            , MAX_STR); 
+         }
+      }
+      EDIT_pos  ('r');
+      MODE_return ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }

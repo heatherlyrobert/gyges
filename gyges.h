@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6u"
-#define     VER_TXT   "added export to vi_clip with full string outcome (mM)"
+#define     VER_NUM   "1.6v"
+#define     VER_TXT   "fixed input saves after shortcut +-=#s calls"
 
 
 
