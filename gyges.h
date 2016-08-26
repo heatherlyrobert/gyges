@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7b"
-#define     VER_TXT   "add steps and counts to errors for better debugging"
+#define     VER_NUM   "1.7c"
+#define     VER_TXT   "add calling function name to all stack pushes in CALC"
 
 
 

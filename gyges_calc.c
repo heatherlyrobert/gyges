@@ -338,9 +338,7 @@ int         calc__nstack  = 0;
 
 
 char         /*--> add a vstring to the stack ------------[ ------ [ ------ ]-*/
-CALC_pushstr       (
-      /*----------+-----------+-----------------------------------------------*/
-      char       *a_new)      /* string literal                               */
+CALC_pushstr       (char *a_func, char *a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* very simply adds a stack entry with a string literal as its value       */
    /*---(defense: stack overflow)--------*//*---------------------------------*/
@@ -357,9 +355,7 @@ CALC_pushstr       (
 }
 
 char         /*--> add a value to the stack --------------[ ------ [ ------ ]-*/
-CALC_pushval       (
-      /*----------+-----------+-----------------------------------------------*/
-      double      a_new)      /* numeric literal                              */
+CALC_pushval       (char *a_func, double a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* very simply adds a stack entry with a numeric literal as its value      */
    /*---(defense: stack overflow)--------*//*---------------------------------*/
@@ -376,9 +372,7 @@ CALC_pushval       (
 }
 
 char         /*--> add a reference to the stack ----------[ ------ [ ------ ]-*/
-CALC_pushref       (
-      /*----------+-----------+-----------------------------------------------*/
-      tCELL      *a_new)      /* reference to cell which will have the value  */
+CALC_pushref       (char *a_func, tCELL *a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* adds a cell reference for later intepretation in the calculation        */
    /*---(defense: stack overflow)--------*//*---------------------------------*/
@@ -532,7 +526,7 @@ CALC__add         (void)
 {
    a = CALC__popval ("add"       , ++s_narg);
    b = CALC__popval ("add"       , ++s_narg);
-   CALC_pushval (b + a);
+   CALC_pushval (__FUNCTION__, b + a);
    return;
 }
 
@@ -541,7 +535,7 @@ CALC__subtract     (void)
 {
    a = CALC__popval ("subtract"  , ++s_narg);
    b = CALC__popval ("subtract"  , ++s_narg);
-   CALC_pushval (b - a);
+   CALC_pushval (__FUNCTION__, b - a);
    return;
 }
 
@@ -550,7 +544,7 @@ CALC__multiply     (void)
 {
    a = CALC__popval ("multiply"  , ++s_narg);
    b = CALC__popval ("multiply"  , ++s_narg);
-   CALC_pushval (b * a);
+   CALC_pushval (__FUNCTION__, b * a);
    return;
 }
 
@@ -559,8 +553,8 @@ CALC__divide       (void)
 {
    a = CALC__popval ("divide"    , ++s_narg);
    b = CALC__popval ("divide"    , ++s_narg);
-   if (a != 0)  CALC_pushval (b / a);
-   else         CALC_pushval (0);
+   if (a != 0)  CALC_pushval (__FUNCTION__, b / a);
+   else         CALC_pushval (__FUNCTION__, 0);
    return;
 }
 
@@ -569,7 +563,7 @@ CALC__modulus      (void)
 {
    a = CALC__popval ("modulus"   , ++s_narg);
    b = CALC__popval ("modulus"   , ++s_narg);
-   CALC_pushval (((int) b) % ((int) a));
+   CALC_pushval (__FUNCTION__, ((int) b) % ((int) a));
    return;
 }
 
@@ -577,7 +571,7 @@ PRIV void
 CALC__increment    (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a + 1);
+   CALC_pushval (__FUNCTION__, a + 1);
    return;
 }
 
@@ -585,7 +579,7 @@ PRIV void
 CALC__decrement    (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a - 1);
+   CALC_pushval (__FUNCTION__, a - 1);
    return;
 }
 
@@ -593,7 +587,7 @@ PRIV void
 CALC__unaryminus   (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (0 - a);
+   CALC_pushval (__FUNCTION__, 0 - a);
    return;
 }
 
@@ -609,7 +603,7 @@ CALC__equal        (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b == a);
+   CALC_pushval (__FUNCTION__, b == a);
    return;
 }
 
@@ -618,7 +612,7 @@ CALC__notequal      (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b != a);
+   CALC_pushval (__FUNCTION__, b != a);
    return;
 }
 
@@ -627,7 +621,7 @@ CALC__greater      (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b > a);
+   CALC_pushval (__FUNCTION__, b > a);
    return;
 }
 
@@ -636,7 +630,7 @@ CALC__lesser       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b < a);
+   CALC_pushval (__FUNCTION__, b < a);
    return;
 }
 
@@ -645,7 +639,7 @@ CALC__gequal       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b >= a);
+   CALC_pushval (__FUNCTION__, b >= a);
    return;
 }
 
@@ -654,7 +648,7 @@ CALC__lequal       (void)
 {
    a = CALC__popval( __FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b <= a);
+   CALC_pushval (__FUNCTION__, b <= a);
    return;
 }
 
@@ -669,7 +663,7 @@ PRIV void
 CALC__not          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (!a);
+   CALC_pushval (__FUNCTION__, !a);
    return;
 }
 
@@ -678,7 +672,7 @@ CALC__and          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b && a);
+   CALC_pushval (__FUNCTION__, b && a);
    return;
 }
 
@@ -687,7 +681,7 @@ CALC__or           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (b || a);
+   CALC_pushval (__FUNCTION__, b || a);
    return;
 }
 
@@ -711,7 +705,7 @@ CALC__concat       (void)
    strncpy (t, s,   MAX_STR);
    strncat (t, r,   MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    free (s);
@@ -733,7 +727,7 @@ CALC__concatplus   (void)
    strncat (t, " ", MAX_STR);
    strncat (t, r,   MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    free (s);
@@ -754,7 +748,7 @@ CALC__lower        (void)
    int i;
    for (i = 0; i < len; ++i) t[i] = tolower(t[i]);
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -774,7 +768,7 @@ CALC__upper        (void)
    int i;
    for (i = 0; i < len; ++i) t[i] = toupper(t[i]);
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -792,7 +786,7 @@ CALC__char         (void)
    /*---(process)------------------------*/
    sprintf (t, "%c", n);
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(complete)-----------------------*/
    return;
 }
@@ -805,7 +799,7 @@ CALC__code         (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushval (r[0]);
+   CALC_pushval (__FUNCTION__, r[0]);
    /*---(complete)-----------------------*/
    return;
 }
@@ -820,7 +814,7 @@ CALC__len          (void)
    /*---(process)------------------------*/
    len = strlen (r);
    /*---(return result)------------------*/
-   CALC_pushval ((double) len);
+   CALC_pushval (__FUNCTION__, (double) len);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -842,7 +836,7 @@ CALC__left         (void)
    if (n >= len)  n = len;
    t[n] = '\0';
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -866,7 +860,7 @@ CALC__right        (void)
    for (i = m; i < len; ++i) t[i - m] = r[i];
    t [m] = '\0';
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -892,7 +886,7 @@ CALC__mid          (void)
    for (i = n; i < n + m; ++i) t[i - n] = r[i];
    t [m] = '\0';
    /*---(return result)------------------*/
-   CALC_pushstr (t);
+   CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -915,7 +909,7 @@ CALC__trim         (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_BOTH, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -932,7 +926,7 @@ CALC__ltrim        (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_HEAD, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -949,7 +943,7 @@ CALC__rtrim        (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_TAIL, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -966,7 +960,7 @@ CALC__strim        (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_SINGLE, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -983,7 +977,7 @@ CALC__etrim        (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_EVERY, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1000,7 +994,7 @@ CALC__mtrim        (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_MAX, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1016,7 +1010,7 @@ CALC__print        (void)
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
    strltrim (r, ySTR_BOTH, MAX_STR);
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1035,12 +1029,12 @@ CALC__lpad         (void)
    /*---(process)------------------------*/
    m = strlen (r);
    if (m >= n) {
-      CALC_pushstr (r);
+      CALC_pushstr (__FUNCTION__, r);
    } else {
       strncpy (t, empty, n - m);
       t [m] = '\0';
       strcat  (t, r);
-      CALC_pushstr (t);
+      CALC_pushstr (__FUNCTION__, t);
    }
    /*---(clean up)-----------------------*/
    free (r);
@@ -1060,12 +1054,12 @@ CALC__rpad         (void)
    /*---(process)------------------------*/
    m = strlen (r);
    if (m >= n) {
-      CALC_pushstr (r);
+      CALC_pushstr (__FUNCTION__, r);
    } else {
       strcpy  (t, r);
       strncat (t, empty, n - m);
       t [n] = '\0';
-      CALC_pushstr (t);
+      CALC_pushstr (__FUNCTION__, t);
    }
    /*---(clean up)-----------------------*/
    free (r);
@@ -1086,12 +1080,12 @@ CALC__lppad        (void)
    strltrim (r, ySTR_BOTH, MAX_STR);
    m = strlen (r);
    if (m >= n) {
-      CALC_pushstr (r);
+      CALC_pushstr (__FUNCTION__, r);
    } else {
       strncpy (t, empty, n - m);
       t [n-m-1] = '\0';
       strcat  (t, r);
-      CALC_pushstr (t);
+      CALC_pushstr (__FUNCTION__, t);
    }
    /*---(clean up)-----------------------*/
    free (r);
@@ -1112,12 +1106,12 @@ CALC__rppad        (void)
    strltrim (r, ySTR_BOTH, MAX_STR);
    m = strlen (r);
    if (m >= n) {
-      CALC_pushstr (r);
+      CALC_pushstr (__FUNCTION__, r);
    } else {
       strcpy  (t, r);
       strncat (t, empty, n - m);
       t [n] = '\0';
-      CALC_pushstr (t);
+      CALC_pushstr (__FUNCTION__, t);
    }
    /*---(clean up)-----------------------*/
    free (r);
@@ -1135,7 +1129,7 @@ CALC__value        (void)
    /*---(process)------------------------*/
    a = atof (r);
    /*---(return result)------------------*/
-   CALC_pushval (a);
+   CALC_pushval (__FUNCTION__, a);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1152,7 +1146,7 @@ CALC__salpha       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_ALPHA, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1169,7 +1163,7 @@ CALC__salphac      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_ALPHA, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1186,7 +1180,7 @@ CALC__salnum       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_ALNUM, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1203,7 +1197,7 @@ CALC__salnumc      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_ALNUM, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1220,7 +1214,7 @@ CALC__sbasic       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_BASIC, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1237,7 +1231,7 @@ CALC__sbasicc      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_BASIC, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1254,7 +1248,7 @@ CALC__swrite       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_WRITE, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1271,7 +1265,7 @@ CALC__swritec      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_WRITE, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1288,7 +1282,7 @@ CALC__sexten       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_EXTEN, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1305,7 +1299,7 @@ CALC__sextenc      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_EXTEN, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1322,7 +1316,7 @@ CALC__sprint       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_PRINT, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1339,7 +1333,7 @@ CALC__sprintc      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_PRINT, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1356,7 +1350,7 @@ CALC__sseven       (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_SEVEN, '-', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1373,7 +1367,7 @@ CALC__ssevenc      (void)
    /*---(process)------------------------*/
    strlclean (r, ySTR_SEVEN, 'y', MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -1396,7 +1390,7 @@ CALC__replace      (void)
    /*---(process)------------------------*/
    strlrepl (r, q, s, n, MAX_STR);
    /*---(return result)------------------*/
-   CALC_pushstr (r);
+   CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (q);
    free (r);
@@ -1438,7 +1432,7 @@ CALC__power        (void)
    b = CALC__popval (__FUNCTION__, ++s_narg);
    c = b;
    for (i = 1; i <  a; ++i)  c *= b;
-   CALC_pushval (c);
+   CALC_pushval (__FUNCTION__, c);
    return;
 }
 
@@ -1446,7 +1440,7 @@ PRIV void
 CALC__abs           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (fabs(a));
+   CALC_pushval (__FUNCTION__, fabs(a));
    return;
 }
 
@@ -1459,7 +1453,7 @@ CALC__rtrunc        (void)
    for (i = 0; i < n; ++i)  a *= 10;
    a = trunc (a);
    for (i = 0; i < n; ++i)  a /= 10;
-   CALC_pushval (a);
+   CALC_pushval (__FUNCTION__, a);
    return;
 }
 
@@ -1467,7 +1461,7 @@ PRIV void
 CALC__trunc         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (trunc(a));
+   CALC_pushval (__FUNCTION__, trunc(a));
    return;
 }
 
@@ -1480,7 +1474,7 @@ CALC__rround        (void)
    for (i = 0; i < n; ++i)  a *= 10;
    a = round (a);
    for (i = 0; i < n; ++i)  a /= 10;
-   CALC_pushval (a);
+   CALC_pushval (__FUNCTION__, a);
    return;
 }
 
@@ -1488,7 +1482,7 @@ PRIV void
 CALC__round         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (round(a));
+   CALC_pushval (__FUNCTION__, round(a));
    return;
 }
 
@@ -1496,7 +1490,7 @@ PRIV void
 CALC__ceiling       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (ceil(a));
+   CALC_pushval (__FUNCTION__, ceil(a));
    return;
 }
 
@@ -1504,14 +1498,14 @@ PRIV void
 CALC__floor         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (floor(a));
+   CALC_pushval (__FUNCTION__, floor(a));
    return;
 }
 
 PRIV void       /* PURPOSE : rand between n-m, not just 0-1 ---------------*/
 CALC__rand          (void)
 {
-   CALC_pushval ((double) rand());
+   CALC_pushval (__FUNCTION__, (double) rand());
    return;
 }
 
@@ -1520,7 +1514,7 @@ CALC__randr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (((double) rand() / (double) RAND_MAX) * (b - a) + a);
+   CALC_pushval (__FUNCTION__, ((double) rand() / (double) RAND_MAX) * (b - a) + a);
    return;
 }
 
@@ -1528,7 +1522,7 @@ PRIV void
 CALC__sqrt          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (sqrt(a));
+   CALC_pushval (__FUNCTION__, sqrt(a));
    return;
 }
 
@@ -1536,7 +1530,7 @@ PRIV void
 CALC__cbrt          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (cbrt(a));
+   CALC_pushval (__FUNCTION__, cbrt(a));
    return;
 }
 
@@ -1544,7 +1538,7 @@ PRIV void
 CALC__sqr           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a * a);
+   CALC_pushval (__FUNCTION__, a * a);
    return;
 }
 
@@ -1552,7 +1546,7 @@ PRIV void
 CALC__cube          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a * a * a);
+   CALC_pushval (__FUNCTION__, a * a * a);
    return;
 }
 
@@ -1568,7 +1562,7 @@ PRIV void
 CALC__degrees       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a * RAD2DEG);
+   CALC_pushval (__FUNCTION__, a * RAD2DEG);
    return;
 }
 
@@ -1576,14 +1570,14 @@ PRIV void
 CALC__radians       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a * DEG2RAD);
+   CALC_pushval (__FUNCTION__, a * DEG2RAD);
    return;
 }
 
 PRIV void
 CALC__pi            (void)
 {
-   CALC_pushval (3.1415927);
+   CALC_pushval (__FUNCTION__, 3.1415927);
    return;
 }
 
@@ -1592,7 +1586,7 @@ CALC__hypot         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (sqrt(a * a + b * b));
+   CALC_pushval (__FUNCTION__, sqrt(a * a + b * b));
    return;
 }
 
@@ -1601,7 +1595,7 @@ CALC__side          (void)
 {
    b = CALC__popval (__FUNCTION__, ++s_narg);
    c = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (sqrt(c * c - b * b));
+   CALC_pushval (__FUNCTION__, sqrt(c * c - b * b));
    return;
 }
 
@@ -1613,7 +1607,7 @@ CALC__sin           (void)
    i = round (a * 10.0);
    i = i % 3600;
    if (i < 0)  i = 3600 + i;
-   CALC_pushval (trig[i].si);
+   CALC_pushval (__FUNCTION__, trig[i].si);
    return;
 }
 
@@ -1630,8 +1624,8 @@ CALC__csc           (void)
 {
    CALC__sin     ();
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (1);
-   CALC_pushval (a);
+   CALC_pushval (__FUNCTION__, 1);
+   CALC_pushval (__FUNCTION__, a);
    CALC__divide ();
    return;
 }
@@ -1652,7 +1646,7 @@ CALC__cos           (void)
    i = round (a * 10.0);
    i = i % 3600;
    if (i < 0)  i = 3600 + i;
-   CALC_pushval (trig[i].co);
+   CALC_pushval (__FUNCTION__, trig[i].co);
    return;
 }
 
@@ -1669,8 +1663,8 @@ CALC__sec           (void)
 {
    CALC__cos     ();
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (1);
-   CALC_pushval (a);
+   CALC_pushval (__FUNCTION__, 1);
+   CALC_pushval (__FUNCTION__, a);
    CALC__divide ();
    return;
 }
@@ -1691,7 +1685,7 @@ CALC__tan           (void)
    i = round (a * 10.0);
    i = i % 3600;
    if (i < 0)  i = 3600 + i;
-   CALC_pushval (trig[i].ta);
+   CALC_pushval (__FUNCTION__, trig[i].ta);
    return;
 }
 
@@ -1708,8 +1702,8 @@ CALC__cot           (void)
 {
    CALC__tan     ();
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (1);
-   CALC_pushval (a);
+   CALC_pushval (__FUNCTION__, 1);
+   CALC_pushval (__FUNCTION__, a);
    CALC__divide ();
    return;
 }
@@ -1726,10 +1720,10 @@ PRIV void
 CALC__crd           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a / 2.0);
+   CALC_pushval (__FUNCTION__, a / 2.0);
    CALC__sin     ();
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (a * 2.0);
+   CALC_pushval (__FUNCTION__, a * 2.0);
    return;
 }
 
@@ -1745,7 +1739,7 @@ PRIV void
 CALC__asin          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (asin(a) * RAD2DEG);
+   CALC_pushval (__FUNCTION__, asin(a) * RAD2DEG);
    return;
 }
 
@@ -1753,7 +1747,7 @@ PRIV void
 CALC__asinr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (asin(a));
+   CALC_pushval (__FUNCTION__, asin(a));
    return;
 }
 
@@ -1761,7 +1755,7 @@ PRIV void
 CALC__acos          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (acos(a) * RAD2DEG);
+   CALC_pushval (__FUNCTION__, acos(a) * RAD2DEG);
    return;
 }
 
@@ -1769,7 +1763,7 @@ PRIV void
 CALC__acosr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (acos(a));
+   CALC_pushval (__FUNCTION__, acos(a));
    return;
 }
 
@@ -1777,7 +1771,7 @@ PRIV void
 CALC__atan          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (atan(a) * RAD2DEG);
+   CALC_pushval (__FUNCTION__, atan(a) * RAD2DEG);
    return;
 }
 
@@ -1785,7 +1779,7 @@ PRIV void
 CALC__atanr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (atan(a));
+   CALC_pushval (__FUNCTION__, atan(a));
    return;
 }
 
@@ -1794,7 +1788,7 @@ CALC__atan2         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (atan2(b,a) * RAD2DEG);
+   CALC_pushval (__FUNCTION__, atan2(b,a) * RAD2DEG);
    return;
 }
 
@@ -1803,7 +1797,7 @@ CALC__atanr2        (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushval (atan2(b,a));
+   CALC_pushval (__FUNCTION__, atan2(b,a));
    return;
 }
 
@@ -1850,10 +1844,10 @@ CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
    }
    /*---(identify new cell)--------------*/
    x_new  = LOC_cell   (x_tab, x_col, x_row);
-   if (x_new == NULL)                           CALC_pushval (0);
-   else if (x_new->s == NULL)                   CALC_pushval (0);
-   else if (x_new->t == 'n' || x_new->t == 'f') CALC_pushval (x_new->v_num);
-   else                                         CALC_pushstr (x_new->s);
+   if (x_new == NULL)                           CALC_pushval (__FUNCTION__, 0);
+   else if (x_new->s == NULL)                   CALC_pushval (__FUNCTION__, 0);
+   else if (x_new->t == 'n' || x_new->t == 'f') CALC_pushval (__FUNCTION__, x_new->v_num);
+   else                                         CALC_pushstr (__FUNCTION__, x_new->s);
    /*---(complete)-----------------------*/
    return;
 }
@@ -1902,7 +1896,7 @@ CALC__loc           (void)
    o = CALC__popval (__FUNCTION__, ++s_narg);
    rc = LOC_legal  (    o,    m,    n, CELL_FIXED);
    if (rc    <  0   )   {
-      CALC__seterror ( -1, "#.range");
+      /*> CALC__seterror ( -1, "#.range");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "address created is not legal");
       return;
    }
@@ -1911,7 +1905,7 @@ CALC__loc           (void)
    DEP_delcalcref (s_me);
    DEP_create     (DEP_CALCREF, s_me, x_new);
    /*> }                                                                              <*/
-   CALC_pushref (x_new);
+   CALC_pushref (__FUNCTION__, x_new);
    /*> printf ("CALC_loc %s\n", s_me->label);                                         <*/
    return;
 }
@@ -1924,21 +1918,32 @@ CALC__address       (char *a_func, char a_type)
    int    x_col;
    int    x_row;
    tCELL *x_base;
-   x_base = CALC__popref (__FUNCTION__, ++s_narg);
+   /*---(get the base reference)---------*/
+   x_base = CALC__popref (a_func      , ++s_narg);
    if (x_base == NULL)   {
-      CALC__seterror ( -1, "#.range");
+      /*> CALC__seterror ( -1, "#.range");                                            <*/
       return;
    }
+   /*---(parse base reference)-----------*/
    rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
    if (rc    <  0   )   {
-      CALC__seterror ( -1, "#.range");
+      /*> CALC__seterror ( -1, "#.range");                                            <*/
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "base reference could not be parsed");
       return;
    }
+   /*---(push the info back on stack)----*/
    switch (a_type) {
-   case 't' :  CALC_pushval (x_tab);  break;
-   case 'c' :  CALC_pushval (x_col);  break;
-   default  :  CALC_pushval (x_row);  break;
+   case 't' :
+      CALC_pushval (__FUNCTION__, x_tab);
+      break;
+   case 'c' :
+      CALC_pushval (__FUNCTION__, x_col);
+      break;
+   default  :
+      CALC_pushval (__FUNCTION__, x_row);
+      break;
    }
+   /*---(complete)-----------------------*/
    return;
 }
 
@@ -1948,7 +1953,7 @@ CALC__addr          (void)
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
-   CALC_pushstr (x_base->label);
+   CALC_pushstr (__FUNCTION__, x_base->label);
    return;
 }
 
@@ -1959,11 +1964,11 @@ CALC__cell          (char a_type)
    char   x_type  = a_type;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    if (x_base == NULL) {
-      CALC_pushval (FALSE);
+      CALC_pushval (__FUNCTION__, FALSE);
       return;
    }
-   if (x_base->t == a_type)  CALC_pushval (TRUE);
-   else                      CALC_pushval (FALSE);
+   if (x_base->t == a_type)  CALC_pushval (__FUNCTION__, TRUE);
+   else                      CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
@@ -1980,15 +1985,15 @@ CALC__isfor         (void)
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    /*---(formula)--------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell ('f');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(like)-----------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('l');
    /*---(complete)-------*/
    return;
@@ -2000,23 +2005,23 @@ CALC__isval         (void)
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    /*---(number)---------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('n');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(formula)--------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('f');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(like)-----------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('l');
    /*---(complete)-------*/
    return;
@@ -2028,23 +2033,23 @@ CALC__iscalc        (void)
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    /*---(formula)--------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('f');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(formula)--------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('m');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(like)-----------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('l');
    /*---(complete)-------*/
    return;
@@ -2070,15 +2075,15 @@ CALC__istext        (void)
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    /*---(formula)--------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('s');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(like)-----------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('m');
    /*---(complete)-------*/
    return;
@@ -2111,15 +2116,15 @@ CALC__ispoint       (void)
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
    /*---(range)----------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('p');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    if (n == TRUE) {
-      CALC_pushval (n);
+      CALC_pushval (__FUNCTION__, n);
       return;
    }
    /*---(address---------*/
-   CALC_pushref (x_base);
+   CALC_pushref (__FUNCTION__, x_base);
    CALC__cell   ('a');
    /*---(complete)-------*/
    return;
@@ -2128,21 +2133,21 @@ CALC__ispoint       (void)
 PRIV void
 CALC__me            (void)
 {
-   CALC_pushstr (s_me->label);
+   CALC_pushstr (__FUNCTION__, s_me->label);
    return;
 }
 
 PRIV void
 CALC__filename      (void)
 {
-   CALC_pushstr (my.f_title);
+   CALC_pushstr (__FUNCTION__, my.f_title);
    return;
 }
 
 PRIV void
 CALC__filebase      (void)
 {
-   CALC_pushstr (my.f_name);
+   CALC_pushstr (__FUNCTION__, my.f_name);
    return;
 }
 
@@ -2151,7 +2156,7 @@ CALC__tabname       (void)
 {
    CALC__address (__FUNCTION__, 't');
    n = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushstr (tabs[n].name);
+   CALC_pushstr (__FUNCTION__, tabs[n].name);
    return;
 }
 
@@ -2211,11 +2216,11 @@ CALC__rangestat    (char a_type)
    if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
    /*---(process)------------------------*/
    switch (a_type) {
-   case 'd' :  CALC_pushval (sqrt (pow (x_ecol - x_bcol + 1, 2) + pow (x_erow - x_brow + 1, 2)));  break;
-   case 't' :  CALC_pushval (x_etab - x_btab + 1);  break;
-   case 'c' :  CALC_pushval (x_ecol - x_bcol + 1);  break;
-   case 'r' :  CALC_pushval (x_ecol - x_bcol + 1);  break;
-   default  :  CALC_pushval (x_erow - x_brow + 1);  break;
+   case 'd' :  CALC_pushval (__FUNCTION__, sqrt (pow (x_ecol - x_bcol + 1, 2) + pow (x_erow - x_brow + 1, 2)));  break;
+   case 't' :  CALC_pushval (__FUNCTION__, x_etab - x_btab + 1);  break;
+   case 'c' :  CALC_pushval (__FUNCTION__, x_ecol - x_bcol + 1);  break;
+   case 'r' :  CALC_pushval (__FUNCTION__, x_ecol - x_bcol + 1);  break;
+   default  :  CALC_pushval (__FUNCTION__, x_erow - x_brow + 1);  break;
    }
    return;
 }
@@ -2275,8 +2280,8 @@ CALC__if            (void)
    a = CALC__popval (__FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
    c = CALC__popval (__FUNCTION__, ++s_narg);
-   if (c) CALC_pushval (b);
-   else   CALC_pushval (a);
+   if (c) CALC_pushval (__FUNCTION__, b);
+   else   CALC_pushval (__FUNCTION__, a);
    return;
 }
 
@@ -2296,7 +2301,7 @@ PRIV void  o___TIME____________o () { return; }
 PRIV void
 CALC__now           (void)
 {
-   CALC_pushval (time(NULL));
+   CALC_pushval (__FUNCTION__, time(NULL));
    return;
 }
 
@@ -2307,7 +2312,7 @@ CALC__year          (void)
    a = CALC__popval (__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%Y", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2318,7 +2323,7 @@ CALC__month         (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%m", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2329,7 +2334,7 @@ CALC__day           (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%d", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2340,7 +2345,7 @@ CALC__hour          (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%H", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2351,7 +2356,7 @@ CALC__minute        (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%M", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2362,7 +2367,7 @@ CALC__second        (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%S", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2373,7 +2378,7 @@ CALC__weekday       (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%w", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2384,7 +2389,7 @@ CALC__weeknum       (void)
    a = CALC__popval(__FUNCTION__, ++s_narg);
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%W", localtime(&xtime));
-   CALC_pushval (atoi(temp));
+   CALC_pushval (__FUNCTION__, atoi(temp));
    return;
 }
 
@@ -2443,7 +2448,7 @@ CALC__timevalue     (void)
    else if (yr >= 1900) temp->tm_year = yr - 1900;
    time_t  xtime = mktime(temp);
    /*---(complete)-----------------------*/
-   CALC_pushval ((double) xtime);
+   CALC_pushval (__FUNCTION__, (double) xtime);
    return;
 }
 
@@ -2597,7 +2602,7 @@ CALC__sum          (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (tot);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, tot);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2607,7 +2612,7 @@ CALC__count        (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (cnt);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, cnt);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2617,7 +2622,7 @@ CALC__counts       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (cnts);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, cnts);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2627,7 +2632,7 @@ CALC__counta       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (cnta);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, cnta);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2637,7 +2642,7 @@ CALC__countb       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (cntb);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, cntb);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2647,7 +2652,7 @@ CALC__countr       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (cntr);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, cntr);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2658,8 +2663,8 @@ CALC__average      (void)
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
    if (errornum == 0) {
-      if (cnt > 0)  CALC_pushval   (tot / cnt);
-      else          CALC_pushval   (cnt);
+      if (cnt > 0)  CALC_pushval   (__FUNCTION__, tot / cnt);
+      else          CALC_pushval   (__FUNCTION__, cnt);
    }
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2670,7 +2675,7 @@ CALC__minimum      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (min);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, min);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2680,7 +2685,7 @@ CALC__maximum      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (max);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, max);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2690,7 +2695,7 @@ CALC__range        (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    CALC__gather ();
-   if (errornum == 0)  CALC_pushval   (max - min);
+   if (errornum == 0)  CALC_pushval   (__FUNCTION__, max - min);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2719,7 +2724,7 @@ CALC__quarters     (void)
    DEBUG_CALC   yLOG_value   ("cnt"       , cnt);
    if      (cnt == 0)  {
       DEBUG_CALC   yLOG_value   ("pushing"   , 0);
-      CALC_pushval ( 0);
+      CALC_pushval (__FUNCTION__,  0);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
@@ -2798,7 +2803,7 @@ CALC__quarter1     (void)
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
-   CALC_pushval ( q1 );
+   CALC_pushval (__FUNCTION__,  q1 );
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2812,7 +2817,7 @@ CALC__median       (void)
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
-   CALC_pushval ( q2 );
+   CALC_pushval (__FUNCTION__,  q2 );
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2826,7 +2831,7 @@ CALC__quarter3     (void)
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
-   CALC_pushval ( q3 );
+   CALC_pushval (__FUNCTION__,  q3 );
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2840,7 +2845,7 @@ CALC__rangeq       (void)
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
-   CALC_pushval ( qr );
+   CALC_pushval (__FUNCTION__,  qr );
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2867,7 +2872,7 @@ CALC__mode         (void)
    CALC__rangesort ();
    if      (cnt == 0)  {
       DEBUG_CALC   yLOG_value   ("pushing"   , 0);
-      CALC_pushval ( 0);
+      CALC_pushval (__FUNCTION__,  0);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
@@ -2885,7 +2890,7 @@ CALC__mode         (void)
       }
       x_save = x_curr;
    }
-   CALC_pushval ((double) x_mode);
+   CALC_pushval (__FUNCTION__, (double) x_mode);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
 }
@@ -2913,7 +2918,7 @@ CALC__stddev       (void)
    /*---(defense: too few values)--------*/
    if      (cnt <= 1)  {
       DEBUG_CALC   yLOG_value   ("pushing"   , 0);
-      CALC_pushval ( 0);
+      CALC_pushval (__FUNCTION__,  0);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
    }
@@ -2931,7 +2936,7 @@ CALC__stddev       (void)
    DEBUG_CALC   yLOG_llong   ("variance"  , x_total / ((double) cnt));
    x_stddev   = sqrt(x_total / ((double) cnt));
    DEBUG_CALC   yLOG_llong   ("stddev"    , x_stddev);
-   CALC_pushval (x_stddev);
+   CALC_pushval (__FUNCTION__, x_stddev);
    /*---(complete)-----------------------*/
    x_mean = tot / ((double) cnt);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -2995,17 +3000,17 @@ CALC__vlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      /*> CALC_pushref (LOC_cell (x_btab, x_bcol, x_crow));                           <*/
-      if (x_bcol + n >  x_ecol)              { CALC_pushval (0); return; }
+      /*> CALC_pushref (__FUNCTION__, LOC_cell (x_btab, x_bcol, x_crow));                           <*/
+      if (x_bcol + n >  x_ecol)              { CALC_pushval (__FUNCTION__, 0); return; }
       x_curr = tabs[x_btab].sheet[x_bcol + n][x_crow];
-      if (x_curr == NULL)                    { CALC_pushval (0); return; }
-      if (x_curr->s == NULL)                 { CALC_pushval (0); return; }
-      if (x_curr->t == 'n' || x_curr->t == 'f') CALC_pushval (x_curr->v_num);
-      else                                      CALC_pushstr (x_curr->s);
+      if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
+      if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
+      if (x_curr->t == 'n' || x_curr->t == 'f') CALC_pushval (__FUNCTION__, x_curr->v_num);
+      else                                      CALC_pushstr (__FUNCTION__, x_curr->s);
       return;
    }
    /*---(nothing found)------------------*/
-   CALC_pushval (0);
+   CALC_pushval (__FUNCTION__, 0);
    /*> CALC__seterror ( -1, "#.nope");                                                <*/
    /*---(complete)-----------------------*/
    return;
@@ -3061,17 +3066,17 @@ CALC__hlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      /*> CALC_pushref (LOC_cell (x_btab, x_bcol, x_crow));                           <*/
+      /*> CALC_pushref (__FUNCTION__, LOC_cell (x_btab, x_bcol, x_crow));                           <*/
       if (x_brow + n >  x_erow)              {  CALC__seterror ( -1, "#.inc"); return; }
       x_curr = tabs[x_btab].sheet[x_ccol][x_brow + n];
-      if (x_curr == NULL)                    { CALC_pushval (0); return; }
-      if (x_curr->s == NULL)                 { CALC_pushval (0); return; }
-      if (strchr ("nfl", x_curr->t) != 0) CALC_pushval (x_curr->v_num);
-      else                                CALC_pushstr (x_curr->s);
+      if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
+      if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
+      if (strchr ("nfl", x_curr->t) != 0) CALC_pushval (__FUNCTION__, x_curr->v_num);
+      else                                CALC_pushstr (__FUNCTION__, x_curr->s);
       return;
    }
    /*---(nothing found)------------------*/
-   CALC_pushval (0);
+   CALC_pushval (__FUNCTION__, 0);
    CALC__seterror ( -1, "#.nfound");
    /*---(complete)-----------------------*/
    return;
@@ -3122,12 +3127,12 @@ CALC__entry        (void)
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
       if (strchr ("sm"  , x_curr->t) == 0)                      continue;
       DEBUG_CALC   yLOG_note    ("found it");
-      if (x_curr->t == 's')  CALC_pushstr (x_curr->s);
-      else                   CALC_pushstr (x_curr->v_str);
+      if (x_curr->t == 's')  CALC_pushstr (__FUNCTION__, x_curr->s);
+      else                   CALC_pushstr (__FUNCTION__, x_curr->v_str);
       return;
    }
    /*---(nothing found)------------------*/
-   CALC_pushstr   ("");
+   CALC_pushstr   (__FUNCTION__, "");
    /*---(complete)-----------------------*/
    return;
 }
@@ -3466,9 +3471,9 @@ CALC_eval          (tCELL *a_curr)
       DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", curr->t, curr->v, curr->s, curr->r, curr->f);
       s_narg = 0;
       switch (curr->t) {
-      case 'v' : CALC_pushval (curr->v);    break;
-      case 's' : CALC_pushstr (curr->s);    break;
-      case 'r' : CALC_pushref (curr->r);    break;
+      case 'v' : CALC_pushval (__FUNCTION__, curr->v);    break;
+      case 's' : CALC_pushstr (__FUNCTION__, curr->s);    break;
+      case 'r' : CALC_pushref (__FUNCTION__, curr->r);    break;
       case 'f' : curr->f();                 break;
       case 'x' : break;
       default  : CALC__seterror (  -1, "#badcalc");
