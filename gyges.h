@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7a"
-#define     VER_TXT   "basic error capture and reporting framework in place"
+#define     VER_NUM   "1.7b"
+#define     VER_TXT   "add steps and counts to errors for better debugging"
 
 
 
@@ -358,7 +358,9 @@ struct cERROR {
    tCELL      *owner;
    long        when;                        /* timestamp of error reporting   */
    char        phase;                       /* rpn, build, eval, display      */
+   char        step;                        /* step in phase                  */
    char        func        [ 20];           /* function reporting issue       */
+   char        narg;                        /* particular arg ref             */
    char        type;                        /* type of issue                  */
    char        desc        [100];           /* fuller error message           */
    tERROR     *next;                        /* next error for cell            */
@@ -753,8 +755,6 @@ char        hist_active;
  *>    tCELL    *p;               /+ pointer to parent                            +/   <* 
  *>    tCALC    *n;               /+ pointer to next calc                         +/   <* 
  *> };                                                                                 <*/
-extern      int     errornum;
-extern      char    errorstr [MAX_STR];
 
 extern    tDEP     *dhead;
 extern    tDEP     *dtail;
