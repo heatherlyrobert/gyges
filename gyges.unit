@@ -10181,7 +10181,7 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  get out of source mode                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  send a character to input            MODE_source           ' ', 27                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (m) : (19:23) :testing the source mode:                   
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 0:23) :testing the source mode:                   
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : M                                                   
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) :testing the source mode:                   
 
@@ -10258,7 +10258,7 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  get out of source mode                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  send a character to input            MODE_source           ' ', 10                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 1:25) : testing   the/ . s-mode :                 
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:25) : testing   the/ . s-mode :                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : M                                                   
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   25) : testing   the/ . s-mode :                 
 
@@ -10284,7 +10284,7 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  get out of source mode                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.055))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  send a character to input            MODE_source           ' ', 10                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 7:23) : testin  the/ . s-mode :                   
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:23) : testin  the/ . s-mode :                   
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : M                                                   
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) : testin  the/ . s-mode :                   
 
@@ -10307,7 +10307,7 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  get out of source mode                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.059))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  send a character to input            MODE_source           ' ', 10                                                                 i_equal     0                                                                      
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : (13:14) : testin  the/ :                            
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:14) : testin  the/ :                            
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : M                                                   
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   14) : testin  the/ :                            
 

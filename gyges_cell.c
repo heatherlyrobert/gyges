@@ -255,6 +255,9 @@ CELL__new          (char a_linked)     /* cell goes into the linked list ?    */
    x_curr->provides  = NULL;
    x_curr->nprovide  = 0;
    x_curr->u         = 0;
+   /*---(errors)-------------------------*/
+   x_curr->nerror    = 0;
+   x_curr->errors    = NULL;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return x_curr;

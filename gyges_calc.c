@@ -75,8 +75,6 @@ char    errorstr [MAX_STR];
 
 
 
-
-
 /*====================------------------------------------====================*/
 /*===----                       private variables                      ----===*/
 /*====================------------------------------------====================*/
@@ -106,9 +104,144 @@ PRIV   char    t[MAX_STR];
 #define  MAX   1000000000
 
 PRIV   tCELL      *s_me;
+static int         s_neval       = 0;
 
 
 char      nada[5] = "";
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        error setting                         ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___ERROR___________o () { return; }
+
+tERROR*      /*--> create a single error entry -----------[ leaf   [ ------ ]-*/
+ERROR_create       (tCELL *a_owner)
+{
+   /*---(locals)-----------+-----------+-*/
+   tERROR     *x_error     = NULL;
+   int         x_tries     = 0;
+   tERROR     *x_next      = NULL;
+   /*---(defense)------------------------*/
+   if (a_owner == NULL)    return NULL;
+   /*---(create cell)--------------------*/
+   while (x_error == NULL) {
+      ++x_tries;
+      x_error = (tERROR *) malloc (sizeof (tERROR));
+      if (x_tries > 10)   return NULL;
+   }
+   /*---(into global list)---------------*/
+   x_error->gnext    = NULL;
+   x_error->gprev    = NULL;
+   if (terror == NULL) {
+      herror         = x_error;
+      terror         = x_error;
+   } else {
+      x_error->gprev = terror;
+      x_error->gnext = NULL;
+      terror->gnext  = x_error;
+      terror         = x_error;
+   }
+   ++nerror;
+   /*---(assign owner)-------------------*/
+   x_error->owner   = a_owner;
+   /*---(into owner list)----------------*/
+   x_error->next     = NULL;
+   x_error->prev     = NULL;
+   if (a_owner->nerror == 0) {
+      a_owner->errors   = x_error;
+   } else {
+      x_next = a_owner->errors;
+      while (x_next->next != NULL)  x_next = x_next->next;
+      x_next->next      = x_error;
+      x_error->prev     = x_next;
+   }
+   ++a_owner->nerror;
+   /*---(complete)-----------------------*/
+   return x_error;
+}
+
+char         /*--> destroy a single error entry ----------[ leaf   [ ------ ]-*/
+ERROR_destroy      (tERROR *a_error)
+{
+   /*---(defense: null cell)-------------*/
+   if (a_error     == NULL)  return NULL;
+   /*---(remove from global list)--------*/
+   if (a_error->gnext != NULL) a_error->gnext->gprev   = a_error->gprev;
+   else                        terror                  = a_error->gprev;
+   if (a_error->gprev != NULL) a_error->gprev->gnext   = a_error->gnext;
+   else                        herror                  = a_error->gnext;
+   --nerror;
+   /*---(if require, take off cell)------*/
+   if (a_error->next  != NULL) a_error->next->prev     = a_error->prev;
+   if (a_error->prev  != NULL) a_error->prev->next     = a_error->next;
+   else                        a_error->owner->errors  = a_error->next;
+   --(a_error->owner->nerror);
+   /*---(free)---------------------------*/
+   free (a_error);
+   /*---(complete)-----------------------*/
+   return  NULL;
+}
+
+char
+ERROR_add          (tCELL *a_owner, char a_phase, char *a_func, char a_type, char *a_desc)
+{
+   /*---(locals)-----------+-----------+-*/
+   tERROR     *x_error     = NULL;
+   /*---(create)-------------------------*/
+   x_error = ERROR_create   (a_owner);
+   if (x_error == NULL)  return  -1;
+   /*---(save values)--------------------*/
+   x_error->phase = a_phase;
+   strlcpy (x_error->func , a_func  ,  20);
+   x_error->type  = a_type;
+   strlcpy (x_error->desc , a_desc  , 100);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+char
+ERROR_list         (void)
+{
+   tERROR     *x_error      = NULL;
+   FILE       *f            = NULL;
+   int         c            = 0;
+   f = fopen ("errors", "w");
+   x_error = herror;
+   while (x_error) {
+      if (c % 45 == 0)  fprintf (f, "--- ---cell--- phase ---function--------- type- ---description--------------------------\n");
+      if (c %  5 == 0)  fprintf (f, "\n");
+      fprintf (f, "%3d %-10.10s ", c, x_error->owner->label);
+      switch (x_error->phase) {
+      case PERR_RPN   : fprintf (f, "%-5.5s ", "rpn"  ); break;
+      case PERR_BUILD : fprintf (f, "%-5.5s ", "build"); break;
+      case PERR_EVAL  : fprintf (f, "%-5.5s ", "eval" ); break;
+      case PERR_DISP  : fprintf (f, "%-5.5s ", "disp" ); break;
+      }
+      fprintf (f, "%-20.20s ", x_error->func);
+      switch (x_error->type ) {
+      case TERR_ARGS  : fprintf (f, "%-5.5s ", "args" ); break;
+      case TERR_ADDR  : fprintf (f, "%-5.5s ", "addr" ); break;
+      case TERR_RANGE : fprintf (f, "%-5.5s ", "range"); break;
+      case TERR_FUNC  : fprintf (f, "%-5.5s ", "func" ); break;
+      }
+      fprintf (f, "%-.100s\n", x_error->desc);
+      ++c;
+      x_error = x_error->gnext;
+   }
+   if (c % 45 != 0)  fprintf (f, "--- ---cell--- phase ---function--------- type- ---description--------------------------\n");
+   fclose (f);
+   return 0;
+}
+
+PR void
+CALC__seterror     (int a_num, char *a_str)
+{
+   errornum = a_num;
+   strncpy (errorstr     , a_str, MAX_STR);
+   return;
+}
 
 
 /*====================------------------------------------====================*/
@@ -251,7 +384,7 @@ CALC_pushref       (
 }
 
 double       /*--> get an numeric off the stack ----------[ ------ [ ------ ]-*/
-CALC__popval          (void)
+CALC__popval          (char *a_func)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* always returns a value for the stack entry.                             */
    /* -- for a numeric literal, it returns the number field on the stack item */
@@ -259,19 +392,31 @@ CALC__popval          (void)
    /* -- for a reference, it returns the value contained in that cell         */
    /* -- if it can't figure it out, it returns a 0.0                          */
    /*---(prepare)------------------------*/
+   if (calc__nstack <= 0) {
+      CALC__seterror ( -1, "#.stack");
+      ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "stack empty, could not get value");
+      return 0.0;
+   }
    --calc__nstack;
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
-   case 'v' :  return  calc__stack[calc__nstack].num;           break;
-   case 's' :  return  0.0;                                     break;
-   case 'r' :  return  calc__stack[calc__nstack].ref->v_num;    break;
+   case 'v' :
+      return  calc__stack[calc__nstack].num;
+      break;
+   case 's' :
+      return  0.0;
+      break;
+   case 'r' :
+      return  calc__stack[calc__nstack].ref->v_num;
+      break;
    }
    /*---(complete)-----------------------*/
+   ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "wrong argument type on stack");
    return 0.0;
 }
 
 char*        /*--> get an string off the stack -----------[ ------ [ ------ ]-*/
-CALC__popstr       (void)
+CALC__popstr       (char *a_func)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* always returns a string for the stack entry.                            */
    /* -- for a numeric literal, it returns an empty string                    */
@@ -283,6 +428,11 @@ CALC__popstr       (void)
    /* -- for a reference that's unknown, it returns an empty string           */
    /* -- if it can't figure it out, it returns an empty string                */
    /*---(prepare)------------------------*/
+   if (calc__nstack <= 0) {
+      CALC__seterror ( -1, "#.stack");
+      ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "stack empty, could not get string");
+      return strndup (nada, MAX_STR);
+   }
    --calc__nstack;
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
@@ -299,48 +449,50 @@ CALC__popstr       (void)
                }
    }
    /*---(complete)-----------------------*/
+   ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "wrong argument type on stack");
    return strndup (nada, MAX_STR);
 }
 
 tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
-CALC__popref          (void)
+CALC__popref          (char *a_func)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
+   if (calc__nstack <= 0) {
+      CALC__seterror ( -1, "#.stack");
+      ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "stack empty, could not get reference");
+      return NULL;
+   }
    --calc__nstack;
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
-   case 'r' :  return  calc__stack[calc__nstack].ref;           break;
+   case 'r' :
+      return  calc__stack[calc__nstack].ref;
+      break;
    }
    /*---(complete)-----------------------*/
+   ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "wrong argument type on stack");
    return NULL;
 }
 
 tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
-CALC__popprint        (void)
+CALC__popprint        (char *a_func)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
+   if (calc__nstack <= 0) {
+      CALC__seterror ( -1, "#.stack");
+      ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "stack empty, could not get printable");
+      return NULL;
+   }
    --calc__nstack;
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
-   case 'r' :  return  strndup (calc__stack[calc__nstack].ref->p, MAX_STR);        break;
+   case 'r' :
+      return  strndup (calc__stack[calc__nstack].ref->p, MAX_STR);
+      break;
    }
    /*---(complete)-----------------------*/
+   ERROR_add (s_me, PERR_EVAL, a_func, TERR_ARGS , "wrong argument type on stack");
    return NULL;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                        error setting                         ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___ERROR___________o () { return; }
-
-PR void
-CALC__seterror     (int a_num, char *a_str)
-{
-   errornum = a_num;
-   strncpy (errorstr     , a_str, MAX_STR);
-   return;
 }
 
 
@@ -366,8 +518,8 @@ PRIV void  o___ARITHMETIC______o () { return; }
 PRIV void
 CALC__add         (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("add"       );
+   b = CALC__popval ("add"       );
    CALC_pushval (b + a);
    return;
 }
@@ -375,8 +527,8 @@ CALC__add         (void)
 PRIV void
 CALC__subtract     (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("subtract"  );
+   b = CALC__popval ("subtract"  );
    CALC_pushval (b - a);
    return;
 }
@@ -384,8 +536,8 @@ CALC__subtract     (void)
 PRIV void
 CALC__multiply     (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("multiply"  );
+   b = CALC__popval ("multiply"  );
    CALC_pushval (b * a);
    return;
 }
@@ -393,8 +545,8 @@ CALC__multiply     (void)
 PRIV void
 CALC__divide       (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("divide"    );
+   b = CALC__popval ("divide"    );
    if (a != 0)  CALC_pushval (b / a);
    else         CALC_pushval (0);
    return;
@@ -403,8 +555,8 @@ CALC__divide       (void)
 PRIV void
 CALC__modulus      (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("modulus"   );
+   b = CALC__popval ("modulus"   );
    CALC_pushval (((int) b) % ((int) a));
    return;
 }
@@ -412,7 +564,7 @@ CALC__modulus      (void)
 PRIV void
 CALC__increment    (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a + 1);
    return;
 }
@@ -420,7 +572,7 @@ CALC__increment    (void)
 PRIV void
 CALC__decrement    (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a - 1);
    return;
 }
@@ -428,7 +580,7 @@ CALC__decrement    (void)
 PRIV void
 CALC__unaryminus   (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (0 - a);
    return;
 }
@@ -443,8 +595,8 @@ PRIV void  o___RELATIONAL______o () { return; }
 PRIV void
 CALC__equal        (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b == a);
    return;
 }
@@ -452,8 +604,8 @@ CALC__equal        (void)
 PRIV void
 CALC__notequal      (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b != a);
    return;
 }
@@ -461,8 +613,8 @@ CALC__notequal      (void)
 PRIV void
 CALC__greater      (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b > a);
    return;
 }
@@ -470,8 +622,8 @@ CALC__greater      (void)
 PRIV void
 CALC__lesser       (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b < a);
    return;
 }
@@ -479,8 +631,8 @@ CALC__lesser       (void)
 PRIV void
 CALC__gequal       (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b >= a);
    return;
 }
@@ -488,8 +640,8 @@ CALC__gequal       (void)
 PRIV void
 CALC__lequal       (void)
 {
-   a = CALC__popval( );
-   b = CALC__popval ();
+   a = CALC__popval( "---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b <= a);
    return;
 }
@@ -504,7 +656,7 @@ PRIV void  o___LOGICAL_________o () { return; }
 PRIV void
 CALC__not          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (!a);
    return;
 }
@@ -512,8 +664,8 @@ CALC__not          (void)
 PRIV void
 CALC__and          (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b && a);
    return;
 }
@@ -521,8 +673,8 @@ CALC__and          (void)
 PRIV void
 CALC__or           (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (b || a);
    return;
 }
@@ -538,8 +690,8 @@ PRIV void
 CALC__concat       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr();
-   s = CALC__popstr();
+   r = CALC__popstr("---"       );
+   s = CALC__popstr("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (s == NULL)  s = strndup (nada, MAX_STR);
@@ -559,8 +711,8 @@ PRIV void
 CALC__concatplus   (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr();
-   s = CALC__popstr();
+   r = CALC__popstr("---"       );
+   s = CALC__popstr("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (s == NULL)  s = strndup (nada, MAX_STR);
@@ -581,7 +733,7 @@ PRIV void
 CALC__lower        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr();
+   r = CALC__popstr("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -601,7 +753,7 @@ PRIV void
 CALC__upper        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr();
+   r = CALC__popstr("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -621,7 +773,7 @@ PRIV void
 CALC__char         (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    /*---(defense)------------------------*/
    if (n     <  32 )  n = '#';
    if (n     >= 127)  n = '#';
@@ -637,7 +789,7 @@ PRIV void
 CALC__code         (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(return result)------------------*/
@@ -650,7 +802,7 @@ PRIV void
 CALC__len          (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -667,8 +819,8 @@ PRIV void
 CALC__left         (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (n     <  0  )  n = 0;
@@ -689,8 +841,8 @@ PRIV void
 CALC__right        (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (n     <  0  )  n = 0;
@@ -713,9 +865,9 @@ PRIV void
 CALC__mid          (void)
 {
    /*---(get arguments)------------------*/
-   m = CALC__popval ();
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   m = CALC__popval ("---"       );
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (m     <  0  )  m = 0;
@@ -745,7 +897,7 @@ PRIV void
 CALC__trim         (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -762,7 +914,7 @@ PRIV void
 CALC__ltrim        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -779,7 +931,7 @@ PRIV void
 CALC__rtrim        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -796,7 +948,7 @@ PRIV void
 CALC__strim        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -813,7 +965,7 @@ PRIV void
 CALC__etrim        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -830,7 +982,7 @@ PRIV void
 CALC__mtrim        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -847,7 +999,7 @@ PRIV void
 CALC__print        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popprint ();
+   r = CALC__popprint ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -863,8 +1015,8 @@ PRIV void
 CALC__lpad         (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (n     <  0  )  n = 0;
@@ -888,8 +1040,8 @@ PRIV void
 CALC__rpad         (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (n     <  0  )  n = 0;
@@ -913,8 +1065,8 @@ PRIV void
 CALC__lppad        (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval   ();
-   r = CALC__popprint ();
+   n = CALC__popval   ("---"       );
+   r = CALC__popprint ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (n     <  0  )  n = 0;
@@ -939,8 +1091,8 @@ PRIV void
 CALC__rppad        (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval   ();
-   r = CALC__popprint ();
+   n = CALC__popval   ("---"       );
+   r = CALC__popprint ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (n     <  0  )  n = 0;
@@ -965,7 +1117,7 @@ PRIV void
 CALC__value        (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -982,7 +1134,7 @@ PRIV void
 CALC__salpha       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -999,7 +1151,7 @@ PRIV void
 CALC__salphac      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1016,7 +1168,7 @@ PRIV void
 CALC__salnum       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1033,7 +1185,7 @@ PRIV void
 CALC__salnumc      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1050,7 +1202,7 @@ PRIV void
 CALC__sbasic       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1067,7 +1219,7 @@ PRIV void
 CALC__sbasicc      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1084,7 +1236,7 @@ PRIV void
 CALC__swrite       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1101,7 +1253,7 @@ PRIV void
 CALC__swritec      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1118,7 +1270,7 @@ PRIV void
 CALC__sexten       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1135,7 +1287,7 @@ PRIV void
 CALC__sextenc      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1152,7 +1304,7 @@ PRIV void
 CALC__sprint       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1169,7 +1321,7 @@ PRIV void
 CALC__sprintc      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1186,7 +1338,7 @@ PRIV void
 CALC__sseven       (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1203,7 +1355,7 @@ PRIV void
 CALC__ssevenc      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popstr ();
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    /*---(process)------------------------*/
@@ -1220,10 +1372,10 @@ PRIV void
 CALC__replace      (void)
 {
    /*---(get arguments)------------------*/
-   n = CALC__popval ();
-   s = CALC__popstr ();
-   q = CALC__popstr ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   s = CALC__popstr ("---"       );
+   q = CALC__popstr ("---"       );
+   r = CALC__popstr ("---"       );
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, MAX_STR);
    if (q == NULL)  q = strndup (nada, MAX_STR);
@@ -1270,8 +1422,8 @@ PRIV void
 CALC__power        (void)
 {
    int   i = 0;
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    c = b;
    for (i = 1; i <  a; ++i)  c *= b;
    CALC_pushval (c);
@@ -1281,7 +1433,7 @@ CALC__power        (void)
 PRIV void
 CALC__abs           (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (fabs(a));
    return;
 }
@@ -1290,8 +1442,8 @@ PRIV void
 CALC__rtrunc        (void)
 {
    int i = 0;
-   n = CALC__popval ();
-   a = CALC__popval ();
+   n = CALC__popval ("---"       );
+   a = CALC__popval ("---"       );
    for (i = 0; i < n; ++i)  a *= 10;
    a = trunc (a);
    for (i = 0; i < n; ++i)  a /= 10;
@@ -1302,7 +1454,7 @@ CALC__rtrunc        (void)
 PRIV void
 CALC__trunc         (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (trunc(a));
    return;
 }
@@ -1311,8 +1463,8 @@ PRIV void
 CALC__rround        (void)
 {
    int i = 0;
-   n = CALC__popval ();
-   a = CALC__popval ();
+   n = CALC__popval ("---"       );
+   a = CALC__popval ("---"       );
    for (i = 0; i < n; ++i)  a *= 10;
    a = round (a);
    for (i = 0; i < n; ++i)  a /= 10;
@@ -1323,7 +1475,7 @@ CALC__rround        (void)
 PRIV void
 CALC__round         (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (round(a));
    return;
 }
@@ -1331,7 +1483,7 @@ CALC__round         (void)
 PRIV void
 CALC__ceiling       (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (ceil(a));
    return;
 }
@@ -1339,7 +1491,7 @@ CALC__ceiling       (void)
 PRIV void
 CALC__floor         (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (floor(a));
    return;
 }
@@ -1354,8 +1506,8 @@ CALC__rand          (void)
 PRIV void       /* PURPOSE : rand between n-m, not just 0-1 ---------------*/
 CALC__randr         (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (((double) rand() / (double) RAND_MAX) * (b - a) + a);
    return;
 }
@@ -1363,7 +1515,7 @@ CALC__randr         (void)
 PRIV void
 CALC__sqrt          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (sqrt(a));
    return;
 }
@@ -1371,7 +1523,7 @@ CALC__sqrt          (void)
 PRIV void
 CALC__cbrt          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (cbrt(a));
    return;
 }
@@ -1379,7 +1531,7 @@ CALC__cbrt          (void)
 PRIV void
 CALC__sqr           (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a * a);
    return;
 }
@@ -1387,7 +1539,7 @@ CALC__sqr           (void)
 PRIV void
 CALC__cube          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a * a * a);
    return;
 }
@@ -1403,7 +1555,7 @@ PRIV void  o___TRIG____________o () { return; }
 PRIV void
 CALC__degrees       (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a * RAD2DEG);
    return;
 }
@@ -1411,7 +1563,7 @@ CALC__degrees       (void)
 PRIV void
 CALC__radians       (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a * DEG2RAD);
    return;
 }
@@ -1426,8 +1578,8 @@ CALC__pi            (void)
 PRIV void
 CALC__hypot         (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (sqrt(a * a + b * b));
    return;
 }
@@ -1435,8 +1587,8 @@ CALC__hypot         (void)
 PRIV void
 CALC__side          (void)
 {
-   b = CALC__popval ();
-   c = CALC__popval ();
+   b = CALC__popval ("---"       );
+   c = CALC__popval ("---"       );
    CALC_pushval (sqrt(c * c - b * b));
    return;
 }
@@ -1445,7 +1597,7 @@ PRIV void
 CALC__sin           (void)
 {
    int i;
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    i = round (a * 10.0);
    i = i % 3600;
    if (i < 0)  i = 3600 + i;
@@ -1465,7 +1617,7 @@ PRIV void
 CALC__csc           (void)
 {
    CALC__sin     ();
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (1);
    CALC_pushval (a);
    CALC__divide ();
@@ -1484,7 +1636,7 @@ PRIV void
 CALC__cos           (void)
 {
    int i;
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    i = round (a * 10.0);
    i = i % 3600;
    if (i < 0)  i = 3600 + i;
@@ -1504,7 +1656,7 @@ PRIV void
 CALC__sec           (void)
 {
    CALC__cos     ();
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (1);
    CALC_pushval (a);
    CALC__divide ();
@@ -1523,7 +1675,7 @@ PRIV void
 CALC__tan           (void)
 {
    int i;
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    i = round (a * 10.0);
    i = i % 3600;
    if (i < 0)  i = 3600 + i;
@@ -1543,7 +1695,7 @@ PRIV void
 CALC__cot           (void)
 {
    CALC__tan     ();
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (1);
    CALC_pushval (a);
    CALC__divide ();
@@ -1561,10 +1713,10 @@ CALC__cotr          (void)
 PRIV void
 CALC__crd           (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a / 2.0);
    CALC__sin     ();
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (a * 2.0);
    return;
 }
@@ -1580,7 +1732,7 @@ CALC__crdr          (void)
 PRIV void
 CALC__asin          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (asin(a) * RAD2DEG);
    return;
 }
@@ -1588,7 +1740,7 @@ CALC__asin          (void)
 PRIV void
 CALC__asinr         (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (asin(a));
    return;
 }
@@ -1596,7 +1748,7 @@ CALC__asinr         (void)
 PRIV void
 CALC__acos          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (acos(a) * RAD2DEG);
    return;
 }
@@ -1604,7 +1756,7 @@ CALC__acos          (void)
 PRIV void
 CALC__acosr         (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (acos(a));
    return;
 }
@@ -1612,7 +1764,7 @@ CALC__acosr         (void)
 PRIV void
 CALC__atan          (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (atan(a) * RAD2DEG);
    return;
 }
@@ -1620,7 +1772,7 @@ CALC__atan          (void)
 PRIV void
 CALC__atanr         (void)
 {
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    CALC_pushval (atan(a));
    return;
 }
@@ -1628,8 +1780,8 @@ CALC__atanr         (void)
 PRIV void
 CALC__atan2         (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (atan2(b,a) * RAD2DEG);
    return;
 }
@@ -1637,8 +1789,8 @@ CALC__atan2         (void)
 PRIV void
 CALC__atanr2        (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
    CALC_pushval (atan2(b,a));
    return;
 }
@@ -1651,67 +1803,80 @@ CALC__atanr2        (void)
 PRIV void  o___ADDRESS_________o () { return; }
 
 PRIV void
-CALC__offset        (int a_tab, int a_col, int a_row)
+CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
 {
-   char   rc;
-   int    x_tab;
-   int    x_col;
-   int    x_row;
-   int    x_abs;
-   tCELL *x_base;
-   tCELL *x_new;
-   x_base = CALC__popref ();
-   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   /*---(locals)-----------+-----------+-*/
+   char        rc;
+   int         x_tab;
+   int         x_col;
+   int         x_row;
+   int         x_abs;
+   tCELL      *x_base;
+   tCELL      *x_new;
+   /*---(get the base reference)---------*/
+   x_base = CALC__popref (a_func      );
+   if (x_base == NULL) {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   /*---(parse base reference)-----------*/
    rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
-   DEBUG_CALC   yLOG_value   ("x_tab"     , x_tab);
-   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_col);
-   DEBUG_CALC   yLOG_value   ("x_brow"    , x_row);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   if (rc    <  0   )   {
+      CALC__seterror ( -1, "#.range");
+      ERROR_add (s_me, PERR_EVAL, a_func, TERR_ADDR , "base reference could not be parsed");
+      return;
+   }
+   /*---(calc offset reference)----------*/
    x_tab += a_tab;
    x_col += a_col;
    x_row += a_row;
    rc     = LOC_legal  (x_tab, x_col, x_row, CELL_FIXED);
-   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   if (rc    <  0   )   {
+      CALC__seterror ( -1, "#.range");
+      ERROR_add (s_me, PERR_EVAL, a_func, TERR_ADDR , "new offset reference is not valid");
+      return;
+   }
+   /*---(identify new cell)--------------*/
    x_new  = LOC_cell   (x_tab, x_col, x_row);
    if (x_new == NULL)                           CALC_pushval (0);
    else if (x_new->s == NULL)                   CALC_pushval (0);
    else if (x_new->t == 'n' || x_new->t == 'f') CALC_pushval (x_new->v_num);
    else                                         CALC_pushstr (x_new->s);
+   /*---(complete)-----------------------*/
    return;
 }
 
 PRIV void
 CALC__offs          (void)
 {
-   n = CALC__popval ();
-   m = CALC__popval ();
-   o = CALC__popval ();
-   CALC__offset  (    o,    m,    n);
+   n = CALC__popval (__FUNCTION__);
+   m = CALC__popval (__FUNCTION__);
+   o = CALC__popval (__FUNCTION__);
+   CALC__offset  (__FUNCTION__,     o,    m,    n);
    return;
 }
 
 PRIV void
 CALC__offt          (void)
 {
-   n = CALC__popval ();
-   CALC__offset  (    n,    0,    0);
+   n = CALC__popval ("---"       );
+   CALC__offset  ("offt",     n,    0,    0);
    return;
 }
 
 PRIV void
 CALC__offc          (void)
 {
-   n = CALC__popval ();
-   CALC__offset  (    0,    n,    0);
+   n = CALC__popval ("---"       );
+   CALC__offset  ("offc",     0,    n,    0);
    return;
 }
 
 PRIV void
 CALC__offr          (void)
 {
-   n = CALC__popval ();
-   CALC__offset  (    0,    0,    n);
+   n = CALC__popval ("---"       );
+   CALC__offset  ("offr",     0,    0,    n);
    return;
 }
 
@@ -1720,15 +1885,15 @@ CALC__loc           (void)
 {
    char   rc;
    tCELL *x_new;
-   n = CALC__popval ();
-   m = CALC__popval ();
-   o = CALC__popval ();
+   n = CALC__popval ("---"       );
+   m = CALC__popval ("---"       );
+   o = CALC__popval ("---"       );
    rc = LOC_legal  (    o,    m,    n, CELL_FIXED);
    if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
    x_new  = LOC_cell   (o, m, n);
    /*> if (s_me->u != x_new->u) {                                                     <*/
-      DEP_delcalcref (s_me);
-      DEP_create     (DEP_CALCREF, s_me, x_new);
+   DEP_delcalcref (s_me);
+   DEP_create     (DEP_CALCREF, s_me, x_new);
    /*> }                                                                              <*/
    CALC_pushref (x_new);
    /*> printf ("CALC_loc %s\n", s_me->label);                                         <*/
@@ -1743,7 +1908,7 @@ CALC__address       (char a_type)
    int    x_col;
    int    x_row;
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
    rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
    if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
@@ -1759,7 +1924,7 @@ PRIV void
 CALC__addr          (void)
 {
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
    CALC_pushstr (x_base->label);
    return;
@@ -1770,7 +1935,7 @@ CALC__cell          (char a_type)
 {
    tCELL *x_base;
    char   x_type  = a_type;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    if (x_base == NULL) {
       CALC_pushval (FALSE);
       return;
@@ -1791,11 +1956,11 @@ PRIV void
 CALC__isfor         (void)
 {
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    /*---(formula)--------*/
    CALC_pushref (x_base);
    CALC__cell ('f');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1811,11 +1976,11 @@ PRIV void
 CALC__isval         (void)
 {
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    /*---(number)---------*/
    CALC_pushref (x_base);
    CALC__cell   ('n');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1823,7 +1988,7 @@ CALC__isval         (void)
    /*---(formula)--------*/
    CALC_pushref (x_base);
    CALC__cell   ('f');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1839,11 +2004,11 @@ PRIV void
 CALC__iscalc        (void)
 {
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    /*---(formula)--------*/
    CALC_pushref (x_base);
    CALC__cell   ('f');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1851,7 +2016,7 @@ CALC__iscalc        (void)
    /*---(formula)--------*/
    CALC_pushref (x_base);
    CALC__cell   ('m');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1881,11 +2046,11 @@ PRIV void
 CALC__istext        (void)
 {
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    /*---(formula)--------*/
    CALC_pushref (x_base);
    CALC__cell   ('s');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1922,11 +2087,11 @@ PRIV void
 CALC__ispoint       (void)
 {
    tCELL *x_base;
-   x_base = CALC__popref ();
+   x_base = CALC__popref ("---"       );
    /*---(range)----------*/
    CALC_pushref (x_base);
    CALC__cell   ('p');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    if (n == TRUE) {
       CALC_pushval (n);
       return;
@@ -1963,7 +2128,7 @@ PRIV void
 CALC__tabname       (void)
 {
    CALC__address ('t');
-   n = CALC__popval ();
+   n = CALC__popval ("---"       );
    CALC_pushstr (tabs[n].name);
    return;
 }
@@ -2003,9 +2168,9 @@ CALC__rangestat    (char a_type)
    int         x_erow      = 0;
    char        rc          = 0;
    /*---(get values)---------------------*/
-   x_end = CALC__popref ();
+   x_end = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref ();
+   x_beg = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
    if (x_beg == NULL)   { CALC__seterror ( -1, "#.range");  return; }
@@ -2085,9 +2250,9 @@ PRIV void  o___LOGIC___________o () { return; }
 PRIV void
 CALC__if            (void)
 {
-   a = CALC__popval ();
-   b = CALC__popval ();
-   c = CALC__popval ();
+   a = CALC__popval ("---"       );
+   b = CALC__popval ("---"       );
+   c = CALC__popval ("---"       );
    if (c) CALC_pushval (b);
    else   CALC_pushval (a);
    return;
@@ -2117,7 +2282,7 @@ PRIV void
 CALC__year          (void)
 {
    char temp[100];
-   a = CALC__popval ();
+   a = CALC__popval ("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%Y", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2128,7 +2293,7 @@ PRIV void
 CALC__month         (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%m", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2139,7 +2304,7 @@ PRIV void
 CALC__day           (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%d", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2150,7 +2315,7 @@ PRIV void
 CALC__hour          (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%H", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2161,7 +2326,7 @@ PRIV void
 CALC__minute        (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%M", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2172,7 +2337,7 @@ PRIV void
 CALC__second        (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%S", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2183,7 +2348,7 @@ PRIV void
 CALC__weekday       (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%w", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2194,7 +2359,7 @@ PRIV void
 CALC__weeknum       (void)
 {
    char temp[100];
-   a = CALC__popval();
+   a = CALC__popval("---"       );
    time_t  xtime = (time_t) a;
    strftime(temp, 100, "%W", localtime(&xtime));
    CALC_pushval (atoi(temp));
@@ -2225,7 +2390,7 @@ CALC__timevalue     (void)
    mo = temp->tm_mon + 1;
    yr = temp->tm_year + 1900;
    /*---(pop string)---------------------*/
-   r   = CALC__popstr();
+   r   = CALC__popstr("---"       );
    /*---(attempt to read)----------------*/
    rc  = sscanf (r, "%d/%d/%d %d:%d:%d", &mo, &dy, &yr, &hr, &mn, &se);
    if (rc < 6) {
@@ -2296,9 +2461,9 @@ CALC__gather       (void)
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
-   x_end = CALC__popref ();
+   x_end = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref ();
+   x_beg = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
    if (x_beg == NULL)   { CALC__seterror ( -1, "#.range");  return; }
@@ -2774,12 +2939,12 @@ CALC__vlookup      (void)
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    if (r == NULL)  r = strndup (nada, MAX_STR);
-   x_end = CALC__popref ();
+   x_end = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref ();
+   x_beg = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
    if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
@@ -2840,12 +3005,12 @@ CALC__hlookup      (void)
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
-   n = CALC__popval ();
-   r = CALC__popstr ();
+   n = CALC__popval ("---"       );
+   r = CALC__popstr ("---"       );
    if (r == NULL)  r = strndup (nada, MAX_STR);
-   x_end = CALC__popref ();
+   x_end = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref ();
+   x_beg = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
    if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
@@ -2906,9 +3071,9 @@ CALC__entry        (void)
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
-   x_end = CALC__popref ();
+   x_end = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref ();
+   x_beg = CALC__popref ("---"       );
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
    if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
@@ -3182,6 +3347,9 @@ CALC_init          (void)
    /*---(error reporting)----------------*/
    errornum = 0;
    strcpy(errorstr, "");
+   herror     = NULL;
+   terror     = NULL;
+   nerror     = 0;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -3239,7 +3407,6 @@ CALC_eval          (tCELL *a_curr)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
-   int         neval       = 0;
    double      result      = 0;
    char       *resstr      = NULL;
    tCALC      *curr        = NULL;
@@ -3267,12 +3434,13 @@ CALC_eval          (tCELL *a_curr)
    DEBUG_CALC   yLOG_info    ("rpn"       , a_curr->rpn);
    /*---(prep)---------------------------*/
    s_me     = a_curr;
+   s_neval  = 0;
    errornum = 0;
    strcpy (errorstr, "");
    /*---(main loop)----------------------*/
    curr        = a_curr->calc;
    while (curr != NULL) {
-      ++neval;
+      ++s_neval;
       DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", curr->t, curr->v, curr->s, curr->r, curr->f);
       switch (curr->t) {
       case 'v' : CALC_pushval (curr->v);    break;
@@ -3301,11 +3469,11 @@ CALC_eval          (tCELL *a_curr)
    }
    /*---(results)------------------------*/
    if (a_curr->rpn[0] == '#') {
-      resstr        = CALC__popstr();
+      resstr        = CALC__popstr("---"       );
       a_curr->v_str = strndup (resstr, MAX_STR);
       DEBUG_CALC   yLOG_info    ("v_str"     , a_curr->v_str);
    } else {
-      result       = CALC__popval();
+      result       = CALC__popval("---"       );
       a_curr->v_num = result;
       DEBUG_CALC   yLOG_value   ("v_num"     , a_curr->v_num);
    }

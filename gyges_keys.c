@@ -1125,6 +1125,26 @@ SMOD_replace  (char a_major, char a_minor)
    /*---(handle keys)--------------------*/
    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
    DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
+   /*---(check for backspace)------------*/
+   if (a_major == 'R' && (a_minor == 8 || a_minor == 127)) {
+      DEBUG_USER   yLOG_note    ("handle a backspace/delete");
+      if (my.cpos > 0) {
+         g_contents [my.cpos] = x_saved;
+         --(my.cpos);
+         x_saved = g_contents [my.cpos];
+         g_contents [my.cpos] = CHAR_PLACE;
+      }
+      EDIT_done   ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
+   }
+   /*---(filter crazy chars)-------------*/
+   if (a_minor < 32 || a_minor >= 127) {
+      DEBUG_USER   yLOG_note    ("unacceptable character");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
+   }
+   /*---(check for mark)-----------------*/
    if (a_major == 'm') {
       DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
       x_saved = g_contents [my.cpos];
@@ -1133,6 +1153,7 @@ SMOD_replace  (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   /*---(handle normal chars)------------*/
    if (a_major == 'r') {
       DEBUG_USER   yLOG_note    ("replace the marked character");
       g_contents [my.cpos] = a_minor;
@@ -1407,6 +1428,10 @@ cmd_exec           (char *a_command)
          return 0;
       }
       return -1;
+   }
+   if (strlen (p) == 7 && strcmp (p, ":errors") == 0) {
+      ERROR_list ();
+      return 0;
    }
    if (x_len == 9 && strcmp (p, ":status") == 0) {
       sta_type = x_work [8];

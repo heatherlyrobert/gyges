@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.6v"
-#define     VER_TXT   "fixed input saves after shortcut +-=#s calls"
+#define     VER_NUM   "1.7a"
+#define     VER_TXT   "basic error capture and reporting framework in place"
 
 
 
@@ -352,6 +352,34 @@ extern    struct cACCESSOR my;
 
 
 
+#define     MAX_ERROR      10000
+typedef  struct cERROR  tERROR;
+struct cERROR {
+   tCELL      *owner;
+   long        when;                        /* timestamp of error reporting   */
+   char        phase;                       /* rpn, build, eval, display      */
+   char        func        [ 20];           /* function reporting issue       */
+   char        type;                        /* type of issue                  */
+   char        desc        [100];           /* fuller error message           */
+   tERROR     *next;                        /* next error for cell            */
+   tERROR     *prev;                        /* next error for cell            */
+   tERROR     *gnext;                       /* global error list next         */
+   tERROR     *gprev;                       /* global error list prev         */
+};
+tERROR     *herror;  /* head  */
+tERROR     *terror;  /* tail  */
+int         nerror;  /* count */
+#define     PERR_RPN     'r'
+#define     PERR_BUILD   'b'
+#define     PERR_EVAL    'e'
+#define     PERR_DISP    'd'
+
+#define     TERR_ARGS    's'
+#define     TERR_ADDR    'a'
+#define     TERR_RANGE   'r'
+#define     TERR_FUNC    'f'
+
+
 
 
 /*====================-----------------+------------------====================*/
@@ -456,13 +484,16 @@ struct cCELL {
    char        nprovide;     /* number of dependent cells                     */
    tDEP       *provides;     /* outgoing successors to this calc              */
    long        u;            /* timestamp of last update run                  */
-   /*---(linked list)--------------------*/
+   /*---(#7, CELL LIST)------------------*/
    /*   all the cells are stored in a doublly linked list in order to make    */
    /*   them easy to manage and verify as a entire population.  the linked    */
    /*   field helps drive hooking and unhooking cells from sheets.            */
    char        linked;       /* 1=linked, 0=unlinked                          */
    tCELL      *next;         /* next cell in doubly linked list               */
    tCELL      *prev;         /* previous cell in doubly linked list           */
+   /*---(#8, ERRORS)---------------------*/
+   char        nerror;       /* number of current errors                      */
+   tERROR     *errors;       /* error entries                                 */
    /*---(end)----------------------------*/
 };
 /*
@@ -864,6 +895,7 @@ int     col_far;
 extern      char          unit_answer [ LEN_TEXT ];
 
 
+
 /*---(character constants)------------*/
 #define   CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
 #define   CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
@@ -875,6 +907,11 @@ extern      char          unit_answer [ LEN_TEXT ];
 #define   CHAR_NULL       216   /* Ø  null             (  0)   */
 #define   CHAR_ESC        234   /* ê  escape           ( 27)   */
 #define   CHAR_SPACE      223   /* ß  space            ( 32)   */
+#define   CHAR_LQUEST     191   /* ¿  lead question    (  -)   */
+#define   CHAR_DEGREE     176   /* °  degree mark      (  -)   */
+#define   CHAR_FUNKY      186   /* º  funky mark       (  -)   */
+#define   CHAR_STAFF      165   /* ¥  staff            (  -)   */
+
 
 
 /*===[[ PROTOTYPES ]]=====================================*/
@@ -1086,6 +1123,7 @@ char      CALC_free          (tCELL *a_curr);
 char      CALC_eval          (tCELL *a_curr);
 char      calc_show          (void);
 char*     CALC_strtok        (char *a_str);
+char      ERROR_list         (void);
 
 
 char      RPN_adjust         (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);

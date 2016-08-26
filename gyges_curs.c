@@ -534,6 +534,9 @@ CURS_status        (tCELL *a_curr)
    case 'M' :
       MODE_list (msg);
       break;
+   case 'E' :
+      snprintf (msg, 500, "errors (%3d)", nerror);
+      break;
    case 't' : /* text register */
       TREG_entry (REG_CURR, msg);
       break;
