@@ -323,13 +323,6 @@ ERROR_list         (void)
    return 0;
 }
 
-PR void
-CALC__seterror     (int a_num, char *a_str)
-{
-   errornum = a_num;
-   strncpy (errorstr     , a_str, MAX_STR);
-   return;
-}
 
 
 /*====================------------------------------------====================*/
@@ -3052,6 +3045,10 @@ CALC__vlookup      (void)
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "beg and end must be on the same tab");
       return;
    }
+   if (s_bcol + n >  s_ecol)              {
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "requested offset is out of range");
+      return;
+   }
    /*---(process)------------------------*/
    for (x_row = s_brow; x_row <= s_erow; ++x_row) {
       DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
@@ -3064,7 +3061,6 @@ CALC__vlookup      (void)
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
       /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_row));                           <*/
-      if (s_bcol + n >  s_ecol)              { CALC_pushval (__FUNCTION__, 0); return; }
       x_curr = tabs[s_btab].sheet[s_bcol + n][x_row];
       if      (x_curr == NULL)          CALC_pushval (__FUNCTION__, 0);
       else if (x_curr->s == NULL)       CALC_pushval (__FUNCTION__, 0);
@@ -3098,8 +3094,8 @@ CALC__hlookup      (void)
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "beg and end must be on the same tab");
       return;
    }
-   if (s_btab != s_etab)  {
-      CALC__seterror ( -1, "#.range");
+   if (s_brow + n >  s_erow)              {
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "requested offset is out of range");
       return;
    }
    /*---(process)------------------------*/
@@ -3114,10 +3110,6 @@ CALC__hlookup      (void)
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
       /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_crow));                           <*/
-      if (s_brow + n >  s_erow)              {
-         CALC__seterror ( -1, "#.inc");
-         return;
-      }
       x_curr = tabs[s_btab].sheet[x_col][s_brow + n];
       if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
       if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
@@ -3126,8 +3118,8 @@ CALC__hlookup      (void)
       return;
    }
    /*---(nothing found)------------------*/
+   ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "match not found");
    CALC_pushval (__FUNCTION__, 0);
-   CALC__seterror ( -1, "#.nfound");
    /*---(complete)-----------------------*/
    return;
 }
@@ -3499,14 +3491,24 @@ CALC_eval          (tCELL *a_curr)
       DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", curr->t, curr->v, curr->s, curr->r, curr->f);
       s_narg = 0;
       switch (curr->t) {
-      case 'v' : CALC_pushval (__FUNCTION__, curr->v);    break;
-      case 's' : CALC_pushstr (__FUNCTION__, curr->s);    break;
-      case 'r' : CALC_pushref (__FUNCTION__, curr->r);    break;
-      case 'f' : curr->f();                 break;
-      case 'x' : break;
-      default  : CALC__seterror (  -1, "#badcalc");
+      case 'v' :
+         CALC_pushval (__FUNCTION__, curr->v);
+         break;
+      case 's' :
+         CALC_pushstr (__FUNCTION__, curr->s);
+         break;
+      case 'r' :
+         CALC_pushref (__FUNCTION__, curr->r);
+         break;
+      case 'f' :
+         curr->f();
+         break;
+      case 'x' :
+         break;
+      default  :
+         ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_OTHER, "bad calculation type requested");
       }
-      /*> if (errornum != 0) break;                                                   <*/
+      if (errornum != 0) break;
       curr = curr->next;
    }
    /*---(check errors)-------------------*/

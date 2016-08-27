@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7h"
-#define     VER_TXT   "create a shared range parser in CALC for maintenance ease"
+#define     VER_NUM   "1.7i"
+#define     VER_TXT   "eliminated all old seterror and replaced with new function"
 
 
 
