@@ -1986,7 +1986,7 @@ CALC__loc           (void)
 }
 
 PRIV void
-CALC__address       (char *a_func, char a_type)
+SHARED__address    (char *a_func, char a_type)
 {
    char   rc;
    int    x_tab;
@@ -2225,7 +2225,7 @@ CALC__filebase      (void)
 PRIV void
 CALC__tabname       (void)
 {
-   CALC__address (__FUNCTION__, 't');
+   SHARED__address (__FUNCTION__, 't');
    n = CALC__popval (__FUNCTION__, ++s_narg);
    CALC_pushstr (__FUNCTION__, tabs[n].name);
    return;
@@ -2233,27 +2233,70 @@ CALC__tabname       (void)
 
 PRIV void
 CALC__tab           (void)
-{
-   CALC__address (__FUNCTION__, 't');
+{  SHARED__address (__FUNCTION__, 't');
    return;
 }
 
 PRIV void
 CALC__col           (void)
-{
-   CALC__address (__FUNCTION__, 'c');
+{  SHARED__address (__FUNCTION__, 'c');
    return;
 }
 
 PRIV void
 CALC__row           (void)
-{
-   CALC__address (__FUNCTION__, 'r');
+{  SHARED__address (__FUNCTION__, 'r');
    return;
 }
 
+static short   s_btab     = 0;
+static short   s_bcol     = 0;
+static short   s_brow     = 0;
+static short   s_etab     = 0;
+static short   s_ecol     = 0;
+static short   s_erow     = 0;
+
+static char
+SHARED__rangeparse (char *a_func)
+{
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *x_beg       = NULL;
+   tCELL      *x_end       = NULL;
+   char        rce         = -10;
+   char        rc          = 0;
+   /*---(get range addresses)------------*/
+   x_end = CALC__popref (a_func      , ++s_narg);
+   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
+   --rce;  if (x_end == NULL)   return rce;
+   x_beg = CALC__popref (a_func      , ++s_narg);
+   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
+   --rce;  if (x_beg == NULL)   return rce;
+   /*---(parse beginning)----------------*/
+   rc = LOC_coordinates (x_beg, &s_btab, &s_bcol, &s_brow);
+   DEBUG_CALC   yLOG_value   ("s_btab"    , s_btab);
+   DEBUG_CALC   yLOG_value   ("s_bcol"    , s_bcol);
+   DEBUG_CALC   yLOG_value   ("s_brow"    , s_brow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0 ) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "beg reference could not be parsed");
+      return rce;
+   }
+   /*---(parse ending)-------------------*/
+   rc = LOC_coordinates (x_end, &s_etab, &s_ecol, &s_erow);
+   DEBUG_CALC   yLOG_value   ("s_etab"    , s_etab);
+   DEBUG_CALC   yLOG_value   ("s_ecol"    , s_ecol);
+   DEBUG_CALC   yLOG_value   ("s_erow"    , s_erow);
+   DEBUG_CALC   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "end reference could not be parsed");
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 PRIV void        /* PURPOSE : total the numeric cells in a range ----------*/
-CALC__rangestat    (char a_type)
+SHARED__rangestat  (char *a_func, char a_type)
 {
    /*---(locals)-----------+-----------+-*/
    tCELL      *x_beg       = NULL;
@@ -2266,73 +2309,51 @@ CALC__rangestat    (char a_type)
    int         x_erow      = 0;
    char        rc          = 0;
    /*---(get values)---------------------*/
-   x_end = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
-   /*---(defense)------------------------*/
-   if (x_beg == NULL)   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
-   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
-   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
-   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_end == NULL)   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
-   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
-   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
-   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   /*---(process)------------------------*/
+   rc = SHARED__rangeparse (a_func);
+   if (rc < 0)  return;
+   /*---(return)-------------------------*/
    switch (a_type) {
-   case 'd' :  CALC_pushval (__FUNCTION__, sqrt (pow (x_ecol - x_bcol + 1, 2) + pow (x_erow - x_brow + 1, 2)));  break;
-   case 't' :  CALC_pushval (__FUNCTION__, x_etab - x_btab + 1);  break;
-   case 'c' :  CALC_pushval (__FUNCTION__, x_ecol - x_bcol + 1);  break;
-   case 'r' :  CALC_pushval (__FUNCTION__, x_ecol - x_bcol + 1);  break;
-   default  :  CALC_pushval (__FUNCTION__, x_erow - x_brow + 1);  break;
+   case 'd' :
+      CALC_pushval (a_func, sqrt (pow (s_ecol - s_bcol + 1, 2) + pow (s_erow - s_brow + 1, 2)));
+      break;
+   case 't' :
+      CALC_pushval (a_func, s_etab - s_btab + 1);
+      break;
+   case 'c' :
+      CALC_pushval (a_func, s_ecol - s_bcol + 1);
+      break;
+   case 'r' :
+      CALC_pushval (a_func, s_ecol - s_bcol + 1);
+      break;
+   default  : 
+      CALC_pushval (a_func, s_erow - s_brow + 1);
+      break;
    }
+   /*---(complete)-----------------------*/
    return;
 }
 
 PRIV void
 CALC__dist          (void)
-{
-   CALC__rangestat ('d');
+{  SHARED__rangestat (__FUNCTION__, 'd');
    return;
 }
 
 PRIV void
 CALC__tabs          (void)
-{
-   CALC__rangestat ('t');
+{  SHARED__rangestat (__FUNCTION__, 't');
    return;
 }
 
 PRIV void
 CALC__cols          (void)
-{
-   CALC__rangestat ('c');
+{  SHARED__rangestat (__FUNCTION__, 'c');
    return;
 }
 
 PRIV void
 CALC__rows          (void)
-{
-   CALC__rangestat ('r');
+{  SHARED__rangestat (__FUNCTION__, 'r');
    return;
 }
 
@@ -2512,7 +2533,7 @@ CALC__timevalue     (void)
             if (rc < 2) {
                rc  = sscanf (r, "%d:%d", &hr, &mn);
                if (rc < 2) {
-                  CALC__seterror ( -1, "#.range");
+                  ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_OTHER, "time value could not be parsed");
                   return;
                }
             }
@@ -2528,7 +2549,7 @@ CALC__timevalue     (void)
    if      (yr <  50  ) temp->tm_year = 100 + yr;
    else if (yr <  100 ) temp->tm_year = yr;
    else if (yr <  1900) {
-      CALC__seterror ( -1, "#.year");
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_OTHER, "year can not be less than 1900");
       return;
    }
    else if (yr >= 1900) temp->tm_year = yr - 1900;
@@ -2559,61 +2580,26 @@ PRIV void  o___RANGE___________o () { return; }
  */
 
 PRIV void        /* PURPOSE : total the numeric cells in a range ----------*/
-CALC__gather       (void)
+SHARED__gather     (char *a_func)
 {
    /*---(locals)-----------+-----------+-*/
-   tCELL      *x_beg       = NULL;
-   int         x_tab       = 0;
-   int         x_bcol      = 0;
-   int         x_brow      = 0;
-   tCELL      *x_end       = NULL;
-   int         x_ecol      = 0;
-   int         x_erow      = 0;
-   int         x_crow      = 0;
-   int         x_ccol      = 0;
+   int         x_row       = 0;
+   int         x_col       = 0;
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
-   x_end = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
-   /*---(defense)------------------------*/
-   if (x_beg == NULL)   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_beg, &x_tab, &x_bcol, &x_brow);
-   DEBUG_CALC   yLOG_value   ("x_tab"     , x_tab);
-   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
-   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_end == NULL)   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_end, NULL  , &x_ecol, &x_erow);
-   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
-   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
+   rc = SHARED__rangeparse (a_func);
+   if (rc < 0)  return;
    /*---(process)------------------------*/
    cnt = cnta = cnts = cntb = cntr = 0;
    tot = 0;
    min =   MAX;
    max = -(MAX);
-   for (x_ccol = x_bcol; x_ccol <= x_ecol; ++x_ccol) {
-      for (x_crow = x_brow; x_crow <= x_erow; ++x_crow) {
-         DEBUG_CALC   yLOG_value   ("x_ccol"    , x_ccol);
-         DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
-         x_curr = tabs[x_tab].sheet[x_ccol][x_crow];
+   for (x_col = s_bcol; x_col <= s_ecol; ++x_col) {
+      for (x_row = s_brow; x_row <= s_erow; ++x_row) {
+         DEBUG_CALC   yLOG_value   ("x_col"    , x_col);
+         DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
+         x_curr = tabs[s_btab].sheet[x_col][x_row];
          DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
          if (x_curr == NULL)                    continue;
          DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -2699,7 +2685,7 @@ PRIV void    /*--> total all numeric cells in a range ----[ ------ [ ------ ]-*/
 CALC__sum          (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, tot);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2709,7 +2695,7 @@ PRIV void    /*--> count all numeric cells in a range ----[ ------ [ ------ ]-*/
 CALC__count        (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, cnt);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2719,7 +2705,7 @@ PRIV void    /*--> count all filled cells in a range -----[ ------ [ ------ ]-*/
 CALC__counts       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, cnts);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2729,7 +2715,7 @@ PRIV void    /*--> count all filled cells in a range -----[ ------ [ ------ ]-*/
 CALC__counta       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, cnta);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2739,7 +2725,7 @@ PRIV void    /*--> count non-filled cells in a range -----[ ------ [ ------ ]-*/
 CALC__countb       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, cntb);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2749,7 +2735,7 @@ PRIV void    /*--> count non-filled cells in a range -----[ ------ [ ------ ]-*/
 CALC__countr       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, cntr);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2759,7 +2745,7 @@ PRIV void    /*--> average all numeric cells in a range --[ ------ [ ------ ]-*/
 CALC__average      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0) {
       if (cnt > 0)  CALC_pushval   (__FUNCTION__, tot / cnt);
       else          CALC_pushval   (__FUNCTION__, cnt);
@@ -2772,7 +2758,7 @@ PRIV void    /*--> find min of all numeric cells in range [ ------ [ ------ ]-*/
 CALC__minimum      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, min);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2782,7 +2768,7 @@ PRIV void    /*--> find max of all numeric cells in range [ ------ [ ------ ]-*/
 CALC__maximum      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, max);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2792,7 +2778,7 @@ PRIV void    /*--> find max of all numeric cells in range [ ------ [ ------ ]-*/
 CALC__range        (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum == 0)  CALC_pushval   (__FUNCTION__, max - min);
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return;
@@ -2814,7 +2800,7 @@ CALC__quarters     (void)
    int         x_3rd2      =  0;            /* third quartile point           */
    double      x_3rdw      =  0;            /* third quartile point           */
    /*---(start)--------------------------*/
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum <  0) {
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
@@ -2961,7 +2947,7 @@ CALC__mode         (void)
    int         x_save      =  0;
    /*---(start)--------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    if (errornum <  0) {
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return;
@@ -3006,7 +2992,7 @@ CALC__stddev       (void)
    double      x_stddev    =  0;
    /*---(start)--------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   CALC__gather ();
+   SHARED__gather (__FUNCTION__);
    /*---(defense: bad range)-------------*/
    if (errornum <  0) {
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -3052,60 +3038,24 @@ PRIV void        /* PURPOSE : search left column in range for string ------*/
 CALC__vlookup      (void)
 {
    /*---(locals)-----------+-----------+-*/
-   tCELL      *x_beg       = NULL;
-   int         x_btab      = 0;
-   int         x_bcol      = 0;
-   int         x_brow      = 0;
-   tCELL      *x_end       = NULL;
-   int         x_etab      = 0;
-   int         x_ecol      = 0;
-   int         x_erow      = 0;
-   int         x_crow      = 0;
    char        rc          = 0;
+   int         x_row       = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    if (r == NULL)  r = strndup (nada, MAX_STR);
-   x_end = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
-   /*---(defense)------------------------*/
-   if (x_beg == NULL)     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
-   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
-   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
-   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_end == NULL)     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
-   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
-   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
-   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_btab != x_etab)  {
-      CALC__seterror ( -1, "#.range");
+   /*---(get values)---------------------*/
+   rc = SHARED__rangeparse (__FUNCTION__);
+   if (rc < 0)  return;
+   if (s_btab != s_etab)  {
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "beg and end must be on the same tab");
       return;
    }
    /*---(process)------------------------*/
-   for (x_crow = x_brow; x_crow <= x_erow; ++x_crow) {
-      DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
-      x_curr = tabs[x_btab].sheet[x_bcol][x_crow];
+   for (x_row = s_brow; x_row <= s_erow; ++x_row) {
+      DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
+      x_curr = tabs[s_btab].sheet[s_bcol][x_row];
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL)                                       continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3113,18 +3063,19 @@ CALC__vlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      /*> CALC_pushref (__FUNCTION__, LOC_cell (x_btab, x_bcol, x_crow));                           <*/
-      if (x_bcol + n >  x_ecol)              { CALC_pushval (__FUNCTION__, 0); return; }
-      x_curr = tabs[x_btab].sheet[x_bcol + n][x_crow];
-      if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
-      if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
-      if (x_curr->t == 'n' || x_curr->t == 'f') CALC_pushval (__FUNCTION__, x_curr->v_num);
-      else                                      CALC_pushstr (__FUNCTION__, x_curr->s);
+      /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_row));                           <*/
+      if (s_bcol + n >  s_ecol)              { CALC_pushval (__FUNCTION__, 0); return; }
+      x_curr = tabs[s_btab].sheet[s_bcol + n][x_row];
+      if      (x_curr == NULL)          CALC_pushval (__FUNCTION__, 0);
+      else if (x_curr->s == NULL)       CALC_pushval (__FUNCTION__, 0);
+      else if (x_curr->t == 'n')        CALC_pushval (__FUNCTION__, x_curr->v_num);
+      else if (x_curr->t == 'f')        CALC_pushval (__FUNCTION__, x_curr->v_num);
+      else                              CALC_pushstr (__FUNCTION__, x_curr->s);
       return;
    }
    /*---(nothing found)------------------*/
+   ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "match not found");
    CALC_pushval (__FUNCTION__, 0);
-   CALC__seterror ( -1, "#.nope");
    /*---(complete)-----------------------*/
    return;
 }
@@ -3133,60 +3084,28 @@ PRIV void        /* PURPOSE : search left column in range for string ------*/
 CALC__hlookup      (void)
 {
    /*---(locals)-----------+-----------+-*/
-   tCELL      *x_beg       = NULL;
-   int         x_btab      = 0;
-   int         x_bcol      = 0;
-   int         x_brow      = 0;
-   tCELL      *x_end       = NULL;
-   int         x_etab      = 0;
-   int         x_ecol      = 0;
-   int         x_erow      = 0;
-   int         x_ccol      = 0;
+   int         x_col       = 0;
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    if (r == NULL)  r = strndup (nada, MAX_STR);
-   x_end = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
-   /*---(defense)------------------------*/
-   if (x_beg == NULL)     {
-      CALC__seterror ( -1, "#.range");
+   /*---(get values)---------------------*/
+   rc = SHARED__rangeparse (__FUNCTION__);
+   if (rc < 0)  return;
+   if (s_btab != s_etab)  {
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "beg and end must be on the same tab");
       return;
    }
-   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
-   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
-   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
-   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_end == NULL)     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
-   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
-   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
-   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_btab != x_etab)  {
+   if (s_btab != s_etab)  {
       CALC__seterror ( -1, "#.range");
       return;
    }
    /*---(process)------------------------*/
-   for (x_ccol = x_bcol; x_ccol <= x_ecol; ++x_ccol) {
-      DEBUG_CALC   yLOG_value   ("x_ccol"    , x_ccol);
-      x_curr = tabs[x_btab].sheet[x_ccol][x_brow];
+   for (x_col = s_bcol; x_col <= s_ecol; ++x_col) {
+      DEBUG_CALC   yLOG_value   ("x_col"    , x_col);
+      x_curr = tabs[s_btab].sheet[x_col][s_brow];
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL)                                       continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3194,12 +3113,12 @@ CALC__hlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      /*> CALC_pushref (__FUNCTION__, LOC_cell (x_btab, x_bcol, x_crow));                           <*/
-      if (x_brow + n >  x_erow)              {
+      /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_crow));                           <*/
+      if (s_brow + n >  s_erow)              {
          CALC__seterror ( -1, "#.inc");
          return;
       }
-      x_curr = tabs[x_btab].sheet[x_ccol][x_brow + n];
+      x_curr = tabs[s_btab].sheet[x_col][s_brow + n];
       if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
       if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
       if (strchr ("nfl", x_curr->t) != 0) CALC_pushval (__FUNCTION__, x_curr->v_num);
@@ -3217,57 +3136,20 @@ PRIV void        /* PURPOSE : search left column in range for string ------*/
 CALC__entry        (void)
 {
    /*---(locals)-----------+-----------+-*/
-   tCELL      *x_beg       = NULL;
-   int         x_btab      = 0;
-   int         x_bcol      = 0;
-   int         x_brow      = 0;
-   tCELL      *x_end       = NULL;
-   int         x_etab      = 0;
-   int         x_ecol      = 0;
-   int         x_erow      = 0;
-   int         x_crow      = 0;
+   int         x_row       = 0;
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
    /*---(get values)---------------------*/
-   x_end = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
-   x_beg = CALC__popref (__FUNCTION__, ++s_narg);
-   DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
-   /*---(defense)------------------------*/
-   if (x_beg == NULL)     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
-   DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
-   DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
-   DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_end == NULL)     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
-   DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
-   DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
-   DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
-   DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     {
-      CALC__seterror ( -1, "#.range");
-      return;
-   }
-   if (x_btab != x_etab)  {
-      CALC__seterror ( -1, "#.range");
+   rc = SHARED__rangeparse (__FUNCTION__);
+   if (rc < 0)  return;
+   if (s_btab != s_etab)  {
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "beg and end must be on the same tab");
       return;
    }
    /*---(process)------------------------*/
-   for (x_crow = s_me->row; x_crow >= x_brow; --x_crow) {
-      DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
-      x_curr = tabs[x_btab].sheet[x_bcol][x_crow];
+   for (x_row = s_me->row; x_row >= s_brow; --x_row) {
+      DEBUG_CALC   yLOG_value   ("x_row"    , x_row);
+      x_curr = tabs[s_btab].sheet[s_bcol][x_row];
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr    == NULL)                                    continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);

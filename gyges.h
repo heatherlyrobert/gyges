@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7g"
-#define     VER_TXT   "change display screens to use x_title var"
+#define     VER_NUM   "1.7h"
+#define     VER_TXT   "create a shared range parser in CALC for maintenance ease"
 
 
 
