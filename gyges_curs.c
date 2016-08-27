@@ -409,7 +409,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(clear line)---------------------*/
    if (sta_error == 'y')  attron (S_COLOR_TITLEE);
    else                   attron (S_COLOR_TITLE);
-   mvprintw (row_formula, 0, "%*.*s", my.x_full, my.x_full, empty);
+   mvprintw (row_formula, 0, "%*.*s", my.x_full, my.x_full, g_empty);
    /*---(location)-----------------------*/
    /*> strcpy(label, tab->cols[CCOL].l);                                         <* 
     *> if (label[0] == '-') label[0] = ' ';                                           <*/
@@ -459,7 +459,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(contents)-------------------------*/
    w  = s_space - len;
    if (w < 0) w = 0;
-   mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, empty);
+   mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, g_empty);
    snprintf (msg, 500, "%s",    g_contents);
    mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg + my.bpos);
    /*---(highlight off)------------------*/
@@ -548,7 +548,7 @@ CURS_status        (tCELL *a_curr)
    }
    if (sta_error == 'y')  attron (S_COLOR_STATUSE);
    else                   attron (S_COLOR_STATUS);
-   mvprintw(row_status, 0, "%*.*s", my.x_full, my.x_full, empty);
+   mvprintw(row_status, 0, "%*.*s", my.x_full, my.x_full, g_empty);
    mvprintw(row_status, 0, msg);
    if (sta_error == 'y')  attroff(S_COLOR_STATUSE);
    else                   attroff(S_COLOR_STATUS);
@@ -562,7 +562,7 @@ CURS_message       (void)
 {
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    attron  (S_COLOR_MESSAGE);
-   mvprintw (row_message, 0, "%*.*s", my.x_full, my.x_full, empty);
+   mvprintw (row_message, 0, "%*.*s", my.x_full, my.x_full, g_empty);
    mvprintw (row_message, 0, my.message);
    attroff (S_COLOR_MESSAGE);
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -591,7 +591,7 @@ CURS_colhead       (void)
          cw    = tab->cols[i].x + w;
          strcpy(label, tab->cols[i].l);
          /*---(output)----------------------*/
-         snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, dashes, label);
+         snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
          if      (i == CCOL          )  attron  (S_COLOR_HEADY   );
          else if (i <= tab->froz_ecol)  attron  (S_COLOR_HEADL   );
          else if (tab->cols[i].c >  0)  attron  (S_COLOR_HEADF   );
@@ -612,7 +612,7 @@ CURS_colhead       (void)
       cw    = tab->cols[i].x + w;
       strcpy(label, tab->cols[i].l);
       /*---(output)----------------------*/
-      snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, dashes, label);
+      snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
       if      (i == CCOL          )  attron  (S_COLOR_HEADY   );
       else if (tab->cols[i].c >  0)  attron  (S_COLOR_HEADF   );
       else                           attron  (S_COLOR_HEADN   );
@@ -630,8 +630,8 @@ CURS_colhead       (void)
          if      (w == 1) snprintf(msg, 500, ">");
          else if (w == 2) snprintf(msg, 500, "\[>");
          else if (w == 3) snprintf(msg, 500, "\[->");
-         else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, dashes, label);
-      } else              snprintf(msg, 500, "%*.*s ", w, w, empty);
+         else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);
+      } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);
       if (tab->cols[ECOL + 1].c == 0)  attron  (S_COLOR_HEADN   );
       mvprintw (row_chead, cw, msg);
       if (tab->cols[ECOL + 1].c == 0)  attroff (S_COLOR_HEADN   );
@@ -989,19 +989,19 @@ CURS_cell          (int a_col, int a_row)
     *> }                                                                              <*/
    /*---(display cell)---------------------*/
    if (curr == NULL || curr->p == NULL) 
-      mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);
+      mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, g_empty);
    else
       mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, curr->p);
    /*> for (i = 0; i < tab->rows[a_row].h; ++i) {                                                                                <* 
     *>    if (curr == NULL || curr->p == NULL) {                                                                                 <* 
-    *>       mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);      <* 
+    *>       mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, g_empty);      <* 
     *>    } else {                                                                                                               <* 
     *>       if (i == 0) {                                                                                                       <* 
     *>          sprintf (xdisp, "%-*.*s", xmax, xmax, curr->p);                                                                  <* 
     *>          if (xmax < strlen(curr->p)) xdisp[xmax - 1] = '>';                                                               <* 
     *>          mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, xdisp);                                                    <* 
     *>       } else {                                                                                                            <* 
-    *>          mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, empty);   <* 
+    *>          mvprintw (tab->rows[a_row].y + i, tab->cols[a_col].x, "%*.*s", tab->cols[a_col].w, tab->cols[a_col].w, g_empty);   <* 
     *>       }                                                                                                                   <* 
     *>    }                                                                                                                      <* 
     *> }                                                                                                                         <*/
@@ -1050,7 +1050,7 @@ CURS_page          (void)
          left = avail - end + 1;
          if (left > 0) {
             for (i = 0; i < tab->rows[y_cur].h; ++i) {
-               mvprintw (tab->rows[y_cur].y + i, end, "%*.*s", left, left, empty);
+               mvprintw (tab->rows[y_cur].y + i, end, "%*.*s", left, left, g_empty);
             }
          }
       }
@@ -1074,13 +1074,13 @@ CURS_page          (void)
       left = avail - end + 1;
       if (left > 0) {
          for (i = 0; i < tab->rows[y_cur].h; ++i) {
-            mvprintw (tab->rows[y_cur].y + i, end, "%*.*s", left, left, empty);
+            mvprintw (tab->rows[y_cur].y + i, end, "%*.*s", left, left, g_empty);
          }
       }
    }
    /*---(fill in bottom)-----------------*/
    for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {
-      mvprintw (tab->rows[y_cur].y, 5, "%*.*s", my.x_avail, my.x_avail, empty);
+      mvprintw (tab->rows[y_cur].y, 5, "%*.*s", my.x_avail, my.x_avail, g_empty);
    }
    /*---(complete)------------------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);

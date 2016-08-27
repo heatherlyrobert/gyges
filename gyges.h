@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7c"
-#define     VER_TXT   "add calling function name to all stack pushes in CALC"
+#define     VER_NUM   "1.7d"
+#define     VER_TXT   "update filler variable names to g_ so they standout"
 
 
 
@@ -376,6 +376,7 @@ int         nerror;  /* count */
 #define     PERR_EVAL    'e'
 #define     PERR_DISP    'd'
 
+#define     TERR_OTHER   '-'
 #define     TERR_ARGS    's'
 #define     TERR_ADDR    'a'
 #define     TERR_RANGE   'r'
@@ -860,12 +861,12 @@ extern char    sta_error;
 extern char    command    [MAX_STR];
 extern char    special;
 
-extern char      empty    [200];
-extern char      dashes   [200];
-extern char      equals   [200];
-extern char      unders   [200];
-extern char      dots     [200];
-extern char      pluses   [200];
+extern char      g_empty    [200];
+extern char      g_dashes   [200];
+extern char      g_equals   [200];
+extern char      g_unders   [200];
+extern char      g_dots     [200];
+extern char      g_pluses   [200];
 
 extern char      ver_ctrl;
 extern char      ver_num  [10];

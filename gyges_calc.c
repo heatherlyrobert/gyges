@@ -209,14 +209,68 @@ ERROR_add          (tCELL *a_owner, char a_phase, int a_step, char *a_func, char
    return;
 }
 
+/*> char                                                                                                          <* 
+ *> ERROR_entry        (tCELL *a_cell, tERROR *a_entry, char *a_list)                                             <* 
+ *> {                                                                                                             <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                   <* 
+ *>    char        rce         = -10;                                                                             <* 
+ *>    int         x_reg       = 0;                                                                               <* 
+ *>    char        x_line      [MAX_STR];                                                                         <* 
+ *>    int         x_len       = 0;                                                                               <* 
+ *>    /+---(defenses)--------------------+/                                                                      <* 
+ *>    --rce;  if (a_list  == NULL) {                                                                             <* 
+ *>       strlcpy (a_list, g_empty, 80);                                                                          <* 
+ *>       return rce;                                                                                             <* 
+ *>    }                                                                                                          <* 
+ *>    /+---(buffer number)------------------+/                                                                   <* 
+ *>    if (a_reg == REG_CURR)  a_reg = s_treg_watch;  /+ for status line +/                                       <* 
+ *>    x_reg  = REG__reg2index  (a_reg);                                                                          <* 
+ *>    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);                                                           <* 
+ *>    --rce;  if (x_reg < 0)  {                                                                                  <* 
+ *>       DEBUG_REGS   yLOG_note    ("register is no good");                                                      <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                               <* 
+ *>       strlcpy (a_list, g_empty, 80);                                                                          <* 
+ *>       return rce;                                                                                             <* 
+ *>    }                                                                                                          <* 
+ *>    /+---(write empty line)------------+/                                                                      <* 
+ *>    if (s_textreg [x_reg].len == 0) {                                                                          <* 
+ *>       sprintf (x_line, "  %c    -                                                      -   -  -  ", a_reg);   <* 
+ *>       strlcpy (a_list, x_line, 80);                                                                           <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                               <* 
+ *>       return 0;                                                                                               <* 
+ *>    }                                                                                                          <* 
+ *>    /+---(write line)------------------+/                                                                      <* 
+ *>    sprintf (x_line , "  %c  %3d [%-40.40s  %-7.7s %3d %3d  %c  ",                                             <* 
+ *>          a_reg                   ,                                                                            <* 
+ *>          s_textreg [x_reg].len   ,                                                                            <* 
+ *>          s_textreg [x_reg].data  ,                                                                            <* 
+ *>          s_textreg [x_reg].label ,                                                                            <* 
+ *>          s_textreg [x_reg].bpos  ,                                                                            <* 
+ *>          s_textreg [x_reg].epos  ,                                                                            <* 
+ *>          s_textreg [x_reg].source);                                                                           <* 
+ *>    x_len = s_textreg [x_reg].len;                                                                             <* 
+ *>    if (x_len <= 40) {                                                                                         <* 
+ *>       x_line [10 + x_len] = ']';                                                                              <* 
+ *>    } else if (x_len > 40) {                                                                                   <* 
+ *>       x_line [10 + 40   ] = '>';                                                                              <* 
+ *>    }                                                                                                          <* 
+ *>    strlcpy (a_list, x_line, 80);                                                                              <* 
+ *>    /+---(complete)--------------------+/                                                                      <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                  <* 
+ *>    return 0;                                                                                                  <* 
+ *> }                                                                                                             <*/
+
 char
 ERROR_list         (void)
 {
-   tERROR     *x_error      = NULL;
-   FILE       *f            = NULL;
-   int         c            = 0;
-   char       *x_title      = "----- ---cell--- phase stp ---function--------- type- cnt ---description--------------------------\n";
+   /*---(locals)-----------+-----------+-*/
+   tERROR     *x_error     = NULL;
+   FILE       *f           = NULL;
+   int         c           = 0;
+   char       *x_title     = "----- ---cell--- phase stp ---function--------- type- cnt ---description--------------------------\n";
+   /*---(open)---------------------------*/
    f = fopen ("errors", "w");
+   /*---(show errors)--------------------*/
    x_error = herror;
    while (x_error) {
       if (c % 45 == 0)  fprintf (f, x_title);
@@ -241,9 +295,12 @@ ERROR_list         (void)
       ++c;
       x_error = x_error->gnext;
    }
-   if (c %  5 != 0)  fprintf (f, "\n");
-   if (c % 45 != 0)  fprintf (f, x_title);
+   /*---(footer)-------------------------*/
+   fprintf (f, "\n");
+   fprintf (f, x_title);
+   /*---(close)--------------------------*/
    fclose (f);
+   /*---(complete)-----------------------*/
    return 0;
 }
 
@@ -342,7 +399,10 @@ CALC_pushstr       (char *a_func, char *a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* very simply adds a stack entry with a string literal as its value       */
    /*---(defense: stack overflow)--------*//*---------------------------------*/
-   if (calc__nstack >= MAX_STACK)  return -1;
+   if (calc__nstack >= MAX_STACK) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_OTHER, "stack full, could not push string");
+      return -1;
+   }
    /*---(update stack item)--------------*/
    calc__stack[calc__nstack].typ = 's';
    calc__stack[calc__nstack].ref = NULL;
@@ -359,7 +419,10 @@ CALC_pushval       (char *a_func, double a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* very simply adds a stack entry with a numeric literal as its value      */
    /*---(defense: stack overflow)--------*//*---------------------------------*/
-   if (calc__nstack >= MAX_STACK)  return -1;
+   if (calc__nstack >= MAX_STACK) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_OTHER, "stack full, could not push value");
+      return -1;
+   }
    /*---(update stack item)--------------*/
    calc__stack[calc__nstack].typ = 'v';
    calc__stack[calc__nstack].ref = NULL;
@@ -376,7 +439,10 @@ CALC_pushref       (char *a_func, tCELL *a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* adds a cell reference for later intepretation in the calculation        */
    /*---(defense: stack overflow)--------*//*---------------------------------*/
-   if (calc__nstack >= MAX_STACK)  return -1;
+   if (calc__nstack >= MAX_STACK) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_OTHER, "stack full, could not push reference");
+      return -1;
+   }
    if (a_new        == NULL     )  return -2;
    /*---(update stack item)--------------*/
    calc__stack[calc__nstack].typ = 'r';
@@ -524,8 +590,8 @@ PRIV void  o___ARITHMETIC______o () { return; }
 PRIV void
 CALC__add         (void)
 {
-   a = CALC__popval ("add"       , ++s_narg);
-   b = CALC__popval ("add"       , ++s_narg);
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
    CALC_pushval (__FUNCTION__, b + a);
    return;
 }
@@ -533,8 +599,8 @@ CALC__add         (void)
 PRIV void
 CALC__subtract     (void)
 {
-   a = CALC__popval ("subtract"  , ++s_narg);
-   b = CALC__popval ("subtract"  , ++s_narg);
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
    CALC_pushval (__FUNCTION__, b - a);
    return;
 }
@@ -542,8 +608,8 @@ CALC__subtract     (void)
 PRIV void
 CALC__multiply     (void)
 {
-   a = CALC__popval ("multiply"  , ++s_narg);
-   b = CALC__popval ("multiply"  , ++s_narg);
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
    CALC_pushval (__FUNCTION__, b * a);
    return;
 }
@@ -551,8 +617,8 @@ CALC__multiply     (void)
 PRIV void
 CALC__divide       (void)
 {
-   a = CALC__popval ("divide"    , ++s_narg);
-   b = CALC__popval ("divide"    , ++s_narg);
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
    if (a != 0)  CALC_pushval (__FUNCTION__, b / a);
    else         CALC_pushval (__FUNCTION__, 0);
    return;
@@ -561,8 +627,8 @@ CALC__divide       (void)
 PRIV void
 CALC__modulus      (void)
 {
-   a = CALC__popval ("modulus"   , ++s_narg);
-   b = CALC__popval ("modulus"   , ++s_narg);
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
    CALC_pushval (__FUNCTION__, ((int) b) % ((int) a));
    return;
 }
@@ -1031,7 +1097,7 @@ CALC__lpad         (void)
    if (m >= n) {
       CALC_pushstr (__FUNCTION__, r);
    } else {
-      strncpy (t, empty, n - m);
+      strncpy (t, g_empty, n - m);
       t [m] = '\0';
       strcat  (t, r);
       CALC_pushstr (__FUNCTION__, t);
@@ -1057,7 +1123,7 @@ CALC__rpad         (void)
       CALC_pushstr (__FUNCTION__, r);
    } else {
       strcpy  (t, r);
-      strncat (t, empty, n - m);
+      strncat (t, g_empty, n - m);
       t [n] = '\0';
       CALC_pushstr (__FUNCTION__, t);
    }
@@ -1082,7 +1148,7 @@ CALC__lppad        (void)
    if (m >= n) {
       CALC_pushstr (__FUNCTION__, r);
    } else {
-      strncpy (t, empty, n - m);
+      strncpy (t, g_empty, n - m);
       t [n-m-1] = '\0';
       strcat  (t, r);
       CALC_pushstr (__FUNCTION__, t);
@@ -1109,7 +1175,7 @@ CALC__rppad        (void)
       CALC_pushstr (__FUNCTION__, r);
    } else {
       strcpy  (t, r);
-      strncat (t, empty, n - m);
+      strncat (t, g_empty, n - m);
       t [n] = '\0';
       CALC_pushstr (__FUNCTION__, t);
    }
@@ -3478,7 +3544,7 @@ CALC_eval          (tCELL *a_curr)
       case 'x' : break;
       default  : CALC__seterror (  -1, "#badcalc");
       }
-      if (errornum != 0) break;
+      /*> if (errornum != 0) break;                                                   <*/
       curr = curr->next;
    }
    /*---(check errors)-------------------*/

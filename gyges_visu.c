@@ -836,13 +836,13 @@ MARK_label         (char a_mark, char *a_label)
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
    --rce;  if (x_mark == NULL) {
-      strlcpy (a_label, empty, 10);
+      strlcpy (a_label, g_empty, 10);
       return rce;
    }
    /*---(get mark index)-----------------*/
    x_index = (int) (x_mark - S_MARK_LIST);
    --rce;  if (x_index >= MAX_MARK) {
-      strlcpy (a_label, empty, 10);
+      strlcpy (a_label, g_empty, 10);
       return rce;
    }
    /*---(complete)-----------------------*/

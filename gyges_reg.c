@@ -538,7 +538,7 @@ REG_entry          (char a_reg, char *a_list)
    --rce;  if (a_list  == NULL) {
       DEBUG_REGS   yLOG_note    ("list is null, no point");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, empty, 80);
+      strlcpy (a_list, g_empty, 80);
       return rce;
    }
    /*---(buffer number)------------------*/
@@ -547,7 +547,7 @@ REG_entry          (char a_reg, char *a_list)
    --rce;  if (x_reg < 0)  {
       DEBUG_REGS   yLOG_note    ("register is no good");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, empty, 80);
+      strlcpy (a_list, g_empty, 80);
       return rce;
    }
    /*---(write line)------------------*/
@@ -964,7 +964,7 @@ REG_valuesout     (char a_style)
       if (curr == NULL) {
          w = tabs [x_tab].cols [x_col].w;
          switch (a_style) {
-         case 'v' : fprintf (f, "%*.*s", w, w, empty);
+         case 'v' : fprintf (f, "%*.*s", w, w, g_empty);
                     break;
          case 'V' : break;
          case 'c' : case 'C' :
@@ -1270,7 +1270,7 @@ TREG_entry         (char a_reg, char *a_list)
    --rce;  if (a_list  == NULL) {
       DEBUG_REGS   yLOG_note    ("list is null, no point");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, empty, 80);
+      strlcpy (a_list, g_empty, 80);
       return rce;
    }
    /*---(buffer number)------------------*/
@@ -1280,7 +1280,7 @@ TREG_entry         (char a_reg, char *a_list)
    --rce;  if (x_reg < 0)  {
       DEBUG_REGS   yLOG_note    ("register is no good");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, empty, 80);
+      strlcpy (a_list, g_empty, 80);
       return rce;
    }
    /*---(write empty line)------------*/
