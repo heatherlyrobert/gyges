@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7f"
-#define     VER_TXT   "interactive error reporting per cell working"
+#define     VER_NUM   "1.7g"
+#define     VER_TXT   "change display screens to use x_title var"
 
 
 

@@ -1512,7 +1512,7 @@ DEP_recalc         (void)
    return 0;
 }
 
-PR char    /*----: dependency-based calculation from cell --------------------*/
+PR char    /*----: dependency-based calculation upward from cell -------------*/
 DEP__revs          (int a_level, tCELL *a_curr, long a_stamp)
 {
    /*---(locals)-------------------------*/

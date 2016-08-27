@@ -709,9 +709,10 @@ CURS_listmark      (void)
    char        x_label     [10];
    char        x_mark      = ' ';
    char        x_marklist  [MAX_STR] = "'abcdefghijklmnopqrstuvwxyz";
+   char       *x_title     = " -m- --fixed---      -m- --moving-- ";
    /*---(header)-------------------------*/
    attron (S_COLOR_TITLE);
-   mvprintw   ( 3, 10, " -m- --fixed---      -m- --moving-- ");
+   mvprintw   ( 3, 10, x_title);
    attrset (0);
    /*---(show marks)---------------------*/
    for (i = 'a'; i <= 'z'; ++i) {
@@ -737,7 +738,7 @@ CURS_listmark      (void)
    }
    /*---(footer)-------------------------*/
    attron (S_COLOR_TITLE);
-   mvprintw   ( 3 + 27, 10, " -m- --fixed---      -m- --moving-- ");
+   mvprintw   ( 3 + 27, 10, x_title);
    attrset (0);
    /*---(complete)-----------------------*/
    return 0;
@@ -754,9 +755,10 @@ CURS_listreg       (void)
    int         x_count     = 0;
    int         x_row       = 4;
    int         x_col       = 10;
+   char       *x_title     = " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ";
    /*---(header)-------------------------*/
    attron    (S_COLOR_TITLE);
-   mvprintw  (x_row, x_col, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
+   mvprintw  (x_row, x_col, x_title);
    attrset   (0);
    /*---(prepare)------------------------*/
    x_count = strlen (x_reglist);
@@ -775,7 +777,7 @@ CURS_listreg       (void)
    ++x_row;
    /*---(footer)-------------------------*/
    attron    (S_COLOR_TITLE);
-   mvprintw  (x_row, x_col, " -r- tab space count cell toplef botrig reach -min-- -max-- -t- ");
+   mvprintw  (x_row, x_col, x_title);
    attrset   (0);
    /*---(complete)-----------------------*/
    return 0;
@@ -792,9 +794,10 @@ CURS_listtreg      (void)
    int         x_count     = 0;
    int         x_row       = 4;
    int         x_col       = 10;
+   char       *x_title     = " -r- len -data------------------------------------- -label- beg end  s  ";
    /*---(header)-------------------------*/
    attron    (S_COLOR_TITLE);
-   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  s  ");
+   mvprintw  (x_row, x_col, x_title);
    attrset   (0);
    /*---(prepare)------------------------*/
    x_count = strlen (x_reglist);
@@ -813,7 +816,7 @@ CURS_listtreg      (void)
    ++x_row;
    /*---(footer)-------------------------*/
    attron    (S_COLOR_TITLE);
-   mvprintw  (x_row, x_col, " -r- len -data------------------------------------- -label- beg end  s  ");
+   mvprintw  (x_row, x_col, x_title);
    attrset   (0);
    /*---(complete)-----------------------*/
    return 0;

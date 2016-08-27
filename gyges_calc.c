@@ -484,7 +484,6 @@ CALC__popval          (char *a_func, char a_seq)
    /* -- if it can't figure it out, it returns a 0.0                          */
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
-      /*> CALC__seterror ( -1, "#.stack");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get value");
       return 0.0;
    }
@@ -520,7 +519,6 @@ CALC__popstr       (char *a_func, char a_seq)
    /* -- if it can't figure it out, it returns an empty string                */
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
-      /*> CALC__seterror ( -1, "#.stack");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get string");
       return strndup (nada, MAX_STR);
    }
@@ -549,7 +547,6 @@ CALC__popref          (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
-      /*> CALC__seterror ( -1, "#.stack");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get reference");
       return NULL;
    }
@@ -570,7 +567,6 @@ CALC__popprint        (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
-      /*> CALC__seterror ( -1, "#.stack");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get printable");
       return NULL;
    }
@@ -1906,14 +1902,10 @@ CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
    tCELL      *x_new;
    /*---(get the base reference)---------*/
    x_base = CALC__popref (a_func      , ++s_narg);
-   if (x_base == NULL) {
-      /*> CALC__seterror ( -1, "#.range");                                            <*/
-      return;
-   }
+   if (x_base == NULL) return;
    /*---(parse base reference)-----------*/
    rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
    if (rc    <  0   )   {
-      /*> CALC__seterror ( -1, "#.range");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "base reference could not be parsed");
       return;
    }
@@ -1923,13 +1915,12 @@ CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
    x_row += a_row;
    rc     = LOC_legal  (x_tab, x_col, x_row, CELL_FIXED);
    if (rc    <  0   )   {
-      /*> CALC__seterror ( -1, "#.range");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "new offset reference is not valid");
       return;
    }
    /*---(identify new cell)--------------*/
    x_new  = LOC_cell   (x_tab, x_col, x_row);
-   if (x_new == NULL)                           CALC_pushval (__FUNCTION__, 0);
+   if      (x_new == NULL)                      CALC_pushval (__FUNCTION__, 0);
    else if (x_new->s == NULL)                   CALC_pushval (__FUNCTION__, 0);
    else if (x_new->t == 'n' || x_new->t == 'f') CALC_pushval (__FUNCTION__, x_new->v_num);
    else                                         CALC_pushstr (__FUNCTION__, x_new->s);
@@ -1981,7 +1972,6 @@ CALC__loc           (void)
    o = CALC__popval (__FUNCTION__, ++s_narg);
    rc = LOC_legal  (    o,    m,    n, CELL_FIXED);
    if (rc    <  0   )   {
-      /*> CALC__seterror ( -1, "#.range");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "address created is not legal");
       return;
    }
@@ -2005,14 +1995,10 @@ CALC__address       (char *a_func, char a_type)
    tCELL *x_base;
    /*---(get the base reference)---------*/
    x_base = CALC__popref (a_func      , ++s_narg);
-   if (x_base == NULL)   {
-      /*> CALC__seterror ( -1, "#.range");                                            <*/
-      return;
-   }
+   if (x_base == NULL)   return;
    /*---(parse base reference)-----------*/
    rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
    if (rc    <  0   )   {
-      /*> CALC__seterror ( -1, "#.range");                                            <*/
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "base reference could not be parsed");
       return;
    }
@@ -2037,7 +2023,7 @@ CALC__addr          (void)
 {
    tCELL *x_base;
    x_base = CALC__popref (__FUNCTION__, ++s_narg);
-   if (x_base == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (x_base == NULL)   return;
    CALC_pushstr (__FUNCTION__, x_base->label);
    return;
 }
@@ -2285,20 +2271,32 @@ CALC__rangestat    (char a_type)
    x_beg = CALC__popref (__FUNCTION__, ++s_narg);
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
-   if (x_beg == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (x_beg == NULL)   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
    DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
    DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
    DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
-   if (x_end == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (rc    <  0   )   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_end == NULL)   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
    DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
    DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
    DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   if (rc    <  0   )   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    /*---(process)------------------------*/
    switch (a_type) {
    case 'd' :  CALC_pushval (__FUNCTION__, sqrt (pow (x_ecol - x_bcol + 1, 2) + pow (x_erow - x_brow + 1, 2)));  break;
@@ -2529,7 +2527,10 @@ CALC__timevalue     (void)
    temp->tm_mon  = mo - 1;
    if      (yr <  50  ) temp->tm_year = 100 + yr;
    else if (yr <  100 ) temp->tm_year = yr;
-   else if (yr <  1900) { CALC__seterror ( -1, "#.year");  return; }
+   else if (yr <  1900) {
+      CALC__seterror ( -1, "#.year");
+      return;
+   }
    else if (yr >= 1900) temp->tm_year = yr - 1900;
    time_t  xtime = mktime(temp);
    /*---(complete)-----------------------*/
@@ -2578,19 +2579,31 @@ CALC__gather       (void)
    x_beg = CALC__popref (__FUNCTION__, ++s_narg);
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
-   if (x_beg == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (x_beg == NULL)   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_beg, &x_tab, &x_bcol, &x_brow);
    DEBUG_CALC   yLOG_value   ("x_tab"     , x_tab);
    DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
    DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
-   if (x_end == NULL)   { CALC__seterror ( -1, "#.range");  return; }
+   if (rc    <  0   )   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_end == NULL)   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_end, NULL  , &x_ecol, &x_erow);
    DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
    DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )   { CALC__seterror ( -1, "#.range");  return; }
+   if (rc    <  0   )   {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    /*---(process)------------------------*/
    cnt = cnta = cnts = cntb = cntr = 0;
    tot = 0;
@@ -3059,21 +3072,36 @@ CALC__vlookup      (void)
    x_beg = CALC__popref (__FUNCTION__, ++s_narg);
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
-   if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
+   if (x_beg == NULL)     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
    DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
    DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
    DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
-   if (x_end == NULL)     { CALC__seterror ( -1, "#.range");    return; }
+   if (rc    <  0   )     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_end == NULL)     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
    DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
    DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
    DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
-   if (x_btab != x_etab)  { CALC__seterror ( -1, "#.range");    return; }
+   if (rc    <  0   )     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_btab != x_etab)  {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    /*---(process)------------------------*/
    for (x_crow = x_brow; x_crow <= x_erow; ++x_crow) {
       DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
@@ -3096,7 +3124,7 @@ CALC__vlookup      (void)
    }
    /*---(nothing found)------------------*/
    CALC_pushval (__FUNCTION__, 0);
-   /*> CALC__seterror ( -1, "#.nope");                                                <*/
+   CALC__seterror ( -1, "#.nope");
    /*---(complete)-----------------------*/
    return;
 }
@@ -3125,21 +3153,36 @@ CALC__hlookup      (void)
    x_beg = CALC__popref (__FUNCTION__, ++s_narg);
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
-   if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
+   if (x_beg == NULL)     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
    DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
    DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
    DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
-   if (x_end == NULL)     { CALC__seterror ( -1, "#.range");    return; }
+   if (rc    <  0   )     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_end == NULL)     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
    DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
    DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
    DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
-   if (x_btab != x_etab)  { CALC__seterror ( -1, "#.range");    return; }
+   if (rc    <  0   )     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_btab != x_etab)  {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    /*---(process)------------------------*/
    for (x_ccol = x_bcol; x_ccol <= x_ecol; ++x_ccol) {
       DEBUG_CALC   yLOG_value   ("x_ccol"    , x_ccol);
@@ -3152,7 +3195,10 @@ CALC__hlookup      (void)
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
       /*> CALC_pushref (__FUNCTION__, LOC_cell (x_btab, x_bcol, x_crow));                           <*/
-      if (x_brow + n >  x_erow)              {  CALC__seterror ( -1, "#.inc"); return; }
+      if (x_brow + n >  x_erow)              {
+         CALC__seterror ( -1, "#.inc");
+         return;
+      }
       x_curr = tabs[x_btab].sheet[x_ccol][x_brow + n];
       if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
       if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
@@ -3188,21 +3234,36 @@ CALC__entry        (void)
    x_beg = CALC__popref (__FUNCTION__, ++s_narg);
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    /*---(defense)------------------------*/
-   if (x_beg == NULL)     { CALC__seterror ( -1, "#.range");  return; }
+   if (x_beg == NULL)     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_beg, &x_btab, &x_bcol, &x_brow);
    DEBUG_CALC   yLOG_value   ("x_btab"    , x_btab);
    DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
    DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
-   if (x_end == NULL)     { CALC__seterror ( -1, "#.range");    return; }
+   if (rc    <  0   )     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_end == NULL)     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    rc = LOC_coordinates (x_end, &x_etab  , &x_ecol, &x_erow);
    DEBUG_CALC   yLOG_value   ("x_etab"    , x_etab);
    DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
    DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
-   if (rc    <  0   )     { CALC__seterror ( -1, "#.range");    return; }
-   if (x_btab != x_etab)  { CALC__seterror ( -1, "#.range");    return; }
+   if (rc    <  0   )     {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
+   if (x_btab != x_etab)  {
+      CALC__seterror ( -1, "#.range");
+      return;
+   }
    /*---(process)------------------------*/
    for (x_crow = s_me->row; x_crow >= x_brow; --x_crow) {
       DEBUG_CALC   yLOG_value   ("x_crow"    , x_crow);
