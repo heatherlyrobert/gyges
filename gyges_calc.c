@@ -209,56 +209,51 @@ ERROR_add          (tCELL *a_owner, char a_phase, int a_step, char *a_func, char
    return;
 }
 
-/*> char                                                                                                          <* 
- *> ERROR_entry        (tCELL *a_cell, tERROR *a_entry, char *a_list)                                             <* 
- *> {                                                                                                             <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                   <* 
- *>    char        rce         = -10;                                                                             <* 
- *>    int         x_reg       = 0;                                                                               <* 
- *>    char        x_line      [MAX_STR];                                                                         <* 
- *>    int         x_len       = 0;                                                                               <* 
- *>    /+---(defenses)--------------------+/                                                                      <* 
- *>    --rce;  if (a_list  == NULL) {                                                                             <* 
- *>       strlcpy (a_list, g_empty, 80);                                                                          <* 
- *>       return rce;                                                                                             <* 
- *>    }                                                                                                          <* 
- *>    /+---(buffer number)------------------+/                                                                   <* 
- *>    if (a_reg == REG_CURR)  a_reg = s_treg_watch;  /+ for status line +/                                       <* 
- *>    x_reg  = REG__reg2index  (a_reg);                                                                          <* 
- *>    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);                                                           <* 
- *>    --rce;  if (x_reg < 0)  {                                                                                  <* 
- *>       DEBUG_REGS   yLOG_note    ("register is no good");                                                      <* 
- *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                               <* 
- *>       strlcpy (a_list, g_empty, 80);                                                                          <* 
- *>       return rce;                                                                                             <* 
- *>    }                                                                                                          <* 
- *>    /+---(write empty line)------------+/                                                                      <* 
- *>    if (s_textreg [x_reg].len == 0) {                                                                          <* 
- *>       sprintf (x_line, "  %c    -                                                      -   -  -  ", a_reg);   <* 
- *>       strlcpy (a_list, x_line, 80);                                                                           <* 
- *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                               <* 
- *>       return 0;                                                                                               <* 
- *>    }                                                                                                          <* 
- *>    /+---(write line)------------------+/                                                                      <* 
- *>    sprintf (x_line , "  %c  %3d [%-40.40s  %-7.7s %3d %3d  %c  ",                                             <* 
- *>          a_reg                   ,                                                                            <* 
- *>          s_textreg [x_reg].len   ,                                                                            <* 
- *>          s_textreg [x_reg].data  ,                                                                            <* 
- *>          s_textreg [x_reg].label ,                                                                            <* 
- *>          s_textreg [x_reg].bpos  ,                                                                            <* 
- *>          s_textreg [x_reg].epos  ,                                                                            <* 
- *>          s_textreg [x_reg].source);                                                                           <* 
- *>    x_len = s_textreg [x_reg].len;                                                                             <* 
- *>    if (x_len <= 40) {                                                                                         <* 
- *>       x_line [10 + x_len] = ']';                                                                              <* 
- *>    } else if (x_len > 40) {                                                                                   <* 
- *>       x_line [10 + 40   ] = '>';                                                                              <* 
- *>    }                                                                                                          <* 
- *>    strlcpy (a_list, x_line, 80);                                                                              <* 
- *>    /+---(complete)--------------------+/                                                                      <* 
- *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                  <* 
- *>    return 0;                                                                                                  <* 
- *> }                                                                                                             <*/
+char
+ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         x_reg       = 0;
+   char        x_line      [MAX_STR];
+   static tERROR *x_error  = NULL;
+   static int     x_total  = 0;
+   static int     x_count  = 0;
+   /*---(defenses)--------------------*/
+   --rce;  if (a_list  == NULL) {
+      strlcpy (a_list, g_empty, 80);
+      return rce;
+   }
+   --rce;  if (a_cell  == NULL) {
+      strlcpy (a_list, g_empty, 80);
+      return rce;
+   }
+   /*---(check)-----------------------*/
+   --rce;  if (a_cell->nerror <= 0) {
+      strlcpy (a_list, g_empty, 80);
+      return rce;
+   }
+   /*---(preparation)-----------------*/
+   --rce;  if (a_seq = '*') {
+      x_error = a_cell->errors;
+      x_total = a_cell->nerror;
+      x_count = 0;
+   } else {
+      if (x_error->next == NULL) {
+         strlcpy (a_list, g_empty, 80);
+         return rce;
+      }
+      x_error = x_error->next;
+      ++x_count;
+   }
+   /*---(write line)------------------*/
+   sprintf (x_line , "  %-2d  %c  %-15.15s  %c  %50.50s  ",
+         x_count, x_error->phase, x_error->func, x_error->type, x_error->desc);
+   strlcpy (a_list, x_line, 80);
+   /*---(complete)--------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char
 ERROR_list         (void)

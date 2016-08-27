@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7d"
-#define     VER_TXT   "update filler variable names to g_ so they standout"
+#define     VER_NUM   "1.7e"
+#define     VER_TXT   "added an error entry function for online display"
 
 
 
