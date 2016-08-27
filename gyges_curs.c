@@ -819,6 +819,41 @@ CURS_listtreg      (void)
    return 0;
 }
 
+char
+CURS_listerror     (tCELL *a_cell)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_line      [MAX_STR];
+   char       *x_title     = " no p sq --------------- s ---------------------------------------- ";
+   int         x_row       = 4;
+   int         x_col       = 10;
+   int         x_count     = 0;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, x_title);
+   attrset   (0);
+   /*---(prepare)------------------------*/
+   rc = ERROR_entry (a_cell, '*', x_line);
+   /*---(show registers)-----------------*/
+   while (rc == 0) {
+      ++x_row;
+      attron (S_COLOR_CURRENT);
+      mvprintw  (x_row, x_col, x_line);
+      attrset   (0);
+      rc = ERROR_entry (a_cell, '-', x_line);
+      if (x_row > 10) break;
+   }
+   /*---(footer)-------------------------*/
+   ++x_row;
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, x_title);
+   attrset   (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -862,11 +897,13 @@ CURS_main          (void)
    CURS_rowhead   ();
    CURS_page      ();
    switch (my.info_win) {
-   case '\'' : CURS_listmark ();
+   case '\'' : CURS_listmark   ();
                break;
-   case '"'  : CURS_listreg  ();
+   case '"'  : CURS_listreg    ();
                break;
-   case 't'  : CURS_listtreg ();
+   case 't'  : CURS_listtreg   ();
+               break;
+   case 'E'  : CURS_listerror  (curr);
                break;
    }
    /*---(command)------------------------*/

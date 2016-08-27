@@ -304,6 +304,10 @@ CELL__wipe         (tCELL *a_curr)
    DEBUG_CELL   yLOG_note    ("unroot, but leave any other provides dependences");
    if (a_curr->provides  != NULL)  rc = DEP_delete (DEP_REQUIRE, dtree, a_curr);  /* DEP_REQUIRES */
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   /*---(errors)-------------------------*/
+   if (a_curr->errors    != NULL)  ERROR_cleanse (a_curr);
+   a_curr->errors         = NULL;
+   a_curr->nerror         = 0;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;

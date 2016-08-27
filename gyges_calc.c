@@ -166,7 +166,7 @@ ERROR_create       (tCELL *a_owner)
 }
 
 char         /*--> destroy a single error entry ----------[ leaf   [ ------ ]-*/
-ERROR_destroy      (tERROR *a_error)
+ERROR_delete       (tERROR *a_error)
 {
    /*---(defense: null cell)-------------*/
    if (a_error     == NULL)  return NULL;
@@ -210,6 +210,29 @@ ERROR_add          (tCELL *a_owner, char a_phase, int a_step, char *a_func, char
 }
 
 char
+ERROR_cleanse      (tCELL *a_owner)
+{
+   /*---(locals)-----------+-----------+-*/
+   tERROR     *x_error     = NULL;
+   tERROR     *x_save      = NULL;
+   char        rce         =  -10;
+   char        rc          = 0;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_owner == NULL) {
+      return rce;
+   }
+   /*---(reqs)---------------------------*/
+   x_error = a_owner->errors;
+   while (x_error != NULL) {
+      x_save = x_error->next;
+      rc = ERROR_delete (x_error);
+      x_error = x_save;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
 ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -234,7 +257,7 @@ ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
       return rce;
    }
    /*---(preparation)-----------------*/
-   --rce;  if (a_seq = '*') {
+   --rce;  if (a_seq == '*') {
       x_error = a_cell->errors;
       x_total = a_cell->nerror;
       x_count = 0;
@@ -247,8 +270,9 @@ ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
       ++x_count;
    }
    /*---(write line)------------------*/
-   sprintf (x_line , "  %-2d  %c  %-15.15s  %c  %50.50s  ",
-         x_count, x_error->phase, x_error->func, x_error->type, x_error->desc);
+   sprintf (x_line , " %-2d %c %-2d %-15.15s %c %-40.40s ",
+         x_count       , x_error->phase, x_error->step ,
+         x_error->func , x_error->type , x_error->desc );
    strlcpy (a_list, x_line, 80);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);

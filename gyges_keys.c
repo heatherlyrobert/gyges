@@ -18,12 +18,13 @@ struct cMODE_INFO {
    /*-a-- -maj show --tla- ---terse----- ---description---------------------------------------- -----------------------,----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
    /*---(major modes)--------------------*/
    { 'G' , 'y', 'y', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             , ""                    ,    0, ""                                                                                        },
-   { 'M' , 'y', 'y', "MAP", "map"       , "map-mode providing 2D review of object collections" , "GVSI:/\"b\'$o"       ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'M' , 'y', 'y', "MAP", "map"       , "map-mode providing 2D review of object collections" , "GVSI:/\"b\'$oe"      ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
    { 'V' , 'y', 'y', "VIS", "visual"    , "visual selection of objects for collection action"  , "\""                  ,    0, "0HhlL$_KkjJG  gz=sh,letk.jb  dxy  !: ~uU /nN oO sS"                                      },
-   { 'S' , 'y', 'y', "SRC", "source"    , "linewise review of textual content"                 , "Isrt"                ,    0, "hor=0HhlL$bBeEwW  g/z=sh,le  sel=vV\"  pul=yYdDxX  put=pP  chg=rRiIaA  fnd=fnN"          },
+   { 'S' , 'y', 'y', "SRC", "source"    , "linewise review of textual content"                 , "Isrte"               ,    0, "hor=0HhlL$bBeEwW  g/z=sh,le  sel=vV\"  pul=yYdDxX  put=pP  chg=rRiIaA  fnd=fnN"          },
    { 'I' , 'y', 'y', "INP", "input"     , "linewise creation and editing of textual content"   , ""                    ,    0, ""                                                                                        },
    { ':' , 'y', '-', "CMD", "command"   , "command line capability for advanced actions"       , ""                    ,    0, ""                                                                                        },
    /*---(sub-modes)----------------------*/
+   { 'e' , '-', 'y', "err", "errors"    , "display and action errors"                          , ""                    ,    0, ""                                                                                        },
    { 's' , '-', 'y', "sel", "select"    , "visual selection within text content"               , "t"                   ,    0, "0HhlL$"                                                                                  },
    { 'r' , '-', 'y', "rep", "replace"   , "linewise overtyping of content in source mode"      , ""                    ,    0, "type over character marked with special marker"                                          },
    { '"' , '-', 'y', "reg", "register"  , "selecting specific registers for data movement"     , ""                    ,    0, "regs=\"a-zA-Z-+0  pull=yYxXdD  -/+=vVcCtTsSfF  push=pPrRmMaAiIoObB  mtce=#?!g"           },
@@ -720,6 +721,11 @@ MODE_map           (char a_major, char a_minor)
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return '\'';  /* make sure single quote goes in prev char */
                       break;
+      case 'E'      :
+         MODE_enter  (SMOD_ERROR   );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return SMOD_ERROR;  /* make sure mode indicator goes also       */
+         break;
       }
       /*---(normal)----------------------*/
       rc = KEYS_basics   (a_major, a_minor);
@@ -972,6 +978,11 @@ MODE_source   (char a_major, char a_minor)
          MODE_enter  (SMOD_TEXTREG );
          return a_minor;  /* make sure double quote goes in prev char */
          break;
+      case 'E'  :
+         MODE_enter  (SMOD_ERROR   );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return SMOD_ERROR;  /* make sure mode indicator goes also       */
+         break;
       }
       /*---(multikey prefixes)-----------*/
       if (strchr (x_multi, a_minor) != 0) {
@@ -1184,6 +1195,47 @@ SMOD_replace  (char a_major, char a_minor)
    EDIT_done   ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return a_major;
+}
+
+char         /*--> review cell errors --------------------[--------[--------]-*/
+SMOD_error         (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   static char x_append    = '-';
+   static char x_saved = '\0';
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
+   /*> --rce;  if (MODE_not (SMOD_ERROR)) {                                           <* 
+    *>    DEBUG_USER   yLOG_note    ("not the correct mode");                         <* 
+    *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
+   /*---(mode changes)-------------------*/
+   /*> if (a_minor == 27 || a_minor == 10) {                                          <* 
+    *>    DEBUG_USER   yLOG_note    ("escape/return, return to previous mode");       <* 
+    *>    MODE_return ();                                                             <* 
+    *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
+   if (a_minor == '?') {
+      DEBUG_USER   yLOG_note    ("display errors for cell");
+      my.info_win = 'E';
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
+   }
+   /*---(complete)-----------------------*/
+   MODE_return ();
+
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+
+   return 0;
+
    return a_major;
 }
 

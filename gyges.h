@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7e"
-#define     VER_TXT   "added an error entry function for online display"
+#define     VER_NUM   "1.7f"
+#define     VER_TXT   "interactive error reporting per cell working"
 
 
 
@@ -818,6 +818,7 @@ tCELL       denada;
 #define     SMOD_SELECT    's'    /* visual selection of chars in source mode */
 #define     SMOD_TEXTREG   't'    /* text register actions                    */
 /*---(sub-modes for map)-----------------*/
+#define     SMOD_ERROR     'e'    /* error reporting and actions              */
 #define     SMOD_REGISTER  '"'    /* register actions                         */
 #define     SMOD_BUFFER    ','    /* selecting buffers                        */
 #define     SMOD_WANDER    '@'    /* formula creation by pointing             */
@@ -1067,6 +1068,7 @@ char      SMOD_buffer        (char  a_major, char  a_minor);
 char      SMOD_replace       (char  a_major, char  a_minor);
 char      SMOD_format        (char  a_major, char  a_minor);
 char      SMOD_wander        (char  a_major, char  a_minor);
+char      SMOD_error         (char  a_major, char  a_minor);
 
 char      KEYS_init          (void);
 char      KEYS_record        (int   a_curr);
@@ -1124,7 +1126,13 @@ char      CALC_free          (tCELL *a_curr);
 char      CALC_eval          (tCELL *a_curr);
 char      calc_show          (void);
 char*     CALC_strtok        (char *a_str);
+
+tERROR*   ERROR_create       (tCELL  *a_owner);
+char      ERROR_delete       (tERROR *a_error);
+char      ERROR_add          (tCELL  *a_owner, char a_phase, int a_step, char *a_func, char a_type, char *a_desc);
+char      ERROR_entry        (tCELL  *a_cell, char a_seq, char *a_list);
 char      ERROR_list         (void);
+char      ERROR_cleanse      (tCELL  *a_owner);
 
 
 char      RPN_adjust         (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
