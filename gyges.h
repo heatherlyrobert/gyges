@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7l"
-#define     VER_TXT   "menus sub-mode is now in place :))"
+#define     VER_NUM   "1.7m"
+#define     VER_TXT   "fixed formatting of version number in normal mode"
 
 
 

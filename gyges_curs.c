@@ -433,7 +433,8 @@ CURS_formula       (tCELL *a_curr)
       mvprintw (row_formula, 25, "%4d", len);
       /*---(4th 14 chars)---*/
       attrset (0);
-      DEBUG_TOPS   attron (S_COLOR_TITLEE);
+      if (debug.tops == 'y')  attron (S_COLOR_TITLEE);
+      else                    attron (S_COLOR_TITLE );
       mvprintw (row_formula, my.x_full - 14, " %s of gyges", VER_NUM);
       s_start  = 30;
       break;
@@ -442,7 +443,8 @@ CURS_formula       (tCELL *a_curr)
       mvprintw (row_formula,  0, "%-6.6s", s_label);
       /*---(2nd  5 chars)---*/
       attrset (0);
-      DEBUG_TOPS   attron (S_COLOR_TITLEE);
+      if (debug.tops == 'y')  attron (S_COLOR_TITLEE);
+      else                    attron (S_COLOR_TITLE );
       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);
       s_start  =  7;
       break;
