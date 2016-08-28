@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7n"
-#define     VER_TXT   "added merge checking to string formula and string likes"
+#define     VER_NUM   "1.7o"
+#define     VER_TXT   "fixed cursor position in menu sub-mode"
 
 
 

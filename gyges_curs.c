@@ -1021,6 +1021,8 @@ CURS_main          (void)
    /*---(cursor pos)---------------------*/
    if (my.info_win != '-') 
       move ( 4, 10);
+   else if (my.menu     != MENU_NONE) 
+      move ( 2,  1);
    else if (MODE_curr() == MODE_SOURCE || MODE_curr() == MODE_INPUT || MODE_curr() == SMOD_REPLACE || MODE_curr() == SMOD_SELECT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
