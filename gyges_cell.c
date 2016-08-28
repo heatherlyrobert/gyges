@@ -1002,6 +1002,31 @@ CELL__altbase      (
    return 0;
 }
 
+char
+CELL__merges       (tCELL *a_cell)
+{
+   int         x_col       =   0;
+   tCELL      *x_next      = NULL;
+   char        rc          =   0;
+   /*---(check for merges)------------*/
+   if (strchr (G_CELL_STR, a_cell->t) == NULL)  return 0;
+   DEBUG_CELL   yLOG_note    ("check for merges in cells to right");
+   x_col   = a_cell->col + 1;
+   DEBUG_CELL   yLOG_value   ("x_col"     , x_col);
+   DEBUG_CELL   yLOG_value   ("NCOL"      , NCOL);
+   while (x_col <  NCOL) {
+      x_next = tab->sheet[x_col][a_cell->row];
+      DEBUG_CELL   yLOG_point   ("next cell" , x_next);
+      if (x_next    == NULL)  break;
+      DEBUG_CELL   yLOG_char    ("type"      , x_next->a);
+      if (x_next->a != '+' )  break;
+      x_next->t = CTYPE_MERGE;
+      rc = DEP_create (DEP_MERGED, a_cell, x_next);
+      ++x_col;
+   }
+   return 0;
+}
+
 char         /*- identify cell type from contents --------[ ------ [ ------ ]-*/
 CELL__interpret    (
       /*----------+-----------+-----------------------------------------------*/
@@ -1190,6 +1215,7 @@ CELL__interpret    (
             return rce - 2;
          }
       }
+      CELL__merges (a_cell);
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -1209,20 +1235,7 @@ CELL__interpret    (
    else {
       if (a_cell->a == '?')  a_cell->a = '<';
       DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
-      DEBUG_CELL   yLOG_note    ("check for merges in cells to right");
-      x_col   = a_cell->col + 1;
-      DEBUG_CELL   yLOG_value   ("x_col"     , x_col);
-      DEBUG_CELL   yLOG_value   ("NCOL"      , NCOL);
-      while (x_col <  NCOL) {
-         x_next = tab->sheet[x_col][a_cell->row];
-         DEBUG_CELL   yLOG_point   ("next cell" , x_next);
-         if (x_next    == NULL)  break;
-         DEBUG_CELL   yLOG_char    ("type"      , x_next->a);
-         if (x_next->a != '+' )  break;
-         x_next->t = CTYPE_MERGE;
-         rc = DEP_create (DEP_MERGED, a_cell, x_next);
-         ++x_col;
-      }
+      CELL__merges (a_cell);
    }
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);

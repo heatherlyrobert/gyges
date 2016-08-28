@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7m"
-#define     VER_TXT   "fixed formatting of version number in normal mode"
+#define     VER_NUM   "1.7n"
+#define     VER_TXT   "added merge checking to string formula and string likes"
 
 
 
