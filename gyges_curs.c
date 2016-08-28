@@ -40,7 +40,7 @@ struct  cMENU {  /* two level menu only, none of that complex shit            */
 };
 tMENU       menus       [MAX_MENU] = {
    /* one  ---menu---------- grp -sc-  ---name----------  ---example------------ */
-   {  'f', "format"         ,  1, '<', "left"           , "test                " },
+   {  'F', "format"         ,  1, '<', "left"           , "test                " },
    {  ' ', ""               ,  1, '|', "center"         , "        test        " },
    {  ' ', ""               ,  1, '>', "right"          , "               test " },
    {  ' ', ""               ,  1, '[', "left bracket"   , "[test              ]" },
@@ -430,6 +430,8 @@ CURS_formula       (tCELL *a_curr)
       /*---(3rd  5 chars)---*/
       mvprintw (row_formula, 25, "%4d", len);
       /*---(4th 14 chars)---*/
+      attrset (0);
+      DEBUG_TOPS   attron (S_COLOR_TITLEE);
       mvprintw (row_formula, my.x_full - 14, " %s of gyges", VER_NUM);
       s_start  = 30;
       break;
@@ -437,6 +439,8 @@ CURS_formula       (tCELL *a_curr)
       /*---(1st  6 chars)---*/
       mvprintw (row_formula,  0, "%-6.6s", s_label);
       /*---(2nd  5 chars)---*/
+      attrset (0);
+      DEBUG_TOPS   attron (S_COLOR_TITLEE);
       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);
       s_start  =  7;
       break;

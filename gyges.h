@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7i"
-#define     VER_TXT   "eliminated all old seterror and replaced with new function"
+#define     VER_NUM   "1.7j"
+#define     VER_TXT   "change version number to red if in debug mode"
 
 
 
