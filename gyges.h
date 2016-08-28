@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7j"
-#define     VER_TXT   "change version number to red if in debug mode"
+#define     VER_NUM   "1.7k"
+#define     VER_TXT   "displays root and submenu in static mode"
 
 
 
@@ -346,6 +346,7 @@ struct cACCESSOR {
    char        reg_curr;
    /*---(cursus)----------*/
    char        info_win;
+   char        menu;
 };
 extern    struct cACCESSOR my;
 

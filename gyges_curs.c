@@ -31,15 +31,17 @@ PRIV  char      CURS_page          (void);
 #define     MAX_MENU       500
 typedef struct cMENU  tMENU;
 struct  cMENU {  /* two level menu only, none of that complex shit            */
-   char     a_one;                          /* shortcut for menu              */
-   char     a_menu      [LEN_STR];          /* top level menu item            */
-   char     a_group;                        /* selection group                */
-   char     a_two;                          /* shortcut for submenu           */
-   char     a_name      [LEN_STR];          /* name of menu item              */
-   char     a_desc      [LEN_STR];          /* descripion, example, alternate */
+   char     one;                            /* shortcut for menu              */
+   char     menu      [LEN_STR];            /* top level menu item            */
+   char     grp;                            /* selection group                */
+   char     two;                            /* shortcut for submenu           */
+   char     name      [LEN_STR];            /* name of menu item              */
+   char     desc      [LEN_STR];            /* descripion, example, alternate */
 };
-tMENU       menus       [MAX_MENU] = {
+tMENU       s_menus     [MAX_MENU] = {
    /* one  ---menu---------- grp -sc-  ---name----------  ---example------------ */
+   {  'f', "file"           ,  1, '-', ""               , ""                     },
+   {  't', "technical"      ,  1, '-', ""               , ""                     },
    {  'F', "format"         ,  1, '<', "left"           , "test                " },
    {  ' ', ""               ,  1, '|', "center"         , "        test        " },
    {  ' ', ""               ,  1, '>', "right"          , "               test " },
@@ -61,7 +63,7 @@ tMENU       menus       [MAX_MENU] = {
    {  ' ', ""               ,  3, 's', "comma/sign"     , "         +1,234,567 " },
    {  ' ', ""               ,  3, 'a', "accounting"     , "        (1,234,567) " },
    {  ' ', ""               ,  3, '$', "currency"       , "         $1,234,567 " },
-   {  ' ', ""               ,  3, '%', "percent"        , "                15% " },
+   {  ' ', ""               ,  3, 'p', "percent"        , "                15p " },
    {  ' ', ""               ,  3, 'p', "point/bullet"   , "                 5) " },
    {  ' ', ""               ,  3, '#', "technical"      , "  123,456.789'032 + " },
    {  ' ', ""               ,  3, 'e', "exponential"    , "          1.235e+05 " },
@@ -705,6 +707,95 @@ CURS_rowhead       (void)
 }
 
 char
+CURS_menuroot      (char a_menu)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   int         x_count     = 0;
+   int         x_row       = 2;
+   int         x_col       = 1;
+   char        x_line      [MAX_STR];
+   char       *x_title     = " - -root-menu- ";
+   /*---(header)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, x_title);
+   attrset (0);
+   /*---(show options)-------------------*/
+   for (i = 0; i < MAX_MENU; ++i) {
+      /*---(filter)----------------------*/
+      if (s_menus [i].one == '~') break;
+      if (s_menus [i].one == ' ') continue;
+      if (a_menu != '-' && s_menus [i].one != a_menu)  continue;
+      /*---(display)---------------------*/
+      ++x_row;
+      if (s_menus [i].one == a_menu)  attron (S_COLOR_CURRENT);
+      else                            attron (S_COLOR_VISUAL);
+      sprintf (x_line, " %c %-11.11s ",
+            s_menus [i].one, s_menus [i].menu);
+      mvprintw  (x_row, x_col, x_line);
+      attrset (0);
+   }
+   ++x_row;
+   /*---(footer)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, x_title);
+   attrset (0);
+   /*---(complete)---------------------------*/
+   return 0;
+}
+
+char
+CURS_menusub       (char a_menu)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           =  0;
+   int         x_count     =  0;
+   int         x_row       =  4;
+   int         x_col       =  1;
+   char        x_line      [MAX_STR];
+   char       *x_title     = " - --submenu--------------------------";
+   char        x_menu      = '-';
+   /*---(header)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, x_title);
+   attrset (0);
+   /*---(show options)-------------------*/
+   for (i = 0; i < MAX_MENU; ++i) {
+      /*---(filter)----------------------*/
+      if (s_menus [i].one == '~'   )  break;
+      if (s_menus [i].one == a_menu)  x_menu = 'y';
+      if (s_menus [i].one != a_menu && s_menus [i].one != ' ')  x_menu = '-';
+      if (x_menu          != 'y'   )  continue;
+      /*---(display)---------------------*/
+      ++x_row;
+      attron (S_COLOR_VISUAL);
+      sprintf (x_line, " %c %-15.15s%-20.20s",
+            s_menus [i].two, s_menus [i].name, s_menus [i].desc);
+      mvprintw  (x_row, x_col, x_line);
+      attrset (0);
+      if (x_row > 32) { 
+         if (x_col > 20) break;
+         ++x_row;
+         attron (S_COLOR_TITLE);
+         mvprintw  (x_row, x_col, x_title);
+         attrset (0);
+         x_col += strlen (x_title) + 2;
+         x_row = 4;
+         attron (S_COLOR_TITLE);
+         mvprintw  (x_row, x_col, x_title);
+         attrset (0);
+      }
+   }
+   ++x_row;
+   /*---(footer)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw  (x_row, x_col, x_title);
+   attrset (0);
+   /*---(complete)---------------------------*/
+   return 0;
+}
+
+char
 CURS_listmark      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -912,6 +1003,12 @@ CURS_main          (void)
                break;
    case 'E'  : CURS_listerror  (curr);
                break;
+   }
+   if (my.menu != ' ') {
+      /*> if (my.menu == '-') CURS_menuroot (my.menu);                                <*/
+      /*> else                CURS_menusub  (my.menu);                                <*/
+      CURS_menuroot ('F');
+      CURS_menusub  ('F');
    }
    /*---(command)------------------------*/
    if (my.scrn == SCRN_DEBUG || my.scrn == SCRN_SMALL) {

@@ -661,6 +661,9 @@ MODE_map           (char a_major, char a_minor)
       }
       /*---(mode switch)-----------------*/
       switch (a_minor) {
+      case '/'      : my.menu = '-';
+                      return 0;
+                      break;
       case 'v'      : MODE_enter  (MODE_VISUAL);
                       VISU_start  (CTAB, CCOL, CROW, VISU_FROM);
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -1393,14 +1396,14 @@ SMOD_format        (char a_major, char a_minor)
    case  'g' : CELL_format   (CHG_INPUT, 'r');  CELL_decimals (CHG_INPUT, '6'); break;  /* real/float      */
    case  'e' : CELL_format   (CHG_INPUT, 'e');  CELL_decimals (CHG_INPUT, '3'); break;  /* exponencial     */
    case  'E' : CELL_format   (CHG_INPUT, 'E');  CELL_decimals (CHG_INPUT, '3'); break;  /* spaced exponent */
-   case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* point/bullet    */
+   case  'P' : CELL_format   (CHG_INPUT, 'p');  break;  /* point/bullet    */
 
    case  ',' : CELL_format   (CHG_INPUT, ',');  break;  /* comma           */
    case  'a' : CELL_format   (CHG_INPUT, 'a');  break;  /* accounting      */
    case  '$' : CELL_format   (CHG_INPUT, '$');  break;  /* dollar          */
    case  's' : CELL_format   (CHG_INPUT, 's');  break;  /* signed          */
    case  '#' : CELL_format   (CHG_INPUT, '#');  CELL_decimals (CHG_INPUT, '6'); break;  /* technical       */
-   case  '%' : CELL_format   (CHG_INPUT, '%');  CELL_decimals (CHG_INPUT, '2'); break;  /* percent         */
+   case  'p' : CELL_format   (CHG_INPUT, '%');  CELL_decimals (CHG_INPUT, '2'); break;  /* percent         */
 
    case  'o' : CELL_format   (CHG_INPUT, 'o');  break;  /* octal           */
    case  'O' : CELL_format   (CHG_INPUT, 'O');  break;  /* spaced octal    */

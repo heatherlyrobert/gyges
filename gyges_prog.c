@@ -107,6 +107,7 @@ PROG_init          (void)
    MODE_enter  (MODE_MAP);
    my.scrn     = SCRN_DEBUG;
    my.info_win = '-';
+   my.menu     = ' ';
    return 0;
 }
 
