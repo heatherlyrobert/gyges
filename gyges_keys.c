@@ -18,7 +18,7 @@ struct cMODE_INFO {
    /*-a-- -maj show --tla- ---terse----- ---description---------------------------------------- -----------------------,----- 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789- */
    /*---(major modes)--------------------*/
    { 'G' , 'y', 'y', "GOD", "god"       , "god-mode allowing 3D omnicient viewing"             , ""                    ,    0, ""                                                                                        },
-   { 'M' , 'y', 'y', "MAP", "map"       , "map-mode providing 2D review of object collections" , "GVSI:/\"b\'$oe"      ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
+   { 'M' , 'y', 'y', "MAP", "map"       , "map-mode providing 2D review of object collections" , "GVSI:/\"b\'$oe\\"    ,    0, "horz(a)=0HhlL$  horz(g/z)=sh,le  vert(a)=_KkjJG  vert(g/z)=tk.jb  modes=vIFV:{ret}"      },
    { 'V' , 'y', 'y', "VIS", "visual"    , "visual selection of objects for collection action"  , "\""                  ,    0, "0HhlL$_KkjJG  gz=sh,letk.jb  dxy  !: ~uU /nN oO sS"                                      },
    { 'S' , 'y', 'y', "SRC", "source"    , "linewise review of textual content"                 , "Isrte"               ,    0, "hor=0HhlL$bBeEwW  g/z=sh,le  sel=vV\"  pul=yYdDxX  put=pP  chg=rRiIaA  fnd=fnN"          },
    { 'I' , 'y', 'y', "INP", "input"     , "linewise creation and editing of textual content"   , ""                    ,    0, ""                                                                                        },
@@ -34,6 +34,7 @@ struct cMODE_INFO {
    { '$' , '-', 'y', "frm", "format"    , "content formatting options"                         , ""                    ,    0, "ali=<|>[^] num=irg,as$%%p tec=#eExXbBoO tim=tdT dec=0-9 str= _-=.+"                      },
    { 'o' , '-', 'y', "obj", "object"    , "object formatting and sizing options"               , ""                    ,    0, ""                                                                                        },
    { '\'', '-', 'y', "mrk", "mark"      , "object and location marking"                        , ""                    ,    0, "set=a-zA-Z()  del=#*  hlp=?!@_  go='a-zA-Z()[<>]"                                        },
+   { '\\', '-', 'y', "mnu", "menus"     , "menu system"                                        , ""                    ,    0, ""                                                                                        },
    /*---(done)---------------------------*/
    { '-' , '-', 'y', "bad", "bad mode"  , "default message when mode is not understood"        , ""                    ,    0, "mode not understood"                                                                     },
 };
@@ -655,58 +656,69 @@ MODE_map           (char a_major, char a_minor)
    --rce;
    if (a_major == ' ') {
       /*---(multikey prefixes)-----------*/
-      if (strchr ("gzced\\"  , a_minor) != 0) {
+      if (strchr ("gzced"  , a_minor) != 0) {
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;
       }
       /*---(mode switch)-----------------*/
       switch (a_minor) {
-      case '/'      : my.menu = '-';
-                      return 0;
-                      break;
-      case 'v'      : MODE_enter  (MODE_VISUAL);
-                      VISU_start  (CTAB, CCOL, CROW, VISU_FROM);
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
-                      break;
-      case ':'      : strncpy     (command , ":", MAX_STR);
-                      MODE_enter  (MODE_COMMAND);
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
-                      break;
-      case 's'      : EDIT_start  ("");
-                      MODE_enter  (MODE_INPUT  );
-                      MODE_input ('m', 'i');
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 'i';
-                      break;
-      case '='      : EDIT_start  ("=");
-                      MODE_enter  (MODE_INPUT  );
-                      MODE_input ('m', 'a');
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 'a';
-                      break;
-      case '#'      : EDIT_start  ("#");
-                      MODE_enter  (MODE_INPUT  );
-                      MODE_input ('m', 'a');
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 'a';
-                      break;
-      case '+'      : EDIT_start  ("+");
-                      MODE_enter  (MODE_INPUT  );
-                      MODE_input ('m', 'a');
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 'a';
-                      break;
-      case '-'      : EDIT_start  ("-");
-                      MODE_enter  (MODE_INPUT  );
-                      MODE_input ('m', 'a');
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 'a';
-                      break;
+      case 'v'      :
+         MODE_enter  (MODE_VISUAL);
+         VISU_start  (CTAB, CCOL, CROW, VISU_FROM);
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case ':'      :
+         strncpy     (command , ":", MAX_STR);
+         MODE_enter  (MODE_COMMAND);
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case 's'      :
+         EDIT_start  ("");
+         MODE_enter  (MODE_INPUT  );
+         MODE_input ('m', 'i');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 'i';
+         break;
+      case '='      :
+         EDIT_start  ("=");
+         MODE_enter  (MODE_INPUT  );
+         MODE_input ('m', 'a');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 'a';
+         break;
+      case '#'      :
+         EDIT_start  ("#");
+         MODE_enter  (MODE_INPUT  );
+         MODE_input ('m', 'a');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 'a';
+         break;
+      case '+'      :
+         EDIT_start  ("+");
+         MODE_enter  (MODE_INPUT  );
+         MODE_input ('m', 'a');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 'a';
+         break;
+      case '-'      :
+         EDIT_start  ("-");
+         MODE_enter  (MODE_INPUT  );
+         MODE_input ('m', 'a');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 'a';
+         break;
       }
       /*---(submodes)--------------------*/
       switch (a_minor) {
+      case '\\'     :
+         DEBUG_USER   yLOG_note    ("selected menu mode");
+         MODE_enter  (SMOD_MENUS  );
+         my.menu = MENU_ROOT;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
       case 'F'      : MODE_enter  (SMOD_FORMAT  );
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return 0;
@@ -725,10 +737,10 @@ MODE_map           (char a_major, char a_minor)
                       return '\'';  /* make sure single quote goes in prev char */
                       break;
       case 'E'      :
-         MODE_enter  (SMOD_ERROR   );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return SMOD_ERROR;  /* make sure mode indicator goes also       */
-         break;
+                      MODE_enter  (SMOD_ERROR   );
+                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                      return SMOD_ERROR;  /* make sure mode indicator goes also       */
+                      break;
       }
       /*---(normal)----------------------*/
       rc = KEYS_basics   (a_major, a_minor);
@@ -903,6 +915,46 @@ SMOD_buffer   (char a_major, char a_minor)
    MODE_return  ();
    /*---(complete)-----------------------*/
    return 0;
+}
+
+char         /*--> menu sub-mode -------------------------[--------[--------]-*/
+SMOD_menus         (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   static char x_append    = '-';
+   static char x_saved = '\0';
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
+   --rce;  if (MODE_not (SMOD_MENUS  )) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(mode changes)-------------------*/
+   if (a_minor == 27) {
+      DEBUG_USER   yLOG_note    ("escape, choose nothing");
+      my.menu = ' ';
+      MODE_return ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(top menu)-----------------------*/
+   if (a_major == ' ') {
+      my.menu = a_minor;
+   } else {
+      my.menu = ' ';
+      MODE_return ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return a_minor;
 }
 
 
@@ -1087,7 +1139,6 @@ MODE_source   (char a_major, char a_minor)
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
-
 
 char         /*--> replace sub-mode ----------------------[--------[--------]-*/
 SMOD_replace  (char a_major, char a_minor)

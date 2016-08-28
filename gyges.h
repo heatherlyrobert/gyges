@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7k"
-#define     VER_TXT   "displays root and submenu in static mode"
+#define     VER_NUM   "1.7l"
+#define     VER_TXT   "menus sub-mode is now in place :))"
 
 
 
@@ -826,6 +826,7 @@ tCELL       denada;
 #define     SMOD_FORMAT    '$'    /* content formatting                       */
 #define     SMOD_OBJECT    'o'    /* object formatting                        */
 #define     SMOD_MARK      '\''   /* location and object marking              */
+#define     SMOD_MENUS     '\\'   /* show menu system                         */
 
 
 /*---(display modes)---------------------*/
@@ -833,6 +834,10 @@ tCELL       denada;
 #define     SCRN_SMALL     's'    /* top line shows very little but source    */
 #define     SCRN_DEBUG     'n'    /* top line has lots of stuff to debug      */
 
+
+
+#define     MENU_NONE      ' '
+#define     MENU_ROOT      '-'
 
 
 
@@ -1070,6 +1075,7 @@ char      SMOD_replace       (char  a_major, char  a_minor);
 char      SMOD_format        (char  a_major, char  a_minor);
 char      SMOD_wander        (char  a_major, char  a_minor);
 char      SMOD_error         (char  a_major, char  a_minor);
+char      SMOD_menus         (char  a_major, char  a_minor);
 
 char      KEYS_init          (void);
 char      KEYS_record        (int   a_curr);

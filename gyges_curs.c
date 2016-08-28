@@ -33,63 +33,63 @@ typedef struct cMENU  tMENU;
 struct  cMENU {  /* two level menu only, none of that complex shit            */
    char     one;                            /* shortcut for menu              */
    char     menu      [LEN_STR];            /* top level menu item            */
-   char     grp;                            /* selection group                */
+   char     next;                           /* next column                    */
    char     two;                            /* shortcut for submenu           */
    char     name      [LEN_STR];            /* name of menu item              */
    char     desc      [LEN_STR];            /* descripion, example, alternate */
 };
 tMENU       s_menus     [MAX_MENU] = {
-   /* one  ---menu---------- grp -sc-  ---name----------  ---example------------ */
-   {  'f', "file"           ,  1, '-', ""               , ""                     },
-   {  't', "technical"      ,  1, '-', ""               , ""                     },
-   {  'F', "format"         ,  1, '<', "left"           , "test                " },
-   {  ' ', ""               ,  1, '|', "center"         , "        test        " },
-   {  ' ', ""               ,  1, '>', "right"          , "               test " },
-   {  ' ', ""               ,  1, '[', "left bracket"   , "[test              ]" },
-   {  ' ', ""               ,  1, '^', "center bracket" , "[       test       ]" },
-   {  ' ', ""               ,  1, ']', "right bracket"  , "[              test]" },
-   {  ' ', ""               ,  1, '{', "right brace"    , "[  test            ]" },
-   {  ' ', ""               ,  1, '}', "left brace"     , "[            test  ]" },
-   {  ' ', ""               ,  2, ' ', "fill space"     , "[  test            ]" },
-   {  ' ', ""               ,  2, '-', "fill dash"      , "[--test------------]" },
-   {  ' ', ""               ,  2, '=', "fill equal"     , "[==test============]" },
-   {  ' ', ""               ,  2, '_', "fill under"     , "[__test____________]" },
-   {  ' ', ""               ,  2, '.', "fill period"    , "[..test............]" },
-   {  ' ', ""               ,  2, '+', "fill plus"      , "[++test++++++++++++]" },
-   {  ' ', ""               ,  3, 'i', "integer"        , "            1234567 " },
-   {  ' ', ""               ,  3, 'r', "real"           , "            987.541 " },
-   {  ' ', ""               ,  3, 'g', "general"        , "         987.541234 " },
-   {  ' ', ""               ,  3, ',', "comma"          , "          1,234,567 " },
-   {  ' ', ""               ,  3, 's', "comma/sign"     , "         +1,234,567 " },
-   {  ' ', ""               ,  3, 'a', "accounting"     , "        (1,234,567) " },
-   {  ' ', ""               ,  3, '$', "currency"       , "         $1,234,567 " },
-   {  ' ', ""               ,  3, 'p', "percent"        , "                15p " },
-   {  ' ', ""               ,  3, 'p', "point/bullet"   , "                 5) " },
-   {  ' ', ""               ,  3, '#', "technical"      , "  123,456.789'032 + " },
-   {  ' ', ""               ,  3, 'e', "exponential"    , "          1.235e+05 " },
-   {  ' ', ""               ,  3, 'E', "exp divided"    , "       +1.235 e +05 " },
-   {  ' ', ""               ,  3, 'x', "hexidecimal"    , "              xaf68 " },
-   {  ' ', ""               ,  3, 'X', "hex divided"    , "            x'af'68 " },
-   {  ' ', ""               ,  3, 'b', "binary"         , "          b10101111 " },
-   {  ' ', ""               ,  3, 'B', "binary divided" , "        b'1010'1111 " },
-   {  ' ', ""               ,  3, 'o', "octal"          , "               o257 " },
-   {  ' ', ""               ,  3, 'O', "octal"          , "              o'257 " },
-   {  ' ', ""               ,  3, 't', "time (24h)"     , "              13:26 " },
-   {  ' ', ""               ,  3, 'd', "date"           , "        2014-Dec-15 " },
-   {  ' ', ""               ,  3, 'T', "timestamp"      , "  14.12.15.13.26.15 " },
-   {  ' ', ""               ,  3, 'D', "date/time"      , "  2014-Dec-15 13:26 " },
-   {  ' ', ""               ,  4, '0', "0 decimals"     , "                  0 " },
-   {  ' ', ""               ,  4, '1', "1 decimals"     , "                0.1 " },
-   {  ' ', ""               ,  4, '2', "2 decimals"     , "               0.12 " },
-   {  ' ', ""               ,  4, '3', "3 decimals"     , "              0.123 " },
-   {  ' ', ""               ,  4, '4', "4 decimals"     , "             0.1234 " },
-   {  ' ', ""               ,  4, '5', "5 decimals"     , "            0.12345 " },
-   {  ' ', ""               ,  4, '6', "6 decimals"     , "           0.123456 " },
-   {  ' ', ""               ,  4, '7', "7 decimals"     , "          0.1234567 " },
-   {  ' ', ""               ,  4, '8', "8 decimals"     , "         0.12345678 " },
-   {  ' ', ""               ,  4, '9', "9 decimals"     , "        0.123456789 " },
-   {  '~', "end-of-menu"    ,  1, ' ', ""               , ""                     },
-   {  ' ', ""               ,  1, ' ', ""               , ""                     },
+   /* one  ---menu---------- next  -sc-  ---name----------  ---example------------ */
+   {  'f', "file"           , ' ', '-', ""               , ""                     },
+   {  't', "technical"      , ' ', '-', ""               , ""                     },
+   {  'F', "format"         , ' ', '<', "left"           , "test                " },
+   {  ' ', ""               , ' ', '|', "center"         , "        test        " },
+   {  ' ', ""               , ' ', '>', "right"          , "               test " },
+   {  ' ', ""               , ' ', '[', "left bracket"   , "[test              ]" },
+   {  ' ', ""               , ' ', '^', "center bracket" , "[       test       ]" },
+   {  ' ', ""               , ' ', ']', "right bracket"  , "[              test]" },
+   {  ' ', ""               , ' ', '{', "right brace"    , "[  test            ]" },
+   {  ' ', ""               , ' ', '}', "left brace"     , "[            test  ]" },
+   {  ' ', ""               , ' ', ' ', "fill space"     , "[  test            ]" },
+   {  ' ', ""               , ' ', '-', "fill dash"      , "[--test------------]" },
+   {  ' ', ""               , ' ', '=', "fill equal"     , "[==test============]" },
+   {  ' ', ""               , ' ', '_', "fill under"     , "[__test____________]" },
+   {  ' ', ""               , ' ', '.', "fill period"    , "[..test............]" },
+   {  ' ', ""               , ' ', '+', "fill plus"      , "[++test++++++++++++]" },
+   {  ' ', ""               , ' ', 'i', "integer"        , "            1234567 " },
+   {  ' ', ""               , ' ', 'r', "real"           , "            987.541 " },
+   {  ' ', ""               , ' ', 'g', "general"        , "         987.541234 " },
+   {  ' ', ""               , ' ', ',', "comma"          , "          1,234,567 " },
+   {  ' ', ""               , ' ', 's', "comma/sign"     , "         +1,234,567 " },
+   {  ' ', ""               , ' ', 'a', "accounting"     , "        (1,234,567) " },
+   {  ' ', ""               , ' ', '$', "currency"       , "         $1,234,567 " },
+   {  ' ', ""               , ' ', 'p', "percent"        , "                15p " },
+   {  ' ', ""               , ' ', 'p', "point/bullet"   , "                 5) " },
+   {  ' ', ""               , '-', '#', "technical"      , "  123,456.789'032 + " },
+   {  ' ', ""               , ' ', 'e', "exponential"    , "          1.235e+05 " },
+   {  ' ', ""               , ' ', 'E', "exp divided"    , "       +1.235 e +05 " },
+   {  ' ', ""               , ' ', 'x', "hexidecimal"    , "              xaf68 " },
+   {  ' ', ""               , ' ', 'X', "hex divided"    , "            x'af'68 " },
+   {  ' ', ""               , ' ', 'b', "binary"         , "          b10101111 " },
+   {  ' ', ""               , ' ', 'B', "binary divided" , "        b'1010'1111 " },
+   {  ' ', ""               , ' ', 'o', "octal"          , "               o257 " },
+   {  ' ', ""               , ' ', 'O', "octal"          , "              o'257 " },
+   {  ' ', ""               , ' ', 't', "time (24h)"     , "              13:26 " },
+   {  ' ', ""               , ' ', 'd', "date"           , "        2014-Dec-15 " },
+   {  ' ', ""               , ' ', 'T', "timestamp"      , "  14.12.15.13.26.15 " },
+   {  ' ', ""               , ' ', 'D', "date/time"      , "  2014-Dec-15 13:26 " },
+   {  ' ', ""               , ' ', '0', "0 decimals"     , "                  0 " },
+   {  ' ', ""               , ' ', '1', "1 decimals"     , "                0.1 " },
+   {  ' ', ""               , ' ', '2', "2 decimals"     , "               0.12 " },
+   {  ' ', ""               , ' ', '3', "3 decimals"     , "              0.123 " },
+   {  ' ', ""               , ' ', '4', "4 decimals"     , "             0.1234 " },
+   {  ' ', ""               , ' ', '5', "5 decimals"     , "            0.12345 " },
+   {  ' ', ""               , ' ', '6', "6 decimals"     , "           0.123456 " },
+   {  ' ', ""               , ' ', '7', "7 decimals"     , "          0.1234567 " },
+   {  ' ', ""               , ' ', '8', "8 decimals"     , "         0.12345678 " },
+   {  ' ', ""               , ' ', '9', "9 decimals"     , "        0.123456789 " },
+   {  '~', "end-of-menu"    , ' ', ' ', ""               , ""                     },
+   {  ' ', ""               , ' ', ' ', ""               , ""                     },
 };
 
 
@@ -671,8 +671,8 @@ CURS_rowhead       (void)
          for (j = 0; j < h; ++j) {
             /*> if (ch + j > my.y_avail)  break;                                         <*/
             switch (j) {
-            case  0 : mvprintw (tab->rows[i].y    , 0, "%4d", i + 1);   break;
-            default : mvprintw (tab->rows[i].y + j, 0, "   .");         break;
+            case  0 : mvprintw (tab->rows[i].y    , 0, "%4d ", i + 1);   break;
+            default : mvprintw (tab->rows[i].y + j, 0, "   . ");         break;
             }
          }
          if      (i == CROW          )  attroff (S_COLOR_HEADY   );
@@ -693,8 +693,8 @@ CURS_rowhead       (void)
       for (j = 0; j < h; ++j) {
          /*> if (ch + j > my.y_avail)  break;                                         <*/
          switch (j) {
-         case  0 : mvprintw (tab->rows[i].y    , 0, "%4d", i + 1);   break;
-         default : mvprintw (tab->rows[i].y + j, 0, "   .");         break;
+         case  0 : mvprintw (tab->rows[i].y    , 0, "%4d ", i + 1);   break;
+         default : mvprintw (tab->rows[i].y + j, 0, "   . ");         break;
          }
       }
       if      (i == CROW          )  attroff (S_COLOR_HEADY   );
@@ -725,7 +725,7 @@ CURS_menuroot      (char a_menu)
       /*---(filter)----------------------*/
       if (s_menus [i].one == '~') break;
       if (s_menus [i].one == ' ') continue;
-      if (a_menu != '-' && s_menus [i].one != a_menu)  continue;
+      if (a_menu != MENU_ROOT && s_menus [i].one != a_menu)  continue;
       /*---(display)---------------------*/
       ++x_row;
       if (s_menus [i].one == a_menu)  attron (S_COLOR_CURRENT);
@@ -773,7 +773,7 @@ CURS_menusub       (char a_menu)
             s_menus [i].two, s_menus [i].name, s_menus [i].desc);
       mvprintw  (x_row, x_col, x_line);
       attrset (0);
-      if (x_row > 32) { 
+      if (s_menus [i].next == '-' || x_row > 32) { 
          if (x_col > 20) break;
          ++x_row;
          attron (S_COLOR_TITLE);
@@ -1004,11 +1004,9 @@ CURS_main          (void)
    case 'E'  : CURS_listerror  (curr);
                break;
    }
-   if (my.menu != ' ') {
-      /*> if (my.menu == '-') CURS_menuroot (my.menu);                                <*/
-      /*> else                CURS_menusub  (my.menu);                                <*/
-      CURS_menuroot ('F');
-      CURS_menusub  ('F');
+   if (my.menu != MENU_NONE) {
+      CURS_menuroot (my.menu);
+      if (my.menu != MENU_ROOT)  CURS_menusub  (my.menu);
    }
    /*---(command)------------------------*/
    if (my.scrn == SCRN_DEBUG || my.scrn == SCRN_SMALL) {

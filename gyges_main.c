@@ -68,6 +68,7 @@ main (int argc, char *argv[])
       case SMOD_WANDER   : rc = SMOD_wander   (' ', cch); break;
       case SMOD_REGISTER : rc = REG_mode      (sch, cch); break;
       case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
+      case SMOD_MENUS    : rc = SMOD_menus    (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(translate unprintable)-------*/
