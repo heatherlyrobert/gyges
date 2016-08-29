@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7o"
-#define     VER_TXT   "fixed cursor position in menu sub-mode"
+#define     VER_NUM   "1.7p"
+#define     VER_TXT   "menu for format works!!!"
 
 
 

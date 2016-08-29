@@ -947,6 +947,11 @@ SMOD_menus         (char a_major, char a_minor)
    if (a_major == ' ') {
       my.menu = a_minor;
    } else {
+      DEBUG_USER   yLOG_note    ("execute option");
+      if (a_major == 'F') {
+         MODE_enter  (SMOD_FORMAT);
+         SMOD_format (' ', a_minor);
+      }
       my.menu = ' ';
       MODE_return ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
