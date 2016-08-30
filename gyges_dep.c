@@ -125,6 +125,8 @@ struct cDEP  {
    /*---(#3, deps linked list)-----------*/
    tDEP     *dprev;           /* pointer to prev dependency in full list      */
    tDEP     *dnext;           /* pointer to next dependency in full list      */
+   /*---(#4, statistics)-----------------*/
+   int       count;           /* number of times used for dep/calc            */
 };
 tDEP     *dhead;
 tDEP     *dtail;
@@ -366,6 +368,8 @@ DEP__new           (void)
       dtail        = curr;
    }
    ++ndep;
+   /*---(statistics)---------------------*/
+   curr->count   = 0;
    /*---(complete)-----------------------*/
    return curr;
 }
@@ -1468,34 +1472,37 @@ DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
 }
 
 PR char    /*----: dependency-based calculation from root (all) --------------*/
-DEP__exec          (int a_level, tCELL *a_curr, long a_stamp)
+DEP__exec          (int a_level, tDEP *a_dep, long a_stamp)
 {
    /*---(locals)-------------------------*/
-   tDEP     *n         = NULL;
+   tCELL      *x_cell      = NULL;
+   tDEP       *x_next      = NULL;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, a_curr, a_stamp);
+   x_cell     = a_dep->target;
+   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, x_cell, a_stamp);
    /*---(defenses)-----------------------*/
-   if (a_curr       == NULL) {
+   if (x_cell       == NULL) {
       DEBUG_CALC   yLOG_note    ("cell is NULL");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(recurse)------------------------*/
-   DEBUG_CALC   yLOG_info    ("label"     , a_curr->label);
-   DEBUG_CALC   yLOG_char    ("type"      , a_curr->t);
-   DEBUG_CALC   yLOG_value   ("nrequire"  , a_curr->nrequire);
-   n = a_curr->requires;
-   while (n != NULL) {
-      DEP__exec (a_level + 1, n->target, a_stamp);
-      n = n->next;
+   DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
+   DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
+   DEBUG_CALC   yLOG_value   ("nrequire"  , x_cell->nrequire);
+   x_next = x_cell->requires;
+   while (x_next != NULL) {
+      DEP__exec (a_level + 1, x_next, a_stamp);
+      x_next = x_next->next;
    }
-   if (strchr (G_CELL_CALC, a_curr->t) != 0 && a_curr->u != a_stamp) {
-      CALC_eval (a_curr);
-      CELL_printable (a_curr);
-      a_curr->u = a_stamp;
+   if (strchr (G_CELL_CALC, x_cell->t) != 0 && x_cell->u != a_stamp) {
+      CALC_eval (x_cell);
+      CELL_printable (x_cell);
+      x_cell->u = a_stamp;
+      a_dep->count++;
    }
-   DEBUG_CALC   DEP__print (a_level, a_curr);
+   DEBUG_CALC   DEP__print (a_level, x_cell);
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1504,41 +1511,53 @@ DEP__exec          (int a_level, tCELL *a_curr, long a_stamp)
 char       /*----: recalculate everything ------------------------------------*/
 DEP_recalc         (void)
 {
+   /*---(locals)-------------------------*/
+   tDEP       *x_next      = NULL;
+   /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    if (debug.dtree == 'y') endwin();
-   DEP__exec (0, dtree, rand());
+   /*---(recurse)------------------------*/
+   x_next = dtree->requires;
+   while (x_next != NULL) {
+      DEP__exec (0, x_next, rand());
+      x_next = x_next->next;
+   }
    if (debug.dtree == 'y') exit (0);
+   /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 PR char    /*----: dependency-based calculation upward from cell -------------*/
-DEP__revs          (int a_level, tCELL *a_curr, long a_stamp)
+DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
 {
    /*---(locals)-------------------------*/
-   tDEP     *n         = NULL;
+   tDEP       *x_next      = NULL;
+   tCELL      *x_cell      = NULL;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, a_curr, a_stamp);
+   x_cell     = a_dep->target;
+   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, x_cell, a_stamp);
    /*---(defenses)-----------------------*/
-   if (a_curr       == NULL) {
+   if (x_cell       == NULL) {
       DEBUG_CALC   yLOG_note    ("cell is NULL");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(recurse)------------------------*/
-   DEBUG_CALC   yLOG_info    ("label"     , a_curr->label);
-   DEBUG_CALC   yLOG_char    ("type"      , a_curr->t);
-   if (a_level > 0 && a_curr->u != a_stamp) {
-      CALC_eval (a_curr);
-      CELL_printable (a_curr);
-      a_curr->u = a_stamp;
+   DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
+   DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
+   if (a_level > 0 && x_cell->u != a_stamp) {
+      CALC_eval (x_cell);
+      CELL_printable (x_cell);
+      x_cell->u = a_stamp;
+      a_dep->count++;
    }
-   DEBUG_CALC   yLOG_value   ("nprovide"  , a_curr->nprovide);
-   n = a_curr->provides;
-   while (n != NULL) {
-      DEP__revs (a_level + 1, n->target, a_stamp);
-      n = n->next;
+   DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
+   x_next = x_cell->provides;
+   while (x_next != NULL) {
+      DEP__revs (a_level + 1, x_next->target, a_stamp);
+      x_next = x_next->next;
    }
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -1548,10 +1567,19 @@ DEP__revs          (int a_level, tCELL *a_curr, long a_stamp)
 char       /*----: recalculate from cell upwards -----------------------------*/
 DEP_calc_up        (tCELL *a_curr)
 {
+   /*---(locals)-------------------------*/
+   tDEP       *x_next      = NULL;
+   /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    if (debug.dtree == 'y') endwin();
-   DEP__revs (0, a_curr, rand());
+   /*---(recurse)------------------------*/
+   x_next = a_curr->provides;
+   while (x_next != NULL) {
+      DEP__revs (0, x_next, rand());
+      x_next = x_next->next;
+   }
    if (debug.dtree == 'y') exit (0);
+   /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -1716,20 +1744,23 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
 }
 
 char
-DEP_write          (FILE *a_file, int a_level, tCELL *a_curr, char a_type)
+DEP_write          (FILE *a_file, int a_level, tDEP *a_dep)
 {
    /*---(locals)-----------+-----------+-*/
-   tDEP       *next        = NULL;
+   tCELL      *x_cell      = NULL;
+   tDEP       *x_next      = NULL;
    int         i;
+   /*---(prepare)------------------------*/
+   x_cell  = a_dep->target;
    /*---(print)--------------------------*/
    for (i = 0; i < a_level; ++i)  fprintf(a_file, "   ");
-   if (a_curr->t == '-')  fprintf (a_file, "%d %-6.6s:%c:%c:\n"      , a_level, a_curr->label, a_type, a_curr->t);
-   else                   fprintf (a_file, "%d %-6.6s:%c:%c:%3d:%s\n", a_level, a_curr->label, a_type, a_curr->t, a_curr->l, a_curr->s);
+   if (x_cell->t == '-')  fprintf (a_file, "%d %-6.6s:%c:%c:%3d:\n"      , a_level, x_cell->label, a_dep->type, x_cell->t);
+   else                   fprintf (a_file, "%d %-6.6s:%c:%c:%3d:%3d:%s\n", a_level, x_cell->label, a_dep->type, x_cell->t, x_cell->l, x_cell->s);
    /*---(process children)---------------*/
-   next = a_curr->requires;
-   while (next != NULL) {
-      DEP_write (a_file, a_level + 1, next->target, next->type);
-      next = next->next;
+   x_next = x_cell->requires;
+   while (x_next != NULL) {
+      DEP_write (a_file, a_level + 1, x_next);
+      x_next = x_next->next;
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -1745,6 +1776,7 @@ DEP_writeall       (void)
    int         i           = 0;
    int         x_count     = 0;
    int         x_total     = 0;
+   tDEP       *x_next      = NULL;
    /*---(open)---------------------------*/
    snprintf (x_name, 95, "%s.deps", my.f_title);
    x_file = fopen(x_name, "w");
@@ -1770,7 +1802,11 @@ DEP_writeall       (void)
    fprintf (x_file, "                                                     (check) ndep     %5d\n", ndep);
    /*---(recurse)------------------------*/
    fprintf (x_file, "\ndetails arranged by first requirement and indented\n\n");
-   DEP_write (x_file, 0, dtree, '-');
+   x_next = dtree->requires;
+   while (x_next != NULL) {
+      DEP_write (x_file, 1, x_next);
+      x_next = x_next->next;
+   }
    /*---(close)--------------------------*/
    fclose (x_file);
    /*---(complete)-----------------------*/

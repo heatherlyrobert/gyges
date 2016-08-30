@@ -64,8 +64,8 @@ tMENU       s_menus     [MAX_MENU] = {
    {  ' ', ""               , ' ', 'a', "accounting"     , "        (1,234,567) " },
    {  ' ', ""               , ' ', '$', "currency"       , "         $1,234,567 " },
    {  ' ', ""               , ' ', 'p', "percent"        , "                15p " },
-   {  ' ', ""               , ' ', 'p', "point/bullet"   , "                 5) " },
-   {  ' ', ""               , '-', '#', "technical"      , "  123,456.789'032 + " },
+   {  ' ', ""               , '-', 'P', "point/bullet"   , "                 5) " },
+   {  ' ', ""               , ' ', '#', "technical"      , "  123,456.789'032 + " },
    {  ' ', ""               , ' ', 'e', "exponential"    , "          1.235e+05 " },
    {  ' ', ""               , ' ', 'E', "exp divided"    , "       +1.235 e +05 " },
    {  ' ', ""               , ' ', 'x', "hexidecimal"    , "              xaf68 " },
@@ -88,9 +88,26 @@ tMENU       s_menus     [MAX_MENU] = {
    {  ' ', ""               , ' ', '7', "7 decimals"     , "          0.1234567 " },
    {  ' ', ""               , ' ', '8', "8 decimals"     , "         0.12345678 " },
    {  ' ', ""               , ' ', '9', "9 decimals"     , "        0.123456789 " },
+   {  'S', "sizing"         , ' ', 'm', "min width"      , "4 chars             " },
+   {  ' ', ""               , ' ', 'n', "normal width"   , "8 chars             " },
+   {  ' ', ""               , ' ', 'N', "normal+ width"  , "12 chars            " },
+   {  ' ', ""               , ' ', 'w', "wide width"     , "20 chars            " },
+   {  ' ', ""               , ' ', 'w', "wide+ width"    , "50 chars            " },
+   {  ' ', ""               , ' ', 'H', "narrower by 5"  , "-5 chars (rounded)  " },
+   {  ' ', ""               , ' ', 'h', "narrower by 1"  , "-1 chars            " },
+   {  ' ', ""               , ' ', 'l', "wider by 1"     , "+1 chars            " },
+   {  ' ', ""               , ' ', 'L', "wider by 5"     , "+5 chars (rounded)  " },
+   {  ' ', ""               , ' ', 'K', "shortest"       , "1 char tall         " },
+   {  ' ', ""               , ' ', 'k', "shorter by 1"   , "-1 chars            " },
+   {  ' ', ""               , ' ', 'j', "taller by 1"    , "+1 chars            " },
+   {  ' ', ""               , ' ', 'J', "tallest"        , "5 chars             " },
+   {  ' ', ""               , ' ', 'M', "merge cells"    , "                    " },
+   {  ' ', ""               , ' ', 'U', "unmerge cells"  , "                    " },
+   {  'D', "distribution"   , ' ', '-', ""               , "                    " },
    {  '~', "end-of-menu"    , ' ', ' ', ""               , ""                     },
    {  ' ', ""               , ' ', ' ', ""               , ""                     },
 };
+
 
 
 #define     MAX_COLORS    20

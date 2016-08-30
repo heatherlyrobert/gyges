@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7p"
-#define     VER_TXT   "menu for format works!!!"
+#define     VER_NUM   "1.7q"
+#define     VER_TXT   "added count to deps and changed dep functions to use it"
 
 
 
@@ -1195,7 +1195,7 @@ char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
 
-char      DEP_write          (FILE *a_file, int a_level, tCELL *a_curr, char a_type);
+char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);
 char      DEP_writeall       (void);
 char     *DEP_unit           (char *a_question, char *a_label);
 
