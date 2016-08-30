@@ -1519,7 +1519,7 @@ DEP_recalc         (void)
    /*---(recurse)------------------------*/
    x_next = dtree->requires;
    while (x_next != NULL) {
-      DEP__exec (0, x_next, rand());
+      DEP__exec (1, x_next, rand());
       x_next = x_next->next;
    }
    if (debug.dtree == 'y') exit (0);
@@ -1537,7 +1537,9 @@ DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    x_cell     = a_dep->target;
-   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, x_cell, a_stamp);
+   DEBUG_CALC   yLOG_value   ("a_level"   , a_level);
+   DEBUG_CALC   yLOG_value   ("a_stamp"   , a_stamp);
+   DEBUG_CALC   yLOG_point   ("*x_cell"   , x_cell);
    /*---(defenses)-----------------------*/
    if (x_cell       == NULL) {
       DEBUG_CALC   yLOG_note    ("cell is NULL");
@@ -1547,7 +1549,7 @@ DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
    /*---(recurse)------------------------*/
    DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
    DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
-   if (a_level > 0 && x_cell->u != a_stamp) {
+   if (x_cell->u != a_stamp) {
       CALC_eval (x_cell);
       CELL_printable (x_cell);
       x_cell->u = a_stamp;
@@ -1565,19 +1567,25 @@ DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
 }
 
 char       /*----: recalculate from cell upwards -----------------------------*/
-DEP_calc_up        (tCELL *a_curr)
+DEP_calc_up        (tCELL *a_cell)
 {
    /*---(locals)-------------------------*/
    tDEP       *x_next      = NULL;
+   int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   DEBUG_CALC   yLOG_info    ("base cell" , a_cell->label);
+   DEBUG_CALC   yLOG_value   ("nprovide"  , a_cell->nprovide);
    if (debug.dtree == 'y') endwin();
    /*---(recurse)------------------------*/
-   x_next = a_curr->provides;
+   x_next = a_cell->provides;
    while (x_next != NULL) {
-      DEP__revs (0, x_next, rand());
+      ++c;
+      DEBUG_CALC   yLOG_value   ("recurse"   , c);
+      DEP__revs (1, x_next, rand());
       x_next = x_next->next;
    }
+   DEBUG_CALC   yLOG_note    ("done recursing");
    if (debug.dtree == 'y') exit (0);
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);

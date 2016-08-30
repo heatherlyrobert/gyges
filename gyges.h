@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7q"
-#define     VER_TXT   "added count to deps and changed dep functions to use it"
+#define     VER_NUM   "1.7r"
+#define     VER_TXT   "basic dependency recalculation works again, with debugging"
 
 
 
