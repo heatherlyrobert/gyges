@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.7r"
-#define     VER_TXT   "basic dependency recalculation works again, with debugging"
+#define     VER_NUM   "1.8a"
+#define     VER_TXT   "huge fix on dependency creation, rooting, and distruction"
 
 
 
@@ -1174,6 +1174,19 @@ char      DEP_purge          /* ------ */  (void);
 #define   DEP_CALCREF   'A'
 #define   DEP_ADDRESS   'a'
 
+#define   DEP_ROOT      'r'
+#define   DEP_UNROOT    'u'
+#define   DEP_CHECKROOT 'a'
+
+
+
+tDEP*     DEP__makereq       (char a_type, char a_index, tCELL *a_source, tCELL *a_target);
+tDEP*     DEP__makepro       (char a_type, char a_index, tCELL *a_source, tCELL *a_target);
+char      DEP__rooting       (tCELL *a_cell, char a_type);
+char      DEP_create_NEW     (char a_type, tCELL *a_source, tCELL *a_target);
+char      DEP_delete_NEW     (char a_type, tCELL *a_source, tCELL *a_target);
+
+
 char      DEP_create         /* ------ */  (char a_type, tCELL *a_source, tCELL *a_target);
 char      DEP_delete         /* ------ */  (char a_type, tCELL *a_me, tCELL *a_other);
 char      DEP_delcalcref     (tCELL *a_source);
@@ -1197,6 +1210,7 @@ char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_p
 
 char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);
 char      DEP_writeall       (void);
+char      DEP_writescreen    (void);
 char     *DEP_unit           (char *a_question, char *a_label);
 
 

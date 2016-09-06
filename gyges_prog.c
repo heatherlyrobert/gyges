@@ -412,9 +412,10 @@ PROG_begin         (void)
 char                /* PURPOSE : shutdown program and free memory ------------*/
 PROG_end           (void)
 {
+   /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   DEP_wrap     ();
    CELL_wrap    ();
+   DEP_wrap     ();   /* disconnect all cells */
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_TOPS   yLOG_end     ();
    return 0;

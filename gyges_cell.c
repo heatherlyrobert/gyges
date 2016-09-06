@@ -280,31 +280,36 @@ CELL__wipe         (tCELL *a_curr)
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(source)-------------------------*/
+   DEBUG_CELL   yLOG_note    ("clear source string");
    if (a_curr->s         != NULL)  free (a_curr->s);
    a_curr->s              = NULL;
    a_curr->l              = 0;
    /*---(results)------------------------*/
+   DEBUG_CELL   yLOG_note    ("clear results, string and value");
    a_curr->t              = CTYPE_BLANK;
    if (a_curr->v_str     != NULL)  free (a_curr->v_str);
    a_curr->v_str          = NULL;
    a_curr->v_num          = 0.0;
    /*---(printable)----------------------*/
+   DEBUG_CELL   yLOG_note    ("wipe printable");
    if (a_curr->p         != NULL)  free (a_curr->p);
    a_curr->p              = NULL;
    /*---(calculations)-------------------*/
+   DEBUG_CELL   yLOG_note    ("clear rpn formulas and calculations");
    if (a_curr->rpn       != NULL)  free (a_curr->rpn);
    a_curr->rpn            = NULL;
    a_curr->nrpn           = 0;
    if (a_curr->calc      != NULL)  CALC_free (a_curr);
    a_curr->calc           = NULL;
    /*---(dependencies)-------------------*/
+   DEBUG_CELL   yLOG_note    ("destroy all requires dependencies");
    if (a_curr->requires  != NULL)  DEP_cleanse (a_curr);
    a_curr->requires       = NULL;
    a_curr->nrequire       = 0;
    DEBUG_CELL   yLOG_note    ("unroot, but leave any other provides dependences");
-   if (a_curr->provides  != NULL)  rc = DEP_delete (DEP_REQUIRE, dtree, a_curr);  /* DEP_REQUIRES */
-   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   if (a_curr->provides  != NULL)  rc = DEP__rooting (a_curr, DEP_UNROOT);
    /*---(errors)-------------------------*/
+   DEBUG_CELL   yLOG_note    ("clear errors");
    if (a_curr->errors    != NULL)  ERROR_cleanse (a_curr);
    a_curr->errors         = NULL;
    a_curr->nerror         = 0;
@@ -436,14 +441,14 @@ CELL__purge        (void)
    char        rc          = 0;
    long        x_stamp     = 0;
    int         x_seq;
-   /*---(dependent cells)------------------*/
+   /*---(disconnect dependent cells)-----*/
    x_stamp = rand ();
    x_seq     = 0;
    DEBUG_CELL   yLOG_note    ("calling DEP_tail");
    rc = DEP_tail (NULL, 'x', &x_seq, 0, dtree, x_stamp, CELL__depwipe);
    DEBUG_CELL   yLOG_value   ("tail rc"   , rc);
    DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);
-   /*---(non-dependency cells)-------------*/
+   /*---(non-dependency cells)-----------*/
    x_seq = 0;
    /*---(walk through list)--------------*/
    next = hcell;
@@ -2063,24 +2068,26 @@ CELL_printable     (tCELL *a_curr) {
    tCELL      *x_next      = NULL;
    int         i           = 0;
    char       *pp          = NULL;
+   char        rce         = -10;
    /*---(defense)------------------------*/
-   if (a_curr    == NULL) return 0;     /* cell does not exist                */
-   if (a_curr->s == NULL) return 0;     /* nothing to do without source       */
+   --rce;  if (a_curr    == NULL) return rce;     /* cell does not exist                */
+   --rce;  if (a_curr->s == NULL) return rce;     /* nothing to do without source       */
    /*---(header)-------------------------*/
-   DEBUG_CELL  yLOG_senter (__FUNCTION__);
-   DEBUG_CELL  yLOG_svalue ("c", a_curr->col);
-   DEBUG_CELL  yLOG_svalue ("r", a_curr->row);
-   DEBUG_CELL  yLOG_schar  (a_curr->t);
-   DEBUG_CELL  yLOG_schar  (a_curr->f);
+   DEBUG_CELL  yLOG_enter (__FUNCTION__);
+   DEBUG_CELL  yLOG_value ("col"       , a_curr->col);
+   DEBUG_CELL  yLOG_value ("row"       , a_curr->row);
+   DEBUG_CELL  yLOG_char  ("type"      , a_curr->t);
+   DEBUG_CELL  yLOG_char  ("format"    , a_curr->f);
    /*---(check for hidden)---------------*/
    if (a_curr->t == CTYPE_MERGE) {
-      DEBUG_CELL  yLOG_snote  ("merged cell");
-      DEBUG_CELL  yLOG_sexit  (__FUNCTION__);
+      DEBUG_CELL  yLOG_note  ("merged cell");
+      DEBUG_CELL  yLOG_exit  (__FUNCTION__);
       return 0;
    }
    /*---(numbers)------------------------*/
+   --rce;
    if (strchr (G_CELL_NUM, a_curr->t) != 0) {
-      DEBUG_CELL  yLOG_snote  ("number");
+      DEBUG_CELL  yLOG_note  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
          CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
       } else if (strchr (sv_nums, a_curr->f) != 0)  {
@@ -2095,7 +2102,7 @@ CELL_printable     (tCELL *a_curr) {
    }
    /*---(calced tsrings------------------*/
    else if (strchr (G_CELL_STR, a_curr->t) != 0) {
-      DEBUG_CELL  yLOG_snote  ("string");
+      DEBUG_CELL  yLOG_note  ("string");
       if      (a_curr->t == CTYPE_STR)   strcat (x_temp, a_curr->s);
       else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
       else if (a_curr->t == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);
@@ -2104,25 +2111,26 @@ CELL_printable     (tCELL *a_curr) {
             free (a_curr->p);
             a_curr->p = NULL;
          }
-         DEBUG_CELL  yLOG_sexit  (__FUNCTION__);
-         return 0;
+         DEBUG_CELL  yLOG_note  ("unknown string type");
+         DEBUG_CELL  yLOG_exit  (__FUNCTION__);
+         return rce;
       }
    }
    /*---(empty)--------------------------*/
    else if (a_curr->t == CTYPE_BLANK) {
-      DEBUG_CELL  yLOG_snote  ("empty");
+      DEBUG_CELL  yLOG_note  ("empty");
       strcat (x_temp, "-");
    }
    /*---(troubles)-----------------------*/
    else if (strchr(G_CELL_ERR, a_curr->t) != 0) {
-      DEBUG_CELL  yLOG_snote  ("error");
+      DEBUG_CELL  yLOG_note  ("error");
       /*> strcat (x_temp, a_curr->s);                                                 <*/
       strcat (x_temp, a_curr->v_str);
       a_curr->a = '<';
    }
    /*---(detault)-----------------------*/
    else {
-      DEBUG_CELL  yLOG_snote  ("other");
+      DEBUG_CELL  yLOG_note  ("other");
       strcat (x_temp, a_curr->s);
    }
    /*---(formatting errors)--------------*/
@@ -2131,7 +2139,7 @@ CELL_printable     (tCELL *a_curr) {
     *>    a_curr->a = '<';                                                            <* 
     *> }                                                                              <*/
    /*---(indented formats)---------------*/
-   DEBUG_CELL  yLOG_sinfo  ("x", x_temp);
+   DEBUG_CELL  yLOG_info  ("x", x_temp);
    /*---(merge formats)------------------*/
    w = tabs[a_curr->tab].cols[a_curr->col].w;
    /*> w = tab->cols[a_curr->col].w;                                                  <*/
@@ -2141,7 +2149,7 @@ CELL_printable     (tCELL *a_curr) {
       w    += tabs[a_curr->tab].cols[i].w;
       ++x_merge;
    }
-   DEBUG_CELL  yLOG_svalue ("w", w);
+   DEBUG_CELL  yLOG_value ("w", w);
    wa    = w - 1;
    /*---(choose filler)------------------*/
    if (strchr(G_CELL_STR, a_curr->t) != NULL || a_curr->v_str != NULL) {
@@ -2200,18 +2208,18 @@ CELL_printable     (tCELL *a_curr) {
       snprintf(p, w + 1, "%s%.*s ",   x_final, wa - len, g_empty);
    }
    /*---(save)---------*/
-   DEBUG_CELL  yLOG_svalue ("x_merge", x_merge);
-   DEBUG_CELL  yLOG_sinfo  ("p"      , p);
+   DEBUG_CELL  yLOG_value ("x_merge", x_merge);
+   DEBUG_CELL  yLOG_info  ("p"      , p);
    if (x_merge == 0) {
       a_curr->p = p;
    } else {
       wa = 0;
       for (i = 0; i <= x_merge; ++i) {
          w     = tabs[a_curr->tab].cols[a_curr->col + i].w;
-         DEBUG_CELL  yLOG_svalue ("#w", w);
+         DEBUG_CELL  yLOG_value ("#w", w);
          while (pp == NULL)  pp = (char*) malloc(w + 1);
          sprintf (pp, "%-*.*s", w, w, p + wa);
-         DEBUG_CELL  yLOG_sinfo  ("#1p", pp);
+         DEBUG_CELL  yLOG_info  ("#1p", pp);
          x_next = tabs[a_curr->tab].sheet[a_curr->col + i][a_curr->row];
          if (x_next->p != NULL) {
             free (x_next->p);
@@ -2225,7 +2233,7 @@ CELL_printable     (tCELL *a_curr) {
       p = NULL;
    }
    /*---(ending)-------------------------*/
-   DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
+   DEBUG_CELL   yLOG_exit   (__FUNCTION__);
    /*---(complete)-----------------------*/
    return 0;
 }

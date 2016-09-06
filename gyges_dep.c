@@ -276,16 +276,47 @@ DEP_purge          (void)
    return 0;
 }
 
+char       /*----: destroy all dependency objects ----------------------------*/
+DEP_purge_OLD      (void)
+{
+   /*---(beginning)----------------------*/
+   /*> printf ("DEP_purge\n");                                                        <*/
+   /*> DEBUG_CELL  printf("DEP_purge      :: begin\n");                               <*/
+   /*---(locals)-------*-----------------*/
+   tDEP     *curr      = NULL;
+   tDEP     *next      = NULL;
+   /*---(walk through list)--------------*/
+   /*> printf ("DEP_purge : defenses\n");                                             <*/
+   if (dhead == NULL) return -1;
+   next = dhead;
+   /*> printf ("DEP_purge : entering loop\n");                                        <*/
+   while (next != NULL) {
+      curr = next;
+      /*> printf ("DEP_purge : pass with %9p\n", curr);                               <*/
+      next = curr->dnext;
+      DEP__free (curr);
+   }
+   /*---(clean ends)---------------------*/
+   dhead = NULL;
+   dtail = NULL;
+   /*---(ending)-------------------------*/
+   /*> DEBUG_CELL  printf("DEP_purge      :: end\n");                                 <*/
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 char       /*----: prepare dependency capability for use ---------------------*/
 DEP_wrap           (void)
 {
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(dependencies)-------------------*/
-   DEP_purge();
+   DEP_purge ();
    CELL_dtree ("free");
    dhead  = NULL;
    dtail  = NULL;
    ndep   = 0;
    /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -319,6 +350,19 @@ DEP_match          (char a_type)
    for (i = 0; i < MAX_DEPTYPE; ++i) {
       if (s_dep_info [i].type != a_type) continue;
       return s_dep_info [i].match_index;
+   }
+   /*---(failure)------------------------*/
+   return -1;
+}
+
+char         /*--> find the index of a dep match type-----[ leaf   [ ------ ]-*/
+DEP_abbrev         (char a_index)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(complete)-----------------------*/
+   if (a_index >= 0 && a_index < MAX_DEPTYPE) {
+      return s_dep_info [a_index].type;
    }
    /*---(failure)------------------------*/
    return -1;
@@ -381,8 +425,13 @@ DEP__free          (
 {  /*---(design notes)--------------------------------------------------------*/
    /* destroys a single dependency object and removes from the associated     */
    /* cells and also from the paired dependency.                              */
+   DEBUG_DEPS   yLOG_senter  (__FUNCTION__);
    /*---(defense: null cell)-------------*/
-   if (a_dep       == NULL)  return NULL;
+   DEBUG_DEPS   yLOG_spoint  (a_dep);
+   if (a_dep       == NULL) {
+      DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
+      return NULL;
+   }
    /*---(remove from dependency list)----*/
    if (a_dep->dnext != NULL) a_dep->dnext->dprev         = a_dep->dprev;
    else                      dtail                       = a_dep->dprev;
@@ -412,6 +461,7 @@ DEP__free          (
    free (a_dep);
    a_dep = NULL;
    /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
    return  NULL;
 }
 
@@ -421,6 +471,338 @@ DEP__free          (
 /*===----                      two-way dependency                      ----===*/
 /*====================------------------------------------====================*/
 PRIV void  o___TWO_WAY_________o () { return; }
+
+tDEP*        /*--> create a requires dependency ----------[ ------ [ ------ ]-*/
+DEP__makereq       (
+      /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* type of dependency (source, format, or calc) */
+      char        a_index,    /* dependency type entry in table               */
+      tCELL      *a_source,   /* cell with the calculation                    */
+      tCELL      *a_target)   /* cell with value the source cell needs        */
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_next      = NULL;          /* iterator -- dependency lists   */
+   tDEP       *x_req       = NULL;          /* new requires entry             */
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(check for existing requires)----*/
+   DEBUG_DEPS   yLOG_info    ("src label" , a_source->label);
+   DEBUG_DEPS   yLOG_value   ("src nreqs" , a_source->nrequire);
+   x_next = a_source->requires;
+   while (x_next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("trg label" , x_next->target->label);
+      if (x_next->target == a_target) {
+         DEBUG_DEPS   yLOG_note    ("found existing, done");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return x_next;
+      }
+      x_next = x_next->next;
+   }
+   /*---(create a new requires)-------*/
+   DEBUG_DEPS   yLOG_note    ("existing not found, create new requires");
+   x_req           = DEP__new ();
+   if (x_req == NULL)   {
+      DEBUG_DEPS yLOG_note      ("could not make a new requires entry");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return NULL; 
+   }
+   /*---(assign basics)---------------*/
+   DEBUG_DEPS   yLOG_note    ("assign basic values");
+   x_req->type     = a_type;
+   x_req->source   = a_source;
+   x_req->target   = a_target;
+   /*---(add to dep counters)---------*/
+   DEBUG_DEPS   yLOG_note    ("increment dependency table counters");
+   ++(s_dep_info [a_index].count);
+   ++(s_dep_info [a_index].total);
+   /*---(hook it up to cell)----------*/
+   DEBUG_DEPS   yLOG_note    ("hook up dependency into cell linked list");
+   if (a_source->requires == NULL) {
+      a_source->requires = x_req;
+   } else {
+      x_next = a_source->requires;
+      while (x_next->next != NULL)  x_next = x_next->next;
+      x_next->next         = x_req;
+      x_req->prev          = x_next;
+   }
+   ++a_source->nrequire;
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return x_req;
+}
+
+tDEP*        /*--> create a provides dependency ----------[ ------ [ ------ ]-*/
+DEP__makepro       (
+      /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* type of dependency (source, format, or calc) */
+      char        a_index,    /* dependency type entry in table               */
+      tCELL      *a_source,   /* cell with the calculation                    */
+      tCELL      *a_target)   /* cell with value the source cell needs        */
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_next      = NULL;          /* iterator -- dependency lists   */
+   tDEP       *x_pro       = NULL;          /* new requires entry             */
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(check for existing requires)----*/
+   DEBUG_DEPS   yLOG_info    ("src label" , a_source->label);
+   DEBUG_DEPS   yLOG_value   ("src npros" , a_source->nprovide);
+   x_next = a_source->provides;
+   while (x_next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("trg label" , x_next->target->label);
+      if (x_next->target == a_target) {
+         DEBUG_DEPS   yLOG_note    ("found existing, done");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return x_next;
+      }
+      x_next = x_next->next;
+   }
+   /*---(create a new provides)-------*/
+   DEBUG_DEPS   yLOG_note    ("existing not found, create new requires");
+   x_pro           = DEP__new ();
+   if (x_pro == NULL)   {
+      DEBUG_DEPS yLOG_note      ("could not make a new provides entry");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return NULL; 
+   }
+   /*---(assign basics)---------------*/
+   DEBUG_DEPS   yLOG_note    ("assign basic values");
+   x_pro->type     = DEP_abbrev (a_index);
+   x_pro->source   = a_source;
+   x_pro->target   = a_target;
+   /*---(add to dep counters)---------*/
+   DEBUG_DEPS   yLOG_note    ("increment dependency table counters");
+   ++(s_dep_info [a_index].count);
+   ++(s_dep_info [a_index].total);
+   /*---(hook it up to cell)----------*/
+   DEBUG_DEPS   yLOG_note    ("hook up dependency into cell linked list");
+   if (a_source->provides == NULL) {
+      a_source->provides = x_pro;
+   } else {
+      x_next = a_source->provides;
+      while (x_next->next != NULL)  x_next = x_next->next;
+      x_next->next         = x_pro;
+      x_pro->prev          = x_next;
+   }
+   ++a_source->nprovide;
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return x_pro;
+}
+
+char         /*--> root and unroot cells -----------------[ ------ [ ------ ]-*/
+DEP__rooting       (tCELL *a_cell, char a_type)
+{  /*---(design notes)-------------------*/
+   /*
+    *   since root can carry a huge number of dependencies, this search checks
+    *   upward from the target for speed.
+    *      a = audit/check root
+    *      u = unroot
+    *      r = root
+    *
+    */
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          = 0;
+   tDEP       *x_next      = NULL;
+   int         x_norms     = 0;
+   int         x_roots     = 0;
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   if (a_cell == NULL) {
+      DEBUG_DEPS   yLOG_note    ("cell is null, FAIL");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_cell == dtree) {
+      DEBUG_DEPS   yLOG_note    ("cell is root, nothing to do");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return 1;
+   }
+   DEBUG_DEPS   yLOG_value   ("owners"    , a_cell->nprovide);
+   /*---(quick path, existing root)------*/
+   --rce;
+   if (a_cell->nprovide == 1 && a_cell->provides->target == dtree) {
+      switch (a_type) {
+      case DEP_ROOT      : 
+      case DEP_CHECKROOT : 
+         DEBUG_DEPS   yLOG_note    ("perfectly rooted");
+         break;
+      case DEP_UNROOT    : 
+         DEBUG_DEPS   yLOG_note    ("perfect root found, unrooting");
+         rc = DEP_delete_NEW (DEP_REQUIRE, dtree, a_cell);
+         if (rc != 0) {
+            DEBUG_DEPS   yLOG_note    ("could not delete root dependency");
+            DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_DEPS   yLOG_value   ("owners"    , a_cell->nprovide);
+         break;
+      }
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return a_cell->nprovide;
+   }
+   /*---(indenpendent cell)--------------*/
+   --rce;
+   if (a_cell->nprovide == 0) {
+      switch (a_type) {
+      case DEP_ROOT      : 
+         DEBUG_DEPS   yLOG_note    ("independent cell, rooting");
+         rc = DEP_create_NEW (DEP_REQUIRE, dtree, a_cell);
+         if (rc != 0) {
+            DEBUG_DEPS   yLOG_note    ("could not create root dependency");
+            DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_DEPS   yLOG_value   ("owners"    , a_cell->nprovide);
+         break;
+      case DEP_CHECKROOT : 
+      case DEP_UNROOT    : 
+         DEBUG_DEPS   yLOG_note    ("independent cell, nothing to do");
+         break;
+      }
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return a_cell->nprovide;
+   }
+   /*---(count link types)---------------*/
+   --rce;
+   x_next = a_cell->provides;
+   while (x_next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("owned by"  , x_next->target->label);
+      if (x_next->target != dtree)  ++x_norms;
+      else                          ++x_roots;
+      x_next = x_next->next;
+   }
+   DEBUG_DEPS   yLOG_value   ("roots"     , x_roots);
+   DEBUG_DEPS   yLOG_value   ("norms"     , x_norms);
+   /*---(normal dependent cell)----------*/
+   if (x_roots == 0) {
+      switch (a_type) {
+      case DEP_CHECKROOT : 
+         DEBUG_DEPS   yLOG_note    ("normal dependent cell, no root");
+         break;
+      case DEP_ROOT      : 
+         DEBUG_DEPS   yLOG_note    ("normal dependent cell, can not root");
+         break;
+      case DEP_UNROOT    : 
+         DEBUG_DEPS   yLOG_note    ("normal dependent cell, no root, can not unroot");
+         break;
+      }
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return x_roots;
+   }
+   /*---(deal with duplicate roots)------*/
+   --rce;
+   x_next  = a_cell->provides;
+   if (x_norms == 0)  x_roots = 0;
+   else               x_roots = 1;
+   while (x_next != NULL) {
+      if (x_next->target == dtree && x_roots > 0) {
+         DEBUG_DEPS   yLOG_note    ("found reduntant root, cleaning");
+         rc = DEP_delete_NEW (DEP_REQUIRE, dtree, a_cell);
+      }
+      ++x_roots;
+      x_next = x_next->next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_value   ("owners"    , a_cell->nprovide);
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> create a two-way dependency -----------[ ------ [ ------ ]-*/
+DEP_create_NEW     (
+      /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* type of dependency (source, format, or calc) */
+      tCELL      *a_source,   /* cell with the calculation                    */
+      tCELL      *a_target)   /* cell with value the source cell needs        */
+{  /*---(design notes)--------------------------------------------------------*/
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;          /* return code for errors         */
+   char        rc          =    0;          /* generic return code            */
+   char        x_index     =    0;          /* dependency type table index    */
+   tDEP       *x_require   = NULL;    /* new requires entry                   */
+   tDEP       *x_provide   = NULL;    /* new provides entry                   */
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(defense: null pointers)---------*/
+   DEBUG_DEPS   yLOG_point   ("a_source"  , a_source);
+   --rce;  if (a_source     == NULL)   {
+      DEBUG_DEPS yLOG_note      ("source is null");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return rce; 
+   }
+   DEBUG_DEPS   yLOG_info    ("src label" , a_source->label);
+   DEBUG_DEPS   yLOG_point   ("a_target"  , a_target);
+   --rce;  if (a_target     == NULL)   {
+      DEBUG_DEPS yLOG_note      ("target is null");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_info    ("trg label" , a_target->label);
+   /*---(defense: linking back to root)--*/
+   --rce;  if (a_target     == dtree)  {
+      DEBUG_DEPS yLOG_note      ("can not route back to root");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: circular ref)----------*/
+   --rce;  if (a_source     == a_target) {
+      DEBUG_DEPS   yLOG_note    ("source and target are same");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: type)------------------*/
+   DEBUG_DEPS   yLOG_char    ("a_type"    , a_type);
+   x_index     = DEP_index (a_type);
+   DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+   --rce;  if (x_index      <  0) {
+      DEBUG_DEPS   yLOG_note    ("dependency type not found");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(check if target needs unroot)---*/
+   DEBUG_DEPS   yLOG_note    ("check target for unrooting");
+   rc = DEP__rooting (a_target, DEP_UNROOT);
+   if (rc != 0) {
+      DEBUG_DEPS   yLOG_note    ("target could not be properly unrooted");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(create require)-----------------*/
+   x_require   = DEP__makereq (a_type, x_index, a_source, a_target);
+   --rce;  if (x_require    == NULL    ) {
+      DEBUG_DEPS   yLOG_note    ("requires did not get made");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(create provide)-----------------*/
+   x_index     = DEP_match    (a_type);
+   x_provide   = DEP__makepro (a_type, x_index, a_target, a_source);
+   --rce;  if (x_require    == NULL    ) {
+      DEBUG_DEPS   yLOG_note    ("provides did not get made");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(cross link them)----------------*/
+   DEBUG_DEPS   yLOG_note    ("link require and provide together");
+   x_require->match     = x_provide;
+   x_provide->match     = x_require;
+   /*---(check if source needs rooting)--*/
+   DEBUG_DEPS   yLOG_note    ("check source for rooting");
+   --rce;
+   rc = DEP__rooting (a_source, DEP_ROOT);
+   if (rc != 1) {
+      DEBUG_DEPS   yLOG_note    ("source could not be properly rooted");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_note    ("all actions complete");
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char         /*--> create a two-way dependency -----------[ ------ [ ------ ]-*/
 DEP_create         (
@@ -773,6 +1155,213 @@ DEP_delcalcref     (
    return 0;
 }
 
+char         /*--> remove a requires dependency ----------[ ------ [ ------ ]-*/
+DEP__remvreq       (
+      /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* type of dependency (source, format, or calc) */
+      char        a_index,    /* dependency type entry in table               */
+      tCELL      *a_source,   /* cell with the calculation                    */
+      tCELL      *a_target)   /* cell with value the source cell needs        */
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_next      = NULL;          /* iterator -- dependency lists   */
+   tDEP       *x_req       = NULL;          /* new requires entry             */
+   char        rce         = -10;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(check for existing requires)----*/
+   DEBUG_DEPS   yLOG_info    ("src label" , a_source->label);
+   DEBUG_DEPS   yLOG_value   ("src nreqs" , a_source->nrequire);
+   x_next = a_source->requires;
+   --rce; while (x_next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("trg label" , x_next->target->label);
+      if (x_next->target == a_target) {
+         DEBUG_DEPS   yLOG_note    ("found existing");
+         rc = DEP__free (x_next);
+         if (rc != 0)  {
+            DEBUG_DEPS   yLOG_note    ("deletion failed");
+            DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_DEPS   yLOG_note    ("update dependency table totals");
+         --(s_dep_info [a_index].count);
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      x_next = x_next->next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_note    ("did not find dependency");
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   --rce;
+   return rce;
+}
+
+char         /*--> remove a provides dependency ----------[ ------ [ ------ ]-*/
+DEP__remvpro       (
+      /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* type of dependency (source, format, or calc) */
+      char        a_index,    /* dependency type entry in table               */
+      tCELL      *a_source,   /* cell with the calculation                    */
+      tCELL      *a_target)   /* cell with value the source cell needs        */
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_next      = NULL;          /* iterator -- dependency lists   */
+   tDEP       *x_req       = NULL;          /* new requires entry             */
+   char        rce         = -10;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(check for existing requires)----*/
+   DEBUG_DEPS   yLOG_info    ("source"    , a_source->label);
+   DEBUG_DEPS   yLOG_value   ("nprovide"  , a_source->nprovide);
+   x_next = a_source->provides;
+   --rce; while (x_next != NULL) {
+      DEBUG_DEPS   yLOG_info    ("target"    , x_next->target->label);
+      if (x_next->target == a_target) {
+         DEBUG_DEPS   yLOG_note    ("found existing");
+         rc = DEP__free (x_next);
+         if (rc != 0)  {
+            DEBUG_DEPS   yLOG_note    ("deletion failed");
+            DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+            return rce;
+         }
+         DEBUG_DEPS   yLOG_note    ("update dependency table totals");
+         --(s_dep_info [a_index].count);
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      x_next = x_next->next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_note    ("did not find dependency");
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   --rce;
+   return rce;
+}
+
+char         /*--> remove a two-way dependency -----------[ ------ [ ------ ]-*/
+DEP_delete_NEW     (
+      /*----------+-----------+-----------------------------------------------*/
+      char        a_type,     /* dependency type                              */
+      tCELL      *a_source,   /* cell with the calculation                    */
+      tCELL      *a_target)   /* cell with value the source cell needs        */
+{  /*---(design notes)--------------------------------------------------------*/
+   /* removes a two-way dependency so that the dependency tree remains        */
+   /* accurate and unneeded cells are removed.  it is important that these    */
+   /* entries remain in a well-formed dependency graph so all necessary cells */
+   /* are calculated at the right times.                                      */
+   /*---(header)-------------------------*//*---------------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;          /* return code for errors         */
+   char        rc          =    0;          /* generic return code            */
+   char        x_index     =    0;          /* dependency type table index    */
+   tDEP       *x_require   = NULL;    /* new requires entry                   */
+   tDEP       *x_provide   = NULL;    /* new provides entry                   */
+   /*---(defense: null pointers)---------*/
+   DEBUG_DEPS   yLOG_point   ("a_source"  , a_source);
+   --rce;  if (a_source     == NULL)   {
+      DEBUG_DEPS yLOG_note      ("source is null");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return rce; 
+   }
+   DEBUG_DEPS   yLOG_info    ("label"     , a_source->label);
+   DEBUG_DEPS   yLOG_value   ("nrequire"  , a_source->nrequire);
+   DEBUG_DEPS   yLOG_point   ("a_target"  , a_target);
+   --rce;  if (a_target     == NULL)   {
+      DEBUG_DEPS yLOG_note      ("target is null");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_info    ("label"     , a_target->label);
+   DEBUG_DEPS   yLOG_value   ("nprovide"  , a_target->nprovide);
+   /*---(defense: linking back to root)--*/
+   --rce;  if (a_target     == dtree)  {
+      DEBUG_DEPS yLOG_note      ("can not delete a route back to root");
+      DEBUG_DEPS yLOG_exit      (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: circular ref)----------*/
+   --rce;  if (a_source     == a_target) {
+      DEBUG_DEPS   yLOG_note    ("source and target are same");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: type)------------------*/
+   DEBUG_DEPS   yLOG_char    ("a_type"    , a_type);
+   x_index     = DEP_index (a_type);
+   DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+   --rce;  if (x_index      <  0) {
+      DEBUG_DEPS   yLOG_note    ("dependency type not found");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(delete require)-----------------*/
+   rc   = DEP__remvreq (a_type, x_index, a_source, a_target);
+   --rce;  if (rc <  0) {
+      DEBUG_DEPS   yLOG_note    ("requires did not get removed");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_value   ("nrequire"  , a_source->nrequire);
+   /*---(delete provide)-----------------*/
+   x_index     = DEP_match (a_type);
+   DEBUG_DEPS   yLOG_value   ("dep index" , x_index);
+   rc   = DEP__remvpro (a_type, x_index, a_target, a_source);
+   --rce;  if (rc <  0) {
+      DEBUG_DEPS   yLOG_note    ("provides did not get removed");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_value   ("nprovide"  , a_target->nprovide);
+   /*---(check if source needs unroot)---*/
+   --rce;
+   if        (a_source           == dtree) {
+      DEBUG_DEPS   yLOG_note    ("source is root, so leave alone");
+   } else if (a_source->nrequire >  0) {
+      DEBUG_DEPS   yLOG_note    ("source has requires, so leave alone");
+   } else {
+      DEBUG_DEPS   yLOG_note    ("must check/unroot source");
+      rc = DEP__rooting (a_target, DEP_UNROOT);
+      if (rc != 0) {
+         DEBUG_DEPS   yLOG_note    ("source could not be properly unrooted");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+   }
+   /*---(check on target)----------------*/
+   if        (a_source           == dtree) {
+      DEBUG_DEPS   yLOG_note    ("source was root, so this is unrooting, done");
+   } else if (a_target->nprovide >  0) {
+      DEBUG_DEPS   yLOG_note    ("target already connected to tree");
+   } else if (a_target->nrequire >  0) {
+      DEBUG_DEPS   yLOG_note    ("target is still needed, must root");
+      rc = DEP__rooting (a_target, DEP_ROOT);
+      if (rc != 0) {
+         DEBUG_DEPS   yLOG_note    ("target could not be properly rooted");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+   } else if (a_target->t == '-') {
+      DEBUG_DEPS   yLOG_note    ("target is a zombie and not required, delete");
+      rc = CELL__delete (CHG_NOHIST, a_target->tab, a_target->col, a_target->row);
+      if (rc != 0) {
+         DEBUG_DEPS   yLOG_note    ("target could not be properly deleted");
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      a_target == NULL;
+   } else {
+      DEBUG_DEPS   yLOG_note    ("target is now independent, nothing to do");
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_note    ("all actions complete");
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*--> remove a two-way dependency -----------[ ------ [ ------ ]-*/
 DEP_delete         (
       /*----------+-----------+-----------------------------------------------*/
@@ -816,7 +1405,10 @@ DEP_delete         (
    DEBUG_DEPS   yLOG_complex ("focus"     , "review connection between <%s> and <%s>", a_source->label, a_target->label);
    /*---(review requires deps)-----------*/
    DEBUG_DEPS   yLOG_info    ("REQUIRES"  , "review requires type dependencies");
-   DEBUG_DEPS   yLOG_value   ("nrequires" , a_source->nrequire);
+   DEBUG_DEPS   yLOG_value   ("sour_reqs" , a_source->nrequire);
+   DEBUG_DEPS   yLOG_value   ("sour_pros" , a_source->nprovide);
+   DEBUG_DEPS   yLOG_value   ("targ_reqs" , a_target->nrequire);
+   DEBUG_DEPS   yLOG_value   ("targ_pros" , a_target->nprovide);
    --rce;
    next = a_source->requires;
    DEBUG_DEPS   yLOG_complex ("reqs head" , "entry %2d contains pointer %p", tries, next);
@@ -890,12 +1482,13 @@ DEP_delete         (
       return rce;
    }
    /*---(check on rooting target)--------*/
-   DEBUG_DEPS   yLOG_note    ("ROOTING: check on target needing rooting");
-   DEBUG_DEPS   yLOG_value   ("nrequire"  , a_target->nrequire);
-   DEBUG_DEPS   yLOG_value   ("nprovide"  , a_target->nprovide);
+   DEBUG_DEPS   yLOG_note    ("ORPHAN?: check on target needing rooting");
+   DEBUG_DEPS   yLOG_value   ("targ_reqs" , a_target->nrequire);
+   DEBUG_DEPS   yLOG_value   ("targ_pros" , a_target->nprovide);
+   DEBUG_DEPS   yLOG_char    ("targ type" , a_target->t);
    --rce;
    if (a_target->nprovide == 0 && a_target->nrequire > 0) {
-      DEBUG_DEPS   yLOG_note    ("no one owns, create a connection from root to target");
+      DEBUG_DEPS   yLOG_note    ("necessary but no one owns, create a connection from root to target");
       rc = DEP_create (DEP_REQUIRE, dtree, a_target);
       DEBUG_DEPS   yLOG_value   ("rc"        , rc);
       if (rc != 0) {
@@ -904,10 +1497,11 @@ DEP_delete         (
          return rce;
       }
       DEBUG_DEPS   yLOG_note    ("success, target rooted");
+   } else {
+      DEBUG_DEPS   yLOG_note    ("cell does not need rooting");
    }
    /*---(check on deleting target)-------*/
-   DEBUG_DEPS   yLOG_note    ("check on target empty and needing deletion");
-   DEBUG_DEPS   yLOG_char    ("targ type" , a_target->t);
+   DEBUG_DEPS   yLOG_note    ("ZOMBIE?: check on target empty and needing deletion");
    --rce;
    if (a_target->nprovide == 0 && a_target->nrequire == 0 && a_target->t == '-') {
       DEBUG_DEPS   yLOG_note    ("target is null and not required, delete");
@@ -921,9 +1515,11 @@ DEP_delete         (
       DEBUG_DEPS   yLOG_note    ("nulling pointer to a_target");
       a_target == NULL;
       DEBUG_DEPS   yLOG_value   ("a_target"  , a_target);
+   } else {
+      DEBUG_DEPS   yLOG_note    ("cell is not a zombie");
    }
    /*---(check for unrooting source)-----*/
-   DEBUG_DEPS   yLOG_note    ("UNROOTING: check on source needing unrooting");
+   DEBUG_DEPS   yLOG_note    ("UNROOT?: check on source needing unrooting");
    DEBUG_DEPS   yLOG_value   ("nrequire"  , a_source->nrequire);
    DEBUG_DEPS   yLOG_value   ("nprovide"  , a_source->nprovide);
    --rce;
@@ -1076,7 +1672,7 @@ DEP_cleanse        (
       DEBUG_DEPS    yLOG_point   ("next"      , next);
       save = next->next;
       DEBUG_DEPS    yLOG_complex ("target"    , "ptr=%9p, label=%s", next->target, next->target->label);
-      rc = DEP_delete (next->type, a_cell, next->target);
+      rc = DEP_delete_NEW (next->type, a_cell, next->target);
       DEBUG_DEPS    yLOG_value   ("nrequire"  , a_cell->nrequire);
       next = save;
    }
@@ -1091,7 +1687,7 @@ DEP_cleanse        (
       DEBUG_DEPS    yLOG_point   ("dtree"     , dtree);
       if (a_cell->provides->target == dtree) {
          DEBUG_DEPS    yLOG_note    ("unrooting");
-         rc = DEP_delete (DEP_REQUIRE, dtree, a_cell);
+         rc = DEP_delete_NEW (DEP_REQUIRE, dtree, a_cell);
       }
    }
    /*---(complete)-----------------------*/
@@ -1456,15 +2052,26 @@ DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   if (a_curr->u == a_stamp) {
+      DEBUG_CALC   yLOG_note    ("already stamped and visited");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(current)------------------------*/
-   DEBUG_CALC   yLOG_complex ("detail"    , "label %s, type %c, nrequire %d", a_curr->label, a_curr->t, a_curr->nrequire);
-   /*---(recurse)------------------------*/
-   n = a_curr->requires;
-   while (n != NULL) {
-      rc = DEP_tail (a_file, a_type, a_seq, a_level + 1, n->target, a_stamp, a_func);
-      n = n->next;
+   DEBUG_CALC   yLOG_complex ("detail"    , "label %s, type %c", a_curr->label, a_curr->t);
+   if (a_curr->nrequire == 0) {
+      DEBUG_CALC   yLOG_note    ("cell requires no other cells");
+   } else {
+      DEBUG_CALC   yLOG_value   ("nrequire"  , a_curr->nrequire);
+      /*---(recurse)------------------------*/
+      n = a_curr->requires;
+      while (n != NULL) {
+         rc = DEP_tail (a_file, a_type, a_seq, a_level + 1, n->target, a_stamp, a_func);
+         n = n->next;
+      }
    }
    /*---(perform function)---------------*/
+   DEBUG_CALC   yLOG_note    ("clean up cell");
    rc = a_func (a_file, a_type, a_seq, a_level, a_curr, a_stamp);
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -1607,8 +2214,8 @@ DEP_trace          (int a_level, tCELL *a_curr)
    /*---(process)------------------------*/
    tDEP     *n         = NULL;
    int       i;
-   /*> for (i = 0; i < a_level; ++i) printf("   ");                                   <*/
-   /*> printf ("%d %s\n", a_level, a_curr->label);                                    <*/
+   for (i = 0; i < a_level; ++i) printf("   ");
+   printf ("%d %s\n", a_level, a_curr->label);
    n = a_curr->provides;
    while (n != NULL) {
       DEP_trace (a_level + 1, n->target);
@@ -1762,8 +2369,10 @@ DEP_write          (FILE *a_file, int a_level, tDEP *a_dep)
    x_cell  = a_dep->target;
    /*---(print)--------------------------*/
    for (i = 0; i < a_level; ++i)  fprintf(a_file, "   ");
-   if (x_cell->t == '-')  fprintf (a_file, "%d %-6.6s:%c:%c:%3d:\n"      , a_level, x_cell->label, a_dep->type, x_cell->t);
-   else                   fprintf (a_file, "%d %-6.6s:%c:%c:%3d:%3d:%s\n", a_level, x_cell->label, a_dep->type, x_cell->t, x_cell->l, x_cell->s);
+   /*> if (x_cell->t == '-')  fprintf (a_file, "%d %-6.6s:%c:%c:%3d:\n"      , a_level, x_cell->label, a_dep->type, x_cell->t);                         <* 
+    *> else                   fprintf (a_file, "%d %-6.6s:%c:%c:%3d:%3d:%s\n", a_level, x_cell->label, a_dep->type, x_cell->t, x_cell->l, x_cell->s);   <*/
+   if (x_cell->t == '-')  fprintf (a_file, "%d %-6.6s:%c:%c:\n"      , a_level, x_cell->label, a_dep->type, x_cell->t);
+   else                   fprintf (a_file, "%d %-6.6s:%c:%c:%3d:%s\n", a_level, x_cell->label, a_dep->type, x_cell->t, x_cell->l, x_cell->s);
    /*---(process children)---------------*/
    x_next = x_cell->requires;
    while (x_next != NULL) {
@@ -1771,6 +2380,20 @@ DEP_write          (FILE *a_file, int a_level, tDEP *a_dep)
       x_next = x_next->next;
    }
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+DEP_writescreen    (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_next      = NULL;
+   x_next = dtree->requires;
+   fprintf (stdout, "root-----------------\n");
+   while (x_next != NULL) {
+      DEP_write (stdout, 1, x_next);
+      x_next = x_next->next;
+   }
    return 0;
 }
 
