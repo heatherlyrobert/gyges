@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8a"
-#define     VER_TXT   "huge fix on dependency creation, rooting, and distruction"
+#define     VER_NUM   "1.8b"
+#define     VER_TXT   "updated unit test logging to mark conds and steps"
 
 
 
@@ -1183,12 +1183,10 @@ char      DEP_purge          /* ------ */  (void);
 tDEP*     DEP__makereq       (char a_type, char a_index, tCELL *a_source, tCELL *a_target);
 tDEP*     DEP__makepro       (char a_type, char a_index, tCELL *a_source, tCELL *a_target);
 char      DEP__rooting       (tCELL *a_cell, char a_type);
-char      DEP_create_NEW     (char a_type, tCELL *a_source, tCELL *a_target);
-char      DEP_delete_NEW     (char a_type, tCELL *a_source, tCELL *a_target);
 
+char      DEP_create         (char a_type, tCELL *a_source, tCELL *a_target);
+char      DEP_delete         (char a_type, tCELL *a_source, tCELL *a_target);
 
-char      DEP_create         /* ------ */  (char a_type, tCELL *a_source, tCELL *a_target);
-char      DEP_delete         /* ------ */  (char a_type, tCELL *a_me, tCELL *a_other);
 char      DEP_delcalcref     (tCELL *a_source);
 tCELL    *DEP_delmerge       (tCELL *a_source);
 char      DEP_delmergeroot   (tCELL *a_target);

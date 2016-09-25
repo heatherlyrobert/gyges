@@ -1576,78 +1576,10 @@ SCRP          v21  (s_dep ) one-way dependency creation and destruction       
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (dep ) check the cell rooting function                       DEP_root                                                                ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testloud                                                                                 i_equal     0                                                                      
-     get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
-     get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
-     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-
-   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
-     code     v21  create a pointer to another          - - - - - - - - - -   tCELL *x_2nd  = NULL;                                                                                                                                          
-     code     v21  create a pointer to a third          - - - - - - - - - -   tCELL *x_3rd  = NULL;                                                                                                                                          
-     code     v21  create a pointer to a fourth         - - - - - - - - - -   tCELL *x_4th  = NULL;                                                                                                                                          
-
-   COND       v21  create the two cells                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  5, "one"                                             p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_1st                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  6, "two"                                             p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_2nd  = yUNIT_p_rc;                                                                                                                                           
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_2nd                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  6,  5, "three"                                           p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_3rd  = yUNIT_p_rc;                                                                                                                                           
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_3rd                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  6,  6, "four"                                            p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_4th  = yUNIT_p_rc;                                                                                                                                           
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_4th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   5, num=   4, fore=   4, back=   4            
-
-   COND       v21  review all cell connections (NONE)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 0) .                                        
-     get      v21  review the provides root             DEP_unit              "cell_provides"  ,  "root"                                              s_equal     s_dep provides   : root  ( 0) .                                        
-     get      v21  review the requires 1st              DEP_unit              "cell_requires"  ,  "0f6"                                               s_equal     s_dep requires   : 0f6   ( 0) .                                        
-     get      v21  review the provides 1st              DEP_unit              "cell_provides"  ,  "0f6"                                               s_equal     s_dep provides   : 0f6   ( 0) .                                        
-     get      v21  review the requires 2nd              DEP_unit              "cell_requires"  ,  "0f7"                                               s_equal     s_dep requires   : 0f7   ( 0) .                                        
-     get      v21  review the provides 2nd              DEP_unit              "cell_provides"  ,  "0f7"                                               s_equal     s_dep provides   : 0f7   ( 0) .                                        
-     get      v21  review the requires 3rd              DEP_unit              "cell_requires"  ,  "0g6"                                               s_equal     s_dep requires   : 0g6   ( 0) .                                        
-     get      v21  review the provides 3rd              DEP_unit              "cell_provides"  ,  "0g6"                                               s_equal     s_dep provides   : 0g6   ( 0) .                                        
-     get      v21  review the requires 4th              DEP_unit              "cell_requires"  ,  "0g7"                                               s_equal     s_dep requires   : 0g7   ( 0) .                                        
-     get      v21  review the provides 4th              DEP_unit              "cell_provides"  ,  "0g7"                                               s_equal     s_dep provides   : 0g7   ( 0) .                                        
-
-   COND       v21  make 3rd dependent on the 1st                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create_NEW        DEP_REQUIRE, x_2nd            ,  x_1st                                  i_equal     0                                                                      
-     get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
-     exec     v21  show full tree                       DEP_writescreen                                                                               i_equal     0                                                                      
-
-
-   COND       v21  make 3rd dependent on the 2nd                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create_NEW        DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
-     get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
-     exec     v21  show full tree                       DEP_writescreen                                                                               i_equal     0                                                                      
-
-   COND       v21  make 4th dependent on the 3rd                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create_NEW        DEP_REQUIRE, x_4th            ,  x_3rd                                  i_equal     0                                                                      
-     get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
-     exec     v21  show full tree                       DEP_writescreen                                                                               i_equal     0                                                                      
-
-
-
-   COND       v21  verify program teardown purges                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
-     get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
-     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
-
-
-
-#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
-#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
 SCRP          v21  (s_dep ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     exec     v21  setup the program                    PROG_testloud                                                                                 i_equal     0                                                                      
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
@@ -1701,6 +1633,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  make 3rd dependent on the 1st                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 1) ,0g6,                                    
@@ -1721,6 +1654,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  make 4th dependent on the 1st                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0g7,                                
@@ -1741,6 +1675,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  make 4th dependent on the 2nd                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_2nd                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0g7,                                
@@ -1761,6 +1696,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  remove dependency of 3rd on 1st                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  remove a dependency                  DEP_delete            DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 1) ,0g7,                                    
@@ -1781,14 +1717,17 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  try to make null dependent on the 1st                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, NULL             ,  x_2nd                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  try to make 3rd dependent on the null                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_3rd            ,  NULL                                   i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  make 4th dependent on the 2nd, again (duplicate)             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_2nd                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 1) ,0g7,                                    
@@ -1809,14 +1748,17 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  make 3rd dependent on the 1st, again                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  make 4th dependent on itself (circular)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_4th                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  add dependency on 5th for 4th (take 4th off root)            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_5th            ,  x_4th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  12, fore=  12, back=  12                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0h8,                                
@@ -1837,10 +1779,12 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  remove dependency of 2nd on 1st (non-existant)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  remove a dependency                  DEP_delete            DEP_REQUIRE, x_2nd            ,  x_1st                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  12, fore=  12, back=  12                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  add dependency on 5th for 2nd                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_5th            ,  x_2nd                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  14, fore=  14, back=  14                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0h8,                                
@@ -1861,6 +1805,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  add dependency on 2nd for 5th (looped and illegal)           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_2nd            ,  x_5th                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  14, fore=  14, back=  14                      
+     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0h8,                                
@@ -1881,6 +1826,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  add dependency on 1st for 5th (three step removed loop)      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_1st            ,  x_5th                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  14, fore=  14, back=  14                      
+#     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0h8,                                
@@ -1901,6 +1847,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  add dependency on 9th for 5th (take 5th off root)            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_9th            ,  x_5th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  16, fore=  16, back=  16                      
+#     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 2) ,0g6,0k11,                               
@@ -1921,6 +1868,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
    COND       v21  remove dependency of 5th on 4th (get 4th back to root)       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  remove a dependency                  DEP_delete            DEP_REQUIRE, x_5th            ,  x_4th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  16, fore=  16, back=  16                      
+#     exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 3) ,0g6,0g7,0k11,                           
