@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8b"
-#define     VER_TXT   "updated unit test logging to mark conds and steps"
+#define     VER_NUM   "1.8c"
+#define     VER_TXT   "create a potential circular reference finder"
 
 
 
@@ -1205,6 +1205,7 @@ char      DEP_calc_up        /* ------ */  (tCELL*);
 char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
+char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp);
 
 char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);
 char      DEP_writeall       (void);

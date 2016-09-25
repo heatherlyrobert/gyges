@@ -733,6 +733,15 @@ DEP_create         (
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(check for circlular ref)--------*/
+   DEBUG_DEPS   yLOG_note    ("check for potential circular reference");
+   rc     = DEP_circle (0, a_target, a_source, rand());
+   DEBUG_DEPS   yLOG_value   ("circle rc" , rc);
+   --rce;  if (rc  <  0) {
+      DEBUG_DEPS   yLOG_note    ("request would cause a circular reference");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(check if target needs unroot)---*/
    DEBUG_DEPS   yLOG_note    ("check target for unrooting");
    rc = DEP__rooting (a_target, DEP_UNROOT);
@@ -1925,6 +1934,69 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
          return rce;
       }
    }
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   tDEP       *x_next      = NULL;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   DEBUG_DEPS   yLOG_value   ("a_level"   , a_level);
+   /*---(defenses)-----------------------*/
+   DEBUG_DEPS   yLOG_point   ("a_source"  , a_source);
+   --rce;  if (a_source   == NULL)  {
+      DEBUG_DEPS   yLOG_info    ("FAILED"    , "source pointer is null");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return  rce;
+   }
+   DEBUG_DEPS   yLOG_info    ("label"     , a_source->label);
+   DEBUG_DEPS   yLOG_point   ("a_target"  , a_target);
+   --rce;  if (a_target   == NULL)  {
+      DEBUG_DEPS   yLOG_info    ("FAILED"    , "target pointer is null");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return  rce;
+   }
+   --rce;  if (a_source == a_target) {
+      DEBUG_DEPS   yLOG_info    ("FAILED"    , "match, circular link");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_DEPS   yLOG_info    ("label"     , a_target->label);
+   --rce;  if (a_level  >= MAX_DEP) {
+      DEBUG_DEPS   yLOG_info    ("FAILED"    , "past max depth");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return  rce;
+   }
+   /*---(check for already processed)----*/
+   if (a_source->u == a_stamp) {
+      DEBUG_DEPS   yLOG_info    ("SKIP"      , "already processed");
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return  0;
+   }
+   /*---(stamp at end)-------------------*/
+   a_source->u = a_stamp;
+   /*---(process children)---------------*/
+   DEBUG_DEPS   yLOG_value   ("chidren"   , a_source->nrequire);
+   --rce;
+   x_next = a_source->requires;
+   while (x_next != NULL) {
+      /*---(recurse to child)------------*/
+      DEBUG_DEPS   yLOG_info    ("process"   , x_next->target->label);
+      rc = DEP_circle (a_level + 1, x_next->target, a_target, a_stamp);
+      if (rc < 0) {
+         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         return rc;
+      }
+      /*---(prepare for next)------------*/
+      x_next = x_next->next;
+   }
+   /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
