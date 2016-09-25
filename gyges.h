@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8c"
-#define     VER_TXT   "create a potential circular reference finder"
+#define     VER_NUM   "1.8d"
+#define     VER_TXT   "fixed unit test 11 on dependencies"
 
 
 

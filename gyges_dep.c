@@ -745,7 +745,7 @@ DEP_create         (
    /*---(check if target needs unroot)---*/
    DEBUG_DEPS   yLOG_note    ("check target for unrooting");
    rc = DEP__rooting (a_target, DEP_UNROOT);
-   if (rc != 0) {
+   if (rc <  0) {
       DEBUG_DEPS   yLOG_note    ("target could not be properly unrooted");
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -773,19 +773,19 @@ DEP_create         (
    DEBUG_DEPS   yLOG_note    ("check source for rooting");
    --rce;
    rc = DEP__rooting (a_source, DEP_ROOT);
-   if (rc != 1) {
+   if (rc <  1) {
       DEBUG_DEPS   yLOG_note    ("source could not be properly rooted");
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(check for dup linking)----------*/
    /*> rc = DEP_check (0, a_source, 'n', rand());                                     <*/
-   rc = DEP_checkall ('n');
-   if (rc <  0) {
-      DEBUG_DEPS   yLOG_note    ("failed dependency check");
-      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
+   /*> rc = DEP_checkall ('n');                                                       <* 
+    *> if (rc <  0) {                                                                 <* 
+    *>    DEBUG_DEPS   yLOG_note    ("failed dependency check");                      <* 
+    *>    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_note    ("all actions complete");
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -1099,7 +1099,7 @@ DEP_delete         (
    } else if (a_target->nrequire >  0) {
       DEBUG_DEPS   yLOG_note    ("target is still needed, must root");
       rc = DEP__rooting (a_target, DEP_ROOT);
-      if (rc != 0) {
+      if (rc <= 0) {
          DEBUG_DEPS   yLOG_note    ("target could not be properly rooted");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
          return rce;
