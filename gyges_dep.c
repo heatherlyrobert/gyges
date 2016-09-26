@@ -1940,7 +1940,12 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
 
 char
 DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp)
-{
+{  /*---(design notes)-------------------*/
+   /*
+    *  burrows down into the a_source "requires" dependencies to see if the
+    *  a_target cell is found.  if so, adding a dependency from a_target to
+    *  a_source would create a circular reference.
+    */
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    tDEP       *x_next      = NULL;
@@ -1982,7 +1987,7 @@ DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp)
    /*---(stamp at end)-------------------*/
    a_source->u = a_stamp;
    /*---(process children)---------------*/
-   DEBUG_DEPS   yLOG_value   ("chidren"   , a_source->nrequire);
+   DEBUG_DEPS   yLOG_value   ("nrequire"  , a_source->nrequire);
    --rce;
    x_next = a_source->requires;
    while (x_next != NULL) {
