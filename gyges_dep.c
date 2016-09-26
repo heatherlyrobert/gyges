@@ -773,7 +773,7 @@ DEP_create         (
    DEBUG_DEPS   yLOG_note    ("check source for rooting");
    --rce;
    rc = DEP__rooting (a_source, DEP_ROOT);
-   if (rc <  1) {
+   if (rc <  0) {
       DEBUG_DEPS   yLOG_note    ("source could not be properly rooted");
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -811,9 +811,16 @@ DEP_delmergeroot   (tCELL *a_target)
    }
    DEBUG_DEPS   yLOG_info    ("label"     , a_target->label);
    x_source = LOC_cell (a_target->tab, a_target->col + 1, a_target->row);
-   --rce;  if (x_source    == NULL       )  return rce;
-   --rce;  if (x_source->t != CTYPE_MERGE)  return rce;
+   --rce;  if (x_source    == NULL       ) {
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   --rce;  if (x_source->t != CTYPE_MERGE) {
+      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    DEP_delmerge (x_source);
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1085,7 +1092,7 @@ DEP_delete         (
    } else {
       DEBUG_DEPS   yLOG_note    ("must check/unroot source");
       rc = DEP__rooting (a_source, DEP_UNROOT);
-      if (rc != 0) {
+      if (rc <  0) {
          DEBUG_DEPS   yLOG_note    ("source could not be properly unrooted");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
          return rce;
@@ -1099,7 +1106,7 @@ DEP_delete         (
    } else if (a_target->nrequire >  0) {
       DEBUG_DEPS   yLOG_note    ("target is still needed, must root");
       rc = DEP__rooting (a_target, DEP_ROOT);
-      if (rc <= 0) {
+      if (rc <  0) {
          DEBUG_DEPS   yLOG_note    ("target could not be properly rooted");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
          return rce;

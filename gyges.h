@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8e"
-#define     VER_TXT   "added design notes for clarity to DEP_circle checker"
+#define     VER_NUM   "1.8f"
+#define     VER_TXT   "fixed unit test 13 issue with dep creation"
 
 
 
