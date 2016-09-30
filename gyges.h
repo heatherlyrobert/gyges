@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8f"
-#define     VER_TXT   "fixed unit test 13 issue with dep creation"
+#define     VER_NUM   "1.8g"
+#define     VER_TXT   "fixed horrible, stupid mis-call on DEG_revs recursion"
 
 
 

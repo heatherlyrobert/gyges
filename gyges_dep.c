@@ -1752,7 +1752,7 @@ DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
    DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
    x_next = x_cell->provides;
    while (x_next != NULL) {
-      DEP__revs (a_level + 1, x_next->target, a_stamp);
+      DEP__revs (a_level + 1, x_next, a_stamp);
       x_next = x_next->next;
    }
    /*---(complete)-----------------------*/
