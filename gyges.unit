@@ -9791,7 +9791,8 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  try to go back in wrong mode                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
+     exec     v21  send a character to source           MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
+     exec     v21  send a character to source           MODE_source           ' ', 'l'                                                                i_equal     0                                                                      
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
      exec     v21  send a character to input            MODE_input            'i', '_'                                                                i_not       'i'                                                                    
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (s) : ( 2: 4) :test:                                      
@@ -9799,7 +9800,6 @@ SCRP          v21  test vi_input mode                                         
 
    COND       v21  get back into input in the middle                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-     code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 2;                                                                                                                                                   
      exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9823,7 +9823,6 @@ SCRP          v21  test vi_input mode                                         
 
    COND       v21  get back into input before the beginning                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-#    code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = -20;                                                                                                                                                 
      exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -9838,15 +9837,14 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  send a character to source           MODE_source           ' ', '$'                                                                i_equal     0                                                                      
      exec     v21  set the mode                         MODE_enter            MODE_INPUT                                                              i_equal     0                                                                      
-     exec     v21  set the position                     EDIT_pos              MODE_INPUT                                                              i_equal     0                                                                      
-#    code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
-     exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
+     exec     v21  set the initial mark                 MODE_input            'm'            , 'a'                                                    i_equal     'a'                                                                    
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
    COND       v21  add a new character                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'i', 'Y'                                                                i_equal     'i'                                                                    
-     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : (11:11) :Zte_joe_stY¤:                               
+     exec     v21  send a character to input            MODE_input            'a', 'Y'                                                                i_equal     'a'                                                                    
+     get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : (11:12) :Zte_joe_stY¤:                               
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
    COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
