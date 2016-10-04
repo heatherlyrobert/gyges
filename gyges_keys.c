@@ -1005,7 +1005,7 @@ MODE_source   (char a_major, char a_minor)
       case  10  :
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
          CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
-         EDIT_pos  ('r');
+         EDIT_pos     ('r');
          MODE_return  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;   /* escape  */
@@ -1015,8 +1015,8 @@ MODE_source   (char a_major, char a_minor)
          if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
             strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
          }
-         EDIT_pos  ('r');
-         MODE_return ();
+         EDIT_pos     ('r');
+         MODE_return  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
@@ -1035,11 +1035,11 @@ MODE_source   (char a_major, char a_minor)
          return 0;
          break;
       case '"'  :
-         MODE_enter  (SMOD_TEXTREG );
+         MODE_enter   (SMOD_TEXTREG );
          return a_minor;  /* make sure double quote goes in prev char */
          break;
       case 'E'  :
-         MODE_enter  (SMOD_ERROR   );
+         MODE_enter   (SMOD_ERROR   );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return SMOD_ERROR;  /* make sure mode indicator goes also       */
          break;
@@ -1056,7 +1056,7 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_note    ("yank selection text");
          TREG_copy   ();
          break;
-      case  'd' : case  'D' :
+      case  'd' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
@@ -1098,7 +1098,9 @@ MODE_source   (char a_major, char a_minor)
          TREG_copy   ();
          KEYS__del   ('X');
          break;
-      case 'D' : g_contents[my.cpos] = '\0';     my.npos = strlen(g_contents);    break;
+      case 'D' : g_contents[my.cpos] = '\0';
+                 EDIT_done ();
+                 break;
       case 'S' : EDIT_start  ("");
                  MODE_enter  (MODE_INPUT);
                  MODE_input ('m', 'i');
