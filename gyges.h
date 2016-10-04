@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8j"
-#define     VER_TXT   "fixed positioning issues in input mode unit test"
+#define     VER_NUM   "1.8k"
+#define     VER_TXT   "fixed cursor position in replace mode unit test"
 
 
 
