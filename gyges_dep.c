@@ -1729,8 +1729,8 @@ DEP_recalc         (void)
 }
 
 #define   MAX_EXEC        100
-static int         cmax;
-static int         ctotal;
+static int         cmax    = -1;
+static int         ctotal  =  0;
 static int         ccount  [MAX_EXEC];
 static tCELL      *cheads  [MAX_EXEC];
 static tCELL      *ctails  [MAX_EXEC];
@@ -1790,6 +1790,12 @@ DEP__seqadd        (char a_level, tCELL *a_cell)
       return rce;
    }
    DEBUG_CALC   yLOG_sinfo   ("label"     , a_cell->label);
+   DEBUG_CALC   yLOG_spoint  (dtree);
+   --rce;  if (a_cell == dtree) {
+      DEBUG_CALC   yLOG_snote   ("cell is root");
+      DEBUG_CALC   yLOG_sexit   (__FUNCTION__);
+      return rce;
+   }
    /*---(defense : already assigned)-----*/
    DEBUG_CALC   yLOG_svalue  ("clevel"    , a_cell->clevel);
    --rce;  if (a_cell->clevel >= 0) {
@@ -1799,6 +1805,7 @@ DEP__seqadd        (char a_level, tCELL *a_cell)
    }
    /*---(first item)---------------------*/
    if (cheads [a_level] == NULL) {
+      DEBUG_CALC   yLOG_snote   ("add as first");
       cheads [a_level] = a_cell;
       a_cell->clevel   = a_level;
       a_cell->cprev    = NULL;
@@ -1807,6 +1814,7 @@ DEP__seqadd        (char a_level, tCELL *a_cell)
    }
    /*---(add to tail)--------------------*/
    else {
+      DEBUG_CALC   yLOG_snote   ("add to tail");
       ctails [a_level]->cnext = a_cell;
       a_cell->clevel   = a_level;
       a_cell->cprev    = ctails [a_level];
@@ -1814,6 +1822,7 @@ DEP__seqadd        (char a_level, tCELL *a_cell)
       ctails [a_level] = a_cell;
    }
    /*---(update totals)------------------*/
+   DEBUG_CALC   yLOG_snote   ("counts)");
    ++(ccount [a_level]);
    ++ctotal;
    if (a_level > cmax)  cmax = a_level;
@@ -1827,25 +1836,44 @@ DEP__seqdel        (tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
    char        x_level     = 0;
-   /*---(defenses)-----------------------*/
+   char        rce         = -10;
+   /*---(header)-------------------------*/
+   DEBUG_CALC   yLOG_senter  (__FUNCTION__);
+   /*---(defense : cell)-----------------*/
+   DEBUG_CALC   yLOG_spoint  (a_cell);
+   --rce;  if (a_cell == NULL) {
+      DEBUG_CALC   yLOG_snote   ("NULL cell");
+      DEBUG_CALC   yLOG_sexit   (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_CALC   yLOG_sinfo   ("label"     , a_cell->label);
+   /*---(defense : unassigned)-----------*/
    x_level = a_cell->clevel;
-   if (x_level < 0) {
-      return -1;
+   DEBUG_CALC   yLOG_svalue  ("x_level"   , x_level);
+   --rce;  if (x_level < 0) {
+      DEBUG_CALC   yLOG_snote   ("unassigned already");
+      DEBUG_CALC   yLOG_sexit   (__FUNCTION__);
+      return rce;
    }
    /*---(next)---------------------------*/
+   DEBUG_CALC   yLOG_snote   ("forward");
    if (a_cell->cnext == NULL)  ctails [x_level]     = a_cell->cprev;
    else                        a_cell->cnext->cprev = a_cell->cprev;
    /*---(prev)---------------------------*/
+   DEBUG_CALC   yLOG_snote   ("backward");
    if (a_cell->cprev == NULL)  cheads [x_level]     = a_cell->cnext;
    else                        a_cell->cprev->cnext = a_cell->cnext;
    /*---(update cell)--------------------*/
+   DEBUG_CALC   yLOG_snote   ("clear");
    a_cell->clevel   = -1;
    a_cell->cprev    = NULL;
    a_cell->cnext    = NULL;
    /*---(update totals)------------------*/
+   DEBUG_CALC   yLOG_snote   ("counts");
    --(ccount [x_level]);
    --ctotal;
    /*---(complete)-----------------------*/
+   DEBUG_CALC   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -1875,12 +1903,13 @@ DEP_calclist       (char *a_list)
    return 0;
 }
 
-static char  /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
-DEP__calcmark      (int a_level, tDEP *a_dep, long a_stamp)
+char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
+DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp)
 {
    /*---(locals)-----------+-----------+-*/
    tDEP       *x_next      = NULL;
    tCELL      *x_cell      = NULL;
+   char        rc          = 0;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    DEBUG_CALC   yLOG_value   ("a_level"   , a_level);
@@ -1904,18 +1933,56 @@ DEP__calcmark      (int a_level, tDEP *a_dep, long a_stamp)
    DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
    /*---(calculate)----------------------*/
    if (x_cell->u != a_stamp) {
-      DEP__seqadd  (a_level, x_cell);
+      if (rc == 0)  rc = DEP__seqadd  (a_level, x_cell);
    } else if (x_cell->clevel < a_level) {
-      DEP__seqdel  (x_cell);
-      DEP__seqadd  (a_level, x_cell);
+      if (rc == 0)  rc = DEP__seqdel  (x_cell);
+      if (rc == 0)  rc = DEP__seqadd  (a_level, x_cell);
    }
+   if (rc < 0) {
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rc;
+   }
+   x_cell->u == a_stamp;
    /*---(recurse)------------------------*/
    DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
    x_next = x_cell->provides;
    while (x_next != NULL) {
-      DEP__calcmark      (a_level + 1, x_next, a_stamp);
+      DEP_seqlevel       (a_level + 1, x_next, a_stamp);
       x_next = x_next->next;
    }
+   /*---(complete)-----------------------*/
+   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char       /*----: recalculate from cell upwards -----------------------------*/
+DEP_seqall         (tCELL *a_cell)
+{
+   /*---(locals)-------------------------*/
+   tDEP       *x_next      = NULL;
+   int         c           = 0;
+   char        rce         = -10;
+   /*---(header)-------------------------*/
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   /*---(defense : cell)-----------------*/
+   DEBUG_CALC   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL) {
+      DEBUG_CALC   yLOG_note    ("NULL cell");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   DEBUG_CALC   yLOG_info    ("base cell" , a_cell->label);
+   DEBUG_CALC   yLOG_value   ("nprovide"  , a_cell->nprovide);
+   DEP__seqclear ();
+   /*---(recurse)------------------------*/
+   x_next = a_cell->provides;
+   while (x_next != NULL) {
+      ++c;
+      DEBUG_CALC   yLOG_value   ("recurse"   , c);
+      DEP_seqlevel (0, x_next, rand());
+      x_next = x_next->next;
+   }
+   DEBUG_CALC   yLOG_note    ("done recursing");
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -2466,9 +2533,14 @@ DEP_unit           (
       else                 snprintf(unit_answer, LEN_TEXT, "s_dep provides   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
    }
    /*---(cell calc exec)-----------------*/
+   else if (strcmp (a_question, "calc_cell"    )  == 0) {
+      if (x_cell->clevel >= 0) snprintf (unit_answer, LEN_TEXT, "s_dep calc seq   : %-5.5s  %2d", x_cell->label, x_cell->clevel);
+      else                     snprintf (unit_answer, LEN_TEXT, "s_dep calc seq   : %-5.5s  %2s", x_cell->label, "--"          );
+   }
    else if (strcmp (a_question, "calc_counts"  )  == 0) {
-      sprintf (unit_answer, "s_dep calc count : %03d", ctotal);
-      for (i = 0; i < cmax; ++i) {
+      sprintf  (unit_answer, "s_dep calc count : %03d %02d", ctotal, cmax);
+      for (i = 0; i <= cmax; ++i) {
+         if (i == 0)  strcat (unit_answer, "  ");
          sprintf (temp, " %02d", ccount [i]);
          strcat  (unit_answer, temp);
       }

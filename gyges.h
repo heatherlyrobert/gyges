@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9b"
-#define     VER_TXT   "basic cell setup in unit test of calc sequencing done"
+#define     VER_NUM   "1.9c"
+#define     VER_TXT   "unit testing successful for marking calc sequencing"
 
 
 
@@ -1214,6 +1214,8 @@ char      DEP__seqclear      (void);
 char      DEP__seqadd        (char a_level, tCELL *a_cell);
 char      DEP__seqdel        (tCELL *a_cell);
 char      DEP_seqlist        (char *a_list);
+char      DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp);
+char      DEP_seqall         (tCELL *a_cell);
 
 char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);
 char      DEP_writeall       (void);
