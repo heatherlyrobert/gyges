@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.8k"
-#define     VER_TXT   "fixed cursor position in replace mode unit test"
+#define     VER_NUM   "1.9a"
+#define     VER_TXT   "created basic calculation execution sequencing functions"
 
 
 
@@ -479,6 +479,9 @@ struct cCELL {
    char        nrpn;         /* number of calculation tokens                  */
    char       *rpn;          /* rpn version of formula                        */
    tCALC      *calc;         /* pointer to head of calculation line           */
+   char        clevel;       /* calculation level                             */
+   tCELL      *cprev;        /* pointer to calculation execution prev         */
+   tCELL      *cnext;        /* pointer to calculation execution next         */
    /*---(#6, DEPENDENCIES)---------------*/
    /*   cells are related to each other as lists of requirements for this     */
    /*   calculation and a list of cells that are dependent on this one.       */
@@ -1206,6 +1209,11 @@ char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
 char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp);
+
+char      DEP__seqclear      (void);
+char      DEP__seqadd        (char a_level, tCELL *a_cell);
+char      DEP__seqdel        (tCELL *a_cell);
+char      DEP_seqlist        (char *a_list);
 
 char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);
 char      DEP_writeall       (void);

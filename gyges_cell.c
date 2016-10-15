@@ -249,6 +249,9 @@ CELL__new          (char a_linked)     /* cell goes into the linked list ?    */
    x_curr->rpn       = NULL;
    x_curr->nrpn      = 0;
    x_curr->calc      = NULL;
+   x_curr->clevel    = 0;
+   x_curr->cprev     = NULL;
+   x_curr->cnext     = NULL;
    /*---(dependencies)-------------------*/
    x_curr->requires  = NULL;
    x_curr->nrequire  = 0;
