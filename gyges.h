@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9a"
-#define     VER_TXT   "created basic calculation execution sequencing functions"
+#define     VER_NUM   "1.9b"
+#define     VER_TXT   "basic cell setup in unit test of calc sequencing done"
 
 
 
