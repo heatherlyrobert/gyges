@@ -1904,7 +1904,7 @@ DEP_calclist       (char *a_list)
 }
 
 char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
-DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp)
+DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp, char a_calc)
 {
    /*---(locals)-----------+-----------+-*/
    tDEP       *x_next      = NULL;
@@ -1942,12 +1942,14 @@ DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp)
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return rc;
    }
+   /*---(update cell and dep)------------*/
    x_cell->u == a_stamp;
+   if (a_calc == 'y')  a_dep->count++;
    /*---(recurse)------------------------*/
    DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
    x_next = x_cell->provides;
    while (x_next != NULL) {
-      DEP_seqlevel       (a_level + 1, x_next, a_stamp);
+      DEP_seqlevel       (a_level + 1, x_next, a_stamp, a_calc);
       x_next = x_next->next;
    }
    /*---(complete)-----------------------*/
@@ -1955,13 +1957,16 @@ DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp)
    return 0;
 }
 
-char       /*----: recalculate from cell upwards -----------------------------*/
-DEP_seqall         (tCELL *a_cell)
+char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
+DEP_seqall         (tCELL *a_cell, char a_calc)
 {
    /*---(locals)-------------------------*/
-   tDEP       *x_next      = NULL;
-   int         c           = 0;
    char        rce         = -10;
+   tDEP       *x_next      = NULL;
+   tCELL      *x_cell      = NULL;
+   int         i           = 0;
+   int         sub         = 0;
+   int         tot         = 0;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    /*---(defense : cell)-----------------*/
@@ -1977,12 +1982,39 @@ DEP_seqall         (tCELL *a_cell)
    /*---(recurse)------------------------*/
    x_next = a_cell->provides;
    while (x_next != NULL) {
-      ++c;
-      DEBUG_CALC   yLOG_value   ("recurse"   , c);
-      DEP_seqlevel (0, x_next, rand());
+      ++i;
+      DEBUG_CALC   yLOG_value   ("recurse"   , i);
+      DEP_seqlevel (0, x_next, rand(), a_calc);
       x_next = x_next->next;
    }
    DEBUG_CALC   yLOG_note    ("done recursing");
+   /*---(execution : defense)------------*/
+   if (ctotal <= 0) {
+      DEBUG_CALC   yLOG_note    ("no calculations required");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_calc != 'y') {
+      DEBUG_CALC   yLOG_note    ("no calculation requested");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(run all calculations)-----------*/
+   for (i = 0; i <= cmax; ++i) {
+      DEBUG_CALC   yLOG_value   ("LEVEL"     , i);
+      x_cell = cheads [i];
+      sub = 0;
+      while (x_cell != NULL) {
+         CALC_eval      (x_cell);
+         CELL_printable (x_cell);
+         ++sub;
+         ++tot;
+      }
+      DEBUG_CALC   yLOG_value   ("expected"  , ccount [i]);
+      DEBUG_CALC   yLOG_value   ("subtotal"  , sub);
+   }
+   DEBUG_CALC   yLOG_value   ("expected"  , ctotal);
+   DEBUG_CALC   yLOG_value   ("subtotal"  , tot);
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -2036,6 +2068,12 @@ DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
 
 char       /*----: recalculate from cell upwards -----------------------------*/
 DEP_calc_up        (tCELL *a_cell)
+{
+   return DEP_seqall (a_cell, 'y');
+}
+
+char       /*----: recalculate from cell upwards -----------------------------*/
+DEP_calc_up_OLD    (tCELL *a_cell)
 {
    /*---(locals)-------------------------*/
    tDEP       *x_next      = NULL;

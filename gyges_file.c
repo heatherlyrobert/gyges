@@ -1553,7 +1553,7 @@ INPT_cell_new      (void)
          break;
       case  FIELD_SRC :  /*--------------*/
          DEBUG_INPT  yLOG_info    ("source"    , p + 1);
-         if      (strcmp ("cell_dep", my.f_type) == 0) 
+         if      (strcmp ("cell_dep" , my.f_type) == 0) 
             INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
          else if (strcmp ("cell_free", my.f_type) == 0) 
             INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);

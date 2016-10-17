@@ -1594,17 +1594,17 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
      code     v21  create a pointer to a ninth          - - - - - - - - - -   tCELL *x_9th  = NULL;                                                                                                                                          
 
    COND       v21  create the four cells                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  1, "one"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  5, "one"                                             p_exists    0                                                                      
      code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  2, "two"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  6, "two"                                             p_exists    0                                                                      
      code     v21  save cell pointer                    - - - - - - - - - -   x_2nd  = yUNIT_p_rc;                                                                                                                                           
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  3, "three"                                           p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  6,  5, "three"                                           p_exists    0                                                                      
      code     v21  save cell pointer                    - - - - - - - - - -   x_3rd  = yUNIT_p_rc;                                                                                                                                           
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  4, "four"                                            p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  6,  6, "four"                                            p_exists    0                                                                      
      code     v21  save cell pointer                    - - - - - - - - - -   x_4th  = yUNIT_p_rc;                                                                                                                                           
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  5, "five"                                            p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  7,  7, "five"                                            p_exists    0                                                                      
      code     v21  save cell pointer                    - - - - - - - - - -   x_5th  = yUNIT_p_rc;                                                                                                                                           
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  9, "nine"                                            p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10, 10, "nine"                                            p_exists    0                                                                      
      code     v21  save cell pointer                    - - - - - - - - - -   x_9th  = yUNIT_p_rc;                                                                                                                                           
 
    COND       v21  review all cell connections (NONE)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -11332,7 +11332,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
    GROUP      v21  third, run sequencing on the tree                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  start with an independent cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_seqall            x_6th                                                                   i_equal     0                                                                      
+     exec     v21  sequence                             DEP_seqall            x_6th            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11347,7 +11347,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 000 -1                                              
 
    COND       v21  start with an top level cell (root provision)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_seqall            x_3rd                                                                   i_equal     0                                                                      
+     exec     v21  sequence                             DEP_seqall            x_3rd            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11362,7 +11362,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 000 -1                                              
 
    COND       v21  sequence a cell with two top-level parents                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_seqall            x_5th                                                                   i_equal     0                                                                      
+     exec     v21  sequence                             DEP_seqall            x_5th            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11377,7 +11377,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 002 00   02                                         
 
    COND       v21  sequence a cell with two even levels                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_seqall            x_4th                                                                   i_equal     0                                                                      
+     exec     v21  sequence                             DEP_seqall            x_4th            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11392,7 +11392,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 003 01   01 02                                      
 
    COND       v21  sequence a cell with complicated attachments                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_seqall            x_1st                                                                   i_equal     0                                                                      
+     exec     v21  sequence                             DEP_seqall            x_1st            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
