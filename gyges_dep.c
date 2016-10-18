@@ -1904,7 +1904,7 @@ DEP_calclist       (char *a_list)
 }
 
 char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
-DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp, char a_calc)
+DEP__seq_pros      (int a_level, tDEP *a_dep, long a_stamp, char a_calc)
 {
    /*---(locals)-----------+-----------+-*/
    tDEP       *x_next      = NULL;
@@ -1949,7 +1949,7 @@ DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp, char a_calc)
    DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
    x_next = x_cell->provides;
    while (x_next != NULL) {
-      DEP_seqlevel       (a_level + 1, x_next, a_stamp, a_calc);
+      DEP__seq_pros (a_level + 1, x_next, a_stamp, a_calc);
       x_next = x_next->next;
    }
    /*---(complete)-----------------------*/
@@ -1958,7 +1958,7 @@ DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp, char a_calc)
 }
 
 char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
-DEP_seqall         (tCELL *a_cell, char a_calc)
+DEP_calc_up        (tCELL *a_cell, char a_calc)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;
@@ -1984,7 +1984,7 @@ DEP_seqall         (tCELL *a_cell, char a_calc)
    while (x_next != NULL) {
       ++i;
       DEBUG_CALC   yLOG_value   ("recurse"   , i);
-      DEP_seqlevel (0, x_next, rand(), a_calc);
+      DEP__seq_pros (0, x_next, rand(), a_calc);
       x_next = x_next->next;
    }
    DEBUG_CALC   yLOG_note    ("done recursing");
@@ -2016,84 +2016,6 @@ DEP_seqall         (tCELL *a_cell, char a_calc)
    }
    DEBUG_CALC   yLOG_value   ("expected"  , ctotal);
    DEBUG_CALC   yLOG_value   ("subtotal"  , tot);
-   /*---(complete)-----------------------*/
-   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-PR char    /*----: dependency-based calculation upward from cell -------------*/
-DEP__revs          (int a_level, tDEP *a_dep, long a_stamp)
-{
-   /*---(locals)-------------------------*/
-   tDEP       *x_next      = NULL;
-   tCELL      *x_cell      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   DEBUG_CALC   yLOG_value   ("a_level"   , a_level);
-   DEBUG_CALC   yLOG_value   ("a_stamp"   , a_stamp);
-   /*---(defenses)-----------------------*/
-   DEBUG_CALC   yLOG_point   ("*x_dep"    , a_dep);
-   if (a_dep        == NULL) {
-      DEBUG_CALC   yLOG_note    ("a_dep is NULL");
-      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   x_cell     = a_dep->target;
-   DEBUG_CALC   yLOG_point   ("*x_cell"   , x_cell);
-   if (x_cell       == NULL) {
-      DEBUG_CALC   yLOG_note    ("cell is NULL");
-      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(show data)----------------------*/
-   DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
-   DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
-   /*---(calculate)----------------------*/
-   if (x_cell->u != a_stamp) {
-      CALC_eval      (x_cell);
-      CELL_printable (x_cell);
-      x_cell->u = a_stamp;
-      a_dep->count++;
-   }
-   /*---(recurse)------------------------*/
-   DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
-   x_next = x_cell->provides;
-   while (x_next != NULL) {
-      DEP__revs      (a_level + 1, x_next, a_stamp);
-      x_next = x_next->next;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char       /*----: recalculate from cell upwards -----------------------------*/
-DEP_calc_up        (tCELL *a_cell)
-{
-   return DEP_seqall (a_cell, 'y');
-}
-
-char       /*----: recalculate from cell upwards -----------------------------*/
-DEP_calc_up_OLD    (tCELL *a_cell)
-{
-   /*---(locals)-------------------------*/
-   tDEP       *x_next      = NULL;
-   int         c           = 0;
-   /*---(header)-------------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   DEBUG_CALC   yLOG_info    ("base cell" , a_cell->label);
-   DEBUG_CALC   yLOG_value   ("nprovide"  , a_cell->nprovide);
-   if (debug.dtree == 'y') endwin();
-   /*---(recurse)------------------------*/
-   x_next = a_cell->provides;
-   while (x_next != NULL) {
-      ++c;
-      DEBUG_CALC   yLOG_value   ("recurse"   , c);
-      DEP__revs (1, x_next, rand());
-      x_next = x_next->next;
-   }
-   DEBUG_CALC   yLOG_note    ("done recursing");
-   if (debug.dtree == 'y') exit (0);
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;

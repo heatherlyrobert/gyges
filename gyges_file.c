@@ -1943,7 +1943,7 @@ INPT_close         (void)
    CURS_rowhead();
    /*---(calculate)----------------------*/
    DEBUG_INPT  yLOG_note    ("recalc");
-   DEP_recalc();
+   /*> DEP_recalc();                                                                  <*/
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -2016,7 +2016,6 @@ INPT_main          (char *a_name)
    }
    /*---(read lines)---------------------*/
    DEBUG_INPT  yLOG_note    ("read lines");
-   my.autocalc = '-';
    while (1) {
       /*---(read and clean)--------------*/
       ++my.f_lines;
@@ -2101,7 +2100,6 @@ INPT_main          (char *a_name)
       }
    }
    /*---(close file)---------------------*/
-   my.autocalc = 'y';
    INPT_close ();
    /*---(complete)-------------------------*/
    DEBUG_INPT yLOG_exit    (__FUNCTION__);

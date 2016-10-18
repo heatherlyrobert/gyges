@@ -108,7 +108,6 @@ PROG_init          (void)
    my.scrn     = SCRN_DEBUG;
    my.info_win = '-';
    my.menu     = ' ';
-   my.autocalc = 'y';
    return 0;
 }
 

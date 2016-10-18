@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9e"
-#define     VER_TXT   "added autocalc logic to toggle dependency calcs"
+#define     VER_NUM   "1.9f"
+#define     VER_TXT   "removed autocalc logic to toggle dependency calcs"
 
 
 
@@ -291,7 +291,6 @@ struct cACCESSOR {
    /*---(files)----------------*/
    char        quiet;          /* bool : 0=normal, 1=quiet                    */
    int         logger;         /* log file so that we don't close it          */
-   char        autocalc;       /* 0=manual, 1=auto                            */
    /*---(mode)------------*/
    char        scrn;                        /* screen display mode            */
    char        message     [MAX_STR];       /* message line                   */
@@ -1203,8 +1202,7 @@ char      DEP_like           /* ------ */  (tCELL  *a_me, char* a_list);
 char      DEP_updatelikes    (tCELL  *a_me);
 
 char      DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, char (*a_func) (FILE *r_file, char r_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp));
-char      DEP_recalc         /* ------ */  (void);
-char      DEP_calc_up        /* ------ */  (tCELL*);
+/*> char      DEP_recalc         /+ ------ +/  (void);                                <*/
 char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
@@ -1213,9 +1211,9 @@ char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, lon
 char      DEP__seqclear      (void);
 char      DEP__seqadd        (char a_level, tCELL *a_cell);
 char      DEP__seqdel        (tCELL *a_cell);
+char      DEP__seq_pros      (int a_level, tDEP *a_dep, long a_stamp, char a_calc);
+char      DEP_calc_up        (tCELL *a_cell, char a_calc);
 char      DEP_seqlist        (char *a_list);
-char      DEP_seqlevel       (int a_level, tDEP *a_dep, long a_stamp, char a_calc);
-char      DEP_seqall         (tCELL *a_cell, char a_calc);
 
 char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);
 char      DEP_writeall       (void);
