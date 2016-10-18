@@ -1671,63 +1671,6 @@ DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    return 0;
 }
 
-PR char    /*----: dependency-based calculation from root (all) --------------*/
-DEP__exec          (int a_level, tDEP *a_dep, long a_stamp)
-{
-   /*---(locals)-------------------------*/
-   tCELL      *x_cell      = NULL;
-   tDEP       *x_next      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   x_cell     = a_dep->target;
-   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, x_cell, a_stamp);
-   /*---(defenses)-----------------------*/
-   if (x_cell       == NULL) {
-      DEBUG_CALC   yLOG_note    ("cell is NULL");
-      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(recurse)------------------------*/
-   DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
-   DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
-   DEBUG_CALC   yLOG_value   ("nrequire"  , x_cell->nrequire);
-   x_next = x_cell->requires;
-   while (x_next != NULL) {
-      DEP__exec (a_level + 1, x_next, a_stamp);
-      x_next = x_next->next;
-   }
-   if (strchr (G_CELL_CALC, x_cell->t) != 0 && x_cell->u != a_stamp) {
-      CALC_eval (x_cell);
-      CELL_printable (x_cell);
-      x_cell->u = a_stamp;
-      a_dep->count++;
-   }
-   DEBUG_CALC   DEP__print (a_level, x_cell);
-   /*---(complete)-----------------------*/
-   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char       /*----: recalculate everything ------------------------------------*/
-DEP_recalc         (void)
-{
-   /*---(locals)-------------------------*/
-   tDEP       *x_next      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   if (debug.dtree == 'y') endwin();
-   /*---(recurse)------------------------*/
-   x_next = dtree->requires;
-   while (x_next != NULL) {
-      DEP__exec (1, x_next, rand());
-      x_next = x_next->next;
-   }
-   if (debug.dtree == 'y') exit (0);
-   /*---(complete)-----------------------*/
-   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 #define   MAX_EXEC        100
 static int         cmax    = -1;
 static int         ctotal  =  0;
@@ -1903,6 +1846,73 @@ DEP_calclist       (char *a_list)
    return 0;
 }
 
+char         /*--> dependency-based calc sequencing ------[ ------ [ ------ ]-*/
+SEQ__recursion     (
+      /*---(params)-----------+--------+-*/
+      int         a_level     ,        /* recursion level (0 thru N)          */ 
+      tDEP       *a_dep       ,        /* current dependency link             */
+      char        a_dir       ,        /* recursion direction (u=up, d=down)  */
+      long        a_stamp     ,        /* unique stamp for current recursion  */
+      char        a_calc      )        /* calc after sequencing (y=yes, n=no) */
+{
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_next      = NULL;
+   tCELL      *x_cell      = NULL;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   DEBUG_CALC   yLOG_value   ("a_level"   , a_level);
+   DEBUG_CALC   yLOG_value   ("a_stamp"   , a_stamp);
+   DEBUG_CALC   yLOG_char    ("a_dir"     , a_dir);
+   /*---(defenses)-----------------------*/
+   DEBUG_CALC   yLOG_point   ("*x_dep"    , a_dep);
+   if (a_dep        == NULL) {
+      DEBUG_CALC   yLOG_note    ("a_dep is NULL");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   DEBUG_CALC   yLOG_char    ("dep type"  , a_dep->type);
+   x_cell     = a_dep->target;
+   DEBUG_CALC   yLOG_point   ("*x_cell"   , x_cell);
+   if (x_cell       == NULL) {
+      DEBUG_CALC   yLOG_note    ("cell is NULL");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   DEBUG_CALC   yLOG_info    ("cell label", x_cell->label);
+   DEBUG_CALC   yLOG_char    ("cell type" , x_cell->t);
+   /*---(calculate)----------------------*/
+   if (x_cell->u != a_stamp) {
+      rc = DEP__seqadd  (a_level, x_cell);
+   } else if (x_cell->clevel < a_level) {
+      rc = DEP__seqdel  (x_cell);
+      if (rc >= 0)  rc = DEP__seqadd  (a_level, x_cell);
+   }
+   if (rc < 0) {
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return rc;
+   }
+   /*---(update cell and dep)------------*/
+   x_cell->u == a_stamp;
+   if (a_calc == 'y')  a_dep->count++;
+   /*---(recurse)------------------------*/
+   DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
+   DEBUG_CALC   yLOG_value   ("nrequire"  , x_cell->nrequire);
+   if (a_dir == 'u')  x_next = x_cell->provides;
+   else               x_next = x_cell->requires;
+   while (x_next != NULL) {
+      rc = SEQ__recursion (a_level + 1, x_next, a_dir, a_stamp, a_calc);
+      if (rc < 0) {
+         DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+         return rc;
+      }
+      x_next = x_next->next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
 DEP__seq_pros      (int a_level, tDEP *a_dep, long a_stamp, char a_calc)
 {
@@ -2016,6 +2026,63 @@ DEP_calc_up        (tCELL *a_cell, char a_calc)
    }
    DEBUG_CALC   yLOG_value   ("expected"  , ctotal);
    DEBUG_CALC   yLOG_value   ("subtotal"  , tot);
+   /*---(complete)-----------------------*/
+   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+PR char    /*----: dependency-based calculation from root (all) --------------*/
+DEP__exec          (int a_level, tDEP *a_dep, long a_stamp)
+{
+   /*---(locals)-------------------------*/
+   tCELL      *x_cell      = NULL;
+   tDEP       *x_next      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   x_cell     = a_dep->target;
+   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, x_cell, a_stamp);
+   /*---(defenses)-----------------------*/
+   if (x_cell       == NULL) {
+      DEBUG_CALC   yLOG_note    ("cell is NULL");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(recurse)------------------------*/
+   DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
+   DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
+   DEBUG_CALC   yLOG_value   ("nrequire"  , x_cell->nrequire);
+   x_next = x_cell->requires;
+   while (x_next != NULL) {
+      DEP__exec (a_level + 1, x_next, a_stamp);
+      x_next = x_next->next;
+   }
+   if (strchr (G_CELL_CALC, x_cell->t) != 0 && x_cell->u != a_stamp) {
+      CALC_eval (x_cell);
+      CELL_printable (x_cell);
+      x_cell->u = a_stamp;
+      a_dep->count++;
+   }
+   DEBUG_CALC   DEP__print (a_level, x_cell);
+   /*---(complete)-----------------------*/
+   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char       /*----: recalculate everything ------------------------------------*/
+DEP_recalc         (void)
+{
+   /*---(locals)-------------------------*/
+   tDEP       *x_next      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   if (debug.dtree == 'y') endwin();
+   /*---(recurse)------------------------*/
+   x_next = dtree->requires;
+   while (x_next != NULL) {
+      DEP__exec (1, x_next, rand());
+      x_next = x_next->next;
+   }
+   if (debug.dtree == 'y') exit (0);
    /*---(complete)-----------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;

@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9f"
-#define     VER_TXT   "removed autocalc logic to toggle dependency calcs"
+#define     VER_NUM   "1.9g"
+#define     VER_TXT   "enhanced sequencing recursion to go up or down"
 
 
 
@@ -1211,6 +1211,7 @@ char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, lon
 char      DEP__seqclear      (void);
 char      DEP__seqadd        (char a_level, tCELL *a_cell);
 char      DEP__seqdel        (tCELL *a_cell);
+char      SEQ__recursion     (int a_level, tDEP *a_dep, char a_dir, long a_stamp, char a_calc);
 char      DEP__seq_pros      (int a_level, tDEP *a_dep, long a_stamp, char a_calc);
 char      DEP_calc_up        (tCELL *a_cell, char a_calc);
 char      DEP_seqlist        (char *a_list);
