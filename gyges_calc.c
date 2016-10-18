@@ -3479,6 +3479,12 @@ CALC_eval          (tCELL *a_curr)
       return rce;
    }
    DEBUG_CALC   yLOG_info    ("rpn"       , a_curr->rpn);
+   DEBUG_CALC   yLOG_char    ("autocalc"  , my.autocalc);
+   if (my.autocalc != 'y') {
+      DEBUG_CALC   yLOG_note    ("calculation is turned off");
+      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(prep)---------------------------*/
    s_me     = a_curr;
    s_neval  = 0;

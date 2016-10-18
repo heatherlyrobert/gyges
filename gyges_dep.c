@@ -2009,6 +2009,7 @@ DEP_seqall         (tCELL *a_cell, char a_calc)
          CELL_printable (x_cell);
          ++sub;
          ++tot;
+         x_cell = x_cell->cnext;
       }
       DEBUG_CALC   yLOG_value   ("expected"  , ccount [i]);
       DEBUG_CALC   yLOG_value   ("subtotal"  , sub);

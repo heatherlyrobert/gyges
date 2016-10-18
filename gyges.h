@@ -132,8 +132,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9d"
-#define     VER_TXT   "unit test 11 had the wrong cells"
+#define     VER_NUM   "1.9e"
+#define     VER_TXT   "added autocalc logic to toggle dependency calcs"
 
 
 
