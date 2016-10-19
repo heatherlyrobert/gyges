@@ -52,6 +52,7 @@
  *      - import or export of special formats (like xls, etc.)
  *      - separate note entries (just confusing, put them right in a cell)
  *      - different cell heights, etc
+ *      - no manual calculation option to turn off auto calcs (fast enough)
  *
  *   gyges will additionally make some serious simplifying assumptions...
  *      - all numbers will be stored as doubles (flexible, but approximate)
@@ -132,8 +133,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9g"
-#define     VER_TXT   "enhanced sequencing recursion to go up or down"
+#define     VER_NUM   "1.9h"
+#define     VER_TXT   "enhanced sequencing recursion unit tested successfully"
 
 
 
@@ -1202,18 +1203,22 @@ char      DEP_like           /* ------ */  (tCELL  *a_me, char* a_list);
 char      DEP_updatelikes    (tCELL  *a_me);
 
 char      DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, char (*a_func) (FILE *r_file, char r_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp));
-/*> char      DEP_recalc         /+ ------ +/  (void);                                <*/
 char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
 char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp);
 
-char      DEP__seqclear      (void);
-char      DEP__seqadd        (char a_level, tCELL *a_cell);
-char      DEP__seqdel        (tCELL *a_cell);
+char      SEQ__seqclear      (void);
+char      SEQ__seqadd        (char a_level, tCELL *a_cell);
+char      SEQ__seqdel        (tCELL *a_cell);
 char      SEQ__recursion     (int a_level, tDEP *a_dep, char a_dir, long a_stamp, char a_calc);
-char      DEP__seq_pros      (int a_level, tDEP *a_dep, long a_stamp, char a_calc);
-char      DEP_calc_up        (tCELL *a_cell, char a_calc);
+char      SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc);
+char      SEQ_calc_up        (tCELL *a_cell, char a_calc);
+char      SEQ_calc_down      (tCELL *a_cell, char a_calc);
+char      SEQ_calc_full      (char a_calc);
+
+
+
 char      DEP_seqlist        (char *a_list);
 
 char      DEP_write          (FILE *a_file, int a_level, tDEP *a_dep);

@@ -11147,7 +11147,7 @@ SCRP          v21  (gyges_keys) verify correct functioning of mode stack      
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (gyges_dep  ) verify calculation sequencing                  DEP__seqclear, DEP__seqadd, DEP__seqdel, DEP_calc_up                    ((48.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (gyges_dep  ) verify calculation sequencing                  SEQ__seqclear, SEQ__seqadd, SEQ__seqdel, SEQ_calc_up, SEQ_calc_down     ((48.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -11222,10 +11222,10 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
    GROUP      v21  second, check basic sequencing functions                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  prepare for sequencing                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  clear the calculation sequencing     DEP__seqclear                                                                                 i_equal     0                                                                      
+     exec     v21  clear the calculation sequencing     SEQ__seqclear                                                                                 i_equal     0                                                                      
 
    COND       v21  add a cell to the sequence                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           0                , x_1st                                                i_equal     0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           0                , x_1st                                                i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     0                                           
@@ -11240,7 +11240,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 001 00   01                                         
 
    COND       v21  add a cell to the next level                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           1                , x_3rd                                                i_equal     0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           1                , x_3rd                                                i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     0                                           
@@ -11255,7 +11255,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 002 01   01 01                                      
 
    COND       v21  remove the last cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  delete a cell                        DEP__seqdel           x_3rd                                                                   i_equal     0                                                                      
+     exec     v21  delete a cell                        SEQ__seqdel           x_3rd                                                                   i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     0                                           
@@ -11270,7 +11270,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 001 01   01 00                                      
 
    COND       v21  add it back to a higher level                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           3                , x_3rd                                                i_equal     0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           3                , x_3rd                                                i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     0                                           
@@ -11285,22 +11285,22 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 002 03   01 00 00 01                                
 
    COND       v21  try to add a null                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           3                , NULL                                                 i_lesser    0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           3                , NULL                                                 i_lesser    0                                                                      
 
    COND       v21  try to add to a bad level                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           101              , x_4th                                                i_lesser    0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           101              , x_4th                                                i_lesser    0                                                                      
 
    COND       v21  try to add twice                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           1                , x_3rd                                                i_lesser    0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           1                , x_3rd                                                i_greater   0                                                                      
 
    COND       v21  try to add root                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           DEP__seqadd           15               , dtree                                                i_lesser    0                                                                      
+     exec     v21  add a cell                           SEQ__seqadd           15               , dtree                                                i_greater   0                                                                      
 
    COND       v21  try to remove a null                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  delete a cell                        DEP__seqdel           NULL                                                                    i_lesser    0                                                                      
+     exec     v21  delete a cell                        SEQ__seqdel           NULL                                                                    i_lesser    0                                                                      
 
    COND       v21  try to remove an unassigned cell                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  delete a cell                        DEP__seqdel           x_4th                                                                   i_lesser    0                                                                      
+     exec     v21  delete a cell                        SEQ__seqdel           x_4th                                                                   i_greater   0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     0                                           
@@ -11315,7 +11315,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 002 03   01 00 00 01                                
 
    COND       v21  clear                                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  clear the calculation sequencing     DEP__seqclear                                                                                 i_equal     0                                                                      
+     exec     v21  clear the calculation sequencing     SEQ__seqclear                                                                                 i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11332,7 +11332,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
    GROUP      v21  third, run sequencing on the tree                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  start with an independent cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_calc_up           x_6th            , '-'                                                  i_equal     0                                                                      
+     exec     v21  sequence                             SEQ_calc_up           x_6th            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11347,7 +11347,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 000 -1                                              
 
    COND       v21  start with an top level cell (root provision)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_calc_up           x_3rd            , '-'                                                  i_equal     0                                                                      
+     exec     v21  sequence                             SEQ_calc_up           x_3rd            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11362,7 +11362,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 000 -1                                              
 
    COND       v21  sequence a cell with two top-level parents                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_calc_up           x_5th            , '-'                                                  i_equal     0                                                                      
+     exec     v21  sequence                             SEQ_calc_up           x_5th            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11377,7 +11377,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 002 00   02                                         
 
    COND       v21  sequence a cell with two even levels                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_calc_up           x_4th            , '-'                                                  i_equal     0                                                                      
+     exec     v21  sequence                             SEQ_calc_up           x_4th            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11392,7 +11392,7 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 003 01   01 02                                      
 
    COND       v21  sequence a cell with complicated attachments                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  sequence                             DEP_calc_up           x_1st            , '-'                                                  i_equal     0                                                                      
+     exec     v21  sequence                             SEQ_calc_up           x_1st            , '-'                                                  i_equal     0                                                                      
 
    COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1    --                                           
@@ -11405,6 +11405,36 @@ SCRP          v21  (gyges_dep  ) verify calculation sequencing                
      get      v21  review the calc seq 8th              DEP_unit              "calc_cell"      ,  "0a8"                                               s_equal     s_dep calc seq   : 0a8     0                                           
      get      v21  review the calc seq 9th              DEP_unit              "calc_cell"      ,  "0a9"                                               s_equal     s_dep calc seq   : 0a9     2                                           
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 006 02   03 01 02                                   
+
+   COND       v21  sequence downward from root                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  sequence                             SEQ_calc_full         '-'                                                                     i_equal     0                                                                      
+
+   COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     3                                           
+     get      v21  review the calc seq 2nd              DEP_unit              "calc_cell"      ,  "0a2"                                               s_equal     s_dep calc seq   : 0a2     3                                           
+     get      v21  review the calc seq 3rd              DEP_unit              "calc_cell"      ,  "0a3"                                               s_equal     s_dep calc seq   : 0a3     0                                           
+     get      v21  review the calc seq 4th              DEP_unit              "calc_cell"      ,  "0a4"                                               s_equal     s_dep calc seq   : 0a4     2                                           
+     get      v21  review the calc seq 5th              DEP_unit              "calc_cell"      ,  "0a5"                                               s_equal     s_dep calc seq   : 0a5     1                                           
+     get      v21  review the calc seq 6th              DEP_unit              "calc_cell"      ,  "0a6"                                               s_equal     s_dep calc seq   : 0a6    --                                           
+     get      v21  review the calc seq 7th              DEP_unit              "calc_cell"      ,  "0a7"                                               s_equal     s_dep calc seq   : 0a7     0                                           
+     get      v21  review the calc seq 8th              DEP_unit              "calc_cell"      ,  "0a8"                                               s_equal     s_dep calc seq   : 0a8     0                                           
+     get      v21  review the calc seq 9th              DEP_unit              "calc_cell"      ,  "0a9"                                               s_equal     s_dep calc seq   : 0a9     0                                           
+     get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 008 03   04 01 01 02                                
+
+   COND       v21  sequence downward from cell                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  sequence                             SEQ_calc_down         x_5th            , '-'                                                  i_equal     0                                                                      
+
+   COND       v21  review all cell calc sequences                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  review the calc seq 1st              DEP_unit              "calc_cell"      ,  "0a1"                                               s_equal     s_dep calc seq   : 0a1     1                                           
+     get      v21  review the calc seq 2nd              DEP_unit              "calc_cell"      ,  "0a2"                                               s_equal     s_dep calc seq   : 0a2     1                                           
+     get      v21  review the calc seq 3rd              DEP_unit              "calc_cell"      ,  "0a3"                                               s_equal     s_dep calc seq   : 0a3    --                                           
+     get      v21  review the calc seq 4th              DEP_unit              "calc_cell"      ,  "0a4"                                               s_equal     s_dep calc seq   : 0a4     0                                           
+     get      v21  review the calc seq 5th              DEP_unit              "calc_cell"      ,  "0a5"                                               s_equal     s_dep calc seq   : 0a5    --                                           
+     get      v21  review the calc seq 6th              DEP_unit              "calc_cell"      ,  "0a6"                                               s_equal     s_dep calc seq   : 0a6    --                                           
+     get      v21  review the calc seq 7th              DEP_unit              "calc_cell"      ,  "0a7"                                               s_equal     s_dep calc seq   : 0a7    --                                           
+     get      v21  review the calc seq 8th              DEP_unit              "calc_cell"      ,  "0a8"                                               s_equal     s_dep calc seq   : 0a8    --                                           
+     get      v21  review the calc seq 9th              DEP_unit              "calc_cell"      ,  "0a9"                                               s_equal     s_dep calc seq   : 0a9    --                                           
+     get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 003 01   01 02                                      
 
 
 

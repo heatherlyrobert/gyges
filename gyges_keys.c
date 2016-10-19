@@ -770,7 +770,7 @@ MODE_map           (char a_major, char a_minor)
                       /*> case 'y'      : REG_copy  ();                   break;                      <*/
                       /*> case 'p'      : REG_paste ('y');                break;                      <*/
                       /*---(modes and multikey)-------*/
-      /*> case '@'      : DEP_recalc();                   break;                      <*/
+      case '@'      : SEQ_calc_full ('y');            break;
                       /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/
                       /*---(new stuff)----------------*/
       case 'u'      : HIST_undo ();                   break;
