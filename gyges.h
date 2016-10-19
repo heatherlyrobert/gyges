@@ -133,8 +133,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9h"
-#define     VER_TXT   "enhanced sequencing recursion unit tested successfully"
+#define     VER_NUM   "1.9i"
+#define     VER_TXT   "sequencing calculation from root down works fast!!"
 
 
 
