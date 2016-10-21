@@ -448,7 +448,7 @@ CELL__purge        (void)
    x_stamp = rand ();
    x_seq     = 0;
    DEBUG_CELL   yLOG_note    ("calling DEP_tail");
-   rc = DEP_tail (NULL, 'x', &x_seq, 0, dtree, x_stamp, CELL__depwipe);
+   rc = SEQ_wipe_deps ();
    DEBUG_CELL   yLOG_value   ("tail rc"   , rc);
    DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);
    /*---(non-dependency cells)-----------*/
@@ -801,7 +801,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
          return NULL;
       }
       DEBUG_CELL   yLOG_note    ("review dependency tree calculation");
-      rc = SEQ_calc_up    (curr, 'y');
+      rc = SEQ_calc_up    (curr);
       DEBUG_CELL   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -855,7 +855,7 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       return NULL;
    }
    DEBUG_CELL   yLOG_note    ("call calc");
-   rc = SEQ_calc_up    (x_new, 'y');
+   rc = SEQ_calc_up    (x_new);
    if (rc < 0) {
       DEBUG_CELL   yLOG_warn    ("calc"      , "returned a bad return code");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1506,7 +1506,7 @@ CELL_width         (char a_mode, char a_num)
          x_cell = tab->sheet[i][j];
          if (x_cell == NULL) continue;
          /*---(update merged cells)----------*/
-         if (x_cell->t == CTYPE_MERGE)  SEQ_calc_up (x_cell, 'y');
+         if (x_cell->t == CTYPE_MERGE)  SEQ_calc_up (x_cell);
          /*---(update printable)-------------*/
          CELL_printable (x_cell);
       }

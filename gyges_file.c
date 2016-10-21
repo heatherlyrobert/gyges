@@ -1943,7 +1943,7 @@ INPT_close         (void)
    CURS_rowhead();
    /*---(calculate)----------------------*/
    DEBUG_INPT  yLOG_note    ("recalc");
-   SEQ_calc_full ('y');
+   SEQ_calc_full ();
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;

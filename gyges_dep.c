@@ -1671,6 +1671,25 @@ DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    return 0;
 }
 
+
+
+/*====================------------------------------------====================*/
+/*===----                      dependency sequencing                   ----===*/
+/*====================------------------------------------====================*/
+PR void  o___SEQUENCING______o () { return; }
+/*
+ *  dependency sequencing must allow...
+ *  -- access in layers according to calculation/depencency requirements
+ *  -- rapid linear access for driving calculations
+ *  -- rapid (if not direct) access from an individual cell
+ *  -- rapid creation (avoid malloc)
+ *
+ *  have chosen to use an array of simple lists implemented within the cells.
+ *  made the lists doublly linked to speed removing random cells.
+ *
+ *
+ */
+
 #define   MAX_EXEC        100
 static int         cmax    = -1;
 static int         ctotal  =  0;
@@ -1820,32 +1839,6 @@ SEQ__seqdel        (tCELL *a_cell)
    return 0;
 }
 
-char
-DEP_calclist       (char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   tCELL      *x_next      = NULL;
-   /*---(defenses)--------------------*/
-   if (a_list  == NULL) return -1;     /* then no point                       */
-   /*---(walk the list)---------------*/
-   strncpy (a_list, "", MAX_STR);
-   for (i = 0; i <= cmax; ++i) {
-      x_next = cheads [i];
-      while (x_next != NULL) {
-         strncat (a_list, x_next->label, MAX_STR);
-         strncat (a_list, ",", MAX_STR);
-         x_next = x_next->cnext;
-      }
-      strncat (a_list, ";", MAX_STR);
-   }
-   if (strcmp (a_list, "") == 0) {
-      strncpy (a_list, "((nada))", MAX_STR);
-   }
-   /*---(complete)--------------------*/
-   return 0;
-}
-
 char         /*--> dependency-based calc sequencing ------[ ------ [ ------ ]-*/
 SEQ__recursion     (
       /*---(params)-----------+--------+-*/
@@ -1922,7 +1915,7 @@ SEQ__recursion     (
 }
 
 char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
-SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc)
+SEQ__driver        (tCELL *a_cell, char a_dir, char a_action)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;
@@ -1955,7 +1948,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc)
    while (x_next != NULL) {
       ++i;
       DEBUG_CALC   yLOG_value   ("recurse"   , i);
-      SEQ__recursion (0, x_next, a_dir, x_stamp, a_calc);
+      SEQ__recursion (0, x_next, a_dir, x_stamp, a_action);
       x_next = x_next->next;
    }
    DEBUG_CALC   yLOG_note    ("done recursing");
@@ -1965,8 +1958,8 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc)
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   if (a_calc != 'y') {
-      DEBUG_CALC   yLOG_note    ("no calculation requested");
+   if (strchr ("cwfrp", a_action) == NULL) {
+      DEBUG_CALC   yLOG_note    ("no action requested");
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -1978,8 +1971,21 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc)
       x_cell = cheads [x_off];
       x_sub = 0;
       while (x_cell != NULL) {
-         CALC_eval      (x_cell);
-         CELL_printable (x_cell);
+         switch (a_action) {
+         case 'c' :  /* calculation               */
+            CALC_eval      (x_cell);
+            CELL_printable (x_cell);
+            break;
+         case 'w' :  /* purge cells               */
+            CELL__wipe     (x_cell);
+            break;
+         case 'f' :  /* write to a file           */
+            break;
+         case 'r' :  /* write to a register       */
+            break;
+         case 'p' :  /* print the sequence        */
+            break;
+         }
          ++x_sub;
          ++x_tot;
          x_cell = x_cell->cnext;
@@ -1995,48 +2001,40 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc)
 }
 
 char         /*--> dependency-based calculation upward ---[ ------ [ ------ ]-*/
-SEQ_calc_up        (tCELL *a_cell, char a_calc) { return SEQ__driver (a_cell, 'u', a_calc); }
+SEQ_calc_up        (tCELL *a_cell) { return SEQ__driver (a_cell, 'u', 'c'); }
 
 char         /*--> dependency-based calculation downward -[ ------ [ ------ ]-*/
-SEQ_calc_down      (tCELL *a_cell, char a_calc) { return SEQ__driver (a_cell, 'd', a_calc); }
+SEQ_calc_down      (tCELL *a_cell) { return SEQ__driver (a_cell, 'd', 'c'); }
 
 char         /*--> dependency-based calculation of all ---[ ------ [ ------ ]-*/
-SEQ_calc_full      (char a_calc)                { return SEQ__driver (dtree , 'd', a_calc); }
+SEQ_calc_full      (void)          { return SEQ__driver (dtree , 'd', 'c'); }
 
-PR char    /*----: dependency-based calculation from root (all) --------------*/
-DEP__exec          (int a_level, tDEP *a_dep, long a_stamp)
+char         /*--> dependency-based wiping of cells ------[ ------ [ ------ ]-*/
+SEQ_wipe_deps      (void)          { return SEQ__driver (dtree , 'd', 'w'); }
+
+char
+SEQ_calclist       (char *a_list)
 {
-   /*---(locals)-------------------------*/
-   tCELL      *x_cell      = NULL;
-   tDEP       *x_next      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   x_cell     = a_dep->target;
-   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, x_cell, a_stamp);
-   /*---(defenses)-----------------------*/
-   if (x_cell       == NULL) {
-      DEBUG_CALC   yLOG_note    ("cell is NULL");
-      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-      return 0;
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   tCELL      *x_next      = NULL;
+   /*---(defenses)--------------------*/
+   if (a_list  == NULL) return -1;     /* then no point                       */
+   /*---(walk the list)---------------*/
+   strncpy (a_list, "", MAX_STR);
+   for (i = 0; i <= cmax; ++i) {
+      x_next = cheads [i];
+      while (x_next != NULL) {
+         strncat (a_list, x_next->label, MAX_STR);
+         strncat (a_list, ",", MAX_STR);
+         x_next = x_next->cnext;
+      }
+      strncat (a_list, ";", MAX_STR);
    }
-   /*---(recurse)------------------------*/
-   DEBUG_CALC   yLOG_info    ("label"     , x_cell->label);
-   DEBUG_CALC   yLOG_char    ("type"      , x_cell->t);
-   DEBUG_CALC   yLOG_value   ("nrequire"  , x_cell->nrequire);
-   x_next = x_cell->requires;
-   while (x_next != NULL) {
-      DEP__exec (a_level + 1, x_next, a_stamp);
-      x_next = x_next->next;
+   if (strcmp (a_list, "") == 0) {
+      strncpy (a_list, "((nada))", MAX_STR);
    }
-   if (strchr (G_CELL_CALC, x_cell->t) != 0 && x_cell->u != a_stamp) {
-      CALC_eval (x_cell);
-      CELL_printable (x_cell);
-      x_cell->u = a_stamp;
-      a_dep->count++;
-   }
-   DEBUG_CALC   DEP__print (a_level, x_cell);
-   /*---(complete)-----------------------*/
-   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
+   /*---(complete)--------------------*/
    return 0;
 }
 

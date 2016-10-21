@@ -133,8 +133,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9i"
-#define     VER_TXT   "sequencing calculation from root down works fast!!"
+#define     VER_NUM   "1.9j"
+#define     VER_TXT   "switch cell purging to use new sequencing ability"
 
 
 
@@ -1213,9 +1213,10 @@ char      SEQ__seqadd        (char a_level, tCELL *a_cell);
 char      SEQ__seqdel        (tCELL *a_cell);
 char      SEQ__recursion     (int a_level, tDEP *a_dep, char a_dir, long a_stamp, char a_calc);
 char      SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc);
-char      SEQ_calc_up        (tCELL *a_cell, char a_calc);
-char      SEQ_calc_down      (tCELL *a_cell, char a_calc);
-char      SEQ_calc_full      (char a_calc);
+char      SEQ_calc_up        (tCELL *a_cell);
+char      SEQ_calc_down      (tCELL *a_cell);
+char      SEQ_calc_full      (void);
+char      SEQ_wipe_deps      (void);
 
 
 
