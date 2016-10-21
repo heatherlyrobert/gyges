@@ -1568,68 +1568,6 @@ DEP_updatelikes    (tCELL  *a_me)
    return 0;
 }
 
-PR char    /*----: dependency-based calculation engine -----------------------*/
-DEP__print         (int a_level, tCELL *a_curr)
-{
-   /*---(defenses)-----------------------*/
-   if (a_curr       == NULL) return 0;
-   /*---(locals)-------------------------*/
-   int       i         = 0;
-   /*---(recurse)------------------------*/
-   /*> for (i = 0; i < a_level; ++i) printf("   ");                                   <*/
-   /*> printf ("%d %-6.6s = %8.2lf  (t=%2d, c=%3d, r=%3d, s=%s)\n", a_level, a_curr->label, a_curr->v_num, a_curr->tab, a_curr->col, a_curr->row, a_curr->s);   <*/
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-/*> char         /+--> head recursion through deptree --------[ ------ [ ------ ]-+/                                                                                                                         <* 
- *> DEP_head           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, void (*a_func) (FILE *r_file, char a_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp))   <* 
- *> {                                                                                                                                                                                                        <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                                                                                              <* 
- *>    tCELL      *x_list      [1000];          /+ list of dependent cells        +/                                                                                                                         <* 
- *>    int         x_count     = 0;             /+ count of dependent cells       +/                                                                                                                         <* 
- *>    int         i           = 0;             /+ iterator -- cell list          +/                                                                                                                         <* 
- *>    tDEP       *n           = NULL;                                                                                                                                                                       <* 
- *>    /+---(header)-------------------------+/                                                                                                                                                              <* 
- *>    DEBUG_CALC   yLOG_enter   (__FUNCTION__);                                                                                                                                                             <* 
- *>    DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, a_curr, a_stamp);                                                                                                   <* 
- *>    /+---(defense: null cell)-------------+/                                                                                                                                                              <* 
- *>    if (a_curr == NULL) {                                                                                                                                                                                 <* 
- *>       DEBUG_CALC   yLOG_note    ("cell is NULL");                                                                                                                                                        <* 
- *>       DEBUG_CALC   yLOG_exit    (__FUNCTION__);                                                                                                                                                          <* 
- *>       return 0;                                                                                                                                                                                          <* 
- *>    }                                                                                                                                                                                                     <* 
- *>    /+---(current)------------------------+/                                                                                                                                                              <* 
- *>    DEBUG_CALC   yLOG_complex ("detail"    , "label %s, type %c, nrequire %d", a_curr->label, a_curr->t, a_curr->nrequire);                                                                               <* 
- *>    /+---(gather required cells)----------+/                                                                                                                                                              <* 
- *>    n = a_curr->requires;                                                                                                                                                                                 <* 
- *>    while (n != NULL && x_count < 1000) {                                                                                                                                                                 <* 
- *>       if (n->target->nprovides > 1) {                                                                                                                                                                    <* 
- *>          tCELL [x_count] = n->target;                                                                                                                                                                    <* 
- *>          ++x_count;                                                                                                                                                                                      <* 
- *>       }                                                                                                                                                                                                  <* 
- *>       n = n->next;                                                                                                                                                                                       <* 
- *>    }                                                                                                                                                                                                     <* 
- *>    DEBUG_CALC   yLOG_value   ("x_count"   , x_count);                                                                                                                                                    <* 
- *>    /+---(defense: count too large)-------+/                                                                                                                                                              <* 
- *>    if (x_count >= 1000) {                                                                                                                                                                                <* 
- *>       DEBUG_CALC   yLOG_note    ("too many requires to process");                                                                                                                                        <* 
- *>       DEBUG_CALC   yLOG_exit    (__FUNCTION__);                                                                                                                                                          <* 
- *>       return -1;                                                                                                                                                                                         <* 
- *>    }                                                                                                                                                                                                     <* 
- *>    /+---(perform function)---------------+/                                                                                                                                                              <* 
- *>    a_func (a_file, a_type, a_seq, a_level, a_curr, a_stamp);                                                                                                                                             <* 
- *>    /+---(recurse)------------------------+/                                                                                                                                                              <* 
- *>    n = a_curr->requires;                                                                                                                                                                                 <* 
- *>    while (n != NULL) {                                                                                                                                                                                   <* 
- *>       DEP_tail (a_file, a_type, a_seq, a_level + 1, n->target, a_stamp, a_func);                                                                                                                         <* 
- *>       n = n->next;                                                                                                                                                                                       <* 
- *>    }                                                                                                                                                                                                     <* 
- *>    /+---(complete)-----------------------+/                                                                                                                                                              <* 
- *>    DEBUG_CALC   yLOG_exit    (__FUNCTION__);                                                                                                                                                             <* 
- *>    return 0;                                                                                                                                                                                             <* 
- *> }                                                                                                                                                                                                        <*/
-
 char         /*--> tail recursion through deptree --------[ ------ [ ------ ]-*/
 DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, char (*a_func) (FILE *r_file, char a_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp))
 {
@@ -1846,7 +1784,7 @@ SEQ__recursion     (
       tDEP       *a_dep       ,        /* current dependency link             */
       char        a_dir       ,        /* recursion direction (u=up, d=down)  */
       long        a_stamp     ,        /* unique stamp for current recursion  */
-      char        a_calc      )        /* calc after sequencing (y=yes, n=no) */
+      char        a_action    )        /* calc after sequencing (c=calc)      */
 {
    /*---(locals)-----------+-----------+-*/
    tDEP       *x_next      = NULL;
@@ -1895,14 +1833,14 @@ SEQ__recursion     (
    }
    /*---(update cell and dep)------------*/
    x_cell->u = a_stamp;
-   if (a_calc == 'y')  a_dep->count++;
+   if (a_action == 'c')  a_dep->count++;
    /*---(recurse)------------------------*/
    DEBUG_CALC   yLOG_value   ("nprovide"  , x_cell->nprovide);
    DEBUG_CALC   yLOG_value   ("nrequire"  , x_cell->nrequire);
    if (a_dir == 'u')  x_next = x_cell->provides;
    else               x_next = x_cell->requires;
    while (x_next != NULL) {
-      rc = SEQ__recursion (a_level + 1, x_next, a_dir, a_stamp, a_calc);
+      rc = SEQ__recursion (a_level + 1, x_next, a_dir, a_stamp, a_action);
       if (rc < 0) {
          DEBUG_CALC   yLOG_exit    (__FUNCTION__);
          return rc;
@@ -1915,7 +1853,7 @@ SEQ__recursion     (
 }
 
 char         /*--> dependency-based calculation marking --[ ------ [ ------ ]-*/
-SEQ__driver        (tCELL *a_cell, char a_dir, char a_action)
+SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE *a_file)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;
@@ -1925,10 +1863,11 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_action)
    int         x_sub       = 0;
    int         x_tot       = 0;
    int         x_off       = 0;
-   long        x_stamp     = 0;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    DEBUG_CALC   yLOG_char    ("a_dir"     , a_dir);
+   DEBUG_CALC   yLOG_value   ("a_stamp"   , a_stamp);
+   DEBUG_CALC   yLOG_char    ("a_action"  , a_action);
    /*---(defense : cell)-----------------*/
    DEBUG_CALC   yLOG_point   ("*a_cell"   , a_cell);
    --rce;  if (a_cell == NULL) {
@@ -1941,14 +1880,13 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_action)
    DEBUG_CALC   yLOG_value   ("nrequire"  , a_cell->nrequire);
    /*---(prepare)------------------------*/
    SEQ__seqclear ();
-   x_stamp = rand ();
    /*---(recurse)------------------------*/
    if (a_dir == 'u')  x_next = a_cell->provides;
    else               x_next = a_cell->requires;
    while (x_next != NULL) {
       ++i;
       DEBUG_CALC   yLOG_value   ("recurse"   , i);
-      SEQ__recursion (0, x_next, a_dir, x_stamp, a_action);
+      SEQ__recursion (0, x_next, a_dir, a_stamp, a_action);
       x_next = x_next->next;
    }
    DEBUG_CALC   yLOG_note    ("done recursing");
@@ -1980,6 +1918,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_action)
             CELL__wipe     (x_cell);
             break;
          case 'f' :  /* write to a file           */
+            FILE_dep       (a_file, x_tot, x_off, x_cell);
             break;
          case 'r' :  /* write to a register       */
             break;
@@ -2001,16 +1940,19 @@ SEQ__driver        (tCELL *a_cell, char a_dir, char a_action)
 }
 
 char         /*--> dependency-based calculation upward ---[ ------ [ ------ ]-*/
-SEQ_calc_up        (tCELL *a_cell) { return SEQ__driver (a_cell, 'u', 'c'); }
+SEQ_calc_up        (tCELL *a_cell) { return SEQ__driver (a_cell, 'u', rand() , 'c', NULL); }
 
 char         /*--> dependency-based calculation downward -[ ------ [ ------ ]-*/
-SEQ_calc_down      (tCELL *a_cell) { return SEQ__driver (a_cell, 'd', 'c'); }
+SEQ_calc_down      (tCELL *a_cell) { return SEQ__driver (a_cell, 'd', rand() , 'c', NULL); }
 
 char         /*--> dependency-based calculation of all ---[ ------ [ ------ ]-*/
-SEQ_calc_full      (void)          { return SEQ__driver (dtree , 'd', 'c'); }
+SEQ_calc_full      (void)          { return SEQ__driver (dtree , 'd', rand() , 'c', NULL); }
 
 char         /*--> dependency-based wiping of cells ------[ ------ [ ------ ]-*/
-SEQ_wipe_deps      (void)          { return SEQ__driver (dtree , 'd', 'w'); }
+SEQ_wipe_deps      (void)          { return SEQ__driver (dtree , 'd', rand() , 'w', NULL); }
+
+char         /*--> dependency-based writing of file ------[ ------ [ ------ ]-*/
+SEQ_file_deps      (long a_stamp, FILE *a_file)  { return SEQ__driver (dtree , 'd', a_stamp, 'f', a_file); }
 
 char
 SEQ_calclist       (char *a_list)

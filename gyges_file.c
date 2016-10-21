@@ -2268,25 +2268,19 @@ OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL 
 }
 
 char         /*--> write file dependent cells ------------[ leaf   [ ------ ]-*/
-FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp)
+FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        x_pre       [50]        = "-           ";
    /*---(defense)------------------------*/
    if (a_curr    == NULL)        return;     /* no cell                       */
    if (a_curr->s == NULL)        return;     /* nothing to write              */
-   if (a_curr->u == a_stamp)     return;     /* already written               */
    if (a_curr->t == '-')         return;     /* don't write, recreate on read */
    /*---(prepare)------------------------*/
-   if      (a_level == 0 )   sprintf (x_pre, "root         ");
-   else if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s",
-         a_level - 1, a_level - 1, "------------", a_level, " ");
-   else                      sprintf (x_pre, "            +");
+   if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");
+   else                 sprintf (x_pre, "            +");
    /*---(print)--------------------------*/
-   OUTP_cell (a_file, "cell_dep", *a_seq, x_pre, a_curr);
-   ++(*a_seq);
-   /*---(update)-------------------------*/
-   a_curr->u = a_stamp;
+   OUTP_cell (a_file, "cell_dep", a_seq, x_pre, a_curr);
    /*---(complete)-----------------------*/
    fflush (a_file);
    return 0;
@@ -2378,18 +2372,15 @@ FILE_write         (char *a_name)
    /*---(dependent cells)------------------*/
    fprintf (f, "\n\n\n#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");
    x_stamp   = rand ();
-   x_seq     = 0;
-   rc = DEP_tail (f, '-', &x_seq, 0, dtree, x_stamp, FILE_dep);
-   if (x_seq == 0)  fprintf (f, "# no cells in dependency tree\n");
-   else             fprintf (f, "# dependent cells complete, count = %d\n", x_seq);
+   rc = SEQ_file_deps (x_stamp, f);
+   fprintf (f, "# dependent cells complete\n");
    /*---(non-dependency cells)-------------*/
    fprintf (f, "\n\n\n#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
    x_seq     = 0;
    for (i = 0; i < NTAB; ++i) {
       rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, tabs[i].ncol - 1, 0, tabs[i].nrow - 1);
    }
-   if (x_seq == 0)  fprintf (f, "# no independent (non-dependency tree) cells\n");
-   else             fprintf (f, "# independent cells complete, count = %d\n", x_seq);
+   fprintf (f, "# independent cells complete\n");
    /*---(buffer contents)------------------*/
    fprintf (f, "\n\n\n#===[[ REGISTER CELLS, in proper order ]]============================================================================#\n");
    x_seq     = 0;

@@ -443,16 +443,10 @@ CELL__purge        (void)
    tCELL      *next        = NULL;
    char        rc          = 0;
    long        x_stamp     = 0;
-   int         x_seq;
    /*---(disconnect dependent cells)-----*/
    x_stamp = rand ();
-   x_seq     = 0;
-   DEBUG_CELL   yLOG_note    ("calling DEP_tail");
    rc = SEQ_wipe_deps ();
-   DEBUG_CELL   yLOG_value   ("tail rc"   , rc);
-   DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);
-   /*---(non-dependency cells)-----------*/
-   x_seq = 0;
+   DEBUG_CELL   yLOG_value   ("seq rc"    , rc);
    /*---(walk through list)--------------*/
    next = hcell;
    DEBUG_CELL   yLOG_point   ("hcell"     , hcell);

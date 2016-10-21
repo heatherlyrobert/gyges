@@ -133,8 +133,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9j"
-#define     VER_TXT   "switch cell purging to use new sequencing ability"
+#define     VER_NUM   "1.9k"
+#define     VER_TXT   "switch dependent cell file writing to new sequencing ability"
 
 
 
@@ -1211,12 +1211,13 @@ char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, lon
 char      SEQ__seqclear      (void);
 char      SEQ__seqadd        (char a_level, tCELL *a_cell);
 char      SEQ__seqdel        (tCELL *a_cell);
-char      SEQ__recursion     (int a_level, tDEP *a_dep, char a_dir, long a_stamp, char a_calc);
-char      SEQ__driver        (tCELL *a_cell, char a_dir, char a_calc);
+char      SEQ__recursion     (int a_level, tDEP  *a_dep , char a_dir, long a_stamp, char a_action);
+char      SEQ__driver        (             tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE *a_file);
 char      SEQ_calc_up        (tCELL *a_cell);
 char      SEQ_calc_down      (tCELL *a_cell);
 char      SEQ_calc_full      (void);
 char      SEQ_wipe_deps      (void);
+char      SEQ_file_deps      (long a_stamp, FILE *a_file);
 
 
 
@@ -1314,7 +1315,7 @@ char      INPT_cell          (cchar *a_recd);
 char      INPT_tab           (cchar *a_recd);
 char      INPT_main          (char *a_name);
 
-char      FILE_dep           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
+char      FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
 char      FILE_write         (char *a_name);
 char      XML3_read          (char *a_name);
 
