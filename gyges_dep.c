@@ -1636,7 +1636,7 @@ static tCELL      *cheads  [MAX_EXEC];
 static tCELL      *ctails  [MAX_EXEC];
 
 char         /*--> prepare for new calculation -----------[ ------ [ ------ ]-*/
-SEQ__seqclear      (void)
+SEQ__clear         (void)
 {
    /*---(locals)-----------+-----------+-*/
    tCELL      *x_next      = NULL;
@@ -1669,7 +1669,7 @@ SEQ__seqclear      (void)
 }
 
 char         /*--> add a cell to calculation level -------[ ------ [ ------ ]-*/
-SEQ__seqadd        (char a_level, tCELL *a_cell)
+SEQ__add           (char a_level, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1732,7 +1732,7 @@ SEQ__seqadd        (char a_level, tCELL *a_cell)
 }
 
 char         /*--> delete a cell from calulation ---------[ ------ [ ------ ]-*/
-SEQ__seqdel        (tCELL *a_cell)
+SEQ__del           (tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
    char        x_level     = 0;
@@ -1815,15 +1815,15 @@ SEQ__recursion     (
    /*---(calculate)----------------------*/
    if (x_cell->u != a_stamp) {
       DEBUG_CALC   yLOG_note    ("stamp does not match");
-      rc = SEQ__seqadd  (a_level, x_cell);
+      rc = SEQ__add  (a_level, x_cell);
    } else if (a_dir == 'u' && x_cell->clevel < a_level) {
       DEBUG_CALC   yLOG_note    ("up and must move lower");
-      rc = SEQ__seqdel  (x_cell);
-      if (rc == 0)  rc = SEQ__seqadd  (a_level, x_cell);
+      rc = SEQ__del  (x_cell);
+      if (rc == 0)  rc = SEQ__add  (a_level, x_cell);
    } else if (a_dir == 'd' && x_cell->clevel < a_level) {
       DEBUG_CALC   yLOG_note    ("down and must move higher");
-      rc = SEQ__seqdel  (x_cell);
-      if (rc == 0)  rc = SEQ__seqadd  (a_level, x_cell);
+      rc = SEQ__del  (x_cell);
+      if (rc == 0)  rc = SEQ__add  (a_level, x_cell);
    } else {
       DEBUG_CALC   yLOG_note    ("everything is fine");
    }
@@ -1863,6 +1863,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
    int         x_sub       = 0;
    int         x_tot       = 0;
    int         x_off       = 0;
+   int         x_seq       = 0;
    /*---(header)-------------------------*/
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    DEBUG_CALC   yLOG_char    ("a_dir"     , a_dir);
@@ -1879,7 +1880,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
    DEBUG_CALC   yLOG_value   ("nprovide"  , a_cell->nprovide);
    DEBUG_CALC   yLOG_value   ("nrequire"  , a_cell->nrequire);
    /*---(prepare)------------------------*/
-   SEQ__seqclear ();
+   SEQ__clear ();
    /*---(recurse)------------------------*/
    if (a_dir == 'u')  x_next = a_cell->provides;
    else               x_next = a_cell->requires;
@@ -1921,6 +1922,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
             FILE_dep       (a_file, x_tot, x_off, x_cell);
             break;
          case 'r' :  /* write to a register       */
+            REG_deps       (x_cell, a_stamp);
             break;
          case 'p' :  /* print the sequence        */
             break;
@@ -1953,6 +1955,9 @@ SEQ_wipe_deps      (void)          { return SEQ__driver (dtree , 'd', rand() , '
 
 char         /*--> dependency-based writing of file ------[ ------ [ ------ ]-*/
 SEQ_file_deps      (long a_stamp, FILE *a_file)  { return SEQ__driver (dtree , 'd', a_stamp, 'f', a_file); }
+
+char         /*--> dependency-based writing of reg -------[ ------ [ ------ ]-*/
+SEQ_reg_deps       (long a_stamp)                { return SEQ__driver (dtree , 'd', a_stamp, 'r', NULL  ); }
 
 char
 SEQ_calclist       (char *a_list)

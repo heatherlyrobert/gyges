@@ -482,7 +482,7 @@ REG_mode           (int a_major, int a_minor)
 static void  o___MOVING__________o () { return; }
 
 char         /*--> tail recursion function for copy ------[ ------ [ ------ ]-*/
-REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp)
+REG_deps           (tCELL *a_curr, long a_stamp)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -491,7 +491,6 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    /*---(defense)------------------------*/
    --rce;  if (a_curr    == NULL)        return rce;     /* no cell                       */
    --rce;  if (a_curr->s == NULL)        return rce;     /* nothing to write              */
-   --rce;  if (a_curr->u == a_stamp)     return rce;     /* already written               */
    --rce;  if (a_curr->t == '-')         return rce;     /* don't write, recreate on read */
    /*---(check for bounds)---------------*/
    rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);
@@ -511,7 +510,6 @@ REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    /*---(place in buffer)----------------*/
    rc = REG__hook   (x_copy, my.reg_curr, 'd');
    --rce;  if (rc < 0)                   return rce;
-   ++(*a_seq);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -663,7 +661,7 @@ REG_save           (char a_type)
    DEBUG_REGS   yLOG_note    ("DEPENDENT CELLS");
    DEBUG_REGS   yLOG_llong   ("x_stamp"   , x_stamp);
    DEBUG_REGS   yLOG_value   ("x_seq"     , x_seq);
-   rc = DEP_tail (NULL, a_type, &x_seq, 0, dtree, x_stamp, REG_tail);
+   rc = SEQ_reg_deps (x_stamp);
    DEBUG_REGS   yLOG_value   ("x_seq"     , x_seq);
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
    /*---(process independent cells)------*/

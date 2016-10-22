@@ -133,8 +133,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9k"
-#define     VER_TXT   "switch dependent cell file writing to new sequencing ability"
+#define     VER_NUM   "1.9l"
+#define     VER_TXT   "switch register cell copy to new sequencing ability"
 
 
 
@@ -1035,7 +1035,7 @@ char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
-char      REG_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
+char      REG_deps           (tCELL *a_curr, long a_stamp);
 char      REG_save           (char a_type);
 char      REG_copy           (void);
 char      REG_cut            (void);
@@ -1208,9 +1208,11 @@ char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
 char      DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp);
 
-char      SEQ__seqclear      (void);
-char      SEQ__seqadd        (char a_level, tCELL *a_cell);
-char      SEQ__seqdel        (tCELL *a_cell);
+
+/*---(sequencing)------------------------*/
+char      SEQ__clear         (void);
+char      SEQ__add           (char a_level, tCELL *a_cell);
+char      SEQ__del           (tCELL *a_cell);
 char      SEQ__recursion     (int a_level, tDEP  *a_dep , char a_dir, long a_stamp, char a_action);
 char      SEQ__driver        (             tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE *a_file);
 char      SEQ_calc_up        (tCELL *a_cell);
@@ -1218,6 +1220,7 @@ char      SEQ_calc_down      (tCELL *a_cell);
 char      SEQ_calc_full      (void);
 char      SEQ_wipe_deps      (void);
 char      SEQ_file_deps      (long a_stamp, FILE *a_file);
+char      SEQ_reg_deps       (long a_stamp);
 
 
 
