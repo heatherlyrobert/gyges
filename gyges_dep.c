@@ -1568,47 +1568,6 @@ DEP_updatelikes    (tCELL  *a_me)
    return 0;
 }
 
-char         /*--> tail recursion through deptree --------[ ------ [ ------ ]-*/
-DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, char (*a_func) (FILE *r_file, char a_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp))
-{
-   /*---(locals)-------------------------*/
-   tDEP     *n         = NULL;
-   char        rc          = 0;
-   /*---(header)-------------------------*/
-   DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   DEBUG_CALC   yLOG_complex ("focus"     , "level %d, cell %p, stamp %ld", a_level, a_curr, a_stamp);
-   /*---(defenses)-----------------------*/
-   if (a_curr == NULL) {
-      DEBUG_CALC   yLOG_note    ("cell is NULL");
-      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   if (a_curr->u == a_stamp) {
-      DEBUG_CALC   yLOG_note    ("already stamped and visited");
-      DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(current)------------------------*/
-   DEBUG_CALC   yLOG_complex ("detail"    , "label %s, type %c", a_curr->label, a_curr->t);
-   if (a_curr->nrequire == 0) {
-      DEBUG_CALC   yLOG_note    ("cell requires no other cells");
-   } else {
-      DEBUG_CALC   yLOG_value   ("nrequire"  , a_curr->nrequire);
-      /*---(recurse)------------------------*/
-      n = a_curr->requires;
-      while (n != NULL) {
-         rc = DEP_tail (a_file, a_type, a_seq, a_level + 1, n->target, a_stamp, a_func);
-         n = n->next;
-      }
-   }
-   /*---(perform function)---------------*/
-   DEBUG_CALC   yLOG_note    ("clean up cell");
-   rc = a_func (a_file, a_type, a_seq, a_level, a_curr, a_stamp);
-   /*---(complete)-----------------------*/
-   DEBUG_CALC   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 
 
 /*====================------------------------------------====================*/

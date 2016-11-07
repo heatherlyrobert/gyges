@@ -124,6 +124,7 @@
 /*===[[ CUSTOM LIBRARIES ]]===================================================*/
 #include    <yLOG.h>         /* CUSTOM : heatherly program logging            */
 #include    <yRPN.h>         /* CUSTOM : heatherly infix to RPN conversion    */
+#include    <yVIKEYS.h>      /* CUSTOM : heatherly vi_keys standard           */
 #include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
 #include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
 
@@ -133,8 +134,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9l"
-#define     VER_TXT   "switch register cell copy to new sequencing ability"
+#define     VER_NUM   "1.9m"
+#define     VER_TXT   "moved MODE functions to yVIKEYS successfully ;))"
 
 
 
@@ -1057,15 +1058,6 @@ char      REG__setter        (char *a_request, char *a_data);
 char*     REG__getter        (char *a_question, char a_reg);
 
 
-/*---(mode handling)--------*/
-char      MODE_init          (void);
-char      MODE_enter         (char  a_mode);
-char      MODE_return        (void);
-char      MODE_curr          (void);
-char      MODE_prev          (void);
-char      MODE_not           (char  a_mode);
-char      MODE_list          (char *a_list);
-char      MODE_message       (void);
 /*---(major modes)----------*/
 char      MODE_god           (char  a_major, char  a_minor);
 char      MODE_map           (char  a_major, char  a_minor);
@@ -1202,7 +1194,6 @@ char      DEP_provides       /* ------ */  (tCELL  *a_me, char* a_list);
 char      DEP_like           /* ------ */  (tCELL  *a_me, char* a_list);
 char      DEP_updatelikes    (tCELL  *a_me);
 
-char      DEP_tail           (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp, char (*a_func) (FILE *r_file, char r_type, int *r_seq, int r_level, tCELL *r_curr, long r_stamp));
 char      DEP_dump           /* ------ */  (void);
 char      DEP_checkall       /* ------ */  (char a_print);
 char      DEP_check          /* ------ */  (int a_level, tCELL *a_curr, char a_print, long a_stamp);
