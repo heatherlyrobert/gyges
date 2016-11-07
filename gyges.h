@@ -134,8 +134,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9m"
-#define     VER_TXT   "moved MODE functions to yVIKEYS successfully ;))"
+#define     VER_NUM   "1.9n"
+#define     VER_TXT   "added yVIKEYS_ver to debugging"
 
 
 
@@ -809,28 +809,6 @@ tCELL       denada;
 
 
 /*===[ MODES ]================================================================*/
-/*---(mode stack)------------------------*/
-/*---(major modes)-----------------------*/
-#define     MODE_GOD       'G'
-#define     MODE_MAP       'M'
-#define     MODE_VISUAL    'V'
-#define     MODE_SOURCE    'S'
-#define     MODE_INPUT     'I'
-#define     MODE_COMMAND   ':'
-#define     MODE_SEARCH    '/'
-/*---(sub-modes for source)--------------*/
-#define     SMOD_REPLACE   'r'    /* replacing characters in source mode      */
-#define     SMOD_SELECT    's'    /* visual selection of chars in source mode */
-#define     SMOD_TEXTREG   't'    /* text register actions                    */
-/*---(sub-modes for map)-----------------*/
-#define     SMOD_ERROR     'e'    /* error reporting and actions              */
-#define     SMOD_REGISTER  '"'    /* register actions                         */
-#define     SMOD_BUFFER    ','    /* selecting buffers                        */
-#define     SMOD_WANDER    '@'    /* formula creation by pointing             */
-#define     SMOD_FORMAT    '$'    /* content formatting                       */
-#define     SMOD_OBJECT    'o'    /* object formatting                        */
-#define     SMOD_MARK      '\''   /* location and object marking              */
-#define     SMOD_MENUS     '\\'   /* show menu system                         */
 
 
 /*---(display modes)---------------------*/

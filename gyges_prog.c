@@ -89,10 +89,11 @@ PROG_logger        (int a_argc, char *a_argv[])
    /*---(log header)------------------*/
    DEBUG_TOPS   yLOG_info     ("purpose" , "light, clean, vim-ish, technical, and wicked spreadsheet");
    DEBUG_TOPS   yLOG_info     ("namesake", "ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant");
-   DEBUG_TOPS   yLOG_info     ("gyges"   , PROG_version   ());
-   DEBUG_TOPS   yLOG_info     ("ySTR"    , ySTR_version   ());
-   DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOG_version   ());
-   DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version   ());
+   DEBUG_TOPS   yLOG_info     ("gyges"   , PROG_version    ());
+   DEBUG_TOPS   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
+   DEBUG_TOPS   yLOG_info     ("ySTR"    , ySTR_version    ());
+   DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOG_version    ());
+   DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version    ());
    /*---(complete)-----------------------*/
    return 0;
 }

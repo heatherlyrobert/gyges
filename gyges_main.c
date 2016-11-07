@@ -37,7 +37,7 @@ main (int argc, char *argv[])
    MOVE_vert ('r');
    MOVE_horz ('r');
    sch = ' ';
-   MODE_message (my.message);
+   MODE_message (my.message, command);
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
@@ -85,7 +85,7 @@ main (int argc, char *argv[])
       else               { sch = ' ';  sta_error = 'y'; }
       /*---(setup status line)-----------*/
       if   (x_savemode != MODE_curr() || MODE_curr() == MODE_COMMAND) {
-         MODE_message (my.message);
+         MODE_message (my.message, command);
       }
       /*---(done)------------------------*/
    }
