@@ -432,15 +432,15 @@ MODE_map           (char a_major, char a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
-   --rce;  if (MODE_not (MODE_MAP    )) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
+   --rce;  if (yVIKEYS_mode_not (MODE_MAP    )) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(major mode changes)-------------*/
    if (a_minor == K_RETURN) {
-      MODE_enter  (MODE_SOURCE);
+      yVIKEYS_mode_enter  (MODE_SOURCE);
       EDIT_pos    ('0');
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
@@ -461,48 +461,48 @@ MODE_map           (char a_major, char a_minor)
       /*---(mode switch)-----------------*/
       switch (a_minor) {
       case 'v'      :
-         MODE_enter  (MODE_VISUAL);
+         yVIKEYS_mode_enter  (MODE_VISUAL);
          VISU_start  (CTAB, CCOL, CROW, VISU_FROM);
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case ':'      :
          strncpy     (command , ":", MAX_STR);
-         MODE_enter  (MODE_COMMAND);
+         yVIKEYS_mode_enter  (MODE_COMMAND);
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case 's'      :
          EDIT_start  ("");
-         MODE_enter  (MODE_INPUT  );
+         yVIKEYS_mode_enter  (MODE_INPUT  );
          MODE_input ('m', 'i');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 'i';
          break;
       case '='      :
          EDIT_start  ("=");
-         MODE_enter  (MODE_INPUT  );
+         yVIKEYS_mode_enter  (MODE_INPUT  );
          MODE_input ('m', 'a');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 'a';
          break;
       case '#'      :
          EDIT_start  ("#");
-         MODE_enter  (MODE_INPUT  );
+         yVIKEYS_mode_enter  (MODE_INPUT  );
          MODE_input ('m', 'a');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 'a';
          break;
       case '+'      :
          EDIT_start  ("+");
-         MODE_enter  (MODE_INPUT  );
+         yVIKEYS_mode_enter  (MODE_INPUT  );
          MODE_input ('m', 'a');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 'a';
          break;
       case '-'      :
          EDIT_start  ("-");
-         MODE_enter  (MODE_INPUT  );
+         yVIKEYS_mode_enter  (MODE_INPUT  );
          MODE_input ('m', 'a');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 'a';
@@ -512,30 +512,30 @@ MODE_map           (char a_major, char a_minor)
       switch (a_minor) {
       case '\\'     :
          DEBUG_USER   yLOG_note    ("selected menu mode");
-         MODE_enter  (SMOD_MENUS  );
+         yVIKEYS_mode_enter  (SMOD_MENUS  );
          my.menu = MENU_ROOT;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
-      case 'F'      : MODE_enter  (SMOD_FORMAT  );
+      case 'F'      : yVIKEYS_mode_enter  (SMOD_FORMAT  );
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return 0;
                       break;
-      case ','      : MODE_enter  (SMOD_BUFFER  );
+      case ','      : yVIKEYS_mode_enter  (SMOD_BUFFER  );
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return 0;
                       break;
-      case '"'      : MODE_enter  (SMOD_REGISTER);
+      case '"'      : yVIKEYS_mode_enter  (SMOD_REGISTER);
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return '"';  /* make sure double quote goes in prev char */
                       break;
       case 'm'      : 
-      case '\''     : MODE_enter  (SMOD_MARK    );
+      case '\''     : yVIKEYS_mode_enter  (SMOD_MARK    );
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return '\'';  /* make sure single quote goes in prev char */
                       break;
       case 'E'      :
-                      MODE_enter  (SMOD_ERROR   );
+                      yVIKEYS_mode_enter  (SMOD_ERROR   );
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return SMOD_ERROR;  /* make sure mode indicator goes also       */
                       break;
@@ -707,10 +707,10 @@ SMOD_buffer   (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    /*---(defenses)-----------------------*/
-   --rce;  if (MODE_not (SMOD_BUFFER))             return rce;
+   --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER))             return rce;
    /*---(check for control keys)---------*/
    BUF_switch   (a_minor);
-   MODE_return  ();
+   yVIKEYS_mode_exit  ();
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -727,8 +727,8 @@ SMOD_menus         (char a_major, char a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
-   --rce;  if (MODE_not (SMOD_MENUS  )) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
+   --rce;  if (yVIKEYS_mode_not (SMOD_MENUS  )) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -737,7 +737,7 @@ SMOD_menus         (char a_major, char a_minor)
    if (a_minor == 27) {
       DEBUG_USER   yLOG_note    ("escape, choose nothing");
       my.menu = ' ';
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -747,11 +747,11 @@ SMOD_menus         (char a_major, char a_minor)
    } else {
       DEBUG_USER   yLOG_note    ("execute option");
       if (a_major == 'F') {
-         MODE_enter  (SMOD_FORMAT);
+         yVIKEYS_mode_enter  (SMOD_FORMAT);
          SMOD_format (' ', a_minor);
       }
       my.menu = ' ';
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -785,8 +785,8 @@ MODE_source   (char a_major, char a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr());
-   --rce;  if (MODE_not (MODE_SOURCE)) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
+   --rce;  if (yVIKEYS_mode_not (MODE_SOURCE)) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -804,7 +804,7 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
          CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
          EDIT_pos     ('r');
-         MODE_return  ();
+         yVIKEYS_mode_exit  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;   /* escape  */
          break;
@@ -814,30 +814,30 @@ MODE_source   (char a_major, char a_minor)
             strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
          }
          EDIT_pos     ('r');
-         MODE_return  ();
+         yVIKEYS_mode_exit  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case  'r' : case  'R' :
          DEBUG_USER   yLOG_note    ("rR keys for replace sub-mode");
-         MODE_enter   (SMOD_REPLACE);
+         yVIKEYS_mode_enter   (SMOD_REPLACE);
          SMOD_replace ('m', ' ');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;
          break;
       case  'v' :
          DEBUG_USER   yLOG_note    ("v key for text select sub-mode");
-         MODE_enter   (SMOD_SELECT );
+         yVIKEYS_mode_enter   (SMOD_SELECT );
          SELC_mode    ('m', ' ');
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case '"'  :
-         MODE_enter   (SMOD_TEXTREG );
+         yVIKEYS_mode_enter   (SMOD_TEXTREG );
          return a_minor;  /* make sure double quote goes in prev char */
          break;
       case 'E'  :
-         MODE_enter   (SMOD_ERROR   );
+         yVIKEYS_mode_enter   (SMOD_ERROR   );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return SMOD_ERROR;  /* make sure mode indicator goes also       */
          break;
@@ -900,7 +900,7 @@ MODE_source   (char a_major, char a_minor)
                  EDIT_done ();
                  break;
       case 'S' : EDIT_start  ("");
-                 MODE_enter  (MODE_INPUT);
+                 yVIKEYS_mode_enter  (MODE_INPUT);
                  MODE_input ('m', 'i');
                  return 'i';
                  break;
@@ -908,19 +908,19 @@ MODE_source   (char a_major, char a_minor)
       /*---(going to input)--------------*/
       switch (a_minor) {
       case 'I' : EDIT_pos   ('0');
-      case 'i' : MODE_enter  (MODE_INPUT);
+      case 'i' : yVIKEYS_mode_enter  (MODE_INPUT);
                  MODE_input ('m', tolower (a_minor));
                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
                  return tolower (a_minor);
                  break;
       case 'A' : EDIT_pos   ('$');
-      case 'a' : MODE_enter  (MODE_INPUT);
+      case 'a' : yVIKEYS_mode_enter  (MODE_INPUT);
                  MODE_input ('m', tolower (a_minor));
                  DEBUG_USER   yLOG_exit    (__FUNCTION__);
                  return tolower (a_minor);
                  break;
-                 /*> case '.' : MODE_enter (SMOD_WANDER); wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
-                  *> case ':' : MODE_enter (SMOD_WANDER); wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <*/
+                 /*> case '.' : yVIKEYS_mode_enter (SMOD_WANDER); wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
+                  *> case ':' : yVIKEYS_mode_enter (SMOD_WANDER); wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <*/
       }
       /*---(multikey)--------------------*/
    } else if (a_major == 'g') {
@@ -963,8 +963,8 @@ SMOD_replace  (char a_major, char a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
-   --rce;  if (MODE_not (SMOD_REPLACE)) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
+   --rce;  if (yVIKEYS_mode_not (SMOD_REPLACE)) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -988,7 +988,7 @@ SMOD_replace  (char a_major, char a_minor)
       }
       x_append = '-';
       EDIT_done   ();
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -1028,7 +1028,7 @@ SMOD_replace  (char a_major, char a_minor)
       DEBUG_USER   yLOG_note    ("replace the marked character");
       g_contents [my.cpos] = a_minor;
       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
@@ -1069,8 +1069,8 @@ SMOD_error         (char a_major, char a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr ());
-   /*> --rce;  if (MODE_not (SMOD_ERROR)) {                                           <* 
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
+   /*> --rce;  if (yVIKEYS_mode_not (SMOD_ERROR)) {                                           <* 
     *>    DEBUG_USER   yLOG_note    ("not the correct mode");                         <* 
     *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
     *>    return rce;                                                                 <* 
@@ -1078,7 +1078,7 @@ SMOD_error         (char a_major, char a_minor)
    /*---(mode changes)-------------------*/
    /*> if (a_minor == 27 || a_minor == 10) {                                          <* 
     *>    DEBUG_USER   yLOG_note    ("escape/return, return to previous mode");       <* 
-    *>    MODE_return ();                                                             <* 
+    *>    yVIKEYS_mode_exit ();                                                             <* 
     *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
     *>    return 0;                                                                   <* 
     *> }                                                                              <*/
@@ -1089,7 +1089,7 @@ SMOD_error         (char a_major, char a_minor)
       return a_major;
    }
    /*---(complete)-----------------------*/
-   MODE_return ();
+   yVIKEYS_mode_exit ();
 
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
 
@@ -1115,8 +1115,8 @@ MODE_input         (char  a_major, char  a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr());
-   --rce;  if (MODE_not (MODE_INPUT )) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
+   --rce;  if (yVIKEYS_mode_not (MODE_INPUT )) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -1147,10 +1147,10 @@ MODE_input         (char  a_major, char  a_minor)
       for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
       if (a_major == 'a')  --(my.cpos);
       EDIT_done   ();
-      if (a_minor == 10 && MODE_prev() == MODE_MAP) {
+      if (a_minor == 10 && yVIKEYS_mode_prev() == MODE_MAP) {
          CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
       }
-      if (a_minor == 27 && MODE_prev() == MODE_MAP) {
+      if (a_minor == 27 && yVIKEYS_mode_prev() == MODE_MAP) {
          if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
             strlcpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
          } else {
@@ -1158,7 +1158,7 @@ MODE_input         (char  a_major, char  a_minor)
          }
       }
       EDIT_pos  ('r');
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -1203,7 +1203,7 @@ SMOD_format        (char a_major, char a_minor)
    switch (a_minor) {
    case   10 :
    case   27 : VISU_clear  ();
-               MODE_return ();
+               yVIKEYS_mode_exit ();
                return 0;   /* escape  */
    }
    /*---(check for alignment prefixes)----------*/
@@ -1433,10 +1433,10 @@ MODE_command       (char a_major, char a_minor)
    /*---(check for control keys)---------*/
    x_len = strlen (command);
    switch (a_minor) {
-   case   27 : MODE_return ();
+   case   27 : yVIKEYS_mode_exit ();
                return 0;
    case   10 : cmd_exec (command);
-               MODE_return ();
+               yVIKEYS_mode_exit ();
                return 0;   /* return  */
    }
    /*---(check for backspace)------------*/
@@ -1465,7 +1465,7 @@ SMOD_wander        (char a_prev, char a_curr)
    char    post = ' ';
    char    rce  = -10;
    /*---(defenses)-----------------------*/
-   --rce;  if (MODE_not (SMOD_WANDER )) {
+   --rce;  if (yVIKEYS_mode_not (SMOD_WANDER )) {
       return rce;
    }
    /*---(check for control keys)---------*/
@@ -1492,7 +1492,7 @@ SMOD_wander        (char a_prev, char a_curr)
                   g_contents[++my.npos] = '\0';
                }
                my.cpos = my.npos;
-               MODE_return ();
+               yVIKEYS_mode_exit ();
                return  0;   /* escape -- back to source mode */
    }
    /*---(basic movement)-----------*/
@@ -1542,7 +1542,7 @@ KEYS__unit         (char *a_question)
    strcpy  (unit_answer, "keys             : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "mode_stack"   )  == 0) {
-      MODE_list (x_list);
+      yVIKEYS_mode_list (x_list);
       snprintf (unit_answer, LEN_TEXT, "keys mode stack  : %s", x_list);
    }
    /*---(complete)-----------------------*/

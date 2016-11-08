@@ -1049,12 +1049,12 @@ VISU_mode          (char a_major, char a_minor)
    char        rce         = -10;
    char        rc          =   0;
    /*---(defenses)-----------------------*/
-   --rce;  if (MODE_not (MODE_VISUAL )) {
+   --rce;  if (yVIKEYS_mode_not (MODE_VISUAL )) {
       return rce;
    }
    if (a_minor == K_ESCAPE)  {
       VISU_clear  ();
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       return  0;
    }
    /*---(check for simple keys-----------*/
@@ -1063,14 +1063,14 @@ VISU_mode          (char a_major, char a_minor)
       if (strchr ("gze"   , a_minor) != 0)       return a_minor;
       /*---(submodes)--------------------*/
       switch (a_minor) {
-      case '"'      : MODE_enter  (SMOD_REGISTER);
+      case '"'      : yVIKEYS_mode_enter  (SMOD_REGISTER);
                       return a_minor;  /* make sure double quote goes in prev char */
                       break;
-      case 'F'      : MODE_enter  (SMOD_FORMAT);
+      case 'F'      : yVIKEYS_mode_enter  (SMOD_FORMAT);
                       return 0;
                       break;
       case ':'      : strncpy (command , ":", MAX_STR);
-                      MODE_enter  (MODE_COMMAND);
+                      yVIKEYS_mode_enter  (MODE_COMMAND);
                       return 0;
                       break;
       }
@@ -1125,8 +1125,8 @@ char      SELC_mode          (char  a_major, char  a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr());
-   --rce;  if (MODE_not (SMOD_SELECT)) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
+   --rce;  if (yVIKEYS_mode_not (SMOD_SELECT)) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -1135,7 +1135,7 @@ char      SELC_mode          (char  a_major, char  a_minor)
    if (a_minor == K_ESCAPE)  {
       SELC_clear ();
       DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
@@ -1150,7 +1150,7 @@ char      SELC_mode          (char  a_major, char  a_minor)
       /*---(submodes)--------------------*/
       switch (a_minor) {
       case '"'      : 
-         MODE_enter (SMOD_TEXTREG );
+         yVIKEYS_mode_enter (SMOD_TEXTREG );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;  /* make sure double quote goes in prev char */
          break;
@@ -1158,33 +1158,33 @@ char      SELC_mode          (char  a_major, char  a_minor)
          DEBUG_USER   yLOG_note    ("yank selection text");
          TREG_copy   ();
          SELC_clear  ();
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       case  'x' : case  'X' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_clear  ();
          SELC_clear  ();
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       case  'd' : case  'D' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
          SELC_clear  ();
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       case  'p' :
          DEBUG_USER   yLOG_note    ("paste after selection text");
          TREG_paste  ('>');
          SELC_clear  ();
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       case  'P' :
          DEBUG_USER   yLOG_note    ("paste before selection text");
          TREG_paste  ('<');
          SELC_clear  ();
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       }
       /*---(actions)---------------------*/
@@ -1223,11 +1223,11 @@ MARK_mode          (char a_major, char a_minor)
    char        rce         = -10;
    char        rc          =   0;
    /*---(defenses)-----------------------*/
-   --rce;  if (MODE_not (SMOD_MARK   )) {
+   --rce;  if (yVIKEYS_mode_not (SMOD_MARK   )) {
       return rce;
    }
    if (a_minor == K_ESCAPE)  {
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       return  0;
    }
    /*---(check for setting)--------------*/
@@ -1237,7 +1237,7 @@ MARK_mode          (char a_major, char a_minor)
                  break;
       case '#' : rc = MARK_which ();
                  if (rc < 0) {
-                    MODE_return ();
+                    yVIKEYS_mode_exit ();
                     return rce;
                  }
                  MARK_unset (rc);
@@ -1253,7 +1253,7 @@ MARK_mode          (char a_major, char a_minor)
                  break;
       default  : rc = MARK_set (a_minor);
                  if (rc < 0) {
-                    MODE_return ();
+                    yVIKEYS_mode_exit ();
                     return rce;
                  }
                  break;
@@ -1263,12 +1263,12 @@ MARK_mode          (char a_major, char a_minor)
    --rce;  if (a_major == '\'') {
       rc = MARK_return (a_minor);
       if (rc < 0)  {
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          return rce;
       }
    }
    /*---(failure)------------------------*/
-   MODE_return ();
+   yVIKEYS_mode_exit ();
    return 0;
 }
 

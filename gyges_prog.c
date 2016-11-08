@@ -104,8 +104,8 @@ PROG_init          (void)
    hist_active = '-';
    nhist       =  0;
    chist       = -1;
-   MODE_init   ();
-   MODE_enter  (MODE_MAP);
+   yVIKEYS_mode_init   ();
+   yVIKEYS_mode_enter  (MODE_MAP);
    my.scrn     = SCRN_DEBUG;
    my.info_win = '-';
    my.menu     = ' ';
@@ -444,7 +444,7 @@ unit_accessor(char *a_question, void *a_thing)
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
       snprintf(unit_answer, LEN_TEXT, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
    } else if (strcmp(a_question, "mode")           == 0) {
-      snprintf(unit_answer, LEN_TEXT, "Mode             : %c", MODE_curr ());
+      snprintf(unit_answer, LEN_TEXT, "Mode             : %c", yVIKEYS_mode_curr ());
    }
    /*---(cell focus)---------------------*/
    else if   (strcmp(a_question, "cell_where")     == 0) {

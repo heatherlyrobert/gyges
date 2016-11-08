@@ -442,7 +442,7 @@ CURS_formula       (tCELL *a_curr)
    switch (my.scrn) {
    case SCRN_DEBUG :
       /*---(1st 12 chars)---*/
-      mvprintw (row_formula,  0, "%c  %c%c %-6.6s", MODE_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
+      mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
       /*---(2nd 13 chars)---*/
       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "   , tab->cols[CCOL].w, a_curr->t, a_curr->f, a_curr->d, a_curr->a);
       else                 mvprintw (row_formula, 12, " %02d                []", tab->cols[CCOL].w);
@@ -472,7 +472,7 @@ CURS_formula       (tCELL *a_curr)
    s_space  = my.apos;
    /*---(set color)------------------------*/
    attrset (0);
-   switch (MODE_curr()) {
+   switch (yVIKEYS_mode_curr()) {
    case MODE_SOURCE  : attron (S_COLOR_SOURCE );  break;
    case MODE_INPUT   : attron (S_COLOR_INPUT  );  break;
    case SMOD_SELECT  : attron (S_COLOR_SOURCE );  break;
@@ -490,7 +490,7 @@ CURS_formula       (tCELL *a_curr)
    /*---(highlight off)------------------*/
    attrset (0);
    /*---(show selection on top)------------*/
-   if ((MODE_curr() == SMOD_SELECT || MODE_curr() == SMOD_TEXTREG) && SELC_islive) {
+   if ((yVIKEYS_mode_curr() == SMOD_SELECT || yVIKEYS_mode_curr() == SMOD_TEXTREG) && SELC_islive) {
       x_beg = SELC_from ();
       x_end = SELC_to   ();
       if (x_beg < my.epos || x_end > my.bpos) {
@@ -557,7 +557,7 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, "marks (%c,%c,%c,%c) %s", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, my.mark_plus);
       break;
    case 'M' :
-      MODE_list (msg);
+      yVIKEYS_mode_list (msg);
       break;
    case 'E' :
       snprintf (msg, 500, "errors (%3d)", nerror);
@@ -1040,7 +1040,7 @@ CURS_main          (void)
       move ( 4, 10);
    else if (my.menu     != MENU_NONE) 
       move ( 2,  1);
-   else if (MODE_curr() == MODE_SOURCE || MODE_curr() == MODE_INPUT || MODE_curr() == SMOD_REPLACE || MODE_curr() == SMOD_SELECT)
+   else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);

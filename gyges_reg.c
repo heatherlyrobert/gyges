@@ -363,11 +363,11 @@ REG_mode           (int a_major, int a_minor)
    char        rce         = -10;
    int         x_buf       =  -1;
    /*---(defenses)-----------------------*/
-   --rce;  if (MODE_not (SMOD_REGISTER)) {
+   --rce;  if (yVIKEYS_mode_not (SMOD_REGISTER)) {
       return rce;
    }
    if (a_minor == K_ESCAPE)  {
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       return  0;
    }
    /*---(check for control keys)---------*/
@@ -378,12 +378,12 @@ REG_mode           (int a_major, int a_minor)
       } else if (a_minor == '?') {
          my.info_win = '"';
          REG_set ('"');
-         /*> MODE_return ();                                                          <*/
+         /*> yVIKEYS_mode_exit ();                                                          <*/
          return  0;
       } else if (a_minor == '!') {
          sta_type = '"';
          REG_set ('"');
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          return  0;
       }
       return rce;
@@ -418,12 +418,12 @@ REG_mode           (int a_major, int a_minor)
                   REG_valuesin ('-');
                   break;
       default   : REG_set ('"');
-                  MODE_return ();
+                  yVIKEYS_mode_exit ();
                   return rce;
                   break;
       }
       REG_set ('"');
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       return 0;
    }
    --rce;  if (a_major == ' ') {
@@ -460,18 +460,18 @@ REG_mode           (int a_major, int a_minor)
                   CROW = s_reg[x_buf].begr;
                   break;
       default   : REG_set ('"');
-                  MODE_return ();
+                  yVIKEYS_mode_exit ();
                   return rce;
                   break;
       }
       REG_set ('"');
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       return 0;
    }
    /*---(failure)------------------------*/
    --rce;
    REG_set ('"');
-   MODE_return ();
+   yVIKEYS_mode_exit ();
    return rce;
 }
 
@@ -1446,8 +1446,8 @@ TREG_mode          (int a_major, int a_minor)
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , MODE_curr());
-   --rce;  if (MODE_not (SMOD_TEXTREG )) {
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
+   --rce;  if (yVIKEYS_mode_not (SMOD_TEXTREG )) {
       DEBUG_USER   yLOG_note    ("not the correct mode");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -1455,7 +1455,7 @@ TREG_mode          (int a_major, int a_minor)
    /*---(escape)-------------------------*/
    if (a_minor == K_ESCAPE)  {
       DEBUG_USER   yLOG_note    ("escape and return to previous mode");
-      MODE_return ();
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
@@ -1481,7 +1481,7 @@ TREG_mode          (int a_major, int a_minor)
       case  '!' :
          sta_type     = 't';
          s_treg_watch = s_treg_curr;
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       case  '#' :
          DEBUG_USER   yLOG_note    ("wipe text register");
@@ -1491,65 +1491,65 @@ TREG_mode          (int a_major, int a_minor)
          s_textreg [x_index].epos  = -1;
          s_textreg [x_index].len   =  0;
          strlcpy (s_textreg [x_index].data , "", MAX_STR);
-         MODE_return ();
+         yVIKEYS_mode_exit ();
          break;
       case  'y' : case  'Y' :
          DEBUG_USER   yLOG_note    ("yank selection text");
          TREG_copy   ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'x' : case  'X' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_clear  ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'd' : case  'D' :
          DEBUG_USER   yLOG_note    ("delete selection text");
          TREG_copy   ();
          TREG_delete ();
          EDIT_done ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'r' : case  'R' :
          DEBUG_USER   yLOG_note    ("replace selection text");
          TREG_replace();
          EDIT_done ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'p' :
          DEBUG_USER   yLOG_note    ("paste after selection text");
          TREG_paste  ('>');
          EDIT_done ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'P' :
          DEBUG_USER   yLOG_note    ("paste before selection text");
          TREG_paste  ('<');
          EDIT_done ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'g' :
          DEBUG_USER   yLOG_note    ("go to beginning selection position");
          x_index = REG__reg2index (s_treg_curr);
          my.cpos = s_textreg [x_index].bpos;
          EDIT_done ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       case  'G' :
          DEBUG_USER   yLOG_note    ("go to ending selection position");
          x_index = REG__reg2index (s_treg_curr);
          my.cpos = s_textreg [x_index].epos;
          EDIT_done ();
-         MODE_return ();
-         if (MODE_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
+         yVIKEYS_mode_exit ();
+         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', K_ESCAPE);
          break;
       }
    }

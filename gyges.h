@@ -134,8 +134,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9n"
-#define     VER_TXT   "added yVIKEYS_ver to debugging"
+#define     VER_NUM   "1.9o"
+#define     VER_TXT   "changed yVIKEYS mode functions to new names"
 
 
 
