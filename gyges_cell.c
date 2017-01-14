@@ -497,11 +497,14 @@ CELL_init          (void)
    tcell  = NULL;
    NCEL   = 0;
    /*---(prepare validatations)----------*/
+   DEBUG_CELL   yLOG_note    ("concatinate format types");
    strcpy (sv_formats, sv_commas);
    strcat (sv_formats, sv_nums);
    strcat (sv_formats, sv_special);
    strcat (sv_formats, sv_times);
    strcat (sv_formats, sv_fillers);
+   DEBUG_CELL   yLOG_info    ("sv_formats", sv_formats);
+   DEBUG_CELL   yLOG_note    ("clear validation types");
    strlcpy (G_CELL_ALL , "", 20);
    strlcpy (G_CELL_RPN , "", 20);
    strlcpy (G_CELL_CALC, "", 20);
@@ -511,16 +514,17 @@ CELL_init          (void)
    strlcpy (G_CELL_ERR , "", 20);
    strlcpy (G_CELL_FPRE, "", 20);
    /*---(complete info table)------------*/
+   DEBUG_CELL   yLOG_note    ("build cell validation types");
    --rce;
    for (i = 0; i < MAX_CELLTYPE; ++i) {
-      DEBUG_CELL   yLOG_value   ("ROUND"     , i);
-      DEBUG_CELL   yLOG_char    ("type"      , s_cell_info [i].type);
+      DEBUG_CELL_M yLOG_value   ("ENTRY"     , i);
+      DEBUG_CELL_M yLOG_char    ("type"      , s_cell_info [i].type);
       /*---(check for end)---------------*/
       if (s_cell_info [i].type == CTYPE_BLANK)  break;
       /*---(add to lists)----------------*/
       sprintf (t, "%c", s_cell_info [i].type);
-      DEBUG_CELL   yLOG_info    ("str type"  , t);
-      DEBUG_CELL   yLOG_char    ("rpn flag"  , s_cell_info [i].rpn);
+      DEBUG_CELL_M yLOG_info    ("str type"  , t);
+      DEBUG_CELL_M yLOG_char    ("rpn flag"  , s_cell_info [i].rpn);
       strcat (G_CELL_ALL , t);
       if (s_cell_info [i].calc    == 'y')  strcat (G_CELL_CALC, t);
       if (s_cell_info [i].deps    == 'y')  strcat (G_CELL_DEPS, t);

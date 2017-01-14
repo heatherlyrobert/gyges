@@ -134,8 +134,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "1.9o"
-#define     VER_TXT   "changed yVIKEYS mode functions to new names"
+#define     VER_NUM   "2.0a"
+#define     VER_TXT   "added full MAS options to debugging, and omniscient"
 
 
 
@@ -218,30 +218,48 @@ struct cDEBUG
    char        summ;                   /* s) statistics and analytical output */
    /*---(startup/shutdown)---------------*/
    char        args;                   /* a) command line args and urgents    */
+   char        args_mas;               /* A) command line args and urgents    */
    char        conf;                   /* c) configuration handling           */
+   char        conf_mas;               /* C) configuration handling           */
    char        prog;                   /* p) program setup and teardown       */
+   char        prog_mas;               /* P) program setup and teardown       */
    /*---(file processing)----------------*/
    char        inpt;                   /* i) text and data file input         */
+   char        inpt_mas;               /* I) text/data file input   (mas/more)*/
    char        outp;                   /* o) text and data file output        */
+   char        outp_mas;               /* O) text/data file output  (mas/more)*/
    /*---(event handling)-----------------*/
    char        loop;                   /* l) main program event loop          */
+   char        loop_mas;               /* L) main program event loop          */
    char        user;                   /* u) user input and handling          */
-   char        apis;                   /* i) interprocess communication       */
+   char        user_mas;               /* U) user input and handling          */
+   char        apis;                   /* z) interprocess communication       */
+   char        apis_mas;               /* Z) interprocess communication       */
    char        sign;                   /* x) os signal handling               */
+   char        sign_mas;               /* X) os signal handling               */
    char        scrp;                   /* b) scripts and batch operations     */
+   char        scrp_mas;               /* B) scripts and batch operations     */
    char        hist;                   /* h) history, undo, redo              */
+   char        hist_mas;               /* H) history, undo, redo              */
    /*---(program)------------------------*/
    char        graf;                   /* g) grahpics, drawing, and display   */
+   char        graf_mas;               /* G) grahpics, drawing, and display   */
    char        data;                   /* d) complex data structure handling  */
+   char        data_mas;               /* D) complex data structure handling  */
    char        envi;                   /* e) environment processing           */
+   char        envi_mas;               /* E) environment processing (mas/more)*/
    /*---(specific)-----------------------*/
    char        s;
    char        sylk;
    char        rpn;
    char        calc;
+   char        calc_mas;
    char        exec;
+   char        exec_mas;
    char        cell;
+   char        cell_mas;
    char        deps;
+   char        deps_mas;
    char        gnome;
    char        dtree;          /* displays the dependency tree and exits      */
    char        loc;
@@ -253,35 +271,56 @@ struct cDEBUG
 };
 tDEBUG      debug;
 
+/*---(standard)--------------------------*/
 #define     DEBUG_TOPS          if (debug.tops      == 'y')
 #define     DEBUG_SUMM          if (debug.summ      == 'y')
 #define     DEBUG_ARGS          if (debug.args      == 'y')
 #define     DEBUG_CONF          if (debug.conf      == 'y')
+#define     DEBUG_CONF_M        if (debug.conf_mas  == 'y')
 #define     DEBUG_PROG          if (debug.prog      == 'y')
+#define     DEBUG_PROG_M        if (debug.prog_mas  == 'y')
 #define     DEBUG_INPT          if (debug.inpt      == 'y')
+#define     DEBUG_INPT_M        if (debug.inpt_mas  == 'y')
 #define     DEBUG_OUTP          if (debug.outp      == 'y')
+#define     DEBUG_OUTP_M        if (debug.outp_mas  == 'y')
 #define     DEBUG_LOOP          if (debug.loop      == 'y')
+#define     DEBUG_LOOP_M        if (debug.loop_mas  == 'y')
 #define     DEBUG_USER          if (debug.user      == 'y')
+#define     DEBUG_USER_M        if (debug.user_mas  == 'y')
 #define     DEBUG_APIS          if (debug.apis      == 'y')
+#define     DEBUG_APIS_M        if (debug.apis_mas  == 'y')
 #define     DEBUG_SIGN          if (debug.sign      == 'y')
+#define     DEBUG_SIGN_M        if (debug.sign_mas  == 'y')
 #define     DEBUG_SCRP          if (debug.scrp      == 'y')
+#define     DEBUG_SCRP_M        if (debug.scrp_mas  == 'y')
 #define     DEBUG_HIST          if (debug.hist      == 'y')
+#define     DEBUG_HIST_M        if (debug.hist_mas  == 'y')
 #define     DEBUG_GRAF          if (debug.graf      == 'y')
+#define     DEBUG_GRAF_M        if (debug.graf_mas  == 'y')
 #define     DEBUG_DATA          if (debug.data      == 'y')
+#define     DEBUG_DATA_M        if (debug.data_mas  == 'y')
 #define     DEBUG_ENVI          if (debug.envi      == 'y')
+#define     DEBUG_ENVI_M        if (debug.envi_mas  == 'y')
+/*---(dependencies)----------------------*/
+#define     DEBUG_DEPS          if (debug.deps      == 'y')
+#define     DEBUG_DEPS_M        if (debug.deps_mas  == 'y')
+#define     DEBUG_GNOME         if (debug.gnome     == 'y')
+/*---(cells)-----------------------------*/
+#define     DEBUG_LOC           if (debug.loc       == 'y')
+#define     DEBUG_CELL          if (debug.cell      == 'y')
+#define     DEBUG_CELL_M        if (debug.cell_mas  == 'y')
+/*---(formulas)--------------------------*/
 #define     DEBUG_S             if (debug.s         == 'y')
 #define     DEBUG_RPN           if (debug.rpn       == 'y')
 #define     DEBUG_CALC          if (debug.calc      == 'y')
+#define     DEBUG_CALC_M        if (debug.calc_mas  == 'y')
 #define     DEBUG_EXEC          if (debug.exec      == 'y')
-#define     DEBUG_CELL          if (debug.cell      == 'y')
-#define     DEBUG_DEPS          if (debug.deps      == 'y')
-#define     DEBUG_GNOME         if (debug.gnome     == 'y')
-#define     DEBUG_LOC           if (debug.loc       == 'y')
-/*---(gyges_visu.c)----------------------*/
+#define     DEBUG_EXEC_M        if (debug.exec_mas  == 'y')
+/*---(visual)----------------------------*/
 #define     DEBUG_VISU          if (debug.visu      == 'y')
 #define     DEBUG_SSEL          if (debug.ssel      == 'y')
 #define     DEBUG_MARK          if (debug.mark      == 'y')
-/*---(gyges_reg.c)-----------------------*/
+/*---(registers)-------------------------*/
 #define     DEBUG_REGS          if (debug.regs      == 'y')
 /*---(ySTR)------------------------------*/
 #define     DEBUG_YSTR          if (debug.ystr      == 'y')
