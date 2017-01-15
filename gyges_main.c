@@ -31,7 +31,13 @@ main (int argc, char *argv[])
       PROG_end     ();
       exit (-1);
    }
+   /*---(file and screen)----------------*/
    if (strcmp (my.f_name, FILE_BLANK) != 0)  INPT_main (my.f_title);
+   KEYS_basics (' ', 'r');
+   KEYS_bcol (BCOL);
+   CURS_colhead();
+   KEYS_brow (BROW);
+   CURS_rowhead();
    hist_active = 'y';
    /*---(process)------------------------*/
    MOVE_vert ('r');

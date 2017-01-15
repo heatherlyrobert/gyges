@@ -629,6 +629,8 @@ CURS_colhead       (void)
       }
    }
    /*---(process oolumns)----------------*/
+   KEYS_pcol ();
+   KEYS_prow ();
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/
