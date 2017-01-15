@@ -21,8 +21,8 @@ INCS    = -I/usr/local/include
 #------   (0)-------------- (1)-------------- (2)-------------- (3)-------------- (4)-------------- (5)-------------- (6)-------------- (7)-------------- (8)-------------- (9)--------------
 LINK    = gcc
 LIBDIR  = -L/usr/local/lib
-LIBS    = ${LIBDIR}         -lncurses         -lyVIKEYS         -lySTR            -lyRPN            -lm
-LIBD    = ${LIBS}           -lyLOG
+LIBS    = ${LIBDIR}         -lncurses         -lyVIKEYS         -lySTR            -lyURG            -lyRPN            -lm
+LIBD    = ${LIBDIR}         -lncurses         -lyVIKEYS         -lySTR_debug      -lyURG_debug      -lyRPN            -lm               -lyLOG
 LIBU    = ${LIBD}           -lyUNIT           -lyVAR         
 
 #===(file lists)============================================================================================================================================================================#

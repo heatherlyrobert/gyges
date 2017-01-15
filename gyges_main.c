@@ -16,12 +16,12 @@ main (int argc, char *argv[])
    char        rc          = 0;
    char        x_savemode  = '-';
    /*---(initialize)---------------------*/
-   if (rc == 0)  rc = PROG_logger  (argc, argv);
-   if (rc == 0)  rc = PROG_init    ();
-   if (rc == 0)  rc = PROG_urgs    (argc, argv);
-   if (rc == 0)  rc = PROG_args    (argc, argv);
-   if (rc == 0)  rc = PROG_begin   ();
-   if (rc != 0)  {
+   if (rc >= 0)  rc = yURG_logger  (argc, argv);
+   if (rc >= 0)  rc = PROG_init    (argc, argv);
+   if (rc >= 0)  rc = yURG_urgs    (argc, argv);
+   if (rc >= 0)  rc = PROG_args    (argc, argv);
+   if (rc >= 0)  rc = PROG_begin   ();
+   if (rc <  0)  {
       PROG_end     ();
       exit (-1);
    }

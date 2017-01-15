@@ -2953,7 +2953,7 @@ SCRP          v21  (s_calc) basic relational [ 6] ==, <, >, <=, >=, !=        
      code     v21  create a pointer to a fifth cell     - - - - - - - - - -   tCELL *x_fif  = NULL;                                                                                                                                          
 
    COND       v21  change environment                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((16.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  modify debugging                     - - - - - - - - - -   debug.calc = 'n';                                                                                                                                              
+#     code     v21  modify debugging                     - - - - - - - - - -   debug.calc = 'n';                                                                                                                                              
 
    COND       v21  change to three worksheets                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((16.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  modify a variable                    - - - - - - - - - -   my.ntab = 5;                                                                                                                                                   
