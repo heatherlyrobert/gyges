@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0c"
-#define     VER_TXT   "fixed untitled screen problem at start"
+#define     VER_NUM   "2.0d"
+#define     VER_TXT   "fixed non-visual select copy and paste"
 
 
 

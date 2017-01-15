@@ -407,13 +407,19 @@ KEYS_regbasic       (char a_major, char a_minor)
    }
    /*---(process)------------------------*/
    switch (a_minor) {
-   case  'y' : REG_copy  ();
-               break;
-   case  'p' : REG_paste ('y');
-               break;
+   case  'y' :
+      DEBUG_USER   yLOG_note    ("call REG_copy");
+      REG_copy  ();
+      break;
+   case  'p' :
+      DEBUG_USER   yLOG_note    ("call REG_paste");
+      REG_paste ('y');
+      break;
    case  'd' :
-   case  'x' : REG_cut   ();
-               break;
+   case  'x' :
+      DEBUG_USER   yLOG_note    ("call REG_cut");
+      REG_cut   ();
+      break;
    }
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);

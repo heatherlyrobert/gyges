@@ -384,130 +384,130 @@ LOC_parse         (
    int         e_row       =   0;           /* ending position of row chars   */
    int         x_abs       =   0;           /* working value for absolutes    */
    /*---(begin)--------------------------*/
-   DEBUG_LOC   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOC   yLOG_info    ("a_label"   , a_label);
-   DEBUG_LOC   yLOG_point   ("a_tab"     , a_tab);
-   DEBUG_LOC   yLOG_point   ("a_col"     , a_col);
-   DEBUG_LOC   yLOG_point   ("a_row"     , a_row);
-   DEBUG_LOC   yLOG_point   ("a_abs"     , a_abs);
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
+   DEBUG_LOCS   yLOG_point   ("a_tab"     , a_tab);
+   DEBUG_LOCS   yLOG_point   ("a_col"     , a_col);
+   DEBUG_LOCS   yLOG_point   ("a_row"     , a_row);
+   DEBUG_LOCS   yLOG_point   ("a_abs"     , a_abs);
    /*---(defense: empty label)-----------*/
    --rce;  if (a_label == NULL) {
-      DEBUG_LOC   yLOG_note    ("aborting, no a_label means no point");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, no a_label means no point");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(check sizes)--------------------*/
    len = strlen (a_label);
-   DEBUG_LOC   yLOG_value   ("len"       , len);
+   DEBUG_LOCS   yLOG_value   ("len"       , len);
    --rce;  if (len <=  0) {
-      DEBUG_LOC   yLOG_note    ("aborting, a_label contains nothing, no point");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, a_label contains nothing, no point");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --rce;  if (len >  12) {  /* a1 to $24$ab$12345 */
-      DEBUG_LOC   yLOG_note    ("aborting, a_label too long for legal address");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, a_label too long for legal address");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(defense: check special)---------*/
    --rce;  if (strcmp (a_label, "root") == 0) {
-      DEBUG_LOC   yLOG_note    ("aborting, no need to parse root");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, no need to parse root");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --rce;  if (strcmp (a_label, ".") == 0) {
-      DEBUG_LOC   yLOG_note    ("aborting, no need to parse dot (.)");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, no need to parse dot (.)");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --rce;  if (strcmp (a_label, "-") == 0) {
-      DEBUG_LOC   yLOG_note    ("aborting, no need to parse dash (-)");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, no need to parse dash (-)");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(look for absolute tab)----------*/
-   DEBUG_LOC   yLOG_char    ("CH"        , a_label[s_tab]);
+   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
    if (a_label[s_tab] == '@') {
       x_abs  = 7;
       ++s_tab;
-      DEBUG_LOC   yLOG_char    ("CH"        , a_label[s_tab]);
+      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
    }
    if (a_label[s_tab] == '$') {
       x_abs += 4;
       ++s_tab;
    }
-   DEBUG_LOC   yLOG_value   ("x_abs"     , x_abs);
-   DEBUG_LOC   yLOG_value   ("s_tab"     , s_tab);
+   DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
+   DEBUG_LOCS   yLOG_value   ("s_tab"     , s_tab);
    /*---(parse tab characters)-----------*/
    s_col = s_tab;
    for (i = s_tab; i < s_tab + 2; ++i) {
-      DEBUG_LOC   yLOG_char    ("CH"        , a_label[i]);
+      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
       if (strchr ("0123456789", a_label[i]) == 0)   break;
       if (i >  s_tab)  x_tab *= 10;
       x_tab += a_label[i] - '0';
       ++s_col;
    }
    if (s_col == s_tab && x_abs == 4)  x_abs = 1;
-   DEBUG_LOC   yLOG_value   ("x_tab"     , x_tab);
-   DEBUG_LOC   yLOG_value   ("s_col"     , s_col);
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
    if (a_tab != NULL)  *a_tab = x_tab;
    /*---(look for absolute col)----------*/
-   DEBUG_LOC   yLOG_char    ("CH"        , a_label[s_col]);
+   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_col]);
    if (a_label [s_col] == '$') {
       x_abs += 1;
       ++s_col;
    }
-   DEBUG_LOC   yLOG_value   ("x_abs"     , x_abs);
-   DEBUG_LOC   yLOG_value   ("s_col"     , s_col);
+   DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
+   DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
    /*---(parse col characters)-----------*/
    s_row = s_col;
    for (i = s_col; i < s_col + 2; ++i) {
-      DEBUG_LOC   yLOG_char    ("CH"        , a_label[i]);
+      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
       if (strchr ("abcdefghijklmnopqrstuvwxyz", a_label[i]) == 0)   break;
       if (i >  s_col)  x_col *= 26;
       x_col += a_label[i] - 'a' + 1;
       ++s_row;
    }
-   DEBUG_LOC   yLOG_value   ("x_col"     , x_col);
-   DEBUG_LOC   yLOG_value   ("s_row"     , s_row);
+   DEBUG_LOCS   yLOG_value   ("x_col"     , x_col);
+   DEBUG_LOCS   yLOG_value   ("s_row"     , s_row);
    --rce;  if (s_row == s_col) {
-      DEBUG_LOC   yLOG_note    ("aborting, no column found");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, no column found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --x_col;
-   DEBUG_LOC   yLOG_value   ("x_col fix" , x_col);
+   DEBUG_LOCS   yLOG_value   ("x_col fix" , x_col);
    if (a_col != NULL)  *a_col = x_col;
    /*---(look for absolute row)----------*/
-   DEBUG_LOC   yLOG_char    ("CH"        , a_label[s_row]);
+   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_row]);
    if (a_label [s_row] == '$') {
       x_abs += 2;
       ++s_row;
    }
-   DEBUG_LOC   yLOG_value   ("x_abs"     , x_abs);
-   DEBUG_LOC   yLOG_value   ("s_row"     , s_row);
+   DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
+   DEBUG_LOCS   yLOG_value   ("s_row"     , s_row);
    if (x_abs > 7)  x_abs = 7;
    if (a_abs != NULL)  *a_abs = x_abs;
    /*---(parse row characters)-----------*/
    e_row = s_row;
    for (i = s_row; i < len; ++i) {
-      DEBUG_LOC   yLOG_char    ("CH"        , a_label[i]);
+      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
       if (strchr ("0123456789", a_label[i]) == 0)   break;
       if (i >  s_row)  x_row *= 10;
       x_row += a_label[i] - '0';
       ++e_row;
    }
-   DEBUG_LOC   yLOG_value   ("x_row"     , x_row);
-   DEBUG_LOC   yLOG_value   ("e_row"     , e_row);
+   DEBUG_LOCS   yLOG_value   ("x_row"     , x_row);
+   DEBUG_LOCS   yLOG_value   ("e_row"     , e_row);
    --rce;  if (e_row != len  ) {
-      DEBUG_LOC   yLOG_note    ("aborting, no row found");
-      DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_note    ("aborting, no row found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --x_row;
    if (a_row != NULL)  *a_row = x_row;
    /*---(complete)-----------------------*/
-   DEBUG_LOC   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return  0;
 }
 

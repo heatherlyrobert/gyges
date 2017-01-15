@@ -679,12 +679,12 @@ REG_save           (char a_type)
          continue;
       }
       DEBUG_REGS   yLOG_complex ("current"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, x_tab, x_col, x_row, curr->t, curr->u);
-      if (curr->u == x_stamp) {
-         DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");
-         ++x_skipped;
-         curr  = VISU_next (&x_tab, &x_col, &x_row);
-         continue;
-      }
+      /*> if (curr->u == x_stamp) {                                                       <* 
+       *>    DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");   <* 
+       *>    ++x_skipped;                                                                 <* 
+       *>    curr  = VISU_next (&x_tab, &x_col, &x_row);                                  <* 
+       *>    continue;                                                                    <* 
+       *> }                                                                               <*/
       ++x_processed;
       x_copy = CELL_dup (curr);
       strcpy (x_copy->label, curr->label);
@@ -742,7 +742,10 @@ char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
 REG_copy           (void)
 {
    char        rc          = 0;
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    rc = REG_save ('-');
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -750,7 +753,10 @@ char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
 REG_cut            (void)
 {
    char        rc          = 0;
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    rc = REG_save ('x');
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -758,7 +764,10 @@ char         /*> add range into the current buffer -------[ ------ [ ------ ]-*/
 REG_append         (void)
 {
    char        rc          = 0;
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    rc = REG_save ('a');
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 

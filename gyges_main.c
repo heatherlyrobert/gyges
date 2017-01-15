@@ -38,6 +38,7 @@ main (int argc, char *argv[])
    CURS_colhead();
    KEYS_brow (BROW);
    CURS_rowhead();
+   SEQ_calc_full ();
    hist_active = 'y';
    /*---(process)------------------------*/
    MOVE_vert ('r');
