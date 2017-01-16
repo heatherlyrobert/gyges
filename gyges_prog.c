@@ -60,36 +60,6 @@ PROG_version       (void)
    return verstring;
 }
 
-/*> char         /+--: evaluate logger needs early -----------[ leaf   [ ------ ]-+/   <* 
- *> PROG_logger        (int a_argc, char *a_argv[])                                    <* 
- *> {                                                                                  <* 
- *>    /+---(locals)-----------+-----------+-+/                                        <* 
- *>    int         i           = 0;                                                    <* 
- *>    char       *a           = NULL;                                                 <* 
- *>    char        x_prog      [LEN_STR] = "";                                         <* 
- *>    char        x_log       = '-';                                                  <* 
- *>    /+---(default urgents)----------------+/                                        <* 
- *>    PROG_urgsmass  ('-', 'y');   /+ turn everything off +/                          <* 
- *>    debug.logger   = -1;                                                            <* 
- *>    strlcpy (x_prog, a_argv [0], LEN_STR);                                          <* 
- *>    /+---(test for normal version)--------+/                                        <* 
- *>    if        (strcmp (a_argv[0], "gyges"        ) == 0)  return 0;                 <* 
- *>    /+---(check for urgents)--------------+/                                        <* 
- *>    for (i = 1; i < a_argc; ++i) {                                                  <* 
- *>       a = a_argv[i];                                                               <* 
- *>       if (a[0] != '@')  continue;                                                  <* 
- *>       x_log = 'y';                                                                 <* 
- *>    }                                                                               <* 
- *>    if (x_log != 'y')  return 0;                                                    <* 
- *>    /+---(startup logging)----------------+/                                        <* 
- *>    debug.tops     = 'y';                                                           <* 
- *>    if (strcmp (a_argv [0], "gyges_debug"  ) == 0)                                  <* 
- *>       strlcpy (x_prog, "gyges"         , LEN_STR);                                 <* 
- *>    debug.logger = yLOG_begin (x_prog, yLOG_SYSTEM    , yLOG_NOISE);                <* 
- *>    /+---(complete)-----------------------+/                                        <* 
- *>    return 0;                                                                       <* 
- *> }                                                                                  <*/
-
 char       /*----: very first setup ------------------s-----------------------*/
 PROG_init          (int a_argc, char *a_argv[])
 {

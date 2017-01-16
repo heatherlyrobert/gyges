@@ -1413,57 +1413,57 @@ DEP_gnome          (char *a_list)
    int         tele        = -1;            /* teleport point to speed sort   */
    char       *r           = NULL;
    /*---(header)-------------------------*/
-   DEBUG_GNOME   yLOG_enter   (__FUNCTION__);
+   DEBUG_SORT    yLOG_enter   (__FUNCTION__);
    /*---(defense: null)------------------*/
    --rce;
    if (a_list  == NULL)  {
-      DEBUG_GNOME   yLOG_exit    (__FUNCTION__);
+      DEBUG_SORT    yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(defense: empty)-----------------*/
    --rce;
    if (strlen (a_list)  == 0)  {
-      DEBUG_GNOME   yLOG_exit    (__FUNCTION__);
+      DEBUG_SORT    yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(initialize)---------------------*/
-   DEBUG_GNOME   yLOG_note    ("initialize");
+   DEBUG_SORT    yLOG_note    ("initialize");
    for (i = 0; i < 100; ++i)  x_array[i] = 0;
    n_array = 0;
    /*---(parse/load)---------------------*/
-   DEBUG_GNOME   yLOG_note    ("load the array");
+   DEBUG_SORT    yLOG_note    ("load the array");
    strcpy (x_list, a_list);
    p = strtok_r (x_list, q, &r);
    i = 0;
    --rce;
    while (p != NULL) {
-      DEBUG_GNOME   yLOG_info    ("parse"     , p);
+      DEBUG_SORT    yLOG_info    ("parse"     , p);
       rc = LOC_parse (p, &x_tab, &x_col, &x_row, &x_abs);
-      DEBUG_GNOME   yLOG_value   ("rc"        , rc);
+      DEBUG_SORT    yLOG_value   ("rc"        , rc);
       if (rc < 0)  {
-         DEBUG_GNOME   yLOG_note    ("could not parse, EXITING");
-         DEBUG_GNOME   yLOG_exit    (__FUNCTION__);
+         DEBUG_SORT    yLOG_note    ("could not parse, EXITING");
+         DEBUG_SORT    yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      DEBUG_GNOME   yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
       ++x_tab;
       ++x_col;
       ++x_row;
-      DEBUG_GNOME   yLOG_complex ("inserted"  , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      DEBUG_SORT    yLOG_complex ("inserted"  , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
       x_array[i] = (x_tab * 100000000) + (x_col * 100000) + (x_row * 10) + x_abs;
-      DEBUG_GNOME   yLOG_pair    (i         , x_array [i]);
+      DEBUG_SORT    yLOG_pair    (i         , x_array [i]);
       p = strtok_r (NULL  , q, &r);
       ++i;
    }
    n_array = i;
    /*---(sort)---------------------------*/
-   DEBUG_GNOME   yLOG_note    ("run the teleporting gnome");
+   DEBUG_SORT    yLOG_note    ("run the teleporting gnome");
    i = 1;
    while (i < n_array) {
       /*---(load vars)-------------------*/
       a = x_array [i - 1];
       b = x_array [i];
-      DEBUG_GNOME   yLOG_complex ("current"   , "compare i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
+      DEBUG_SORT    yLOG_complex ("current"   , "compare i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
       /*---(compare)---------------------*/
       if (i == 0 || a < b) {
          if (tele >= 0) {
@@ -1479,34 +1479,34 @@ DEP_gnome          (char *a_list)
       x_array [i]     = a;
       a = x_array [i - 1];
       b = x_array [i];
-      DEBUG_GNOME   yLOG_complex ("swapped"   , "now     i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
+      DEBUG_SORT    yLOG_complex ("swapped"   , "now     i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
       /*---(update)----------------------*/
       if (tele < 0) tele = i;
       if (i > 1) --i;
    }
    /*---(put back in list)---------------*/
-   DEBUG_GNOME   yLOG_note    ("replace in the list");
+   DEBUG_SORT    yLOG_note    ("replace in the list");
    strcpy (a_list, ",");
    for (i = 0; i < n_array; ++i) {
-      DEBUG_GNOME   yLOG_value   ("value"   , x_array[i]);
+      DEBUG_SORT    yLOG_value   ("value"   , x_array[i]);
       x_tab = x_array[i] / 100000000;
       x_col = (x_array[i] - (x_tab * 100000000))         / 100000;
       x_row = (x_array[i] - (x_tab * 100000000) - (x_col * 100000))         / 10;
       x_abs = (x_array[i] - (x_tab * 100000000) - (x_col * 100000) - (x_row * 10));
-      DEBUG_GNOME   yLOG_complex ("removed"   , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      DEBUG_SORT    yLOG_complex ("removed"   , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
       --x_tab;
       --x_col;
       --x_row;
-      DEBUG_GNOME   yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
       rc = LOC_ref (x_tab, x_col, x_row, x_abs, x_label);
-      DEBUG_GNOME   yLOG_value   ("label"   , x_label);
-      DEBUG_GNOME   yLOG_pair    (i         , x_label);
+      DEBUG_SORT    yLOG_value   ("label"   , x_label);
+      DEBUG_SORT    yLOG_pair    (i         , x_label);
       strcat (a_list, x_label);
       strcat (a_list, ",");
    }
-   DEBUG_GNOME   yLOG_info    ("final"     , a_list);
+   DEBUG_SORT    yLOG_info    ("final"     , a_list);
    /*---(complete)-----------------------*/
-   DEBUG_GNOME   yLOG_exit    (__FUNCTION__);
+   DEBUG_SORT    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
