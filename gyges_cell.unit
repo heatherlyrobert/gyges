@@ -1,0 +1,141 @@
+#!/usr/local/bin/koios
+#   koios-polos (northern axis) -- c unit testing metaprogram and mini-language
+#   program under test  : gyges
+#   auto-generated script file converted from a previous script version
+#   updated to the most recent version (v21)
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+PREP          v21  include the prototype headers                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+   incl       v21  include public header                gyges.h               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (gyges_cell) fundamental cell creation and destruction       CELL_init, CELL__new, CELL__free, CELL__valid, CELL__purge              ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  setup testing variables                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  create a custom expect string        - - - - - - - - - -   char custom [2000];                                                                                                                                            
+     code     v21  create a pointer to the first cell   - - - - - - - - - -   void *x_head = NULL;                                                                                                                                           
+     code     v21  create a pointer to a mid-point      - - - - - - - - - -   void *x_save = NULL;                                                                                                                                           
+     code     v21  create a pointer to one after that   - - - - - - - - - -   void *x_plus = NULL;                                                                                                                                           
+     code     v21  create a pointer to the last cell    - - - - - - - - - -   void *x_tail = NULL;                                                                                                                                           
+     code     v21  create a pointer to an unlinked cel  - - - - - - - - - -   void *x_out  = NULL;                                                                                                                                           
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             LINKED                                                                  p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_head = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   1, head=%9p, tail=%9p", x_head, x_head);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   2, num=   1, fore=   1, back=   1            
+     exec     v21  test the cell validity               CELL__valid           x_head         , LINKED                                                 i_equal     0                                                                      
+
+   COND       v21  add another cell                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             LINKED                                                                  p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_tail = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
+     exec     v21  test the cell validity               CELL__valid           x_tail         , LINKED                                                 i_equal     0                                                                      
+
+   COND       v21  add an unlinked cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             UNLINKED                                                                p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_out  = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   4, num=   2, fore=   2, back=   2            
+     exec     v21  test the cell validity               CELL__valid           x_out          , UNLINKED                                               i_equal     0                                                                      
+
+   COND       v21  add another cell                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             LINKED                                                                  p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_tail = yUNIT_p_rc;                                                                                                                                           
+     code     v21  keep the previous one                - - - - - - - - - -   x_save = x_tail;                                                                                                                                               
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   3, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   5, num=   3, fore=   3, back=   3            
+     exec     v21  test the cell validity               CELL__valid           x_tail         , LINKED                                                 i_equal     0                                                                      
+
+   COND       v21  add another cell, but with a bad argument                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             15                                                                      p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_tail = yUNIT_p_rc;                                                                                                                                           
+     code     v21  keep the previous one                - - - - - - - - - -   x_plus = x_tail;                                                                                                                                               
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   4, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   6, num=   4, fore=   4, back=   4            
+     exec     v21  test the cell validity               CELL__valid           x_tail         , LINKED                                                 i_equal     0                                                                      
+
+   COND       v21  add another cell                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             LINKED                                                                  p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_tail = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   5, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   7, num=   5, fore=   5, back=   5            
+     exec     v21  test the cell validity               CELL__valid           x_tail         , LINKED                                                 i_equal     0                                                                      
+
+   COND       v21  test a cell twice                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  test the cell validity               CELL__valid           x_head         , LINKED                                                 i_equal     0                                                                      
+     exec     v21  test the cell validity               CELL__valid           x_head         , LINKED                                                 i_equal     1                                                                      
+
+   COND       v21  test a null cell                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  test the cell validity               CELL__valid           NULL           , LINKED                                                 i_lesser    0                                                                      
+
+   COND       v21  delete a middle cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  test the cell validity               CELL__valid           x_plus         , LINKED                                                 i_equal     0                                                                      
+     exec     v21  delete last cell                     CELL__free            x_plus         , NULL                                                   p_equal     0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_plus = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   4, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   6, num=   4, fore=   4, back=   4            
+
+   COND       v21  test a deleted cell                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  test the cell validity               CELL__valid           x_plus         , LINKED                                                 i_lesser    0                                                                      
+
+   COND       v21  try to delete a null pointer                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  delete last cell                     CELL__free            NULL           , NULL                                                   i_lesser    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_plus = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   4, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   6, num=   4, fore=   4, back=   4            
+
+   COND       v21  add an unlinked cell, again                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__new             UNLINKED                                                                p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_out  = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   4, head=%9p, tail=%9p", x_head, x_tail);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   7, num=   4, fore=   4, back=   4            
+
+   COND       v21  delete the last cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  delete last cell                     CELL__free            x_tail         , NULL                                                   i_equal     0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_tail = yUNIT_i_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   3, head=%9p, tail=%9p", x_head, x_save);                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   6, num=   3, fore=   3, back=   3            
+
+   COND       v21  purge all cells (leaves unlinked)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   3, num=   0, fore=   0, back=   0            
+
+   COND       v21  delete unlinked cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  delete last cell                     CELL__free            x_out          , UNLINKED                                               i_equal     0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_tail = yUNIT_i_rc;                                                                                                                                           
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   2, num=   0, fore=   0, back=   0            
+
+   COND       v21  delete the last cell again (illegal)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  delete last cell                     CELL__free            x_tail         , NULL                                                   i_lesser    0                                                                      
+
+   COND       v21  verify program teardown (still cant get last unlinked)       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+

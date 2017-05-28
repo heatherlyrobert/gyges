@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0e"
-#define     VER_TXT   "moved DEBUG_GNOME to DEBUG_SORT"
+#define     VER_NUM   "2.0f"
+#define     VER_TXT   "broke out gyges_dep unit testing and localized data in dep"
 
 
 
@@ -680,10 +680,6 @@ char        hist_active;
  *>    tCALC    *n;               /+ pointer to next calc                         +/   <* 
  *> };                                                                                 <*/
 
-extern    tDEP     *dhead;
-extern    tDEP     *dtail;
-extern    tCELL    *dtree;
-extern    int       ndep;
 
 
 
@@ -1124,7 +1120,6 @@ tCELL    *CELL__new          /* ------ */  (char a_linked);
 char      CELL__valid        /* ------ */  (tCELL *a_cell, char a_linked);
 char      CELL__free         /* ------ */  (tCELL *a_cell, char a_linked);
 
-char      CELL_dtree         (char *a_action);
 char      CELL_regdel        (tCELL *a_curr);
 
 char      HIST_change        (char *a_type, int a_tab, int a_col, int a_row, char *a_before, char *a_after);

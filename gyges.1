@@ -1,15 +1,15 @@
 .TH gyges 1 2013-Jan "linux" "heatherly custom tools manual"
 
 .SH NAME
-gyges-hekatonkheires \- clean, powerful, and technical console spreadsheet
+gyges-hekatonkheires \- powerful, technical, vim-ish spreadsheet
 
 .SH IMAGERY (see HERITAGE at bottom for more)
-ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant
+ugly, impossibly powerful, one-hundred handed, fifty headed giant
 
 .SH SUMMARY
-gyges (pronounced j-eye-j-ees) is a clean, powerful, technical, and
+gyges (j-eye-j-ees) is a light, clean, powerful, technical, aesthetic, and
 keyboard-centric console spreadsheet focused on functionality, analytics,
-interfacing, scripting, and smart data in a plain package.
+interfacing, scripting, and tailored usage.
 
 .SH SYNOPSIS
 
@@ -20,6 +20,62 @@ primary production version
 .B gyges_debug [URGENTS] [OPTIONS]
 .nf
 performs all gyges actions, but with debugging and tracing
+
+.SH SCOPE REASONING and DECISION
+
+.B situation (s).  
+spreadsheets are a modern wonder of interactive calculation, iterative design,
+and complex analysis which can be quite reasonably and economically placed
+in the hands of non-technical users.
+
+.B complication (c).  
+raging acceptance led to uncontrolled creeping featurism and kitchen-sink
+capabilities -- replacing everything from todo lists, graphing, database
+management and some production systems.
+
+.B problem (p).  
+spreadsheets are now simply magic -- too many capabilities and flexility
+combined with complex problems and spaghetti solutions.  none of the safety,
+debugging, and testing seem to apply.
+
+.B my solution (m).  
+do one thing and do it well.  pare back funtionality to a core feature set
+which can be fully understood and tested, hand off non-core to other tools,
+and make the interface more productive.
+
+.B accepted functionality (a).  
+   -- conceptual framework of cells within tabs within sheets
+   -- full vi-keys support and a majority of vi/vim features
+   -- console/terminal formatting to enforce value and focus
+   -- full set of mathmatical operators for functions
+   -- full set of core functions, as in lotus, visicalc, and excel
+   -- dependency-graph calculation method to avoid issues
+   -- cell coloring for interpretation and dependency-awareness
+   -- compile calculations to byte-code for speed
+   -- fully scriptable using the same commands
+
+.B rejected functionality (r).  
+   -- mouse and menus (fuck off)
+   -- international support (who cares)
+   -- any formatting other than alignment and numerical
+   -- graphing or visual analyses (integrate with other tools)
+   -- importing or exporting of special formats (like xls, etc)
+   -- large data tables (which should be in a controlled database)
+   -- data sorting and filtering (again, database)
+   -- reporting and printing (just not a spreadsheet thing)
+   -- cell notes to provide details
+   -- text wrapping (learn word processors or databases)
+
+.B rational limitations and assumtions (l)
+   -- all values will be stored as doubles (more flexible)
+   -- cell positions are pre-allocated for speed and clarity
+   -- file format is 7bit-safe ascii, no crazy binary formats
+
+
+
+
+
+
 
 .SH MOVEMENT
 gyges seeks to drive consistency by fully using the vi-keys mini-language as
@@ -629,17 +685,15 @@ $  greed
 
 
 .SH HERITAGE
-gyges the big-limbed is the youngest of three primeval greek giant brothers
-called the hekatonkheires (hundred-handed).  these brothers were born of ouranos
-(father sky) and gaia (mother earth) and therefore siblings of the titans.
-the hekatonkheires were extremely powerful, in fact more powerful than all
-the titans together, and each had one-hundred arms and fifty heads.
+gyges, the big-limbed, is the youngst of three primeval giant brothers
+called the hekatonkheires (hundred-handed).  each brother was extremely
+powerful, more powerful than all the titans combined.  and, were impossibly
+ugly in a way only something with one-hundred hands and fifty heads can be.
 
-they were also unbelievably ugly in the way that only something with fifty
-heads and one-hundred arms can be ;)
+these brothers were born of ouranos (father-sky) and gaia (mother-earth).
 
-this spreadsheet is named after gyges given the extremely powerful and yet
-dangerously unconstrained nature of the spreadsheet concept.
+this spreadsheet is named after gyges given the extremely powerful, massively
+parallel, and dangerously unconstrained nature of the spreadsheet concept.
 
 .SH AUTHOR
 heatherly

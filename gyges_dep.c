@@ -1,4 +1,7 @@
 /*============================----beg-of-source---============================*/
+#include    "gyges.h"
+
+
 
 /*===[[ MODULE ]]=============================================================*
 
@@ -108,11 +111,25 @@
  */
 
 
+/*===[[ PRIVATE DATA ]]=======================================================*/
 
+/*---(dependency root)-------------------*/
+/*
+ * the dependency graph connects cells into a graph structure.  but, in order
+ * to be efficient, all cells that require nothing but provide to other cells
+ * must be tied back to a root to simplfy tracing and sequencing.  s_root is
+ * that root.
+ *
+ */
+static tCELL    *s_root;
 
-/*---[[ global header ]]----------------------------------*/
-#include   "gyges.h"
-
+/*---(denpendency link)------------------*/
+/*
+ * dependencies are carried on one-way links.  these links carry little
+ * information, but carry direct pointers to every related structure so that
+ * once the dependency graph is needed, it is fast, efficient, and right.
+ *
+ */
 struct cDEP  {
    /*---(#1, dependency)-----------------*/
    char      type;            /* type of connection                           */
@@ -131,14 +148,20 @@ struct cDEP  {
    /*---(#5, statistics)-----------------*/
    int       count;           /* number of times used for dep/calc            */
 };
-tDEP     *dhead;
-tDEP     *dtail;
-tCELL    *dtree;
-int       ndep;
+static tDEP     *s_hdep;
+static tDEP     *s_tdep;
+static int       s_ndep;
 
-
-
-#define   MAX_DEPTYPE     30
+/*---(dependency types)------------------*/
+/*
+ * gyges dependencies are complex and relate many different types of cells.
+ * in order to keep all the dependencies sorted out and properly classified,
+ * a more formal system was required.  the dep_info structure gives it that
+ * formality.
+ *
+ */
+typedef     struct cDEP_INFO   tDEP_INFO;
+#define     MAX_DEPTYPE     30
 struct cDEP_INFO {
    char        type;                   /* connection type                     */
    char        match;                  /* matching connect type               */
@@ -147,7 +170,8 @@ struct cDEP_INFO {
    char        match_index;            /* index of matching type              */
    int         count;                  /* current count of type               */
    int         total;                  /* total of type ever created          */
-} s_dep_info [MAX_DEPTYPE] = {
+};
+tDEP_INFO   s_dep_info [MAX_DEPTYPE] = {
    /*-ty- -ma- -dir ---description---------------------------------------- idx -cnt- -tot- */
 
    {  'R', 'p', '-', "requires another cell for its value"                , 0 ,    0,    0 },
@@ -197,15 +221,16 @@ DEP_init           (void)
    int         x_reqs      = 0;
    int         x_pros      = 0;
    int         t           [5];
-   /*---(setup)--------------------------*/
-   DEP_purge  ();
-   CELL_dtree ("new");
-   --rce;  if (dtree == NULL)  return rce;
-   strcpy (dtree->label, "root");
+   /*---(root tree)----------------------*/
+   s_root = CELL__new (UNLINKED);
+   --rce;  if (s_root == NULL) {
+      return rce;
+   }
+   strcpy (s_root->label, "root");
    /*---(initialize)---------------------*/
-   dhead  = NULL;
-   dtail  = NULL;
-   ndep   = 0;
+   s_hdep  = NULL;
+   s_tdep  = NULL;
+   s_ndep   = 0;
    strlcpy (S_DEP_REQS, "", 10);
    strlcpy (S_DEP_PROS, "", 10);
    /*---(complete info table)------------*/
@@ -261,8 +286,8 @@ DEP_purge          (void)
    tDEP     *next      = NULL;
    /*---(walk through list)--------------*/
    /*> printf ("DEP_purge : defenses\n");                                             <*/
-   if (dhead == NULL) return -1;
-   next = dhead;
+   if (s_hdep == NULL) return -1;
+   next = s_hdep;
    /*> printf ("DEP_purge : entering loop\n");                                        <*/
    while (next != NULL) {
       curr = next;
@@ -271,8 +296,8 @@ DEP_purge          (void)
       DEP__free (curr);
    }
    /*---(clean ends)---------------------*/
-   dhead = NULL;
-   dtail = NULL;
+   s_hdep = NULL;
+   s_tdep = NULL;
    /*---(ending)-------------------------*/
    /*> DEBUG_CELL  printf("DEP_purge      :: end\n");                                 <*/
    /*---(complete)-----------------------*/
@@ -285,10 +310,10 @@ DEP_wrap           (void)
    DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(dependencies)-------------------*/
    DEP_purge ();
-   CELL_dtree ("free");
-   dhead  = NULL;
-   dtail  = NULL;
-   ndep   = 0;
+   CELL__free (s_root, UNLINKED);
+   s_hdep  = NULL;
+   s_tdep  = NULL;
+   s_ndep   = 0;
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -379,16 +404,16 @@ DEP__new           (void)
    /*---(dependency doubly-linked list)--*/
    curr->dprev   = NULL;
    curr->dnext   = NULL;
-   if (dtail == NULL) {
-      dhead        = curr;
-      dtail        = curr;
+   if (s_tdep == NULL) {
+      s_hdep        = curr;
+      s_tdep        = curr;
    } else {
-      curr->dprev     = dtail;
+      curr->dprev     = s_tdep;
       curr->dnext     = NULL;
-      dtail->dnext = curr;
-      dtail        = curr;
+      s_tdep->dnext = curr;
+      s_tdep        = curr;
    }
-   ++ndep;
+   ++s_ndep;
    /*---(statistics)---------------------*/
    curr->count   = 0;
    /*---(complete)-----------------------*/
@@ -411,10 +436,10 @@ DEP__free          (
    }
    /*---(remove from dependency list)----*/
    if (a_dep->dnext != NULL) a_dep->dnext->dprev         = a_dep->dprev;
-   else                      dtail                       = a_dep->dprev;
+   else                      s_tdep                       = a_dep->dprev;
    if (a_dep->dprev != NULL) a_dep->dprev->dnext         = a_dep->dnext;
-   else                      dhead                       = a_dep->dnext;
-   --ndep;
+   else                      s_hdep                       = a_dep->dnext;
+   --s_ndep;
    /*---(detatch from paired dep)--------*/
    if (a_dep->match != NULL) {
       a_dep->match->match  = NULL;
@@ -592,7 +617,7 @@ DEP__rooting       (tCELL *a_cell, char a_type)
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   if (a_cell == dtree) {
+   if (a_cell == s_root) {
       DEBUG_DEPS   yLOG_note    ("cell is root, nothing to do");
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return 1;
@@ -600,7 +625,7 @@ DEP__rooting       (tCELL *a_cell, char a_type)
    DEBUG_DEPS   yLOG_value   ("owners"    , a_cell->nprovide);
    /*---(quick path, existing root)------*/
    --rce;
-   if (a_cell->nprovide == 1 && a_cell->provides->target == dtree) {
+   if (a_cell->nprovide == 1 && a_cell->provides->target == s_root) {
       switch (a_type) {
       case DEP_ROOT      : 
       case DEP_CHECKROOT : 
@@ -608,7 +633,7 @@ DEP__rooting       (tCELL *a_cell, char a_type)
          break;
       case DEP_UNROOT    : 
          DEBUG_DEPS   yLOG_note    ("perfect root found, unrooting");
-         rc = DEP_delete (DEP_REQUIRE, dtree, a_cell);
+         rc = DEP_delete (DEP_REQUIRE, s_root, a_cell);
          if (rc != 0) {
             DEBUG_DEPS   yLOG_note    ("could not delete root dependency");
             DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -626,7 +651,7 @@ DEP__rooting       (tCELL *a_cell, char a_type)
       switch (a_type) {
       case DEP_ROOT      : 
          DEBUG_DEPS   yLOG_note    ("independent cell, rooting");
-         rc = DEP_create (DEP_REQUIRE, dtree, a_cell);
+         rc = DEP_create (DEP_REQUIRE, s_root, a_cell);
          if (rc != 0) {
             DEBUG_DEPS   yLOG_note    ("could not create root dependency");
             DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
@@ -647,7 +672,7 @@ DEP__rooting       (tCELL *a_cell, char a_type)
    x_next = a_cell->provides;
    while (x_next != NULL) {
       DEBUG_DEPS   yLOG_info    ("owned by"  , x_next->target->label);
-      if (x_next->target != dtree)  ++x_norms;
+      if (x_next->target != s_root)  ++x_norms;
       else                          ++x_roots;
       x_next = x_next->next;
    }
@@ -675,9 +700,9 @@ DEP__rooting       (tCELL *a_cell, char a_type)
    if (x_norms == 0)  x_roots = 0;
    else               x_roots = 1;
    while (x_next != NULL) {
-      if (x_next->target == dtree && x_roots > 0) {
+      if (x_next->target == s_root && x_roots > 0) {
          DEBUG_DEPS   yLOG_note    ("found reduntant root, cleaning");
-         rc = DEP_delete (DEP_REQUIRE, dtree, a_cell);
+         rc = DEP_delete (DEP_REQUIRE, s_root, a_cell);
       }
       ++x_roots;
       x_next = x_next->next;
@@ -719,7 +744,7 @@ DEP_create         (
    }
    DEBUG_DEPS   yLOG_info    ("trg label" , a_target->label);
    /*---(defense: linking back to root)--*/
-   --rce;  if (a_target     == dtree)  {
+   --rce;  if (a_target     == s_root)  {
       DEBUG_DEPS yLOG_note      ("can not route back to root");
       DEBUG_DEPS yLOG_exit      (__FUNCTION__);
       return rce;
@@ -1051,7 +1076,7 @@ DEP_delete         (
    DEBUG_DEPS   yLOG_info    ("label"     , a_target->label);
    DEBUG_DEPS   yLOG_value   ("nprovide"  , a_target->nprovide);
    /*---(defense: linking back to root)--*/
-   --rce;  if (a_target     == dtree)  {
+   --rce;  if (a_target     == s_root)  {
       DEBUG_DEPS yLOG_note      ("can not delete a route back to root");
       DEBUG_DEPS yLOG_exit      (__FUNCTION__);
       return rce;
@@ -1091,7 +1116,7 @@ DEP_delete         (
    DEBUG_DEPS   yLOG_value   ("nprovide"  , a_target->nprovide);
    /*---(check if source needs unroot)---*/
    --rce;
-   if        (a_source           == dtree) {
+   if        (a_source           == s_root) {
       DEBUG_DEPS   yLOG_note    ("source is root, so no unrooting, done");
    } else if (a_source->nrequire >  0) {
       DEBUG_DEPS   yLOG_note    ("source has requires, so leave alone");
@@ -1105,7 +1130,7 @@ DEP_delete         (
       }
    }
    /*---(check on target)----------------*/
-   if        (a_source           == dtree) {
+   if        (a_source           == s_root) {
       DEBUG_DEPS   yLOG_note    ("source was root, so this is unrooting, done");
    } else if (a_target->nprovide >  0) {
       DEBUG_DEPS   yLOG_note    ("target already connected to tree");
@@ -1277,10 +1302,10 @@ DEP_cleanse        (
       DEBUG_DEPS    yLOG_info    ("label"     , a_cell->provides->source->label);
       DEBUG_DEPS    yLOG_point   ("target"    , a_cell->provides->target);
       DEBUG_DEPS    yLOG_info    ("label"     , a_cell->provides->target->label);
-      DEBUG_DEPS    yLOG_point   ("dtree"     , dtree);
-      if (a_cell->provides->target == dtree) {
+      DEBUG_DEPS    yLOG_point   ("s_root"     , s_root);
+      if (a_cell->provides->target == s_root) {
          DEBUG_DEPS    yLOG_note    ("unrooting");
-         rc = DEP_delete (DEP_REQUIRE, dtree, a_cell);
+         rc = DEP_delete (DEP_REQUIRE, s_root, a_cell);
       }
    }
    /*---(complete)-----------------------*/
@@ -1649,8 +1674,8 @@ SEQ__add           (char a_level, tCELL *a_cell)
       return rce;
    }
    DEBUG_CALC   yLOG_sinfo   ("label"     , a_cell->label);
-   DEBUG_CALC   yLOG_spoint  (dtree);
-   --rce;  if (a_cell == dtree) {
+   DEBUG_CALC   yLOG_spoint  (s_root);
+   --rce;  if (a_cell == s_root) {
       DEBUG_CALC   yLOG_snote   ("cell is root");
       DEBUG_CALC   yLOG_sexit   (__FUNCTION__);
       return -(rce);
@@ -1907,16 +1932,16 @@ char         /*--> dependency-based calculation downward -[ ------ [ ------ ]-*/
 SEQ_calc_down      (tCELL *a_cell) { return SEQ__driver (a_cell, 'd', rand() , 'c', NULL); }
 
 char         /*--> dependency-based calculation of all ---[ ------ [ ------ ]-*/
-SEQ_calc_full      (void)          { return SEQ__driver (dtree , 'd', rand() , 'c', NULL); }
+SEQ_calc_full      (void)          { return SEQ__driver (s_root , 'd', rand() , 'c', NULL); }
 
 char         /*--> dependency-based wiping of cells ------[ ------ [ ------ ]-*/
-SEQ_wipe_deps      (void)          { return SEQ__driver (dtree , 'd', rand() , 'w', NULL); }
+SEQ_wipe_deps      (void)          { return SEQ__driver (s_root , 'd', rand() , 'w', NULL); }
 
 char         /*--> dependency-based writing of file ------[ ------ [ ------ ]-*/
-SEQ_file_deps      (long a_stamp, FILE *a_file)  { return SEQ__driver (dtree , 'd', a_stamp, 'f', a_file); }
+SEQ_file_deps      (long a_stamp, FILE *a_file)  { return SEQ__driver (s_root , 'd', a_stamp, 'f', a_file); }
 
 char         /*--> dependency-based writing of reg -------[ ------ [ ------ ]-*/
-SEQ_reg_deps       (long a_stamp)                { return SEQ__driver (dtree , 'd', a_stamp, 'r', NULL  ); }
+SEQ_reg_deps       (long a_stamp)                { return SEQ__driver (s_root , 'd', a_stamp, 'r', NULL  ); }
 
 char
 SEQ_calclist       (char *a_list)
@@ -1978,7 +2003,7 @@ char
 DEP_checkall       (char a_print)
 {
    char        rcc         = 0;
-   rcc = DEP_check (0, dtree, a_print, rand());
+   rcc = DEP_check (0, s_root, a_print, rand());
    return rcc;
 }
 
@@ -2084,7 +2109,7 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
       /*---(prepare for next)------------*/
       next = next->next;
    }
-   /*> if (a_print == 'y' && a_level == 0)  printf ("total = %d vs %d\n", dep_count, ndep);   <*/
+   /*> if (a_print == 'y' && a_level == 0)  printf ("total = %d vs %d\n", dep_count, s_ndep);   <*/
    /*---(stamp at end)-------------------*/
    a_curr->u = a_stamp;
    /*---(complete)-----------------------*/
@@ -2092,9 +2117,9 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
    if (a_level == 0) {
       DEBUG_DEPS   yLOG_note    ("checking root exit");
       DEBUG_DEPS   yLOG_value   ("dep_count" , dep_count);
-      DEBUG_DEPS   yLOG_value   ("ndep"      , ndep);
-      if (dep_count != ndep) {
-         DEBUG_DEPS   yLOG_info    ("FAILED"    , "dep_count and ndep do not match");
+      DEBUG_DEPS   yLOG_value   ("s_ndep"      , s_ndep);
+      if (dep_count != s_ndep) {
+         DEBUG_DEPS   yLOG_info    ("FAILED"    , "dep_count and s_ndep do not match");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
          return rce;
       }
@@ -2201,7 +2226,7 @@ DEP_writescreen    (void)
 {
    /*---(locals)-----------+-----------+-*/
    tDEP       *x_next      = NULL;
-   x_next = dtree->requires;
+   x_next = s_root->requires;
    fprintf (stdout, "root-----------------\n");
    while (x_next != NULL) {
       DEP_write (stdout, 1, x_next);
@@ -2243,10 +2268,10 @@ DEP_writeall       (void)
    }
    fprintf (x_file, "\n");
    fprintf (x_file, "---  --  --  ---  -----------------------------------grand-totals---  %5d  %5d\n", x_count, x_total);
-   fprintf (x_file, "                                                     (check) ndep     %5d\n", ndep);
+   fprintf (x_file, "                                                     (check) s_ndep     %5d\n", s_ndep);
    /*---(recurse)------------------------*/
    fprintf (x_file, "\ndetails arranged by first requirement and indented\n\n");
-   x_next = dtree->requires;
+   x_next = s_root->requires;
    while (x_next != NULL) {
       DEP_write (x_file, 1, x_next);
       x_next = x_next->next;
@@ -2283,21 +2308,21 @@ DEP_full           (void)
 {
    int i = 0;
    tDEP  *curr;
-   curr = dhead;
+   curr = s_hdep;
    while (curr != NULL) {
       ++i;
       curr = curr->dnext;
    }
    /*> printf ("forward   = %d\n", i);                                                <*/
-   curr = dtail;
+   curr = s_tdep;
    i = 0;
    while (curr != NULL) {
       ++i;
       curr = curr->dprev;
    }
    /*> printf ("backward  = %d\n", i);                                                <*/
-   /*> printf ("ndep      = %d\n", ndep);                                             <*/
-   curr = dhead;
+   /*> printf ("s_ndep      = %d\n", s_ndep);                                             <*/
+   curr = s_hdep;
    i = 0;
    int match     = 0;
    int no_parent = 0;
@@ -2328,7 +2353,7 @@ DEP_dump           (void)
 {
    char xlabel[MAX_STR];
    endwin();
-   DEP_show  (0, dtree);
+   DEP_show  (0, s_root);
    DEP_trace (0, tabs[0].sheet[2][11]);
    DEP_full  ();
    /*> printf ("0c12  = %9p\n", tabs[0].sheet[2][11]);                                <*/
@@ -2336,10 +2361,10 @@ DEP_dump           (void)
    /*> printf ("deps  = %s\n",  xlabel);                                              <*/
    DEP_requires  (tabs[0].sheet[2][11], xlabel);
    /*> printf ("reqs  = %s\n",  xlabel);                                              <*/
-   /*> printf ("dtree = %9p\n", dtree);                                               <*/
-   DEP_provides  (dtree, xlabel);
+   /*> printf ("s_root = %9p\n", s_root);                                               <*/
+   DEP_provides  (s_root, xlabel);
    /*> printf ("deps  = %s\n", xlabel);                                               <*/
-   DEP_requires  (dtree, xlabel);
+   DEP_requires  (s_root, xlabel);
    /*> printf ("reqs  = %s\n", xlabel);                                               <*/
    DEP_checkall ('y');
    exit (0);
@@ -2381,7 +2406,7 @@ DEP_unit           (
    strcpy  (unit_answer, "s_dep            : question not understood");
    /*---(identify the cell pointer)------*/
    if (a_label == NULL || strcmp ("root", a_label) == 0) {
-      x_cell = dtree;
+      x_cell = s_root;
    } else {
       rc     = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
       if (rc < 0) {
@@ -2396,12 +2421,12 @@ DEP_unit           (
    }
    /*---(dependency list)----------------*/
    if      (strcmp (a_question, "dep_pointers")   == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_dep pointers   : num=%4d, head=%9p, tail=%9p", ndep, dhead, dtail);
+      snprintf(unit_answer, LEN_TEXT, "s_dep pointers   : num=%4d, head=%9p, tail=%9p", s_ndep, s_hdep, s_tdep);
    }
    else if (strcmp (a_question, "dep_count")      == 0) {
-      x_dep  = dhead; while (x_dep  != NULL) { ++x_fore; x_dep  = x_dep ->dnext; }
-      x_dep  = dtail; while (x_dep  != NULL) { ++x_back; x_dep  = x_dep ->dprev; }
-      snprintf(unit_answer, LEN_TEXT, "s_dep count      : num=%4d, fore=%4d, back=%4d", ndep, x_fore, x_back);
+      x_dep  = s_hdep; while (x_dep  != NULL) { ++x_fore; x_dep  = x_dep ->dnext; }
+      x_dep  = s_tdep; while (x_dep  != NULL) { ++x_back; x_dep  = x_dep ->dprev; }
+      snprintf(unit_answer, LEN_TEXT, "s_dep count      : num=%4d, fore=%4d, back=%4d", s_ndep, x_fore, x_back);
    }
    /*---(cell reqs/deps)-----------------*/
    else if (strcmp (a_question, "cell_requires")  == 0) {

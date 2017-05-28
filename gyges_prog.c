@@ -73,7 +73,7 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version    ());
    DEBUG_TOPS   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
    /*---(header)-------------------------*/
-   DEBUG_TOPS   yLOG_exit  (__FUNCTION__);
+   DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
    hist_active = '-';
    nhist       =  0;
@@ -84,7 +84,7 @@ PROG_init          (int a_argc, char *a_argv[])
    my.info_win = '-';
    my.menu     = ' ';
    /*---(complete)-----------------------*/
-   DEBUG_TOPS   yLOG_exit  (__FUNCTION__);
+   DEBUG_TOPS   yLOG_exit     (__FUNCTION__);
    return 0;
 }
 
@@ -302,12 +302,12 @@ unit_accessor(char *a_question, void *a_thing)
    }
    /*---(dependencies)-------------------*/
    /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 
-    *>    snprintf(unit_answer, LEN_TEXT, "Deps Linked List : n=%4d, h=%9p, t=%9p", ndep, dhead, dtail);                                                                          <* 
+    *>    snprintf(unit_answer, LEN_TEXT, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <* 
     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <* 
     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->next; }   <+/   <* 
-    *>    x_deps = dhead; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <* 
-    *>    x_deps = dtail; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_TEXT, "Deps Links Count : n=%4d, f=%4d, b=%4d", ndep, x_fore, x_back);                                                                        <* 
+    *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <* 
+    *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <* 
+    *>    snprintf(unit_answer, LEN_TEXT, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <* 
     *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <* 
     *>    DEP_requires (a_thing, temp);                                                                                                                                               <* 
     *>    snprintf(unit_answer, LEN_TEXT, "Cell Reqs List   : %-.35s", temp);                                                                                                     <* 

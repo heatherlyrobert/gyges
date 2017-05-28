@@ -182,6 +182,141 @@ char    G_CELL_FPRE   [20] = "";
 
 
 /*====================------------------------------------====================*/
+/*===----                        program level                         ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___PROGRAM_________o () { return; }
+
+char
+CELL_init          (void)
+{
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         i           = 0;
+   int         x_count     = 0;
+   int         x_found     = 0;
+   int         x_reqs      = 0;
+   int         x_pros      = 0;
+   int         t           [5];
+   /*---(cells)--------------------------*/
+   ACEL   = 0;
+   hcell  = NULL;
+   tcell  = NULL;
+   NCEL   = 0;
+   /*---(prepare validatations)----------*/
+   DEBUG_CELL   yLOG_note    ("concatinate format types");
+   strcpy (sv_formats, sv_commas);
+   strcat (sv_formats, sv_nums);
+   strcat (sv_formats, sv_special);
+   strcat (sv_formats, sv_times);
+   strcat (sv_formats, sv_fillers);
+   DEBUG_CELL   yLOG_info    ("sv_formats", sv_formats);
+   DEBUG_CELL   yLOG_note    ("clear validation types");
+   strlcpy (G_CELL_ALL , "", 20);
+   strlcpy (G_CELL_RPN , "", 20);
+   strlcpy (G_CELL_CALC, "", 20);
+   strlcpy (G_CELL_DEPS, "", 20);
+   strlcpy (G_CELL_NUM , "", 20);
+   strlcpy (G_CELL_STR , "", 20);
+   strlcpy (G_CELL_ERR , "", 20);
+   strlcpy (G_CELL_FPRE, "", 20);
+   /*---(complete info table)------------*/
+   DEBUG_CELL   yLOG_note    ("build cell validation types");
+   --rce;
+   for (i = 0; i < MAX_CELLTYPE; ++i) {
+      DEBUG_CELL_M yLOG_value   ("ENTRY"     , i);
+      DEBUG_CELL_M yLOG_char    ("type"      , s_cell_info [i].type);
+      /*---(check for end)---------------*/
+      if (s_cell_info [i].type == CTYPE_BLANK)  break;
+      /*---(add to lists)----------------*/
+      sprintf (t, "%c", s_cell_info [i].type);
+      DEBUG_CELL_M yLOG_info    ("str type"  , t);
+      DEBUG_CELL_M yLOG_char    ("rpn flag"  , s_cell_info [i].rpn);
+      strcat (G_CELL_ALL , t);
+      if (s_cell_info [i].calc    == 'y')  strcat (G_CELL_CALC, t);
+      if (s_cell_info [i].deps    == 'y')  strcat (G_CELL_DEPS, t);
+      if (s_cell_info [i].result  == '=')  strcat (G_CELL_NUM , t);
+      if (s_cell_info [i].result  == '#')  strcat (G_CELL_STR , t);
+      if (s_cell_info [i].result  == 'e')  strcat (G_CELL_ERR , t);
+      if (s_cell_info [i].rpn     == 'y') {
+         strcat  (G_CELL_RPN , t);
+         sprintf (t, "%c", s_cell_info [i].prefix);
+         if   (s_cell_info [i].prefix != ' ' && 
+               strchr (G_CELL_FPRE, s_cell_info [i].prefix) == 0) {
+            strcat  (G_CELL_FPRE , t);
+         }
+      }
+      ++x_count;
+   }
+   /*---(report out)---------------------*/
+   DEBUG_CELL   yLOG_value   ("x_count"   , x_count);
+   DEBUG_CELL   yLOG_info    ("G_CELL_ALL" , G_CELL_ALL );
+   DEBUG_CELL   yLOG_info    ("G_CELL_RPN" , G_CELL_RPN );
+   DEBUG_CELL   yLOG_info    ("G_CELL_CALC", G_CELL_CALC);
+   DEBUG_CELL   yLOG_info    ("G_CELL_DEPS", G_CELL_DEPS);
+   DEBUG_CELL   yLOG_info    ("G_CELL_NUM" , G_CELL_NUM );
+   DEBUG_CELL   yLOG_info    ("G_CELL_STR" , G_CELL_STR );
+   DEBUG_CELL   yLOG_info    ("G_CELL_ERR" , G_CELL_ERR );
+   DEBUG_CELL   yLOG_info    ("G_CELL_FPRE", G_CELL_FPRE);
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+CELL__purge        (void)
+{
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *curr        = NULL;
+   tCELL      *next        = NULL;
+   char        rc          = 0;
+   long        x_stamp     = 0;
+   /*---(disconnect dependent cells)-----*/
+   x_stamp = rand ();
+   rc = SEQ_wipe_deps ();
+   DEBUG_CELL   yLOG_value   ("seq rc"    , rc);
+   /*---(walk through list)--------------*/
+   next = hcell;
+   DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
+   while (next != NULL) {
+      curr = next;
+      next = curr->next;
+      rc = CELL__wipe    (curr);
+      DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
+      rc = LOC_unhook   (curr);
+      DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
+      rc = CELL__free    (curr, LINKED);
+      DEBUG_CELL   yLOG_value   ("free rc"   , rc);
+      DEBUG_CELL   yLOG_point   ("next"      , next);
+   }
+   /*---(clean ends)---------------------*/
+   if (ncell == 0) {
+      hcell = NULL;
+      tcell = NULL;
+   }
+   /*---(ending)-------------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+CELL_wrap          (void)
+{
+   /*---(cells)--------------------------*/
+   CELL__purge ();
+   hcell  = NULL;
+   tcell  = NULL;
+   NCEL   = 0;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                        basic utilities                       ----===*/
 /*====================------------------------------------====================*/
 PRIV void  o___BASICS__________o () { return; }
@@ -433,150 +568,12 @@ CELL__depwipe      (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
    return 0;
 }
 
-char
-CELL__purge        (void)
-{
-   /*---(beginning)----------------------*/
-   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   /*---(locals)-----------+-----------+-*/
-   tCELL      *curr        = NULL;
-   tCELL      *next        = NULL;
-   char        rc          = 0;
-   long        x_stamp     = 0;
-   /*---(disconnect dependent cells)-----*/
-   x_stamp = rand ();
-   rc = SEQ_wipe_deps ();
-   DEBUG_CELL   yLOG_value   ("seq rc"    , rc);
-   /*---(walk through list)--------------*/
-   next = hcell;
-   DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
-   while (next != NULL) {
-      curr = next;
-      next = curr->next;
-      rc = CELL__wipe    (curr);
-      DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
-      rc = LOC_unhook   (curr);
-      DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
-      rc = CELL__free    (curr, LINKED);
-      DEBUG_CELL   yLOG_value   ("free rc"   , rc);
-      DEBUG_CELL   yLOG_point   ("next"      , next);
-   }
-   /*---(clean ends)---------------------*/
-   if (ncell == 0) {
-      hcell = NULL;
-      tcell = NULL;
-   }
-   /*---(ending)-------------------------*/
-   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
 
 
 /*====================------------------------------------====================*/
 /*===----                       setup and teardown                     ----===*/
 /*====================------------------------------------====================*/
 PRIV void  o___SETUP___________o () { return; }
-
-char
-CELL_init          (void)
-{
-   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         i           = 0;
-   int         x_count     = 0;
-   int         x_found     = 0;
-   int         x_reqs      = 0;
-   int         x_pros      = 0;
-   int         t           [5];
-   /*---(cells)--------------------------*/
-   ACEL   = 0;
-   hcell  = NULL;
-   tcell  = NULL;
-   NCEL   = 0;
-   /*---(prepare validatations)----------*/
-   DEBUG_CELL   yLOG_note    ("concatinate format types");
-   strcpy (sv_formats, sv_commas);
-   strcat (sv_formats, sv_nums);
-   strcat (sv_formats, sv_special);
-   strcat (sv_formats, sv_times);
-   strcat (sv_formats, sv_fillers);
-   DEBUG_CELL   yLOG_info    ("sv_formats", sv_formats);
-   DEBUG_CELL   yLOG_note    ("clear validation types");
-   strlcpy (G_CELL_ALL , "", 20);
-   strlcpy (G_CELL_RPN , "", 20);
-   strlcpy (G_CELL_CALC, "", 20);
-   strlcpy (G_CELL_DEPS, "", 20);
-   strlcpy (G_CELL_NUM , "", 20);
-   strlcpy (G_CELL_STR , "", 20);
-   strlcpy (G_CELL_ERR , "", 20);
-   strlcpy (G_CELL_FPRE, "", 20);
-   /*---(complete info table)------------*/
-   DEBUG_CELL   yLOG_note    ("build cell validation types");
-   --rce;
-   for (i = 0; i < MAX_CELLTYPE; ++i) {
-      DEBUG_CELL_M yLOG_value   ("ENTRY"     , i);
-      DEBUG_CELL_M yLOG_char    ("type"      , s_cell_info [i].type);
-      /*---(check for end)---------------*/
-      if (s_cell_info [i].type == CTYPE_BLANK)  break;
-      /*---(add to lists)----------------*/
-      sprintf (t, "%c", s_cell_info [i].type);
-      DEBUG_CELL_M yLOG_info    ("str type"  , t);
-      DEBUG_CELL_M yLOG_char    ("rpn flag"  , s_cell_info [i].rpn);
-      strcat (G_CELL_ALL , t);
-      if (s_cell_info [i].calc    == 'y')  strcat (G_CELL_CALC, t);
-      if (s_cell_info [i].deps    == 'y')  strcat (G_CELL_DEPS, t);
-      if (s_cell_info [i].result  == '=')  strcat (G_CELL_NUM , t);
-      if (s_cell_info [i].result  == '#')  strcat (G_CELL_STR , t);
-      if (s_cell_info [i].result  == 'e')  strcat (G_CELL_ERR , t);
-      if (s_cell_info [i].rpn     == 'y') {
-         strcat  (G_CELL_RPN , t);
-         sprintf (t, "%c", s_cell_info [i].prefix);
-         if   (s_cell_info [i].prefix != ' ' && 
-               strchr (G_CELL_FPRE, s_cell_info [i].prefix) == 0) {
-            strcat  (G_CELL_FPRE , t);
-         }
-      }
-      ++x_count;
-   }
-   /*---(report out)---------------------*/
-   DEBUG_CELL   yLOG_value   ("x_count"   , x_count);
-   DEBUG_CELL   yLOG_info    ("G_CELL_ALL" , G_CELL_ALL );
-   DEBUG_CELL   yLOG_info    ("G_CELL_RPN" , G_CELL_RPN );
-   DEBUG_CELL   yLOG_info    ("G_CELL_CALC", G_CELL_CALC);
-   DEBUG_CELL   yLOG_info    ("G_CELL_DEPS", G_CELL_DEPS);
-   DEBUG_CELL   yLOG_info    ("G_CELL_NUM" , G_CELL_NUM );
-   DEBUG_CELL   yLOG_info    ("G_CELL_STR" , G_CELL_STR );
-   DEBUG_CELL   yLOG_info    ("G_CELL_ERR" , G_CELL_ERR );
-   DEBUG_CELL   yLOG_info    ("G_CELL_FPRE", G_CELL_FPRE);
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-/*---(multiples)----------*/
-
-char
-CELL_wrap          (void)
-{
-   /*---(cells)--------------------------*/
-   CELL__purge ();
-   hcell  = NULL;
-   tcell  = NULL;
-   NCEL   = 0;
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*> create dtree ----------------------------[--------[--------]-*/
-CELL_dtree         (char *a_action)
-{
-   if      (strcmp ("new"   , a_action) == 0)  dtree = CELL__new (UNLINKED);
-   else if (strcmp ("free"  , a_action) == 0)  CELL__free (dtree, UNLINKED);
-   else    return -1;
-   return 0;
-}
 
 char         /*> delete a register cell ------------------[--------[--------]-*/
 CELL_regdel        (tCELL *a_curr)
@@ -1274,7 +1271,7 @@ CELL_erase         (void)
     *> x_seq   = 0;                                                                   <* 
     *> DEBUG_CELL   yLOG_note    ("dependent cells");                                 <* 
     *> DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);                               <* 
-    *> rc = DEP__tail (NULL, '-', &x_seq, 0, dtree, x_stamp, CELL_depwipe);            <* 
+    *> rc = DEP__tail (NULL, '-', &x_seq, 0, s_root, x_stamp, CELL_depwipe);            <* 
     *> DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);                               <*/
    /*---(process independent cells)----------*/
    x_next = VISU_first(NULL, &x_col, &x_row);
@@ -2315,7 +2312,9 @@ CELL__unitnew      (
    strcpy  (unit_answer, "s_celln          : question not understood");
    /*---(identify the cell pointer)------*/
    if (a_label == NULL || strcmp ("root", a_label) == 0) {
-      x_cell = dtree;
+      /*> x_cell = s_root;                                                            <*/
+      sprintf (unit_answer, "s_celln error    : can not call on dependency s_root");
+      return unit_answer;
    } else {
       rc     = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
       if (rc < 0) {
