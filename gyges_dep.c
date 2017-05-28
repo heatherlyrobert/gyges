@@ -208,7 +208,7 @@ static char S_DEP_PROS [10] = "";
 /*====================------------------------------------====================*/
 PRIV void  o___PROG____________o () { return; }
 
-char       /*----: prepare dependency capability for use ---------------------*/
+char         /*--> prepare dependency capability ---------[--------[--------]-*/
 DEP_init           (void)
 {
    DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
@@ -275,41 +275,42 @@ DEP_init           (void)
    return 0;
 }
 
-char       /*----: destroy all dependency objects ----------------------------*/
-DEP_purge          (void)
+char         /*--> destory all dependencies --------------[--------[--------]-*/
+DEP__purge         (void)
 {
    /*---(beginning)----------------------*/
-   /*> printf ("DEP_purge\n");                                                        <*/
-   /*> DEBUG_CELL  printf("DEP_purge      :: begin\n");                               <*/
+   /*> printf ("DEP__purge\n");                                                        <*/
+   /*> DEBUG_CELL  printf("DEP__purge      :: begin\n");                               <*/
    /*---(locals)-------*-----------------*/
    tDEP     *curr      = NULL;
    tDEP     *next      = NULL;
    /*---(walk through list)--------------*/
-   /*> printf ("DEP_purge : defenses\n");                                             <*/
+   /*> printf ("DEP__purge : defenses\n");                                             <*/
    if (s_hdep == NULL) return -1;
    next = s_hdep;
-   /*> printf ("DEP_purge : entering loop\n");                                        <*/
+   /*> printf ("DEP__purge : entering loop\n");                                        <*/
    while (next != NULL) {
       curr = next;
-      /*> printf ("DEP_purge : pass with %9p\n", curr);                               <*/
+      /*> printf ("DEP__purge : pass with %9p\n", curr);                               <*/
       next = curr->dnext;
       DEP__free (curr);
    }
    /*---(clean ends)---------------------*/
    s_hdep = NULL;
    s_tdep = NULL;
+   s_ndep = 0;
    /*---(ending)-------------------------*/
-   /*> DEBUG_CELL  printf("DEP_purge      :: end\n");                                 <*/
+   /*> DEBUG_CELL  printf("DEP__purge      :: end\n");                                 <*/
    /*---(complete)-----------------------*/
    return 0;
 }
 
-char       /*----: prepare dependency capability for use ---------------------*/
+char         /*--> shut down dependency usage ------------[--------[--------]-*/
 DEP_wrap           (void)
 {
    DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(dependencies)-------------------*/
-   DEP_purge ();
+   DEP__purge ();
    CELL__free (s_root, UNLINKED);
    s_hdep  = NULL;
    s_tdep  = NULL;
@@ -317,6 +318,124 @@ DEP_wrap           (void)
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       allocation/memory                      ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___MALLOC__________o () { return; }
+
+tDEP*        /*--> create a new, blank dependency --------[ leaf   [ ------ ]-*/
+DEP__new           (void)
+{  /*---(design notes)--------------------------------------------------------*/
+   /* creates a new dependency object which is completely blank except for    */
+   /* being linked to the dependency doubly-linked list which allows a        */
+   /* single point of control over all dependencies regardless of type or     */
+   /* the cell it is associated with.                                         */
+   /*---(locals)-----------+-----------+-*/
+   tDEP       *x_new       = NULL;
+   int         x_tries     = 0;
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_senter  (__FUNCTION__);
+   /*---(create)-------------------------*/
+   DEBUG_DEPS   yLOG_snote   ("malloc");
+   while (x_new == NULL && x_tries < 10) {
+      x_new = (tDEP *) malloc (sizeof (tDEP));
+      ++x_tries;
+   }
+   DEBUG_DEPS   yLOG_svalue  ("tries", x_tries);
+   if (x_new == NULL) {
+      DEBUG_DEPS   yLOG_snote   ("FAILED");
+      DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
+      return NULL;
+   }
+   /*---(dependency fields)--------------*/
+   DEBUG_DEPS   yLOG_snote   ("dep pointers");
+   x_new->type    = DEP_BLANK;
+   x_new->source  = NULL;
+   x_new->target  = NULL;
+   /*---(cell fields)--------------------*/
+   DEBUG_DEPS   yLOG_snote   ("cell");
+   x_new->prev    = NULL;
+   x_new->next    = NULL;
+   x_new->match   = NULL;
+   /*---(calc fields)--------------------*/
+   DEBUG_DEPS   yLOG_snote   ("calc");
+   x_new->cprev   = NULL;
+   x_new->cnext   = NULL;
+   /*---(dependency doubly-linked list)--*/
+   DEBUG_DEPS   yLOG_snote   ("main list");
+   x_new->dprev   = NULL;
+   x_new->dnext   = NULL;
+   if (s_tdep == NULL) {
+      s_hdep         = x_new;
+      s_tdep         = x_new;
+   } else {
+      x_new->dprev   = s_tdep;
+      x_new->dnext   = NULL;
+      s_tdep->dnext  = x_new;
+      s_tdep         = x_new;
+   }
+   ++s_ndep;
+   /*---(statistics)---------------------*/
+   DEBUG_DEPS   yLOG_snote   ("stats");
+   x_new->count   = 0;
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
+   return x_new;
+}
+
+tDEP*        /*--> destroy a single dependency -----------[ leaf   [ ------ ]-*/
+DEP__free          (tDEP *a_dep)
+{  /*---(design notes)--------------------------------------------------------*/
+   /* destroys a single dependency object and removes from the associated     */
+   /* cells and also from the paired dependency (leaves the paired one alone) */
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_senter  (__FUNCTION__);
+   /*---(defense: null cell)-------------*/
+   DEBUG_DEPS   yLOG_spoint  (a_dep);
+   if (a_dep       == NULL) {
+      DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
+      return NULL;
+   }
+   /*---(remove from dependency list)----*/
+   DEBUG_DEPS   yLOG_snote   ("main list");
+   if (a_dep->dnext != NULL) a_dep->dnext->dprev       = a_dep->dprev;
+   else                      s_tdep                    = a_dep->dprev;
+   if (a_dep->dprev != NULL) a_dep->dprev->dnext       = a_dep->dnext;
+   else                      s_hdep                    = a_dep->dnext;
+   --s_ndep;
+   /*---(detatch from paired dep)--------*/
+   DEBUG_DEPS   yLOG_snote   ("detach pair");
+   if (a_dep->match != NULL) {
+      a_dep->match->match  = NULL;
+      a_dep->match         = NULL;
+   }
+   /*---(if require, take off cell)------*/
+   if      (strchr (S_DEP_REQS, a_dep->type) != NULL) {
+      DEBUG_DEPS   yLOG_snote   ("requires");
+      if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
+      if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
+      else                      a_dep->source->requires  = a_dep->next;
+      --(a_dep->source->nrequire);
+   }
+   /*---(if provide, take off cell)------*/
+   else if (strchr (S_DEP_PROS, a_dep->type) != NULL) {
+      DEBUG_DEPS   yLOG_snote   ("provides");
+      if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
+      if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
+      else                      a_dep->source->provides  = a_dep->next;
+      --(a_dep->source->nprovide);
+   }
+   /*---(free)---------------------------*/
+   DEBUG_DEPS   yLOG_snote   ("free");
+   free (a_dep);
+   a_dep = NULL;
+   /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
+   return  NULL;
 }
 
 
@@ -365,106 +484,6 @@ DEP_abbrev         (char a_index)
    }
    /*---(failure)------------------------*/
    return -1;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                      one-way dependency                      ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___ONE_WAY_________o () { return; }
-
-tDEP*        /*--> create a new, blank dependency --------[ leaf   [ ------ ]-*/
-DEP__new           (void)
-{  /*---(design notes)--------------------------------------------------------*/
-   /* creates a new dependency object which is completely blank except for    */
-   /* being linked to the dependency doubly-linked list which allows a        */
-   /* single point of control over all dependencies regardless of type or     */
-   /* the cell it is associated with.                                         */
-   /*---(locals)-----------+-----------+-*/
-   tDEP       *curr        = NULL;
-   int         tries       = 0;
-   /*---(create)-------------------------*/
-   while (curr == NULL && tries < 10) {
-      curr = (tDEP *) malloc (sizeof (tDEP));
-      ++tries;
-   }
-   if (curr == NULL)    return NULL;
-   /*---(dependency fields)--------------*/
-   curr->type    = DEP_BLANK;
-   curr->source  = NULL;
-   curr->target  = NULL;
-   /*---(cell fields)--------------------*/
-   curr->prev    = NULL;
-   curr->next    = NULL;
-   curr->match   = NULL;
-   /*---(calc fields)--------------------*/
-   curr->cprev   = NULL;
-   curr->cnext   = NULL;
-   /*---(dependency doubly-linked list)--*/
-   curr->dprev   = NULL;
-   curr->dnext   = NULL;
-   if (s_tdep == NULL) {
-      s_hdep        = curr;
-      s_tdep        = curr;
-   } else {
-      curr->dprev     = s_tdep;
-      curr->dnext     = NULL;
-      s_tdep->dnext = curr;
-      s_tdep        = curr;
-   }
-   ++s_ndep;
-   /*---(statistics)---------------------*/
-   curr->count   = 0;
-   /*---(complete)-----------------------*/
-   return curr;
-}
-
-tDEP*        /*--> destroy a single dependency -----------[ leaf   [ ------ ]-*/
-DEP__free          (
-      /*----------+-----------+-----------------------------------------------*/
-      tDEP       *a_dep)
-{  /*---(design notes)--------------------------------------------------------*/
-   /* destroys a single dependency object and removes from the associated     */
-   /* cells and also from the paired dependency.                              */
-   DEBUG_DEPS   yLOG_senter  (__FUNCTION__);
-   /*---(defense: null cell)-------------*/
-   DEBUG_DEPS   yLOG_spoint  (a_dep);
-   if (a_dep       == NULL) {
-      DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
-      return NULL;
-   }
-   /*---(remove from dependency list)----*/
-   if (a_dep->dnext != NULL) a_dep->dnext->dprev         = a_dep->dprev;
-   else                      s_tdep                       = a_dep->dprev;
-   if (a_dep->dprev != NULL) a_dep->dprev->dnext         = a_dep->dnext;
-   else                      s_hdep                       = a_dep->dnext;
-   --s_ndep;
-   /*---(detatch from paired dep)--------*/
-   if (a_dep->match != NULL) {
-      a_dep->match->match  = NULL;
-      a_dep->match         = NULL;
-   }
-   /*---(if require, take off cell)------*/
-   if      (strchr (S_DEP_REQS, a_dep->type) != NULL) {
-      if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
-      if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
-      else                      a_dep->source->requires  = a_dep->next;
-      --(a_dep->source->nrequire);
-   }
-   /*---(if provide, take off cell)------*/
-   else if (strchr (S_DEP_PROS, a_dep->type) != NULL) {
-      if (a_dep->next  != NULL) a_dep->next->prev        = a_dep->prev;
-      if (a_dep->prev  != NULL) a_dep->prev->next        = a_dep->next;
-      else                      a_dep->source->provides  = a_dep->next;
-      --(a_dep->source->nprovide);
-   }
-   /*---(free)---------------------------*/
-   free (a_dep);
-   a_dep = NULL;
-   /*---(complete)-----------------------*/
-   DEBUG_DEPS   yLOG_sexit   (__FUNCTION__);
-   return  NULL;
 }
 
 

@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0f"
-#define     VER_TXT   "broke out gyges_dep unit testing and localized data in dep"
+#define     VER_NUM   "2.0g"
+#define     VER_TXT   "clean up DEP__new, DEP__free and add debugging"
 
 
 
@@ -1038,7 +1038,7 @@ tDEP     *DEP__free          /* ------ */  (tDEP *a_dep);
 
 char      DEP_init           /* ------ */  (void);
 char      DEP_wrap           /* ------ */  (void);
-char      DEP_purge          /* ------ */  (void);
+char      DEP__purge          /* ------ */  (void);
 
 #define   DEP_BLANK     '-'
 

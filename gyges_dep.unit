@@ -12,13 +12,13 @@ PREP          v21  include the prototype headers                              
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SECT          v21  program level functions                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SECT          v21  (dep   ) program level functions                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
 
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_dep ) initialization and wrapup (not correct linking)     DEP_init, DEP_purge, DEP_wrap                                           ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) initialization and wrapup (not correct linking)     DEP_init, DEP__purge, DEP_wrap                                          ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify dependency initialization                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  initialize dependencies              DEP_init                                                                                      i_equal     0                                                                      
@@ -42,12 +42,12 @@ SCRP          v21  (s_dep ) initialization and wrapup (not correct linking)   
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
 
    COND       v21  purge all                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  purge                                DEP_purge                                                                                     i_equal     0                                                                      
+     exec     v21  purge                                DEP__purge                                                                                    i_equal     0                                                                      
      get      v21  review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                              s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
    COND       v21  purge on empty list                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  purge                                DEP_purge                                                                                     i_lesser    0                                                                      
+     exec     v21  purge                                DEP__purge                                                                                    i_lesser    0                                                                      
      get      v21  review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                              s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -66,13 +66,13 @@ SCRP          v21  (s_dep ) initialization and wrapup (not correct linking)   
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SECT          v21  fundamental dependency creation and destruction              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SECT          v21  (dep   ) fundamental dependency creation and destruction     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
 
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_dep ) one-way dependency creation and destruction         DEP__new, DEP__free                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) one-way dependency creation and destruction         DEP__new, DEP__free                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
@@ -166,7 +166,7 @@ SCRP          v21  (s_dep ) one-way dependency creation and destruction       
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   3, fore=   3, back=   3                      
 
    COND       v21  (DLL12) purge all                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  purge                                DEP_purge                                                                                     i_equal     0                                                                      
+     exec     v21  purge                                DEP__purge                                                                                    i_equal     0                                                                      
      get      v21  review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                              s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -178,12 +178,12 @@ SCRP          v21  (s_dep ) one-way dependency creation and destruction       
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   1, fore=   1, back=   1                      
 
    COND       v21  (DLL14) purge all, on single list                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  purge                                DEP_purge                                                                                     i_equal     0                                                                      
+     exec     v21  purge                                DEP__purge                                                                                    i_equal     0                                                                      
      get      v21  review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                              s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
    COND       v21  (DLL15) purge all, on empty list                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  purge                                DEP_purge                                                                                     i_not       0                                                                      
+     exec     v21  purge                                DEP__purge                                                                                    i_not       0                                                                      
      get      v21  review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                              s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
 
@@ -208,7 +208,7 @@ SCRP          v21  (s_dep ) one-way dependency creation and destruction       
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_dep ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -521,7 +521,7 @@ SCRP          v21  (s_dep ) two-way dependency creation and destruction       
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_dep ) range dependency creation and destruction           DEP_range, DEP_cleanse                                                  ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) range dependency creation and destruction           DEP_range, DEP_cleanse                                                  ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -941,7 +941,7 @@ SCRP          v21  (s_dep ) range dependency creation and destruction         
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_dep ) two-way dependency creation using formulas          DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((13.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) two-way dependency creation using formulas          DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((13.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -1223,7 +1223,7 @@ SCRP          v21  (s_dep ) two-way dependency creation using formulas        
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (gyges_dep  ) verify calculation sequencing                  SEQ__clear, SEQ__add, SEQ__del, SEQ_calc_up, SEQ_calc_down              ((48.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) verify calculation sequencing                       SEQ__clear, SEQ__add, SEQ__del, SEQ_calc_up, SEQ_calc_down              ((48.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
