@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0g"
-#define     VER_TXT   "clean up DEP__new, DEP__free and add debugging"
+#define     VER_NUM   "2.0h"
+#define     VER_TXT   "combined logic from DEP_requires, provides, and likes"
 
 
 
@@ -1080,9 +1080,11 @@ char      DEP_delmergeroot   (tCELL *a_target);
 char      DEP_range          /* ------ */  (tCELL *a_from, int a_btab, int a_bcol, int a_brow, int a_etab, int a_ecol, int a_erow);
 char      DEP_cleanse        /* ------ */  (tCELL *a_curr);
 
-char      DEP_requires       /* ------ */  (tCELL  *a_me, char* a_list);
-char      DEP_provides       /* ------ */  (tCELL  *a_me, char* a_list);
-char      DEP_like           /* ------ */  (tCELL  *a_me, char* a_list);
+char      DEP_disp_reqs      /* ------ */  (tCELL  *a_me, char* a_list);
+char      DEP_disp_pros      /* ------ */  (tCELL  *a_me, char* a_list);
+char      DEP_disp_like      /* ------ */  (tCELL  *a_me, char* a_list);
+char      DEP_disp_sort      /* ------ */  (char *a_list);
+
 char      DEP_updatelikes    (tCELL  *a_me);
 
 char      DEP_dump           /* ------ */  (void);

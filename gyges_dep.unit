@@ -208,7 +208,7 @@ SCRP          v21  (dep   ) one-way dependency creation and destruction       
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (dep   ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_disp_reqs, DEP_disp_pros, DEP_check         ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -941,7 +941,7 @@ SCRP          v21  (dep   ) range dependency creation and destruction         
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (dep   ) two-way dependency creation using formulas          DEP_create, DEP_delete, DEP_requires, DEP_provides, DEP_check           ((13.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (dep   ) two-way dependency creation using formulas          DEP_create, DEP_delete, DEP_disp_reqs, DEP_disp_pros, DEP_check         ((13.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      

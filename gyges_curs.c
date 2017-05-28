@@ -1003,9 +1003,9 @@ CURS_main          (void)
    strncpy (like , "+", MAX_STR);
    strncpy (my.mark_list, "+", MAX_STR);
    strncpy (my.mark_plus, "+", MAX_STR);
-   DEP_requires   (curr, reqs);
-   DEP_provides   (curr, deps);
-   DEP_like       (curr, like);
+   DEP_disp_reqs  (curr, reqs);
+   DEP_disp_pros  (curr, deps);
+   DEP_disp_like  (curr, like);
    MARK_list      (my.mark_list);
    MARK_listplus  (my.mark_plus);
    /*---(update cells)-------------------*/

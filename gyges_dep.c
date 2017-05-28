@@ -200,6 +200,7 @@ tDEP_INFO   s_dep_info [MAX_DEPTYPE] = {
 
 static char S_DEP_REQS [10] = "";
 static char S_DEP_PROS [10] = "";
+static char S_DEP_LIKE [10] = "";
 
 
 
@@ -231,8 +232,9 @@ DEP_init           (void)
    s_hdep  = NULL;
    s_tdep  = NULL;
    s_ndep   = 0;
-   strlcpy (S_DEP_REQS, "", 10);
-   strlcpy (S_DEP_PROS, "", 10);
+   strlcpy (S_DEP_REQS, "" , 10);
+   strlcpy (S_DEP_PROS, "" , 10);
+   strlcpy (S_DEP_LIKE, "l", 10);
    /*---(complete info table)------------*/
    --rce;
    for (i = 0; i < MAX_DEPTYPE; ++i) {
@@ -270,6 +272,7 @@ DEP_init           (void)
    /*---(report out)---------------------*/
    DEBUG_DEPS   yLOG_info    ("S_DEP_REQS", S_DEP_REQS);
    DEBUG_DEPS   yLOG_info    ("S_DEP_PROS", S_DEP_PROS);
+   DEBUG_DEPS   yLOG_info    ("S_DEP_LIKE", S_DEP_LIKE);
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1339,9 +1342,10 @@ DEP_cleanse        (
 /*====================------------------------------------====================*/
 PRIV void  o___INFO____________o () { return; }
 
-char       /*----: list the requirements -------------------------------------*/
-DEP_requires       (tCELL  *a_me, char *a_list)
-{
+char       /*----: list dependencies -----------------------------------------*/
+DEP__disp_master   (tCELL  *a_me, char *a_list, char a_start, char *a_types)
+{  /*---(design notes)-------------------*/
+   /* combined logic from the three accessors below as they were 90% the same */
    /*---(locals)-----------+-----------+-*/
    tDEP       *n           = NULL;
    char        rce         = -10;
@@ -1349,11 +1353,16 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    --rce;  if (a_list  == NULL)  return rce;
    strncpy (a_list, "-", MAX_STR);   /* special for a null list */
    --rce;  if (a_me    == NULL)  return rce;
-   /*---(walk the list)------------------*/
+   /*---(setup)--------------------------*/
    strncpy (a_list, ",", MAX_STR);
-   n = a_me->requires;
+   --rce;  switch (a_start) {
+   case 'R' :  n = a_me->requires; break;
+   case 'P' :  n = a_me->provides; break;
+   default         :  return rce;
+   }
+   /*---(walk the list)------------------*/
    while (n != NULL) {
-      if (strchr (S_DEP_REQS, n->type) != 0) {
+      if (strchr (a_types, n->type) != 0) {
          strncat    (a_list, n->target->label, MAX_STR);
          strncat    (a_list, ","             , MAX_STR);
       }
@@ -1365,194 +1374,89 @@ DEP_requires       (tCELL  *a_me, char *a_list)
    return 0;
 }
 
-char       /*----: list the provisions ---------------------------------------*/
-DEP_provides       (tCELL  *a_me, char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   tDEP       *n           = NULL;
-   char        rce         = -10;
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_list  == NULL)  return rce;
-   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
-   --rce;  if (a_me    == NULL)  return rce;
-   /*---(walk the list)---------------*/
-   strncpy (a_list, ",", MAX_STR);
-   n = a_me->provides;
-   while (n != NULL) {
-      if (strchr (S_DEP_PROS, n->type) != 0) {
-         if (n->type != DEP_LIKE  ) {
-            strncat    (a_list, n->target->label, MAX_STR);
-            strncat    (a_list, ","             , MAX_STR);
-         }
-      }
-      n = n->next;
-   }
-   /*---(catch empty)-----------------*/
-   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
-   /*---(complete)--------------------*/
-   return 0;
-}
+char       DEP_disp_reqs      (tCELL  *a_me, char *a_list) { return DEP__disp_master (a_me, a_list, 'R', S_DEP_REQS); }
+char       DEP_disp_pros      (tCELL  *a_me, char *a_list) { return DEP__disp_master (a_me, a_list, 'P', S_DEP_PROS); }
+char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_master (a_me, a_list, 'P', S_DEP_LIKE); }
 
-char 
-DEP_like           (tCELL  *a_me, char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   tDEP       *n           = NULL;
-   char        rce         = -10;
-   /*---(defenses)-------s---------------*/
-   --rce;  if (a_list  == NULL)  return rce;
-   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
-   --rce;  if (a_me    == NULL)  return rce;
-   /*---(walk the list)---------------*/
-   strncpy (a_list, ",", MAX_STR);
-   n = a_me->provides;
-   while (n != NULL) {
-      if (n->type == DEP_LIKE  ) {
-         strncat    (a_list, n->target->label, MAX_STR);
-         strncat    (a_list, ","             , MAX_STR);
-      }
-      n = n->next;
-   }
-   /*---(catch empty)-----------------*/
-   if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
-   /*---(complete)--------------------*/
-   return 0;
-}
+/*> char       /+----: list the requirements -------------------------------------+/   <* 
+ *> DEP_disp_reqs      (tCELL  *a_me, char *a_list)                                    <* 
+ *> {                                                                                  <* 
+ *>    /+---(locals)-----------+-----------+-+/                                        <* 
+ *>    tDEP       *n           = NULL;                                                 <* 
+ *>    char        rce         = -10;                                                  <* 
+ *>    /+---(defenses)-----------------------+/                                        <* 
+ *>    --rce;  if (a_list  == NULL)  return rce;                                       <* 
+ *>    strncpy (a_list, "-", MAX_STR);   /+ special for a null list +/                 <* 
+ *>    --rce;  if (a_me    == NULL)  return rce;                                       <* 
+ *>    /+---(walk the list)------------------+/                                        <* 
+ *>    strncpy (a_list, ",", MAX_STR);                                                 <* 
+ *>    n = a_me->requires;                                                             <* 
+ *>    while (n != NULL) {                                                             <* 
+ *>       if (strchr (S_DEP_REQS, n->type) != 0) {                                     <* 
+ *>          strncat    (a_list, n->target->label, MAX_STR);                           <* 
+ *>          strncat    (a_list, ","             , MAX_STR);                           <* 
+ *>       }                                                                            <* 
+ *>       n = n->next;                                                                 <* 
+ *>    }                                                                               <* 
+ *>    /+---(catch empty)--------------------+/                                        <* 
+ *>    if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");                          <* 
+ *>    /+---(complete)-----------------------+/                                        <* 
+ *>    return 0;                                                                       <* 
+ *> }                                                                                  <*/
 
-char         /*--> sort cell label list ------------------[ ------ [ ------ ]-*/
-DEP_gnome          (char *a_list)
-{
-   /*---(purpose)-------------------------------------------------------------* 
-    * for unit testing to be reliable, cosmetic changes must not result in    *
-    * failures or the need to update the unit test script.  label lists from  *
-    * the dependency linked lists are a prime example.  they are added in the *
-    * order they are encountered, but simple reordering of operations can     *
-    * make them appear different even if the same cells are listed.  this     *
-    * routine simply sorts a list of dependencies so they are more stable.    */
-   /*---(design notes)--------------------------------------------------------* 
-    * there are many sort algorithms which can handle vast amounts of complex *
-    * data, but they are simply overkill and problematic for small, simple    *
-    * lists.  the teleporting gnome sort is my personal favorite due to its   *
-    * simplicity which in turn leads to maintainability and confidence.       */
-   /*---(oddities)------------------------------------------------------------* 
-    * one is added to tab, col, and row before storage in the array and       *
-    * sorting as the all three are consolidated mathmatically into a single   *
-    * fieild and zeros are just a little harder to debug ;)                   */
-   /*---(locals)-----------+-----------+-*//*---------------------------------*/
-   char        rce         = -10;           /* return code for errors         */
-   char        x_list      [1000] = "";     /* copy of the list for parsing   */
-   char       *p           = NULL;          /* strtok parsing pointer         */
-   char       *q           = ",;";          /* strtok delimeter string        */
-   int         x_array     [1000];          /* working list as integers       */
-   int         n_array     =  0;            /* working count of entries       */
-   int         i           =  0;            /* loop iterator -- entry         */
-   int         x_tab       =  0;            /* tab of current entry           */
-   int         x_col       =  0;            /* col of current entry           */
-   int         x_row       =  0;            /* row of current entry           */
-   char        x_abs       =  0;            /* referencing of current entry   */
-   char        x_label     [15];            /* label for sorted entry         */
-   char        rc          =  0;            /* return code                    */
-   int         a           =  0;            /* comparison entry one           */
-   int         b           =  0;            /* comparison entry two           */
-   int         tele        = -1;            /* teleport point to speed sort   */
-   char       *r           = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_SORT    yLOG_enter   (__FUNCTION__);
-   /*---(defense: null)------------------*/
-   --rce;
-   if (a_list  == NULL)  {
-      DEBUG_SORT    yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(defense: empty)-----------------*/
-   --rce;
-   if (strlen (a_list)  == 0)  {
-      DEBUG_SORT    yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(initialize)---------------------*/
-   DEBUG_SORT    yLOG_note    ("initialize");
-   for (i = 0; i < 100; ++i)  x_array[i] = 0;
-   n_array = 0;
-   /*---(parse/load)---------------------*/
-   DEBUG_SORT    yLOG_note    ("load the array");
-   strcpy (x_list, a_list);
-   p = strtok_r (x_list, q, &r);
-   i = 0;
-   --rce;
-   while (p != NULL) {
-      DEBUG_SORT    yLOG_info    ("parse"     , p);
-      rc = LOC_parse (p, &x_tab, &x_col, &x_row, &x_abs);
-      DEBUG_SORT    yLOG_value   ("rc"        , rc);
-      if (rc < 0)  {
-         DEBUG_SORT    yLOG_note    ("could not parse, EXITING");
-         DEBUG_SORT    yLOG_exit    (__FUNCTION__);
-         return rce;
-      }
-      DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
-      ++x_tab;
-      ++x_col;
-      ++x_row;
-      DEBUG_SORT    yLOG_complex ("inserted"  , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
-      x_array[i] = (x_tab * 100000000) + (x_col * 100000) + (x_row * 10) + x_abs;
-      DEBUG_SORT    yLOG_pair    (i         , x_array [i]);
-      p = strtok_r (NULL  , q, &r);
-      ++i;
-   }
-   n_array = i;
-   /*---(sort)---------------------------*/
-   DEBUG_SORT    yLOG_note    ("run the teleporting gnome");
-   i = 1;
-   while (i < n_array) {
-      /*---(load vars)-------------------*/
-      a = x_array [i - 1];
-      b = x_array [i];
-      DEBUG_SORT    yLOG_complex ("current"   , "compare i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
-      /*---(compare)---------------------*/
-      if (i == 0 || a < b) {
-         if (tele >= 0) {
-            i    = tele;
-            tele = -1;
-         } else {
-            ++i;
-         }
-         continue;
-      }
-      /*---(swap)------------------------*/
-      x_array [i - 1] = b;
-      x_array [i]     = a;
-      a = x_array [i - 1];
-      b = x_array [i];
-      DEBUG_SORT    yLOG_complex ("swapped"   , "now     i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
-      /*---(update)----------------------*/
-      if (tele < 0) tele = i;
-      if (i > 1) --i;
-   }
-   /*---(put back in list)---------------*/
-   DEBUG_SORT    yLOG_note    ("replace in the list");
-   strcpy (a_list, ",");
-   for (i = 0; i < n_array; ++i) {
-      DEBUG_SORT    yLOG_value   ("value"   , x_array[i]);
-      x_tab = x_array[i] / 100000000;
-      x_col = (x_array[i] - (x_tab * 100000000))         / 100000;
-      x_row = (x_array[i] - (x_tab * 100000000) - (x_col * 100000))         / 10;
-      x_abs = (x_array[i] - (x_tab * 100000000) - (x_col * 100000) - (x_row * 10));
-      DEBUG_SORT    yLOG_complex ("removed"   , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
-      --x_tab;
-      --x_col;
-      --x_row;
-      DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
-      rc = LOC_ref (x_tab, x_col, x_row, x_abs, x_label);
-      DEBUG_SORT    yLOG_value   ("label"   , x_label);
-      DEBUG_SORT    yLOG_pair    (i         , x_label);
-      strcat (a_list, x_label);
-      strcat (a_list, ",");
-   }
-   DEBUG_SORT    yLOG_info    ("final"     , a_list);
-   /*---(complete)-----------------------*/
-   DEBUG_SORT    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char       /+----: list the provisions ---------------------------------------+/   <* 
+ *> DEP_disp_pros      (tCELL  *a_me, char *a_list)                                    <* 
+ *> {                                                                                  <* 
+ *>    /+---(locals)-----------+-----------+-+/                                        <* 
+ *>    tDEP       *n           = NULL;                                                 <* 
+ *>    char        rce         = -10;                                                  <* 
+ *>    /+---(defenses)-----------------------+/                                        <* 
+ *>    --rce;  if (a_list  == NULL)  return rce;                                       <* 
+ *>    strncpy (a_list, "-", MAX_STR);   /+ special for a null list +/                 <* 
+ *>    --rce;  if (a_me    == NULL)  return rce;                                       <* 
+ *>    /+---(walk the list)---------------+/                                           <* 
+ *>    strncpy (a_list, ",", MAX_STR);                                                 <* 
+ *>    n = a_me->provides;                                                             <* 
+ *>    while (n != NULL) {                                                             <* 
+ *>       if (strchr (S_DEP_PROS, n->type) != 0) {                                     <* 
+ *>          if (n->type != DEP_LIKE  ) {                                              <* 
+ *>             strncat    (a_list, n->target->label, MAX_STR);                        <* 
+ *>             strncat    (a_list, ","             , MAX_STR);                        <* 
+ *>          }                                                                         <* 
+ *>       }                                                                            <* 
+ *>       n = n->next;                                                                 <* 
+ *>    }                                                                               <* 
+ *>    /+---(catch empty)-----------------+/                                           <* 
+ *>    if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");                          <* 
+ *>    /+---(complete)--------------------+/                                           <* 
+ *>    return 0;                                                                       <* 
+ *> }                                                                                  <*/
+
+/*> char                                                                              <* 
+ *> DEP_disp_like      (tCELL  *a_me, char *a_list)                                   <* 
+ *> {                                                                                 <* 
+ *>    /+---(locals)-----------+-----------+-+/                                       <* 
+ *>    tDEP       *n           = NULL;                                                <* 
+ *>    char        rce         = -10;                                                 <* 
+ *>    /+---(defenses)-------s---------------+/                                       <* 
+ *>    --rce;  if (a_list  == NULL)  return rce;                                      <* 
+ *>    strncpy (a_list, "-", MAX_STR);   /+ special for a null list +/                <* 
+ *>    --rce;  if (a_me    == NULL)  return rce;                                      <* 
+ *>    /+---(walk the list)---------------+/                                          <* 
+ *>    strncpy (a_list, ",", MAX_STR);                                                <* 
+ *>    n = a_me->provides;                                                            <* 
+ *>    while (n != NULL) {                                                            <* 
+ *>       if (n->type == DEP_LIKE  ) {                                                <* 
+ *>          strncat    (a_list, n->target->label, MAX_STR);                          <* 
+ *>          strncat    (a_list, ","             , MAX_STR);                          <* 
+ *>       }                                                                           <* 
+ *>       n = n->next;                                                                <* 
+ *>    }                                                                              <* 
+ *>    /+---(catch empty)-----------------+/                                          <* 
+ *>    if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");                         <* 
+ *>    /+---(complete)--------------------+/                                          <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
 
 
 
@@ -2376,14 +2280,14 @@ DEP_dump           (void)
    DEP_trace (0, tabs[0].sheet[2][11]);
    DEP_full  ();
    /*> printf ("0c12  = %9p\n", tabs[0].sheet[2][11]);                                <*/
-   DEP_provides  (tabs[0].sheet[2][11], xlabel);
+   DEP_disp_pros (tabs[0].sheet[2][11], xlabel);
    /*> printf ("deps  = %s\n",  xlabel);                                              <*/
-   DEP_requires  (tabs[0].sheet[2][11], xlabel);
+   DEP_disp_reqs (tabs[0].sheet[2][11], xlabel);
    /*> printf ("reqs  = %s\n",  xlabel);                                              <*/
    /*> printf ("s_root = %9p\n", s_root);                                               <*/
-   DEP_provides  (s_root, xlabel);
+   DEP_disp_pros (s_root, xlabel);
    /*> printf ("deps  = %s\n", xlabel);                                               <*/
-   DEP_requires  (s_root, xlabel);
+   DEP_disp_reqs (s_root, xlabel);
    /*> printf ("reqs  = %s\n", xlabel);                                               <*/
    DEP_checkall ('y');
    exit (0);
@@ -2449,14 +2353,14 @@ DEP_unit           (
    }
    /*---(cell reqs/deps)-----------------*/
    else if (strcmp (a_question, "cell_requires")  == 0) {
-      DEP_requires (x_cell, temp);
-      DEP_gnome    (temp);
+      DEP_disp_reqs  (x_cell, temp);
+      DEP_disp_sort  (temp);
       if (x_cell != NULL)  snprintf(unit_answer, LEN_TEXT, "s_dep requires   : %-5.5s (%2d) %-.35s", x_cell->label, x_cell->nrequire, temp);
       else                 snprintf(unit_answer, LEN_TEXT, "s_dep requires   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
    }
    else if (strcmp (a_question, "cell_provides")  == 0) {
-      DEP_provides (x_cell, temp);
-      DEP_gnome    (temp);
+      DEP_disp_pros  (x_cell, temp);
+      DEP_disp_sort  (temp);
       if (x_cell != NULL)  snprintf(unit_answer, LEN_TEXT, "s_dep provides   : %-5.5s (%2d) %-.35s", x_cell->label, x_cell->nprovide, temp);
       else                 snprintf(unit_answer, LEN_TEXT, "s_dep provides   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
    }
@@ -2479,6 +2383,141 @@ DEP_unit           (
    }
    /*---(complete)-----------------------*/
    return unit_answer;
+}
+
+char         /*--> sort cell label list ------------------[ ------ [ ------ ]-*/
+DEP_disp_sort      (char *a_list)
+{
+   /*---(purpose)-------------------------------------------------------------* 
+    * for unit testing to be reliable, cosmetic changes must not result in    *
+    * failures or the need to update the unit test script.  label lists from  *
+    * the dependency linked lists are a prime example.  they are added in the *
+    * order they are encountered, but simple reordering of operations can     *
+    * make them appear different even if the same cells are listed.  this     *
+    * routine simply sorts a list of dependencies so they are more stable.    */
+   /*---(design notes)--------------------------------------------------------* 
+    * there are many sort algorithms which can handle vast amounts of complex *
+    * data, but they are simply overkill and problematic for small, simple    *
+    * lists.  the teleporting gnome sort is my personal favorite due to its   *
+    * simplicity which in turn leads to maintainability and confidence.       */
+   /*---(oddities)------------------------------------------------------------* 
+    * one is added to tab, col, and row before storage in the array and       *
+    * sorting as the all three are consolidated mathmatically into a single   *
+    * fieild and zeros are just a little harder to debug ;)                   */
+   /*---(locals)-----------+-----------+-*//*---------------------------------*/
+   char        rce         = -10;           /* return code for errors         */
+   char        x_list      [1000] = "";     /* copy of the list for parsing   */
+   char       *p           = NULL;          /* strtok parsing pointer         */
+   char       *q           = ",;";          /* strtok delimeter string        */
+   int         x_array     [1000];          /* working list as integers       */
+   int         n_array     =  0;            /* working count of entries       */
+   int         i           =  0;            /* loop iterator -- entry         */
+   int         x_tab       =  0;            /* tab of current entry           */
+   int         x_col       =  0;            /* col of current entry           */
+   int         x_row       =  0;            /* row of current entry           */
+   char        x_abs       =  0;            /* referencing of current entry   */
+   char        x_label     [15];            /* label for sorted entry         */
+   char        rc          =  0;            /* return code                    */
+   int         a           =  0;            /* comparison entry one           */
+   int         b           =  0;            /* comparison entry two           */
+   int         tele        = -1;            /* teleport point to speed sort   */
+   char       *r           = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_SORT    yLOG_enter   (__FUNCTION__);
+   /*---(defense: null)------------------*/
+   --rce;
+   if (a_list  == NULL)  {
+      DEBUG_SORT    yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(defense: empty)-----------------*/
+   --rce;
+   if (strlen (a_list)  == 0)  {
+      DEBUG_SORT    yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(initialize)---------------------*/
+   DEBUG_SORT    yLOG_note    ("initialize");
+   for (i = 0; i < 100; ++i)  x_array[i] = 0;
+   n_array = 0;
+   /*---(parse/load)---------------------*/
+   DEBUG_SORT    yLOG_note    ("load the array");
+   strcpy (x_list, a_list);
+   p = strtok_r (x_list, q, &r);
+   i = 0;
+   --rce;
+   while (p != NULL) {
+      DEBUG_SORT    yLOG_info    ("parse"     , p);
+      rc = LOC_parse (p, &x_tab, &x_col, &x_row, &x_abs);
+      DEBUG_SORT    yLOG_value   ("rc"        , rc);
+      if (rc < 0)  {
+         DEBUG_SORT    yLOG_note    ("could not parse, EXITING");
+         DEBUG_SORT    yLOG_exit    (__FUNCTION__);
+         return rce;
+      }
+      DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      ++x_tab;
+      ++x_col;
+      ++x_row;
+      DEBUG_SORT    yLOG_complex ("inserted"  , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      x_array[i] = (x_tab * 100000000) + (x_col * 100000) + (x_row * 10) + x_abs;
+      DEBUG_SORT    yLOG_pair    (i         , x_array [i]);
+      p = strtok_r (NULL  , q, &r);
+      ++i;
+   }
+   n_array = i;
+   /*---(sort)---------------------------*/
+   DEBUG_SORT    yLOG_note    ("run the teleporting gnome");
+   i = 1;
+   while (i < n_array) {
+      /*---(load vars)-------------------*/
+      a = x_array [i - 1];
+      b = x_array [i];
+      DEBUG_SORT    yLOG_complex ("current"   , "compare i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
+      /*---(compare)---------------------*/
+      if (i == 0 || a < b) {
+         if (tele >= 0) {
+            i    = tele;
+            tele = -1;
+         } else {
+            ++i;
+         }
+         continue;
+      }
+      /*---(swap)------------------------*/
+      x_array [i - 1] = b;
+      x_array [i]     = a;
+      a = x_array [i - 1];
+      b = x_array [i];
+      DEBUG_SORT    yLOG_complex ("swapped"   , "now     i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
+      /*---(update)----------------------*/
+      if (tele < 0) tele = i;
+      if (i > 1) --i;
+   }
+   /*---(put back in list)---------------*/
+   DEBUG_SORT    yLOG_note    ("replace in the list");
+   strcpy (a_list, ",");
+   for (i = 0; i < n_array; ++i) {
+      DEBUG_SORT    yLOG_value   ("value"   , x_array[i]);
+      x_tab = x_array[i] / 100000000;
+      x_col = (x_array[i] - (x_tab * 100000000))         / 100000;
+      x_row = (x_array[i] - (x_tab * 100000000) - (x_col * 100000))         / 10;
+      x_abs = (x_array[i] - (x_tab * 100000000) - (x_col * 100000) - (x_row * 10));
+      DEBUG_SORT    yLOG_complex ("removed"   , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      --x_tab;
+      --x_col;
+      --x_row;
+      DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
+      rc = LOC_ref (x_tab, x_col, x_row, x_abs, x_label);
+      DEBUG_SORT    yLOG_value   ("label"   , x_label);
+      DEBUG_SORT    yLOG_pair    (i         , x_label);
+      strcat (a_list, x_label);
+      strcat (a_list, ",");
+   }
+   DEBUG_SORT    yLOG_info    ("final"     , a_list);
+   /*---(complete)-----------------------*/
+   DEBUG_SORT    yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 

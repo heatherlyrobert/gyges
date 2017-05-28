@@ -1673,7 +1673,7 @@ REG__getter        (char *a_question, char a_reg)
    /*---(register list)------------------*/
    else if (strcmp (a_question, "reg_sort"     )  == 0) {
       REG_list  (a_reg, x_list);
-      if (strlen (x_list) > 12)  DEP_gnome (x_list + 11);
+      if (strlen (x_list) > 12)  DEP_disp_sort (x_list + 11);
       snprintf (unit_answer, LEN_TEXT, "s_reg sort %-.45s", x_list);
    }
    else if (strcmp (a_question, "reg_list"     )  == 0) {

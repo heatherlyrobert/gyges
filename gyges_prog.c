@@ -309,10 +309,10 @@ unit_accessor(char *a_question, void *a_thing)
     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <* 
     *>    snprintf(unit_answer, LEN_TEXT, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <* 
     *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <* 
-    *>    DEP_requires (a_thing, temp);                                                                                                                                               <* 
+    *>    DEP_disp_reqs  (a_thing, temp);                                                                                                                                               <* 
     *>    snprintf(unit_answer, LEN_TEXT, "Cell Reqs List   : %-.35s", temp);                                                                                                     <* 
     *> } else if (strcmp(a_question, "cell_deps")      == 0) {                                                                                                                    <* 
-    *>    DEP_provides (a_thing, temp);                                                                                                                                               <* 
+    *>    DEP_disp_pros  (a_thing, temp);                                                                                                                                               <* 
     *>    snprintf(unit_answer, LEN_TEXT, "Cell Deps List   : %-.35s", temp);                                                                                                     <* 
     *> }                                                                                                                                                                          <*/
    /*---(UNKNOWN)------------------------*/
