@@ -1348,12 +1348,11 @@ CELL_merge           (tCELL *a_curr)
    tCELL      *x_left      = NULL;
    /*---(look left)----------------------*/
    x_left = CELL__merge_left (a_curr);
-   /*> --rce;  if (x_left == NULL)  {                                                 <* 
-    *>    a_curr->t = CTYPE_STR;                                                      <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
    /*---(check for broken merge)---------*/
    if (CELL__merge_valid (x_left) >= 0) {
+      x_left->t = CTYPE_STR;
+      x_left->f = '?';
+      x_left->a = '<';
       CELL__unmerge_right (x_left);
       return 0;
    }

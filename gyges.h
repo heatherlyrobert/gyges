@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0j"
-#define     VER_TXT   "added cell detail info win, and cleaned info_win a little"
+#define     VER_NUM   "2.0k"
+#define     VER_TXT   "fix how broken merged cells are shown"
 
 
 
