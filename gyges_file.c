@@ -1438,7 +1438,7 @@ INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_sou
       x_merge = LOC_cell (a_tab, i, a_row);
       if (x_merge == NULL)    break;
       if (x_merge->a != '+')  break;
-      DEP_create (DEP_MERGED, x_new, x_merge);
+      DEP_create (G_DEP_MERGED, x_new, x_merge);
    }
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
@@ -1643,7 +1643,7 @@ INPT_cellD         (cchar *a_recd)
             x_merge = LOC_cell (x_tab, i, x_row);
             if (x_merge == NULL)    break;
             if (x_merge->a != '+')  break;
-            DEP_create (DEP_MERGED, x_new, x_merge);
+            DEP_create (G_DEP_MERGED, x_new, x_merge);
          }
          break;
       }

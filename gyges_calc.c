@@ -1971,7 +1971,7 @@ CALC__loc           (void)
    x_new  = LOC_cell   (o, m, n);
    /*> if (s_me->u != x_new->u) {                                                     <*/
    DEP_delcalcref (s_me);
-   DEP_create     (DEP_CALCREF, s_me, x_new);
+   DEP_create     (G_DEP_CALCREF, s_me, x_new);
    /*> }                                                                              <*/
    CALC_pushref (__FUNCTION__, x_new);
    /*> printf ("CALC_loc %s\n", s_me->label);                                         <*/
@@ -4011,7 +4011,7 @@ CALC_build         (tCELL *a_cell)
                DEBUG_CALC   yLOG_exit    (__FUNCTION__);
                return rce - 1;
             }
-            rc = DEP_create (DEP_REQUIRE, a_cell, dest);
+            rc = DEP_create (G_DEP_REQUIRE, a_cell, dest);
             DEBUG_CALC   yLOG_value   ("rc"        , rc);
             if (rc < 0) {
                DEBUG_CALC   yLOG_info    ("error"     , "dependency can not be created");

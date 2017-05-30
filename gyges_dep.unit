@@ -256,7 +256,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  make 3rd dependent on the 1st                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -277,7 +277,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  make 4th dependent on the 1st                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_1st                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_4th            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -298,7 +298,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  make 4th dependent on the 2nd                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_2nd                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_4th            ,  x_2nd                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -319,7 +319,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  remove dependency of 3rd on 1st                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  remove a dependency                  DEP_delete            DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
+     exec     v21  remove a dependency                  DEP_delete            G_DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -340,17 +340,17 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  try to make null dependent on the 1st                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, NULL             ,  x_2nd                                  i_lesser    0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, NULL             ,  x_2nd                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  try to make 3rd dependent on the null                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_3rd            ,  NULL                                   i_lesser    0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_3rd            ,  NULL                                   i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  make 4th dependent on the 2nd, again (duplicate)             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_2nd                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_4th            ,  x_2nd                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -371,17 +371,17 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  make 3rd dependent on the 1st, again                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_3rd            ,  x_1st                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  make 4th dependent on itself (circular)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_4th            ,  x_4th                                  i_lesser    0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_4th            ,  x_4th                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  add dependency on 5th for 4th (take 4th off root)            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_5th            ,  x_4th                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_5th            ,  x_4th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  12, fore=  12, back=  12                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -402,12 +402,12 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  remove dependency of 2nd on 1st (non-existant)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  remove a dependency                  DEP_delete            DEP_REQUIRE, x_2nd            ,  x_1st                                  i_lesser    0                                                                      
+     exec     v21  remove a dependency                  DEP_delete            G_DEP_REQUIRE, x_2nd            ,  x_1st                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  12, fore=  12, back=  12                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
    COND       v21  add dependency on 5th for 2nd                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_5th            ,  x_2nd                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_5th            ,  x_2nd                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  14, fore=  14, back=  14                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -428,7 +428,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  add dependency on 2nd for 5th (looped and illegal)           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_2nd            ,  x_5th                                  i_lesser    0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_2nd            ,  x_5th                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  14, fore=  14, back=  14                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -449,7 +449,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  add dependency on 1st for 5th (three step removed loop)      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_1st            ,  x_5th                                  i_lesser    0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_1st            ,  x_5th                                  i_lesser    0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  14, fore=  14, back=  14                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -470,7 +470,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 0) .                                        
 
    COND       v21  add dependency on 9th for 5th (take 5th off root)            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_9th            ,  x_5th                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_9th            ,  x_5th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  16, fore=  16, back=  16                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -491,7 +491,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 1) ,root,                                   
 
    COND       v21  remove dependency of 5th on 4th (get 4th back to root)       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  remove a dependency                  DEP_delete            DEP_REQUIRE, x_5th            ,  x_4th                                  i_equal     0                                                                      
+     exec     v21  remove a dependency                  DEP_delete            G_DEP_REQUIRE, x_5th            ,  x_4th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  16, fore=  16, back=  16                      
 #    exec     v21  show the dependency tree             DEP_writescreen                                                                               i_equal     0                                                                      
 
@@ -516,6 +516,384 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (dep   ) managing merge dependencies (non-visual)            CELL_merge, CELL__merge_left, CELL__merge_right, DEP_unmerge, ...       ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
+     get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  create a pointer to 1st cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
+     code     v21  create a pointer to 2nd cell         - - - - - - - - - -   tCELL *x_2nd  = NULL;                                                                                                                                          
+     code     v21  create a pointer to 3rd cell         - - - - - - - - - -   tCELL *x_3rd  = NULL;                                                                                                                                          
+     code     v21  create a pointer to 4th cell         - - - - - - - - - -   tCELL *x_4th  = NULL;                                                                                                                                          
+     code     v21  create a pointer to 5th cell         - - - - - - - - - -   tCELL *x_5th  = NULL;                                                                                                                                          
+     code     v21  create a pointer to merge root       - - - - - - - - - -   tCELL *x_root = NULL;                                                                                                                                          
+
+   GROUP      v21  check a simple two cell merge                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  create a merge root cell                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  5, "1st"                                             p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check the merge left logic                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check left            (1st)          CELL__merge_left      x_1st                                                                   p_equal     x_1st                                                                  
+     exec     v21  check left            (2nd)          CELL__merge_left      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check left            (3rd)          CELL__merge_left      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check left            (4th)          CELL__merge_left      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check left            (5th)          CELL__merge_left      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   COND       v21  create a normal cell to the right                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  6,  5, "2nd"                                             p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_2nd  = yUNIT_p_rc;                                                                                                                                           
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check the merge left logic                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check left            (1st)          CELL__merge_left      x_1st                                                                   p_equal     x_1st                                                                  
+     exec     v21  check left            (2nd)          CELL__merge_left      x_2nd                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check left            (3rd)          CELL__merge_left      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check left            (4th)          CELL__merge_left      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check left            (5th)          CELL__merge_left      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   COND       v21  change second cell to a merge symbol                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_2nd, "<"                                                              i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  check merge right                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge right (from null)              CELL__merge_right     x_4th                                                                   i_lesser    0                                                                      
+     exec     v21  merge right                          CELL__merge_right     x_1st                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   GROUP      v21  check two contiguous merges staying separate                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  create a normal cell to the right                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  7,  5, "3rd"                                             p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_3rd  = yUNIT_p_rc;                                                                                                                                           
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
+
+   COND       v21  check the merge left logic                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check left            (1st)          CELL__merge_left      x_1st                                                                   p_equal     x_1st                                                                  
+     exec     v21  check left            (2nd)          CELL__merge_left      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check left            (3rd)          CELL__merge_left      x_3rd                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check left            (4th)          CELL__merge_left      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check left            (5th)          CELL__merge_left      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  create a normal cell to the right                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  8,  5, "4th"                                             p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_4th  = yUNIT_p_rc;                                                                                                                                           
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
+
+   COND       v21  change 4th cell to a merge symbol                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_4th, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  check the merge left logic                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check left            (1st)          CELL__merge_left      x_1st                                                                   p_equal     x_1st                                                                  
+     exec     v21  check left            (2nd)          CELL__merge_left      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check left            (3rd)          CELL__merge_left      x_3rd                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check left            (4th)          CELL__merge_left      x_4th                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check left            (5th)          CELL__merge_left      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check merge right (remerge)                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge right                          CELL__merge_right     x_1st                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
+
+   COND       v21  check merge right                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge right                          CELL__merge_right     x_3rd                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
+
+   GROUP      v21  check extensions to an existing                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  create a normal cell to the right                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  9,  5, "5th"                                             p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_5th  = yUNIT_p_rc;                                                                                                                                           
+
+   COND       v21  change 5th cell to a merge symbol                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_5th, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  merge using combination function                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge combo                          CELL_merge            x_5th                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_equal     x_3rd                                                                  
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  2 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+
+   COND       v21  update 3rd to a merge symbol                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_3rd, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  merge using combination function                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge combo                          CELL_merge            x_3rd                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_equal     x_1st                                                                  
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  4 d=  1                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+
+   GROUP      v21  break an existing merge with content change                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  update 2nd to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_2nd, "2nd"                                                            i_equal     0                                                                      
+
+   COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  unmerge function                     CELL_unmerge          x_2nd                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_equal     x_2nd                                                                  
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  3 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+
+   COND       v21  update 5th to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_5th, "5th"                                                            i_equal     0                                                                      
+
+   COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  unmerge function                     CELL_unmerge          x_5th                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  2 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+
+   GROUP      v21  create broken merge situations                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  update 1st to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_1st, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  check merge at current cell                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge function                       CELL_merge            x_1st                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_2nd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  2 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+
+   COND       v21  update 2nd to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_2nd, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge function                       CELL_merge            x_2nd                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+
+   GROUP      v21  jump into the merge and fix it                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  update 3rd to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_3rd, "3rd"                                                            i_equal     0                                                                      
+
+   COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge function                       CELL_unmerge          x_3rd                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_null      0                                                                      
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+
+   COND       v21  update 5th to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_5th, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  check merge at current cell                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge function                       CELL_merge            x_5th                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   6, fore=   6, back=   6                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_equal     x_3rd                                                                  
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  2 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+
+   COND       v21  update 1st to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_1st, "1st"                                                            i_equal     0                                                                      
+
+   COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge function                       CELL_unmerge          x_1st                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_3rd                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_equal     x_3rd                                                                  
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  1 d=  1                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  2 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+
+   GROUP      v21  finish with a bang (all five merged)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  update 3rd to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the cell source only          CELL_unitchange       x_3rd, "<"                                                              i_equal     0                                                                      
+
+   COND       v21  check merge at current cell                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  merge function                       CELL_merge            x_3rd                                                                   i_equal     0                                                                      
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  10, fore=  10, back=  10                      
+
+   COND       v21  check merge sources                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  check merge source    (1st)          DEP_merge_source      x_1st                                                                   p_null      0                                                                      
+     exec     v21  check merge source    (2nd)          DEP_merge_source      x_2nd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (3rd)          DEP_merge_source      x_3rd                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (4th)          DEP_merge_source      x_4th                                                                   p_equal     x_1st                                                                  
+     exec     v21  check merge source    (5th)          DEP_merge_source      x_5th                                                                   p_equal     x_1st                                                                  
+
+   COND       v21  check cell information                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell's info (1st)          CELL__unitnew         "cell_info"      , "0f6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  4 d=  1                   
+     get      v21  check the cell's info (2nd)          CELL__unitnew         "cell_info"      , "0g6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (3rd)          CELL__unitnew         "cell_info"      , "0h6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (4th)          CELL__unitnew         "cell_info"      , "0i6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+     get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                   
+
+   COND       v21  verify program teardown purges                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
+     get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
 
 
 
@@ -575,7 +953,7 @@ SCRP          v21  (dep   ) range dependency creation and destruction         
      get      v21  review the provides 8th              DEP_unit              "cell_provides"  ,  "0j10"                                              s_equal     s_dep provides   : 0j10  ( 0) .                                        
 
    COND       v21  add dependency on 8th for 1st (get started simple)           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_8th            ,  x_1st                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_8th            ,  x_1st                                i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   4, fore=   4, back=   4                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -623,9 +1001,9 @@ SCRP          v21  (dep   ) range dependency creation and destruction         
      get      v21  review the provides 8th              DEP_unit              "cell_provides"  ,  "0j10"                                              s_equal     s_dep provides   : 0j10  ( 0) .                                        
 
    COND       v21  add several dependencies on 7th                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_7th            ,  x_1st                                  i_equal     0                                                                      
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_7th            ,  x_2nd                                  i_equal     0                                                                      
-     exec     v21  create a dependency                  DEP_create            DEP_REQUIRE, x_7th            ,  x_5th                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_7th            ,  x_1st                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_7th            ,  x_2nd                                  i_equal     0                                                                      
+     exec     v21  create a dependency                  DEP_create            G_DEP_REQUIRE, x_7th            ,  x_5th                                  i_equal     0                                                                      
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  

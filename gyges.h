@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0h"
-#define     VER_TXT   "combined logic from DEP_requires, provides, and likes"
+#define     VER_NUM   "2.0i"
+#define     VER_TXT   "completely reworked, fixed, and unit tested interactive cell merging"
 
 
 
@@ -1033,43 +1033,41 @@ char      RPN_convert        (tCELL *a_curr);
 
 
 
-tDEP     *DEP__new           /* ------ */  (void);
-tDEP     *DEP__free          /* ------ */  (tDEP *a_dep);
 
-char      DEP_init           /* ------ */  (void);
-char      DEP_wrap           /* ------ */  (void);
-char      DEP__purge          /* ------ */  (void);
-
-#define   DEP_BLANK     '-'
-
-#define   DEP_REQUIRE   'R'
-#define   DEP_PROVIDE   'p'
-
-#define   DEP_RANGE     'P'
-#define   DEP_CELL      'c'
-
-#define   DEP_FORMAT    'F'
-#define   DEP_COPY      'f'
-
-#define   DEP_SOURCE    'S'
-#define   DEP_LIKE      'l'
-
-#define   DEP_MERGED    'M'
-#define   DEP_EMPTY     'e'
-
-#define   DEP_CALCREF   'A'
-#define   DEP_ADDRESS   'a'
-
-#define   DEP_ROOT      'r'
-#define   DEP_UNROOT    'u'
-#define   DEP_CHECKROOT 'a'
+/*---(external)-------------*/
+#define     G_DEP_BLANK          '-'
+#define     G_DEP_REQUIRE        'R'
+#define     G_DEP_PROVIDE        'p'
+#define     G_DEP_RANGE          'P'
+#define     G_DEP_CELL           'c'
+#define     G_DEP_FORMAT         'F'
+#define     G_DEP_COPY           'f'
+#define     G_DEP_SOURCE         'S'
+#define     G_DEP_LIKE           'l'
+#define     G_DEP_MERGED         'M'
+#define     G_DEP_BLEED          'b'
+#define     G_DEP_CALCREF        'A'
+#define     G_DEP_ADDRESS        'a'
+#define     G_DEP_ROOT           'r'
+#define     G_DEP_UNROOT         'u'
+#define     G_DEP_CHECKROOT      'a'
+/*---(program)--------------*/
+char        DEP_init             (void);
+char        DEP__purge           (void);
+char        DEP_wrap             (void);
+/*---(malloc)---------------*/
+tDEP       *DEP__new             (void);
+tDEP       *DEP__free            (tDEP *a_dep);
 
 
+/*345678901-12345678901234567890->--------------------------------------------*/
+tCELL*      DEP_merge_source     (tCELL *a_curr);
 
-tDEP*     DEP__makereq       (char a_type, char a_index, tCELL *a_source, tCELL *a_target);
-tDEP*     DEP__makepro       (char a_type, char a_index, tCELL *a_source, tCELL *a_target);
-char      DEP__rooting       (tCELL *a_cell, char a_type);
 
+
+
+/*---(single)---------------*/
+char      DEP_rooting        (tCELL *a_cell, char a_type);
 char      DEP_create         (char a_type, tCELL *a_source, tCELL *a_target);
 char      DEP_delete         (char a_type, tCELL *a_source, tCELL *a_target);
 
@@ -1124,6 +1122,21 @@ char      CELL__free         /* ------ */  (tCELL *a_cell, char a_linked);
 
 char      CELL_regdel        (tCELL *a_curr);
 
+/*345678901-12345678901234567890->--------------------------------------------*/
+/*---(merge-specific)-----------------*/
+char        CELL__merge_valid    (tCELL *a_curr);
+tCELL*      CELL__merge_left     (tCELL *a_curr);
+char        CELL__merge_right    (tCELL *a_left);
+char        CELL__unmerge_right  (tCELL *a_left);
+char        CELL_merge           (tCELL *a_curr);
+char        CELL_unmerge         (tCELL *a_curr);
+char        CELL_merge_visu      (void);
+char        CELL_unmerge_visu    (void);
+/*---(unit-testing)-------------------*/
+char        CELL_unitchange      (tCELL *a_cell, char *a_source);
+
+
+
 char      HIST_change        (char *a_type, int a_tab, int a_col, int a_row, char *a_before, char *a_after);
 char      HIST_format        (char *a_type, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
 char      HIST_size          (char *a_type, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
@@ -1150,7 +1163,9 @@ char*     TAB_unit           /* ------ */  (char *a_question, tCELL *a_cell);
 char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 char      LOC_jump           /* ------ */  (int a_tab, int a_col, int a_row);
 char      LOC_legal          /* ------ */  (int a_tab, int a_col, int a_row, char a_adapt);
-char      CELL_merge         /* ------ */  (char);
+
+
+
 
 #define   CELL_FIXED         'n'
 #define   CELL_ADAPT         'y'

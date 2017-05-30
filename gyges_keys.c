@@ -1250,8 +1250,8 @@ SMOD_format        (char a_major, char a_minor)
    case  '}' : CELL_align    (CHG_INPUT, '}');  break;  /* right +2    */
    case  '{' : CELL_align    (CHG_INPUT, '{');  break;  /* left  +2    */
 
-   case  'M' : CELL_merge    ('m');  break;  /* merge       */
-   case  'U' : CELL_merge    ('u');  break;  /* unmerge     */
+   case  'M' : CELL_merge_visu ();              break;  /* merge       */
+   case  'U' : CELL_unmerge_visu ();            break;  /* unmerge     */
 
    case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /* integer         */
    case  'r' : CELL_format   (CHG_INPUT, 'r');  CELL_decimals (CHG_INPUT, '3'); break;  /* real/float      */
