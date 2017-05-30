@@ -1249,7 +1249,7 @@ MARK_mode          (char a_major, char a_minor)
                  break;
       case '!' : sta_type = 'm';
                  break;
-      case '?' : my.info_win = '\'';
+      case '?' : my.info_win = G_INFO_MARK;
                  break;
       default  : rc = MARK_set (a_minor);
                  if (rc < 0) {

@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0i"
-#define     VER_TXT   "completely reworked, fixed, and unit tested interactive cell merging"
+#define     VER_NUM   "2.0j"
+#define     VER_TXT   "added cell detail info win, and cleaned info_win a little"
 
 
 
@@ -270,6 +270,12 @@ struct cACCESSOR {
 extern    struct cACCESSOR my;
 
 
+#define     G_INFO_NONE       ' '
+#define     G_INFO_MARK       '\''
+#define     G_INFO_REGS       '"'
+#define     G_INFO_TREG       't'
+#define     G_INFO_CELL       'c'
+#define     G_INFO_ERROR      'E'
 
 
 #define     MAX_ERROR      10000
@@ -1001,16 +1007,17 @@ char*     MOVE_unit          (char *a_question, int a_num);
 
 
 /*---(ncurses)----------------------------------*/
-char      CURS_begin         (void);
-char      CURS_end           (void);
-int       CURS_main          (void);
-char      CURS_colhead       (void);
-char      CURS_rowhead       (void);
-char      CURS_cell          (int  a_col, int a_row);
-char      CURS_size          (void);
-char      CURS_listmark      (void);
-char      CURS_listreg       (void);
-char      CURS_listtreg      (void);
+char      CURS_begin           (void);
+char      CURS_end             (void);
+int       CURS_main            (void);
+char      CURS_colhead         (void);
+char      CURS_rowhead         (void);
+char      CURS_cell            (int  a_col, int a_row);
+char      CURS_size            (void);
+char      CURS_info_cell       (void);
+char      CURS_listmark        (void);
+char      CURS_listreg         (void);
+char      CURS_listtreg        (void);
 
 char      CALC_init          (void);
 char      CALC_cleanse       (tCELL *a_cell);

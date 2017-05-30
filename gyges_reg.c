@@ -376,7 +376,7 @@ REG_mode           (int a_major, int a_minor)
          REG_set    (a_minor);
          return 0;
       } else if (a_minor == '?') {
-         my.info_win = '"';
+         my.info_win = G_INFO_REGS;
          REG_set ('"');
          /*> yVIKEYS_mode_exit ();                                                          <*/
          return  0;
@@ -1477,7 +1477,7 @@ TREG_mode          (int a_major, int a_minor)
          return 0;
       } else if (a_minor == '?') {
          DEBUG_USER   yLOG_note    ("show text register inventory");
-         my.info_win  = 't';
+         my.info_win  = G_INFO_TREG;
          s_treg_curr = '"';
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return  0;

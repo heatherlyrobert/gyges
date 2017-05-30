@@ -164,7 +164,7 @@ static tCOLOR_INFO  s_color_info [MAX_COLOR_INFO] = {
    { "h_use"    , ' ', "row/column with entries"                            , 'y' , ' ' , '-',   0 },
    { "h_not"    , ' ', "row/column with no entries"                         , 'b' , ' ' , '-',   0 },
    /*---(selection)------*/
-   { "curr"     , ' ', "current cell"                                       , 'b' , 'y' , 'b',   0 },
+   { "curr"     , ' ', "current cell"                                       , 'k' , 'y' , 'b',   0 },
    { "root"     , ' ', "root of visual selection"                           , 'y' , 'k' , 'y',   0 },
    { "visu"     , ' ', "selected, not root/curr"                            , 'y' , 'y' , 'y',   0 },
    { "mark"     , ' ', "location marks"                                     , 'w' , 'c' , 'y',   0 },
@@ -817,6 +817,81 @@ CURS_menusub       (char a_menu)
 }
 
 char
+CURS_info_cell       (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 3;
+   char        x_temp      [MAX_STR];
+   char        x_line      [MAX_STR];
+   int         x_len       = 0;
+   char       *x_title     = " ------------------cell details-------------------- ";
+   tCELL      *x_curr      = tab->sheet[CCOL][CROW];
+   /*---(header)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw   ( i++, 10, x_title);
+   attrset    (0);
+   /*---(show variables)-----------------*/
+   attron     (S_COLOR_CURRENT);
+   sprintf    (x_line, " %-5s tab=%3d, col=%3d, row=%3d                    ", s_label, CTAB, CCOL, CROW);
+   mvprintw   ( i++, 10, x_line);
+   if (x_curr == NULL) {
+      sprintf    (x_line, " %-50.50s ", " s --- (null)");
+      mvprintw   ( i++, 10, x_line);
+   } else {
+      if (x_curr->l < 43)  sprintf    (x_temp, "s %3d [%-s]"     , x_curr->l, x_curr->s);
+      else                 sprintf    (x_temp, "s %3d [%-42.42s>", x_curr->l, x_curr->s);
+      sprintf    (x_line, " %-50.50s ", x_temp);
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_temp, "v     = %-16.6lf", x_curr->v_num);
+      sprintf    (x_line, " %-50.50s ", x_temp);
+      mvprintw   ( i++, 10, x_line);
+      if (x_curr->v_str == NULL) {
+         sprintf    (x_line, " %-50.50s ", "m --- (null)");
+         mvprintw   ( i++, 10, x_line);
+      } else {
+         x_len = strlen (x_curr->v_str);
+         if (x_len     < 43)  sprintf    (x_temp, "m %3d [%-s]"     , x_len, x_curr->v_str);
+         else                 sprintf    (x_temp, "m %3d [%-42.42s>", x_len, x_curr->v_str);
+         sprintf    (x_line, " %-50.50s ", x_temp);
+         mvprintw   ( i++, 10, x_line);
+      }
+      sprintf    (x_line, " t     %c%-43.43s ", x_curr->t, " ");
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_line, " a     %c%-43.43s ", x_curr->a, " ");
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_line, " d     %c%-43.43s ", x_curr->d, " ");
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_line, " f     %c%-43.43s ", x_curr->f, " ");
+      mvprintw   ( i++, 10, x_line);
+      if (x_curr->p == NULL) {
+         sprintf    (x_line, " %-50.50s ", "p --- (null)");
+         mvprintw   ( i++, 10, x_line);
+      } else {
+         x_len = strlen (x_curr->p);
+         if (x_len     < 43)  sprintf    (x_temp, "p %3d [%-s]"     , x_len, x_curr->p);
+         else                 sprintf    (x_temp, "p %3d [%-42.42s>", x_len, x_curr->p);
+         sprintf    (x_line, " %-50.50s ", x_temp);
+         mvprintw   ( i++, 10, x_line);
+      }
+      sprintf    (x_line, " nrpn  %-4d%-40.40s ", x_curr->nrpn     , " ");
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_line, " npro  %-4d%-40.40s ", x_curr->nprovide , " ");
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_line, " nreq  %-4d%-40.40s ", x_curr->nrequire , " ");
+      mvprintw   ( i++, 10, x_line);
+      sprintf    (x_line, " nerr  %-4d%-40.40s ", x_curr->nerror   , " ");
+      mvprintw   ( i++, 10, x_line);
+   }
+   attrset    (0);
+   /*---(footer)-------------------------*/
+   attron     (S_COLOR_TITLE);
+   mvprintw   ( i++, 10, x_title);
+   attrset    (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
 CURS_listmark      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1016,14 +1091,16 @@ CURS_main          (void)
    CURS_rowhead   ();
    CURS_page      ();
    switch (my.info_win) {
-   case '\'' : CURS_listmark   ();
-               break;
-   case '"'  : CURS_listreg    ();
-               break;
-   case 't'  : CURS_listtreg   ();
-               break;
-   case 'E'  : CURS_listerror  (curr);
-               break;
+   case G_INFO_MARK  : CURS_listmark   ();
+                       break;
+   case G_INFO_REGS  : CURS_listreg    ();
+                       break;
+   case G_INFO_TREG  : CURS_listtreg   ();
+                       break;
+   case G_INFO_CELL  : CURS_info_cell  ();
+                       break;
+   case G_INFO_ERROR : CURS_listerror  (curr);
+                       break;
    }
    if (my.menu != MENU_NONE) {
       CURS_menuroot (my.menu);
@@ -1038,7 +1115,7 @@ CURS_main          (void)
       mvprintw (row_chead, 0, s_label + 1);
    }
    /*---(cursor pos)---------------------*/
-   if (my.info_win != '-') 
+   if (my.info_win != G_INFO_NONE) 
       move ( 4, 10);
    else if (my.menu     != MENU_NONE) 
       move ( 2,  1);
@@ -1047,7 +1124,7 @@ CURS_main          (void)
    else
       move (tab->rows[CROW].y, tab->cols[CCOL].x + tab->cols[CCOL].w - 1);
    /*---(refresh)------------------------*/
-   my.info_win = '-';
+   my.info_win = G_INFO_NONE;
    refresh ();
    ch = getch ();
    DEBUG_GRAF  yLOG_value   ("key"       , ch);

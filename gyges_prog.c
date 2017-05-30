@@ -81,7 +81,7 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_mode_init   ();
    yVIKEYS_mode_enter  (MODE_MAP);
    my.scrn     = SCRN_DEBUG;
-   my.info_win = '-';
+   my.info_win = G_INFO_NONE;
    my.menu     = ' ';
    /*---(complete)-----------------------*/
    DEBUG_TOPS   yLOG_exit     (__FUNCTION__);

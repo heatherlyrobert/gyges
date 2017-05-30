@@ -580,6 +580,7 @@ MODE_map           (char a_major, char a_minor)
       case 'u'      : HIST_undo ();                   break;
       case 'U'      : HIST_redo ();                   break;
                       /*> case 'W'      : REG_bufwrite (my.reg_curr);     break;                      <*/
+      case '?'      : my.info_win = G_INFO_CELL;      break;
       default       : /* unknown problem */
                       DEBUG_USER   yLOG_exit    (__FUNCTION__);
                       return rce;
@@ -1090,7 +1091,7 @@ SMOD_error         (char a_major, char a_minor)
     *> }                                                                              <*/
    if (a_minor == '?') {
       DEBUG_USER   yLOG_note    ("display errors for cell");
-      my.info_win = 'E';
+      my.info_win = G_INFO_ERROR;
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_major;
    }
