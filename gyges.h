@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0p"
-#define     VER_TXT   "layouts now produce an information window also"
+#define     VER_NUM   "2.0q"
+#define     VER_TXT   "added category, sub-cat, and description to calculations"
 
 
 
