@@ -134,10 +134,10 @@ PROG_args          (int argc, char *argv[])
       else if (strncmp (a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp (a, "--help"    ,10) == 0)  PROG_usage();
       /*---(prefixes)--------------------*/
-      else if (strncmp (a, "--formula-"          , 10) == 0)  PROG_layout_set ("formula"  , a + 10);
-      else if (strncmp (a, "--status-"           ,  9) == 0)  PROG_layout_set ("status"   , a +  9);
-      else if (strncmp (a, "--command-"          , 10) == 0)  PROG_layout_set ("command"  , a + 10);
-      else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("layout"   , a +  9);
+      else if (strncmp (a, "--formula-"          , 10) == 0)  PROG_layout_set ("cli", "formula"  , a + 10);
+      else if (strncmp (a, "--status-"           ,  9) == 0)  PROG_layout_set ("cli", "status"   , a +  9);
+      else if (strncmp (a, "--command-"          , 10) == 0)  PROG_layout_set ("cli", "command"  , a + 10);
+      else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);
       /*---(other)-----------------------*/
       else if (a[0] != '-'                     )  strncpy (my.f_name , argv[i]  , LEN_RECD);
    }
@@ -265,7 +265,7 @@ PROG_end           (void)
 PRIV void  o___LAYOUT__________o () { return; }
 
 char
-PROG_layout_set     (char *a_cat, char *a_opt)
+PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
@@ -283,12 +283,19 @@ PROG_layout_set     (char *a_cat, char *a_opt)
       if (g_layouts [i].opt [0] != a_opt [0])       continue;
       if (strcmp (g_layouts [i].cat, a_cat) != 0)   continue;
       if (strcmp (g_layouts [i].opt, a_opt) != 0)   continue;
-      /*---(handle)----------------------*/
+      /*---(assign)----------------------*/
       x_found = i;
       if (g_layouts [i].formula > 0)  my.layout_formula = g_layouts [i].formula;
       if (g_layouts [i].status  > 0)  my.layout_status  = g_layouts [i].status;
       if (g_layouts [i].command > 0)  my.layout_command = g_layouts [i].command;
+      /*---(reset)-----------------------*/
       CURS_size    ();
+      if (strcmp (a_who, "cmd") == 0) {
+         MOVE_prep    ();
+         EROW         = 10000;
+         MOVE_vert    ('r');
+         MOVE_done    ();
+      }
       break;
       /*---(done)------------------------*/
    }

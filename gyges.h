@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0n"
-#define     VER_TXT   "layout commands working inside the system };>"
+#define     VER_NUM   "2.0o"
+#define     VER_TXT   "got command layout hide working, appears when used!"
 
 
 
@@ -799,7 +799,7 @@ extern char    cmd        [10];
 extern char    msg_type;
 extern char    message    [LEN_RECD];
 extern char    sta_error;
-extern char    command    [LEN_RECD];
+extern char    g_command    [LEN_RECD];
 extern char    special;
 
 extern char      g_empty    [200];
@@ -858,14 +858,14 @@ extern      char          unit_answer [LEN_UNIT];
 int       main               (int argc, char *argv[]);
 
 /*---(from s.c)----------------------------*/
-char      PROG_init          (int argc, char *argv[]);
-char      PROG_urgsmass      (char a_set, char a_extra);
-char      PROG_urgs          (int argc, char *argv[]);
-char      PROG_args          (int argc, char *argv[]);
-char      PROG_begin         (void);
-char      PROG_end           (void);
-char      PROG_layout_set     (char *a_cat, char *a_opt);
-char      PROG_layout_list    (void);
+char      PROG_init            (int argc, char *argv[]);
+char      PROG_urgsmass        (char a_set, char a_extra);
+char      PROG_urgs            (int argc, char *argv[]);
+char      PROG_args            (int argc, char *argv[]);
+char      PROG_begin           (void);
+char      PROG_end             (void);
+char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
+char      PROG_layout_list     (void);
 
 char     *unit_accessor      (char *a_question, void *a_thing);
 char      PROG_testing       (void);

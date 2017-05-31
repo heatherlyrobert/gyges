@@ -473,7 +473,7 @@ MODE_map           (char a_major, char a_minor)
          return 0;
          break;
       case ':'      :
-         strncpy     (command , ":", LEN_RECD);
+         strncpy     (g_command , ":", LEN_RECD);
          yVIKEYS_mode_enter  (MODE_COMMAND);
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
@@ -1353,35 +1353,19 @@ cmd_exec           (char *a_command)
    }
    /*---(layout commands)----------------*/
    if (x_len >= 12 && strcmp (p, ":formula") == 0) {
-      PROG_layout_set ("formula"  , x_work + 9);
-      MOVE_prep    ();
-      EROW         = 10000;
-      MOVE_vert    ('r');
-      MOVE_done    ();
+      PROG_layout_set ("cmd", "formula"  , x_work + 9);
       return 0;
    }
    if (x_len >= 11 && strcmp (p, ":status") == 0) {
-      PROG_layout_set ("status"   , x_work + 8);
-      MOVE_prep    ();
-      EROW         = 10000;
-      MOVE_vert    ('r');
-      MOVE_done    ();
+      PROG_layout_set ("cmd", "status"   , x_work + 8);
       return 0;
    }
    if (x_len >= 12 && strcmp (p, ":command") == 0) {
-      PROG_layout_set ("command"  , x_work + 9);
-      MOVE_prep    ();
-      EROW         = 10000;
-      MOVE_vert    ('r');
-      MOVE_done    ();
+      PROG_layout_set ("cmd", "command"  , x_work + 9);
       return 0;
    }
    if (x_len >= 11 && strcmp (p, ":layout" ) == 0) {
-      PROG_layout_set ("layout"   , x_work + 8);
-      MOVE_prep    ();
-      EROW         = 10000;
-      MOVE_vert    ('r');
-      MOVE_done    ();
+      PROG_layout_set ("cmd", "layout"   , x_work + 8);
       return 0;
    }
    if   (strncmp(p, ":q"        , LEN_RECD) == 0 ||
@@ -1463,11 +1447,11 @@ MODE_command       (char a_major, char a_minor)
    int         x_len       = 0;
    char        x_temp      [11]        = "";
    /*---(check for control keys)---------*/
-   x_len = strlen (command);
+   x_len = strlen (g_command);
    switch (a_minor) {
    case   27 : yVIKEYS_mode_exit ();
                return 0;
-   case   10 : cmd_exec (command);
+   case   10 : cmd_exec (g_command);
                yVIKEYS_mode_exit ();
                return 0;   /* return  */
    }
@@ -1475,12 +1459,12 @@ MODE_command       (char a_major, char a_minor)
    if (a_minor == 8 || a_minor == 127) {
       --x_len;
       if (x_len < 0)   x_len = 0;
-      command [x_len] = '\0';
+      g_command [x_len] = '\0';
       return 0;
    }
    /*---(normal characters)--------------*/
    snprintf (x_temp, 10, "%c", a_minor);
-   strcat   (command, x_temp);
+   strcat   (g_command, x_temp);
    /*---(complete)-----------------------*/
    return 0;
 }

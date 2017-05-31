@@ -591,7 +591,7 @@ CURS_status        (tCELL *a_curr)
 char
 CURS_message       (void)
 {
-   if (s_command_size <= 0)  return 0;
+   if (s_command_size <= 0 && yVIKEYS_mode_not (MODE_COMMAND))  return 0;
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    attron  (S_COLOR_MESSAGE);
    mvprintw (s_command_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);
@@ -1093,10 +1093,10 @@ CURS_main          (void)
    /*---(update cells)-------------------*/
    CURS_formula   (curr);
    CURS_status    (curr);
-   CURS_message   ();
    CURS_colhead   ();
    CURS_rowhead   ();
    CURS_page      ();
+   CURS_message   ();
    switch (my.info_win) {
    case G_INFO_MARK  : CURS_listmark   ();
                        break;
@@ -1354,10 +1354,12 @@ CURS_size         (void)
    row_formula  = 0;
    row_chead    = 1;
    row_main     = 2;
-   if (my.layout_status  != G_STATUS_HIDE ) { s_status_row   = y - 2; s_status_size  = 1; }
-   else                                     { s_status_row   = 0;     s_status_size  = 0; }
-   if (my.layout_command != G_COMMAND_HIDE) { s_command_row  = y - 1; s_command_size = 1; }
-   else                                     { s_command_row  = 0;     s_command_size = 0; }
+   s_status_row   = y - 2;
+   if (my.layout_status  != G_STATUS_HIDE ) s_status_size  = 1;
+   else                                     s_status_size  = 0;
+   s_command_row  = y - 1;
+   if (my.layout_command != G_COMMAND_HIDE) s_command_size = 1;
+   else                                     s_command_size = 0;
    col_header   = 0;
    col_far      = x - 1;
    /*---(critical numbers)------------*/

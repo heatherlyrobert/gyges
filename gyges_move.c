@@ -13,7 +13,7 @@ char    g_contents      [LEN_RECD] = "";
 char    saved   [LEN_RECD] = "";
 char    cmd[10] = "";
 char    message [LEN_RECD] = "";
-char    command [LEN_RECD] = "";
+char    g_command [LEN_RECD] = "";
 char    special = 0;
 
 

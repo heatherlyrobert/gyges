@@ -44,7 +44,7 @@ main (int argc, char *argv[])
    MOVE_vert ('r');
    MOVE_horz ('r');
    sch = ' ';
-   yVIKEYS_mode_mesg (my.message, command);
+   yVIKEYS_mode_mesg (my.message, g_command);
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
@@ -92,7 +92,7 @@ main (int argc, char *argv[])
       else               { sch = ' ';  sta_error = 'y'; }
       /*---(setup status line)-----------*/
       if   (x_savemode != yVIKEYS_mode_curr() || yVIKEYS_mode_curr() == MODE_COMMAND) {
-         yVIKEYS_mode_mesg (my.message, command);
+         yVIKEYS_mode_mesg (my.message, g_command);
       }
       /*---(done)------------------------*/
    }
