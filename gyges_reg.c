@@ -342,7 +342,7 @@ REG_set            (char a_reg)
       REG_clear (my.reg_curr, '-');
       return  0;
    } else if (a_reg == '!') {
-      sta_type = '"';
+      my.layout_status = G_STATUS_REGS;
       return  0;
    }
    /*---(complete)-----------------------*/
@@ -381,7 +381,7 @@ REG_mode           (int a_major, int a_minor)
          /*> yVIKEYS_mode_exit ();                                                          <*/
          return  0;
       } else if (a_minor == '!') {
-         sta_type = '"';
+         my.layout_status = G_STATUS_REGS;
          REG_set ('"');
          yVIKEYS_mode_exit ();
          return  0;
@@ -1488,7 +1488,7 @@ TREG_mode          (int a_major, int a_minor)
    --rce;  if (a_major == ' ') {
       switch (a_minor) {
       case  '!' :
-         sta_type     = 't';
+         my.layout_status     = G_STATUS_TREG;
          s_treg_watch = s_treg_curr;
          yVIKEYS_mode_exit ();
          break;

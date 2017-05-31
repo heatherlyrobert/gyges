@@ -1352,11 +1352,11 @@ cmd_exec           (char *a_command)
       return 0;
    }
    if (x_len == 9 && strcmp (p, ":status") == 0) {
-      sta_type = x_work [8];
+      my.layout_status = x_work [8];
       return 0;
    }
    if (x_len == 9 && strcmp (p, ":screen") == 0) {
-      my.scrn = x_work [8];
+      my.layout_formula = x_work [8];
       return 0;
    }
    if   (strncmp(p, ":q"        , MAX_STR) == 0 ||

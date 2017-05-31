@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0k"
-#define     VER_TXT   "fix how broken merged cells are shown"
+#define     VER_NUM   "2.0l"
+#define     VER_TXT   "standardize and make constants for status line options"
 
 
 
@@ -211,8 +211,10 @@ struct cACCESSOR {
    /*---(files)----------------*/
    char        quiet;          /* bool : 0=normal, 1=quiet                    */
    int         logger;         /* log file so that we don't close it          */
-   /*---(mode)------------*/
-   char        scrn;                        /* screen display mode            */
+   /*---(layout)----------*/
+   char        layout_formula;              /* formula line display mode      */
+   char        layout_status;               /* status line display mode       */
+   char        layout_command;              /* command line display mode      */
    char        message     [MAX_STR];       /* message line                   */
    /*---(file hanndling)--*/
    char        f_title     [MAX_STR];       /* specific file base name        */
@@ -731,10 +733,24 @@ tCELL       denada;
 /*===[ MODES ]================================================================*/
 
 
-/*---(display modes)---------------------*/
-#define     SCRN_TINY      't'    /* top line shows only source               */
-#define     SCRN_SMALL     's'    /* top line shows very little but source    */
-#define     SCRN_DEBUG     'n'    /* top line has lots of stuff to debug      */
+/*---(layout_formula)--------------------*/
+#define     G_FORMULA_TINY      't'    /* top line shows only source               */
+#define     G_FORMULA_SMALL     's'    /* top line shows very little but source    */
+#define     G_FORMULA_DEBUG     'n'    /* top line has lots of stuff to debug      */
+/*---(layout_status)---------------------*/
+#define     G_STATUS_HIDE       ' '
+#define     G_STATUS_FILE       'f'
+#define     G_STATUS_VISUAL     'v'
+#define     G_STATUS_DEPS       'd'
+#define     G_STATUS_REGS       '"'
+#define     G_STATUS_TREG       't'
+#define     G_STATUS_MARK       'm'
+#define     G_STATUS_CELL       'C'
+#define     G_STATUS_KEYLOG     'K'
+#define     G_STATUS_HISTORY    'H'
+#define     G_STATUS_MODELIST   'M'
+#define     G_STATUS_ERRORS     'E'
+#define     G_STATUS_BUFFER     'B'
 
 
 
@@ -765,7 +781,6 @@ extern char    saved      [MAX_STR];
 extern char    cmd        [10];
 extern char    msg_type;
 extern char    message    [MAX_STR];
-extern char    sta_type;
 extern char    sta_error;
 extern char    command    [MAX_STR];
 extern char    special;

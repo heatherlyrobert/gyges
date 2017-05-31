@@ -80,7 +80,7 @@ PROG_init          (int a_argc, char *a_argv[])
    chist       = -1;
    yVIKEYS_mode_init   ();
    yVIKEYS_mode_enter  (MODE_MAP);
-   my.scrn     = SCRN_DEBUG;
+   my.layout_formula     = G_FORMULA_DEBUG;
    my.info_win = G_INFO_NONE;
    my.menu     = ' ';
    /*---(complete)-----------------------*/
@@ -110,10 +110,22 @@ PROG_args          (int argc, char *argv[])
       if      (strncmp(a, "-f"        ,10) == 0)  strncpy (my.f_name , argv[++i], MAX_STR);
       else if (strncmp(a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp(a, "--help"    ,10) == 0)  PROG_usage();
-      else if (strncmp(a, "--tiny"    ,10) == 0)  my.scrn = SCRN_TINY;
-      else if (strncmp(a, "--small"   ,10) == 0)  my.scrn = SCRN_SMALL;
-      else if (strncmp(a, "--debug"   ,10) == 0)  my.scrn = SCRN_DEBUG;
-      else if (strncmp(a, "--status"  ,10) == 0)  sta_type = argv[++i][0];
+      else if (strncmp(a, "--formula-tiny"      , 20) == 0)  my.layout_formula = G_FORMULA_TINY;
+      else if (strncmp(a, "--formula-small"     , 20) == 0)  my.layout_formula = G_FORMULA_SMALL;
+      else if (strncmp(a, "--formula-debug"     , 20) == 0)  my.layout_formula = G_FORMULA_DEBUG;
+      else if (strncmp(a, "--status-hide"       , 20) == 0)  my.layout_status  = G_STATUS_HIDE;
+      else if (strncmp(a, "--status-file"       , 20) == 0)  my.layout_status  = G_STATUS_FILE;
+      else if (strncmp(a, "--status-visual"     , 20) == 0)  my.layout_status  = G_STATUS_VISUAL;
+      else if (strncmp(a, "--status-deps"       , 20) == 0)  my.layout_status  = G_STATUS_DEPS;
+      else if (strncmp(a, "--status-regs"       , 20) == 0)  my.layout_status  = G_STATUS_REGS;
+      else if (strncmp(a, "--status-treg"       , 20) == 0)  my.layout_status  = G_STATUS_TREG;
+      else if (strncmp(a, "--status-mark"       , 20) == 0)  my.layout_status  = G_STATUS_MARK;
+      else if (strncmp(a, "--status-cell"       , 20) == 0)  my.layout_status  = G_STATUS_CELL;
+      else if (strncmp(a, "--status-keylog"     , 20) == 0)  my.layout_status  = G_STATUS_KEYLOG;
+      else if (strncmp(a, "--status-history"    , 20) == 0)  my.layout_status  = G_STATUS_HISTORY;
+      else if (strncmp(a, "--status-modelist"   , 20) == 0)  my.layout_status  = G_STATUS_MODELIST;
+      else if (strncmp(a, "--status-errors"     , 20) == 0)  my.layout_status  = G_STATUS_ERRORS;
+      else if (strncmp(a, "--status-buffer"     , 20) == 0)  my.layout_status  = G_STATUS_BUFFER;
       else if (a[0] != '-'                     )  strncpy (my.f_name , argv[i]  , MAX_STR);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);

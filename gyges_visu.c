@@ -1247,7 +1247,7 @@ MARK_mode          (char a_major, char a_minor)
                  break;
       case '_' : my.mark_show = '-';
                  break;
-      case '!' : sta_type = 'm';
+      case '!' : my.layout_status = G_STATUS_MARK;
                  break;
       case '?' : my.info_win = G_INFO_MARK;
                  break;

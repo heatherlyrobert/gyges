@@ -246,7 +246,6 @@ static int  S_COLOR_HEADN      = COLOR_PAIR(74);
 
 
 char        msg_type  = '-';
-char        sta_type  = 'v';
 char        sta_error = '-';
 
 static char s_label   [10]  = "";
@@ -439,8 +438,8 @@ CURS_formula       (tCELL *a_curr)
    /*---(length)-----------------------------*/
    len = strlen (g_contents);
    /*---(display)----------------------------*/
-   switch (my.scrn) {
-   case SCRN_DEBUG :
+   switch (my.layout_formula) {
+   case G_FORMULA_DEBUG :
       /*---(1st 12 chars)---*/
       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
       /*---(2nd 13 chars)---*/
@@ -455,7 +454,7 @@ CURS_formula       (tCELL *a_curr)
       mvprintw (row_formula, my.x_full - 14, " %s of gyges", VER_NUM);
       s_start  = 30;
       break;
-   case SCRN_SMALL :
+   case G_FORMULA_SMALL :
       /*---(1st  6 chars)---*/
       mvprintw (row_formula,  0, "%-6.6s", s_label);
       /*---(2nd  5 chars)---*/
@@ -465,7 +464,7 @@ CURS_formula       (tCELL *a_curr)
       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);
       s_start  =  7;
       break;
-   case SCRN_TINY  :
+   case G_FORMULA_TINY  :
       s_start  =  1;
       break;
    }
@@ -525,45 +524,45 @@ CURS_status        (tCELL *a_curr)
    int         i           = 0;             /* iterator -- keys               */
    char        msg[500]  = "";                   /* temporary display message   */
    char        rpn[MAX_STR] = "";
-   switch (sta_type) {
-   case 'c' : /* cell details */
+   switch (my.layout_status) {
+   case G_STATUS_CELL     : /* cell details */
       if (a_curr != NULL) {
          strncpy (rpn , "+", MAX_STR);
          if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
          snprintf (msg, 500, "[ rpn %-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ]", rpn, reqs, deps, like);
       }
       break;
-   case 'd' : /* cell details */
+   case G_STATUS_DEPS     : /* cell details */
       if (a_curr != NULL) {
          snprintf (msg, 500, "[ reqs=%-40.40s ][ pros=%-40.40s ]", reqs, deps);
       }
       break;
-   case 'r' : /* buffer contents */
+   case G_STATUS_BUFFER   : /* buffer contents */
       if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
       else                                       strncpy (rpn, "((null))", MAX_STR);
       snprintf (msg, 500, "[ %-100.100s ]", rpn);
       break;
-   case '"' : /* register contents */
+   case G_STATUS_REGS     : /* register contents */
       REG_list     (my.reg_curr  , bufc);
       snprintf (msg, 500, "[ reg %-100.100s ]", bufc);
       break;
-   case 'k' : /* keylog */
-      KEYS_status (msg);
+   case G_STATUS_TREG     :
+      TREG_entry (REG_CURR, msg);
       break;
-   case 'u' :
-      snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
-      break;
-   case 'm' :
+   case G_STATUS_MARK     :
       snprintf (msg, 500, "marks (%c,%c,%c,%c) %s", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, my.mark_plus);
       break;
-   case 'M' :
+   case G_STATUS_KEYLOG   :
+      KEYS_status (msg);
+      break;
+   case G_STATUS_HISTORY  :
+      snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);
+      break;
+   case G_STATUS_MODELIST :
       yVIKEYS_mode_list (msg);
       break;
-   case 'E' :
+   case G_STATUS_ERRORS   :
       snprintf (msg, 500, "errors (%3d)", nerror);
-      break;
-   case 't' : /* text register */
-      TREG_entry (REG_CURR, msg);
       break;
    case 'v' : /* file version */
    default  :
@@ -1064,12 +1063,12 @@ CURS_main          (void)
    /*---(header)-------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
-   switch (my.scrn) {
-   case SCRN_DEBUG : my.apos = my.x_full - 29 - 15 -  2;
+   switch (my.layout_formula) {
+   case G_FORMULA_DEBUG : my.apos = my.x_full - 29 - 15 -  2;
                      break;
-   case SCRN_SMALL : my.apos = my.x_full -  6 -  5 -  2;
+   case G_FORMULA_SMALL : my.apos = my.x_full -  6 -  5 -  2;
                      break;
-   case SCRN_TINY  : my.apos = my.x_full -  0 -  0 -  2;
+   case G_FORMULA_TINY  : my.apos = my.x_full -  0 -  0 -  2;
                      break;
    }
    curr    = tab->sheet[CCOL][CROW];
@@ -1107,7 +1106,7 @@ CURS_main          (void)
       if (my.menu != MENU_ROOT)  CURS_menusub  (my.menu);
    }
    /*---(command)------------------------*/
-   if (my.scrn == SCRN_DEBUG || my.scrn == SCRN_SMALL) {
+   if (my.layout_formula == G_FORMULA_DEBUG || my.layout_formula == G_FORMULA_SMALL) {
       attron   (S_COLOR_KEYS);
       mvprintw (row_chead, 0, cmd);
       attroff  (S_COLOR_KEYS);
