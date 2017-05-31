@@ -7356,7 +7356,7 @@ SECT          v21  (gyges_cell) formatting of numerical cell contents         
 SCRP          v21  (s_cell) printable comma formats                             CELL__print_comma                                                       ((33.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((33.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [MAX_STR];                                                                                                                                     
+     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [LEN_RECD];                                                                                                                                     
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((33.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -7497,7 +7497,7 @@ SCRP          v21  (s_cell) printable comma formats                           
 SCRP          v21  (s_cell) printable numeric formats                           CELL__print_number                                                      ((34.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((34.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [MAX_STR];                                                                                                                                     
+     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [LEN_RECD];                                                                                                                                     
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((34.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -7632,7 +7632,7 @@ SCRP          v21  (s_cell) printable numeric formats                         
 SCRP          v21  (s_cell) printable technical formats                         CELL__print_special                                                     ((35.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((35.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [MAX_STR];                                                                                                                                     
+     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [LEN_RECD];                                                                                                                                     
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((35.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -7914,7 +7914,7 @@ SCRP          v21  (s_cell) printable technical formats                       
 SCRP          v21  (s_cell) printable time formats                              CELL__print_times                                                       ((36.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((36.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [MAX_STR];                                                                                                                                     
+     code     v21  create a return holder               - - - - - - - - - -   char  x_string  [LEN_RECD];                                                                                                                                     
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((36.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -8273,7 +8273,7 @@ SCRP          v21  (gyges_file) verify the reading of cell records            
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((39.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
-     code     v21  tab record                           - - - - - - - - - -   char   x_recd [MAX_STR] = "";                                                                                                                                  
+     code     v21  tab record                           - - - - - - - - - -   char   x_recd [LEN_RECD] = "";                                                                                                                                  
 
    COND       v21  check the cell linked list                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((39.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
@@ -8345,7 +8345,7 @@ SCRP          v21  (s_file) verify the reading of tab records                 
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
-     code     v21  tab record                           - - - - - - - - - -   char   x_recd [MAX_STR] = "";                                                                                                                                  
+     code     v21  tab record                           - - - - - - - - - -   char   x_recd [LEN_RECD] = "";                                                                                                                                  
 
    COND       v21  check the initial state                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the current position          MOVE_unit             "tab_pos"        , 0                                                    s_equal     s_move tab pos   : tab=   0, col=   0, row=   0                        
@@ -8570,7 +8570,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
    COND       v21  initialize contents                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy an empty string to contents     - - - - - - - - - -   strncpy(g_contents, "", MAX_STR);                                                                                                                              
+     code     v21  copy an empty string to contents     - - - - - - - - - -   strncpy(g_contents, "", LEN_RECD);                                                                                                                              
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0: 0) ::                                          
 
    COND       v21  set the mode to source, then input                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -8725,7 +8725,7 @@ SCRP          v21  test vi_source mode                                        
      exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 
    COND       v21  initialize contents                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy a string to contents            - - - - - - - - - -   strncpy(g_contents, "testing the source mode", MAX_STR);                                                                                                       
+     code     v21  copy a string to contents            - - - - - - - - - -   strncpy(g_contents, "testing the source mode", LEN_RECD);                                                                                                       
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 0:23) :testing the source mode:                   
      exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (    0) :(null):                                    
@@ -8853,7 +8853,7 @@ SCRP          v21  test vi_source mode                                        
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) :testing the source mode:                   
 
    COND       v21  more complex content                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy a string to contents            - - - - - - - - - -   strncpy(g_contents, " testing   the/ . s-mode ", MAX_STR);                                                                                                     
+     code     v21  copy a string to contents            - - - - - - - - - -   strncpy(g_contents, " testing   the/ . s-mode ", LEN_RECD);                                                                                                     
      exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     ( ) : ( 0:25) : testing   the/ . s-mode :                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (   23) :testing the source mode:                   
@@ -9002,7 +9002,7 @@ SCRP          v21  test vi_replace sub-mode                                   
 
    COND       v21  initialize contents                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
-     code     v21  copy a string to contents            - - - - - - - - - -   strncpy (g_contents, "testing the replace sub-mode", MAX_STR);                                                                                                 
+     code     v21  copy a string to contents            - - - - - - - - - -   strncpy (g_contents, "testing the replace sub-mode", LEN_RECD);                                                                                                 
      code     v21  set the available content display    - - - - - - - - - -   my.apos = 35;                                                                                                                                                  
      exec     v21  prepare the values                   MODE_source           ' ', '0'                                                                i_equal     0                                                                      
      get      v21  check the position                   MOVE_unit             "edit_pos"       , 0                                                    s_equal     s_move edit pos  : n= 28, a= 35, b=  0, c=  0, e= 27                 
@@ -9691,11 +9691,11 @@ SCRP          v21  (s_calc) verify custom strtok handling                     
      code     v21  create a return pointer              - - - - - - - - - -   char *p     = NULL;                                                                                                                                            
 
    COND       v21  check parsing empty string                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, ""                              , MAX_STR);                                                                                                     
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, ""                              , LEN_RECD);                                                                                                     
      exec     v21  parse string                         CALC_strtok           text                                                                    p_null      0                                                                      
 
    COND       v21  check parsing a list of one                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one"                           , MAX_STR);                                                                                                     
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one"                           , LEN_RECD);                                                                                                     
      exec     v21  parse string                         CALC_strtok           text                                                                    p_exists    0                                                                      
      code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                
      echo     v21  check the substring                  - - - - - - - - - -   p                                                                       s_equal     one                                                                    
@@ -9703,7 +9703,7 @@ SCRP          v21  (s_calc) verify custom strtok handling                     
      exec     v21  parse string                         CALC_strtok           NULL                                                                    p_null      0                                                                      
 
    COND       v21  check parsing normal                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one,two,thr"                   , MAX_STR);                                                                                                     
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one,two,thr"                   , LEN_RECD);                                                                                                     
      exec     v21  parse string                         CALC_strtok           text                                                                    p_exists    0                                                                      
      code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                
      echo     v21  check the substring                  - - - - - - - - - -   p                                                                       s_equal     one                                                                    
@@ -9717,7 +9717,7 @@ SCRP          v21  (s_calc) verify custom strtok handling                     
      exec     v21  parse string                         CALC_strtok           NULL                                                                    p_null      0                                                                      
 
    COND       v21  check parsing with string literal                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one,\"two\",thr"               , MAX_STR);                                                                                                     
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one,\"two\",thr"               , LEN_RECD);                                                                                                     
      exec     v21  parse string                         CALC_strtok           text                                                                    p_exists    0                                                                      
      code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                
      echo     v21  check the substring                  - - - - - - - - - -   p                                                                       s_equal     one                                                                    
@@ -9731,7 +9731,7 @@ SCRP          v21  (s_calc) verify custom strtok handling                     
      exec     v21  parse string                         CALC_strtok           NULL                                                                    p_null      0                                                                      
 
    COND       v21  check parsing with comma in string literal                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one\",two\",thr"               , MAX_STR);                                                                                                     
+     code     v21  copy text to string                  - - - - - - - - - -   strlcpy (text, "one\",two\",thr"               , LEN_RECD);                                                                                                     
      exec     v21  parse string                         CALC_strtok           text                                                                    p_exists    0                                                                      
      code     v21  capture return pointer               - - - - - - - - - -   p = yUNIT_p_rc;                                                                                                                                                
      echo     v21  check the substring                  - - - - - - - - - -   p                                                                       s_equal     one\",two\"                                                            

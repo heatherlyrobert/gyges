@@ -916,13 +916,13 @@ MARK_list          (char *a_list)
    char        x_entry     [20];
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
-   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
+   strncpy (a_list, "-", LEN_RECD);   /* special for a null list */
    /*---(walk the list)------------------*/
-   strncpy (a_list, ",", MAX_STR);
+   strncpy (a_list, ",", LEN_RECD);
    for (i = 0; i < MAX_MARK; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       sprintf    (x_entry, "%s,", s_mark_info [i].label);
-      strncat    (a_list, x_entry, MAX_STR);
+      strncat    (a_list, x_entry, LEN_RECD);
    }
    /*---(catch empty)--------------------*/
    if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
@@ -939,13 +939,13 @@ MARK_listplus      (char *a_list)
    char        x_entry     [20];
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
-   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
+   strncpy (a_list, "-", LEN_RECD);   /* special for a null list */
    /*---(walk the list)------------------*/
-   strncpy (a_list, ",", MAX_STR);
+   strncpy (a_list, ",", LEN_RECD);
    for (i = 0; i < MAX_MARK; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
-      strncat    (a_list, x_entry, MAX_STR);
+      strncat    (a_list, x_entry, LEN_RECD);
    }
    /*---(catch empty)--------------------*/
    if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
@@ -1069,7 +1069,7 @@ VISU_mode          (char a_major, char a_minor)
       case 'F'      : yVIKEYS_mode_enter  (SMOD_FORMAT);
                       return 0;
                       break;
-      case ':'      : strncpy (command , ":", MAX_STR);
+      case ':'      : strncpy (command , ":", LEN_RECD);
                       yVIKEYS_mode_enter  (MODE_COMMAND);
                       return 0;
                       break;
@@ -1119,7 +1119,7 @@ char      SELC_mode          (char  a_major, char  a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [MAX_STR]   = "";
+   char        x_majors    [LEN_RECD]   = "";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -1283,27 +1283,27 @@ char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
 VISU__unit         (char *a_question, char a_reg)
 {
    /*---(locals)-----------+-----------+-*/
-   char        x_list      [MAX_STR];
+   char        x_list      [LEN_RECD];
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "s_sel            : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "sel_range"    )  == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_sel range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
+      snprintf (unit_answer, LEN_UNIT, "s_sel range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
    }
    else if (strcmp (a_question, "sel_curr")       == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_sel current    : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
+      snprintf (unit_answer, LEN_UNIT, "s_sel current    : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
    }
    else if (strcmp (a_question, "sel_full")       == 0) {
       if (s_visu.curr != DONE_DONE) {
-         snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow]);
+         snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow]);
       } else {
-         snprintf (unit_answer, LEN_TEXT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
+         snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
       }
    }
    /*---(marks)--------------------------*/
    else if (strcmp (a_question, "mark_list")      == 0) {
       MARK_listplus (my.mark_plus);
-      snprintf (unit_answer, LEN_TEXT, "s_sel marks      : %-.40s", my.mark_plus);
+      snprintf (unit_answer, LEN_UNIT, "s_sel marks      : %-.40s", my.mark_plus);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

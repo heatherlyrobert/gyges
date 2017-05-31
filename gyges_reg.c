@@ -520,7 +520,7 @@ REG_entry          (char a_reg, char *a_list)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    int         x_reg       = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char        x_toplef    [10];
    char        x_botrig    [10];
    char        x_min       [10];
@@ -607,8 +607,8 @@ REG_list           (char a_buf, char *a_list)
       curr = s_reg[x_buf].buf[i];
       DEBUG_REGS   yLOG_complex ("curr"      , "%2d, %p, %s", i, curr, curr->label);
       if (curr == NULL)  continue;
-      strncat (a_list, curr->label, MAX_STR);
-      strncat (a_list, ",", MAX_STR);
+      strncat (a_list, curr->label, LEN_RECD);
+      strncat (a_list, ",", LEN_RECD);
    }
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -792,8 +792,8 @@ REG_paste          (char a_adapt)
    int         x_prow      = 0;
    char        x_abs       = 0;
    char        x_addr      [20]        = "";
-   char        x_source    [MAX_STR]   = "";
-   char        x_bformat   [MAX_STR]   = "";
+   char        x_source    [LEN_RECD]   = "";
+   char        x_bformat   [LEN_RECD]   = "";
    int         x_reg       = 0;
    char        rce         = -10;
    int         x_count     = 0;
@@ -864,7 +864,7 @@ REG_valuesin      (char a_style)
    int         x_col       = 0;
    int         x_row       = 0;
    int         x_lines     = 0;
-   char        x_recd      [MAX_STR];
+   char        x_recd      [LEN_RECD];
    int         x_len       = 0;
    char       *p           = NULL;
    char       *q           = "\t";
@@ -888,7 +888,7 @@ REG_valuesin      (char a_style)
       /*---(read and clean)--------------*/
       ++x_lines;
       DEBUG_INPT  yLOG_value   ("line"      , x_lines);
-      fgets (x_recd, MAX_STR, f);
+      fgets (x_recd, LEN_RECD, f);
       if (feof (f))  {
          DEBUG_INPT  yLOG_note    ("end of file reached");
          break;
@@ -906,11 +906,11 @@ REG_valuesin      (char a_style)
       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
       while (p != NULL) {
          DEBUG_INPT  yLOG_point   ("p"         , p);
-         strldchg (p,  29, CHAR_GROUP, MAX_STR);   /* group     */
-         strldchg (p,  31, CHAR_FIELD, MAX_STR);   /* field     */
-         strldchg (p,   9, CHAR_TAB  , MAX_STR);   /* tab       */
-         strldchg (p,  27, CHAR_ESC  , MAX_STR);   /* escape    */
-         strldchg (p, 127, CHAR_BS   , MAX_STR);   /* del       */
+         strldchg (p,  29, G_CHAR_GROUP, LEN_RECD);   /* group     */
+         strldchg (p,  31, G_CHAR_FIELD, LEN_RECD);   /* field     */
+         strldchg (p,   9, G_CHAR_TAB  , LEN_RECD);   /* tab       */
+         strldchg (p,  27, G_CHAR_ESC  , LEN_RECD);   /* escape    */
+         strldchg (p, 127, G_CHAR_BS   , LEN_RECD);   /* del       */
          DEBUG_INPT  yLOG_info    ("value"     , p);
          DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
          x_curr = CELL_change (CHG_INPUT, CTAB, x_col, x_row, p);
@@ -942,10 +942,10 @@ REG_valuesout     (char a_style)
    int         x_row       = 0;
    int         x_rowsave   = 0;
    int         w           = 0;
-   int         x_print     [MAX_STR];
-   int         x_trim      [MAX_STR];
-   int         x_source    [MAX_STR];
-   int         x_full      [MAX_STR];
+   int         x_print     [LEN_RECD];
+   int         x_trim      [LEN_RECD];
+   int         x_source    [LEN_RECD];
+   int         x_full      [LEN_RECD];
    int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -989,29 +989,29 @@ REG_valuesout     (char a_style)
       /*---(write filled cells)----------*/
       else {
          /*---(printable)----------------*/
-         strlcpy  (x_print , curr->p, MAX_STR);
-         strldchg (x_print , CHAR_GROUP,  29, MAX_STR);   /* group     */
-         strldchg (x_print , CHAR_FIELD,  31, MAX_STR);   /* field     */
-         strldchg (x_print , CHAR_TAB  ,   9, MAX_STR);   /* tab       */
-         strldchg (x_print , CHAR_ESC  ,  27, MAX_STR);   /* escape    */
-         strldchg (x_print , CHAR_BS   , 127, MAX_STR);   /* del       */
-         strlcpy  (x_trim  , x_print, MAX_STR);
+         strlcpy  (x_print , curr->p, LEN_RECD);
+         strldchg (x_print , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
+         strldchg (x_print , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
+         strldchg (x_print , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
+         strldchg (x_print , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
+         strldchg (x_print , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+         strlcpy  (x_trim  , x_print, LEN_RECD);
          /*---(trimmed printable)--------*/
-         strltrim (x_trim, ySTR_BOTH, MAX_STR);
+         strltrim (x_trim, ySTR_BOTH, LEN_RECD);
          /*---(full outcome)-------------*/
-         strlcpy  (x_full  , curr->v_str, MAX_STR);
-         strldchg (x_full  , CHAR_GROUP,  29, MAX_STR);   /* group     */
-         strldchg (x_full  , CHAR_FIELD,  31, MAX_STR);   /* field     */
-         strldchg (x_full  , CHAR_TAB  ,   9, MAX_STR);   /* tab       */
-         strldchg (x_full  , CHAR_ESC  ,  27, MAX_STR);   /* escape    */
-         strldchg (x_full  , CHAR_BS   , 127, MAX_STR);   /* del       */
+         strlcpy  (x_full  , curr->v_str, LEN_RECD);
+         strldchg (x_full  , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
+         strldchg (x_full  , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
+         strldchg (x_full  , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
+         strldchg (x_full  , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
+         strldchg (x_full  , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
          /*---(source)-------------------*/
-         strlcpy  (x_source, curr->s, MAX_STR);
-         strldchg (x_source, CHAR_GROUP,  29, MAX_STR);   /* group     */
-         strldchg (x_source, CHAR_FIELD,  31, MAX_STR);   /* field     */
-         strldchg (x_source, CHAR_TAB  ,   9, MAX_STR);   /* tab       */
-         strldchg (x_source, CHAR_ESC  ,  27, MAX_STR);   /* escape    */
-         strldchg (x_source, CHAR_BS   , 127, MAX_STR);   /* del       */
+         strlcpy  (x_source, curr->s, LEN_RECD);
+         strldchg (x_source, G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
+         strldchg (x_source, G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
+         strldchg (x_source, G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
+         strldchg (x_source, G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
+         strldchg (x_source, G_CHAR_BS   , 127, LEN_RECD);   /* del       */
          switch (a_style) {
          case 'v' : fprintf (f, "%s"                  , x_print);
                     break;
@@ -1230,7 +1230,7 @@ struct cTEXTREG {
    int         bpos;                        /* original starting point        */
    int         epos;                        /* original ending point          */
    int         len;                         /* length of text                 */
-   char        data        [MAX_STR];       /* text                           */
+   char        data        [LEN_RECD];       /* text                           */
    char        source;                      /* user, file, import             */
 };
 static      tTEXTREG    s_textreg   [MAX_REG];
@@ -1254,7 +1254,7 @@ TREG_init          (void)
       s_textreg [i].bpos   = -1;
       s_textreg [i].epos   = -1;
       s_textreg [i].len    =  0;
-      strlcpy (s_textreg [i].data , "", MAX_STR);
+      strlcpy (s_textreg [i].data , "", LEN_RECD);
       s_textreg [i].source = TREG_NONE;
    }
    /*---(complete)-----------------------*/
@@ -1267,7 +1267,7 @@ TREG_entry         (char a_reg, char *a_list)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    int         x_reg       = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    int         x_len       = 0;
    /*---(beginning)----------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -1427,7 +1427,7 @@ TREG_paste         (char a_dir)
    x_gap   = s_textreg [x_index].len;
    for (i = x_len; i >= x_start; --i) {
       g_contents [i + x_gap] = g_contents [i];
-      g_contents [i]         = CHAR_PLACE;
+      g_contents [i]         = G_CHAR_PLACE;
    }
    /*---(fill)---------------------------*/
    x_len   = s_textreg [x_index].len;
@@ -1499,7 +1499,7 @@ TREG_mode          (int a_major, int a_minor)
          s_textreg [x_index].bpos  = -1;
          s_textreg [x_index].epos  = -1;
          s_textreg [x_index].len   =  0;
-         strlcpy (s_textreg [x_index].data , "", MAX_STR);
+         strlcpy (s_textreg [x_index].data , "", LEN_RECD);
          yVIKEYS_mode_exit ();
          break;
       case  'y' : case  'Y' :
@@ -1589,8 +1589,8 @@ TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_sou
    strlcpy (s_textreg [x_reg].label, a_label , 10);
    s_textreg [x_reg].bpos   = a_beg;
    s_textreg [x_reg].epos   = a_end;
-   strlcpy (s_textreg [x_reg].data , a_source, MAX_STR);
-   s_textreg [x_reg].len    = strllen (s_textreg [x_reg].data, MAX_STR);
+   strlcpy (s_textreg [x_reg].data , a_source, LEN_RECD);
+   s_textreg [x_reg].len    = strllen (s_textreg [x_reg].data, LEN_RECD);
    s_textreg [x_reg].source = TREG_FILE;
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
@@ -1652,7 +1652,7 @@ REG__getter        (char *a_question, char a_reg)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_reg       = 0;
-   char        x_list      [MAX_STR];
+   char        x_list      [LEN_RECD];
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "s_reg            : question not understood");
    /*---(buffer number)------------------*/
@@ -1661,33 +1661,33 @@ REG__getter        (char *a_question, char a_reg)
    }
    /*---(defenses)-----------------------*/
    if      (x_reg < 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg error      : register reference (%c) is not valid", a_reg);
+      snprintf (unit_answer, LEN_UNIT, "s_reg error      : register reference (%c) is not valid", a_reg);
    }
    /*---(register list)------------------*/
    else if (strcmp (a_question, "reg_names"    )  == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg names      : %-.45s", s_regnames);
+      snprintf (unit_answer, LEN_UNIT, "s_reg names      : %-.45s", s_regnames);
    }
    else if (strcmp (a_question, "reg_count"    )  == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg count      : %d", strlen (s_regnames));
+      snprintf (unit_answer, LEN_UNIT, "s_reg count      : %d", strlen (s_regnames));
    }
    /*---(register list)------------------*/
    else if (strcmp (a_question, "reg_sort"     )  == 0) {
       REG_list  (a_reg, x_list);
       if (strlen (x_list) > 12)  DEP_disp_sort (x_list + 11);
-      snprintf (unit_answer, LEN_TEXT, "s_reg sort %-.45s", x_list);
+      snprintf (unit_answer, LEN_UNIT, "s_reg sort %-.45s", x_list);
    }
    else if (strcmp (a_question, "reg_list"     )  == 0) {
       REG_list  (a_reg, x_list);
-      snprintf (unit_answer, LEN_TEXT, "s_reg list %-.45s", x_list);
+      snprintf (unit_answer, LEN_UNIT, "s_reg list %-.45s", x_list);
    }
    else if (strcmp (a_question, "reg_range"    )  == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].begc, s_reg[x_reg].begr, s_reg[x_reg].endc, s_reg[x_reg].endr);
+      snprintf (unit_answer, LEN_UNIT, "s_reg range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].begc, s_reg[x_reg].begr, s_reg[x_reg].endc, s_reg[x_reg].endr);
    }
    else if (strcmp (a_question, "reg_reach"    )  == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg reach      : %c, ta=%4d, nc=%4d, nr=%4d, xc=%4d, xr=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].minc, s_reg[x_reg].minr, s_reg[x_reg].maxc, s_reg[x_reg].maxr);
+      snprintf (unit_answer, LEN_UNIT, "s_reg reach      : %c, ta=%4d, nc=%4d, nr=%4d, xc=%4d, xr=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].minc, s_reg[x_reg].minr, s_reg[x_reg].maxc, s_reg[x_reg].maxr);
    }
    else if (strcmp (a_question, "reg_buffer")     == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_reg buffer (%c) : (%02d) r=%3d, n=%3d, h=%10p, t=%10p", a_reg, x_reg, s_reg[x_reg].real, s_reg[x_reg].nbuf, s_reg[x_reg].buf[0], s_reg[x_reg].buf[s_reg[x_reg].nbuf - 1]);
+      snprintf (unit_answer, LEN_UNIT, "s_reg buffer (%c) : (%02d) r=%3d, n=%3d, h=%10p, t=%10p", a_reg, x_reg, s_reg[x_reg].real, s_reg[x_reg].nbuf, s_reg[x_reg].buf[0], s_reg[x_reg].buf[s_reg[x_reg].nbuf - 1]);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

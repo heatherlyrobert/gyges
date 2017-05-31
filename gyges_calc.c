@@ -98,7 +98,7 @@ PRIV   int         cnt, cnta, cnts, cntb, cntr;
 PRIV   double      entries     [1000];
 
 PRIV   char   *q, *r, *s;
-PRIV   char    t[MAX_STR];
+PRIV   char    t[LEN_RECD];
 #define  MAX   1000000000
 
 PRIV   tCELL      *s_me;
@@ -107,7 +107,7 @@ static int         s_nerror      = 0;
 static int         s_nbuild      = 0;
 static int         s_neval       = 0;
 static int         errornum;
-static char        errorstr      [MAX_STR];
+static char        errorstr      [LEN_RECD];
 
 
 char      nada[5] = "";
@@ -204,7 +204,7 @@ ERROR_add          (tCELL *a_owner, char a_phase, int a_step, char *a_func, char
    strlcpy (x_error->desc , a_desc  , 100);
    /*---(put in old container)-----------*/
    errornum = -1;
-   strncpy (errorstr     , a_desc, MAX_STR);
+   strncpy (errorstr     , a_desc, LEN_RECD);
    /*---(complete)-----------------------*/
    return;
 }
@@ -238,7 +238,7 @@ ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    int         x_reg       = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    static tERROR *x_error  = NULL;
    static int     x_total  = 0;
    static int     x_count  = 0;
@@ -419,7 +419,7 @@ CALC_pushstr       (char *a_func, char *a_new)
    calc__stack[calc__nstack].typ = 's';
    calc__stack[calc__nstack].ref = NULL;
    calc__stack[calc__nstack].num = 0;
-   calc__stack[calc__nstack].str = strndup (a_new, MAX_STR);
+   calc__stack[calc__nstack].str = strndup (a_new, LEN_RECD);
    /*---(update stack counter)-----------*/
    ++calc__nstack;
    /*---(complete)-----------------------*/
@@ -513,26 +513,26 @@ CALC__popstr       (char *a_func, char a_seq)
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get string");
-      return strndup (nada, MAX_STR);
+      return strndup (nada, LEN_RECD);
    }
    --calc__nstack;
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
-   case 'v' :  return  strndup (nada, MAX_STR);                 break;
+   case 'v' :  return  strndup (nada, LEN_RECD);                 break;
    case 's' :  return  calc__stack[calc__nstack].str;           break;
    case 'r' :  if        (calc__stack[calc__nstack].ref->t == '-') {
-                  return  strndup (nada, MAX_STR);
+                  return  strndup (nada, LEN_RECD);
                } else if (calc__stack[calc__nstack].ref->v_str != NULL) {
-                  return  strndup (calc__stack[calc__nstack].ref->v_str, MAX_STR);
+                  return  strndup (calc__stack[calc__nstack].ref->v_str, LEN_RECD);
                } else if (calc__stack[calc__nstack].ref->s != NULL) {
-                  return  strndup (calc__stack[calc__nstack].ref->s, MAX_STR);
+                  return  strndup (calc__stack[calc__nstack].ref->s, LEN_RECD);
                } else {
-                  return strndup (nada, MAX_STR);
+                  return strndup (nada, LEN_RECD);
                }
    }
    /*---(complete)-----------------------*/
    ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "wrong argument type on stack");
-   return strndup (nada, MAX_STR);
+   return strndup (nada, LEN_RECD);
 }
 
 tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
@@ -567,7 +567,7 @@ CALC__popprint        (char *a_func, char a_seq)
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
    case 'r' :
-      return  strndup (calc__stack[calc__nstack].ref->p, MAX_STR);
+      return  strndup (calc__stack[calc__nstack].ref->p, LEN_RECD);
       break;
    }
    /*---(complete)-----------------------*/
@@ -773,11 +773,11 @@ CALC__concat       (void)
    r = CALC__popstr(__FUNCTION__, ++s_narg);
    s = CALC__popstr(__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
-   if (s == NULL)  s = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   if (s == NULL)  s = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strncpy (t, s,   MAX_STR);
-   strncat (t, r,   MAX_STR);
+   strncpy (t, s,   LEN_RECD);
+   strncat (t, r,   LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
@@ -794,12 +794,12 @@ CALC__concatplus   (void)
    r = CALC__popstr(__FUNCTION__, ++s_narg);
    s = CALC__popstr(__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
-   if (s == NULL)  s = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   if (s == NULL)  s = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strncpy (t, s,   MAX_STR);
-   strncat (t, " ", MAX_STR);
-   strncat (t, r,   MAX_STR);
+   strncpy (t, s,   LEN_RECD);
+   strncat (t, " ", LEN_RECD);
+   strncat (t, r,   LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
@@ -815,9 +815,9 @@ CALC__lower        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr(__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strncpy (t, r, MAX_STR);
+   strncpy (t, r, LEN_RECD);
    len = strlen(t);
    int i;
    for (i = 0; i < len; ++i) t[i] = tolower(t[i]);
@@ -835,10 +835,10 @@ CALC__upper        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr(__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
    len = strlen(r);
-   strncpy (t, r, MAX_STR);
+   strncpy (t, r, LEN_RECD);
    int i;
    for (i = 0; i < len; ++i) t[i] = toupper(t[i]);
    /*---(return result)------------------*/
@@ -871,7 +871,7 @@ CALC__code         (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushval (__FUNCTION__, r[0]);
    /*---(complete)-----------------------*/
@@ -884,7 +884,7 @@ CALC__len          (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
    len = strlen (r);
    /*---(return result)------------------*/
@@ -902,11 +902,11 @@ CALC__left         (void)
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
    len = strlen (r);
-   strncpy (t, r, MAX_STR);
+   strncpy (t, r, LEN_RECD);
    if (n >= len)  n = len;
    t[n] = '\0';
    /*---(return result)------------------*/
@@ -924,7 +924,7 @@ CALC__right        (void)
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
    len = strlen (r);
@@ -949,7 +949,7 @@ CALC__mid          (void)
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (m     <  0  )  m = 0;
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
@@ -979,9 +979,9 @@ CALC__trim         (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_BOTH, MAX_STR);
+   strltrim (r, ySTR_BOTH, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -996,9 +996,9 @@ CALC__ltrim        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_HEAD, MAX_STR);
+   strltrim (r, ySTR_HEAD, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1013,9 +1013,9 @@ CALC__rtrim        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_TAIL, MAX_STR);
+   strltrim (r, ySTR_TAIL, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1030,9 +1030,9 @@ CALC__strim        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_SINGLE, MAX_STR);
+   strltrim (r, ySTR_SINGLE, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1047,9 +1047,9 @@ CALC__etrim        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_EVERY, MAX_STR);
+   strltrim (r, ySTR_EVERY, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1064,9 +1064,9 @@ CALC__mtrim        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_MAX, MAX_STR);
+   strltrim (r, ySTR_MAX, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1081,9 +1081,9 @@ CALC__print        (void)
    /*---(get arguments)------------------*/
    r = CALC__popprint (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strltrim (r, ySTR_BOTH, MAX_STR);
+   strltrim (r, ySTR_BOTH, LEN_RECD);
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
    free (r);
@@ -1098,7 +1098,7 @@ CALC__lpad         (void)
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
    m = strlen (r);
@@ -1123,7 +1123,7 @@ CALC__rpad         (void)
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
    m = strlen (r);
@@ -1148,10 +1148,10 @@ CALC__lppad        (void)
    n = CALC__popval   (__FUNCTION__, ++s_narg);
    r = CALC__popprint (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
-   strltrim (r, ySTR_BOTH, MAX_STR);
+   strltrim (r, ySTR_BOTH, LEN_RECD);
    m = strlen (r);
    if (m >= n) {
       CALC_pushstr (__FUNCTION__, r);
@@ -1174,10 +1174,10 @@ CALC__rppad        (void)
    n = CALC__popval   (__FUNCTION__, ++s_narg);
    r = CALC__popprint (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
-   strltrim (r, ySTR_BOTH, MAX_STR);
+   strltrim (r, ySTR_BOTH, LEN_RECD);
    m = strlen (r);
    if (m >= n) {
       CALC_pushstr (__FUNCTION__, r);
@@ -1199,7 +1199,7 @@ CALC__value        (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
    a = atof (r);
    /*---(return result)------------------*/
@@ -1216,9 +1216,9 @@ CALC__salpha       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_ALPHA, '-', MAX_STR);
+   strlclean (r, ySTR_ALPHA, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1233,9 +1233,9 @@ CALC__salphac      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_ALPHA, 'y', MAX_STR);
+   strlclean (r, ySTR_ALPHA, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1250,9 +1250,9 @@ CALC__salnum       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_ALNUM, '-', MAX_STR);
+   strlclean (r, ySTR_ALNUM, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1267,9 +1267,9 @@ CALC__salnumc      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_ALNUM, 'y', MAX_STR);
+   strlclean (r, ySTR_ALNUM, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1284,9 +1284,9 @@ CALC__sbasic       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_BASIC, '-', MAX_STR);
+   strlclean (r, ySTR_BASIC, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1301,9 +1301,9 @@ CALC__sbasicc      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_BASIC, 'y', MAX_STR);
+   strlclean (r, ySTR_BASIC, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1318,9 +1318,9 @@ CALC__swrite       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_WRITE, '-', MAX_STR);
+   strlclean (r, ySTR_WRITE, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1335,9 +1335,9 @@ CALC__swritec      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_WRITE, 'y', MAX_STR);
+   strlclean (r, ySTR_WRITE, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1352,9 +1352,9 @@ CALC__sexten       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_EXTEN, '-', MAX_STR);
+   strlclean (r, ySTR_EXTEN, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1369,9 +1369,9 @@ CALC__sextenc      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_EXTEN, 'y', MAX_STR);
+   strlclean (r, ySTR_EXTEN, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1386,9 +1386,9 @@ CALC__sprint       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_PRINT, '-', MAX_STR);
+   strlclean (r, ySTR_PRINT, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1403,9 +1403,9 @@ CALC__sprintc      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_PRINT, 'y', MAX_STR);
+   strlclean (r, ySTR_PRINT, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1420,9 +1420,9 @@ CALC__sseven       (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_SEVEN, '-', MAX_STR);
+   strlclean (r, ySTR_SEVEN, '-', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1437,9 +1437,9 @@ CALC__ssevenc      (void)
    /*---(get arguments)------------------*/
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
-   strlclean (r, ySTR_SEVEN, 'y', MAX_STR);
+   strlclean (r, ySTR_SEVEN, 'y', LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -1457,12 +1457,12 @@ CALC__replace      (void)
    q = CALC__popstr (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (r == NULL)  r = strndup (nada, MAX_STR);
-   if (q == NULL)  q = strndup (nada, MAX_STR);
-   if (s == NULL)  s = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   if (q == NULL)  q = strndup (nada, LEN_RECD);
+   if (s == NULL)  s = strndup (nada, LEN_RECD);
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
-   strlrepl (r, q, s, n, MAX_STR);
+   strlrepl (r, q, s, n, LEN_RECD);
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
@@ -3037,7 +3037,7 @@ CALC__vlookup      (void)
    /*---(get values)---------------------*/
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(get values)---------------------*/
    rc = SHARED__rangeparse (__FUNCTION__);
    if (rc < 0)  return;
@@ -3086,7 +3086,7 @@ CALC__hlookup      (void)
    /*---(get values)---------------------*/
    n = CALC__popval (__FUNCTION__, ++s_narg);
    r = CALC__popstr (__FUNCTION__, ++s_narg);
-   if (r == NULL)  r = strndup (nada, MAX_STR);
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(get values)---------------------*/
    rc = SHARED__rangeparse (__FUNCTION__);
    if (rc < 0)  return;
@@ -3514,13 +3514,13 @@ CALC_eval          (tCELL *a_curr)
    /*---(check errors)-------------------*/
    if        (errornum <  0) {
       a_curr->t = 'E';
-      a_curr->v_str = strndup (errorstr, MAX_STR);
+      a_curr->v_str = strndup (errorstr, LEN_RECD);
       DEBUG_CALC   yLOG_value   ("errornum"  , errornum);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return rce;
    } else if (errornum >  0) {
       a_curr->t = 'E';
-      a_curr->v_str = strndup (errorstr, MAX_STR);
+      a_curr->v_str = strndup (errorstr, LEN_RECD);
       DEBUG_CALC   yLOG_value   ("errornum"  , errornum);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -3528,7 +3528,7 @@ CALC_eval          (tCELL *a_curr)
    /*---(results)------------------------*/
    if (a_curr->rpn[0] == '#') {
       resstr        = CALC__popstr(__FUNCTION__, ++s_narg);
-      a_curr->v_str = strndup (resstr, MAX_STR);
+      a_curr->v_str = strndup (resstr, LEN_RECD);
       DEBUG_CALC   yLOG_info    ("v_str"     , a_curr->v_str);
    } else {
       result       = CALC__popval(__FUNCTION__, ++s_narg);
@@ -3802,7 +3802,7 @@ CALC_strtok        (char *a_str)
       x_str   = a_str;
       x_pos   = 0;
       x_next  = 0;
-      x_len   = strllen (a_str, MAX_STR);
+      x_len   = strllen (a_str, LEN_RECD);
       x_lit   = '-';
       /*> printf ("   -- a_str = %p\n", a_str);                                       <*/
       /*> printf ("   -- x_str = %p <<%s>>\n", x_str, x_str);                         <*/
@@ -3851,7 +3851,7 @@ CALC_build         (tCELL *a_cell)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
-   char        work        [MAX_STR];       /* working copy of source string  */
+   char        work        [LEN_RECD];       /* working copy of source string  */
    int         x_ntoken    = -1;
    char       *p;                           /* strtok current pointer         */
    char       *q           = ",";           /* strtok delimiter               */
@@ -3894,7 +3894,7 @@ CALC_build         (tCELL *a_cell)
    /*---(clear calc and deps)------------*/
    CALC_cleanse (a_cell);
    /*---(initialize)-------------------------*/
-   strncpy (work, a_cell->rpn + 2, MAX_STR);
+   strncpy (work, a_cell->rpn + 2, LEN_RECD);
    DEBUG_CALC   yLOG_info    ("source"    , work);
    if (a_cell->s [0] == '&')  strcpy (label, "");
    /*---(read first tokens)------------------*/
@@ -3922,7 +3922,7 @@ CALC_build         (tCELL *a_cell)
          int   len = strlen(p);
          p[len - 1] = '\0';
          x_calc->t = 's';
-         x_calc->s = strndup(p + 1, MAX_STR);
+         x_calc->s = strndup(p + 1, LEN_RECD);
          /*---(read next)---------------------*/
          DEBUG_CALC   yLOG_complex ("element"   , "typ=%c, val=%F, str=%-9p, ref=%-9p, fnc=%-9p", x_calc->t, x_calc->v, x_calc->s, x_calc->r, x_calc->f);
          /*> p = strtok (NULL, q);                                                    <*/
@@ -3939,7 +3939,7 @@ CALC_build         (tCELL *a_cell)
          rc = CALC_range (a_cell, x_calc);
          if (rc < 0) {
             a_cell->t = 'E';
-            a_cell->v_str = strndup ("#.badrng", MAX_STR);
+            a_cell->v_str = strndup ("#.badrng", LEN_RECD);
             DEBUG_CALC   yLOG_exit    (__FUNCTION__);
             return rce;
          }
@@ -3958,7 +3958,7 @@ CALC_build         (tCELL *a_cell)
          rc = CALC_pointer (a_cell, x_calc);
          if (rc < 0) {
             a_cell->t = 'E';
-            a_cell->v_str = strndup ("#.badptr", MAX_STR);
+            a_cell->v_str = strndup ("#.badptr", LEN_RECD);
             DEBUG_CALC   yLOG_exit    (__FUNCTION__);
             return rce;
          }
@@ -4007,7 +4007,7 @@ CALC_build         (tCELL *a_cell)
             DEBUG_CALC   yLOG_point   ("dest"      , dest);
             if (dest == NULL)  {
                a_cell->t = 'E';
-               a_cell->v_str = strndup ("#.badmal", MAX_STR);
+               a_cell->v_str = strndup ("#.badmal", LEN_RECD);
                DEBUG_CALC   yLOG_exit    (__FUNCTION__);
                return rce - 1;
             }
@@ -4016,7 +4016,7 @@ CALC_build         (tCELL *a_cell)
             if (rc < 0) {
                DEBUG_CALC   yLOG_info    ("error"     , "dependency can not be created");
                a_cell->t = 'E';
-               a_cell->v_str = strndup ("#.baddep", MAX_STR);
+               a_cell->v_str = strndup ("#.baddep", LEN_RECD);
                DEBUG_CALC   yLOG_exit    (__FUNCTION__);
                return rce - 2;
             }
@@ -4024,7 +4024,7 @@ CALC_build         (tCELL *a_cell)
             x_calc->r = dest;
          } else {
             a_cell->t = 'E';
-            a_cell->v_str = strndup ("#.badref", MAX_STR);
+            a_cell->v_str = strndup ("#.badref", LEN_RECD);
             DEBUG_CALC   yLOG_exit    (__FUNCTION__);
             return rce - 3;
          }
@@ -4037,7 +4037,7 @@ CALC_build         (tCELL *a_cell)
       }
       if (rc > 0) {
          a_cell->t = 'E';
-         a_cell->v_str = strndup ("#.bigref", MAX_STR);
+         a_cell->v_str = strndup ("#.bigref", LEN_RECD);
          DEBUG_CALC   yLOG_exit    (__FUNCTION__);
          return rce - 4;
       }
@@ -4060,7 +4060,7 @@ CALC_build         (tCELL *a_cell)
       }
       /*---(fall through)-----------------*/
       a_cell->t = 'E';
-      a_cell->v_str = strndup ("#.unknown", MAX_STR);
+      a_cell->v_str = strndup ("#.unknown", LEN_RECD);
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
       return rce - 4;
    }

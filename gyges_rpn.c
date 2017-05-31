@@ -54,12 +54,12 @@ char     *g_rcops     = "|&=!<>*/%+-():;";
 
 /*---[[ private variables ]]------------------------------*/
 /*---(copy of source)-------*/
-PRIV   char      rpn__working[MAX_STR];
+PRIV   char      rpn__working[LEN_RECD];
 /*---(rpn output)-----------*/
 PRIV   int       rpn__offcol   = 0;
 PRIV   int       rpn__offrow   = 0;
 
-char        s_final     [MAX_STR];
+char        s_final     [LEN_RECD];
 
 
 
@@ -96,7 +96,7 @@ RPN_adjust         (
     */
    /*---(locals)-----------+-----------+-*/
    char       *x_tokens    = NULL;               /* source made into tokens   */
-   char        x_final     [MAX_STR]   = "";     /* new version of formula    */
+   char        x_final     [LEN_RECD]   = "";     /* new version of formula    */
    char       *p           = NULL;               /* strtok field pointer      */
    char       *q           = " ";                /* strtok delimiters         */
    char       *r           = NULL;               /* strtok context            */
@@ -224,11 +224,11 @@ RPN_makelike       (tCELL *a_curr, char *a_label)
    if (tab->sheet[xcol][xrow] == NULL || tab->sheet[xcol][xrow]->s == NULL) {
       rpn__offcol = 0;
       rpn__offrow = 0;
-      strncpy(rpn__working, "", MAX_STR);
+      strncpy(rpn__working, "", LEN_RECD);
    } else {
       rpn__offcol = a_curr->col - xcol;
       rpn__offrow = a_curr->row - xrow;
-      strncpy(rpn__working, tab->sheet[xcol][xrow]->s, MAX_STR);
+      strncpy(rpn__working, tab->sheet[xcol][xrow]->s, LEN_RECD);
    }
    return 0;
 }
@@ -256,9 +256,9 @@ RPN_convert        (
    /*---(locals)-----------+-------------+-*/
    int         i           = 1;
    int         len         = 0;
-   char        x_work      [MAX_STR]     = "";
+   char        x_work      [LEN_RECD]     = "";
    char       *x_rpn       = NULL;
-   char        x_rpn2      [MAX_STR]     = "";
+   char        x_rpn2      [LEN_RECD]     = "";
    int         x_ntoken;
    char        rce         = -10;
    char        ch          = ' ';
@@ -267,7 +267,7 @@ RPN_convert        (
    int         x_col       = 0;
    int         x_row       = 0;
    char        rc          = 0;
-   char        x_temp      [MAX_STR]     = "";
+   char        x_temp      [LEN_RECD]     = "";
    tCELL      *x_like      = NULL;
    /*---(begin)----------------------------*/
    DEBUG_RPN    yLOG_enter   (__FUNCTION__);
@@ -310,7 +310,7 @@ RPN_convert        (
    a_curr->rpn  = NULL;
    a_curr->nrpn = 0;
    /*---(convert)------------------------*/
-   strncpy (x_work, a_curr->s, MAX_STR);
+   strncpy (x_work, a_curr->s, LEN_RECD);
    if (ch == '~') {
       DEBUG_RPN    yLOG_note    ("processing a like formula");
       rc = LOC_parse (x_work + 1, &x_tab, &x_col, &x_row, NULL);
@@ -327,7 +327,7 @@ RPN_convert        (
          DEBUG_RPN    yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      strncpy (x_work, x_like->s, MAX_STR);
+      strncpy (x_work, x_like->s, LEN_RECD);
       ch = x_work[0];
       rc = RPN_adjust (x_like, a_curr->tab - x_tab, a_curr->col - x_col, a_curr->row - x_row, x_temp);
       DEBUG_RPN    yLOG_value   ("adjust rc" , rc);
@@ -336,8 +336,8 @@ RPN_convert        (
          DEBUG_RPN    yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      strncpy (x_work, x_temp, MAX_STR);
-      /*> strltrim (x_work, ySTR_EVERY, MAX_STR);                                     <*/
+      strncpy (x_work, x_temp, LEN_RECD);
+      /*> strltrim (x_work, ySTR_EVERY, LEN_RECD);                                     <*/
       if (ch == '#')  a_curr->t = CTYPE_MLIKE;
    }
    x_work [0] = '=';
@@ -356,7 +356,7 @@ RPN_convert        (
    DEBUG_RPN    yLOG_info    ("x_rpn2"    , x_rpn2);
    DEBUG_RPN    yLOG_value   ("x_ntoken"  , x_ntoken);
    /*---(put into cell)------------------*/
-   a_curr->rpn   = strndup (x_rpn2, MAX_STR);
+   a_curr->rpn   = strndup (x_rpn2, LEN_RECD);
    a_curr->nrpn  = x_ntoken;
    /*> x_tokens = yRPN_tokens (a_curr->s);                                            <* 
     *> DEBUG_RPN    yLOG_point   ("x_tokens"  , x_tokens);                            <* 
@@ -381,7 +381,7 @@ RPN_unit           (char *a_question, void *a_curr)
    strcpy  (unit_answer, "s_rpn            : question not understood");
    /*---(dependency list)----------------*/
    if      (strcmp (a_question, "rpn_updated" )   == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_rpn updated    : %-.45s", s_final);
+      snprintf(unit_answer, LEN_STR, "s_rpn updated    : %-.45s", s_final);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

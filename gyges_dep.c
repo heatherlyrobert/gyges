@@ -1349,10 +1349,10 @@ DEP__disp_master   (tCELL  *a_me, char *a_list, char a_start, char *a_types)
    char        rce         = -10;
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
-   strncpy (a_list, "-", MAX_STR);   /* special for a null list */
+   strncpy (a_list, "-", LEN_RECD);   /* special for a null list */
    --rce;  if (a_me    == NULL)  return rce;
    /*---(setup)--------------------------*/
-   strncpy (a_list, ",", MAX_STR);
+   strncpy (a_list, ",", LEN_RECD);
    --rce;  switch (a_start) {
    case 'R' :  n = a_me->requires; break;
    case 'P' :  n = a_me->provides; break;
@@ -1361,8 +1361,8 @@ DEP__disp_master   (tCELL  *a_me, char *a_list, char a_start, char *a_types)
    /*---(walk the list)------------------*/
    while (n != NULL) {
       if (strchr (a_types, n->type) != 0) {
-         strncat    (a_list, n->target->label, MAX_STR);
-         strncat    (a_list, ","             , MAX_STR);
+         strncat    (a_list, n->target->label, LEN_RECD);
+         strncat    (a_list, ","             , LEN_RECD);
       }
       n = n->next;
    }
@@ -1384,15 +1384,15 @@ char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_ma
  *>    char        rce         = -10;                                                  <* 
  *>    /+---(defenses)-----------------------+/                                        <* 
  *>    --rce;  if (a_list  == NULL)  return rce;                                       <* 
- *>    strncpy (a_list, "-", MAX_STR);   /+ special for a null list +/                 <* 
+ *>    strncpy (a_list, "-", LEN_RECD);   /+ special for a null list +/                 <* 
  *>    --rce;  if (a_me    == NULL)  return rce;                                       <* 
  *>    /+---(walk the list)------------------+/                                        <* 
- *>    strncpy (a_list, ",", MAX_STR);                                                 <* 
+ *>    strncpy (a_list, ",", LEN_RECD);                                                 <* 
  *>    n = a_me->requires;                                                             <* 
  *>    while (n != NULL) {                                                             <* 
  *>       if (strchr (S_DEP_REQS, n->type) != 0) {                                     <* 
- *>          strncat    (a_list, n->target->label, MAX_STR);                           <* 
- *>          strncat    (a_list, ","             , MAX_STR);                           <* 
+ *>          strncat    (a_list, n->target->label, LEN_RECD);                           <* 
+ *>          strncat    (a_list, ","             , LEN_RECD);                           <* 
  *>       }                                                                            <* 
  *>       n = n->next;                                                                 <* 
  *>    }                                                                               <* 
@@ -1410,16 +1410,16 @@ char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_ma
  *>    char        rce         = -10;                                                  <* 
  *>    /+---(defenses)-----------------------+/                                        <* 
  *>    --rce;  if (a_list  == NULL)  return rce;                                       <* 
- *>    strncpy (a_list, "-", MAX_STR);   /+ special for a null list +/                 <* 
+ *>    strncpy (a_list, "-", LEN_RECD);   /+ special for a null list +/                 <* 
  *>    --rce;  if (a_me    == NULL)  return rce;                                       <* 
  *>    /+---(walk the list)---------------+/                                           <* 
- *>    strncpy (a_list, ",", MAX_STR);                                                 <* 
+ *>    strncpy (a_list, ",", LEN_RECD);                                                 <* 
  *>    n = a_me->provides;                                                             <* 
  *>    while (n != NULL) {                                                             <* 
  *>       if (strchr (S_DEP_PROS, n->type) != 0) {                                     <* 
  *>          if (n->type != G_DEP_LIKE  ) {                                              <* 
- *>             strncat    (a_list, n->target->label, MAX_STR);                        <* 
- *>             strncat    (a_list, ","             , MAX_STR);                        <* 
+ *>             strncat    (a_list, n->target->label, LEN_RECD);                        <* 
+ *>             strncat    (a_list, ","             , LEN_RECD);                        <* 
  *>          }                                                                         <* 
  *>       }                                                                            <* 
  *>       n = n->next;                                                                 <* 
@@ -1438,15 +1438,15 @@ char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_ma
  *>    char        rce         = -10;                                                 <* 
  *>    /+---(defenses)-------s---------------+/                                       <* 
  *>    --rce;  if (a_list  == NULL)  return rce;                                      <* 
- *>    strncpy (a_list, "-", MAX_STR);   /+ special for a null list +/                <* 
+ *>    strncpy (a_list, "-", LEN_RECD);   /+ special for a null list +/                <* 
  *>    --rce;  if (a_me    == NULL)  return rce;                                      <* 
  *>    /+---(walk the list)---------------+/                                          <* 
- *>    strncpy (a_list, ",", MAX_STR);                                                <* 
+ *>    strncpy (a_list, ",", LEN_RECD);                                                <* 
  *>    n = a_me->provides;                                                            <* 
  *>    while (n != NULL) {                                                            <* 
  *>       if (n->type == G_DEP_LIKE  ) {                                                <* 
- *>          strncat    (a_list, n->target->label, MAX_STR);                          <* 
- *>          strncat    (a_list, ","             , MAX_STR);                          <* 
+ *>          strncat    (a_list, n->target->label, LEN_RECD);                          <* 
+ *>          strncat    (a_list, ","             , LEN_RECD);                          <* 
  *>       }                                                                           <* 
  *>       n = n->next;                                                                <* 
  *>    }                                                                              <* 
@@ -1898,18 +1898,18 @@ SEQ_calclist       (char *a_list)
    /*---(defenses)--------------------*/
    if (a_list  == NULL) return -1;     /* then no point                       */
    /*---(walk the list)---------------*/
-   strncpy (a_list, "", MAX_STR);
+   strncpy (a_list, "", LEN_RECD);
    for (i = 0; i <= cmax; ++i) {
       x_next = cheads [i];
       while (x_next != NULL) {
-         strncat (a_list, x_next->label, MAX_STR);
-         strncat (a_list, ",", MAX_STR);
+         strncat (a_list, x_next->label, LEN_RECD);
+         strncat (a_list, ",", LEN_RECD);
          x_next = x_next->cnext;
       }
-      strncat (a_list, ";", MAX_STR);
+      strncat (a_list, ";", LEN_RECD);
    }
    if (strcmp (a_list, "") == 0) {
-      strncpy (a_list, "((nada))", MAX_STR);
+      strncpy (a_list, "((nada))", LEN_RECD);
    }
    /*---(complete)--------------------*/
    return 0;
@@ -2297,7 +2297,7 @@ DEP_full           (void)
 char
 DEP_dump           (void)
 {
-   char xlabel[MAX_STR];
+   char xlabel[LEN_RECD];
    endwin();
    DEP_show  (0, s_root);
    DEP_trace (0, tabs[0].sheet[2][11]);
@@ -2338,7 +2338,7 @@ DEP_unit           (
     */
    /*---(locals)-----------+-----------+-*/
    int         len         = 0;
-   char        temp        [MAX_STR];
+   char        temp        [LEN_RECD];
    int         x_fore      = 0;
    int         x_back      = 0;
    tDEP       *x_dep       = NULL;
@@ -2367,30 +2367,30 @@ DEP_unit           (
    }
    /*---(dependency list)----------------*/
    if      (strcmp (a_question, "dep_pointers")   == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_dep pointers   : num=%4d, head=%9p, tail=%9p", s_ndep, s_hdep, s_tdep);
+      snprintf(unit_answer, LEN_UNIT, "s_dep pointers   : num=%4d, head=%9p, tail=%9p", s_ndep, s_hdep, s_tdep);
    }
    else if (strcmp (a_question, "dep_count")      == 0) {
       x_dep  = s_hdep; while (x_dep  != NULL) { ++x_fore; x_dep  = x_dep ->dnext; }
       x_dep  = s_tdep; while (x_dep  != NULL) { ++x_back; x_dep  = x_dep ->dprev; }
-      snprintf(unit_answer, LEN_TEXT, "s_dep count      : num=%4d, fore=%4d, back=%4d", s_ndep, x_fore, x_back);
+      snprintf(unit_answer, LEN_UNIT, "s_dep count      : num=%4d, fore=%4d, back=%4d", s_ndep, x_fore, x_back);
    }
    /*---(cell reqs/deps)-----------------*/
    else if (strcmp (a_question, "cell_requires")  == 0) {
       DEP_disp_reqs  (x_cell, temp);
       DEP_disp_sort  (temp);
-      if (x_cell != NULL)  snprintf(unit_answer, LEN_TEXT, "s_dep requires   : %-5.5s (%2d) %-.35s", x_cell->label, x_cell->nrequire, temp);
-      else                 snprintf(unit_answer, LEN_TEXT, "s_dep requires   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
+      if (x_cell != NULL)  snprintf(unit_answer, LEN_UNIT, "s_dep requires   : %-5.5s (%2d) %-.35s", x_cell->label, x_cell->nrequire, temp);
+      else                 snprintf(unit_answer, LEN_UNIT, "s_dep requires   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
    }
    else if (strcmp (a_question, "cell_provides")  == 0) {
       DEP_disp_pros  (x_cell, temp);
       DEP_disp_sort  (temp);
-      if (x_cell != NULL)  snprintf(unit_answer, LEN_TEXT, "s_dep provides   : %-5.5s (%2d) %-.35s", x_cell->label, x_cell->nprovide, temp);
-      else                 snprintf(unit_answer, LEN_TEXT, "s_dep provides   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
+      if (x_cell != NULL)  snprintf(unit_answer, LEN_UNIT, "s_dep provides   : %-5.5s (%2d) %-.35s", x_cell->label, x_cell->nprovide, temp);
+      else                 snprintf(unit_answer, LEN_UNIT, "s_dep provides   : %-5.5s (%2d) %-.35s", "-----"      , 0               , temp);
    }
    /*---(cell calc exec)-----------------*/
    else if (strcmp (a_question, "calc_cell"    )  == 0) {
-      if (x_cell->clevel >= 0) snprintf (unit_answer, LEN_TEXT, "s_dep calc seq   : %-5.5s  %2d", x_cell->label, x_cell->clevel);
-      else                     snprintf (unit_answer, LEN_TEXT, "s_dep calc seq   : %-5.5s  %2s", x_cell->label, "--"          );
+      if (x_cell->clevel >= 0) snprintf (unit_answer, LEN_UNIT, "s_dep calc seq   : %-5.5s  %2d", x_cell->label, x_cell->clevel);
+      else                     snprintf (unit_answer, LEN_UNIT, "s_dep calc seq   : %-5.5s  %2s", x_cell->label, "--"          );
    }
    else if (strcmp (a_question, "calc_counts"  )  == 0) {
       sprintf  (unit_answer, "s_dep calc count : %03d %02d", ctotal, cmax);
@@ -2402,7 +2402,7 @@ DEP_unit           (
    }
    /*---(UNKNOWN)------------------------*/
    else {
-      snprintf(unit_answer, LEN_TEXT, "UNKNOWN          : question is not understood");
+      snprintf(unit_answer, LEN_UNIT, "UNKNOWN          : question is not understood");
    }
    /*---(complete)-----------------------*/
    return unit_answer;

@@ -3,7 +3,7 @@
 #include   "gyges.h"
 
 
-static char    s_label     [MAX_STR]   = "";
+static char    s_label     [LEN_RECD]   = "";
 
 
 /*====================------------------------------------====================*/
@@ -552,30 +552,30 @@ LOC_unit           (char *a_question, tCELL *a_cell)
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "loc_cell"     )  == 0) {
       if (rc == 0) {
-         snprintf (unit_answer, LEN_TEXT, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
       } else {
-         snprintf (unit_answer, LEN_TEXT, "s_loc cell       : cell not found");
+         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : cell not found");
       }
    }
    else if (strcmp(a_question, "loc_who"       )  == 0) {
       if (a_cell != NULL) {
-         snprintf (unit_answer, LEN_TEXT, "s_loc occupant   : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_UNIT, "s_loc occupant   : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
       } else {
-         snprintf (unit_answer, LEN_TEXT, "s_loc occupant   : ptr=%9p, no cell attached", a_cell);
+         snprintf (unit_answer, LEN_UNIT, "s_loc occupant   : ptr=%9p, no cell attached", a_cell);
       }
    }
    else if (strcmp (a_question, "cell_where")     == 0) {
       if (rc == 0) {
-         snprintf (unit_answer, LEN_TEXT, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_UNIT, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->tab, x_curr->col, x_curr->row);
       } else {
-         snprintf (unit_answer, LEN_TEXT, "s_cell location  : not found in cell list");
+         snprintf (unit_answer, LEN_UNIT, "s_cell location  : not found in cell list");
       }
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_cell main list : num=%4d, head=%9p, tail=%9p", NCEL, hcell, tcell);
+      snprintf(unit_answer, LEN_UNIT, "s_cell main list : num=%4d, head=%9p, tail=%9p", NCEL, hcell, tcell);
    }
    else if (strcmp(a_question, "loc_label")      == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_loc label      : %s", s_label);
+      snprintf(unit_answer, LEN_UNIT, "s_loc label      : %s", s_label);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

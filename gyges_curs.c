@@ -253,6 +253,7 @@ static int  s_start         = 0;
 static int  s_space         = 0;
 
 
+
 /*====================------------------------------------====================*/
 /*===----                      color configuration                     ----===*/
 /*====================------------------------------------====================*/
@@ -504,7 +505,7 @@ CURS_formula       (tCELL *a_curr)
    }
    /*---(boundary markers)---------------*/
    attron (S_COLOR_VISUAL );
-   sprintf (msg, "%c", CHAR_NULL );
+   sprintf (msg, "%c", G_CHAR_NULL );
    if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);
    else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");
    else                              mvprintw (row_formula, s_start - 1, "<");
@@ -523,12 +524,12 @@ CURS_status        (tCELL *a_curr)
    int         l           = 0;             /* string length                  */
    int         i           = 0;             /* iterator -- keys               */
    char        msg[500]  = "";                   /* temporary display message   */
-   char        rpn[MAX_STR] = "";
+   char        rpn[LEN_RECD] = "";
    switch (my.layout_status) {
    case G_STATUS_CELL     : /* cell details */
       if (a_curr != NULL) {
-         strncpy (rpn , "+", MAX_STR);
-         if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
+         strncpy (rpn , "+", LEN_RECD);
+         if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, LEN_RECD);
          snprintf (msg, 500, "[ rpn %-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ]", rpn, reqs, deps, like);
       }
       break;
@@ -538,8 +539,8 @@ CURS_status        (tCELL *a_curr)
       }
       break;
    case G_STATUS_BUFFER   : /* buffer contents */
-      if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, MAX_STR);
-      else                                       strncpy (rpn, "((null))", MAX_STR);
+      if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, LEN_RECD);
+      else                                       strncpy (rpn, "((null))", LEN_RECD);
       snprintf (msg, 500, "[ %-100.100s ]", rpn);
       break;
    case G_STATUS_REGS     : /* register contents */
@@ -734,7 +735,7 @@ CURS_menuroot      (char a_menu)
    int         x_count     = 0;
    int         x_row       = 2;
    int         x_col       = 1;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char       *x_title     = " - -root-menu- ";
    /*---(header)-------------------------*/
    attron (S_COLOR_TITLE);
@@ -772,7 +773,7 @@ CURS_menusub       (char a_menu)
    int         x_count     =  0;
    int         x_row       =  4;
    int         x_col       =  1;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char       *x_title     = " - --submenu--------------------------";
    char        x_menu      = '-';
    /*---(header)-------------------------*/
@@ -820,8 +821,8 @@ CURS_info_cell       (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 3;
-   char        x_temp      [MAX_STR];
-   char        x_line      [MAX_STR];
+   char        x_temp      [LEN_RECD];
+   char        x_line      [LEN_RECD];
    int         x_len       = 0;
    char       *x_title     = " ------------------cell details-------------------- ";
    tCELL      *x_curr      = tab->sheet[CCOL][CROW];
@@ -895,10 +896,10 @@ CURS_listmark      (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char        x_label     [10];
    char        x_mark      = ' ';
-   char        x_marklist  [MAX_STR] = "'abcdefghijklmnopqrstuvwxyz";
+   char        x_marklist  [LEN_RECD] = "'abcdefghijklmnopqrstuvwxyz";
    char       *x_title     = " -m- --fixed---      -m- --moving-- ";
    /*---(header)-------------------------*/
    attron (S_COLOR_TITLE);
@@ -939,9 +940,9 @@ CURS_listreg       (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char        x_reg       = ' ';
-   char        x_reglist   [MAX_STR] = "\"abcdefghijklmnopqrstuvwxyz";
+   char        x_reglist   [LEN_RECD] = "\"abcdefghijklmnopqrstuvwxyz";
    int         x_count     = 0;
    int         x_row       = 4;
    int         x_col       = 10;
@@ -978,9 +979,9 @@ CURS_listtreg      (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char        x_reg       = ' ';
-   char        x_reglist   [MAX_STR] = "\"abcdefghijklmnopqrstuvwxyz";
+   char        x_reglist   [LEN_RECD] = "\"abcdefghijklmnopqrstuvwxyz";
    int         x_count     = 0;
    int         x_row       = 4;
    int         x_col       = 10;
@@ -1017,7 +1018,7 @@ CURS_listerror     (tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
-   char        x_line      [MAX_STR];
+   char        x_line      [LEN_RECD];
    char       *x_title     = " no p sq --------------- s ---------------------------------------- ";
    int         x_row       = 4;
    int         x_col       = 10;
@@ -1072,11 +1073,11 @@ CURS_main          (void)
                      break;
    }
    curr    = tab->sheet[CCOL][CROW];
-   strncpy (reqs , "+", MAX_STR);
-   strncpy (deps , "+", MAX_STR);
-   strncpy (like , "+", MAX_STR);
-   strncpy (my.mark_list, "+", MAX_STR);
-   strncpy (my.mark_plus, "+", MAX_STR);
+   strncpy (reqs , "+", LEN_RECD);
+   strncpy (deps , "+", LEN_RECD);
+   strncpy (like , "+", LEN_RECD);
+   strncpy (my.mark_list, "+", LEN_RECD);
+   strncpy (my.mark_plus, "+", LEN_RECD);
    DEP_disp_reqs  (curr, reqs);
    DEP_disp_pros  (curr, deps);
    DEP_disp_like  (curr, like);
@@ -1147,12 +1148,12 @@ CURS_cell          (int a_col, int a_row)
    /*---(locals)---------------------------*/
    tCELL    *curr      = tab->sheet[a_col][a_row];
    tCELL    *next      = NULL;
-   char      label[MAX_STR] = "zzz";
-   char      l[MAX_STR]  = "";
+   char      label[LEN_RECD] = "zzz";
+   char      l[LEN_RECD]  = "";
    int       i         = 0;
    uint      xmax      = 0;
    int       xcol      = 0;
-   char      xdisp [MAX_STR];
+   char      xdisp [LEN_RECD];
    /*---(check for merges)-----------------*/
    /*> if (curr != NULL && curr->a == '+')  return 0;                                 <*/
    /*---(identify cell)--------------------*/

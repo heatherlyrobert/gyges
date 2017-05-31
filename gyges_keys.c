@@ -15,7 +15,7 @@ static int    wrow;
 static int    wpos;
 static char   wref  [20];
 static char   wref2 [20];
-static char   wsave [MAX_STR];
+static char   wsave [LEN_RECD];
 
 char
 KEYS_init          (void)
@@ -42,7 +42,7 @@ char
 KEYS_status        (char *a_msg)
 {
    /*---(locals)-----------+-----------+-*/
-   char        t           [MAX_STR];
+   char        t           [LEN_RECD];
    int         x_key       = 0;
    int         x_len       = 0;             /* string length                  */
    int         i           = 0;             /* iterator -- keys               */
@@ -65,7 +65,7 @@ KEYS_basics        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_minors    [MAX_STR]  = "0HhlL$_KkjJGr";
+   char        x_minors    [LEN_RECD]  = "0HhlL$_KkjJGr";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -119,7 +119,7 @@ KEYS_gz_family     (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;                /* return code for errors    */
    char        rc          =   0;                /* generic return code       */
-   char        x_minors    [MAX_STR]  = "shcletkmjbaonf.AONF";
+   char        x_minors    [LEN_RECD]  = "shcletkmjbaonf.AONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -190,7 +190,7 @@ KEYS_e_family      (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_minors    [MAX_STR]  = "tKkjJbsHhlLeaonfSETBAONF";
+   char        x_minors    [LEN_RECD]  = "tKkjJbsHhlLeaonfSETBAONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -284,7 +284,7 @@ KEYS_c_family      (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_minors    [MAX_STR]  = "hljksetbaonfAONF";
+   char        x_minors    [LEN_RECD]  = "hljksetbaonfAONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -388,7 +388,7 @@ KEYS_regbasic       (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_minors    [MAX_STR]  = "ypdx";
+   char        x_minors    [LEN_RECD]  = "ypdx";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -432,7 +432,7 @@ MODE_map           (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          = 0;
-   char        x_minors    [MAX_STR]  = "ypdx";
+   char        x_minors    [LEN_RECD]  = "ypdx";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -473,7 +473,7 @@ MODE_map           (char a_major, char a_minor)
          return 0;
          break;
       case ':'      :
-         strncpy     (command , ":", MAX_STR);
+         strncpy     (command , ":", LEN_RECD);
          yVIKEYS_mode_enter  (MODE_COMMAND);
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
@@ -786,7 +786,7 @@ MODE_source   (char a_major, char a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_multi     [MAX_STR]   = "cdgz";
+   char        x_multi     [LEN_RECD]   = "cdgz";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -818,7 +818,7 @@ MODE_source   (char a_major, char a_minor)
       case  27  : case  'U' :
          DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
          if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
-            strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
+            strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, LEN_RECD); 
          }
          EDIT_pos     ('r');
          yVIKEYS_mode_exit  ();
@@ -962,7 +962,7 @@ SMOD_replace  (char a_major, char a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [MAX_STR]  = "rRm";
+   char        x_majors    [LEN_RECD]  = "rRm";
    static char x_append    = '-';
    static char x_saved = '\0';
    /*---(header)-------------------------*/
@@ -1009,7 +1009,7 @@ SMOD_replace  (char a_major, char a_minor)
          g_contents [my.cpos] = x_saved;
          --(my.cpos);
          x_saved = g_contents [my.cpos];
-         g_contents [my.cpos] = CHAR_PLACE;
+         g_contents [my.cpos] = G_CHAR_PLACE;
       }
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -1025,7 +1025,7 @@ SMOD_replace  (char a_major, char a_minor)
    if (a_major == 'm') {
       DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
       x_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = CHAR_PLACE;
+      g_contents [my.cpos] = G_CHAR_PLACE;
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
@@ -1046,14 +1046,14 @@ SMOD_replace  (char a_major, char a_minor)
       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
       ++(my.cpos);
       x_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = CHAR_PLACE;
+      g_contents [my.cpos] = G_CHAR_PLACE;
    }
    /*---(correct current position)-------*/
    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
    DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
    if (my.cpos  >= my.npos) {
       DEBUG_USER   yLOG_note    ("update the end pos");
-      g_contents [my.npos    ] = CHAR_PLACE;
+      g_contents [my.npos    ] = G_CHAR_PLACE;
       g_contents [my.npos + 1] = '\0';
       x_append = 'y';
    }
@@ -1115,7 +1115,7 @@ MODE_input         (char  a_major, char  a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [MAX_STR]   = "IiaAm";
+   char        x_majors    [LEN_RECD]   = "IiaAm";
    int         i           = 0;             /* loop iterator                  */
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
@@ -1143,7 +1143,7 @@ MODE_input         (char  a_major, char  a_minor)
       DEBUG_USER   yLOG_value   ("total pos" , my.npos);
       DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);
       for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
-      g_contents [my.cpos] = CHAR_PLACE;
+      g_contents [my.cpos] = G_CHAR_PLACE;
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_minor;
@@ -1159,9 +1159,9 @@ MODE_input         (char  a_major, char  a_minor)
       }
       if (a_minor == 27 && yVIKEYS_mode_prev() == MODE_MAP) {
          if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
-            strlcpy (g_contents, tab->sheet[tab->ccol][CROW]->s, MAX_STR); 
+            strlcpy (g_contents, tab->sheet[tab->ccol][CROW]->s, LEN_RECD); 
          } else {
-            strlcpy (g_contents, ""                            , MAX_STR); 
+            strlcpy (g_contents, ""                            , LEN_RECD); 
          }
       }
       EDIT_pos  ('r');
@@ -1311,19 +1311,19 @@ cmd_exec           (char *a_command)
    /*---(locals)-----------+-----------+-*/
    char       *p           = NULL;
    char       *q           = " ";
-   char        x_work      [MAX_STR]   = "";
+   char        x_work      [LEN_RECD]   = "";
    char        rc          = 0;
    int         x_len       = 0;
    char        x_flag      = '-';
-   strncpy    (x_work, a_command, MAX_STR);
+   strncpy    (x_work, a_command, LEN_RECD);
    x_len = strlen (x_work);
    p = strtok (x_work, q);
    if (p == NULL) return 0;
-   if   (strncmp(p, ":w"        , MAX_STR) == 0 ||
-         strncmp(p, ":wa"       , MAX_STR) == 0 ||
-         strncmp(p, ":wq"       , MAX_STR) == 0 ||
-         strncmp(p, ":wqa"      , MAX_STR) == 0 ||
-         strncmp(p, ":write"    , MAX_STR) == 0) {
+   if   (strncmp(p, ":w"        , LEN_RECD) == 0 ||
+         strncmp(p, ":wa"       , LEN_RECD) == 0 ||
+         strncmp(p, ":wq"       , LEN_RECD) == 0 ||
+         strncmp(p, ":wqa"      , LEN_RECD) == 0 ||
+         strncmp(p, ":write"    , LEN_RECD) == 0) {
       FILE_write (my.f_title);
       if (p [2] == 'q')  done = 0;
       return 0;
@@ -1351,16 +1351,25 @@ cmd_exec           (char *a_command)
       ERROR_list ();
       return 0;
    }
-   if (x_len == 9 && strcmp (p, ":status") == 0) {
-      my.layout_status = x_work [8];
+   /*---(layout commands)----------------*/
+   if (x_len >= 12 && strcmp (p, ":formula") == 0) {
+      PROG_layout_set ("formula"  , x_work + 9);
       return 0;
    }
-   if (x_len == 9 && strcmp (p, ":screen") == 0) {
-      my.layout_formula = x_work [8];
+   if (x_len >= 11 && strcmp (p, ":status") == 0) {
+      PROG_layout_set ("status"   , x_work + 8);
       return 0;
    }
-   if   (strncmp(p, ":q"        , MAX_STR) == 0 ||
-         strncmp(p, ":qa"       , MAX_STR) == 0) {
+   if (x_len >= 12 && strcmp (p, ":command") == 0) {
+      PROG_layout_set ("command"  , x_work + 9);
+      return 0;
+   }
+   if (x_len >= 11 && strcmp (p, ":layout" ) == 0) {
+      PROG_layout_set ("layout"   , x_work + 8);
+      return 0;
+   }
+   if   (strncmp(p, ":q"        , LEN_RECD) == 0 ||
+         strncmp(p, ":qa"       , LEN_RECD) == 0) {
       done = 0;
       return 0;
    }
@@ -1420,11 +1429,11 @@ cmd_exec           (char *a_command)
       return 0;
    }
    sta_error = 'y';
-   /*> if        (strncmp(p, "o"        , MAX_STR) == 0) {                            <* 
+   /*> if        (strncmp(p, "o"        , LEN_RECD) == 0) {                            <* 
     *>    p = strtok(NULL, q);                                                        <* 
     *>    if (p == NULL) return 0;                                                    <* 
     *>    INPT_main (p);                                                              <* 
-    *> } else if (strncmp(p, "q"        , MAX_STR) == 0) {                            <* 
+    *> } else if (strncmp(p, "q"        , LEN_RECD) == 0) {                            <* 
     *>    done = 0;                                                                   <* 
     *> }                                                                              <*/
    /*---(complete)-----------------------*/
@@ -1544,13 +1553,13 @@ char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
 KEYS__unit         (char *a_question)
 {
    /*---(locals)-----------+-----------+-*/
-   char        x_list      [MAX_STR];
+   char        x_list      [LEN_RECD];
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "keys             : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "mode_stack"   )  == 0) {
       yVIKEYS_mode_list (x_list);
-      snprintf (unit_answer, LEN_TEXT, "keys mode stack  : %s", x_list);
+      snprintf (unit_answer, LEN_UNIT, "keys mode stack  : %s", x_list);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

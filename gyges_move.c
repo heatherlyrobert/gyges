@@ -9,11 +9,11 @@ struct cACCESSOR my;
 int     save = 0;
 
 int     done = 1;
-char    g_contents      [MAX_STR] = "";
-char    saved   [MAX_STR] = "";
+char    g_contents      [LEN_RECD] = "";
+char    saved   [LEN_RECD] = "";
 char    cmd[10] = "";
-char    message [MAX_STR] = "";
-char    command [MAX_STR] = "";
+char    message [LEN_RECD] = "";
+char    command [LEN_RECD] = "";
 char    special = 0;
 
 
@@ -30,15 +30,15 @@ static  int   s_endr  = 0;
 char          /* PURPOSE : clear out recent editing --------------------------*/
 clear_input   (void)
 {
-   strncpy(saved   , g_contents, MAX_STR);
-   strncpy(g_contents, ""      , MAX_STR);
+   strncpy(saved   , g_contents, LEN_RECD);
+   strncpy(g_contents, ""      , LEN_RECD);
    return 0;
 }
 
 char          /* PURPOSE : place recent input into the right cell ------------*/
 save_saved    (void)
 {
-   strncpy(g_contents, saved, MAX_STR);
+   strncpy(g_contents, saved, LEN_RECD);
    CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
    return 0;
 }
@@ -112,9 +112,9 @@ MOVE_done          (void)
    /*---(update contents)-------------*/
    DEBUG_USER  yLOG_note    ("update current contents");
    if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {
-      strncpy (g_contents, tab->sheet[CCOL][CROW]->s, MAX_STR);
+      strncpy (g_contents, tab->sheet[CCOL][CROW]->s, LEN_RECD);
    } else {
-      strncpy (g_contents, ""                       , MAX_STR);
+      strncpy (g_contents, ""                       , LEN_RECD);
    }
    my.npos = strlen (g_contents);
    my.bpos = 0;
@@ -324,7 +324,7 @@ MOVE_gz_horz       (char a_major, char a_minor)
    int         x_target    = 0;
    int         x_cum       = 0;
    int         x_col       = 0;
-   char        x_minors    [MAX_STR]  = "shcle";
+   char        x_minors    [LEN_RECD]  = "shcle";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -407,7 +407,7 @@ MOVE_horz          (char a_minor)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;           /* return code for error          */
-   char        x_minors    [MAX_STR]  = "0HhlL$r";
+   char        x_minors    [LEN_RECD]  = "0HhlL$r";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
@@ -573,9 +573,9 @@ KEYS_col           (char a_major, char a_minor)
     *> /+---(update contents)-------------+/                                          <* 
     *> DEBUG_USER  yLOG_note    ("update current contents");                          <* 
     *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {     <* 
-    *>    strncpy (g_contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                     <* 
+    *>    strncpy (g_contents, tab->sheet[CCOL][CROW]->s, LEN_RECD);                     <* 
     *> } else {                                                                       <* 
-    *>    strncpy (g_contents, ""                  , MAX_STR);                          <* 
+    *>    strncpy (g_contents, ""                  , LEN_RECD);                          <* 
     *> }                                                                              <* 
     *> /+---(check for selection)---------+/                                          <* 
     *> DEBUG_USER  yLOG_note    ("update selection if necessary");                    <* 
@@ -862,7 +862,7 @@ MOVE_vert          (char a_minor)
 {
    /*---(locals)-------------------------*/
    char        rce         = -10;           /* return code for error          */
-   char        x_minors    [MAX_STR]  = "_KkjJGr";
+   char        x_minors    [LEN_RECD]  = "_KkjJGr";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
@@ -1034,9 +1034,9 @@ KEYS_row           (char a_major, char a_minor)
     *> /+---(update contents)-------------+/                                               <* 
     *> DEBUG_USER  yLOG_note    ("update current contents");                               <* 
     *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {          <* 
-    *>    strncpy(g_contents, tab->sheet[CCOL][CROW]->s, MAX_STR);                           <* 
+    *>    strncpy(g_contents, tab->sheet[CCOL][CROW]->s, LEN_RECD);                           <* 
     *> } else {                                                                            <* 
-    *>    strncpy(g_contents, ""                  , MAX_STR);                                <* 
+    *>    strncpy(g_contents, ""                  , LEN_RECD);                                <* 
     *> }                                                                                   <* 
     *> /+---(check for selection)---------+/                                               <* 
     *> DEBUG_USER  yLOG_note    ("update selection if necessary");                         <* 
@@ -1268,7 +1268,7 @@ PRIV void  o___EDIT_WRAPPERS___o () { return; }
 char         /*--> prepare contents for new edit ---------[ leaf   [ ------ ]-*/
 EDIT_start         (char *a_prefix)
 {
-   strlcpy (g_contents, a_prefix , MAX_STR);
+   strlcpy (g_contents, a_prefix , LEN_RECD);
    my.npos = strlen (g_contents);
    my.cpos = my.npos;
    /*---(complete)-----------------------*/
@@ -1303,8 +1303,8 @@ EDIT_done          (void)
    DEBUG_USER   yLOG_value   ("my.epos"   , my.epos);
    /*---(check over/underrun)---------*/
    DEBUG_USER   yLOG_note    ("correct my.npos over/underruns");
-   if (my.npos  >= MAX_STR) {
-      my.npos = MAX_STR - 1;
+   if (my.npos  >= LEN_RECD) {
+      my.npos = LEN_RECD - 1;
       g_contents [my.npos] = '\0';
    }
    if (my.npos < 0) {
@@ -1463,7 +1463,7 @@ EDIT_pos           (char a_minor)
    int  avail = my.apos;                /* available positions                   */
    int  half  = avail / 2;           /* half the viewable positions           */
    int  qtr   = avail / 4;           /* quarter the viewable positions        */
-   char        x_minors    [MAX_STR]  = "0l-+m$Tt.bB^k,jvwWer";
+   char        x_minors    [LEN_RECD]  = "0l-+m$Tt.bB^k,jvwWer";
    /*---(header)-------------------------*/
    DEBUG_USER  yLOG_enter   (__FUNCTION__);
    DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
@@ -1532,36 +1532,36 @@ MOVE_unit          (char *a_question, int a_num)
    strcpy  (unit_answer, "s_move unit      : question not understood");
    /*---(defenses)-----------------------*/
    if      (a_num < 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_move error     : tab ref (%d) is negative", a_num);
+      snprintf (unit_answer, LEN_UNIT, "s_move error     : tab ref (%d) is negative", a_num);
    }
    else if (a_num >= NTAB) {
-      snprintf (unit_answer, LEN_TEXT, "s_move error     : tab ref (%d vs %d) is too high", a_num, NTAB);
+      snprintf (unit_answer, LEN_UNIT, "s_move error     : tab ref (%d vs %d) is too high", a_num, NTAB);
    }
    /*---(screen location)----------------*/
    else if (strcmp(a_question, "row_stats"     ) == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move row stat  : num=%4d, scr=%4d, beg=%4d, cur=%4d, end=%4d", NROW, my.y_avail, BROW, CROW, EROW);
+      snprintf(unit_answer, LEN_UNIT, "s_move row stat  : num=%4d, scr=%4d, beg=%4d, cur=%4d, end=%4d", NROW, my.y_avail, BROW, CROW, EROW);
    }
    else if (strcmp(a_question, "col_stats"     ) == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move col stat  : num=%4d, scr=%4d, beg=%4d, cur=%4d, end=%4d", NCOL, my.x_avail, BCOL, CCOL, ECOL);
+      snprintf(unit_answer, LEN_UNIT, "s_move col stat  : num=%4d, scr=%4d, beg=%4d, cur=%4d, end=%4d", NCOL, my.x_avail, BCOL, CCOL, ECOL);
    }
    /*---(current position)---------------*/
    else if (strcmp(a_question, "tab_cur"       ) == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move tab cur   : tab=%4d, col=%4d, row=%4d", CTAB, CCOL, CROW);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab cur   : tab=%4d, col=%4d, row=%4d", CTAB, CCOL, CROW);
    }
    else if (strcmp(a_question, "tab_beg"       ) == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].bcol, tabs [a_num].brow);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].bcol, tabs [a_num].brow);
    }
    else if (strcmp(a_question, "tab_pos"       ) == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ccol, tabs [a_num].crow);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ccol, tabs [a_num].crow);
    }
    else if (strcmp(a_question, "tab_max" )       == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ncol, tabs [a_num].nrow);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ncol, tabs [a_num].nrow);
    }
    else if (strcmp(a_question, "edit_con")       == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move edit con  : :%-*.*s:", my.apos, my.apos, g_contents + my.bpos);
+      snprintf(unit_answer, LEN_UNIT, "s_move edit con  : :%-*.*s:", my.apos, my.apos, g_contents + my.bpos);
    }
    else if (strcmp(a_question, "edit_pos")       == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_move edit pos  : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", my.npos, my.apos, my.bpos, my.cpos, my.epos);
+      snprintf(unit_answer, LEN_UNIT, "s_move edit pos  : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", my.npos, my.apos, my.bpos, my.cpos, my.epos);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

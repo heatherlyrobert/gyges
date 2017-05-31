@@ -613,8 +613,8 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    char        rc          = 0;
    tCELL      *curr        = NULL;
    tCELL      *x_other     = NULL;
-   char        x_before    [MAX_STR]   = "[<{(null)}>]";
-   char        x_after     [MAX_STR]   = "[<{(null)}>]";
+   char        x_before    [LEN_RECD]   = "[<{(null)}>]";
+   char        x_after     [LEN_RECD]   = "[<{(null)}>]";
    /*---(defenses)-----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
@@ -685,7 +685,7 @@ CELL_dup           (tCELL *a_old)
    if (new == NULL)                    return NULL;
    /*---(copy source)--------------------*/
    if (a_old->s == NULL)    new->s = NULL;
-   else                     new->s = strndup (a_old->s, MAX_STR);
+   else                     new->s = strndup (a_old->s, LEN_RECD);
    new->l        = a_old->l;
    /*---(copy formatting)----------------*/
    new->a        = a_old->a;
@@ -776,7 +776,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    if (a_mode == CHG_INPUTAND)  HIST_change ("CHANGE", a_tab, a_col, a_row, s_bsource, a_source);
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("change source and length values");
-   curr->s = strndup (a_source, MAX_STR);
+   curr->s = strndup (a_source, LEN_RECD);
    curr->l = strlen  (curr->s);
    /*---(interpret)----------------------*/
    DEBUG_CELL   yLOG_note    ("interpret new contents");
@@ -1047,7 +1047,7 @@ CELL__interpret    (
    /*    else   string literal                                                */
    /*---(locals)-----------+-----------+-*//*---------------------------------*/
    int         i           = 0;                  /* iterator -- character     */
-   char        temp        [MAX_STR];            /* working storage           */
+   char        temp        [LEN_RECD];            /* working storage           */
    char        x_pre       = ' ';                /* source string prefix      */
    int         len         = a_cell->l;          /* current string length     */
    char        rce         = -10;
@@ -1075,7 +1075,7 @@ CELL__interpret    (
    if (a_cell->s == NULL) {
       DEBUG_CELL   yLOG_note    ("cell contents are null");
       a_cell->t = CTYPE_BLANK;
-      a_cell->s = strndup ("", MAX_STR);
+      a_cell->s = strndup ("", LEN_RECD);
       a_cell->l = 0;
       a_cell->a = '?';
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1093,7 +1093,7 @@ CELL__interpret    (
    }
    /*---(initialize)---------------------*/
    a_cell->v_num = 0.0;
-   strncpy (temp, a_cell->s, MAX_STR);
+   strncpy (temp, a_cell->s, LEN_RECD);
    x_pre = temp [0];
    --rce;
    /*---(special base numbers)-----------*/
@@ -1136,7 +1136,7 @@ CELL__interpret    (
       rc = RPN_convert (a_cell);
       --rce;  if (rc < 0) {
          a_cell->t = CTYPE_ERROR;
-         a_cell->v_str = strndup ("#.rpn", MAX_STR);
+         a_cell->v_str = strndup ("#.rpn", LEN_RECD);
          CALC_free   (a_cell);
          DEP_cleanse (a_cell);
          DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1147,7 +1147,7 @@ CELL__interpret    (
       rc = CALC_build  (a_cell);
       if (rc < 0) {
          a_cell->t = CTYPE_ERROR;
-         a_cell->v_str = strndup ("#.build", MAX_STR);
+         a_cell->v_str = strndup ("#.build", LEN_RECD);
          CALC_free   (a_cell);
          DEP_cleanse (a_cell);
          DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1188,7 +1188,7 @@ CELL__interpret    (
          rc = CALC_eval   (a_cell);
          if (rc < 0) {
             a_cell->t = CTYPE_ERROR;
-            a_cell->v_str = strndup ("#.eval", MAX_STR);
+            a_cell->v_str = strndup ("#.eval", LEN_RECD);
             CALC_free   (a_cell);
             DEP_cleanse (a_cell);
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1773,7 +1773,7 @@ CELL_height        (char a_mode, char a_num)
 /*====================------------------------------------====================*/
 PRIV void  o___DISPLAY_________o () { return; }
 
-char        s_print     [MAX_STR] = "";
+char        s_print     [LEN_RECD] = "";
 
 char         /*--> format printable number ---------------[ ------ [ ------ ]-*/
 CELL__print_comma  (
@@ -1795,8 +1795,8 @@ CELL__print_comma  (
    ullong      x_int       = 0;             /* whole part                     */
    ullong      x_frac      = 0;             /* fractional part                */
    char        x_comma     = ',';           /* comma symbol                   */
-   char        x_work      [MAX_STR] = "";  /* string for final return        */
-   char        x_temp      [MAX_STR] = "";  /* string for working space       */
+   char        x_work      [LEN_RECD] = "";  /* string for final return        */
+   char        x_temp      [LEN_RECD] = "";  /* string for working space       */
    int         x_len       = 0;             /* string length                  */
    char       *x_text      = NULL;          /* return text                    */
    char        x_iter      = 0;
@@ -1906,8 +1906,8 @@ CELL__print_comma  (
    }
    DEBUG_CELL  yLOG_info    ("merged"    , x_work);
    /*---(allocate)-----------------------*/
-   strncpy (s_print, x_work, MAX_STR);
-   strncpy (a_text , x_work, MAX_STR);
+   strncpy (s_print, x_work, LEN_RECD);
+   strncpy (a_text , x_work, LEN_RECD);
    /*---(complete)-----------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
@@ -1924,9 +1924,9 @@ CELL__print_special(
    /* converts a double (standard for cells) into one of a number of special  */
    /* number bases.                                                           */
    /*---(locals)-----------+-----------+-*//*---------------------------------*/
-   char        x_work      [MAX_STR] = "";  /* temp working string            */
-   char        x_temp      [MAX_STR] = "";  /* temp working string            */
-   char        x_prefix    [MAX_STR] = "";  /* temp working string            */
+   char        x_work      [LEN_RECD] = "";  /* temp working string            */
+   char        x_temp      [LEN_RECD] = "";  /* temp working string            */
+   char        x_prefix    [LEN_RECD] = "";  /* temp working string            */
    char        rce         = -10;           /* return code for errors         */
    int         x_len       = 0;
    int         i           = 0;
@@ -1961,8 +1961,8 @@ CELL__print_special(
    /*---(defense: negative)--------------*/
    --rce;  if (a_num < 0) {
       strcpy  (x_work, "#.neg");
-      strncpy (s_print, x_work, MAX_STR);
-      strncpy (a_text , x_work, MAX_STR);
+      strncpy (s_print, x_work, LEN_RECD);
+      strncpy (a_text , x_work, LEN_RECD);
       DEBUG_CELL  yLOG_note    ("number must not be negative");
       DEBUG_CELL  yLOG_exit    (__FUNCTION__);
       return rce;
@@ -2052,8 +2052,8 @@ CELL__print_special(
       /*---(done)-----------------*/
    }
    /*---(return value)-------------------*/
-   strncpy (s_print, x_work, MAX_STR);
-   strncpy (a_text , x_work, MAX_STR);
+   strncpy (s_print, x_work, LEN_RECD);
+   strncpy (a_text , x_work, LEN_RECD);
    /*---(complete)-----------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
@@ -2069,8 +2069,8 @@ CELL__print_times  (
    /* converts a double (standard for cells) into one a variety of time       */
    /* representation formats.                                                 */
    /*---(locals)-----------+-----------+-*//*---------------------------------*/
-   char        x_work      [MAX_STR] = "";  /* temp working string            */
-   char        x_temp      [MAX_STR] = "";  /* temp working string            */
+   char        x_work      [LEN_RECD] = "";  /* temp working string            */
+   char        x_temp      [LEN_RECD] = "";  /* temp working string            */
    char        rce         = -10;           /* return code for errors         */
    long        x_now       = 0;
    tTIME      *x_time      = NULL;
@@ -2110,8 +2110,8 @@ CELL__print_times  (
              break;
    }
    /*---(allocate)-----------------------*/
-   strncpy (s_print, x_work, MAX_STR);
-   strncpy (a_text , x_work, MAX_STR);
+   strncpy (s_print, x_work, LEN_RECD);
+   strncpy (a_text , x_work, LEN_RECD);
    /*---(complete)-----------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
@@ -2128,8 +2128,8 @@ CELL__print_number (
    /* converts a double (standard for cells) into one a a wide variety of     */
    /* number formats.                                                         */
    /*---(locals)-----------+-----------+-*//*---------------------------------*/
-   char        x_work      [MAX_STR] = "";  /* temp working string            */
-   char        x_temp      [MAX_STR] = "";  /* temp working string            */
+   char        x_work      [LEN_RECD] = "";  /* temp working string            */
+   char        x_temp      [LEN_RECD] = "";  /* temp working string            */
    char        rce         = -10;           /* return code for errors         */
    int         x_len       = 0;
    int         i           = 0;
@@ -2216,8 +2216,8 @@ CELL__print_number (
       strcat (x_work, x_temp);
    }
    /*---(allocate)-----------------------*/
-   strncpy (s_print, x_work, MAX_STR);
-   strncpy (a_text , x_work, MAX_STR);
+   strncpy (s_print, x_work, LEN_RECD);
+   strncpy (a_text , x_work, LEN_RECD);
    /*---(complete)-----------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
@@ -2232,8 +2232,8 @@ CELL_printable     (tCELL *a_curr) {
    int         pad1        = 0;             /* leading edge padding           */
    int         pad2        = 0;             /* trailing edge padding          */
    int         start       = 0;             /* starting character to print    */
-   char        x_temp      [MAX_STR] = "";  /* temp working string            */
-   char        x_final     [MAX_STR] = "";  /* temp working string            */
+   char        x_temp      [LEN_RECD] = "";  /* temp working string            */
+   char        x_final     [LEN_RECD] = "";  /* temp working string            */
    char       *p           = NULL;          /* final printable string         */
    char       *x_filler    = g_empty;
    int         x_merge     = 0;             /* merged cells to right          */
@@ -2440,20 +2440,20 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    }
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "cell_where")    == 0) {
-      if (x_found == 'y')  snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
-      else                 snprintf (unit_answer, LEN_TEXT, "s_cell location  : ptr=%10s, tab=%4d, col=%4d, row=%4d", "not-exist"  , -10        , -10        , -10        );
+      if (x_found == 'y')  snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      else                 snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10s, tab=%4d, col=%4d, row=%4d", "not-exist"  , -10        , -10        , -10        );
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);
+      snprintf(unit_answer, LEN_UNIT, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);
    }
    else if (strcmp(a_question, "cell_count")     == 0) {
       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
-      snprintf(unit_answer, LEN_TEXT, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
+      snprintf(unit_answer, LEN_UNIT, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
    }
    /*---(printing)-----------------------*/
    else if (strcmp(a_question, "cell_print")     == 0) {
-      snprintf (unit_answer, LEN_TEXT, "s_cell print     : <<%s>>", s_print);
+      snprintf (unit_answer, LEN_UNIT, "s_cell print     : <<%s>>", s_print);
    }
    /*---(complete)-----------------------*/
    return unit_answer;
@@ -2473,7 +2473,7 @@ CELL__unitnew      (
     */
    /*---(locals)-----------+-----------+-*/
    int         len         = 0;
-   char        temp        [MAX_STR];
+   char        temp        [LEN_RECD];
    int         x_fore      = 0;
    int         x_back      = 0;
    tDEP       *x_dep       = NULL;
@@ -2508,45 +2508,45 @@ CELL__unitnew      (
    }
    /*---(cell contents)------------------*/
    if (strcmp(a_question, "cell_info")      == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln info     : --- --- --- --- ----- ----- -----");
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln info     : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, x_cell->nrpn, x_cell->nrequire, x_cell->nprovide);
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln info     : --- --- --- --- ----- ----- -----");
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln info     : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, x_cell->nrpn, x_cell->nrequire, x_cell->nprovide);
    }
    else if   (strcmp(a_question, "cell_source")    == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln source   : (----) ::");
-      else if (x_cell->s    == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln source   : (null) ::");
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln source   : (%4d) :%-.40s:", x_cell->l, x_cell->s);
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (----) ::");
+      else if (x_cell->s    == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (null) ::");
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln source   : (%4d) :%-.40s:", x_cell->l, x_cell->s);
    }
    else if (strcmp(a_question, "cell_value")     == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln value    :         ---.------");
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln value    : %18.6F", x_cell->v_num);
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln value    :         ---.------");
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln value    : %18.6F", x_cell->v_num);
    }
    else if (strcmp(a_question, "cell_modified")  == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln modded   : (----)");
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln modded   : (%4d) %-.40s", (int) strlen(x_cell->v_str), x_cell->v_str);
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (----)");
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (%4d) %-.40s", (int) strlen(x_cell->v_str), x_cell->v_str);
    }
    else if (strcmp(a_question, "cell_printable") == 0) {
-      /*> snprintf(unit_answer, LEN_TEXT, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_cell->p), x_cell->p);   <*/
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln print    : (----) ::");
-      else if (x_cell->s    == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln print    : (null) ::");
+      /*> snprintf(unit_answer, LEN_UNIT, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_cell->p), x_cell->p);   <*/
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (----) ::");
+      else if (x_cell->s    == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (null) ::");
       else {
          len = strlen (x_cell->p);
-         if      (len       == 0   )  snprintf(unit_answer, LEN_TEXT, "s_celln print    : (null) ::");
-         else if (len       >= 35  )  snprintf(unit_answer, LEN_TEXT, "s_celln print    : (%4d) :%-34.34s++", (int) strlen(x_cell->p), x_cell->p);
-         else                         snprintf(unit_answer, LEN_TEXT, "s_celln print    : (%4d) :%s:"       , (int) strlen(x_cell->p), x_cell->p);
+         if      (len       == 0   )  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (null) ::");
+         else if (len       >= 35  )  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (%4d) :%-34.34s++", (int) strlen(x_cell->p), x_cell->p);
+         else                         snprintf(unit_answer, LEN_UNIT, "s_celln print    : (%4d) :%s:"       , (int) strlen(x_cell->p), x_cell->p);
       }
    }
    else if (strcmp(a_question, "cell_contents")  == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln cont (-) : (--:--) ::");
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln cont (-) : (--:--) ::");
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    else if (strcmp(a_question, "cell_size"    )  == 0) {
-      snprintf(unit_answer, LEN_TEXT, "s_celln size     : width=%3d, height=%3d", tabs[x_tab].cols[x_col].w, tabs[x_tab].rows[x_row].h);
+      snprintf(unit_answer, LEN_UNIT, "s_celln size     : width=%3d, height=%3d", tabs[x_tab].cols[x_col].w, tabs[x_tab].rows[x_row].h);
    }
    /*---(cell contents)------------------*/
    else if (strcmp(a_question, "cell_rpn")       == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_TEXT, "s_celln rpn      : (----) -");
-      else if (x_cell->nrpn == 0)     snprintf(unit_answer, LEN_TEXT, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);
-      else                            snprintf(unit_answer, LEN_TEXT, "s_celln rpn      : (%4d) %-.40s", x_cell->nrpn, x_cell->rpn);
+      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (----) -");
+      else if (x_cell->nrpn == 0)     snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) %-.40s", x_cell->nrpn, x_cell->rpn);
    }
    /*---(complete)-----------------------*/
    return unit_answer;
@@ -2561,7 +2561,7 @@ CELL_unitchange      (tCELL *a_cell, char *a_source)
    --rce;  if (a_cell   == NULL)  return rce;
    --rce;  if (a_source == NULL)  return rce;
    /*---(change)-------------------------*/
-   a_cell->s = strndup (a_source, MAX_STR);
+   a_cell->s = strndup (a_source, LEN_RECD);
    a_cell->l = strlen  (a_cell->s);
    /*---(complete)-----------------------*/
    return 0;

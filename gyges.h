@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0l"
-#define     VER_TXT   "standardize and make constants for status line options"
+#define     VER_NUM   "2.0m"
+#define     VER_TXT   "all layout options working through CLI and commands"
 
 
 
@@ -185,19 +185,21 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     DEF_HEIGHT  1
 #define     MIN_HEIGHT  1
 /*---(string length)------------------*/
-#define     MAX_STR     2000
 #define     LEN_RECD    2000
-#define     LEN_STR     200
+#define     LEN_UNIT    500
+#define     LEN_STR     500
+#define     LEN_DESC    100
+#define     LEN_LABEL   20
 /*---(registers)----------------------*/
 
 
-char        reqs        [MAX_STR];
-char        deps        [MAX_STR];
-char        like        [MAX_STR];
-char        rpn         [MAX_STR];
-char        keys        [MAX_STR];
-char        buf0        [MAX_STR];
-char        bufc        [MAX_STR];
+char        reqs        [LEN_RECD];
+char        deps        [LEN_RECD];
+char        like        [LEN_RECD];
+char        rpn         [LEN_RECD];
+char        keys        [LEN_RECD];
+char        buf0        [LEN_RECD];
+char        bufc        [LEN_RECD];
 
 char        keylog      [10000];
 int         nkeylog;
@@ -215,16 +217,16 @@ struct cACCESSOR {
    char        layout_formula;              /* formula line display mode      */
    char        layout_status;               /* status line display mode       */
    char        layout_command;              /* command line display mode      */
-   char        message     [MAX_STR];       /* message line                   */
+   char        message     [LEN_RECD];       /* message line                   */
    /*---(file hanndling)--*/
-   char        f_title     [MAX_STR];       /* specific file base name        */
-   char        f_suffix    [MAX_STR];       /* file suffix for spreadsheet    */
-   char        f_name      [MAX_STR];       /* full file name                 */
+   char        f_title     [LEN_RECD];       /* specific file base name        */
+   char        f_suffix    [LEN_RECD];       /* file suffix for spreadsheet    */
+   char        f_name      [LEN_RECD];       /* full file name                 */
    FILE       *f_file;                      /* file pointer                   */
    int         f_lines;                     /* file line number               */
-   char        f_recd      [MAX_STR];       /* current file record            */
-   char        f_type      [MAX_STR];       /* current record verb            */
-   char        f_vers      [MAX_STR];       /* current record version         */
+   char        f_recd      [LEN_RECD];       /* current file record            */
+   char        f_type      [LEN_RECD];       /* current record verb            */
+   char        f_vers      [LEN_RECD];       /* current record version         */
    /*---(tab vars)--------*/
    int         ntab;           /* number of worksheet tabs                         */
    int         ctab;           /* current tab                                      */
@@ -261,8 +263,8 @@ struct cACCESSOR {
    char        mark_head;      /* first sequential mark                         */
    char        mark_save;      /* last mark requested or used                   */
    char        mark_tail;      /* last sequential mark                          */
-   char        mark_list   [MAX_STR];       /* current marks                  */
-   char        mark_plus   [MAX_STR];       /* current marks with mark id     */
+   char        mark_list   [LEN_RECD];       /* current marks                  */
+   char        mark_plus   [LEN_RECD];       /* current marks with mark id     */
    /*---(registers)-------*/
    char        reg_curr;
    /*---(cursus)----------*/
@@ -576,7 +578,7 @@ struct cTAB {
    /* tabs are pre-allocated and can put into and taken out of use simply by  */
    /* flipping the active flag and updating the name as desired.              */
    char        active;                      /* currently in use?  0=no, 1=yes */
-   char        name  [MAX_STR ];            /* tab name for user reference    */
+   char        name  [LEN_RECD ];            /* tab name for user reference    */
    /*---(contents)-----------------------*/
    /* tabs pull three other data structures together in a package: column     */
    /* characteristics, row characteristics, and a grid on which to hang cells.*/
@@ -642,8 +644,8 @@ struct cHIST {
    int         btab;
    int         bcol;
    int         brow;
-   char        before      [MAX_STR];
-   char        after       [MAX_STR];
+   char        before      [LEN_RECD];
+   char        after       [LEN_RECD];
 };
 tHIST       hist        [MAX_HIST];
 int         nhist;
@@ -731,6 +733,17 @@ tCELL       denada;
 
 
 /*===[ MODES ]================================================================*/
+#define     MAX_LAYOUT      100
+typedef     struct cLAYOUT  tLAYOUT;
+struct cLAYOUT {
+   char        cat         [LEN_LABEL];
+   char        opt         [LEN_LABEL];
+   char        formula;
+   char        status;
+   char        command;
+   char        desc        [LEN_DESC];
+};
+extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 
 
 /*---(layout_formula)--------------------*/
@@ -751,6 +764,10 @@ tCELL       denada;
 #define     G_STATUS_MODELIST   'M'
 #define     G_STATUS_ERRORS     'E'
 #define     G_STATUS_BUFFER     'B'
+/*---(layout_command)--------------------*/
+#define     G_COMMAND_SHOW      's'
+#define     G_COMMAND_HIDE      'h'
+#define     G_COMMAND_FLOAT     'f'
 
 
 
@@ -765,7 +782,7 @@ extern int     save;
 #define     FILE_SUFFIX "gyges"
 #define     FILE_BUF    "/var/run/buffer.gyges"
 
-char        f_maker     [MAX_STR];
+char        f_maker     [LEN_RECD];
 
 
 /*---(strchr validation strings)-----------*/
@@ -776,13 +793,13 @@ extern      char     *g_rcops;
 
 
 extern int     done;
-extern char    g_contents [MAX_STR];
-extern char    saved      [MAX_STR];
+extern char    g_contents [LEN_RECD];
+extern char    saved      [LEN_RECD];
 extern char    cmd        [10];
 extern char    msg_type;
-extern char    message    [MAX_STR];
+extern char    message    [LEN_RECD];
 extern char    sta_error;
-extern char    command    [MAX_STR];
+extern char    command    [LEN_RECD];
 extern char    special;
 
 extern char      g_empty    [200];
@@ -816,26 +833,25 @@ int     col_far;
 #define     K_CTRL_L      12
 #define     K_CTRL_S      19
 
-#define     LEN_TEXT  2000
-extern      char          unit_answer [ LEN_TEXT ];
+extern      char          unit_answer [LEN_UNIT];
 
 
 
 /*---(character constants)------------*/
-#define   CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
-#define   CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
-#define   CHAR_FIELD      167   /* §  field separator  ( 31)   */
-#define   CHAR_BS         171   /* «  backspace        (127)   */
-#define   CHAR_ENTER      182   /* ¶  return/newline   ( 10)   */
-#define   CHAR_TAB        187   /* »  tab              (  9)   */
-#define   CHAR_MARK       215   /* ×  mark             (  -)   */
-#define   CHAR_NULL       216   /* Ø  null             (  0)   */
-#define   CHAR_ESC        234   /* ê  escape           ( 27)   */
-#define   CHAR_SPACE      223   /* ß  space            ( 32)   */
-#define   CHAR_LQUEST     191   /* ¿  lead question    (  -)   */
-#define   CHAR_DEGREE     176   /* °  degree mark      (  -)   */
-#define   CHAR_FUNKY      186   /* º  funky mark       (  -)   */
-#define   CHAR_STAFF      165   /* ¥  staff            (  -)   */
+#define   G_CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
+#define   G_CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
+#define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
+#define   G_CHAR_BS         171   /* «  backspace        (127)   */
+#define   G_CHAR_ENTER      182   /* ¶  return/newline   ( 10)   */
+#define   G_CHAR_TAB        187   /* »  tab              (  9)   */
+#define   G_CHAR_MARK       215   /* ×  mark             (  -)   */
+#define   G_CHAR_NULL       216   /* Ø  null             (  0)   */
+#define   G_CHAR_ESC        234   /* ê  escape           ( 27)   */
+#define   G_CHAR_SPACE      223   /* ß  space            ( 32)   */
+#define   G_CHAR_LQUEST     191   /* ¿  lead question    (  -)   */
+#define   G_CHAR_DEGREE     176   /* °  degree mark      (  -)   */
+#define   G_CHAR_FUNKY      186   /* º  funky mark       (  -)   */
+#define   G_CHAR_STAFF      165   /* ¥  staff            (  -)   */
 
 
 
@@ -850,6 +866,8 @@ char      PROG_urgs          (int argc, char *argv[]);
 char      PROG_args          (int argc, char *argv[]);
 char      PROG_begin         (void);
 char      PROG_end           (void);
+char      PROG_layout_set     (char *a_cat, char *a_opt);
+char      PROG_layout_list    (void);
 
 char     *unit_accessor      (char *a_question, void *a_thing);
 char      PROG_testing       (void);
