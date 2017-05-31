@@ -258,6 +258,12 @@ static int  s_start         = 0;
 static int  s_space         = 0;
 
 
+char
+CURS_info_request  (char a_type)
+{
+   my.info_win = a_type;
+   return 0;
+}
 
 /*====================------------------------------------====================*/
 /*===----                      color configuration                     ----===*/
@@ -943,6 +949,42 @@ CURS_listmark      (void)
 }
 
 char
+CURS_info_layout   (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_line      [LEN_RECD];
+   int         x_row       = 4;
+   int         x_col       = 10;
+   char       *x_title     = " ---command---------- ---description-------------------------- ";
+   char       *x_leave     = "    please PRESS ANY KEY to escape this information window     ";
+   /*---(header)-------------------------*/
+   attron    (S_COLOR_VISUAL);
+   mvprintw  (x_row++, x_col, x_leave);
+   attrset   (0);
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row++, x_col, x_title);
+   attrset   (0);
+   /*---(show registers)-----------------*/
+   attron    (S_COLOR_CURRENT);
+   for (i = 0; i < MAX_LAYOUT; ++i) {
+      /*---(lower case)------------------*/
+      if (PROG_layout_entry  (i, x_line) < 0) break;
+      mvprintw  (x_row++, x_col, x_line);
+   }
+   attrset   (0);
+   /*---(footer)-------------------------*/
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row++, x_col, x_title);
+   attrset   (0);
+   attron    (S_COLOR_VISUAL);
+   mvprintw  (x_row++, x_col, x_leave);
+   attrset   (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
 CURS_listreg       (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1098,15 +1140,17 @@ CURS_main          (void)
    CURS_page      ();
    CURS_message   ();
    switch (my.info_win) {
-   case G_INFO_MARK  : CURS_listmark   ();
+   case G_INFO_MARK   : CURS_listmark    ();
                        break;
-   case G_INFO_REGS  : CURS_listreg    ();
+   case G_INFO_REGS   : CURS_listreg     ();
                        break;
-   case G_INFO_TREG  : CURS_listtreg   ();
+   case G_INFO_TREG   : CURS_listtreg    ();
                        break;
-   case G_INFO_CELL  : CURS_info_cell  ();
+   case G_INFO_CELL   : CURS_info_cell   ();
                        break;
-   case G_INFO_ERROR : CURS_listerror  (curr);
+   case G_INFO_ERROR  : CURS_listerror   (curr);
+                       break;
+   case G_INFO_LAYOUT : CURS_info_layout ();
                        break;
    }
    if (my.menu != MENU_NONE) {

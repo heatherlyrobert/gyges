@@ -21,183 +21,20 @@ primary production version
 .nf
 performs all production actions, but with debugging and tracing
 
-.SH SCREEN LAYOUT
-the gyges screen is broken into the following sections.  by introducing this
-terminology early, it will make the remaining discussions more clear.
+.SH OPTIONS
+.B screen layout.  
+gyges can adapt its display in many interesting ways, both size and contents.
+rather than list the options here, gyges can tell you its latest.  these options
+are non-destructive, so you can play with them without consequence.
 
-.B formula line.  
-the very top line of the terminal window.  the primary function of this line is
-to show the contents of the current cell.  since cells are often much smaller
-than their contents, this is one of the only ways to see the whole thing.
-
-.B column headers.  
-the second line of the terminal window.  each column in the spreadsheet is
-labeled with one or two character names.  as you resize and move left/right
-different subsets of the horizontal space will be shown.
-
-.B row headers.  
-the left side of the terminal window.  each row in the spreadsheet is labeled
-with one to four digit numbers.  as you move up/down different subsets of
-the vertical space will be shown.
-
-.B status line.  
-the second to last line of the terminal window.  this line shows up in
-a different color to stand out and is used to display varying information
-about either the current cell or the spreadsheet as a whole.
-
-.B command line.  
-the last line of the terminal window.  when you are not in search or command
-mode, this line will display the current mode and give very terse list of
-the options and keystrokes available.
-
-.B working area.  
-everything at the intersection of a row (horizontal) and column (vertical)
-is the working area of the system.  gyges tries to maximize this space while
-still giving enough context and current information.
-
-.B info windows.  
-this can be requested to appear on top of the working area to provide more
-details.  they are temporary and must be dismissed to continue working.
-
-.B menus.  
-while all commands are keyboard-centric, menus can be requested to help if
-you can not remember how to proceed.  these menus will be drawn over the
-working area and will disappear after each use.
-
-.SH LAYOUT OPTIONS
-.B formula line.  
-these options effect the display of the formula line -- providing more or
-less additional information which takes away from the length of the formula
-display itself.
-
-.B --formula-options (:formula ?)
+.B --layout-options
 .RS 8
-displays options for the formula line.
+display options for status, command, and formula and exit.
 .RE
 
-.B --formula-tiny (:formula tiny)
+.B (:layout options)
 .RS 8
-all formula with one-char continuation markers on each end.
-.RE
-
-.B --formula-small (:formula small)
-.RS 8
-prefixes with address and suffixes with current version.
-.RE
-
-.B --formula-debug (:formula debug)
-.RS 8
-prefixes with cell characteristics to help debugging cells.
-.RE
-
-.B status line.
-these options effect visibility and content of the status line.
-
-.B --status-options (:status ?)
-.RS 8
-displays options for the status line.
-.RE
-
-.B --status-hide (:status hide)
-.RS 8
-hides the status line.
-.RE
-
-.B --status-file (:status file)
-.RS 8
-displays file information (default).
-.RE
-
-.B --status-buffer (:status buffer)
-.RS 8
-displays buffer information.
-.RE
-
-.B --status-visual (:status visual)
-.RS 8
-displays visual selection information.
-.RE
-
-.B --status-regs (:status regs)
-.RS 8
-displays register information.
-.RE
-
-.B --status-treg (:status treg)
-.RS 8
-displays text register information.
-.RE
-
-.B --status-mark (:status mark)
-.RS 8
-displays cell marks information.
-.RE
-
-.B --status-cell (:status cell)
-.RS 8
-displays current cell detail information.
-.RE
-
-.B --status-deps (:status deps)
-.RS 8
-displays current cell dependency information.
-.RE
-
-.B --status-keylog (:status keylog)
-.RS 8
-displays key logger information for debugging.
-.RE
-
-.B --status-history (:status history)
-.RS 8
-displays history information for debugging.
-.RE
-
-.B --status-modelist (:status modelist)
-.RS 8
-displays mode list/stack information for debugging.
-.RE
-
-.B --status-errors (:status errors)
-.RS 8
-displays error information for debugging.
-.RE
-
-.B command line.
-these options effect visibility and content of the command line.
-
-.B --command-options (:command ?)
-.RS 8
-displays options for the command line.
-.RE
-
-.B --command-show (:command show)
-.RS 8
-displays the command line and its help messages.
-.RE
-
-.B --command-hide (:command hide)
-.RS 8
-hides the command line until a ':' is typed.
-.RE
-
-.B overall layout combinations.  
-because certain combinations of layout options are more common, we have ways
-of requesting them more tersely.
-
-.B --layout-options (:layout ?)
-.RS 8
-display all layout options for status, command, and formula.
-.RE
-
-.B --layout-min, --tiny (:layout min)
-.RS 8
---formula-tiny, --status-hide, and --command-hide
-.RE
-
-.B --layout-max, --debug (:layout max)
-.RS 8
---formula-debug, --status-file, and --command-show
+display info window for status, command, and formula options.
 .RE
 
 .SH SEE ALSO

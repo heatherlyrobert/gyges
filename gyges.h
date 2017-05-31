@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0o"
-#define     VER_TXT   "got command layout hide working, appears when used!"
+#define     VER_NUM   "2.0p"
+#define     VER_TXT   "layouts now produce an information window also"
 
 
 
@@ -280,6 +280,7 @@ extern    struct cACCESSOR my;
 #define     G_INFO_TREG       't'
 #define     G_INFO_CELL       'c'
 #define     G_INFO_ERROR      'E'
+#define     G_INFO_LAYOUT     'L'
 
 
 #define     MAX_ERROR      10000
@@ -864,8 +865,10 @@ char      PROG_urgs            (int argc, char *argv[]);
 char      PROG_args            (int argc, char *argv[]);
 char      PROG_begin           (void);
 char      PROG_end             (void);
+char      PROG_layout_init     (void);
 char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
-char      PROG_layout_list     (void);
+char      PROG_layout_list     (char *a_who);
+char      PROG_layout_entry    (int a_num, char *a_line);
 
 char     *unit_accessor      (char *a_question, void *a_thing);
 char      PROG_testing       (void);
@@ -1046,6 +1049,7 @@ char      CURS_rowhead         (void);
 char      CURS_cell            (int  a_col, int a_row);
 char      CURS_size            (void);
 char      CURS_info_cell       (void);
+char      CURS_info_layout     (void);
 char      CURS_listmark        (void);
 char      CURS_listreg         (void);
 char      CURS_listtreg        (void);

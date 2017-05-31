@@ -27,6 +27,7 @@ tLAYOUT     g_layouts [MAX_LAYOUT] = {
    { "layout"    , "max"          , G_FORMULA_DEBUG     , G_STATUS_FILE       , G_COMMAND_SHOW      , "greatest supporting information"            },
    { ""          , ""             , 0                   , 0                   , 0                   , ""                                           },
 };
+int         g_nlayout;
 
 /*====================------------------------------------====================*/
 /*===----                        program wide                          ----===*/
@@ -103,7 +104,7 @@ PROG_init          (int a_argc, char *a_argv[])
    chist       = -1;
    yVIKEYS_mode_init   ();
    yVIKEYS_mode_enter  (MODE_MAP);
-   my.layout_formula     = G_FORMULA_DEBUG;
+   PROG_layout_init    ();
    my.info_win = G_INFO_NONE;
    my.menu     = ' ';
    /*---(complete)-----------------------*/
@@ -265,6 +266,25 @@ PROG_end           (void)
 PRIV void  o___LAYOUT__________o () { return; }
 
 char
+PROG_layout_init    (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   /*---(find)---------------------------*/
+   g_nlayout = 0;
+   for (i = 0; i <= MAX_LAYOUT; ++i) {
+      /*---(filter)----------------------*/
+      if (g_layouts [i].cat [0] == '\0')            break;
+      ++g_nlayout;
+   }
+   my.layout_formula     = G_FORMULA_DEBUG;
+   my.layout_status      = G_STATUS_FILE;
+   my.layout_command     = G_COMMAND_SHOW;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
 PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
 {
    /*---(locals)-----------+-----------+-*/
@@ -274,9 +294,9 @@ PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
    if (a_cat == NULL)   return -1;
    if (a_opt == NULL)   return -2;
    /*---(list)---------------------------*/
-   if (strcmp (a_opt, "options") == 0)  PROG_layout_list ();
+   if (strcmp (a_opt, "options") == 0)  PROG_layout_list (a_who);
    /*---(find)---------------------------*/
-   for (i = 0; i <= MAX_LAYOUT; ++i) {
+   for (i = 0; i <= g_nlayout; ++i) {
       /*---(filter)----------------------*/
       if (g_layouts [i].cat [0] == '\0')            break;
       if (g_layouts [i].cat [0] != a_cat [0])       continue;
@@ -304,7 +324,7 @@ PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
 }
 
 char
-PROG_layout_list    (void)
+PROG_layout_list    (char *a_who)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
@@ -313,6 +333,12 @@ PROG_layout_list    (void)
    char        x_cmd       [LEN_DESC];
    char       *x_title     = "   ---option-----------  ---command----------  ---description--------------------------";
    /*---(defense)------------------------*/
+   if (a_who == NULL)  return -1;
+   if (strcmp (a_who, "cmd") == 0) {
+      CURS_info_request  (G_INFO_LAYOUT);
+      return 0;
+   }
+   /*---(header)-------------------------*/
    printf ("gyges_hekatonkheires - screen layout options/commands\n");
    printf ("\n%s\n", x_title);
    for (i = 0; i <= MAX_LAYOUT; ++i) {
@@ -328,6 +354,24 @@ PROG_layout_list    (void)
    /*---(complete)-----------------------*/
    printf ("\n%s\n", x_title);
    exit (-1);
+   return 0;
+}
+
+char
+PROG_layout_entry   (int a_num, char *a_line)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_cmd       [LEN_DESC];
+   /*---(defense)------------------------*/
+   --rce;  if (a_line == NULL)       return rce;
+   strcpy (a_line, " -------------------- ---------------------------------------- ");
+   --rce;  if (a_num <  0        )  return rce;
+   --rce;  if (a_num >= g_nlayout)  return rce;
+   /*---(format)-------------------------*/
+   sprintf (x_cmd , ":%s %s" , g_layouts [a_num].cat, g_layouts [a_num].opt);
+   sprintf (a_line, " %-20.20s %-40.40s ", x_cmd, g_layouts [a_num].desc);
+   /*---(complete)-----------------------*/
    return 0;
 }
 

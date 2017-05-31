@@ -76,6 +76,49 @@ very technical, well-versed, power user.
    -- operate using modes and windows/panels like vi/vim
    -- follow the yVIKEYS standard to the letter
 
+.SH SCREEN DESIGN and LAYOUT
+the gyges screen is broken into the following sections.  by introducing this
+terminology early, it will make the remaining discussions more clear.
+
+.B formula line.  
+the very top line of the terminal window.  the primary function of this line is
+to show the contents of the current cell.  since cells are often much smaller
+than their contents, this is one of the only ways to see the whole thing.
+
+.B column headers.  
+the second line of the terminal window.  each column in the spreadsheet is
+labeled with one or two character names.  as you resize and move left/right
+different subsets of the horizontal space will be shown.
+
+.B row headers.  
+the left side of the terminal window.  each row in the spreadsheet is labeled
+with one to four digit numbers.  as you move up/down different subsets of
+the vertical space will be shown.
+
+.B status line.  
+the second to last line of the terminal window.  this line shows up in
+a different color to stand out and is used to display varying information
+about either the current cell or the spreadsheet as a whole.
+
+.B command line.  
+the last line of the terminal window.  when you are not in search or command
+mode, this line will display the current mode and give very terse list of
+the options and keystrokes available.
+
+.B working area.  
+everything at the intersection of a row (horizontal) and column (vertical)
+is the working area of the system.  gyges tries to maximize this space while
+still giving enough context and current information.
+
+.B info windows.  
+this can be requested to appear on top of the working area to provide more
+details.  they are temporary and must be dismissed to continue working.
+
+.B menus.  
+while all commands are keyboard-centric, menus can be requested to help if
+you can not remember how to proceed.  these menus will be drawn over the
+working area and will disappear after each use.
+
 .SH HERITAGE
 .B background.  
 gyges, the big-limbed, is the youngst of three primeval giant brothers
