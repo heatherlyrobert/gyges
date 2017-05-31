@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0m"
-#define     VER_TXT   "all layout options working through CLI and commands"
+#define     VER_NUM   "2.0n"
+#define     VER_TXT   "layout commands working inside the system };>"
 
 
 
@@ -817,8 +817,6 @@ int     row_buffers;
 int     row_formula;
 int     row_chead;
 int     row_main;
-int     row_status;
-int     row_message;
 int     col_header;
 int     col_far;
 

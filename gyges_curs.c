@@ -28,6 +28,11 @@
 
 PRIV  char      CURS_page          (void);
 
+int     s_status_row;
+int     s_status_size;
+int     s_command_row;
+int     s_command_size;
+
 #define     MAX_MENU       500
 typedef struct cMENU  tMENU;
 struct  cMENU {  /* two level menu only, none of that complex shit            */
@@ -525,6 +530,7 @@ CURS_status        (tCELL *a_curr)
    int         i           = 0;             /* iterator -- keys               */
    char        msg[500]  = "";                   /* temporary display message   */
    char        rpn[LEN_RECD] = "";
+   if (s_status_size <= 0)  return 0;
    switch (my.layout_status) {
    case G_STATUS_CELL     : /* cell details */
       if (a_curr != NULL) {
@@ -573,8 +579,8 @@ CURS_status        (tCELL *a_curr)
    }
    if (sta_error == 'y')  attron (S_COLOR_STATUSE);
    else                   attron (S_COLOR_STATUS);
-   mvprintw(row_status, 0, "%*.*s", my.x_full, my.x_full, g_empty);
-   mvprintw(row_status, 0, msg);
+   mvprintw(s_status_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);
+   mvprintw(s_status_row, 0, msg);
    if (sta_error == 'y')  attroff(S_COLOR_STATUSE);
    else                   attroff(S_COLOR_STATUS);
    sta_error = '-';
@@ -585,10 +591,11 @@ CURS_status        (tCELL *a_curr)
 char
 CURS_message       (void)
 {
+   if (s_command_size <= 0)  return 0;
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    attron  (S_COLOR_MESSAGE);
-   mvprintw (row_message, 0, "%*.*s", my.x_full, my.x_full, g_empty);
-   mvprintw (row_message, 0, my.message);
+   mvprintw (s_command_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);
+   mvprintw (s_command_row, 0, my.message);
    attroff (S_COLOR_MESSAGE);
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1106,7 +1113,7 @@ CURS_main          (void)
       CURS_menuroot (my.menu);
       if (my.menu != MENU_ROOT)  CURS_menusub  (my.menu);
    }
-   /*---(command)------------------------*/
+   /*---(label/keys)---------------------*/
    if (my.layout_formula == G_FORMULA_DEBUG || my.layout_formula == G_FORMULA_SMALL) {
       attron   (S_COLOR_KEYS);
       mvprintw (row_chead, 0, cmd);
@@ -1347,13 +1354,15 @@ CURS_size         (void)
    row_formula  = 0;
    row_chead    = 1;
    row_main     = 2;
-   row_status   = y - 2;
-   row_message  = y - 1;
+   if (my.layout_status  != G_STATUS_HIDE ) { s_status_row   = y - 2; s_status_size  = 1; }
+   else                                     { s_status_row   = 0;     s_status_size  = 0; }
+   if (my.layout_command != G_COMMAND_HIDE) { s_command_row  = y - 1; s_command_size = 1; }
+   else                                     { s_command_row  = 0;     s_command_size = 0; }
    col_header   = 0;
    col_far      = x - 1;
    /*---(critical numbers)------------*/
    my.y_full    = y;
-   my.y_avail   = y - row_main - 2;
+   my.y_avail   = y - row_main - s_status_size - s_command_size;
    /*---(column markers)--------------*/
    my.x_full    =  x;
    my.x_left    =  5;
@@ -1361,6 +1370,7 @@ CURS_size         (void)
    my.x_avail   = x - my.x_left - my.x_right;
    /*---(clear the screen)------------*/
    clear();
+   touchwin (stdscr);
    /*---(complete)--------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;

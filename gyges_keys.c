@@ -1354,18 +1354,34 @@ cmd_exec           (char *a_command)
    /*---(layout commands)----------------*/
    if (x_len >= 12 && strcmp (p, ":formula") == 0) {
       PROG_layout_set ("formula"  , x_work + 9);
+      MOVE_prep    ();
+      EROW         = 10000;
+      MOVE_vert    ('r');
+      MOVE_done    ();
       return 0;
    }
    if (x_len >= 11 && strcmp (p, ":status") == 0) {
       PROG_layout_set ("status"   , x_work + 8);
+      MOVE_prep    ();
+      EROW         = 10000;
+      MOVE_vert    ('r');
+      MOVE_done    ();
       return 0;
    }
    if (x_len >= 12 && strcmp (p, ":command") == 0) {
       PROG_layout_set ("command"  , x_work + 9);
+      MOVE_prep    ();
+      EROW         = 10000;
+      MOVE_vert    ('r');
+      MOVE_done    ();
       return 0;
    }
    if (x_len >= 11 && strcmp (p, ":layout" ) == 0) {
       PROG_layout_set ("layout"   , x_work + 8);
+      MOVE_prep    ();
+      EROW         = 10000;
+      MOVE_vert    ('r');
+      MOVE_done    ();
       return 0;
    }
    if   (strncmp(p, ":q"        , LEN_RECD) == 0 ||

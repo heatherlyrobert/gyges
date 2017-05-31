@@ -278,17 +278,18 @@ PROG_layout_set     (char *a_cat, char *a_opt)
    /*---(find)---------------------------*/
    for (i = 0; i <= MAX_LAYOUT; ++i) {
       /*---(filter)----------------------*/
-       if (g_layouts [i].cat [0] == '\0')            break;
-       if (g_layouts [i].cat [0] != a_cat [0])       continue;
-       if (g_layouts [i].opt [0] != a_opt [0])       continue;
-       if (strcmp (g_layouts [i].cat, a_cat) != 0)   continue;
-       if (strcmp (g_layouts [i].opt, a_opt) != 0)   continue;
+      if (g_layouts [i].cat [0] == '\0')            break;
+      if (g_layouts [i].cat [0] != a_cat [0])       continue;
+      if (g_layouts [i].opt [0] != a_opt [0])       continue;
+      if (strcmp (g_layouts [i].cat, a_cat) != 0)   continue;
+      if (strcmp (g_layouts [i].opt, a_opt) != 0)   continue;
       /*---(handle)----------------------*/
-       x_found = i;
-       if (g_layouts [i].formula > 0)  my.layout_formula = g_layouts [i].formula;
-       if (g_layouts [i].status  > 0)  my.layout_status  = g_layouts [i].status;
-       if (g_layouts [i].command > 0)  my.layout_command = g_layouts [i].command;
-       break;
+      x_found = i;
+      if (g_layouts [i].formula > 0)  my.layout_formula = g_layouts [i].formula;
+      if (g_layouts [i].status  > 0)  my.layout_status  = g_layouts [i].status;
+      if (g_layouts [i].command > 0)  my.layout_command = g_layouts [i].command;
+      CURS_size    ();
+      break;
       /*---(done)------------------------*/
    }
    /*---(complete)-----------------------*/
