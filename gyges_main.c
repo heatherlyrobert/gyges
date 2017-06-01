@@ -25,6 +25,7 @@ main (int argc, char *argv[])
       PROG_end     ();
       exit (-1);
    }
+   CALC_func_list ();
    /*---(post-initialization)------------*/
    if (rc == 0)  rc = CURS_begin ();
    if (rc != 0)  {

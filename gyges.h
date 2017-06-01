@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0q"
-#define     VER_TXT   "added category, sub-cat, and description to calculations"
+#define     VER_NUM   "2.0r"
+#define     VER_TXT   "all calc entries classified and arguments identified"
 
 
 
@@ -1054,24 +1054,25 @@ char      CURS_listmark        (void);
 char      CURS_listreg         (void);
 char      CURS_listtreg        (void);
 
-char      CALC_init          (void);
-char      CALC_cleanse       (tCELL *a_cell);
-char      CALC_build         (tCELL *a_curr);
-char      CALC_free          (tCELL *a_curr);
-char      CALC_eval          (tCELL *a_curr);
-char      calc_show          (void);
-char*     CALC_strtok        (char *a_str);
+char      CALC_init            (void);
+char      CALC_cleanse         (tCELL *a_cell);
+char      CALC_build           (tCELL *a_curr);
+char      CALC_free            (tCELL *a_curr);
+char      CALC_eval            (tCELL *a_curr);
+char      calc_show            (void);
+char*     CALC_strtok          (char *a_str);
+char      CALC_func_list       (void);
 
-tERROR*   ERROR_create       (tCELL  *a_owner);
-char      ERROR_delete       (tERROR *a_error);
-char      ERROR_add          (tCELL  *a_owner, char a_phase, int a_step, char *a_func, char a_type, char *a_desc);
-char      ERROR_entry        (tCELL  *a_cell, char a_seq, char *a_list);
-char      ERROR_list         (void);
-char      ERROR_cleanse      (tCELL  *a_owner);
+tERROR*   ERROR_create         (tCELL  *a_owner);
+char      ERROR_delete         (tERROR *a_error);
+char      ERROR_add            (tCELL  *a_owner, char a_phase, int a_step, char *a_func, char a_type, char *a_desc);
+char      ERROR_entry          (tCELL  *a_cell, char a_seq, char *a_list);
+char      ERROR_list           (void);
+char      ERROR_cleanse        (tCELL  *a_owner);
 
 
-char      RPN_adjust         (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
-char      RPN_convert        (tCELL *a_curr);
+char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
+char      RPN_convert          (tCELL *a_curr);
 
 
 

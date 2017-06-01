@@ -71,6 +71,22 @@ struct cCALC {
    tCALC    *prev;            /* pointer to next calc                         */
 };
 
+#define     MAX_TERM     20
+typedef     struct cTERMS   tTERMS;
+struct cTERMS {
+   char        type;
+   char       *abbr;
+   char       *desc;
+};
+tTERMS      s_terms [MAX_TERM] = {
+   { 'v' , "val"    , "numeric or cell address"        },
+   { 's' , "str"    , "string or cell address"         },
+   { '?' , "run"    , "string or numeric (runtime)"    },
+   { 'a' , "adr"    , "cell address or pointer"        },
+   { 'r' , "rng"    , "range of cells or pointer"      },
+   { 't' , "tof"    , "true or false"                  },
+   { '-' , "---"    , "-----"                          },
+};
 
 
 /*====================------------------------------------====================*/
@@ -723,6 +739,46 @@ CALC__lequal       (void)
    a = CALC__popval( __FUNCTION__, ++s_narg);
    b = CALC__popval (__FUNCTION__, ++s_narg);
    CALC_pushval (__FUNCTION__, b <= a);
+   return;
+}
+
+PRIV void
+CALC__sequal       (void)
+{
+   r = CALC__popstr (__FUNCTION__, ++s_narg);
+   s = CALC__popstr (__FUNCTION__, ++s_narg);
+   if (strcmp (s, r) == 0) CALC_pushval (__FUNCTION__, TRUE );
+                           CALC_pushval (__FUNCTION__, FALSE);
+   return;
+}
+
+PRIV void
+CALC__snotequal    (void)
+{
+   r = CALC__popstr (__FUNCTION__, ++s_narg);
+   s = CALC__popstr (__FUNCTION__, ++s_narg);
+   if (strcmp (s, r) != 0) CALC_pushval (__FUNCTION__, TRUE );
+                           CALC_pushval (__FUNCTION__, FALSE);
+   return;
+}
+
+PRIV void
+CALC__slesser      (void)
+{
+   r = CALC__popstr (__FUNCTION__, ++s_narg);
+   s = CALC__popstr (__FUNCTION__, ++s_narg);
+   if (strcmp (s, r) <  0) CALC_pushval (__FUNCTION__, TRUE );
+                           CALC_pushval (__FUNCTION__, FALSE);
+   return;
+}
+
+PRIV void
+CALC__sgreater     (void)
+{
+   r = CALC__popstr (__FUNCTION__, ++s_narg);
+   s = CALC__popstr (__FUNCTION__, ++s_narg);
+   if (strcmp (s, r) >  0) CALC_pushval (__FUNCTION__, TRUE );
+                           CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
@@ -2382,6 +2438,17 @@ CALC__if            (void)
    return;
 }
 
+PRIV void
+CALC__ifs           (void)
+{
+   r = CALC__popstr (__FUNCTION__, ++s_narg);
+   s = CALC__popstr (__FUNCTION__, ++s_narg);
+   c = CALC__popval (__FUNCTION__, ++s_narg);
+   if (c) CALC_pushstr (__FUNCTION__, s);
+   else   CALC_pushstr (__FUNCTION__, r);
+   return;
+}
+
 
 /*====================------------------------------------====================*/
 /*===----                    date and time functions                   ----===*/
@@ -3169,204 +3236,200 @@ struct  cFUNCS {
    char        n           [20];       /* operator symbol/name                */
    char        l;                      /* length of name                      */
    void   (*f) (void);                 /* function pointer                    */
-   char        terms;                  /* number of terms                     */
+   char        type;                   /* type (func, op, or const)           */
+   char        terms       [10];       /* number of terms                     */
    char        cat         [10];       /* category                            */
-   char        sub         [10];       /* sub-category                        */
    char        desc        [60];       /* descriptive label                   */
 } funcs [MAX_FUNCS] = {
-   /*---(arithmetic operators)------------*/
-   { "+"          ,  0, CALC__add               , 2, "math"      , "op"        , ""                                                   },
-   { "-"          ,  0, CALC__subtract          , 2, "math"      , "op"        , ""                                                   },
-   { "*"          ,  0, CALC__multiply          , 2, "math"      , "op"        , ""                                                   },
-   { "/"          ,  0, CALC__divide            , 2, "math"      , "op"        , ""                                                   },
-   { "%"          ,  0, CALC__modulus           , 2, "math"      , "op"        , ""                                                   },
-   { "++"         ,  0, CALC__increment         , 1, "math"      , "op"        , ""                                                   },
-   { "--"         ,  0, CALC__decrement         , 1, "math"      , "op"        , ""                                                   },
-   { "-:"         ,  0, CALC__unaryminus        , 1, "math"      , "op"        , ""                                                   },
-   /*---(relational operators)------------*/
-   { "=="         ,  0, CALC__equal             , 2, "rel"       , "op"        , ""                                                   },
-   { "!="         ,  0, CALC__notequal          , 2, "rel"       , "op"        , ""                                                   },
-   { ">"          ,  0, CALC__greater           , 2, "rel"       , "op"        , ""                                                   },
-   { "<"          ,  0, CALC__lesser            , 2, "rel"       , "op"        , ""                                                   },
-   { ">="         ,  0, CALC__gequal            , 2, "rel"       , "op"        , ""                                                   },
-   { "<="         ,  0, CALC__lequal            , 2, "rel"       , "op"        , ""                                                   },
+   /*---(mathmatical operators)-----------*/
+   { "+"          ,  0, CALC__add               , 'o', "v:vv"   , "math"     , "v = m + n;"                                         },
+   { "-"          ,  0, CALC__subtract          , 'o', "v:vv"   , "math"     , "v = m - n;"                                         },
+   { "*"          ,  0, CALC__multiply          , 'o', "v:vv"   , "math"     , "v = m * n;"                                         },
+   { "/"          ,  0, CALC__divide            , 'o', "v:vv"   , "math"     , "v = m / n;"                                         },
+   { "%"          ,  0, CALC__modulus           , 'o', "v:vv"   , "math"     , "v = (int) ((m / n - trunc (m / n)) * n);"           },
+   { "++"         ,  0, CALC__increment         , 'o', "v:n"    , "math"     , "v = m + 1;"                                         },
+   { "--"         ,  0, CALC__decrement         , 'o', "v:n"    , "math"     , "v = m - 1;"                                         },
+   { "-:"         ,  0, CALC__unaryminus        , 'o', "v:n"    , "math"     , "v = -m;"                                            },
+   /*---(mathmatical functions)-----------*/
+   { "exp"        ,  0, CALC__power             , 'f', "v:vv"   , "math"     , ""                                                   },
+   { "abs"        ,  0, CALC__abs               , 'f', "v:v"    , "math"     , ""                                                    },
+   { "trunc"      ,  0, CALC__trunc             , 'f', "v:v"    , "math"     , ""                                                   },
+   { "rtrunc"     ,  0, CALC__rtrunc            , 'f', "v:vv"   , "math"     , ""                                                   },
+   { "round"      ,  0, CALC__round             , 'f', "v:v"    , "math"     , ""                                                   },
+   { "rround"     ,  0, CALC__rround            , 'f', "v:vv"   , "math"     , ""                                                   },
+   { "ceil"       ,  0, CALC__ceiling           , 'f', "v:v"    , "math"     , ""                                                   },
+   { "floor"      ,  0, CALC__floor             , 'f', "v:v"    , "math"     , ""                                                   },
+   { "sqrt"       ,  0, CALC__sqrt              , 'f', "v:v"    , "math"     , ""                                                   },
+   { "cbrt"       ,  0, CALC__cbrt              , 'f', "v:v"    , "math"     , ""                                                   },
+   { "sqr"        ,  0, CALC__sqr               , 'f', "v:v"    , "math"     , ""                                                   },
+   { "cube"       ,  0, CALC__cube              , 'f', "v:v"    , "math"     , ""                                                   },
+   { "rand"       ,  0, CALC__rand              , 'f', "v:"     , "math"     , ""                                                   },
+   { "randr"      ,  0, CALC__randr             , 'f', "v:vv"   , "math"     , ""                                                   },
    /*---(logical operators)---------------*/
-   { "!"          ,  0, CALC__not               , 1, "logic"     , "op"        , ""                                                   },
-   { "&&"         ,  0, CALC__and               , 2, "logic"     , "op"        , ""                                                   },
-   { "||"         ,  0, CALC__or                , 2, "logic"     , "op"        , ""                                                   },
+   { "=="         ,  0, CALC__equal             , 'o', "t:vv"   , "logic"    , ""                                                   },
+   { "!="         ,  0, CALC__notequal          , 'o', "t:vv"   , "logic"    , ""                                                   },
+   { ">"          ,  0, CALC__greater           , 'o', "t:vv"   , "logic"    , ""                                                   },
+   { "<"          ,  0, CALC__lesser            , 'o', "t:vv"   , "logic"    , ""                                                   },
+   { ">="         ,  0, CALC__gequal            , 'o', "t:vv"   , "logic"    , ""                                                   },
+   { "<="         ,  0, CALC__lequal            , 'o', "t:vv"   , "logic"    , ""                                                   },
+   { "!"          ,  0, CALC__not               , 'o', "t:t"    , "logic"    , "if true, returns false, else true"                  },
+   { "&&"         ,  0, CALC__and               , 'o', "t:tt"   , "logic"    , "if both arg are true, returns true, else false"     },
+   { "||"         ,  0, CALC__or                , 'o', "t:tt"   , "logic"    , "if either arg is true, returns true, else false"    },
+   /*---(logical functions)---------------*/
+   { "if"         ,  0, CALC__if                , 'f', "v:tvv"  , "logic"    , "if t is true, returns val1, else val2"              },
+   { "i"          ,  0, CALC__if                , 'f', "v:tvv"  , "logic"    , "if t is true, returns val1, else val2"              },
+   /*---(string logic operators)----------*/
+   { "#=="        ,  0, CALC__sequal            , 'o', "t:ss"   , "slogic"   , ""                                                   },
+   { "#!="        ,  0, CALC__snotequal         , 'o', "t:ss"   , "slogic"   , ""                                                   },
+   { "#<"         ,  0, CALC__slesser           , 'o', "t:ss"   , "slogic"   , ""                                                   },
+   { "#>"         ,  0, CALC__sgreater          , 'o', "t:ss"   , "slogic"   , ""                                                   },
+   /*---(string logic functions)----------*/
+   { "ifs"        ,  0, CALC__ifs               , 'f', "s:tss"  , "slogic"   , "if t is true, returns str1, else str2"              },
    /*---(string operators)----------------*/
-   { "#"          ,  0, CALC__concat            , 2, ""          , ""          , ""                                                   },
-   { "##"         ,  0, CALC__concatplus        , 2, ""          , ""          , ""                                                   },
+   { "#"          ,  0, CALC__concat            , 'o', "s:ss"   , "string"   , ""                                                   },
+   { "##"         ,  0, CALC__concatplus        , 'o', "s:ss"   , "string"   , ""                                                   },
    /*---(string functions)----------------*/
-   { "lower"      ,  0, CALC__lower             , 1, ""          , ""          , ""                                                   },
-   { "upper"      ,  0, CALC__upper             , 1, ""          , ""          , ""                                                   },
-   { "len"        ,  0, CALC__len               , 1, ""          , ""          , ""                                                   },
-   { "char"       ,  0, CALC__char              , 1, ""          , ""          , ""                                                   },
-   { "code"       ,  0, CALC__code              , 1, ""          , ""          , ""                                                   },
-   { "left"       ,  0, CALC__left              , 2, ""          , ""          , ""                                                   },
-   { "right"      ,  0, CALC__right             , 2, ""          , ""          , ""                                                   },
-   { "mid"        ,  0, CALC__mid               , 3, ""          , ""          , ""                                                   },
-   { "trim"       ,  0, CALC__trim              , 1, ""          , ""          , ""                                                   },
-   { "ltrim"      ,  0, CALC__ltrim             , 1, ""          , ""          , ""                                                   },
-   { "rtrim"      ,  0, CALC__rtrim             , 1, ""          , ""          , ""                                                   },
-   { "strim"      ,  0, CALC__strim             , 1, ""          , ""          , ""                                                   },
-   { "etrim"      ,  0, CALC__etrim             , 1, ""          , ""          , ""                                                   },
-   { "mtrim"      ,  0, CALC__mtrim             , 0, ""          , ""          , ""                                                   },
-   { "print"      ,  0, CALC__print             , 0, ""          , ""          , ""                                                   },
-   { "p"          ,  0, CALC__print             , 0, ""          , ""          , ""                                                   },
-   { "lpad"       ,  0, CALC__lpad              , 0, ""          , ""          , ""                                                   },
-   { "rpad"       ,  0, CALC__rpad              , 0, ""          , ""          , ""                                                   },
-   { "lppad"      ,  0, CALC__lppad             , 0, ""          , ""          , ""                                                   },
-   { "rppad"      ,  0, CALC__rppad             , 0, ""          , ""          , ""                                                   },
-   { "value"      ,  0, CALC__value             , 0, ""          , ""          , ""                                                   },
-   { "salpha"     ,  0, CALC__salpha            , 0, ""          , ""          , ""                                                   },
-   { "salphac"    ,  0, CALC__salphac           , 0, ""          , ""          , ""                                                   },
-   { "salnum"     ,  0, CALC__salnum            , 0, ""          , ""          , ""                                                   },
-   { "salnumc"    ,  0, CALC__salnumc           , 0, ""          , ""          , ""                                                   },
-   { "sbasic"     ,  0, CALC__sbasic            , 0, ""          , ""          , ""                                                   },
-   { "sbasicc"    ,  0, CALC__sbasicc           , 0, ""          , ""          , ""                                                   },
-   { "swrite"     ,  0, CALC__swrite            , 0, ""          , ""          , ""                                                   },
-   { "swritec"    ,  0, CALC__swritec           , 0, ""          , ""          , ""                                                   },
-   { "sexten"     ,  0, CALC__sexten            , 0, ""          , ""          , ""                                                   },
-   { "sextenc"    ,  0, CALC__sextenc           , 0, ""          , ""          , ""                                                   },
-   { "sprint"     ,  0, CALC__sprint            , 0, ""          , ""          , ""                                                   },
-   { "sprintc"    ,  0, CALC__sprintc           , 0, ""          , ""          , ""                                                   },
-   { "sseven"     ,  0, CALC__sseven            , 0, ""          , ""          , ""                                                   },
-   { "ssevenc"    ,  0, CALC__ssevenc           , 0, ""          , ""          , ""                                                   },
-   { "replace"    ,  0, CALC__replace           , 0, ""          , ""          , ""                                                   },
-   /*---(math functions)------------------*/
-   { "exp"        ,  0, CALC__power             , 0, ""          , ""          , ""                                                   },
-   { "abs"        ,  0, CALC__abs               , 0, ""          , ""          , ""                                                   },
-   { "trunc"      ,  0, CALC__trunc             , 0, ""          , ""          , ""                                                   },
-   { "rtrunc"     ,  0, CALC__rtrunc            , 0, ""          , ""          , ""                                                   },
-   { "round"      ,  0, CALC__round             , 0, ""          , ""          , ""                                                   },
-   { "rround"     ,  0, CALC__rround            , 0, ""          , ""          , ""                                                   },
-   { "ceil"       ,  0, CALC__ceiling           , 0, ""          , ""          , ""                                                   },
-   { "floor"      ,  0, CALC__floor             , 0, ""          , ""          , ""                                                   },
-   { "sqrt"       ,  0, CALC__sqrt              , 0, ""          , ""          , ""                                                   },
-   { "cbrt"       ,  0, CALC__cbrt              , 0, ""          , ""          , ""                                                   },
-   { "sqr"        ,  0, CALC__sqr               , 0, ""          , ""          , ""                                                   },
-   { "cube"       ,  0, CALC__cube              , 0, ""          , ""          , ""                                                   },
-   { "rand"       ,  0, CALC__rand              , 0, ""          , ""          , ""                                                   },
-   { "randr"      ,  0, CALC__randr             , 0, ""          , ""          , ""                                                   },
+   { "len"        ,  0, CALC__len               , 'f', "v:s"    , "string"   , ""                                                   },
+   { "left"       ,  0, CALC__left              , 'f', "s:sv"   , "string"   , ""                                                   },
+   { "right"      ,  0, CALC__right             , 'f', "s:sv"   , "string"   , ""                                                   },
+   { "mid"        ,  0, CALC__mid               , 'f', "s:svv"  , "string"   , ""                                                   },
+   { "trim"       ,  0, CALC__trim              , 'f', "s:s"    , "string"   , ""                                                   },
+   { "ltrim"      ,  0, CALC__ltrim             , 'f', "s:s"    , "string"   , ""                                                   },
+   { "rtrim"      ,  0, CALC__rtrim             , 'f', "s:s"    , "string"   , ""                                                   },
+   { "strim"      ,  0, CALC__strim             , 'f', "s:s"    , "string"   , ""                                                   },
+   { "etrim"      ,  0, CALC__etrim             , 'f', "s:s"    , "string"   , ""                                                   },
+   { "mtrim"      ,  0, CALC__mtrim             , 'f', "s:s"    , "string"   , ""                                                   },
+   { "print"      ,  0, CALC__print             , 'f', "s:a"    , "string"   , ""                                                   },
+   { "p"          ,  0, CALC__print             , 'f', "s:a"    , "string"   , ""                                                   },
+   { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , "string"   , ""                                                   },
+   { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , "string"   , ""                                                   },
+   { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , "string"   , ""                                                   },
+   { "rppad"      ,  0, CALC__rppad             , 'f', "s:av"   , "string"   , ""                                                   },
+   /*---(conversion functions)------------*/
+   { "lower"      ,  0, CALC__lower             , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "upper"      ,  0, CALC__upper             , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "char"       ,  0, CALC__char              , 'f', "s:v"    , "conv"     , ""                                                   },
+   { "code"       ,  0, CALC__code              , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "value"      ,  0, CALC__value             , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "salpha"     ,  0, CALC__salpha            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "salphac"    ,  0, CALC__salphac           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "salnum"     ,  0, CALC__salnum            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "salnumc"    ,  0, CALC__salnumc           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sbasic"     ,  0, CALC__sbasic            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sbasicc"    ,  0, CALC__sbasicc           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "swrite"     ,  0, CALC__swrite            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "swritec"    ,  0, CALC__swritec           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sexten"     ,  0, CALC__sexten            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sextenc"    ,  0, CALC__sextenc           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sprint"     ,  0, CALC__sprint            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sprintc"    ,  0, CALC__sprintc           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "sseven"     ,  0, CALC__sseven            , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "ssevenc"    ,  0, CALC__ssevenc           , 'f', "s:s"    , "conv"     , ""                                                   },
+   { "replace"    ,  0, CALC__replace           , 'f', "s:sssv" , "conv"     , ""                                                   },
    /*---(trig functions)------------------*/
-   { "radians"    ,  0, CALC__radians           , 0, ""          , ""          , ""                                                   },
-   { "rad"        ,  0, CALC__radians           , 0, ""          , ""          , ""                                                   },
-   { "degrees"    ,  0, CALC__degrees           , 0, ""          , ""          , ""                                                   },
-   { "deg"        ,  0, CALC__degrees           , 0, ""          , ""          , ""                                                   },
-   { "pi"         ,  0, CALC__pi                , 0, ""          , ""          , ""                                                   },
-   { "hypotenuse" ,  0, CALC__hypot             , 0, ""          , ""          , ""                                                   },
-   { "hypot"      ,  0, CALC__hypot             , 0, ""          , ""          , ""                                                   },
-   { "hyp"        ,  0, CALC__hypot             , 0, ""          , ""          , ""                                                   },
-   { "side"       ,  0, CALC__side              , 0, ""          , ""          , ""                                                   },
-   { "sid"        ,  0, CALC__side              , 0, ""          , ""          , ""                                                   },
-   { "sine"       ,  0, CALC__sin               , 0, ""          , ""          , ""                                                   },
-   { "sin"        ,  0, CALC__sin               , 0, ""          , ""          , ""                                                   },
-   { "sinr"       ,  0, CALC__sinr              , 0, ""          , ""          , ""                                                   },
-   { "cosecant"   ,  0, CALC__csc               , 0, ""          , ""          , ""                                                   },
-   { "csc"        ,  0, CALC__csc               , 0, ""          , ""          , ""                                                   },
-   { "cscr"       ,  0, CALC__cscr              , 0, ""          , ""          , ""                                                   },
-   { "cosine"     ,  0, CALC__cos               , 0, ""          , ""          , ""                                                   },
-   { "cos"        ,  0, CALC__cos               , 0, ""          , ""          , ""                                                   },
-   { "cosr"       ,  0, CALC__cosr              , 0, ""          , ""          , ""                                                   },
-   { "secant"     ,  0, CALC__sec               , 0, ""          , ""          , ""                                                   },
-   { "sec"        ,  0, CALC__sec               , 0, ""          , ""          , ""                                                   },
-   { "secr"       ,  0, CALC__secr              , 0, ""          , ""          , ""                                                   },
-   { "tangent"    ,  0, CALC__tan               , 0, ""          , ""          , ""                                                   },
-   { "tan"        ,  0, CALC__tan               , 0, ""          , ""          , ""                                                   },
-   { "tanr"       ,  0, CALC__tanr              , 0, ""          , ""          , ""                                                   },
-   { "cotangent"  ,  0, CALC__cot               , 0, ""          , ""          , ""                                                   },
-   { "cot"        ,  0, CALC__cot               , 0, ""          , ""          , ""                                                   },
-   { "cotr"       ,  0, CALC__cotr              , 0, ""          , ""          , ""                                                   },
-   { "chord"      ,  0, CALC__crd               , 0, ""          , ""          , ""                                                   },
-   { "crd"        ,  0, CALC__crd               , 0, ""          , ""          , ""                                                   },
-   { "crdr"       ,  0, CALC__crdr              , 0, ""          , ""          , ""                                                   },
-   { "asin"       ,  0, CALC__asin              , 0, ""          , ""          , ""                                                   },
-   { "asinr"      ,  0, CALC__asinr             , 0, ""          , ""          , ""                                                   },
-   { "acos"       ,  0, CALC__acos              , 0, ""          , ""          , ""                                                   },
-   { "acosr"      ,  0, CALC__acosr             , 0, ""          , ""          , ""                                                   },
-   { "atan"       ,  0, CALC__atan              , 0, ""          , ""          , ""                                                   },
-   { "atanr"      ,  0, CALC__atanr             , 0, ""          , ""          , ""                                                   },
-   { "atan2"      ,  0, CALC__atan2             , 0, ""          , ""          , ""                                                   },
-   { "atanr2"     ,  0, CALC__atanr2            , 0, ""          , ""          , ""                                                   },
+   { "rad"        ,  0, CALC__radians           , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "deg"        ,  0, CALC__degrees           , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "pi"         ,  0, CALC__pi                , 'f', "v:"     , "trig"     , ""                                                   },
+   { "hypot"      ,  0, CALC__hypot             , 'f', "v:vv"   , "trig"     , ""                                                   },
+   { "side"       ,  0, CALC__side              , 'f', "v:vv"   , "trig"     , ""                                                   },
+   { "sin"        ,  0, CALC__sin               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "sinr"       ,  0, CALC__sinr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "csc"        ,  0, CALC__csc               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "cscr"       ,  0, CALC__cscr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "cos"        ,  0, CALC__cos               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "cosr"       ,  0, CALC__cosr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "sec"        ,  0, CALC__sec               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "secr"       ,  0, CALC__secr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "tan"        ,  0, CALC__tan               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "tanr"       ,  0, CALC__tanr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "cot"        ,  0, CALC__cot               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "cotr"       ,  0, CALC__cotr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "crd"        ,  0, CALC__crd               , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "crdr"       ,  0, CALC__crdr              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "asin"       ,  0, CALC__asin              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "asinr"      ,  0, CALC__asinr             , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "acos"       ,  0, CALC__acos              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "acosr"      ,  0, CALC__acosr             , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "atan"       ,  0, CALC__atan              , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "atanr"      ,  0, CALC__atanr             , 'f', "v:v"    , "trig"     , ""                                                   },
+   { "atan2"      ,  0, CALC__atan2             , 'f', "v:vv"   , "trig"     , ""                                                   },
+   { "atanr2"     ,  0, CALC__atanr2            , 'f', "v:vv"   , "trig"     , ""                                                   },
    /*---(address functions)---------------*/
-   { "offs"       ,  0, CALC__offs              , 0, ""          , ""          , ""                                                   },
-   { "offt"       ,  0, CALC__offt              , 0, ""          , ""          , ""                                                   },
-   { "offc"       ,  0, CALC__offc              , 0, ""          , ""          , ""                                                   },
-   { "offr"       ,  0, CALC__offr              , 0, ""          , ""          , ""                                                   },
-   { "loc"        ,  0, CALC__loc               , 0, ""          , ""          , ""                                                   },
-   { "isnum"      ,  0, CALC__isnum             , 0, ""          , ""          , ""                                                   },
-   { "isfor"      ,  0, CALC__isfor             , 0, ""          , ""          , ""                                                   },
-   { "isvalue"    ,  0, CALC__isval             , 0, ""          , ""          , ""                                                   },
-   { "isstr"      ,  0, CALC__isstr             , 0, ""          , ""          , ""                                                   },
-   { "ismod"      ,  0, CALC__ismod             , 0, ""          , ""          , ""                                                   },
-   { "istext"     ,  0, CALC__istext            , 0, ""          , ""          , ""                                                   },
-   { "isblank"    ,  0, CALC__isblank           , 0, ""          , ""          , ""                                                   },
-   { "iscalc"     ,  0, CALC__iscalc            , 0, ""          , ""          , ""                                                   },
-   { "ispoint"    ,  0, CALC__ispoint           , 0, ""          , ""          , ""                                                   },
-   { "iserror"    ,  0, CALC__iserror           , 0, ""          , ""          , ""                                                   },
-   { "me"         ,  0, CALC__me                , 0, ""          , ""          , ""                                                   },
-   { "addr"       ,  0, CALC__addr              , 0, ""          , ""          , ""                                                   },
-   { "filename"   ,  0, CALC__filename          , 0, ""          , ""          , ""                                                   },
-   { "filebase"   ,  0, CALC__filebase          , 0, ""          , ""          , ""                                                   },
-   { "tabname"    ,  0, CALC__tabname           , 0, ""          , ""          , ""                                                   },
-   { "tab"        ,  0, CALC__tab               , 0, ""          , ""          , ""                                                   },
-   { "col"        ,  0, CALC__col               , 0, ""          , ""          , ""                                                   },
-   { "row"        ,  0, CALC__row               , 0, ""          , ""          , ""                                                   },
-   { "dist"       ,  0, CALC__dist              , 0, ""          , ""          , ""                                                   },
-   { "tabs"       ,  0, CALC__tabs              , 0, ""          , ""          , ""                                                   },
-   { "cols"       ,  0, CALC__cols              , 0, ""          , ""          , ""                                                   },
-   { "rows"       ,  0, CALC__rows              , 0, ""          , ""          , ""                                                   },
-   /*---(look for logic functions)--------*/
-   { "if"         ,  0, CALC__if                , 0, ""          , ""          , ""                                                   },
-   /*---(time functions)------------------*/
-   { "today"      ,  0, CALC__now               , 0, ""          , ""          , ""                                                   },
-   { "now"        ,  0, CALC__now               , 0, ""          , ""          , ""                                                   },
-   { "year"       ,  0, CALC__year              , 0, ""          , ""          , ""                                                   },
-   { "month"      ,  0, CALC__month             , 0, ""          , ""          , ""                                                   },
-   { "day"        ,  0, CALC__day               , 0, ""          , ""          , ""                                                   },
-   { "hour"       ,  0, CALC__hour              , 0, ""          , ""          , ""                                                   },
-   { "minute"     ,  0, CALC__minute            , 0, ""          , ""          , ""                                                   },
-   { "second"     ,  0, CALC__second            , 0, ""          , ""          , ""                                                   },
-   { "weekday"    ,  0, CALC__weekday           , 0, ""          , ""          , ""                                                   },
-   { "weeknum"    ,  0, CALC__weeknum           , 0, ""          , ""          , ""                                                   },
-   { "datevalue"  ,  0, CALC__timevalue         , 0, ""          , ""          , ""                                                   },
-   { "tv"         ,  0, CALC__timevalue         , 0, ""          , ""          , ""                                                   },
-   /*---(range functions)-----------------*/
-   { "sum"        ,  0, CALC__sum               , 0, ""          , ""          , ""                                                   },
-   { "su"         ,  0, CALC__sum               , 0, ""          , ""          , ""                                                   },
-   { "count"      ,  0, CALC__count             , 0, ""          , ""          , ""                                                   },
-   { "co"         ,  0, CALC__count             , 0, ""          , ""          , ""                                                   },
-   { "countn"     ,  0, CALC__count             , 0, ""          , ""          , ""                                                   },
-   { "counts"     ,  0, CALC__counts            , 0, ""          , ""          , ""                                                   },
-   { "counta"     ,  0, CALC__counta            , 0, ""          , ""          , ""                                                   },
-   { "countb"     ,  0, CALC__countb            , 0, ""          , ""          , ""                                                   },
-   { "countr"     ,  0, CALC__countr            , 0, ""          , ""          , ""                                                   },
-   { "reqs"       ,  0, CALC__countr            , 0, ""          , ""          , ""                                                   },
-   { "average"    ,  0, CALC__average           , 0, ""          , ""          , ""                                                   },
-   { "avg"        ,  0, CALC__average           , 0, ""          , ""          , ""                                                   },
-   { "mean"       ,  0, CALC__average           , 0, ""          , ""          , ""                                                   },
-   { "qtr0"       ,  0, CALC__minimum           , 0, ""          , ""          , ""                                                   },
-   { "qtr1"       ,  0, CALC__quarter1          , 0, ""          , ""          , ""                                                   },
-   { "qtr2"       ,  0, CALC__average           , 0, ""          , ""          , ""                                                   },
-   { "qtr3"       ,  0, CALC__quarter3          , 0, ""          , ""          , ""                                                   },
-   { "qtr4"       ,  0, CALC__maximum           , 0, ""          , ""          , ""                                                   },
-   { "min"        ,  0, CALC__minimum           , 0, ""          , ""          , ""                                                   },
-   { "max"        ,  0, CALC__maximum           , 0, ""          , ""          , ""                                                   },
-   { "range"      ,  0, CALC__range             , 0, ""          , ""          , ""                                                   },
-   { "rangeq"     ,  0, CALC__rangeq            , 0, ""          , ""          , ""                                                   },
-   { "median"     ,  0, CALC__median            , 0, ""          , ""          , ""                                                   },
-   { "mode"       ,  0, CALC__mode              , 0, ""          , ""          , ""                                                   },
-   { "stddev"     ,  0, CALC__stddev            , 0, ""          , ""          , ""                                                   },
-   { "sd"         ,  0, CALC__stddev            , 0, ""          , ""          , ""                                                   },
+   { "offs"       ,  0, CALC__offs              , 'f', "?:v"    , "addr"     , ""                                                   },
+   { "offt"       ,  0, CALC__offt              , 'f', "?:v"    , "addr"     , ""                                                   },
+   { "offc"       ,  0, CALC__offc              , 'f', "?:v"    , "addr"     , ""                                                   },
+   { "offr"       ,  0, CALC__offr              , 'f', "?:v"    , "addr"     , ""                                                   },
+   { "loc"        ,  0, CALC__loc               , 'f', "r:vvv"  , "addr"     , ""                                                   },
+   /*---(cell info functions)-------------*/
+   { "isnum"      ,  0, CALC__isnum             , 'f', "t:a"    , "info"     , ""                                                   },
+   { "isfor"      ,  0, CALC__isfor             , 'f', "t:a"    , "info"     , ""                                                   },
+   { "isvalue"    ,  0, CALC__isval             , 'f', "t:a"    , "info"     , ""                                                   },
+   { "isstr"      ,  0, CALC__isstr             , 'f', "t:a"    , "info"     , ""                                                   },
+   { "ismod"      ,  0, CALC__ismod             , 'f', "t:a"    , "info"     , ""                                                   },
+   { "istext"     ,  0, CALC__istext            , 'f', "t:a"    , "info"     , ""                                                   },
+   { "isblank"    ,  0, CALC__isblank           , 'f', "t:a"    , "info"     , ""                                                   },
+   { "iscalc"     ,  0, CALC__iscalc            , 'f', "t:a"    , "info"     , ""                                                   },
+   { "ispoint"    ,  0, CALC__ispoint           , 'f', "t:a"    , "info"     , ""                                                   },
+   { "iserror"    ,  0, CALC__iserror           , 'f', "t:a"    , "info"     , ""                                                   },
+   { "me"         ,  0, CALC__me                , 'f', "s:"     , "info"     , ""                                                   },
+   { "addr"       ,  0, CALC__addr              , 'f', "s:"     , "info"     , ""                                                   },
+   { "filename"   ,  0, CALC__filename          , 'f', "s:"     , "info"     , ""                                                   },
+   { "filebase"   ,  0, CALC__filebase          , 'f', "s:"     , "info"     , ""                                                   },
+   { "tabname"    ,  0, CALC__tabname           , 'f', "s:a"    , "info"     , ""                                                   },
+   { "tab"        ,  0, CALC__tab               , 'f', "v:a"    , "info"     , ""                                                   },
+   { "col"        ,  0, CALC__col               , 'f', "v:a"    , "info"     , ""                                                   },
+   { "row"        ,  0, CALC__row               , 'f', "v:a"    , "info"     , ""                                                   },
+   /*---(range info functions)------------*/
+   { "dist"       ,  0, CALC__dist              , 'f', "v:r"    , "range"    , ""                                                   },
+   { "tabs"       ,  0, CALC__tabs              , 'f', "v:r"    , "range"    , ""                                                   },
+   { "cols"       ,  0, CALC__cols              , 'f', "v:r"    , "range"    , ""                                                   },
+   { "rows"       ,  0, CALC__rows              , 'f', "v:r"    , "range"    , ""                                                   },
+   /*---(date functions)------------------*/
+   { "today"      ,  0, CALC__now               , 'f', "v:"     , "date"     , ""                                                   },
+   { "now"        ,  0, CALC__now               , 'f', "v:"     , "date"     , ""                                                   },
+   { "year"       ,  0, CALC__year              , 'f', "v:s"    , "date"     , ""                                                   },
+   { "month"      ,  0, CALC__month             , 'f', "v:s"    , "date"     , ""                                                   },
+   { "day"        ,  0, CALC__day               , 'f', "v:s"    , "date"     , ""                                                   },
+   { "hour"       ,  0, CALC__hour              , 'f', "v:s"    , "date"     , ""                                                   },
+   { "minute"     ,  0, CALC__minute            , 'f', "v:s"    , "date"     , ""                                                   },
+   { "second"     ,  0, CALC__second            , 'f', "v:s"    , "date"     , ""                                                   },
+   { "weekday"    ,  0, CALC__weekday           , 'f', "v:s"    , "date"     , ""                                                   },
+   { "weeknum"    ,  0, CALC__weeknum           , 'f', "v:s"    , "date"     , ""                                                   },
+   { "datevalue"  ,  0, CALC__timevalue         , 'f', "v:s"    , "date"     , ""                                                   },
+   { "tv"         ,  0, CALC__timevalue         , 'f', "v:s"    , "date"     , ""                                                   },
+   /*---(statistical functions)-----------*/
+   { "sum"        ,  0, CALC__sum               , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "s"          ,  0, CALC__sum               , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "count"      ,  0, CALC__count             , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "c"          ,  0, CALC__count             , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "countn"     ,  0, CALC__count             , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "counts"     ,  0, CALC__counts            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "counta"     ,  0, CALC__counta            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "countb"     ,  0, CALC__countb            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "countr"     ,  0, CALC__countr            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "reqs"       ,  0, CALC__countr            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "avg"        ,  0, CALC__average           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "mean"       ,  0, CALC__average           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "q0"         ,  0, CALC__minimum           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "q1"         ,  0, CALC__quarter1          , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "q2"         ,  0, CALC__average           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "q3"         ,  0, CALC__quarter3          , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "q4"         ,  0, CALC__maximum           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "min"        ,  0, CALC__minimum           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "max"        ,  0, CALC__maximum           , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "range"      ,  0, CALC__range             , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "rangeq"     ,  0, CALC__rangeq            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "median"     ,  0, CALC__median            , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "mode"       ,  0, CALC__mode              , 'f', "v:r"    , "stat"     , ""                                                   },
+   { "stddev"     ,  0, CALC__stddev            , 'f', "v:r"    , "stat"     , ""                                                   },
    /*---(lookup functions)----------------*/
-   { "vlookup"    ,  0, CALC__vlookup           , 0, ""          , ""          , ""                                                   },
-   { "vl"         ,  0, CALC__vlookup           , 0, ""          , ""          , ""                                                   },
-   { "hlookup"    ,  0, CALC__hlookup           , 0, ""          , ""          , ""                                                   },
-   { "hl"         ,  0, CALC__hlookup           , 0, ""          , ""          , ""                                                   },
-   { "entry"      ,  0, CALC__entry             , 0, ""          , ""          , ""                                                   },
+   { "vlookup"    ,  0, CALC__vlookup           , 'f', "?:rsv"  , "look"     , ""                                                   },
+   { "v"          ,  0, CALC__vlookup           , 'f', "?:rsv"  , "look"     , ""                                                   },
+   { "hlookup"    ,  0, CALC__hlookup           , 'f', "?:rsv"  , "look"     , ""                                                   },
+   { "h"          ,  0, CALC__hlookup           , 'f', "?:rsv"  , "look"     , ""                                                   },
+   { "entry"      ,  0, CALC__entry             , 'f', "?:r"    , "look"     , ""                                                   },
    /*---(end-of-funcs)--------------------*/
-   { "END"        ,  0, NULL                    , 0, ""          , ""          , ""                                                   },
+   { "END"        ,  0, NULL                    , '-', ""       , ""         , ""                                                   },
 };
 
 char         /*--> initialize calculation capability -----[ ------ [ ------ ]-*/
@@ -4085,6 +4148,22 @@ CALC_build         (tCELL *a_cell)
    /*---(complete)-------------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;
+}
+
+char
+CALC_func_list       (void)
+{
+   int         i           = 0;
+   char        x_save      [10] = "";
+   for (i = 0; i < MAX_FUNCS; ++i) {
+      if (funcs [i].n [0] == 'E')   break;
+      if (strcmp (funcs [i].cat, x_save) != 0)   printf ("\n   %s\n", funcs [i].cat);
+      printf ("   %c  %-10.10s  %-8.8s  %-40.40s\n",
+            funcs [i].type , funcs [i].n    ,
+            funcs [i].terms, funcs [i].desc                  );
+      strcpy (x_save, funcs [i].cat);
+   }
+   exit (1);
 }
 
 
