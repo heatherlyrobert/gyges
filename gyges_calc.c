@@ -591,6 +591,26 @@ CALC__popprint        (char *a_func, char a_seq)
    return NULL;
 }
 
+tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+CALC__popsource       (char *a_func, char a_seq)
+{  /*---(design notes)-------------------*//*---------------------------------*/
+   /*---(prepare)------------------------*/
+   if (calc__nstack <= 0) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get printable");
+      return NULL;
+   }
+   --calc__nstack;
+   /*---(handle stack types)-------------*/
+   switch (calc__stack[calc__nstack].typ) {
+   case 'r' :
+      return  strndup (calc__stack[calc__nstack].ref->s, LEN_RECD);
+      break;
+   }
+   /*---(complete)-----------------------*/
+   ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "wrong argument type on stack");
+   return NULL;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -1136,6 +1156,22 @@ CALC__print        (void)
 {
    /*---(get arguments)------------------*/
    r = CALC__popprint (__FUNCTION__, ++s_narg);
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   /*---(process)------------------------*/
+   strltrim (r, ySTR_BOTH, LEN_RECD);
+   CALC_pushstr (__FUNCTION__, r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__formula      (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popsource (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
@@ -3247,9 +3283,9 @@ struct  cFUNCS {
    { "*"          ,  0, CALC__multiply          , 'o', "v:vv"   , "math"     , "v = m * n;"                                         },
    { "/"          ,  0, CALC__divide            , 'o', "v:vv"   , "math"     , "v = m / n;"                                         },
    { "%"          ,  0, CALC__modulus           , 'o', "v:vv"   , "math"     , "v = (int) ((m / n - trunc (m / n)) * n);"           },
-   { "++"         ,  0, CALC__increment         , 'o', "v:n"    , "math"     , "v = m + 1;"                                         },
-   { "--"         ,  0, CALC__decrement         , 'o', "v:n"    , "math"     , "v = m - 1;"                                         },
-   { "-:"         ,  0, CALC__unaryminus        , 'o', "v:n"    , "math"     , "v = -m;"                                            },
+   { "++"         ,  0, CALC__increment         , 'o', "v:v"    , "math"     , "v = m + 1;"                                         },
+   { "--"         ,  0, CALC__decrement         , 'o', "v:v"    , "math"     , "v = m - 1;"                                         },
+   { "-:"         ,  0, CALC__unaryminus        , 'o', "v:v"    , "math"     , "v = -m;"                                            },
    /*---(mathmatical functions)-----------*/
    { "exp"        ,  0, CALC__power             , 'f', "v:vv"   , "math"     , ""                                                   },
    { "abs"        ,  0, CALC__abs               , 'f', "v:v"    , "math"     , ""                                                    },
@@ -3272,19 +3308,18 @@ struct  cFUNCS {
    { "<"          ,  0, CALC__lesser            , 'o', "t:vv"   , "logic"    , ""                                                   },
    { ">="         ,  0, CALC__gequal            , 'o', "t:vv"   , "logic"    , ""                                                   },
    { "<="         ,  0, CALC__lequal            , 'o', "t:vv"   , "logic"    , ""                                                   },
-   { "!"          ,  0, CALC__not               , 'o', "t:t"    , "logic"    , "if true, returns false, else true"                  },
-   { "&&"         ,  0, CALC__and               , 'o', "t:tt"   , "logic"    , "if both arg are true, returns true, else false"     },
-   { "||"         ,  0, CALC__or                , 'o', "t:tt"   , "logic"    , "if either arg is true, returns true, else false"    },
+   { "!"          ,  0, CALC__not               , 'o', "t:v"    , "logic"    , "if true, returns false, else true"                  },
+   { "&&"         ,  0, CALC__and               , 'o', "t:vv"   , "logic"    , "if both arg are true, returns true, else false"     },
+   { "||"         ,  0, CALC__or                , 'o', "t:vv"   , "logic"    , "if either arg is true, returns true, else false"    },
    /*---(logical functions)---------------*/
-   { "if"         ,  0, CALC__if                , 'f', "v:tvv"  , "logic"    , "if t is true, returns val1, else val2"              },
-   { "i"          ,  0, CALC__if                , 'f', "v:tvv"  , "logic"    , "if t is true, returns val1, else val2"              },
+   { "if"         ,  0, CALC__if                , 'f', "v:vvv"  , "logic"    , "if t is true, returns val1, else val2"              },
    /*---(string logic operators)----------*/
-   { "#=="        ,  0, CALC__sequal            , 'o', "t:ss"   , "slogic"   , ""                                                   },
-   { "#!="        ,  0, CALC__snotequal         , 'o', "t:ss"   , "slogic"   , ""                                                   },
+   { "#="         ,  0, CALC__sequal            , 'o', "t:ss"   , "slogic"   , ""                                                   },
+   { "#!"         ,  0, CALC__snotequal         , 'o', "t:ss"   , "slogic"   , ""                                                   },
    { "#<"         ,  0, CALC__slesser           , 'o', "t:ss"   , "slogic"   , ""                                                   },
    { "#>"         ,  0, CALC__sgreater          , 'o', "t:ss"   , "slogic"   , ""                                                   },
    /*---(string logic functions)----------*/
-   { "ifs"        ,  0, CALC__ifs               , 'f', "s:tss"  , "slogic"   , "if t is true, returns str1, else str2"              },
+   { "ifs"        ,  0, CALC__ifs               , 'f', "s:vss"  , "slogic"   , "if t is true, returns str1, else str2"              },
    /*---(string operators)----------------*/
    { "#"          ,  0, CALC__concat            , 'o', "s:ss"   , "string"   , ""                                                   },
    { "##"         ,  0, CALC__concatplus        , 'o', "s:ss"   , "string"   , ""                                                   },
@@ -3301,6 +3336,8 @@ struct  cFUNCS {
    { "mtrim"      ,  0, CALC__mtrim             , 'f', "s:s"    , "string"   , ""                                                   },
    { "print"      ,  0, CALC__print             , 'f', "s:a"    , "string"   , ""                                                   },
    { "p"          ,  0, CALC__print             , 'f', "s:a"    , "string"   , ""                                                   },
+   { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , "string"   , ""                                                   },
+   { "f"          ,  0, CALC__formula           , 'f', "s:a"    , "string"   , ""                                                   },
    { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , "string"   , ""                                                   },
    { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , "string"   , ""                                                   },
    { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , "string"   , ""                                                   },
@@ -4151,16 +4188,127 @@ CALC_build         (tCELL *a_cell)
 }
 
 char
+CALC_func_func       (char *a_func, char *a_terms, char *a_show)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   int         x_len       =    0;
+   /*---(defense)------------------------*/
+   --rce;  if (a_func  == NULL)   return rce;
+   --rce;  if (a_terms == NULL)   return rce;
+   --rce;  if (a_show  == NULL)   return rce;
+   /*---(prepare)--------------------------*/
+   sprintf (a_show, "?func?");
+   x_len = strlen (a_terms);
+   /*---(void)-----------------------------*/
+   if (x_len == 2) {
+      if (strcmp ("v:"    , a_terms) == 0)  sprintf (a_show, "val   %s ()"        , a_func);
+      if (strcmp ("s:"    , a_terms) == 0)  sprintf (a_show, "str   %s ()"        , a_func);
+      if (strcmp ("a:"    , a_terms) == 0)  sprintf (a_show, "adr   %s ()"        , a_func);
+      return 0;
+   }
+   /*---(unary)----------------------------*/
+   if (x_len == 3) {
+      if (strcmp ("v:v"   , a_terms) == 0)  sprintf (a_show, "val   %s (x)"        , a_func);
+      if (strcmp ("v:s"   , a_terms) == 0)  sprintf (a_show, "val   %s (n)"        , a_func);
+      if (strcmp ("v:a"   , a_terms) == 0)  sprintf (a_show, "val   %s (a)"        , a_func);
+      if (strcmp ("v:r"   , a_terms) == 0)  sprintf (a_show, "val   %s (a..o)"     , a_func);
+      if (strcmp ("s:v"   , a_terms) == 0)  sprintf (a_show, "str   %s (x)"        , a_func);
+      if (strcmp ("s:s"   , a_terms) == 0)  sprintf (a_show, "str   %s (n)"        , a_func);
+      if (strcmp ("s:a"   , a_terms) == 0)  sprintf (a_show, "str   %s (a)"        , a_func);
+      if (strcmp ("t:v"   , a_terms) == 0)  sprintf (a_show, "T/F   %s (x)"        , a_func);
+      if (strcmp ("t:a"   , a_terms) == 0)  sprintf (a_show, "T/F   %s (a)"        , a_func);
+      if (strcmp ("?:v"   , a_terms) == 0)  sprintf (a_show, "???   %s (x)"        , a_func);
+      if (strcmp ("?:r"   , a_terms) == 0)  sprintf (a_show, "???   %s (a..o)"     , a_func);
+      return 0;
+   }
+   /*---(binary)---------------------------*/
+   if (x_len == 4) {
+      if (strcmp ("v:vv"  , a_terms) == 0)  sprintf (a_show, "val   %s (x, y)"      , a_func);
+      if (strcmp ("s:ss"  , a_terms) == 0)  sprintf (a_show, "str   %s (n, m)"      , a_func);
+      if (strcmp ("s:sv"  , a_terms) == 0)  sprintf (a_show, "str   %s (n, x)"      , a_func);
+      if (strcmp ("s:av"  , a_terms) == 0)  sprintf (a_show, "str   %s (a, x)"      , a_func);
+   }
+   /*---(terciary)-------------------------*/
+   if (x_len == 5) {
+      if (strcmp ("v:vvv" , a_terms) == 0)  sprintf (a_show, "val   %s (x, y, z)"    , a_func);
+      if (strcmp ("s:vss" , a_terms) == 0)  sprintf (a_show, "str   %s (x, n, m)"    , a_func);
+      if (strcmp ("s:svv" , a_terms) == 0)  sprintf (a_show, "str   %s (n, x, y)"    , a_func);
+      if (strcmp ("r:vvv" , a_terms) == 0)  sprintf (a_show, "adr   %s (x, y, z)"    , a_func);
+      if (strcmp ("?:rsv" , a_terms) == 0)  sprintf (a_show, "???   %s (a..o, n, x)" , a_func);
+   }
+   /*---(quadinary)------------------------*/
+   if (x_len == 6) {
+      if (strcmp ("s:sssv", a_terms) == 0)  sprintf (a_show, "str   %s (n, m, o, x)"  , a_func);
+   }
+   /*---(complete)-------------------------*/
+   return 0;
+}
+
+char
+CALC_func_op         (char *a_op, char *a_terms, char *a_show)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   int         x_len       =    0;
+   /*---(defense)------------------------*/
+   --rce;  if (a_op    == NULL)   return rce;
+   --rce;  if (a_terms == NULL)   return rce;
+   --rce;  if (a_show  == NULL)   return rce;
+   /*---(prepare)--------------------------*/
+   sprintf (a_show, "?op?");
+   x_len = strlen (a_terms);
+   /*---(exceptions)-----------------------*/
+   if (x_len == 3 && strcmp (a_op, "-:") == 0) {
+      strcpy (a_show, "val   -x");
+      return 0;
+   }
+   /*---(unary)----------------------------*/
+   if (x_len == 3) {
+      if (a_terms [0] == 'v')  sprintf (a_show, "val   %sx", a_op);
+      if (a_terms [0] == 't')  sprintf (a_show, "T/F   %sx", a_op);
+      return 0;
+   }
+   /*---(binary values)--------------------*/
+   if (x_len == 4 && a_terms [0] == 'v') {
+      sprintf (a_show, "val   x %s y", a_op);
+      return 0;
+   }
+   /*---(binary logic)---------------------*/
+   if (x_len == 4 && a_terms [0] == 't') {
+      if (a_terms [2] == 'v')  sprintf (a_show, "T/F   x %s y", a_op);
+      if (a_terms [2] == 's')  sprintf (a_show, "T/F   n %s m", a_op);
+      return 0;
+   }
+   /*---(binary string)--------------------*/
+   if (x_len == 4 && a_terms [0] == 's') {
+      sprintf (a_show, "str   n %s m", a_op);
+      return 0;
+   }
+   /*---(complete)-------------------------*/
+   return 0;
+}
+
+char
 CALC_func_list       (void)
 {
+   /*---(locals)-----------+-----------+-*/
    int         i           = 0;
    char        x_save      [10] = "";
+   int         x_len       = 0;
+   char        x_terms     [30] = "";
+   char       *x_title     = "   ---name---   ret   ---example-----------  ---description------------------------------------";
+   /*---(header)-------------------------*/                       /*  (a1..a2,s,v)  */
+   printf ("gyges_hekatonkheires - cell formula operators and functions\n");
+   printf ("\n%s\n", x_title);
    for (i = 0; i < MAX_FUNCS; ++i) {
       if (funcs [i].n [0] == 'E')   break;
       if (strcmp (funcs [i].cat, x_save) != 0)   printf ("\n   %s\n", funcs [i].cat);
-      printf ("   %c  %-10.10s  %-8.8s  %-40.40s\n",
-            funcs [i].type , funcs [i].n    ,
-            funcs [i].terms, funcs [i].desc                  );
+      x_len = strlen (funcs [i].terms);
+      if (funcs [i].type == 'o') CALC_func_op   (funcs [i].n, funcs [i].terms, x_terms);
+      else                       CALC_func_func (funcs [i].n, funcs [i].terms, x_terms);
+      printf ("   %-10.10s   %-25.25s  %-40.40s\n",
+            funcs [i].n    , x_terms   , funcs [i].desc );
       strcpy (x_save, funcs [i].cat);
    }
    exit (1);

@@ -139,6 +139,7 @@ PROG_args          (int argc, char *argv[])
       else if (strncmp (a, "--status-"           ,  9) == 0)  PROG_layout_set ("cli", "status"   , a +  9);
       else if (strncmp (a, "--command-"          , 10) == 0)  PROG_layout_set ("cli", "command"  , a + 10);
       else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);
+      else if (strncmp (a, "--function-list"     ,  9) == 0)  CALC_func_list  ();
       /*---(other)-----------------------*/
       else if (a[0] != '-'                     )  strncpy (my.f_name , argv[i]  , LEN_RECD);
    }

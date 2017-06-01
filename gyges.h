@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0r"
-#define     VER_TXT   "all calc entries classified and arguments identified"
+#define     VER_NUM   "2.0s"
+#define     VER_TXT   "print wonderful examples of each formula with specific args"
 
 
 
