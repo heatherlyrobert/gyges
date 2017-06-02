@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0t"
-#define     VER_TXT   "completed all descriptions of formula functions"
+#define     VER_NUM   "2.0u"
+#define     VER_TXT   "function categories working very well now"
 
 
 
@@ -1062,6 +1062,7 @@ char      CALC_eval            (tCELL *a_curr);
 char      calc_show            (void);
 char*     CALC_strtok          (char *a_str);
 
+char      CALC__find_fcat      (char a_fcat);
 char      CALC__func_oper      (char *a_oper, char *a_terms, char *a_show);
 char      CALC__func_func      (char *a_func, char *a_terms, char *a_show);
 char      CALC_func_list       (void);
