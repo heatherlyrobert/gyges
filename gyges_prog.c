@@ -105,6 +105,7 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_mode_init   ();
    yVIKEYS_mode_enter  (MODE_MAP);
    PROG_layout_init    ();
+   CALC_init           ();
    my.info_win = G_INFO_NONE;
    my.menu     = ' ';
    /*---(complete)-----------------------*/
@@ -240,7 +241,6 @@ PROG_begin         (void)
    my.bpos =    0;
    my.epos =    my.npos - 1;;
    /*---(prepare)------------------------*/
-   CALC_init ();
    DEP_init  ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);

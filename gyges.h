@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0s"
-#define     VER_TXT   "print wonderful examples of each formula with specific args"
+#define     VER_NUM   "2.0t"
+#define     VER_TXT   "completed all descriptions of formula functions"
 
 
 
@@ -1061,6 +1061,9 @@ char      CALC_free            (tCELL *a_curr);
 char      CALC_eval            (tCELL *a_curr);
 char      calc_show            (void);
 char*     CALC_strtok          (char *a_str);
+
+char      CALC__func_oper      (char *a_oper, char *a_terms, char *a_show);
+char      CALC__func_func      (char *a_func, char *a_terms, char *a_show);
 char      CALC_func_list       (void);
 
 tERROR*   ERROR_create         (tCELL  *a_owner);
