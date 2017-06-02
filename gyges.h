@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0v"
-#define     VER_TXT   "tested new string logical comparision formulas"
+#define     VER_NUM   "2.0w"
+#define     VER_TXT   "added some very clever functions to the list"
 
 
 

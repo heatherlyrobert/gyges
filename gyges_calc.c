@@ -81,10 +81,10 @@ struct cTERMS {
 tTERMS      s_terms [MAX_TERM] = {
    { 'v' , "val"    , "numeric or cell address"        },
    { 's' , "str"    , "string or cell address"         },
-   { '?' , "run"    , "string or numeric (runtime)"    },
+   { '?' , "v/s"    , "string or numeric (runtime)"    },
    { 'a' , "adr"    , "cell address or pointer"        },
    { 'r' , "rng"    , "range of cells or pointer"      },
-   { 't' , "tof"    , "true or false"                  },
+   { 't' , "T/F"    , "true or false"                  },
    { '-' , "---"    , "-----"                          },
 };
 
@@ -2057,25 +2057,105 @@ CALC__offr          (void)
 }
 
 PRIV void
-CALC__loc           (void)
+CALC__loc_driver    (short a_tab, short a_col, short a_row)
 {
    char   rc;
    tCELL *x_new;
-   n = CALC__popval (__FUNCTION__, ++s_narg);
-   m = CALC__popval (__FUNCTION__, ++s_narg);
-   o = CALC__popval (__FUNCTION__, ++s_narg);
-   rc = LOC_legal  (    o,    m,    n, CELL_FIXED);
+   rc = LOC_legal  (a_tab, a_col, a_row, CELL_FIXED);
    if (rc    <  0   )   {
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "address created is not legal");
       return;
    }
-   x_new  = LOC_cell   (o, m, n);
-   /*> if (s_me->u != x_new->u) {                                                     <*/
+   x_new  = LOC_cell   (a_tab, a_col, a_row);
    DEP_delcalcref (s_me);
    DEP_create     (G_DEP_CALCREF, s_me, x_new);
-   /*> }                                                                              <*/
    CALC_pushref (__FUNCTION__, x_new);
-   /*> printf ("CALC_loc %s\n", s_me->label);                                         <*/
+   return;
+}
+
+PRIV void
+CALC__loc           (void)
+{
+   n = CALC__popval (__FUNCTION__, ++s_narg);
+   m = CALC__popval (__FUNCTION__, ++s_narg);
+   o = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (o, m, n);
+   return;
+}
+
+PRIV void
+CALC__loci          (void)
+{
+   n = CALC__popval (__FUNCTION__, ++s_narg);
+   m = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab, m, n);
+   return;
+}
+
+PRIV void
+CALC__loct          (void)
+{
+   o = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (o, s_me->col, s_me->row);
+   return;
+}
+
+PRIV void
+CALC__locc          (void)
+{
+   m = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab, m, s_me->row);
+   return;
+}
+
+PRIV void
+CALC__locr          (void)
+{
+   n = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab, s_me->col, n);
+   return;
+}
+
+PRIV void
+CALC__loco          (void)
+{
+   n = CALC__popval (__FUNCTION__, ++s_narg);
+   m = CALC__popval (__FUNCTION__, ++s_narg);
+   o = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab + o, s_me->col + m, s_me->row + n);
+   return;
+}
+
+PRIV void
+CALC__locoi         (void)
+{
+   n = CALC__popval (__FUNCTION__, ++s_narg);
+   m = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab    , s_me->col + m, s_me->row + n);
+   return;
+}
+
+PRIV void
+CALC__locot         (void)
+{
+   o = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab + o, s_me->col    , s_me->row    );
+   return;
+}
+
+PRIV void
+CALC__lococ         (void)
+{
+   m = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab    , s_me->col + m, s_me->row    );
+   return;
+}
+
+PRIV void
+CALC__locor         (void)
+{
+   n = CALC__popval (__FUNCTION__, ++s_narg);
+   CALC__loc_driver (s_me->tab    , s_me->col    , s_me->row + n);
    return;
 }
 
@@ -2512,6 +2592,28 @@ CALC__ifs           (void)
    c = CALC__popval (__FUNCTION__, ++s_narg);
    if (c) CALC_pushstr (__FUNCTION__, s);
    else   CALC_pushstr (__FUNCTION__, r);
+   return;
+}
+
+PRIV void
+CALC__within        (void)
+{
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
+   c = CALC__popval (__FUNCTION__, ++s_narg);
+   if (c >= b && c <= a) CALC_pushval (__FUNCTION__, TRUE);
+   else                  CALC_pushval (__FUNCTION__, FALSE);
+   return;
+}
+
+PRIV void
+CALC__approx        (void)
+{
+   a = CALC__popval (__FUNCTION__, ++s_narg);
+   b = CALC__popval (__FUNCTION__, ++s_narg);
+   c = CALC__popval (__FUNCTION__, ++s_narg);
+   if (c >= (b - a) && c <= (b + a)) CALC_pushval (__FUNCTION__, TRUE);
+   else                              CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
@@ -3407,6 +3509,8 @@ struct cFCAT {
    { ' ', "end-list"                               , 0 },
 };
 
+int         s_nfunc         = 0;
+int         s_ndups         = 0;
 #define     MAX_FUNCS       1000
 struct  cFUNCS {
    char        n           [20];       /* operator symbol/name                */
@@ -3459,6 +3563,8 @@ struct  cFUNCS {
    /*---(logical functions)---------------*/
    { "if"         ,  0, CALC__if                , 'f', "v:vvv"  , 'l', "if x is T, y, else z"                              , "" },
    { "ifs"        ,  0, CALC__ifs               , 'f', "s:vss"  , 'l', "if x is T, n, else m"                              , "" },
+   { "within"     ,  0, CALC__within            , 'f', "t:vvv"  , 'l', "if x is within the range of y to z, then T"        , "" },
+   { "approx"     ,  0, CALC__approx            , 'f', "t:vvv"  , 'l', "if x is within the range of y +/- z, then T"       , "" },
    /*---(string operators)----------------*/
    { "#"          ,  0, CALC__concat            , 'o', "s:ss"   , 's', "m concatinated to the end of n"                    , "" },
    { "##"         ,  0, CALC__concatplus        , 'o', "s:ss"   , 's', "m concatinated to the end of n (with a space)"     , "" },
@@ -3532,6 +3638,15 @@ struct  cFUNCS {
    { "atanr2"     ,  0, CALC__atanr2            , 'f', "v:vv"   , 't', "arctangent in radians given sides x and y"         , "" },
    /*---(address functions)---------------*/
    { "loc"        ,  0, CALC__loc               , 'f', "a:vvv"  , 'a', "create a cell reference from tab, col, row"        , "" },
+   { "loc_i"      ,  0, CALC__loci              , 'f', "a:vv"   , 'a', "create a cell reference from col, row, same tab"   , "" },
+   { "loc_t"      ,  0, CALC__loct              , 'f', "a:v"    , 'a', "create a cell reference from tab, same col, row"   , "" },
+   { "loc_c"      ,  0, CALC__locc              , 'f', "a:v"    , 'a', "create a cell reference from col, same tab, row"   , "" },
+   { "loc_r"      ,  0, CALC__locr              , 'f', "a:v"    , 'a', "create a cell reference from row, same tab, col"   , "" },
+   { "loco"       ,  0, CALC__loco              , 'f', "a:vvv"  , 'a', "create offset reference from tab, col, row"        , "" },
+   { "loco_i"     ,  0, CALC__locoi             , 'f', "a:vv"   , 'a', "create offset reference from col, row, same tab"   , "" },
+   { "loco_t"     ,  0, CALC__locot             , 'f', "a:v"    , 'a', "create offset reference from tab, same col, row"   , "" },
+   { "loco_c"     ,  0, CALC__lococ             , 'f', "a:v"    , 'a', "create offset reference from col, same tab, row"   , "" },
+   { "loco_r"     ,  0, CALC__locor             , 'f', "a:v"    , 'a', "create offset reference from row, same tab, col"   , "" },
    /*---(cell info functions)-------------*/
    { "isnum"      ,  0, CALC__isnum             , 'f', "t:a"    , 'i', "T if cell a is numeric value"                      , "" },
    { "isfor"      ,  0, CALC__isfor             , 'f', "t:a"    , 'i', "T if cell a is numeric formula"                    , "" },
@@ -3544,7 +3659,7 @@ struct  cFUNCS {
    { "ispoint"    ,  0, CALC__ispoint           , 'f', "t:a"    , 'i', "T if cell a is cell or range pointer"              , "" },
    { "iserror"    ,  0, CALC__iserror           , 'f', "t:a"    , 'i', "T if cell a is in error status"                    , "" },
    { "me"         ,  0, CALC__me                , 'f', "s:"     , 'i', "cell label of current cell"                        , "" },
-   { "addr"       ,  0, CALC__addr              , 'f', "s:a"    , 'i', "cell label of cell a"                              , "" },
+   { "label"      ,  0, CALC__addr              , 'f', "s:a"    , 'i', "cell label of cell a"                              , "" },
    { "filename"   ,  0, CALC__filename          , 'f', "s:"     , 'i', "full name of current file"                         , "" },
    { "filebase"   ,  0, CALC__filebase          , 'f', "s:"     , 'i', "basename of current file"                          , "" },
    { "tabname"    ,  0, CALC__tabname           , 'f', "s:a"    , 'i', "tab name of cell a"                                , "" },
@@ -3563,7 +3678,6 @@ struct  cFUNCS {
    { "s"          ,  0, CALC__sum               , 'f', "v:r"    , 'r', "sum of numeric cells in range"                     , "" },
    { "count"      ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" },
    { "c"          ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" },
-   { "countn"     ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" },
    { "counts"     ,  0, CALC__counts            , 'f', "v:r"    , 'r', "count of string cells in range"                    , "" },
    { "counta"     ,  0, CALC__counta            , 'f', "v:r"    , 'r', "count of filled cells in range"                    , "" },
    { "countb"     ,  0, CALC__countb            , 'f', "v:r"    , 'r', "count of blank cells in range"                     , "" },
@@ -3594,18 +3708,18 @@ struct  cFUNCS {
    { "weekday"    ,  0, CALC__weekday           , 'f', "v:v"    , 'd', "weekday number (0-6) of time number"               , "" },
    { "weeknum"    ,  0, CALC__weeknum           , 'f', "v:v"    , 'd', "week number (0-54) of time number"                 , "" },
    { "datevalue"  ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" },
-   { "tv"         ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" },
    { "dv"         ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" },
    { "date"       ,  0, CALC__date              , 'f', "v:vvv"  , 'd', "turns year, month, day values into eqoch number"   , "" },
    { "time"       ,  0, CALC__time              , 'f', "v:vvv"  , 'd', "turns hour, min, sec values into eqoch number"     , "" },
    { "datepart"   ,  0, CALC__datepart          , 'f', "v:v"    , 'd', "incremental epoch yy:mm:dd part of epoch number"   , "" },
    { "timepart"   ,  0, CALC__timepart          , 'f', "v:v"    , 'd', "incremental epoch hh:mm:ss part of epoch number"   , "" },
    /*---(lookup functions)----------------*/
-   { "offs"       ,  0, CALC__offs              , 'f', "?:vvv"  , 'f', "contents of cell offset from current tab,col,row"  , "" },
-   { "offt"       ,  0, CALC__offt              , 'f', "?:v"    , 'f', "contents of cell offset from current tab"          , "" },
-   { "offc"       ,  0, CALC__offc              , 'f', "?:v"    , 'f', "contents of cell offset from current col"          , "" },
-   { "offr"       ,  0, CALC__offr              , 'f', "?:v"    , 'f', "contents of cell offset from current row"          , "" },
+   { "off"        ,  0, CALC__offs              , 'f', "?:vvv"  , 'f', "contents of cell offset from current tab,col,row"  , "" },
+   { "off_t"      ,  0, CALC__offt              , 'f', "?:v"    , 'f', "contents of cell offset from current tab"          , "" },
+   { "off_c"      ,  0, CALC__offc              , 'f', "?:v"    , 'f', "contents of cell offset from current col"          , "" },
+   { "off_r"      ,  0, CALC__offr              , 'f', "?:v"    , 'f', "contents of cell offset from current row"          , "" },
    { "index"      ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" },
+   { "i"          ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" },
    { "vlookup"    ,  0, CALC__vlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to right of one matching n"     , "" },
    { "v"          ,  0, CALC__vlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to right of one matching n"     , "" },
    { "hlookup"    ,  0, CALC__hlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to down of one matching n"      , "" },
@@ -3619,8 +3733,10 @@ char         /*--> initialize calculation capability -----[--------[--------]-*/
 CALC_init            (void)
 {
    /*---(locals)-----------+-----------+-*/
-   int         i;
+   int         i, j;
    double      a;
+   char        x_terms     [50];
+   char        x_dup;
    /*---(randomizer)---------------------*/
    srand(time(NULL));
    /*---(load trig table)----------------*/
@@ -3636,9 +3752,22 @@ CALC_init            (void)
       if (s_funcs [i].f == NULL)              break;
       if (strcmp (s_funcs[i].n, "END") == 0)  break;
       s_funcs [i].l  = strlen (s_funcs [i].n);
-      if (s_funcs [i].type == 'o') CALC__func_oper (s_funcs [i].n, s_funcs [i].terms, s_funcs [i].disp);
-      else                       CALC__func_func (s_funcs [i].n, s_funcs [i].terms, s_funcs [i].disp);
+      if (s_funcs [i].type == 'o') CALC__func_oper (s_funcs [i].n, s_funcs [i].terms, x_terms);
+      else                         CALC__func_func (s_funcs [i].n, s_funcs [i].terms, x_terms);
+      x_dup = '-';
+      for (j = 0; j < MAX_FUNCS; ++j) {
+         if (s_funcs [j].f == NULL)              break;
+         if (strcmp (s_funcs[j].n, "END") == 0)  break;
+         if (j >= i)                             break;
+         if (s_funcs [j].f != s_funcs [i].f)     continue;
+         x_dup = 'y';
+         ++s_ndups;
+         break;
+      }
+      if (x_dup != 'y')  sprintf (s_funcs [i].disp, "%s" , x_terms);
+      else               sprintf (s_funcs [i].disp, "%s*", x_terms);
       ++s_fcats [CALC__find_fcat (s_funcs [i].fcat)].count;
+      ++s_nfunc;
    }
    /*---(error reporting)----------------*/
    errornum = 0;
@@ -4378,6 +4507,7 @@ CALC__func_func      (char *a_func, char *a_terms, char *a_show)
       if (strcmp ("s:a"   , a_terms) == 0)  sprintf (a_show, "str   %s (a)"        , a_func);
       if (strcmp ("t:v"   , a_terms) == 0)  sprintf (a_show, "T/F   %s (x)"        , a_func);
       if (strcmp ("t:a"   , a_terms) == 0)  sprintf (a_show, "T/F   %s (a)"        , a_func);
+      if (strcmp ("a:v"   , a_terms) == 0)  sprintf (a_show, "adr   %s (x)"        , a_func);
       if (strcmp ("?:v"   , a_terms) == 0)  sprintf (a_show, "v/s   %s (x)"        , a_func);
       if (strcmp ("?:r"   , a_terms) == 0)  sprintf (a_show, "v/s   %s (a..o)"     , a_func);
       return 0;
@@ -4388,6 +4518,7 @@ CALC__func_func      (char *a_func, char *a_terms, char *a_show)
       if (strcmp ("s:ss"  , a_terms) == 0)  sprintf (a_show, "str   %s (n, m)"      , a_func);
       if (strcmp ("s:sv"  , a_terms) == 0)  sprintf (a_show, "str   %s (n, x)"      , a_func);
       if (strcmp ("s:av"  , a_terms) == 0)  sprintf (a_show, "str   %s (a, x)"      , a_func);
+      if (strcmp ("a:vv"  , a_terms) == 0)  sprintf (a_show, "adr   %s (x, y)"      , a_func);
       if (strcmp ("?:vv"  , a_terms) == 0)  sprintf (a_show, "v/s   %s (x, y)"      , a_func);
    }
    /*---(terciary)-------------------------*/
@@ -4396,6 +4527,7 @@ CALC__func_func      (char *a_func, char *a_terms, char *a_show)
       if (strcmp ("s:vss" , a_terms) == 0)  sprintf (a_show, "str   %s (x, n, m)"    , a_func);
       if (strcmp ("s:svv" , a_terms) == 0)  sprintf (a_show, "str   %s (n, x, y)"    , a_func);
       if (strcmp ("a:vvv" , a_terms) == 0)  sprintf (a_show, "adr   %s (x, y, z)"    , a_func);
+      if (strcmp ("t:vvv" , a_terms) == 0)  sprintf (a_show, "T/F   %s (x, y, z)"    , a_func);
       if (strcmp ("?:vvv" , a_terms) == 0)  sprintf (a_show, "v/s   %s (x, y, z)"    , a_func);
       if (strcmp ("?:rsv" , a_terms) == 0)  sprintf (a_show, "v/s   %s (a..o, n, x)" , a_func);
    }
@@ -4455,19 +4587,22 @@ char
 CALC_func_list       (void)
 {
    /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   char        x_save      = '?';
+   int         i           =    0;
+   char        x_save      =  '?';
    char       *x_title     = "   ---name---   ret   ---example--------------  ---description------------------------------------";
    /*---(header)-------------------------*/
    printf ("gyges_hekatonkheires - cell formula operators and functions\n");
-   printf ("\n%s\n", x_title);
    for (i = 0; i < MAX_FUNCS; ++i) {
       if (s_funcs [i].n [0] == 'E')   break;
-      if (s_funcs [i].fcat != x_save)   printf ("\n   %c (%2d) %s\n", s_funcs [i].fcat, s_fcats [CALC__find_fcat (s_funcs [i].fcat)].count, s_fcats [CALC__find_fcat (s_funcs [i].fcat)].desc);
+      if (s_funcs [i].fcat != x_save) {
+         printf ("\n   %c (%2d) %s\n", s_funcs [i].fcat, s_fcats [CALC__find_fcat (s_funcs [i].fcat)].count, s_fcats [CALC__find_fcat (s_funcs [i].fcat)].desc);
+         printf ("%s\n", x_title);
+      }
       printf ("   %-10.10s   %-30.30s  %-45.50s\n",
             s_funcs [i].n    , s_funcs [i].disp   , s_funcs [i].desc );
       x_save = s_funcs [i].fcat;
    }
+   printf ("\nend-of-list  %d total operators and functions (%d dups)\n", s_nfunc, s_ndups);
    exit (1);
 }
 
