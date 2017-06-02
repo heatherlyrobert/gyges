@@ -768,7 +768,7 @@ CALC__sequal       (void)
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    s = CALC__popstr (__FUNCTION__, ++s_narg);
    if (strcmp (s, r) == 0) CALC_pushval (__FUNCTION__, TRUE );
-   CALC_pushval (__FUNCTION__, FALSE);
+   else                    CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
@@ -778,7 +778,7 @@ CALC__snotequal    (void)
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    s = CALC__popstr (__FUNCTION__, ++s_narg);
    if (strcmp (s, r) != 0) CALC_pushval (__FUNCTION__, TRUE );
-   CALC_pushval (__FUNCTION__, FALSE);
+   else                    CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
@@ -788,7 +788,7 @@ CALC__slesser      (void)
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    s = CALC__popstr (__FUNCTION__, ++s_narg);
    if (strcmp (s, r) <  0) CALC_pushval (__FUNCTION__, TRUE );
-   CALC_pushval (__FUNCTION__, FALSE);
+   else                    CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
@@ -798,7 +798,7 @@ CALC__sgreater     (void)
    r = CALC__popstr (__FUNCTION__, ++s_narg);
    s = CALC__popstr (__FUNCTION__, ++s_narg);
    if (strcmp (s, r) >  0) CALC_pushval (__FUNCTION__, TRUE );
-   CALC_pushval (__FUNCTION__, FALSE);
+   else                    CALC_pushval (__FUNCTION__, FALSE);
    return;
 }
 
