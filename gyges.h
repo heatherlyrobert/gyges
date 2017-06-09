@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.0w"
-#define     VER_TXT   "added some very clever functions to the list"
+#define     VER_NUM   "2.1a"
+#define     VER_TXT   "build full unit tests for concatination and trim functions"
 
 
 

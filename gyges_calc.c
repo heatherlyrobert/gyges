@@ -611,6 +611,26 @@ CALC__popsource       (char *a_func, char a_seq)
    return NULL;
 }
 
+tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+CALC__poprpn          (char *a_func, char a_seq)
+{  /*---(design notes)-------------------*//*---------------------------------*/
+   /*---(prepare)------------------------*/
+   if (calc__nstack <= 0) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get printable");
+      return NULL;
+   }
+   --calc__nstack;
+   /*---(handle stack types)-------------*/
+   switch (calc__stack[calc__nstack].typ) {
+   case 'r' :
+      return  strndup (calc__stack[calc__nstack].ref->rpn, LEN_RECD);
+      break;
+   }
+   /*---(complete)-----------------------*/
+   ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "wrong argument type on stack");
+   return NULL;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -1184,6 +1204,22 @@ CALC__formula      (void)
 }
 
 PRIV void
+CALC__rpn          (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__poprpn    (__FUNCTION__, ++s_narg);
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   /*---(process)------------------------*/
+   strltrim (r, ySTR_BOTH, LEN_RECD);
+   CALC_pushstr (__FUNCTION__, r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
 CALC__lpad         (void)
 {
    /*---(get arguments)------------------*/
@@ -1535,6 +1571,28 @@ CALC__ssevenc      (void)
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, r);
    /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__find         (void)
+{
+   char       *rcp         = NULL;
+   /*---(get arguments)------------------*/
+   q = CALC__popstr (__FUNCTION__, ++s_narg);
+   r = CALC__popstr (__FUNCTION__, ++s_narg);
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   if (q == NULL)  q = strndup (nada, LEN_RECD);
+   /*---(process)------------------------*/
+   rcp = strstr (r, q);
+   /*---(return result)------------------*/
+   if (rcp == NULL)   CALC_pushval (__FUNCTION__, -1);
+   else               CALC_pushval (__FUNCTION__, (int) (rcp - r));
+   /*---(clean up)-----------------------*/
+   free (q);
    free (r);
    /*---(complete)-----------------------*/
    return;
@@ -3530,7 +3588,10 @@ struct  cFUNCS {
    { "%"          ,  0, CALC__modulus           , 'o', "v:vv"   , 'm', "ansi-c modulus"                                    , "" },
    { "++"         ,  0, CALC__increment         , 'o', "v:v"    , 'm', "truly x + 1 as base variable uneffected"           , "" },
    { "--"         ,  0, CALC__decrement         , 'o', "v:v"    , 'm', "truly x - 1 as base variable uneffected"           , "" },
+   { ":+"         ,  0, CALC__increment         , 'o', "v:v"    , 'm', "non-standard, acts like prefix ++"                 , "" },
+   { ":-"         ,  0, CALC__decrement         , 'o', "v:v"    , 'm', "non-standard, acts like prefix --"                 , "" },
    { "-:"         ,  0, CALC__unaryminus        , 'o', "v:v"    , 'm', "ansi-c unary minus"                                , "" },
+   { "+:"         ,  0, CALC__noop              , 'o', "v:v"    , 'm', "ansi-c unary plus (no effect)"                     , "" },
    /*---(mathmatical functions)-----------*/
    { "exp"        ,  0, CALC__power             , 'f', "v:vv"   , 'm', "x raised to the power of y"                        , "" },
    { "abs"        ,  0, CALC__abs               , 'f', "v:v"    , 'm', "ansi-c fabs() removes negative sign"               , "" },
@@ -3583,10 +3644,13 @@ struct  cFUNCS {
    { "p"          ,  0, CALC__print             , 'f', "s:a"    , 's', "gyges print/display value of cell a"               , "" },
    { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , 's', "gyges formula source of cell a"                    , "" },
    { "f"          ,  0, CALC__formula           , 'f', "s:a"    , 's', "gyges formula source of cell a"                    , "" },
+   { "rpn"        ,  0, CALC__rpn               , 'f', "s:a"    , 's', "gyges rpn version of cell a formula"               , "" },
+   { "r"          ,  0, CALC__rpn               , 'f', "s:a"    , 's', "gyges rpn version of cell a formula"               , "" },
    { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , 's', "add whitespace to start of n until x length"       , "" },
    { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , 's', "add whitespace to end of n until x length"         , "" },
    { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" },
    { "rppad"      ,  0, CALC__rppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" },
+   { "find"       ,  0, CALC__find              , 'f', "s:ss"   , 's', "find m within n"                                   , "" },
    { "replace"    ,  0, CALC__replace           , 'f', "s:sssv" , 's', "replace m with o within n, x times"                , "" },
    /*---(conversion functions)------------*/
    { "lower"      ,  0, CALC__lower             , 'f', "s:s"    , 'c', "change all chars in n to lower case"               , "" },
@@ -3764,8 +3828,8 @@ CALC_init            (void)
          ++s_ndups;
          break;
       }
-      if (x_dup != 'y')  sprintf (s_funcs [i].disp, "%s" , x_terms);
-      else               sprintf (s_funcs [i].disp, "%s*", x_terms);
+      if (x_dup != 'y')  sprintf (s_funcs [i].disp, "%s"  , x_terms);
+      else               sprintf (s_funcs [i].disp, "%s *", x_terms);
       ++s_fcats [CALC__find_fcat (s_funcs [i].fcat)].count;
       ++s_nfunc;
    }
@@ -4555,6 +4619,18 @@ CALC__func_oper      (char *a_oper, char *a_terms, char *a_show)
    /*---(exceptions)-----------------------*/
    if (x_len == 3 && strcmp (a_oper, "-:") == 0) {
       strcpy (a_show, "val   -x");
+      return 0;
+   }
+   if (x_len == 3 && strcmp (a_oper, "+:") == 0) {
+      strcpy (a_show, "val   +x");
+      return 0;
+   }
+   if (x_len == 3 && strcmp (a_oper, ":+") == 0) {
+      strcpy (a_show, "val   x++");
+      return 0;
+   }
+   if (x_len == 3 && strcmp (a_oper, ":-") == 0) {
+      strcpy (a_show, "val   x--");
       return 0;
    }
    /*---(unary)----------------------------*/

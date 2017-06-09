@@ -1370,3 +1370,479 @@ SCRP          v21  (s_calc) basic trig       [19] sin, cos, tan, deg, rad, ...
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (s_calc) within and approx logic functions                   CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval         ((16.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((16.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+     get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
+     get      v21  review the deps links count          DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_one  = NULL;                                                                                                                                          
+
+   COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((15.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL__create          0, 10, 10                                                               p_exists    0                                                                      
+     code     v21  save cell pointer                    - - - - - - - - - -   x_one  = yUNIT_p_rc;                                                                                                                                           
+     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (    0) :%-.40s:", "(null)");                                                                                              
+     get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
+     get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=? d=0 a=? c=  0 r=  0 d=  0                   
+
+   COND       v21  within with three zeros          TRUE                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((15.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "=within(0,0,0)"                                  p_exists    0                                                                      
+     get      v21  check the cell's value               unit_accessor         "cell_value",    x_one                                                  s_equal     Cell Value       :           1.000000                                  
+     get      v21  check the cell's RPN version         unit_accessor         "cell_rpn",      x_one                                                  s_equal     Cell RPN         : (  4) =,0,0,0,within                                
+
+   COND       v21  within with matching positives   TRUE                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((15.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "=within(5,5,5)"                                  p_exists    0                                                                      
+     get      v21  check the cell's value               unit_accessor         "cell_value",    x_one                                                  s_equal     Cell Value       :           1.000000                                  
+     get      v21  check the cell's RPN version         unit_accessor         "cell_rpn",      x_one                                                  s_equal     Cell RPN         : (  4) =,5,5,5,within                                
+
+   COND       v21  within with matching negatives   TRUE                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((15.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "=within(-7,-7,-7)"                               p_exists    0                                                                      
+     get      v21  check the cell's value               unit_accessor         "cell_value",    x_one                                                  s_equal     Cell Value       :           1.000000                                  
+     get      v21  check the cell's RPN version         unit_accessor         "cell_rpn",      x_one                                                  s_equal     Cell RPN         : (  7) =,7,-:,7,-:,7,-:,within                       
+
+
+
+
+
+
+   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (s_calc) string concatination functions (#, ##)              CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval         ((14.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  add source data cells                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  0, "one"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  1, "two"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  2, "three"                                           p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  3, "four"                                            p_exists    0                                                                      
+
+   GROUP      v21  simple string value formulas                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  very basic string formula                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1"                                             p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   1) #,0a1                                        
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   3) :one:                                        
+
+   COND       v21  point at another cell                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a3"                                             p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   1) #,0a3                                        
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   5) :three:                                      
+
+   COND       v21  point at an empty cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#d3"                                             p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   1) #,0d3                                        
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   GROUP      v21  two object concatination                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  simple concatination                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1#a2"                                          p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,0a2,#                                  
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   6) :onetwo:                                     
+
+   COND       v21  simple concatination with space                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1##a2"                                         p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,0a2,##                                 
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   7) :one two:                                    
+
+   COND       v21  concatination with literal suffix                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1##\"another\""                                p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,\"another\",##                         
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  11) :one another:                                
+
+   COND       v21  concatination with literal prefix                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#\"joking\"#a1"                                  p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,\"joking\",0a1,#                           
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   9) :jokingone:                                  
+
+   GROUP      v21  multiple combinations                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  three cells                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1#a2#a3"                                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   5) #,0a1,0a2,#,0a3,#                            
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  11) :onetwothree:                                
+
+   COND       v21  three cells mixed operators                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1##a2#a3"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   5) #,0a1,0a2,##,0a3,#                           
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  12) :one twothree:                               
+
+   COND       v21  two cells and a literal                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1##a2#\"done\""                                p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   5) #,0a1,0a2,##,\"done\",#                      
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  11) :one twodone:                                
+
+   COND       v21  four cells                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1#a4#a2##a3"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   7) #,0a1,0a4,#,0a2,#,0a3,##                     
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  16) :onefourtwo three:                           
+
+   COND       v21  three cells, empty cell, and literal                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#a1#\"hubba\"#a2##d7#a3"                         p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   9) #,0a1,\"hubba\",#,0a2,#,0d7,##,0a3,#         
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "b1"                                                 s_equal     s_celln value    :           0.000000                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  17) :onehubbatwo three:                          
+
+   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (s_calc) string trimming functions (trim family)             CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval         ((14.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  add source data cells                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  0, "one two    three"                                p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  1, " one   two    three     "                        p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  2, " one  \" two   \"    three     "                 p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  3, " one  \" two   five \"    three     "            p_exists    0                                                                      
+
+   GROUP      v21  simple left trims                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  only internal, unquoted spaces                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#ltrim(a1)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   2) #,0a1,ltrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  16) :one two    three:                           
+
+   COND       v21  lots of unquoted spaceing                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  1, "#ltrim(a2)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b2"                                                 s_equal     s_celln rpn      : (   2) #,0a2,ltrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b2"                                                 s_equal     s_celln modded   : (  23) :one   two    three     :                    
+
+   COND       v21  interal, external, and quoted spacing                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  2, "#ltrim(a3)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b3"                                                 s_equal     s_celln rpn      : (   2) #,0a3,ltrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b3"                                                 s_equal     s_celln modded   : (  28) :one  \" two   \"    three     :             
+
+   COND       v21  interal, external, and quoted intewoven spacing              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  3, "#ltrim(a4)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b4"                                                 s_equal     s_celln rpn      : (   2) #,0a4,ltrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b4"                                                 s_equal     s_celln modded   : (  33) :one  \" two   five \"    three     :        
+
+   COND       v21  empty cell                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  4, "#ltrim(a5)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b5"                                                 s_equal     s_celln rpn      : (   2) #,0a5,ltrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b5"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   COND       v21  null reference                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  5, "#ltrim(NULL)"                                    p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b6"                                                 s_equal     s_celln rpn      : (   2) #,NULL,ltrim                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b6"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  invalid cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#ltrim(a0)"                                      p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,a0,ltrim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  literal value                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#ltrim(\" test   one   \")"                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,\" test   one   \",ltrim                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (  13) :test   one   :                              
+
+   COND       v21  concatination                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  7, "#ltrim(a1##\"hey \")"                            p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b8"                                                 s_equal     s_celln rpn      : (   4) #,0a1,\"hey \",##,ltrim                      
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b8"                                                 s_equal     s_celln modded   : (  21) :one two    three hey :                      
+
+   GROUP      v21  simple right trims                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  only internal, unquoted spaces                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#rtrim(a1)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   2) #,0a1,rtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  16) :one two    three:                           
+
+   COND       v21  lots of unquoted spaceing                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  1, "#rtrim(a2)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b2"                                                 s_equal     s_celln rpn      : (   2) #,0a2,rtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b2"                                                 s_equal     s_celln modded   : (  19) : one   two    three:                        
+
+   COND       v21  interal, external, and quoted spacing                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  2, "#rtrim(a3)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b3"                                                 s_equal     s_celln rpn      : (   2) #,0a3,rtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b3"                                                 s_equal     s_celln modded   : (  24) : one  \" two   \"    three:                 
+
+   COND       v21  interal, external, and quoted intewoven spacing              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  3, "#rtrim(a4)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b4"                                                 s_equal     s_celln rpn      : (   2) #,0a4,rtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b4"                                                 s_equal     s_celln modded   : (  29) : one  \" two   five \"    three:            
+
+   COND       v21  empty cell                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  4, "#rtrim(a5)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b5"                                                 s_equal     s_celln rpn      : (   2) #,0a5,rtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b5"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   COND       v21  null reference                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  5, "#rtrim(NULL)"                                    p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b6"                                                 s_equal     s_celln rpn      : (   2) #,NULL,rtrim                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b6"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  invalid cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#rtrim(a0)"                                      p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,a0,rtrim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  literal value                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#rtrim(\" test   one   \")"                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,\" test   one   \",rtrim                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (  11) : test   one:                                
+
+   COND       v21  concatination                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  7, "#rtrim(a1##\"hey \")"                            p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b8"                                                 s_equal     s_celln rpn      : (   4) #,0a1,\"hey \",##,rtrim                      
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b8"                                                 s_equal     s_celln modded   : (  20) :one two    three hey:                       
+
+   GROUP      v21  trim both ends                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  only internal, unquoted spaces                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#trim(a1)"                                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   2) #,0a1,trim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  16) :one two    three:                           
+
+   COND       v21  lots of unquoted spaceing                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  1, "#trim(a2)"                                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b2"                                                 s_equal     s_celln rpn      : (   2) #,0a2,trim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b2"                                                 s_equal     s_celln modded   : (  18) :one   two    three:                         
+
+   COND       v21  interal, external, and quoted spacing                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  2, "#trim(a3)"                                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b3"                                                 s_equal     s_celln rpn      : (   2) #,0a3,trim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b3"                                                 s_equal     s_celln modded   : (  23) :one  \" two   \"    three:                  
+
+   COND       v21  interal, external, and quoted intewoven spacing              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  3, "#trim(a4)"                                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b4"                                                 s_equal     s_celln rpn      : (   2) #,0a4,trim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b4"                                                 s_equal     s_celln modded   : (  28) :one  \" two   five \"    three:             
+
+   COND       v21  empty cell                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  4, "#trim(a5)"                                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b5"                                                 s_equal     s_celln rpn      : (   2) #,0a5,trim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b5"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   COND       v21  null reference                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  5, "#trim(NULL)"                                     p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b6"                                                 s_equal     s_celln rpn      : (   2) #,NULL,trim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b6"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  invalid cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#trim(a0)"                                       p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,a0,trim                                    
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  literal value                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#trim(\" test   one   \")"                       p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,\" test   one   \",trim                    
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (  10) :test   one:                                 
+
+   COND       v21  concatination                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  7, "#trim(a1##\"hey \")"                             p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b8"                                                 s_equal     s_celln rpn      : (   4) #,0a1,\"hey \",##,trim                       
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b8"                                                 s_equal     s_celln modded   : (  20) :one two    three hey:                       
+
+   GROUP      v21  trim both ends, plus single interal unquoted                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  only internal, unquoted spaces                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#strim(a1)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   2) #,0a1,strim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  13) :one two three:                              
+
+   COND       v21  lots of unquoted spaceing                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  1, "#strim(a2)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b2"                                                 s_equal     s_celln rpn      : (   2) #,0a2,strim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b2"                                                 s_equal     s_celln modded   : (  13) :one two three:                              
+
+   COND       v21  interal, external, and quoted spacing                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  2, "#strim(a3)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b3"                                                 s_equal     s_celln rpn      : (   2) #,0a3,strim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b3"                                                 s_equal     s_celln modded   : (  19) :one \" two   \" three:                      
+
+   COND       v21  interal, external, and quoted intewoven spacing              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  3, "#strim(a4)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b4"                                                 s_equal     s_celln rpn      : (   2) #,0a4,strim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b4"                                                 s_equal     s_celln modded   : (  24) :one \" two   five \" three:                 
+
+   COND       v21  empty cell                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  4, "#strim(a5)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b5"                                                 s_equal     s_celln rpn      : (   2) #,0a5,strim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b5"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   COND       v21  null reference                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  5, "#strim(NULL)"                                    p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b6"                                                 s_equal     s_celln rpn      : (   2) #,NULL,strim                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b6"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  invalid cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#strim(a0)"                                      p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,a0,strim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  literal value                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#strim(\" test   one   \")"                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,\" test   one   \",strim                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   8) :test one:                                   
+
+   COND       v21  concatination                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  7, "#strim(a1##\"hey \")"                            p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b8"                                                 s_equal     s_celln rpn      : (   4) #,0a1,\"hey \",##,strim                      
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b8"                                                 s_equal     s_celln modded   : (  17) :one two three hey:                          
+
+   GROUP      v21  trim both ends, plus every interal unquoted                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  only internal, unquoted spaces                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#etrim(a1)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   2) #,0a1,etrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  11) :onetwothree:                                
+
+   COND       v21  lots of unquoted spaceing                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  1, "#etrim(a2)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b2"                                                 s_equal     s_celln rpn      : (   2) #,0a2,etrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b2"                                                 s_equal     s_celln modded   : (  11) :onetwothree:                                
+
+   COND       v21  interal, external, and quoted spacing                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  2, "#etrim(a3)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b3"                                                 s_equal     s_celln rpn      : (   2) #,0a3,etrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b3"                                                 s_equal     s_celln modded   : (  17) :one\" two   \"three:                        
+
+   COND       v21  interal, external, and quoted intewoven spacing              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  3, "#etrim(a4)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b4"                                                 s_equal     s_celln rpn      : (   2) #,0a4,etrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b4"                                                 s_equal     s_celln modded   : (  22) :one\" two   five \"three:                   
+
+   COND       v21  empty cell                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  4, "#etrim(a5)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b5"                                                 s_equal     s_celln rpn      : (   2) #,0a5,etrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b5"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   COND       v21  null reference                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  5, "#etrim(NULL)"                                    p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b6"                                                 s_equal     s_celln rpn      : (   2) #,NULL,etrim                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b6"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  invalid cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#etrim(a0)"                                      p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,a0,etrim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  literal value                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#etrim(\" test   one   \")"                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,\" test   one   \",etrim                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :testone:                                    
+
+   COND       v21  concatination                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  7, "#etrim(a1##\"hey \")"                            p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b8"                                                 s_equal     s_celln rpn      : (   4) #,0a1,\"hey \",##,etrim                      
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b8"                                                 s_equal     s_celln modded   : (  14) :onetwothreehey:                             
+
+   GROUP      v21  trim both ends, plus every every internal                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  only internal, unquoted spaces                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mtrim(a1)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   2) #,0a1,mtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  11) :onetwothree:                                
+
+   COND       v21  lots of unquoted spaceing                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  1, "#mtrim(a2)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b2"                                                 s_equal     s_celln rpn      : (   2) #,0a2,mtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b2"                                                 s_equal     s_celln modded   : (  11) :onetwothree:                                
+
+   COND       v21  interal, external, and quoted spacing                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  2, "#mtrim(a3)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b3"                                                 s_equal     s_celln rpn      : (   2) #,0a3,mtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b3"                                                 s_equal     s_celln modded   : (  13) :one\"two\"three:                            
+
+   COND       v21  interal, external, and quoted intewoven spacing              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  3, "#mtrim(a4)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b4"                                                 s_equal     s_celln rpn      : (   2) #,0a4,mtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b4"                                                 s_equal     s_celln modded   : (  17) :one\"twofive\"three:                        
+
+   COND       v21  empty cell                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  4, "#mtrim(a5)"                                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b5"                                                 s_equal     s_celln rpn      : (   2) #,0a5,mtrim                                  
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b5"                                                 s_equal     s_celln modded   : (   0) ::                                           
+
+   COND       v21  null reference                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  5, "#mtrim(NULL)"                                    p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b6"                                                 s_equal     s_celln rpn      : (   2) #,NULL,mtrim                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b6"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  invalid cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#mtrim(a0)"                                      p_null      0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,a0,mtrim                                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :#.build:                                    
+
+   COND       v21  literal value                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  6, "#mtrim(\" test   one   \")"                      p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b7"                                                 s_equal     s_celln rpn      : (   2) #,\" test   one   \",mtrim                   
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b7"                                                 s_equal     s_celln modded   : (   7) :testone:                                    
+
+   COND       v21  concatination                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  7, "#mtrim(a1##\"hey \")"                            p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b8"                                                 s_equal     s_celln rpn      : (   4) #,0a1,\"hey \",##,mtrim                      
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b8"                                                 s_equal     s_celln modded   : (  14) :onetwothreehey:                             
+
+   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+

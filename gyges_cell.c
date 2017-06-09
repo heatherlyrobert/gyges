@@ -2522,7 +2522,7 @@ CELL__unitnew      (
    }
    else if (strcmp(a_question, "cell_modified")  == 0) {
       if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (----)");
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (%4d) %-.40s", (int) strlen(x_cell->v_str), x_cell->v_str);
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (%4d) :%-.40s:", (int) strlen(x_cell->v_str), x_cell->v_str);
    }
    else if (strcmp(a_question, "cell_printable") == 0) {
       /*> snprintf(unit_answer, LEN_UNIT, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_cell->p), x_cell->p);   <*/
