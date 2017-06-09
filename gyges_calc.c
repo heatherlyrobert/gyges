@@ -1024,11 +1024,11 @@ CALC__right        (void)
    if (n     <  0  )  n = 0;
    /*---(process)------------------------*/
    len = strlen (r);
+   if (n >  len)  n = len;
    m = len - n;
-   if (m >= len)  m = len;
    int i;
    for (i = m; i < len; ++i) t[i - m] = r[i];
-   t [m] = '\0';
+   t [n] = '\0';
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/
@@ -1047,9 +1047,17 @@ CALC__mid          (void)
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, LEN_RECD);
    if (m     <  0  )  m = 0;
-   if (n     <  0  )  n = 0;
-   /*---(process)------------------------*/
    len = strlen (r);
+   if (n     <  0  ) {
+      if (n + m <  0) {
+         n = 0;
+         m = 0;
+      } else {
+         m = n + m;
+         n = 0;
+      }
+   }
+   /*---(process)------------------------*/
    if (n     >= len)  n = len;
    if (n + m >= len)  m = len - n;
    int i;

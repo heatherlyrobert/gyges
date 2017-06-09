@@ -1539,6 +1539,189 @@ SCRP          v21  (s_calc) string concatination functions (#, ##)            
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (s_calc) string length, left, right, and mid                 CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval         ((14.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  add source data cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  0, "123456789012345678901234567890"                  p_exists    0                                                                      
+
+   GROUP      v21  start with length                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  look at the source string                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  0,  1, "=len(a1)"                                        p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "a2"                                                 s_equal     s_celln rpn      : (   2) =,0a1,len                                    
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "a2"                                                 s_equal     s_celln value    :          30.000000                                  
+
+   COND       v21  look at the new string                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=len(b1)"                                        p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "c1"                                                 s_equal     s_celln rpn      : (   2) =,0b1,len                                    
+     get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   GROUP      v21  take the left part of the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  take a small part                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,2)"                                     p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,2,left                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   2) :12:                                         
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   COND       v21  take a larger part                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,9)"                                     p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,9,left                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   9) :123456789:                                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           9.000000                                  
+
+   COND       v21  take a majority                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,25)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,25,left                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  25) :1234567890123456789012345:                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          25.000000                                  
+
+   COND       v21  take the whole thing                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,30)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,30,left                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  30) :123456789012345678901234567890:             
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          30.000000                                  
+
+   COND       v21  take too much                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,35)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,35,left                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  30) :123456789012345678901234567890:             
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          30.000000                                  
+
+   COND       v21  take zero                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,0)"                                     p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,0,left                                 
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  take a negative amount                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#left(a1,-1)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,1,-:,left                              
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   GROUP      v21  take the right part of the cell                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  take a small part                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,2)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,2,right                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   2) :90:                                         
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   COND       v21  take a larger part                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,9)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,9,right                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   9) :234567890:                                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           9.000000                                  
+
+   COND       v21  take a majority                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,25)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,25,right                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  25) :6789012345678901234567890:                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          25.000000                                  
+
+   COND       v21  take the whole thing                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,30)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,30,right                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  30) :123456789012345678901234567890:             
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          30.000000                                  
+
+   COND       v21  take too much                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,35)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,35,right                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  30) :123456789012345678901234567890:             
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          30.000000                                  
+
+   COND       v21  take zero                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,0)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   3) #,0a1,0,right                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  take a negative amount                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#right(a1,-1)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,1,-:,right                             
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   GROUP      v21  take the middle part of the cell                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  take a small part                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,12,2)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,12,2,mid                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   2) :34:                                         
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   COND       v21  take a larger part                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,9,9)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,9,9,mid                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   9) :012345678:                                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           9.000000                                  
+
+   COND       v21  take a majority                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,2,25)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,2,25,mid                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  25) :3456789012345678901234567:                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          25.000000                                  
+
+   COND       v21  take from the start (like left)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,0,25)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,0,25,mid                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  25) :1234567890123456789012345:                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          25.000000                                  
+
+   COND       v21  take to the end (like right)                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,5,25)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,5,25,mid                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  25) :6789012345678901234567890:                  
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          25.000000                                  
+
+   COND       v21  take past the end                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,2,30)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,2,30,mid                               
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (  28) :3456789012345678901234567890:               
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :          28.000000                                  
+
+   COND       v21  start negative                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,-5,10)"                                  p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   5) #,0a1,5,-:,10,mid                            
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   5) :12345:                                      
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           5.000000                                  
+
+   COND       v21  take zero                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,5,0)"                                    p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   4) #,0a1,5,0,mid                                
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  take a negative amount                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  1,  0, "#mid(a1,5,-1)"                                   p_exists    0                                                                      
+     get      v21  check the cell's RPN version         CELL__unitnew         "cell_rpn"       , "b1"                                                 s_equal     s_celln rpn      : (   5) #,0a1,5,1,-:,mid                             
+     get      v21  check the cell's results             CELL__unitnew         "cell_modified"  , "b1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  verify with =len(b1) cell            CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((17.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
 SCRP          v21  (s_calc) string trimming functions (trim family)             CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval         ((14.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
