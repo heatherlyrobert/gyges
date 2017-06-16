@@ -518,14 +518,15 @@ char*        /*--> get an string off the stack -----------[ ------ [ ------ ]-*/
 CALC__popstr       (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* always returns a string for the stack entry.                            */
-   /* -- for a numeric literal, it returns an empty string                    */
-   /* -- for a string literal, it returns the string from the stack           */
-   /* -- for a reference that's unused, it returns an empty string            */
-   /* -- for a reference that's numeric, it returns an empty string           */
-   /* -- for a reference that's modified, it returns the string value         */
-   /* -- for a reference that's unmodified, it returns the source value       */
-   /* -- for a reference that's unknown, it returns an empty string           */
-   /* -- if it can't figure it out, it returns an empty string                */
+   /* -- numeric literal              , return an empty string            */
+   /* -- string literal               , return string from the stack      */
+   /* -- reference that's unused      , return an empty string            */
+   /* -- reference that's numeric     , return an empty string            */
+   /* -- reference that's string      , return an string                  */
+   /* -- reference that's num formula , return an empty string            */
+   /* -- reference that's str formula , return the modified value         */
+   /* -- reference that's unknown     , return an empty string            */
+   /* -- if it can't figure it out    , return an empty string            */
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "stack empty, could not get string");
@@ -534,17 +535,27 @@ CALC__popstr       (char *a_func, char a_seq)
    --calc__nstack;
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
-   case 'v' :  return  strndup (nada, LEN_RECD);                 break;
-   case 's' :  return  calc__stack[calc__nstack].str;           break;
-   case 'r' :  if        (calc__stack[calc__nstack].ref->t == '-') {
-                  return  strndup (nada, LEN_RECD);
-               } else if (calc__stack[calc__nstack].ref->v_str != NULL) {
-                  return  strndup (calc__stack[calc__nstack].ref->v_str, LEN_RECD);
-               } else if (calc__stack[calc__nstack].ref->s != NULL) {
-                  return  strndup (calc__stack[calc__nstack].ref->s, LEN_RECD);
-               } else {
-                  return strndup (nada, LEN_RECD);
-               }
+   case 'v' :
+      return  strndup (nada, LEN_RECD);
+      break;
+   case 's' :
+      return  calc__stack[calc__nstack].str;
+      break;
+   case 'r' :
+      switch (calc__stack[calc__nstack].ref->t) {
+      case  CTYPE_STR    :
+         return  strndup (calc__stack[calc__nstack].ref->s    , LEN_RECD);
+         break;
+      case  CTYPE_MOD    :
+         return  strndup (calc__stack[calc__nstack].ref->v_str, LEN_RECD);
+         break;
+      default            :
+         return  strndup (nada, LEN_RECD);
+         break;
+      }
+   default            :
+      return  strndup (nada, LEN_RECD);
+      break;
    }
    /*---(complete)-----------------------*/
    ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ARGS , "wrong argument type on stack");

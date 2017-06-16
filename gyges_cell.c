@@ -1102,7 +1102,7 @@ CELL__interpret    (
     *   for these alternate bases.  i am avoiding x... and b... so that i don't
     *   accidentally pull in addresses and other strings.
     */
-   if (a_cell->l > 1 && x_pre == '0') {
+   if (a_cell->l > 1 && x_pre == '0' && a_cell->s[1] != '.') {
       rc = CELL__altbase (a_cell->s, &x_value);
       if (rc >= 0) {
          a_cell->t     = CTYPE_NUM;

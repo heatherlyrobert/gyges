@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1d"
-#define     VER_TXT   "updated gyges_calc unit test one/two with complex examples"
+#define     VER_NUM   "2.1e"
+#define     VER_TXT   "fixed string retrieval from stack in calcs for len,left,..."
 
 
 
