@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1b"
-#define     VER_TXT   "build full unit test for len, left, righ, and mid functions"
+#define     VER_NUM   "2.1c"
+#define     VER_TXT   "updated gyges_calc unit test one to stop using pointers"
 
 
 

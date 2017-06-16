@@ -1180,7 +1180,7 @@ CALC__mtrim        (void)
 }
 
 PRIV void
-CALC__print        (void)
+CALC__printstr     (void)
 {
    /*---(get arguments)------------------*/
    r = CALC__popprint (__FUNCTION__, ++s_narg);
@@ -1189,6 +1189,22 @@ CALC__print        (void)
    /*---(process)------------------------*/
    strltrim (r, ySTR_BOTH, LEN_RECD);
    CALC_pushstr (__FUNCTION__, r);
+   /*---(clean up)-----------------------*/
+   free (r);
+   /*---(complete)-----------------------*/
+   return;
+}
+
+PRIV void
+CALC__printnum     (void)
+{
+   /*---(get arguments)------------------*/
+   r = CALC__popprint (__FUNCTION__, ++s_narg);
+   /*---(defense)------------------------*/
+   if (r == NULL)  r = strndup (nada, LEN_RECD);
+   /*---(process)------------------------*/
+   strltrim (r, ySTR_BOTH, LEN_RECD);
+   CALC_pushval (__FUNCTION__, atof (r));
    /*---(clean up)-----------------------*/
    free (r);
    /*---(complete)-----------------------*/
@@ -3648,8 +3664,10 @@ struct  cFUNCS {
    { "strim"      ,  0, CALC__strim             , 'f', "s:s"    , 's', "compress all whitespce to single, except quoted"   , "" },
    { "etrim"      ,  0, CALC__etrim             , 'f', "s:s"    , 's', "trim every whitespace in n excluding quoted"       , "" },
    { "mtrim"      ,  0, CALC__mtrim             , 'f', "s:s"    , 's', "trim every whitespace in n including quoted"       , "" },
-   { "print"      ,  0, CALC__print             , 'f', "s:a"    , 's', "gyges print/display value of cell a"               , "" },
-   { "p"          ,  0, CALC__print             , 'f', "s:a"    , 's', "gyges print/display value of cell a"               , "" },
+   { "print"      ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" },
+   { "p"          ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" },
+   { "printnum"   ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" },
+   { "n"          ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" },
    { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , 's', "gyges formula source of cell a"                    , "" },
    { "f"          ,  0, CALC__formula           , 'f', "s:a"    , 's', "gyges formula source of cell a"                    , "" },
    { "rpn"        ,  0, CALC__rpn               , 'f', "s:a"    , 's', "gyges rpn version of cell a formula"               , "" },
@@ -3657,7 +3675,7 @@ struct  cFUNCS {
    { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , 's', "add whitespace to start of n until x length"       , "" },
    { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , 's', "add whitespace to end of n until x length"         , "" },
    { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" },
-   { "rppad"      ,  0, CALC__rppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" },
+   { "rppad"      ,  0, CALC__rppad             , 'f', "s:av"   , 's', "add whitespace to end of printable till x len"     , "" },
    { "find"       ,  0, CALC__find              , 'f', "s:ss"   , 's', "find m within n"                                   , "" },
    { "replace"    ,  0, CALC__replace           , 'f', "s:sssv" , 's', "replace m with o within n, x times"                , "" },
    /*---(conversion functions)------------*/
@@ -4687,6 +4705,17 @@ CALC_func_list       (void)
       x_save = s_funcs [i].fcat;
    }
    printf ("\nend-of-list  %d total operators and functions (%d dups)\n", s_nfunc, s_ndups);
+   /*---(sum of short ones)--------------*/
+   printf ("\n\nquick access, one-char functions\n");
+   for (i = 0; i < MAX_FUNCS; ++i) {
+      if (s_funcs [i].n [0] == 'E')   break;
+      if (s_funcs [i].type  != 'f')   continue;
+      if (s_funcs [i].l     >   1 )   continue;
+      printf ("   %-10.10s   %-30.30s  %-45.50s\n",
+            s_funcs [i].n    , s_funcs [i].disp   , s_funcs [i].desc );
+   }
+   printf ("end of quick list\n\n");
+   /*---(complete)-----------------------*/
    exit (1);
 }
 
