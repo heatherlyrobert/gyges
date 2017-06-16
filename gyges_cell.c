@@ -2547,7 +2547,7 @@ CELL__unitnew      (
    else if (strcmp(a_question, "cell_rpn")       == 0) {
       if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (----) -");
       else if (x_cell->nrpn == 0)     snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) %-.40s", x_cell->nrpn, x_cell->rpn);
+      else                            snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) %s"    , x_cell->nrpn, x_cell->rpn);
    }
    /*---(complete)-----------------------*/
    return unit_answer;
