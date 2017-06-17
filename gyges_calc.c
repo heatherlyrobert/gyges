@@ -603,7 +603,7 @@ CALC__popprint        (char *a_func, char a_seq)
 }
 
 tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
-CALC__popsource       (char *a_func, char a_seq)
+CALC__popform         (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
    if (calc__nstack <= 0) {
@@ -614,7 +614,11 @@ CALC__popsource       (char *a_func, char a_seq)
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
    case 'r' :
-      return  strndup (calc__stack[calc__nstack].ref->s, LEN_RECD);
+      if (strchr (G_CELL_CALC , calc__stack[calc__nstack].ref->t) != 0) {
+         return  strndup (calc__stack[calc__nstack].ref->s    , LEN_RECD);
+      } else {
+         return  strndup ("n/a", LEN_RECD);
+      }
       break;
    }
    /*---(complete)-----------------------*/
@@ -634,7 +638,11 @@ CALC__poprpn          (char *a_func, char a_seq)
    /*---(handle stack types)-------------*/
    switch (calc__stack[calc__nstack].typ) {
    case 'r' :
-      return  strndup (calc__stack[calc__nstack].ref->rpn, LEN_RECD);
+      if (strchr (G_CELL_RPN  , calc__stack[calc__nstack].ref->t) != 0) {
+         return  strndup (calc__stack[calc__nstack].ref->rpn  , LEN_RECD);
+      } else {
+         return  strndup ("n/a", LEN_RECD);
+      }
       break;
    }
    /*---(complete)-----------------------*/
@@ -1209,12 +1217,15 @@ CALC__printstr     (void)
 PRIV void
 CALC__printnum     (void)
 {
+   int         x_len       = 0;
    /*---(get arguments)------------------*/
    r = CALC__popprint (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
    strltrim (r, ySTR_BOTH, LEN_RECD);
+   x_len = strlen (r);
+   if (r [x_len - 1] == '>')  r [x_len - 1] = '\0';
    CALC_pushval (__FUNCTION__, atof (r));
    /*---(clean up)-----------------------*/
    free (r);
@@ -1226,7 +1237,7 @@ PRIV void
 CALC__formula      (void)
 {
    /*---(get arguments)------------------*/
-   r = CALC__popsource (__FUNCTION__, ++s_narg);
+   r = CALC__popform   (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
    if (r == NULL)  r = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
@@ -2519,21 +2530,30 @@ CALC__row           (void)
 PRIV void
 CALC__nreq          (void)
 {
-   CALC_pushval (__FUNCTION__, s_me->nrequire);
+   tCELL *x_base;
+   x_base = CALC__popref (__FUNCTION__, ++s_narg);
+   if (x_base == NULL)    CALC_pushval (__FUNCTION__, 0);
+   else                   CALC_pushval (__FUNCTION__, x_base->nrequire);
    return;
 }
 
 PRIV void
 CALC__npro          (void)
 {
-   CALC_pushval (__FUNCTION__, s_me->nprovide);
+   tCELL *x_base;
+   x_base = CALC__popref (__FUNCTION__, ++s_narg);
+   if (x_base == NULL)    CALC_pushval (__FUNCTION__, 0);
+   else                   CALC_pushval (__FUNCTION__, x_base->nprovide);
    return;
 }
 
 PRIV void
 CALC__nrpn          (void)
 {
-   CALC_pushval (__FUNCTION__, s_me->nrpn);
+   tCELL *x_base;
+   x_base = CALC__popref (__FUNCTION__, ++s_narg);
+   if (x_base == NULL)    CALC_pushval (__FUNCTION__, 0);
+   else                   CALC_pushval (__FUNCTION__, x_base->nrpn);
    return;
 }
 

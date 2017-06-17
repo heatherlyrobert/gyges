@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1e"
-#define     VER_TXT   "fixed string retrieval from stack in calcs for len,left,..."
+#define     VER_NUM   "2.1f"
+#define     VER_TXT   "fixed and verified r, f, nrpn in unit testing"
 
 
 
