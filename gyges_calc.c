@@ -617,7 +617,7 @@ CALC__popform         (char *a_func, char a_seq)
       if (strchr (G_CELL_CALC , calc__stack[calc__nstack].ref->t) != 0) {
          return  strndup (calc__stack[calc__nstack].ref->s    , LEN_RECD);
       } else {
-         return  strndup ("n/a", LEN_RECD);
+         return  strndup (nada , LEN_RECD);
       }
       break;
    }
@@ -641,7 +641,7 @@ CALC__poprpn          (char *a_func, char a_seq)
       if (strchr (G_CELL_RPN  , calc__stack[calc__nstack].ref->t) != 0) {
          return  strndup (calc__stack[calc__nstack].ref->rpn  , LEN_RECD);
       } else {
-         return  strndup ("n/a", LEN_RECD);
+         return  strndup (nada , LEN_RECD);
       }
       break;
    }
@@ -2557,6 +2557,36 @@ CALC__nrpn          (void)
    return;
 }
 
+PRIV void
+CALC__reqs          (void)
+{
+   tCELL *x_base;
+   char   x_list  [LEN_RECD] = "";
+   x_base = CALC__popref (__FUNCTION__, ++s_narg);
+   if      (x_base == NULL)         CALC_pushstr (__FUNCTION__, nada);
+   else if (x_base->nrequire <= 0)  CALC_pushstr (__FUNCTION__, nada);
+   else  {
+      DEP_disp_reqs (x_base, x_list);
+      CALC_pushstr (__FUNCTION__, x_list);
+   }
+   return;
+}
+
+PRIV void
+CALC__pros          (void)
+{
+   tCELL *x_base;
+   char   x_list  [LEN_RECD] = "";
+   x_base = CALC__popref (__FUNCTION__, ++s_narg);
+   if      (x_base == NULL)         CALC_pushstr (__FUNCTION__, nada);
+   else if (x_base->nprovide <= 0)  CALC_pushstr (__FUNCTION__, nada);
+   else  {
+      DEP_disp_pros (x_base, x_list);
+      CALC_pushstr (__FUNCTION__, x_list);
+   }
+   return;
+}
+
 static short   s_btab     = 0;
 static short   s_bcol     = 0;
 static short   s_brow     = 0;
@@ -3699,10 +3729,6 @@ struct  cFUNCS {
    { "p"          ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" },
    { "printnum"   ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" },
    { "n"          ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" },
-   { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , 's', "gyges formula source of cell a"                    , "" },
-   { "f"          ,  0, CALC__formula           , 'f', "s:a"    , 's', "gyges formula source of cell a"                    , "" },
-   { "rpn"        ,  0, CALC__rpn               , 'f', "s:a"    , 's', "gyges rpn version of cell a formula"               , "" },
-   { "r"          ,  0, CALC__rpn               , 'f', "s:a"    , 's', "gyges rpn version of cell a formula"               , "" },
    { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , 's', "add whitespace to start of n until x length"       , "" },
    { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , 's', "add whitespace to end of n until x length"         , "" },
    { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" },
@@ -3787,9 +3813,15 @@ struct  cFUNCS {
    { "tab"        ,  0, CALC__tab               , 'f', "v:a"    , 'i', "tab number of cell a"                              , "" },
    { "col"        ,  0, CALC__col               , 'f', "v:a"    , 'i', "col number of cell a"                              , "" },
    { "row"        ,  0, CALC__row               , 'f', "v:a"    , 'i', "row number of cell a"                              , "" },
-   { "nreq"       ,  0, CALC__nreq              , 'f', "v:a"    , 'i', "count of cells required by cell a"                 , "" },
-   { "npro"       ,  0, CALC__npro              , 'f', "v:a"    , 'i', "count of cells provided to by cell a"              , "" },
+   { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , 'i', "formula source of cell a"                          , "" },
+   { "f"          ,  0, CALC__formula           , 'f', "s:a"    , 'i', "formula source of cell a"                          , "" },
+   { "rpn"        ,  0, CALC__rpn               , 'f', "s:a"    , 'i', "rpn version of cell a formula"                     , "" },
+   { "r"          ,  0, CALC__rpn               , 'f', "s:a"    , 'i', "rpn version of cell a formula"                     , "" },
    { "nrpn"       ,  0, CALC__nrpn              , 'f', "v:a"    , 'i', "count of formula tokens in cell a "                , "" },
+   { "reqs"       ,  0, CALC__reqs              , 'f', "s:a"    , 'i', "list of cells required by cell a"                  , "" },
+   { "nreq"       ,  0, CALC__nreq              , 'f', "v:a"    , 'i', "count of cells required by cell a"                 , "" },
+   { "pros"       ,  0, CALC__pros              , 'f', "s:a"    , 'i', "list of cells provided to by cell a"               , "" },
+   { "npro"       ,  0, CALC__npro              , 'f', "v:a"    , 'i', "count of cells provided to by cell a"              , "" },
    /*---(range info functions)------------*/
    { "dist"       ,  0, CALC__dist              , 'f', "v:r"    , 'r', "geometric distance between beg and end locations"  , "" },
    { "tabs"       ,  0, CALC__tabs              , 'f', "v:r"    , 'r', "number of tabs in range"                           , "" },

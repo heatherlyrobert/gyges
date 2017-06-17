@@ -192,6 +192,9 @@ tDEP_INFO   s_dep_info [MAX_DEPTYPE] = {
    {  'A', 'a', '-', "contains a calculated/runtime reference function"   , 0 ,    0,    0 },
    {  'a', 'A', '+', "provides its value to a calculated reference"       , 0 ,    0,    0 },
 
+   {  'W', 'o', '+', "watcher, watches another cell for properties"       , 0 ,    0,    0 },
+   {  'o', 'W', '-', "observed, provides information to another cell"     , 0 ,    0,    0 },
+
    {  '-', '-', ' ', "newly created dependency, not yet assigned"         , 0 ,    0,    0 },
 
 };

@@ -2734,37 +2734,37 @@ SCRP          v21  (s_calc) alternate cell contents (p,n,f,r)                 
 
    COND       v21  simple string cell                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a8)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  longer string without spaces                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a5)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  longer string with spaces                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a1)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  very long string                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a2)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  an indented string                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a6)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  an integer                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a3)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  negative PI                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#f(a7)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  simple string formula                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -2796,37 +2796,37 @@ SCRP          v21  (s_calc) alternate cell contents (p,n,f,r)                 
 
    COND       v21  simple string cell                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a8)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  longer string without spaces                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a5)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  longer string with spaces                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a1)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  very long string                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a2)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  an indented string                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a6)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  an integer                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a3)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  negative PI                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#r(a7)"                                          p_exists    0                                                                      
-     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   3) :n/a:                                        
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  simple string formula                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -2916,9 +2916,193 @@ SCRP          v21  (s_calc) alternate cell contents (p,n,f,r)                 
      get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
      get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           1.000000                                  
 
+   GROUP      v21  review requires                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
+   COND       v21  simple string cell                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a8)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
+   COND       v21  longer string without spaces                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a5)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
 
+   COND       v21  longer string with spaces                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a1)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  very long string                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a2)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  an indented string                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a6)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  an integer                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a3)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  negative PI                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(a7)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   0) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  simple string formula                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(b5)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   5) :,0a8,:                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  simple numeric formula (displayed as integer with rounding)  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(b6)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   5) :,0a9,:                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  longer string formula                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(b1)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (  13) :,0a8,0a5,0a6,:                              
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  numeric like formula                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(b7)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (  10) :,0a10,0b6,:                                 
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  string like formula                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#reqs(b8)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (  10) :,0a11,0b5,:                                 
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   GROUP      v21  review count of requires                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  simple string cell                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a8)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  longer string without spaces                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a5)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  longer string with spaces                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a1)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  very long string                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a2)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  an indented string                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a6)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  an integer                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a3)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  negative PI                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(a7)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  simple string formula                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(b5)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           1.000000                                  
+
+   COND       v21  simple numeric formula (displayed as integer with rounding)  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(b6)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           1.000000                                  
+
+   COND       v21  longer string formula                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(b1)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           3.000000                                  
+
+   COND       v21  numeric like formula                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(b7)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   COND       v21  string like formula                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=nreq(b8)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   GROUP      v21  review provides                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  string never used                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#pros(a1)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   5) :,0c1,:                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  string used once                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#pros(a6)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   9) :,0b1,0c1,:                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  string used many                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#pros(a8)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (  13) :,0b1,0b5,0c1,:                              
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  number never used                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#pros(a2)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   5) :,0c1,:                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  number used once                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#pros(a4)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (   9) :,0b2,0c1,:                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   COND       v21  number used many                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "#pros(a9)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (  13) :,0b4,0b6,0c1,:                              
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           0.000000                                  
+
+   GROUP      v21  review count of provides                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  string never used                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=npro(a1)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           1.000000                                  
+
+   COND       v21  string used once                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=npro(a6)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   COND       v21  string used many                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=npro(a8)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           3.000000                                  
+
+   COND       v21  number never used                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=npro(a2)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           1.000000                                  
+
+   COND       v21  number used once                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=npro(a4)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           2.000000                                  
+
+   COND       v21  number used many                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the source string             CELL_change           CHG_INPUT, 0,  2,  0, "=npro(a9)"                                       p_exists    0                                                                      
+     get      v21  check the cell modded                CELL__unitnew         "cell_modified"  , "c1"                                                 s_equal     s_celln modded   : (null) ::                                           
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"     , "c1"                                                 s_equal     s_celln value    :           3.000000                                  
 
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 

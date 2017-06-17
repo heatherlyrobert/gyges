@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1f"
-#define     VER_TXT   "fixed and verified r, f, nrpn in unit testing"
+#define     VER_NUM   "2.1g"
+#define     VER_TXT   "built and tested pros, npro, reqs, and nreq"
 
 
 
