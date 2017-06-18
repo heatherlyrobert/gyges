@@ -343,7 +343,7 @@ LOC_label         (
 }
 
 char         /*--> convert a cell into a coordinates -----[ ------ [ ------ ]-*/
-LOC_coordinates   (
+LOC_coords        (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell to be converted                         */
       int        *a_tab,      /* return variable for the tab                  */
@@ -356,8 +356,9 @@ LOC_coordinates   (
    /*---(defense: valid cell)------------*/
    --rce;  if (a_cell  == NULL)             return rce;
    /*---(fiugure out reference)----------*/
-   rc = LOC_parse (a_cell->label, a_tab, a_col, a_row, NULL);
-   --rce;  if (rc <  0)                     return rce;
+   if (a_tab != NULL)  *a_tab  = a_cell->tab;
+   if (a_col != NULL)  *a_col  = a_cell->col;
+   if (a_row != NULL)  *a_row  = a_cell->row;
    /*---(complete)-----------------------*/
    return  0;
 }
@@ -511,21 +512,6 @@ LOC_parse         (
    return  0;
 }
 
-int        /*----: turn a cell name into a tab index -------------------------*/
-LOC_tab            (char *a_name)
-{
-   int       i         = 0;
-   int       rc        = 0;
-   for (i = 0; i < NTAB; ++i) {
-      if ((rc = strcmp(tabs[i].name, a_name)) == 0) {
-         return i;
-      }
-      /*> printf ("LOC_tab           : trying %d which is <<%s>>==<<%s>> rc = %d\n", i, a_name, tabs[i].name, rc);   <*/
-   }
-   return 0;
-}
-
-
 
 
 /*====================------------------------------------====================*/
@@ -549,12 +535,15 @@ LOC_unit           (char *a_question, tCELL *a_cell)
       if (x_curr == a_cell) { rc = 0; break; }
       x_curr = x_curr->next;
    }
+   if (rc < 0)   x_curr = NULL;
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "loc_cell"     )  == 0) {
-      if (rc == 0) {
-         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      if        (a_cell == NULL) {
+         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : requested a null cell");
+      } else if (x_curr == NULL) {
+         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : ptr=%9p, cell not found in list"   , a_cell);
       } else {
-         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : cell not found");
+         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
       }
    }
    else if (strcmp(a_question, "loc_who"       )  == 0) {
@@ -565,7 +554,9 @@ LOC_unit           (char *a_question, tCELL *a_cell)
       }
    }
    else if (strcmp (a_question, "cell_where")     == 0) {
-      if (rc == 0) {
+      if (a_cell == NULL) {
+
+      } else if (rc == 0) {
          snprintf (unit_answer, LEN_UNIT, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->tab, x_curr->col, x_curr->row);
       } else {
          snprintf (unit_answer, LEN_UNIT, "s_cell location  : not found in cell list");

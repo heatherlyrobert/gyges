@@ -2509,16 +2509,16 @@ CELL__unitnew      (
    /*---(cell contents)------------------*/
    if (strcmp(a_question, "cell_info")      == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln info     : --- --- --- --- ----- ----- -----");
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln info     : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, x_cell->nrpn, x_cell->nrequire, x_cell->nprovide);
+      else                             snprintf(unit_answer, LEN_UNIT, "s_celln info     : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, x_cell->nrpn, x_cell->nrequire, x_cell->nprovide);
    }
    else if   (strcmp(a_question, "cell_source")    == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (----) ::");
       else if (x_cell->s     == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (null) ::");
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln source   : (%4d) :%-.40s:", x_cell->l, x_cell->s);
+      else                             snprintf(unit_answer, LEN_UNIT, "s_celln source   : (%4d) :%-.40s:", x_cell->l, x_cell->s);
    }
    else if (strcmp(a_question, "cell_value")     == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln value    :         ---.------");
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln value    : %18.6F", x_cell->v_num);
+      else                             snprintf(unit_answer, LEN_UNIT, "s_celln value    : %18.6F", x_cell->v_num);
    }
    else if (strcmp(a_question, "cell_modified")  == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (----) ::");
@@ -2537,17 +2537,17 @@ CELL__unitnew      (
       }
    }
    else if (strcmp(a_question, "cell_contents")  == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln cont (-) : (--:--) ::");
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
+      if      (x_cell       == NULL)   snprintf(unit_answer, LEN_UNIT, "s_celln cont (-) : (--:--) ::");
+      else                             snprintf(unit_answer, LEN_UNIT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    else if (strcmp(a_question, "cell_size"    )  == 0) {
       snprintf(unit_answer, LEN_UNIT, "s_celln size     : width=%3d, height=%3d", tabs[x_tab].cols[x_col].w, tabs[x_tab].rows[x_row].h);
    }
    /*---(cell contents)------------------*/
    else if (strcmp(a_question, "cell_rpn")       == 0) {
-      if      (x_cell       == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (----) -");
-      else if (x_cell->nrpn == 0)     snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);
-      else                            snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) %s"    , x_cell->nrpn, x_cell->rpn);
+      if      (x_cell       == NULL)   snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (----) -");
+      else if (x_cell->nrpn == 0)      snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);
+      else                             snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) %s"    , x_cell->nrpn, x_cell->rpn);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

@@ -2093,7 +2093,7 @@ CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
    x_base = CALC__popref (a_func      , ++s_narg);
    if (x_base == NULL) return;
    /*---(parse base reference)-----------*/
-   rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
+   rc = LOC_coords (x_base, &x_tab, &x_col, &x_row);
    if (rc    <  0   )   {
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "base reference could not be parsed");
       return;
@@ -2275,7 +2275,7 @@ SHARED__address    (char *a_func, char a_type)
    x_base = CALC__popref (a_func      , ++s_narg);
    if (x_base == NULL)   return;
    /*---(parse base reference)-----------*/
-   rc = LOC_coordinates (x_base, &x_tab, &x_col, &x_row);
+   rc = LOC_coords (x_base, &x_tab, &x_col, &x_row);
    if (rc    <  0   )   {
       ERROR_add (s_me, PERR_EVAL, s_neval, a_func, TERR_ADDR , "base reference could not be parsed");
       return;
@@ -2610,7 +2610,7 @@ SHARED__rangeparse (char *a_func)
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    --rce;  if (x_beg == NULL)   return rce;
    /*---(parse beginning)----------------*/
-   rc = LOC_coordinates (x_beg, &s_btab, &s_bcol, &s_brow);
+   rc = LOC_coords (x_beg, &s_btab, &s_bcol, &s_brow);
    DEBUG_CALC   yLOG_value   ("s_btab"    , s_btab);
    DEBUG_CALC   yLOG_value   ("s_bcol"    , s_bcol);
    DEBUG_CALC   yLOG_value   ("s_brow"    , s_brow);
@@ -2620,7 +2620,7 @@ SHARED__rangeparse (char *a_func)
       return rce;
    }
    /*---(parse ending)-------------------*/
-   rc = LOC_coordinates (x_end, &s_etab, &s_ecol, &s_erow);
+   rc = LOC_coords (x_end, &s_etab, &s_ecol, &s_erow);
    DEBUG_CALC   yLOG_value   ("s_etab"    , s_etab);
    DEBUG_CALC   yLOG_value   ("s_ecol"    , s_ecol);
    DEBUG_CALC   yLOG_value   ("s_erow"    , s_erow);
@@ -2652,7 +2652,7 @@ SHARED__rangestat  (char *a_func, char a_type)
    /*---(return)-------------------------*/
    switch (a_type) {
    case 'd' :
-      CALC_pushval (a_func, sqrt (pow (s_ecol - s_bcol + 1, 2) + pow (s_erow - s_brow + 1, 2)));
+      CALC_pushval (a_func, sqrt (pow (s_etab - s_btab, 2) + pow (s_ecol - s_bcol, 2) + pow (s_erow - s_brow, 2)));
       break;
    case 't' :
       CALC_pushval (a_func, s_etab - s_btab + 1);
@@ -2661,8 +2661,6 @@ SHARED__rangestat  (char *a_func, char a_type)
       CALC_pushval (a_func, s_ecol - s_bcol + 1);
       break;
    case 'r' :
-      CALC_pushval (a_func, s_ecol - s_bcol + 1);
-      break;
    default  : 
       CALC_pushval (a_func, s_erow - s_brow + 1);
       break;
@@ -3059,7 +3057,7 @@ SHARED__gather     (char *a_func)
       for (x_row = s_brow; x_row <= s_erow; ++x_row) {
          DEBUG_CALC   yLOG_value   ("x_col"    , x_col);
          DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
-         x_curr = tabs[s_btab].sheet[x_col][x_row];
+         x_curr = LOC_cell (s_btab, x_col, x_row);
          DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
          if (x_curr == NULL)                    continue;
          DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3328,12 +3326,15 @@ CALC__quarters     (void)
    DEBUG_CALC   yLOG_complex ("x_1st1"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_1st1, entries [x_1st1], x_1stw      , entries [x_1st1] * x_1stw);
    DEBUG_CALC   yLOG_complex ("x_1st2"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_1st2, entries [x_1st2], 4.0 - x_1stw, entries [x_1st2] * (4.0 - x_1stw));
    q1 = ((entries [x_1st1] * x_1stw) + (entries [x_1st2] * (4.0 - x_1stw))) / 4.0;
+   printf ("q1 = %lf\n", q1);
    DEBUG_CALC   yLOG_complex ("x_1st"     , "%10.5lf", q1);
    DEBUG_CALC   yLOG_complex ("x_3rd1"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_3rd1, entries [x_3rd1], x_3rdw      , entries [x_3rd1] * x_3rdw);
    DEBUG_CALC   yLOG_complex ("x_3rd2"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_3rd2, entries [x_3rd2], 4.0 - x_3rdw, entries [x_3rd2] * (4.0 - x_3rdw));
    q3 = ((entries [x_3rd1] * x_3rdw) + (entries [x_3rd2] * (4.0 - x_3rdw))) / 4.0;
+   printf ("q3 = %lf\n", q3);
    DEBUG_CALC   yLOG_complex ("x_3rd"     , "%10.5lf", q3);
    qr = q3 - q1;
+   printf ("qr = %lf\n", qr);
    /*---(complete)-----------------------*/
    return;
 }
@@ -3342,6 +3343,7 @@ PRIV void    /*--> find the interquartile range ----------[ ------ [ ------ ]-*/
 CALC__quarter1     (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
+   printf ("quarter1\n");
    CALC__quarters ();
    if (errornum <  0) {
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);
@@ -3664,225 +3666,235 @@ struct  cFUNCS {
    char        fcat;                   /* category                            */
    char        desc        [60];       /* descriptive label                   */
    char        disp        [30];       /* display version of function         */
+   char        excel       [30];       /* microsoft excel version             */
+   char        google      [30];       /* google spreadsheet version          */
+   char        office      [30];       /* open office version                 */
 } s_funcs [MAX_FUNCS] = {
    /*---(mathmatical operators)-----------*/
-   { "+"          ,  0, CALC__add               , 'o', "v:vv"   , 'm', "ansi-c addition"                                   , "" },
-   { "-"          ,  0, CALC__subtract          , 'o', "v:vv"   , 'm', "ansi-c subtraction"                                , "" },
-   { "*"          ,  0, CALC__multiply          , 'o', "v:vv"   , 'm', "ansi-c multipication"                              , "" },
-   { "/"          ,  0, CALC__divide            , 'o', "v:vv"   , 'm', "ansi-c division"                                   , "" },
-   { "%"          ,  0, CALC__modulus           , 'o', "v:vv"   , 'm', "ansi-c modulus"                                    , "" },
-   { "++"         ,  0, CALC__increment         , 'o', "v:v"    , 'm', "truly x + 1 as base variable uneffected"           , "" },
-   { "--"         ,  0, CALC__decrement         , 'o', "v:v"    , 'm', "truly x - 1 as base variable uneffected"           , "" },
-   { ":+"         ,  0, CALC__increment         , 'o', "v:v"    , 'm', "non-standard, acts like prefix ++"                 , "" },
-   { ":-"         ,  0, CALC__decrement         , 'o', "v:v"    , 'm', "non-standard, acts like prefix --"                 , "" },
-   { "-:"         ,  0, CALC__unaryminus        , 'o', "v:v"    , 'm', "ansi-c unary minus"                                , "" },
-   { "+:"         ,  0, CALC__noop              , 'o', "v:v"    , 'm', "ansi-c unary plus (no effect)"                     , "" },
+   { "+"          ,  0, CALC__add               , 'o', "v:vv"   , 'm', "ansi-c addition"                                   , "" , ""            , ""            , ""            },
+   { "-"          ,  0, CALC__subtract          , 'o', "v:vv"   , 'm', "ansi-c subtraction"                                , "" , ""            , ""            , ""            },
+   { "*"          ,  0, CALC__multiply          , 'o', "v:vv"   , 'm', "ansi-c multipication"                              , "" , ""            , ""            , ""            },
+   { "/"          ,  0, CALC__divide            , 'o', "v:vv"   , 'm', "ansi-c division"                                   , "" , ""            , ""            , ""            },
+   { "%"          ,  0, CALC__modulus           , 'o', "v:vv"   , 'm', "ansi-c modulus"                                    , "" , ""            , ""            , ""            },
+   { "++"         ,  0, CALC__increment         , 'o', "v:v"    , 'm', "truly x + 1 as base variable uneffected"           , "" , ""            , ""            , ""            },
+   { "--"         ,  0, CALC__decrement         , 'o', "v:v"    , 'm', "truly x - 1 as base variable uneffected"           , "" , ""            , ""            , ""            },
+   { ":+"         ,  0, CALC__increment         , 'o', "v:v"    , 'm', "non-standard, acts like prefix ++"                 , "" , ""            , ""            , ""            },
+   { ":-"         ,  0, CALC__decrement         , 'o', "v:v"    , 'm', "non-standard, acts like prefix --"                 , "" , ""            , ""            , ""            },
+   { "-:"         ,  0, CALC__unaryminus        , 'o', "v:v"    , 'm', "ansi-c unary minus"                                , "" , ""            , ""            , ""            },
+   { "+:"         ,  0, CALC__noop              , 'o', "v:v"    , 'm', "ansi-c unary plus (no effect)"                     , "" , ""            , ""            , ""            },
    /*---(mathmatical functions)-----------*/
-   { "exp"        ,  0, CALC__power             , 'f', "v:vv"   , 'm', "x raised to the power of y"                        , "" },
-   { "abs"        ,  0, CALC__abs               , 'f', "v:v"    , 'm', "ansi-c fabs() removes negative sign"               , "" },
-   { "trunc"      ,  0, CALC__trunc             , 'f', "v:v"    , 'm', "truncate to the nearest integer value"             , "" },
-   { "rtrunc"     ,  0, CALC__rtrunc            , 'f', "v:vv"   , 'm', "truncate to y decimal places"                      , "" },
-   { "round"      ,  0, CALC__round             , 'f', "v:v"    , 'm', "round, up or down, to the nearest integer"         , "" },
-   { "rround"     ,  0, CALC__rround            , 'f', "v:vv"   , 'm', "round, up or down, to y decimal places"            , "" },
-   { "ceil"       ,  0, CALC__ceiling           , 'f', "v:v"    , 'm', "raise up to the nearest integer"                   , "" },
-   { "floor"      ,  0, CALC__floor             , 'f', "v:v"    , 'm', "push down to the nearest integer"                  , "" },
-   { "sqrt"       ,  0, CALC__sqrt              , 'f', "v:v"    , 'm', "ansi-c square root"                                , "" },
-   { "cbrt"       ,  0, CALC__cbrt              , 'f', "v:v"    , 'm', "cube root of x"                                    , "" },
-   { "sqr"        ,  0, CALC__sqr               , 'f', "v:v"    , 'm', "square of x"                                       , "" },
-   { "cube"       ,  0, CALC__cube              , 'f', "v:v"    , 'm', "cube of x"                                         , "" },
-   { "rand"       ,  0, CALC__rand              , 'f', "v:"     , 'm', "random number betreen 0 and 1"                     , "" },
-   { "randr"      ,  0, CALC__randr             , 'f', "v:vv"   , 'm', "random number betreen x and y"                     , "" },
+   { "exp"        ,  0, CALC__power             , 'f', "v:vv"   , 'm', "x raised to the power of y"                        , "" , ""            , ""            , ""            },
+   { "abs"        ,  0, CALC__abs               , 'f', "v:v"    , 'm', "ansi-c fabs() removes negative sign"               , "" , ""            , ""            , ""            },
+   { "trunc"      ,  0, CALC__trunc             , 'f', "v:v"    , 'm', "truncate to the nearest integer value"             , "" , ""            , ""            , ""            },
+   { "rtrunc"     ,  0, CALC__rtrunc            , 'f', "v:vv"   , 'm', "truncate to y decimal places"                      , "" , ""            , ""            , ""            },
+   { "round"      ,  0, CALC__round             , 'f', "v:v"    , 'm', "round, up or down, to the nearest integer"         , "" , ""            , ""            , ""            },
+   { "rround"     ,  0, CALC__rround            , 'f', "v:vv"   , 'm', "round, up or down, to y decimal places"            , "" , ""            , ""            , ""            },
+   { "ceil"       ,  0, CALC__ceiling           , 'f', "v:v"    , 'm', "raise up to the nearest integer"                   , "" , ""            , ""            , ""            },
+   { "floor"      ,  0, CALC__floor             , 'f', "v:v"    , 'm', "push down to the nearest integer"                  , "" , ""            , ""            , ""            },
+   { "sqrt"       ,  0, CALC__sqrt              , 'f', "v:v"    , 'm', "ansi-c square root"                                , "" , ""            , ""            , ""            },
+   { "cbrt"       ,  0, CALC__cbrt              , 'f', "v:v"    , 'm', "cube root of x"                                    , "" , ""            , ""            , ""            },
+   { "sqr"        ,  0, CALC__sqr               , 'f', "v:v"    , 'm', "square of x"                                       , "" , ""            , ""            , ""            },
+   { "cube"       ,  0, CALC__cube              , 'f', "v:v"    , 'm', "cube of x"                                         , "" , ""            , ""            , ""            },
+   { "rand"       ,  0, CALC__rand              , 'f', "v:"     , 'm', "random number betreen 0 and 1"                     , "" , ""            , ""            , ""            },
+   { "randr"      ,  0, CALC__randr             , 'f', "v:vv"   , 'm', "random number betreen x and y"                     , "" , ""            , ""            , ""            },
    /*---(logical operators)---------------*/
-   { "=="         ,  0, CALC__equal             , 'o', "t:vv"   , 'l', "T if x are y are equal, else F"                    , "" },
-   { "!="         ,  0, CALC__notequal          , 'o', "t:vv"   , 'l', "T if x not equal y, else F"                        , "" },
-   { ">"          ,  0, CALC__greater           , 'o', "t:vv"   , 'l', "T if x greater than y, else F"                     , "" },
-   { "<"          ,  0, CALC__lesser            , 'o', "t:vv"   , 'l', "T if x lesser than y, else F"                      , "" },
-   { ">="         ,  0, CALC__gequal            , 'o', "t:vv"   , 'l', "T if x greater than or equal to y, else F"         , "" },
-   { "<="         ,  0, CALC__lequal            , 'o', "t:vv"   , 'l', "T if x lesser than or equal to y, else F"          , "" },
-   { "!"          ,  0, CALC__not               , 'o', "t:v"    , 'l', "T if x F, else F"                                  , "" },
-   { "&&"         ,  0, CALC__and               , 'o', "t:vv"   , 'l', "T if both x and y are T, else F"                   , "" },
-   { "||"         ,  0, CALC__or                , 'o', "t:vv"   , 'l', "T if either x or y is T, else F"                   , "" },
-   { "#="         ,  0, CALC__sequal            , 'o', "t:ss"   , 'l', "T if n are m are equal, else F"                    , "" },
-   { "#!"         ,  0, CALC__snotequal         , 'o', "t:ss"   , 'l', "T if n not equal m, else F"                        , "" },
-   { "#<"         ,  0, CALC__slesser           , 'o', "t:ss"   , 'l', "T if n greater than m, else F"                     , "" },
-   { "#>"         ,  0, CALC__sgreater          , 'o', "t:ss"   , 'l', "T if n lesser than m, else F"                      , "" },
+   { "=="         ,  0, CALC__equal             , 'o', "t:vv"   , 'l', "T if x are y are equal, else F"                    , "" , ""            , ""            , ""            },
+   { "!="         ,  0, CALC__notequal          , 'o', "t:vv"   , 'l', "T if x not equal y, else F"                        , "" , ""            , ""            , ""            },
+   { ">"          ,  0, CALC__greater           , 'o', "t:vv"   , 'l', "T if x greater than y, else F"                     , "" , ""            , ""            , ""            },
+   { "<"          ,  0, CALC__lesser            , 'o', "t:vv"   , 'l', "T if x lesser than y, else F"                      , "" , ""            , ""            , ""            },
+   { ">="         ,  0, CALC__gequal            , 'o', "t:vv"   , 'l', "T if x greater than or equal to y, else F"         , "" , ""            , ""            , ""            },
+   { "<="         ,  0, CALC__lequal            , 'o', "t:vv"   , 'l', "T if x lesser than or equal to y, else F"          , "" , ""            , ""            , ""            },
+   { "!"          ,  0, CALC__not               , 'o', "t:v"    , 'l', "T if x F, else F"                                  , "" , ""            , ""            , ""            },
+   { "&&"         ,  0, CALC__and               , 'o', "t:vv"   , 'l', "T if both x and y are T, else F"                   , "" , ""            , ""            , ""            },
+   { "||"         ,  0, CALC__or                , 'o', "t:vv"   , 'l', "T if either x or y is T, else F"                   , "" , ""            , ""            , ""            },
+   { "#="         ,  0, CALC__sequal            , 'o', "t:ss"   , 'l', "T if n are m are equal, else F"                    , "" , ""            , ""            , ""            },
+   { "#!"         ,  0, CALC__snotequal         , 'o', "t:ss"   , 'l', "T if n not equal m, else F"                        , "" , ""            , ""            , ""            },
+   { "#<"         ,  0, CALC__slesser           , 'o', "t:ss"   , 'l', "T if n greater than m, else F"                     , "" , ""            , ""            , ""            },
+   { "#>"         ,  0, CALC__sgreater          , 'o', "t:ss"   , 'l', "T if n lesser than m, else F"                      , "" , ""            , ""            , ""            },
    /*---(logical functions)---------------*/
-   { "if"         ,  0, CALC__if                , 'f', "v:vvv"  , 'l', "if x is T, y, else z"                              , "" },
-   { "ifs"        ,  0, CALC__ifs               , 'f', "s:vss"  , 'l', "if x is T, n, else m"                              , "" },
-   { "within"     ,  0, CALC__within            , 'f', "t:vvv"  , 'l', "if x is within the range of y to z, then T"        , "" },
-   { "approx"     ,  0, CALC__approx            , 'f', "t:vvv"  , 'l', "if x is within the range of y +/- z, then T"       , "" },
+   { "if"         ,  0, CALC__if                , 'f', "v:vvv"  , 'l', "if x is T, y, else z"                              , "" , ""            , ""            , ""            },
+   { "ifs"        ,  0, CALC__ifs               , 'f', "s:vss"  , 'l', "if x is T, n, else m"                              , "" , ""            , ""            , ""            },
+   { "within"     ,  0, CALC__within            , 'f', "t:vvv"  , 'l', "if x is within the range of y to z, then T"        , "" , ""            , ""            , ""            },
+   { "approx"     ,  0, CALC__approx            , 'f', "t:vvv"  , 'l', "if x is within the range of y +/- z, then T"       , "" , ""            , ""            , ""            },
    /*---(string operators)----------------*/
-   { "#"          ,  0, CALC__concat            , 'o', "s:ss"   , 's', "m concatinated to the end of n"                    , "" },
-   { "##"         ,  0, CALC__concatplus        , 'o', "s:ss"   , 's', "m concatinated to the end of n (with a space)"     , "" },
+   { "#"          ,  0, CALC__concat            , 'o', "s:ss"   , 's', "m concatinated to the end of n"                    , "" , ""            , ""            , ""            },
+   { "##"         ,  0, CALC__concatplus        , 'o', "s:ss"   , 's', "m concatinated to the end of n (with a space)"     , "" , ""            , ""            , ""            },
    /*---(string functions)----------------*/
-   { "len"        ,  0, CALC__len               , 'f', "v:s"    , 's', "length of n"                                       , "" },
-   { "left"       ,  0, CALC__left              , 'f', "s:sv"   , 's', "left x characters of n"                            , "" },
-   { "right"      ,  0, CALC__right             , 'f', "s:sv"   , 's', "right x characters of n"                           , "" },
-   { "mid"        ,  0, CALC__mid               , 'f', "s:svv"  , 's', "y characters of n, starting at x"                  , "" },
-   { "trim"       ,  0, CALC__trim              , 'f', "s:s"    , 's', "trim leading and trailing whitespace from n"       , "" },
-   { "ltrim"      ,  0, CALC__ltrim             , 'f', "s:s"    , 's', "trim just leading whitespace from n"               , "" },
-   { "rtrim"      ,  0, CALC__rtrim             , 'f', "s:s"    , 's', "trim just trailing whitespace from n"              , "" },
-   { "strim"      ,  0, CALC__strim             , 'f', "s:s"    , 's', "compress all whitespce to single, except quoted"   , "" },
-   { "etrim"      ,  0, CALC__etrim             , 'f', "s:s"    , 's', "trim every whitespace in n excluding quoted"       , "" },
-   { "mtrim"      ,  0, CALC__mtrim             , 'f', "s:s"    , 's', "trim every whitespace in n including quoted"       , "" },
-   { "print"      ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" },
-   { "p"          ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" },
-   { "printnum"   ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" },
-   { "n"          ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" },
-   { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , 's', "add whitespace to start of n until x length"       , "" },
-   { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , 's', "add whitespace to end of n until x length"         , "" },
-   { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" },
-   { "rppad"      ,  0, CALC__rppad             , 'f', "s:av"   , 's', "add whitespace to end of printable till x len"     , "" },
-   { "find"       ,  0, CALC__find              , 'f', "s:ss"   , 's', "find m within n"                                   , "" },
-   { "replace"    ,  0, CALC__replace           , 'f', "s:sssv" , 's', "replace m with o within n, x times"                , "" },
+   { "len"        ,  0, CALC__len               , 'f', "v:s"    , 's', "length of n"                                       , "" , ""            , ""            , ""            },
+   { "left"       ,  0, CALC__left              , 'f', "s:sv"   , 's', "left x characters of n"                            , "" , ""            , ""            , ""            },
+   { "right"      ,  0, CALC__right             , 'f', "s:sv"   , 's', "right x characters of n"                           , "" , ""            , ""            , ""            },
+   { "mid"        ,  0, CALC__mid               , 'f', "s:svv"  , 's', "y characters of n, starting at x"                  , "" , ""            , ""            , ""            },
+   { "trim"       ,  0, CALC__trim              , 'f', "s:s"    , 's', "trim leading and trailing whitespace from n"       , "" , ""            , ""            , ""            },
+   { "ltrim"      ,  0, CALC__ltrim             , 'f', "s:s"    , 's', "trim just leading whitespace from n"               , "" , ""            , ""            , ""            },
+   { "rtrim"      ,  0, CALC__rtrim             , 'f', "s:s"    , 's', "trim just trailing whitespace from n"              , "" , ""            , ""            , ""            },
+   { "strim"      ,  0, CALC__strim             , 'f', "s:s"    , 's', "compress all whitespce to single, except quoted"   , "" , ""            , ""            , ""            },
+   { "etrim"      ,  0, CALC__etrim             , 'f', "s:s"    , 's', "trim every whitespace in n excluding quoted"       , "" , ""            , ""            , ""            },
+   { "mtrim"      ,  0, CALC__mtrim             , 'f', "s:s"    , 's', "trim every whitespace in n including quoted"       , "" , ""            , ""            , ""            },
+   { "print"      ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" , ""            , ""            , ""            },
+   { "p"          ,  0, CALC__printstr          , 'f', "s:a"    , 's', "gyges trimmed print string of cell a"              , "" , ""            , ""            , ""            },
+   { "printnum"   ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" , ""            , ""            , ""            },
+   { "n"          ,  0, CALC__printnum          , 'f', "v:a"    , 's', "gyges trimmed print string as value of cell a"     , "" , ""            , ""            , ""            },
+   { "lpad"       ,  0, CALC__lpad              , 'f', "s:sv"   , 's', "add whitespace to start of n until x length"       , "" , ""            , ""            , ""            },
+   { "rpad"       ,  0, CALC__rpad              , 'f', "s:sv"   , 's', "add whitespace to end of n until x length"         , "" , ""            , ""            , ""            },
+   { "lppad"      ,  0, CALC__lppad             , 'f', "s:av"   , 's', "add whitespace to start of printable till x len"   , "" , ""            , ""            , ""            },
+   { "rppad"      ,  0, CALC__rppad             , 'f', "s:av"   , 's', "add whitespace to end of printable till x len"     , "" , ""            , ""            , ""            },
+   { "find"       ,  0, CALC__find              , 'f', "s:ss"   , 's', "find m within n"                                   , "" , ""            , ""            , ""            },
+   { "replace"    ,  0, CALC__replace           , 'f', "s:sssv" , 's', "replace m with o within n, x times"                , "" , ""            , ""            , ""            },
    /*---(conversion functions)------------*/
-   { "lower"      ,  0, CALC__lower             , 'f', "s:s"    , 'c', "change all chars in n to lower case"               , "" },
-   { "upper"      ,  0, CALC__upper             , 'f', "s:s"    , 'c', "change all chars in n to upper case"               , "" },
-   { "char"       ,  0, CALC__char              , 'f', "s:v"    , 'c', "change x into an ascii character with that code"   , "" },
-   { "code"       ,  0, CALC__code              , 'f', "v:s"    , 'c', "return ascii value of first char in n"             , "" },
-   { "value"      ,  0, CALC__value             , 'f', "v:s"    , 'c', "ansi-c atof() to convert text number into value"   , "" },
-   { "salpha"     ,  0, CALC__salpha            , 'f', "s:s"    , 'c', "change all non-alphabetic chars in n to '_'"       , "" },
-   { "salphac"    ,  0, CALC__salphac           , 'f', "s:s"    , 'c', "remove all non-alphabetic chars in n"              , "" },
-   { "salnum"     ,  0, CALC__salnum            , 'f', "s:s"    , 'c', "change all non-alphanumeric chars in n to '_'"     , "" },
-   { "salnumc"    ,  0, CALC__salnumc           , 'f', "s:s"    , 'c', "remove all non-alphanumeric chars in n"            , "" },
-   { "sbasic"     ,  0, CALC__sbasic            , 'f', "s:s"    , 'c', "change all non-basic chars in n to '_'"            , "" },
-   { "sbasicc"    ,  0, CALC__sbasicc           , 'f', "s:s"    , 'c', "remove all non-basic chars in n"                   , "" },
-   { "swrite"     ,  0, CALC__swrite            , 'f', "s:s"    , 'c', "change all non-writing chars in n to '_'"          , "" },
-   { "swritec"    ,  0, CALC__swritec           , 'f', "s:s"    , 'c', "remove all non-writing chars in n"                 , "" },
-   { "sexten"     ,  0, CALC__sexten            , 'f', "s:s"    , 'c', "change all non-extended chars in n to '_'"         , "" },
-   { "sextenc"    ,  0, CALC__sextenc           , 'f', "s:s"    , 'c', "change all non-extended chars in n"                , "" },
-   { "sprint"     ,  0, CALC__sprint            , 'f', "s:s"    , 'c', "change all non-printable chars in n to '_'"        , "" },
-   { "sprintc"    ,  0, CALC__sprintc           , 'f', "s:s"    , 'c', "change all non-printable chars in n"               , "" },
-   { "sseven"     ,  0, CALC__sseven            , 'f', "s:s"    , 'c', "change all non-7bit safe chars in n to '_'"        , "" },
-   { "ssevenc"    ,  0, CALC__ssevenc           , 'f', "s:s"    , 'c', "remove all non-7bit safe chars in n"               , "" },
+   { "lower"      ,  0, CALC__lower             , 'f', "s:s"    , 'c', "change all chars in n to lower case"               , "" , ""            , ""            , ""            },
+   { "upper"      ,  0, CALC__upper             , 'f', "s:s"    , 'c', "change all chars in n to upper case"               , "" , ""            , ""            , ""            },
+   { "char"       ,  0, CALC__char              , 'f', "s:v"    , 'c', "change x into an ascii character with that code"   , "" , ""            , ""            , ""            },
+   { "code"       ,  0, CALC__code              , 'f', "v:s"    , 'c', "return ascii value of first char in n"             , "" , ""            , ""            , ""            },
+   { "value"      ,  0, CALC__value             , 'f', "v:s"    , 'c', "ansi-c atof() to convert text number into value"   , "" , ""            , ""            , ""            },
+   { "salpha"     ,  0, CALC__salpha            , 'f', "s:s"    , 'c', "change all non-alphabetic chars in n to '_'"       , "" , ""            , ""            , ""            },
+   { "salphac"    ,  0, CALC__salphac           , 'f', "s:s"    , 'c', "remove all non-alphabetic chars in n"              , "" , ""            , ""            , ""            },
+   { "salnum"     ,  0, CALC__salnum            , 'f', "s:s"    , 'c', "change all non-alphanumeric chars in n to '_'"     , "" , ""            , ""            , ""            },
+   { "salnumc"    ,  0, CALC__salnumc           , 'f', "s:s"    , 'c', "remove all non-alphanumeric chars in n"            , "" , ""            , ""            , ""            },
+   { "sbasic"     ,  0, CALC__sbasic            , 'f', "s:s"    , 'c', "change all non-basic chars in n to '_'"            , "" , ""            , ""            , ""            },
+   { "sbasicc"    ,  0, CALC__sbasicc           , 'f', "s:s"    , 'c', "remove all non-basic chars in n"                   , "" , ""            , ""            , ""            },
+   { "swrite"     ,  0, CALC__swrite            , 'f', "s:s"    , 'c', "change all non-writing chars in n to '_'"          , "" , ""            , ""            , ""            },
+   { "swritec"    ,  0, CALC__swritec           , 'f', "s:s"    , 'c', "remove all non-writing chars in n"                 , "" , ""            , ""            , ""            },
+   { "sexten"     ,  0, CALC__sexten            , 'f', "s:s"    , 'c', "change all non-extended chars in n to '_'"         , "" , ""            , ""            , ""            },
+   { "sextenc"    ,  0, CALC__sextenc           , 'f', "s:s"    , 'c', "change all non-extended chars in n"                , "" , ""            , ""            , ""            },
+   { "sprint"     ,  0, CALC__sprint            , 'f', "s:s"    , 'c', "change all non-printable chars in n to '_'"        , "" , ""            , ""            , ""            },
+   { "sprintc"    ,  0, CALC__sprintc           , 'f', "s:s"    , 'c', "change all non-printable chars in n"               , "" , ""            , ""            , ""            },
+   { "sseven"     ,  0, CALC__sseven            , 'f', "s:s"    , 'c', "change all non-7bit safe chars in n to '_'"        , "" , ""            , ""            , ""            },
+   { "ssevenc"    ,  0, CALC__ssevenc           , 'f', "s:s"    , 'c', "remove all non-7bit safe chars in n"               , "" , ""            , ""            , ""            },
    /*---(trig functions)------------------*/
-   { "rad"        ,  0, CALC__radians           , 'f', "v:v"    , 't', "translate x degrees into radians"                  , "" },
-   { "deg"        ,  0, CALC__degrees           , 'f', "v:v"    , 't', "translate x radians into degrees"                  , "" },
-   { "pi"         ,  0, CALC__pi                , 'f', "v:"     , 't', "value of PI to 7 decimal places"                   , "" },
-   { "hypot"      ,  0, CALC__hypot             , 'f', "v:vv"   , 't', "hypotenuse length given sides x and y"             , "" },
-   { "side"       ,  0, CALC__side              , 'f', "v:vv"   , 't', "side length given hypotenuse and other side"       , "" },
-   { "sin"        ,  0, CALC__sin               , 'f', "v:v"    , 't', "sine (degrees)"                                    , "" },
-   { "sinr"       ,  0, CALC__sinr              , 'f', "v:v"    , 't', "sine (radians)"                                    , "" },
-   { "csc"        ,  0, CALC__csc               , 'f', "v:v"    , 't', "cosecant (degrees)"                                , "" },
-   { "cscr"       ,  0, CALC__cscr              , 'f', "v:v"    , 't', "cosecant (radians)"                                , "" },
-   { "cos"        ,  0, CALC__cos               , 'f', "v:v"    , 't', "cosine (degrees)"                                  , "" },
-   { "cosr"       ,  0, CALC__cosr              , 'f', "v:v"    , 't', "cosine (radians)"                                  , "" },
-   { "sec"        ,  0, CALC__sec               , 'f', "v:v"    , 't', "secant (degrees)"                                  , "" },
-   { "secr"       ,  0, CALC__secr              , 'f', "v:v"    , 't', "secant (radians)"                                  , "" },
-   { "tan"        ,  0, CALC__tan               , 'f', "v:v"    , 't', "tangent (degrees)"                                 , "" },
-   { "tanr"       ,  0, CALC__tanr              , 'f', "v:v"    , 't', "tangent (radians)"                                 , "" },
-   { "cot"        ,  0, CALC__cot               , 'f', "v:v"    , 't', "cotangent (degrees)"                               , "" },
-   { "cotr"       ,  0, CALC__cotr              , 'f', "v:v"    , 't', "cotangent (radians)"                               , "" },
-   { "crd"        ,  0, CALC__crd               , 'f', "v:v"    , 't', "chord (degrees)"                                   , "" },
-   { "crdr"       ,  0, CALC__crdr              , 'f', "v:v"    , 't', "chord (radians)"                                   , "" },
-   { "asin"       ,  0, CALC__asin              , 'f', "v:v"    , 't', "arcsine in degrees"                                , "" },
-   { "asinr"      ,  0, CALC__asinr             , 'f', "v:v"    , 't', "arcsine in radians"                                , "" },
-   { "acos"       ,  0, CALC__acos              , 'f', "v:v"    , 't', "arcosine in degrees"                               , "" },
-   { "acosr"      ,  0, CALC__acosr             , 'f', "v:v"    , 't', "arcosine in radians"                               , "" },
-   { "atan"       ,  0, CALC__atan              , 'f', "v:v"    , 't', "arctangent in degrees"                             , "" },
-   { "atanr"      ,  0, CALC__atanr             , 'f', "v:v"    , 't', "arctangent in radians"                             , "" },
-   { "atan2"      ,  0, CALC__atan2             , 'f', "v:vv"   , 't', "arctangent in degrees given sides x and y"         , "" },
-   { "atanr2"     ,  0, CALC__atanr2            , 'f', "v:vv"   , 't', "arctangent in radians given sides x and y"         , "" },
+   { "rad"        ,  0, CALC__radians           , 'f', "v:v"    , 't', "translate x degrees into radians"                  , "" , ""            , ""            , ""            },
+   { "deg"        ,  0, CALC__degrees           , 'f', "v:v"    , 't', "translate x radians into degrees"                  , "" , ""            , ""            , ""            },
+   { "pi"         ,  0, CALC__pi                , 'f', "v:"     , 't', "value of PI to 7 decimal places"                   , "" , ""            , ""            , ""            },
+   { "hypot"      ,  0, CALC__hypot             , 'f', "v:vv"   , 't', "hypotenuse length given sides x and y"             , "" , ""            , ""            , ""            },
+   { "side"       ,  0, CALC__side              , 'f', "v:vv"   , 't', "side length given hypotenuse and other side"       , "" , ""            , ""            , ""            },
+   { "sin"        ,  0, CALC__sin               , 'f', "v:v"    , 't', "sine (degrees)"                                    , "" , ""            , ""            , ""            },
+   { "sinr"       ,  0, CALC__sinr              , 'f', "v:v"    , 't', "sine (radians)"                                    , "" , ""            , ""            , ""            },
+   { "csc"        ,  0, CALC__csc               , 'f', "v:v"    , 't', "cosecant (degrees)"                                , "" , ""            , ""            , ""            },
+   { "cscr"       ,  0, CALC__cscr              , 'f', "v:v"    , 't', "cosecant (radians)"                                , "" , ""            , ""            , ""            },
+   { "cos"        ,  0, CALC__cos               , 'f', "v:v"    , 't', "cosine (degrees)"                                  , "" , ""            , ""            , ""            },
+   { "cosr"       ,  0, CALC__cosr              , 'f', "v:v"    , 't', "cosine (radians)"                                  , "" , ""            , ""            , ""            },
+   { "sec"        ,  0, CALC__sec               , 'f', "v:v"    , 't', "secant (degrees)"                                  , "" , ""            , ""            , ""            },
+   { "secr"       ,  0, CALC__secr              , 'f', "v:v"    , 't', "secant (radians)"                                  , "" , ""            , ""            , ""            },
+   { "tan"        ,  0, CALC__tan               , 'f', "v:v"    , 't', "tangent (degrees)"                                 , "" , ""            , ""            , ""            },
+   { "tanr"       ,  0, CALC__tanr              , 'f', "v:v"    , 't', "tangent (radians)"                                 , "" , ""            , ""            , ""            },
+   { "cot"        ,  0, CALC__cot               , 'f', "v:v"    , 't', "cotangent (degrees)"                               , "" , ""            , ""            , ""            },
+   { "cotr"       ,  0, CALC__cotr              , 'f', "v:v"    , 't', "cotangent (radians)"                               , "" , ""            , ""            , ""            },
+   { "crd"        ,  0, CALC__crd               , 'f', "v:v"    , 't', "chord (degrees)"                                   , "" , ""            , ""            , ""            },
+   { "crdr"       ,  0, CALC__crdr              , 'f', "v:v"    , 't', "chord (radians)"                                   , "" , ""            , ""            , ""            },
+   { "asin"       ,  0, CALC__asin              , 'f', "v:v"    , 't', "arcsine in degrees"                                , "" , ""            , ""            , ""            },
+   { "asinr"      ,  0, CALC__asinr             , 'f', "v:v"    , 't', "arcsine in radians"                                , "" , ""            , ""            , ""            },
+   { "acos"       ,  0, CALC__acos              , 'f', "v:v"    , 't', "arcosine in degrees"                               , "" , ""            , ""            , ""            },
+   { "acosr"      ,  0, CALC__acosr             , 'f', "v:v"    , 't', "arcosine in radians"                               , "" , ""            , ""            , ""            },
+   { "atan"       ,  0, CALC__atan              , 'f', "v:v"    , 't', "arctangent in degrees"                             , "" , ""            , ""            , ""            },
+   { "atanr"      ,  0, CALC__atanr             , 'f', "v:v"    , 't', "arctangent in radians"                             , "" , ""            , ""            , ""            },
+   { "atan2"      ,  0, CALC__atan2             , 'f', "v:vv"   , 't', "arctangent in degrees given sides x and y"         , "" , ""            , ""            , ""            },
+   { "atanr2"     ,  0, CALC__atanr2            , 'f', "v:vv"   , 't', "arctangent in radians given sides x and y"         , "" , ""            , ""            , ""            },
    /*---(address functions)---------------*/
-   { "loc"        ,  0, CALC__loc               , 'f', "a:vvv"  , 'a', "create a cell reference from tab, col, row"        , "" },
-   { "loc_i"      ,  0, CALC__loci              , 'f', "a:vv"   , 'a', "create a cell reference from col, row, same tab"   , "" },
-   { "loc_t"      ,  0, CALC__loct              , 'f', "a:v"    , 'a', "create a cell reference from tab, same col, row"   , "" },
-   { "loc_c"      ,  0, CALC__locc              , 'f', "a:v"    , 'a', "create a cell reference from col, same tab, row"   , "" },
-   { "loc_r"      ,  0, CALC__locr              , 'f', "a:v"    , 'a', "create a cell reference from row, same tab, col"   , "" },
-   { "loco"       ,  0, CALC__loco              , 'f', "a:vvv"  , 'a', "create offset reference from tab, col, row"        , "" },
-   { "loco_i"     ,  0, CALC__locoi             , 'f', "a:vv"   , 'a', "create offset reference from col, row, same tab"   , "" },
-   { "loco_t"     ,  0, CALC__locot             , 'f', "a:v"    , 'a', "create offset reference from tab, same col, row"   , "" },
-   { "loco_c"     ,  0, CALC__lococ             , 'f', "a:v"    , 'a', "create offset reference from col, same tab, row"   , "" },
-   { "loco_r"     ,  0, CALC__locor             , 'f', "a:v"    , 'a', "create offset reference from row, same tab, col"   , "" },
+   { "loc"        ,  0, CALC__loc               , 'f', "a:vvv"  , 'a', "create a cell reference from tab, col, row"        , "" , ""            , ""            , ""            },
+   { "loc_i"      ,  0, CALC__loci              , 'f', "a:vv"   , 'a', "create a cell reference from col, row, same tab"   , "" , ""            , ""            , ""            },
+   { "l"          ,  0, CALC__loci              , 'f', "a:vv"   , 'a', "create a cell reference from col, row, same tab"   , "" , ""            , ""            , ""            },
+   { "loc_t"      ,  0, CALC__loct              , 'f', "a:v"    , 'a', "create a cell reference from tab, same col, row"   , "" , ""            , ""            , ""            },
+   { "loc_c"      ,  0, CALC__locc              , 'f', "a:v"    , 'a', "create a cell reference from col, same tab, row"   , "" , ""            , ""            , ""            },
+   { "loc_r"      ,  0, CALC__locr              , 'f', "a:v"    , 'a', "create a cell reference from row, same tab, col"   , "" , ""            , ""            , ""            },
+   { "loco"       ,  0, CALC__loco              , 'f', "a:vvv"  , 'a', "create offset reference from tab, col, row"        , "" , ""            , ""            , ""            },
+   { "loco_i"     ,  0, CALC__locoi             , 'f', "a:vv"   , 'a', "create offset reference from col, row, same tab"   , "" , ""            , ""            , ""            },
+   { "loco_t"     ,  0, CALC__locot             , 'f', "a:v"    , 'a', "create offset reference from tab, same col, row"   , "" , ""            , ""            , ""            },
+   { "loco_c"     ,  0, CALC__lococ             , 'f', "a:v"    , 'a', "create offset reference from col, same tab, row"   , "" , ""            , ""            , ""            },
+   { "loco_r"     ,  0, CALC__locor             , 'f', "a:v"    , 'a', "create offset reference from row, same tab, col"   , "" , ""            , ""            , ""            },
    /*---(cell info functions)-------------*/
-   { "isnum"      ,  0, CALC__isnum             , 'f', "t:a"    , 'i', "T if cell a is numeric value"                      , "" },
-   { "isfor"      ,  0, CALC__isfor             , 'f', "t:a"    , 'i', "T if cell a is numeric formula"                    , "" },
-   { "isvalue"    ,  0, CALC__isval             , 'f', "t:a"    , 'i', "T if cell a is numeric value or formula"           , "" },
-   { "isstr"      ,  0, CALC__isstr             , 'f', "t:a"    , 'i', "T if cell a is string value"                       , "" },
-   { "ismod"      ,  0, CALC__ismod             , 'f', "t:a"    , 'i', "T if cell a is string formula"                     , "" },
-   { "istext"     ,  0, CALC__istext            , 'f', "t:a"    , 'i', "T if cell a is string value or formula"            , "" },
-   { "isblank"    ,  0, CALC__isblank           , 'f', "t:a"    , 'i', "T if cell a is empty"                              , "" },
-   { "iscalc"     ,  0, CALC__iscalc            , 'f', "t:a"    , 'i', "T if cell a is numeric or string formula"          , "" },
-   { "ispoint"    ,  0, CALC__ispoint           , 'f', "t:a"    , 'i', "T if cell a is cell or range pointer"              , "" },
-   { "iserror"    ,  0, CALC__iserror           , 'f', "t:a"    , 'i', "T if cell a is in error status"                    , "" },
-   { "me"         ,  0, CALC__me                , 'f', "s:"     , 'i', "cell label of current cell"                        , "" },
-   { "label"      ,  0, CALC__addr              , 'f', "s:a"    , 'i', "cell label of cell a"                              , "" },
-   { "filename"   ,  0, CALC__filename          , 'f', "s:"     , 'i', "full name of current file"                         , "" },
-   { "filebase"   ,  0, CALC__filebase          , 'f', "s:"     , 'i', "basename of current file"                          , "" },
-   { "tabname"    ,  0, CALC__tabname           , 'f', "s:a"    , 'i', "tab name of cell a"                                , "" },
-   { "tab"        ,  0, CALC__tab               , 'f', "v:a"    , 'i', "tab number of cell a"                              , "" },
-   { "col"        ,  0, CALC__col               , 'f', "v:a"    , 'i', "col number of cell a"                              , "" },
-   { "row"        ,  0, CALC__row               , 'f', "v:a"    , 'i', "row number of cell a"                              , "" },
-   { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , 'i', "formula source of cell a"                          , "" },
-   { "f"          ,  0, CALC__formula           , 'f', "s:a"    , 'i', "formula source of cell a"                          , "" },
-   { "rpn"        ,  0, CALC__rpn               , 'f', "s:a"    , 'i', "rpn version of cell a formula"                     , "" },
-   { "r"          ,  0, CALC__rpn               , 'f', "s:a"    , 'i', "rpn version of cell a formula"                     , "" },
-   { "nrpn"       ,  0, CALC__nrpn              , 'f', "v:a"    , 'i', "count of formula tokens in cell a "                , "" },
-   { "reqs"       ,  0, CALC__reqs              , 'f', "s:a"    , 'i', "list of cells required by cell a"                  , "" },
-   { "nreq"       ,  0, CALC__nreq              , 'f', "v:a"    , 'i', "count of cells required by cell a"                 , "" },
-   { "pros"       ,  0, CALC__pros              , 'f', "s:a"    , 'i', "list of cells provided to by cell a"               , "" },
-   { "npro"       ,  0, CALC__npro              , 'f', "v:a"    , 'i', "count of cells provided to by cell a"              , "" },
+   { "isnum"      ,  0, CALC__isnum             , 'f', "t:a"    , 'i', "T if cell a is numeric value"                      , "" , ""            , ""            , ""            },
+   { "isfor"      ,  0, CALC__isfor             , 'f', "t:a"    , 'i', "T if cell a is numeric formula"                    , "" , ""            , ""            , ""            },
+   { "isvalue"    ,  0, CALC__isval             , 'f', "t:a"    , 'i', "T if cell a is numeric value or formula"           , "" , ""            , ""            , ""            },
+   { "isstr"      ,  0, CALC__isstr             , 'f', "t:a"    , 'i', "T if cell a is string value"                       , "" , ""            , ""            , ""            },
+   { "ismod"      ,  0, CALC__ismod             , 'f', "t:a"    , 'i', "T if cell a is string formula"                     , "" , ""            , ""            , ""            },
+   { "istext"     ,  0, CALC__istext            , 'f', "t:a"    , 'i', "T if cell a is string value or formula"            , "" , ""            , ""            , ""            },
+   { "isblank"    ,  0, CALC__isblank           , 'f', "t:a"    , 'i', "T if cell a is empty"                              , "" , ""            , ""            , ""            },
+   { "iscalc"     ,  0, CALC__iscalc            , 'f', "t:a"    , 'i', "T if cell a is numeric or string formula"          , "" , ""            , ""            , ""            },
+   { "ispoint"    ,  0, CALC__ispoint           , 'f', "t:a"    , 'i', "T if cell a is cell or range pointer"              , "" , ""            , ""            , ""            },
+   { "iserror"    ,  0, CALC__iserror           , 'f', "t:a"    , 'i', "T if cell a is in error status"                    , "" , ""            , ""            , ""            },
+   { "me"         ,  0, CALC__me                , 'f', "s:"     , 'i', "cell label of current cell"                        , "" , ""            , ""            , ""            },
+   { "label"      ,  0, CALC__addr              , 'f', "s:a"    , 'i', "cell label of cell a"                              , "" , ""            , ""            , ""            },
+   { "filename"   ,  0, CALC__filename          , 'f', "s:"     , 'i', "full name of current file"                         , "" , ""            , ""            , ""            },
+   { "filebase"   ,  0, CALC__filebase          , 'f', "s:"     , 'i', "basename of current file"                          , "" , ""            , ""            , ""            },
+   { "tabname"    ,  0, CALC__tabname           , 'f', "s:a"    , 'i', "tab name of cell a"                                , "" , ""            , ""            , ""            },
+   { "tab"        ,  0, CALC__tab               , 'f', "v:a"    , 'i', "tab number of cell a"                              , "" , ""            , ""            , ""            },
+   { "col"        ,  0, CALC__col               , 'f', "v:a"    , 'i', "col number of cell a"                              , "" , ""            , ""            , ""            },
+   { "row"        ,  0, CALC__row               , 'f', "v:a"    , 'i', "row number of cell a"                              , "" , ""            , ""            , ""            },
+   { "formula"    ,  0, CALC__formula           , 'f', "s:a"    , 'i', "formula source of cell a"                          , "" , ""            , ""            , ""            },
+   { "f"          ,  0, CALC__formula           , 'f', "s:a"    , 'i', "formula source of cell a"                          , "" , ""            , ""            , ""            },
+   { "rpn"        ,  0, CALC__rpn               , 'f', "s:a"    , 'i', "rpn version of cell a formula"                     , "" , ""            , ""            , ""            },
+   { "r"          ,  0, CALC__rpn               , 'f', "s:a"    , 'i', "rpn version of cell a formula"                     , "" , ""            , ""            , ""            },
+   { "nrpn"       ,  0, CALC__nrpn              , 'f', "v:a"    , 'i', "count of formula tokens in cell a "                , "" , ""            , ""            , ""            },
+   { "reqs"       ,  0, CALC__reqs              , 'f', "s:a"    , 'i', "list of cells required by cell a"                  , "" , ""            , ""            , ""            },
+   { "nreq"       ,  0, CALC__nreq              , 'f', "v:a"    , 'i', "count of cells required by cell a"                 , "" , ""            , ""            , ""            },
+   { "pros"       ,  0, CALC__pros              , 'f', "s:a"    , 'i', "list of cells provided to by cell a"               , "" , ""            , ""            , ""            },
+   { "npro"       ,  0, CALC__npro              , 'f', "v:a"    , 'i', "count of cells provided to by cell a"              , "" , ""            , ""            , ""            },
    /*---(range info functions)------------*/
-   { "dist"       ,  0, CALC__dist              , 'f', "v:r"    , 'r', "geometric distance between beg and end locations"  , "" },
-   { "tabs"       ,  0, CALC__tabs              , 'f', "v:r"    , 'r', "number of tabs in range"                           , "" },
-   { "cols"       ,  0, CALC__cols              , 'f', "v:r"    , 'r', "number of columns in range"                        , "" },
-   { "rows"       ,  0, CALC__rows              , 'f', "v:r"    , 'r', "number of rows in range"                           , "" },
-   { "sum"        ,  0, CALC__sum               , 'f', "v:r"    , 'r', "sum of numeric cells in range"                     , "" },
-   { "s"          ,  0, CALC__sum               , 'f', "v:r"    , 'r', "sum of numeric cells in range"                     , "" },
-   { "count"      ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" },
-   { "c"          ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" },
-   { "counts"     ,  0, CALC__counts            , 'f', "v:r"    , 'r', "count of string cells in range"                    , "" },
-   { "counta"     ,  0, CALC__counta            , 'f', "v:r"    , 'r', "count of filled cells in range"                    , "" },
-   { "countb"     ,  0, CALC__countb            , 'f', "v:r"    , 'r', "count of blank cells in range"                     , "" },
-   { "counte"     ,  0, CALC__counte            , 'f', "v:r"    , 'r', "count of every cell in range"                      , "" },
-   { "avg"        ,  0, CALC__average           , 'f', "v:r"    , 'r', "average of numeric cells in range"                 , "" },
-   { "mean"       ,  0, CALC__average           , 'f', "v:r"    , 'r', "average of numeric cells in range"                 , "" },
-   { "min"        ,  0, CALC__minimum           , 'f', "v:r"    , 'r', "minimum value in range"                            , "" },
-   { "max"        ,  0, CALC__maximum           , 'f', "v:r"    , 'r', "maximum value in range"                            , "" },
-   { "q0"         ,  0, CALC__minimum           , 'f', "v:r"    , 'r', "minimum value in range"                            , "" },
-   { "q1"         ,  0, CALC__quarter1          , 'f', "v:r"    , 'r', "first quarter value in range"                      , "" },
-   { "q2"         ,  0, CALC__average           , 'f', "v:r"    , 'r', "second quarter (average) value in range"           , "" },
-   { "q3"         ,  0, CALC__quarter3          , 'f', "v:r"    , 'r', "third quarter value in range"                      , "" },
-   { "q4"         ,  0, CALC__maximum           , 'f', "v:r"    , 'r', "maximum value in range"                            , "" },
-   { "range"      ,  0, CALC__range             , 'f', "v:r"    , 'r', "difference between min and max in range"           , "" },
-   { "rangeq"     ,  0, CALC__rangeq            , 'f', "v:r"    , 'r', "difference between q1 and q3 in range"             , "" },
-   { "median"     ,  0, CALC__median            , 'f', "v:r"    , 'r', "median value in range"                             , "" },
-   { "mode"       ,  0, CALC__mode              , 'f', "v:r"    , 'r', "mode of range"                                     , "" },
-   { "stddev"     ,  0, CALC__stddev            , 'f', "v:r"    , 'r', "standard deviation in range"                       , "" },
+   { "dist"       ,  0, CALC__dist              , 'f', "v:r"    , 'r', "geometric distance between beg and end locations"  , "" , ""            , ""            , ""            },
+   { "tabs"       ,  0, CALC__tabs              , 'f', "v:r"    , 'r', "number of tabs in range"                           , "" , ""            , ""            , ""            },
+   { "cols"       ,  0, CALC__cols              , 'f', "v:r"    , 'r', "number of columns in range"                        , "" , ""            , ""            , ""            },
+   { "rows"       ,  0, CALC__rows              , 'f', "v:r"    , 'r', "number of rows in range"                           , "" , ""            , ""            , ""            },
+   { "sum"        ,  0, CALC__sum               , 'f', "v:r"    , 'r', "sum of numeric cells in range"                     , "" , ""            , ""            , ""            },
+   { "s"          ,  0, CALC__sum               , 'f', "v:r"    , 'r', "sum of numeric cells in range"                     , "" , ""            , ""            , ""            },
+   { "count"      ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" , "count"       , ""            , ""            },
+   { "numbers"    ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" , "count"       , ""            , ""            },
+   { "c"          ,  0, CALC__count             , 'f', "v:r"    , 'r', "count of numeric cells in range"                   , "" , "count"       , ""            , ""            },
+   { "counts"     ,  0, CALC__counts            , 'f', "v:r"    , 'r', "count of string cells in range"                    , "" , ""            , ""            , ""            },
+   { "strings"    ,  0, CALC__counts            , 'f', "v:r"    , 'r', "count of string cells in range"                    , "" , ""            , ""            , ""            },
+   { "counta"     ,  0, CALC__counta            , 'f', "v:r"    , 'r', "count of filled cells in range"                    , "" , "counta"      , ""            , ""            },
+   { "filled"     ,  0, CALC__counta            , 'f', "v:r"    , 'r', "count of filled cells in range"                    , "" , "counta"      , ""            , ""            },
+   { "countb"     ,  0, CALC__countb            , 'f', "v:r"    , 'r', "count of blank cells in range"                     , "" , "countblank"  , ""            , ""            },
+   { "blanks"     ,  0, CALC__countb            , 'f', "v:r"    , 'r', "count of blank cells in range"                     , "" , "countblank"  , ""            , ""            },
+   { "counte"     ,  0, CALC__counte            , 'f', "v:r"    , 'r', "count of every cell in range"                      , "" , ""            , ""            , ""            },
+   { "every"      ,  0, CALC__counte            , 'f', "v:r"    , 'r', "count of every cell in range"                      , "" , ""            , ""            , ""            },
+   { "avg"        ,  0, CALC__average           , 'f', "v:r"    , 'r', "average of numeric cells in range"                 , "" , ""            , ""            , ""            },
+   { "mean"       ,  0, CALC__average           , 'f', "v:r"    , 'r', "average of numeric cells in range"                 , "" , ""            , ""            , ""            },
+   { "min"        ,  0, CALC__minimum           , 'f', "v:r"    , 'r', "minimum value in range"                            , "" , ""            , ""            , ""            },
+   { "max"        ,  0, CALC__maximum           , 'f', "v:r"    , 'r', "maximum value in range"                            , "" , ""            , ""            , ""            },
+   { "range"      ,  0, CALC__range             , 'f', "v:r"    , 'r', "difference between min and max in range"           , "" , ""            , ""            , ""            },
+   { "qtr0"       ,  0, CALC__minimum           , 'f', "v:r"    , 'r', "minimum value in range"                            , "" , ""            , ""            , ""            },
+   { "qtr1"       ,  0, CALC__quarter1          , 'f', "v:r"    , 'r', "first quarter value in range"                      , "" , ""            , ""            , ""            },
+   { "qtr2"       ,  0, CALC__average           , 'f', "v:r"    , 'r', "second quarter (average) value in range"           , "" , ""            , ""            , ""            },
+   { "qtr3"       ,  0, CALC__quarter3          , 'f', "v:r"    , 'r', "third quarter value in range"                      , "" , ""            , ""            , ""            },
+   { "qtr4"       ,  0, CALC__maximum           , 'f', "v:r"    , 'r', "maximum value in range"                            , "" , ""            , ""            , ""            },
+   { "rangeq"     ,  0, CALC__rangeq            , 'f', "v:r"    , 'r', "difference between q1 and q3 in range"             , "" , ""            , ""            , ""            },
+   { "median"     ,  0, CALC__median            , 'f', "v:r"    , 'r', "median value in range"                             , "" , ""            , ""            , ""            },
+   { "mode"       ,  0, CALC__mode              , 'f', "v:r"    , 'r', "mode of range"                                     , "" , ""            , ""            , ""            },
+   { "stddev"     ,  0, CALC__stddev            , 'f', "v:r"    , 'r', "standard deviation in range"                       , "" , ""            , ""            , ""            },
    /*---(date functions)------------------*/
-   { "today"      ,  0, CALC__now               , 'f', "v:"     , 'd', "current unix epoch (time number) in seconds"       , "" },
-   { "now"        ,  0, CALC__now               , 'f', "v:"     , 'd', "current unix epoch (time number) in seconds"       , "" },
-   { "year"       ,  0, CALC__year              , 'f', "v:v"    , 'd', "year number of time number"                        , "" },
-   { "month"      ,  0, CALC__month             , 'f', "v:v"    , 'd', "month number (0-11) of time number"                , "" },
-   { "day"        ,  0, CALC__day               , 'f', "v:v"    , 'd', "day number (0-31) of time number"                  , "" },
-   { "hour"       ,  0, CALC__hour              , 'f', "v:v"    , 'd', "hour number (0-23) of time number"                 , "" },
-   { "minute"     ,  0, CALC__minute            , 'f', "v:v"    , 'd', "minute number (0-59) of time number"               , "" },
-   { "second"     ,  0, CALC__second            , 'f', "v:v"    , 'd', "second number (0-59) of time number"               , "" },
-   { "weekday"    ,  0, CALC__weekday           , 'f', "v:v"    , 'd', "weekday number (0-6) of time number"               , "" },
-   { "weeknum"    ,  0, CALC__weeknum           , 'f', "v:v"    , 'd', "week number (0-54) of time number"                 , "" },
-   { "datevalue"  ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" },
-   { "dv"         ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" },
-   { "date"       ,  0, CALC__date              , 'f', "v:vvv"  , 'd', "turns year, month, day values into eqoch number"   , "" },
-   { "time"       ,  0, CALC__time              , 'f', "v:vvv"  , 'd', "turns hour, min, sec values into eqoch number"     , "" },
-   { "datepart"   ,  0, CALC__datepart          , 'f', "v:v"    , 'd', "incremental epoch yy:mm:dd part of epoch number"   , "" },
-   { "timepart"   ,  0, CALC__timepart          , 'f', "v:v"    , 'd', "incremental epoch hh:mm:ss part of epoch number"   , "" },
+   { "today"      ,  0, CALC__now               , 'f', "v:"     , 'd', "current unix epoch (time number) in seconds"       , "" , ""            , ""            , ""            },
+   { "now"        ,  0, CALC__now               , 'f', "v:"     , 'd', "current unix epoch (time number) in seconds"       , "" , ""            , ""            , ""            },
+   { "year"       ,  0, CALC__year              , 'f', "v:v"    , 'd', "year number of time number"                        , "" , ""            , ""            , ""            },
+   { "month"      ,  0, CALC__month             , 'f', "v:v"    , 'd', "month number (0-11) of time number"                , "" , ""            , ""            , ""            },
+   { "day"        ,  0, CALC__day               , 'f', "v:v"    , 'd', "day number (0-31) of time number"                  , "" , ""            , ""            , ""            },
+   { "hour"       ,  0, CALC__hour              , 'f', "v:v"    , 'd', "hour number (0-23) of time number"                 , "" , ""            , ""            , ""            },
+   { "minute"     ,  0, CALC__minute            , 'f', "v:v"    , 'd', "minute number (0-59) of time number"               , "" , ""            , ""            , ""            },
+   { "second"     ,  0, CALC__second            , 'f', "v:v"    , 'd', "second number (0-59) of time number"               , "" , ""            , ""            , ""            },
+   { "weekday"    ,  0, CALC__weekday           , 'f', "v:v"    , 'd', "weekday number (0-6) of time number"               , "" , ""            , ""            , ""            },
+   { "weeknum"    ,  0, CALC__weeknum           , 'f', "v:v"    , 'd', "week number (0-54) of time number"                 , "" , ""            , ""            , ""            },
+   { "datevalue"  ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" , ""            , ""            , ""            },
+   { "dv"         ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" , ""            , ""            , ""            },
+   { "date"       ,  0, CALC__date              , 'f', "v:vvv"  , 'd', "turns year, month, day values into eqoch number"   , "" , ""            , ""            , ""            },
+   { "time"       ,  0, CALC__time              , 'f', "v:vvv"  , 'd', "turns hour, min, sec values into eqoch number"     , "" , ""            , ""            , ""            },
+   { "datepart"   ,  0, CALC__datepart          , 'f', "v:v"    , 'd', "incremental epoch yy:mm:dd part of epoch number"   , "" , ""            , ""            , ""            },
+   { "timepart"   ,  0, CALC__timepart          , 'f', "v:v"    , 'd', "incremental epoch hh:mm:ss part of epoch number"   , "" , ""            , ""            , ""            },
    /*---(lookup functions)----------------*/
-   { "off"        ,  0, CALC__offs              , 'f', "?:vvv"  , 'f', "contents of cell offset from current tab,col,row"  , "" },
-   { "off_t"      ,  0, CALC__offt              , 'f', "?:v"    , 'f', "contents of cell offset from current tab"          , "" },
-   { "off_c"      ,  0, CALC__offc              , 'f', "?:v"    , 'f', "contents of cell offset from current col"          , "" },
-   { "off_r"      ,  0, CALC__offr              , 'f', "?:v"    , 'f', "contents of cell offset from current row"          , "" },
-   { "index"      ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" },
-   { "i"          ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" },
-   { "vlookup"    ,  0, CALC__vlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to right of one matching n"     , "" },
-   { "v"          ,  0, CALC__vlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to right of one matching n"     , "" },
-   { "hlookup"    ,  0, CALC__hlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to down of one matching n"      , "" },
-   { "h"          ,  0, CALC__hlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to down of one matching n"      , "" },
-   { "entry"      ,  0, CALC__entry             , 'f', "?:r"    , 'f', "first entry next to or above current in range"     , "" },
+   { "off"        ,  0, CALC__offs              , 'f', "?:vvv"  , 'f', "contents of cell offset from current tab,col,row"  , "" , ""            , ""            , ""            },
+   { "off_t"      ,  0, CALC__offt              , 'f', "?:v"    , 'f', "contents of cell offset from current tab"          , "" , ""            , ""            , ""            },
+   { "off_c"      ,  0, CALC__offc              , 'f', "?:v"    , 'f', "contents of cell offset from current col"          , "" , ""            , ""            , ""            },
+   { "off_r"      ,  0, CALC__offr              , 'f', "?:v"    , 'f', "contents of cell offset from current row"          , "" , ""            , ""            , ""            },
+   { "off_i"      ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" , ""            , ""            , ""            },
+   { "index"      ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" , ""            , ""            , ""            },
+   { "i"          ,  0, CALC__index             , 'f', "?:vv"   , 'f', "contents of cell offset from current col,row"      , "" , ""            , ""            , ""            },
+   { "vlookup"    ,  0, CALC__vlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to right of one matching n"     , "" , ""            , ""            , ""            },
+   { "v"          ,  0, CALC__vlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to right of one matching n"     , "" , ""            , ""            , ""            },
+   { "hlookup"    ,  0, CALC__hlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to down of one matching n"      , "" , ""            , ""            , ""            },
+   { "h"          ,  0, CALC__hlookup           , 'f', "?:rsv"  , 'f', "contents of cell x to down of one matching n"      , "" , ""            , ""            , ""            },
+   { "entry"      ,  0, CALC__entry             , 'f', "?:r"    , 'f', "first entry next to or above current in range"     , "" , ""            , ""            , ""            },
    /*---(end-of-s_funcs)--------------------*/
-   { "END"        ,  0, NULL                    , '-', ""       , '-', ""                                                  , "" },
+   { "END"        ,  0, NULL                    , '-', ""       , '-', ""                                                  , "" , ""            , ""            , ""            },
 };
 
-char         /*--> initialize calculation capability -----[--------[--------]-*/
+char         /*--> initialize calculation capability -----[ shoot- [--------]-*/
 CALC_init            (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3932,7 +3944,7 @@ CALC_init            (void)
    return 0;
 }
 
-tCALC*       /*--> create a new calculation entry --------[ ------ [ ------ ]-*/
+tCALC*       /*--> create a new calculation entry --------[ leaf-- [ ------ ]-*/
 CALC_new           (tCELL *a_curr, tCALC  *a_tail)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3964,7 +3976,7 @@ CALC_new           (tCELL *a_curr, tCALC  *a_tail)
    return new;
 }
 
-char               /* PURPOSE : clear an existing calculation ----------------*/
+char         /*--> free an existing calculation ----------[ seed-- [ ------ ]-*/
 CALC_free          (tCELL *a_cell)
 {
    tCALC   *curr = a_cell->calc;
@@ -3980,7 +3992,7 @@ CALC_free          (tCELL *a_cell)
    return 0;
 }
 
-char               /* PURPOSE : evaluate a calculation -----------------------*/
+char         /*--> evaluate a calculation ----------------[ branch [ ------ ]-*/
 CALC_eval          (tCELL *a_curr)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -4071,7 +4083,7 @@ CALC_eval          (tCELL *a_curr)
    return 0;
 }
 
-char         /*--> handle ranges in rpn ------------------[ ------ [ ------ ]-*/
+char         /*--> handle ranges in rpn ------------------[ leaf-- [ ------ ]-*/
 CALC_range         (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell owning the calculation                  */
@@ -4105,7 +4117,7 @@ CALC_range         (
    x_end  = x_curr->r;
    DEBUG_CALC   yLOG_point   ("x_end"     , x_end);
    --rce;  if (x_end     == NULL)  return rce;
-   rc = LOC_coordinates (x_end, &x_tab, &x_ecol, &x_erow);
+   rc = LOC_coords (x_end, &x_tab, &x_ecol, &x_erow);
    DEBUG_CALC   yLOG_value   ("x_tab"     , x_tab);
    DEBUG_CALC   yLOG_value   ("x_ecol"    , x_ecol);
    DEBUG_CALC   yLOG_value   ("x_erow"    , x_erow);
@@ -4119,7 +4131,7 @@ CALC_range         (
    x_beg  = x_curr->r;
    DEBUG_CALC   yLOG_point   ("x_beg"     , x_beg);
    --rce;  if (x_beg     == NULL)  return rce;
-   rc = LOC_coordinates (x_beg, NULL  , &x_bcol, &x_brow);
+   rc = LOC_coords (x_beg, NULL  , &x_bcol, &x_brow);
    DEBUG_CALC   yLOG_value   ("x_bcol"    , x_bcol);
    DEBUG_CALC   yLOG_value   ("x_brow"    , x_brow);
    DEBUG_CALC   yLOG_value   ("rc"        , rc);
@@ -4133,7 +4145,7 @@ CALC_range         (
    return 0;
 }
 
-char         /*- verify a well formed pointer ------------[ ------ [ ------ ]-*/
+char         /*--> verify a well formed pointer ----------[ seed-- [ ------ ]-*/
 CALC_checkpointer  (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell)     /* cell to interpret                            */
@@ -4213,7 +4225,7 @@ CALC_checkpointer  (
    return  --rce;
 }
 
-char         /*--> interpret a pointer -------------------[ ------ [ ------ ]-*/
+char         /*--> interpret a pointer -------------------[ leaf-- [ ------ ]-*/
 CALC_pointer       (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell owning the calculation                  */
@@ -4299,7 +4311,7 @@ CALC_pointer       (
    return --rce;
 }
 
-char         /*--> clear out the calculation -------------[ ------ [ ------ ]-*/
+char         /*--> clear an existing calculation ---------[ leaf-- [ ------ ]-*/
 CALC_cleanse       (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell)     /* cell owning the calculation                  */
@@ -4314,8 +4326,7 @@ CALC_cleanse       (
    return 0;
 }
 
-
-char*
+char*        /*--> parse a calculation string ------------[ leaf-- [ ------ ]-*/
 CALC_strtok        (char *a_str)
 {
    /*---(locals)-----------+-----------+-*/
@@ -4377,7 +4388,7 @@ CALC_strtok        (char *a_str)
    return x_str + x_pos;
 }
 
-char               /* PURPOSE : build a new calculation ----------------------*/
+char         /*--> build a new calculation ---------------[ branch [ ------ ]-*/
 CALC_build         (tCELL *a_cell)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);

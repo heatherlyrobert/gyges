@@ -135,8 +135,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1g"
-#define     VER_TXT   "built and tested pros, npro, reqs, and nreq"
+#define     VER_NUM   "2.1h"
+#define     VER_TXT   "tested and fixed all range statistics formulas"
 
 
 
@@ -1196,14 +1196,14 @@ char      HIST_redo          (void);
 char      LOC_hook           /* ------ */  (tCELL *a_cell, int a_tab, int a_col, int a_row);
 char      LOC_unhook         /* ------ */  (tCELL *a_cell);
 char      LOC_move           /* ------ */  (int  a_tab1, int  a_col1, int  a_row1, int  a_tab2, int  a_col2, int  a_row2);
+
 tCELL    *LOC_cell           /* ------ */  (int  a_tab, int  a_col, int a_row);
 tCELL    *LOC_at                           (char *a_label);
+char      LOC_coords                       (tCELL *a_cell, int *a_tab, int *a_col, int *a_row);
+char      LOC_parse          /* ------ */  (char *a_label, int *a_tab, int *a_col, int *a_row, char  *a_abs);
 
 char      LOC_label          /* ------ */  (tCELL *a_curr, char *a_final);
 char      LOC_ref            /* ------ */  (int a_tab, int a_col, int a_row, char a_abs, char *a_label);
-char      LOC_coordinates                  (tCELL *a_cell, int *a_tab, int *a_col, int *a_row);
-char      LOC_parse          /* ------ */  (char *a_label, int *a_tab, int *a_col, int *a_row, char  *a_abs);
-int       LOC_tab            /* ------ */  (char  *a_name);
 
 char*     TAB_unit           /* ------ */  (char *a_question, tCELL *a_cell);
 
