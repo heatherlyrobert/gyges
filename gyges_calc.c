@@ -89,6 +89,8 @@ tTERMS      s_terms [MAX_TERM] = {
 };
 
 
+long        time_zone  = 0;
+
 /*====================------------------------------------====================*/
 /*===----                       private variables                      ----===*/
 /*====================------------------------------------====================*/
@@ -2867,6 +2869,17 @@ CALC__weeknum       (void)
 }
 
 PRIV void
+CALC__daynum        (void)
+{
+   char temp[100];
+   a = CALC__popval(__FUNCTION__, ++s_narg);
+   time_t  xtime = (time_t) a;
+   strftime(temp, 100, "%j", localtime(&xtime));
+   CALC_pushval (__FUNCTION__, atoi(temp));
+   return;
+}
+
+PRIV void
 CALC__timevalue     (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2878,14 +2891,13 @@ CALC__timevalue     (void)
    int         yr = 0;
    int         rc = 0;
    struct tm  *temp;
-   time_t      x_time;
    ullong      x_now;
    /*---(set defaults)-------------------*/
    x_now = time (NULL);
    temp = localtime(&x_now);
    se = temp->tm_sec;
    mn = temp->tm_min;
-   hr = temp->tm_hour + 1;
+   hr = temp->tm_hour;
    dy = temp->tm_mday;
    mo = temp->tm_mon + 1;
    yr = temp->tm_year + 1900;
@@ -2915,12 +2927,12 @@ CALC__timevalue     (void)
    /*---(convert)------------------------*/
    temp->tm_sec  = se;
    temp->tm_min  = mn;
-   temp->tm_hour = hr - 1;
+   temp->tm_hour = hr;
    temp->tm_mday = dy;
    temp->tm_mon  = mo - 1;
-   if      (yr <  50  ) temp->tm_year = 100 + yr;
+   if      (yr <  70  ) temp->tm_year = 100 + yr;
    else if (yr <  100 ) temp->tm_year = yr;
-   else if (yr <  1900) {
+   else if (yr <  1970) {
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_OTHER, "year can not be less than 1900");
       return;
    }
@@ -2938,17 +2950,26 @@ CALC__date          (void)
    struct tm  *temp;
    time_t      x_time;
    ullong      x_now;
+   int         yr = 0;
    /*---(set defaults)-------------------*/
    x_now = time (NULL);
-   temp = localtime(&x_now);
+   temp = localtime (&x_now);
    /*---(get numbers)--------------------*/
    temp->tm_sec  = 0;
    temp->tm_min  = 0;
    temp->tm_hour = 0;
    temp->tm_mday = CALC__popval(__FUNCTION__, ++s_narg);
-   temp->tm_mon  = CALC__popval(__FUNCTION__, ++s_narg);
-   temp->tm_year = CALC__popval(__FUNCTION__, ++s_narg);
-   time_t  xtime = mktime(temp);
+   temp->tm_mon  = CALC__popval(__FUNCTION__, ++s_narg) - 1;
+   yr            = CALC__popval(__FUNCTION__, ++s_narg);
+   if (temp->tm_year >= 1900)  temp->tm_year -= 1900;
+   if      (yr <  70  ) temp->tm_year = 100 + yr;
+   else if (yr <  100 ) temp->tm_year = yr;
+   else if (yr <  1970) {
+      ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_OTHER, "year can not be less than 1900");
+      return;
+   }
+   else if (yr >= 1900) temp->tm_year = yr - 1900;
+   time_t  xtime = mktime (temp);
    /*---(complete)-----------------------*/
    CALC_pushval (__FUNCTION__, (double) xtime);
    return;
@@ -2963,34 +2984,11 @@ CALC__time          (void)
    ullong      x_now;
    /*---(set defaults)-------------------*/
    x_now = time (NULL);
-   temp = localtime(&x_now);
+   temp = localtime (&x_now);
    /*---(get numbers)--------------------*/
    temp->tm_sec  = CALC__popval(__FUNCTION__, ++s_narg);
    temp->tm_min  = CALC__popval(__FUNCTION__, ++s_narg);
    temp->tm_hour = CALC__popval(__FUNCTION__, ++s_narg);
-   temp->tm_mday = 0;
-   temp->tm_mon  = 0;
-   temp->tm_year = 0;
-   time_t  xtime = mktime(temp);
-   /*---(complete)-----------------------*/
-   CALC_pushval (__FUNCTION__, (double) xtime);
-   return;
-}
-
-PRIV void
-CALC__timepart      (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   struct tm  *temp;
-   ullong      x_time;
-   /*---(set defaults)-------------------*/
-   a = CALC__popval(__FUNCTION__, ++s_narg);
-   x_time = (time_t) a;
-   temp = localtime(&x_time);
-   /*---(get numbers)--------------------*/
-   temp->tm_mday = 0;
-   temp->tm_mon  = 0;
-   temp->tm_year = 0;
    time_t  xtime = mktime(temp);
    /*---(complete)-----------------------*/
    CALC_pushval (__FUNCTION__, (double) xtime);
@@ -3014,6 +3012,22 @@ CALC__datepart      (void)
    time_t  xtime = mktime(temp);
    /*---(complete)-----------------------*/
    CALC_pushval (__FUNCTION__, (double) xtime);
+   return;
+}
+
+PRIV void
+CALC__timepart      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   struct tm  *temp;
+   ullong      x_time;
+   /*---(set defaults)-------------------*/
+   b = CALC__popval(__FUNCTION__, ++s_narg);
+   CALC_pushval(__FUNCTION__, b);
+   CALC__datepart ();
+   a = CALC__popval(__FUNCTION__, ++s_narg);
+   /*---(complete)-----------------------*/
+   CALC_pushval (__FUNCTION__, (b - a) + time_zone);
    return;
 }
 
@@ -3521,7 +3535,7 @@ CALC__vlookup      (void)
    /*---(process)------------------------*/
    for (x_row = s_brow; x_row <= s_erow; ++x_row) {
       DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
-      x_curr = tabs[s_btab].sheet[s_bcol][x_row];
+      x_curr = LOC_cell (s_btab, s_bcol, x_row);
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL)                                       continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3529,8 +3543,7 @@ CALC__vlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_row));                           <*/
-      x_curr = tabs[s_btab].sheet[s_bcol + n][x_row];
+      x_curr = LOC_cell (s_btab, s_bcol + n, x_row);
       if      (x_curr == NULL)          CALC_pushval (__FUNCTION__, 0);
       else if (x_curr->s == NULL)       CALC_pushval (__FUNCTION__, 0);
       else if (x_curr->t == 'n')        CALC_pushval (__FUNCTION__, x_curr->v_num);
@@ -3570,7 +3583,7 @@ CALC__hlookup      (void)
    /*---(process)------------------------*/
    for (x_col = s_bcol; x_col <= s_ecol; ++x_col) {
       DEBUG_CALC   yLOG_value   ("x_col"    , x_col);
-      x_curr = tabs[s_btab].sheet[x_col][s_brow];
+      x_curr = LOC_cell (s_btab, x_col, s_brow);
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL)                                       continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3579,7 +3592,7 @@ CALC__hlookup      (void)
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
       /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_crow));                           <*/
-      x_curr = tabs[s_btab].sheet[x_col][s_brow + n];
+      x_curr = LOC_cell (s_btab, x_col, s_brow + n);
       if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
       if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
       if (strchr ("nfl", x_curr->t) != 0) CALC_pushval (__FUNCTION__, x_curr->v_num);
@@ -3610,7 +3623,7 @@ CALC__entry        (void)
    /*---(process)------------------------*/
    for (x_row = s_me->row; x_row >= s_brow; --x_row) {
       DEBUG_CALC   yLOG_value   ("x_row"    , x_row);
-      x_curr = tabs[s_btab].sheet[s_bcol][x_row];
+      x_curr = LOC_cell (s_btab, s_bcol, x_row);
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr    == NULL)                                    continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3871,6 +3884,7 @@ struct  cFUNCS {
    { "second"     ,  0, CALC__second            , 'f', "v:v"    , 'd', "second number (0-59) of time number"               , "" , ""            , ""            , ""            },
    { "weekday"    ,  0, CALC__weekday           , 'f', "v:v"    , 'd', "weekday number (0-6) of time number"               , "" , ""            , ""            , ""            },
    { "weeknum"    ,  0, CALC__weeknum           , 'f', "v:v"    , 'd', "week number (0-54) of time number"                 , "" , ""            , ""            , ""            },
+   { "daynum"     ,  0, CALC__daynum            , 'f', "v:v"    , 'd', "week number (0-54) of time number"                 , "" , ""            , ""            , ""            },
    { "datevalue"  ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" , ""            , ""            , ""            },
    { "dv"         ,  0, CALC__timevalue         , 'f', "v:s"    , 'd', "converts string format date to epoch number"       , "" , ""            , ""            , ""            },
    { "date"       ,  0, CALC__date              , 'f', "v:vvv"  , 'd', "turns year, month, day values into eqoch number"   , "" , ""            , ""            , ""            },
@@ -3902,8 +3916,17 @@ CALC_init            (void)
    double      a;
    char        x_terms     [50];
    char        x_dup;
+   struct tm  *temp;
+   ullong      x_now;
    /*---(randomizer)---------------------*/
    srand(time(NULL));
+   /*---(get timezone offset)------------*/
+   x_now     = 0;
+   temp      = gmtime (&x_now);
+   time_zone = mktime (temp);
+   /*> printf ("time_zone = %ld = %2d/%2d/%2d %2d:%2d:%2d\n", time_zone,              <* 
+    *>       temp->tm_year, temp->tm_mon + 1, temp->tm_mday,                          <* 
+    *>       temp->tm_hour, temp->tm_min    , temp->tm_sec);                          <*/
    /*---(load trig table)----------------*/
    for (i = 0; i < 3600; ++i) {
       a = ((double) i) / 10.0;

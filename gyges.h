@@ -109,6 +109,7 @@
 
 
 
+
 /*===[[ STANDARD C LIBRARIES ]]===============================================*/
 #include    <stdio.h>        /* C_ANSI : strcpy, strlen, strchr, strcmp, ...  */
 #include    <string.h>       /* C_ANSI : printf, snprintf, fgets, fopen, ...  */
@@ -135,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1h"
-#define     VER_TXT   "tested and fixed all range statistics formulas"
+#define     VER_NUM   "2.1i"
+#define     VER_TXT   "unit tested all date and time functions"
 
 
 

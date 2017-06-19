@@ -3311,4 +3311,93 @@ SCRP          v21  (s_calc) basic range functions                             
 
 
 
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (calc--) time functions                                      CELL_change, RPN_convert, CELL_interpret, CALC_build, CALC_eval         ((27.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+     get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
+     get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
+
+   COND       v21  get epoch for current-ish date only                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    3,   10, "=dv (\"05/13/16 0:0:0\")"                  p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "d11"                                                  s_equal     s_celln value    :  1463122800.000000                                  
+
+   COND       v21  get epoch for current-ish date only (4 digit year)           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    3,   10, "=dv (\"05/13/2016 0:0:0\")"                p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "d11"                                                  s_equal     s_celln value    :  1463122800.000000                                  
+
+   COND       v21  get epoch for current-ish date                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    3,   10, "=dv (\"05/13/16 4:31:22\")"                p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "d11"                                                  s_equal     s_celln value    :  1463139082.000000                                  
+
+   COND       v21  try a negative date (4 digit year)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    3,   10, "=dv (\"05/13/1965 4:31:22\")"              p_null      0                                                                      
+
+   COND       v21  set back to a stable date                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    3,   10, "=dv (\"05/13/2016 4:31:22\")"              p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "d11"                                                  s_equal     s_celln value    :  1463139082.000000                                  
+
+   COND       v21  break down date values                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  request year                         CELL_change           CHG_INPUT,   0,    4,   10, "=year    (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e11"                                                  s_equal     s_celln value    :        2016.000000                                  
+     exec     v21  request month                        CELL_change           CHG_INPUT,   0,    4,   11, "=month   (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e12"                                                  s_equal     s_celln value    :           5.000000                                  
+     exec     v21  request day                          CELL_change           CHG_INPUT,   0,    4,   12, "=day     (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e13"                                                  s_equal     s_celln value    :          13.000000                                  
+     exec     v21  request hour                         CELL_change           CHG_INPUT,   0,    4,   13, "=hour    (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e14"                                                  s_equal     s_celln value    :           4.000000                                  
+     exec     v21  request minute                       CELL_change           CHG_INPUT,   0,    4,   14, "=minute  (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e15"                                                  s_equal     s_celln value    :          31.000000                                  
+     exec     v21  request second                       CELL_change           CHG_INPUT,   0,    4,   15, "=second  (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e16"                                                  s_equal     s_celln value    :          22.000000                                  
+     exec     v21  request weekday                      CELL_change           CHG_INPUT,   0,    4,   16, "=weekday (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e17"                                                  s_equal     s_celln value    :           5.000000                                  
+     exec     v21  request week number                  CELL_change           CHG_INPUT,   0,    4,   17, "=weeknum (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e18"                                                  s_equal     s_celln value    :          19.000000                                  
+     exec     v21  request day of year number           CELL_change           CHG_INPUT,   0,    4,   18, "=daynum  (d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e19"                                                  s_equal     s_celln value    :         134.000000                                  
+
+   COND       v21  date and time parts                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  convert date only                    CELL_change           CHG_INPUT,   0,    5,   10, "=date    ( 16,  5, 13)"                    p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "f11"                                                  s_equal     s_celln value    :  1463122800.000000                                  
+     exec     v21  request date part of whole entry     CELL_change           CHG_INPUT,   0,    6,   10, "=datepart(d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "g11"                                                  s_equal     s_celln value    :  1463122800.000000                                  
+     exec     v21  compare values                       CELL_change           CHG_INPUT,   0,    7,   10, "= f11 == g11"                              p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "h11"                                                  s_equal     s_celln value    :           1.000000                                  
+     exec     v21  request date part of whole entry     CELL_change           CHG_INPUT,   0,    6,   11, "=timepart(d11)"                            p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "g12"                                                  s_equal     s_celln value    :       45082.000000                                  
+
+   COND       v21  run forward to another date                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    3,   10, "=dv (\"07/04/2042 16:21:52\")"             p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "d11"                                                  s_equal     s_celln value    :  2288128912.000000                                  
+
+   COND       v21  break down date values                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e11"                                                  s_equal     s_celln value    :        2042.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e12"                                                  s_equal     s_celln value    :           7.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e13"                                                  s_equal     s_celln value    :           4.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e14"                                                  s_equal     s_celln value    :          16.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e15"                                                  s_equal     s_celln value    :          21.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e16"                                                  s_equal     s_celln value    :          52.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e17"                                                  s_equal     s_celln value    :           5.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e18"                                                  s_equal     s_celln value    :          26.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "e19"                                                  s_equal     s_celln value    :         185.000000                                  
+
+   COND       v21  date and time parts                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  convert date only                    CELL_change           CHG_INPUT,   0,    5,   10, "=date    ( 42,  7,  4)"                    p_exists    0                                                                      
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "f11"                                                  s_equal     s_celln value    :  2288070000.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "g11"                                                  s_equal     s_celln value    :  2288070000.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "h11"                                                  s_equal     s_celln value    :           1.000000                                  
+     get      v21  check the cell value                 CELL__unitnew         "cell_value"   , "g12"                                                  s_equal     s_celln value    :       87712.000000                                  
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((27.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+
+
+
 # end-of-file
