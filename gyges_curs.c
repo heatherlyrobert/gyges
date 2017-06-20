@@ -838,7 +838,7 @@ CURS_info_cell       (void)
    char        x_line      [LEN_RECD];
    int         x_len       = 0;
    char       *x_title     = " ------------------cell details-------------------- ";
-   tCELL      *x_curr      = p_tab->sheet[CCOL][CROW];
+   tCELL      *x_curr      = LOC_cell_at_curr ();
    /*---(header)-------------------------*/
    attron (S_COLOR_TITLE);
    mvprintw   ( i++, 10, x_title);
@@ -1121,7 +1121,7 @@ CURS_main          (void)
    case G_FORMULA_TINY  : my.apos = my.x_full -  0 -  0 -  2;
                      break;
    }
-   curr    = p_tab->sheet[CCOL][CROW];
+   curr    = LOC_cell_at_curr ();
    strncpy (reqs , "+", LEN_RECD);
    strncpy (deps , "+", LEN_RECD);
    strncpy (like , "+", LEN_RECD);
@@ -1197,7 +1197,7 @@ char               /* PURPOSE : display an individual cell                    */
 CURS_cell          (int a_col, int a_row)
 {
    /*---(locals)---------------------------*/
-   tCELL    *curr      = p_tab->sheet[a_col][a_row];
+   tCELL    *curr      = LOC_cell_at_loc (CTAB, a_col, a_row);
    tCELL    *next      = NULL;
    char      label[LEN_RECD] = "zzz";
    char      l[LEN_RECD]  = "";
@@ -1252,31 +1252,6 @@ CURS_cell          (int a_col, int a_row)
       else if (curr->t == CTYPE_BLANK)          attron (S_COLOR_NULL   );
       else                                      attron (S_COLOR_STRING );
    }
-   /*---(check max width)------------------*/
-   /*> xmax = p_tab->cols[a_col].w;                                                     <* 
-    *> if (curr != NULL) {                                                            <* 
-    *>    xcol = curr->col + 1;                                                       <* 
-    *>    next = p_tab->sheet[xcol][a_row];                                             <* 
-    *>    while (next != NULL && xcol <= ECOL && next->t == CTYPE_MERGE) {            <* 
-    *>       xmax += p_tab->cols[next->col].w;                                          <* 
-    *>       ++xcol;                                                                  <* 
-    *>       next = p_tab->sheet[xcol][a_row];                                          <* 
-    *>    }                                                                           <* 
-    *> }                                                                              <*/
-   /*---(check for current)----------------*/
-   /*> if (curr!= NULL && a_row == CROW) {                                            <* 
-    *>    xcol = curr->col + 1;                                                       <* 
-    *>    next = p_tab->sheet[xcol][a_row];                                             <* 
-    *>    while  (next != NULL) {                                                     <* 
-    *>       if (next->t != CTYPE_MERGE) break;                                       <* 
-    *>       if (xcol == CCOL) {                                                      <* 
-    *>          attron (S_COLOR_CURRENT);                                             <* 
-    *>          break;                                                                <* 
-    *>       }                                                                        <* 
-    *>       ++xcol;                                                                  <* 
-    *>       next = p_tab->sheet[xcol][a_row];                                          <* 
-    *>    }                                                                           <* 
-    *> }                                                                              <*/
    /*---(display cell)---------------------*/
    if (curr == NULL || curr->p == NULL) 
       mvprintw (p_tab->rows[a_row].y + i, p_tab->cols[a_col].x, "%*.*s", p_tab->cols[a_col].w, p_tab->cols[a_col].w, g_empty);

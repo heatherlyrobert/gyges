@@ -787,6 +787,7 @@ MODE_source   (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        x_multi     [LEN_RECD]   = "cdgz";
+   tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -817,8 +818,9 @@ MODE_source   (char a_major, char a_minor)
          break;
       case  27  : case  'U' :
          DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
-         if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[p_tab->ccol][CROW]->s != NULL) {
-            strncpy (g_contents, p_tab->sheet[p_tab->ccol][CROW]->s, LEN_RECD); 
+         x_curr = LOC_cell_at_curr ();
+         if (x_curr != NULL && x_curr->s != NULL) {
+            strncpy (g_contents, x_curr->s, LEN_RECD); 
          }
          EDIT_pos     ('r');
          yVIKEYS_mode_exit  ();
@@ -1117,6 +1119,7 @@ MODE_input         (char  a_major, char  a_minor)
    char        rce         = -10;
    char        x_majors    [LEN_RECD]   = "IiaAm";
    int         i           = 0;             /* loop iterator                  */
+   tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -1158,8 +1161,9 @@ MODE_input         (char  a_major, char  a_minor)
          CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
       }
       if (a_minor == 27 && yVIKEYS_mode_prev() == MODE_MAP) {
-         if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[p_tab->ccol][CROW]->s != NULL) {
-            strlcpy (g_contents, p_tab->sheet[p_tab->ccol][CROW]->s, LEN_RECD); 
+         x_curr = LOC_cell_at_curr ();
+         if (x_curr != NULL && x_curr->s != NULL) {
+            strlcpy (g_contents, x_curr->s, LEN_RECD); 
          } else {
             strlcpy (g_contents, ""                            , LEN_RECD); 
          }
@@ -1205,7 +1209,7 @@ char       /*----: process keys for formatting mode --------------------------*/
 SMOD_format        (char a_major, char a_minor)
 {
    /*---(current cell -- whether good or not)---*/
-   tCELL   *curr = p_tab->sheet[CCOL][CROW];
+   tCELL   *curr = LOC_cell_at_curr ();
    /*---(check for control keys)----------------*/
    switch (a_minor) {
    case   10 :

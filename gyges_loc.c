@@ -393,12 +393,14 @@ LOC_legal          (
    return 0;
 }
 
-tCELL*       /*--> return the cell at a location ---------[ ------ [ ------ ]-*/
-LOC_cell           (
-      /*----------+-----------+-----------------------------------------------*/
-      int         a_tab,      /* tab number                                   */
-      int         a_col,      /* column number                                */
-      int         a_row)      /* row number                                   */
+tCELL*       /*--> return the cell at current loc --------[ leaf   [ ------ ]-*/
+LOC_cell_at_curr     (void)
+{
+   return tabs [CTAB].sheet[CCOL][CROW];
+}
+
+tCELL*       /*--> return the cell at a location ---------[ leaf   [ ------ ]-*/
+LOC_cell_at_loc      (short a_tab, short a_col, short a_row)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
@@ -410,9 +412,7 @@ LOC_cell           (
 }
 
 tCELL*       /*--> return the cell at a location ---------[ ------ [ ------ ]-*/
-LOC_at             (
-      /*----------+-----------+-----------------------------------------------*/
-      char       *a_label)    /* tab number                                   */
+LOC_cell_labeled   (char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
@@ -423,7 +423,7 @@ LOC_at             (
    /*---(defenses)-----------------------*/
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
    if (rc < 0)  return NULL;
-   x_curr = LOC_cell  (x_tab, x_col, x_row);
+   x_curr = LOC_cell_at_loc  (x_tab, x_col, x_row);
    if (x_curr == NULL)    return NULL;
    /*---(complete)-----------------------*/
    return x_curr;

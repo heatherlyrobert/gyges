@@ -219,16 +219,17 @@ char               /* PURPOSE : convert normal infix notation to postfix/rpn -*/
 RPN_makelike       (tCELL *a_curr, char *a_label)
 {
    int      xtab, xcol, xrow;
-   tCELL   *dest   = NULL;
+   tCELL      *x_curr      = NULL;
    LOC_parse (a_label, &xtab, &xcol, &xrow, NULL);
-   if (p_tab->sheet[xcol][xrow] == NULL || p_tab->sheet[xcol][xrow]->s == NULL) {
+   x_curr = LOC_cell_at_loc  (CTAB, xcol, xrow);
+   if (x_curr == NULL || x_curr->s == NULL) {
       rpn__offcol = 0;
       rpn__offrow = 0;
       strncpy(rpn__working, "", LEN_RECD);
    } else {
       rpn__offcol = a_curr->col - xcol;
       rpn__offrow = a_curr->row - xrow;
-      strncpy(rpn__working, p_tab->sheet[xcol][xrow]->s, LEN_RECD);
+      strncpy(rpn__working, x_curr->s, LEN_RECD);
    }
    return 0;
 }
@@ -320,7 +321,7 @@ RPN_convert        (
          DEBUG_RPN    yLOG_exit    (__FUNCTION__);
          return rce;
       }
-      x_like = LOC_cell (x_tab, x_col, x_row);
+      x_like = LOC_cell_at_loc (x_tab, x_col, x_row);
       DEBUG_RPN    yLOG_point   ("x_like"    , x_like);
       --rce;
       if (x_like == NULL) {

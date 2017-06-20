@@ -716,7 +716,7 @@ REG_save           (char a_type)
             DEBUG_REGS   yLOG_exit    (__FUNCTION__);
             return rce;
          }
-         curr = tabs[x_tab].sheet[x_col][x_row];
+         curr = LOC_cell_at_loc (x_tab, x_col, x_row);
          DEBUG_REGS   yLOG_complex ("erasing"   , "idx=%4d, ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", i, curr, x_tab, x_col, x_row, curr->t, curr->u);
          if (x_count == 0)  rc = CELL__delete (CHG_INPUT   , x_tab, x_col, x_row);
          else               rc = CELL__delete (CHG_INPUTAND, x_tab, x_col, x_row);

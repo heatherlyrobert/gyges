@@ -2110,7 +2110,7 @@ CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
       return;
    }
    /*---(identify new cell)--------------*/
-   x_new  = LOC_cell   (x_tab, x_col, x_row);
+   x_new  = LOC_cell_at_loc   (x_tab, x_col, x_row);
    if      (x_new == NULL)                      CALC_pushval (__FUNCTION__, 0);
    else if (x_new->s == NULL)                   CALC_pushval (__FUNCTION__, 0);
    else if (x_new->t == 'n' || x_new->t == 'f') CALC_pushval (__FUNCTION__, x_new->v_num);
@@ -2172,7 +2172,7 @@ CALC__loc_driver    (short a_tab, short a_col, short a_row)
       ERROR_add (s_me, PERR_EVAL, s_neval, __FUNCTION__, TERR_ADDR , "address created is not legal");
       return;
    }
-   x_new  = LOC_cell   (a_tab, a_col, a_row);
+   x_new  = LOC_cell_at_loc   (a_tab, a_col, a_row);
    DEP_delcalcref (s_me);
    DEP_create     (G_DEP_CALCREF, s_me, x_new);
    CALC_pushref (__FUNCTION__, x_new);
@@ -3071,7 +3071,7 @@ SHARED__gather     (char *a_func)
       for (x_row = s_brow; x_row <= s_erow; ++x_row) {
          DEBUG_CALC   yLOG_value   ("x_col"    , x_col);
          DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
-         x_curr = LOC_cell (s_btab, x_col, x_row);
+         x_curr = LOC_cell_at_loc  (s_btab, x_col, x_row);
          DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
          if (x_curr == NULL)                    continue;
          DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3535,7 +3535,7 @@ CALC__vlookup      (void)
    /*---(process)------------------------*/
    for (x_row = s_brow; x_row <= s_erow; ++x_row) {
       DEBUG_CALC   yLOG_value   ("x_row"     , x_row);
-      x_curr = LOC_cell (s_btab, s_bcol, x_row);
+      x_curr = LOC_cell_at_loc (s_btab, s_bcol, x_row);
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL)                                       continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3543,7 +3543,7 @@ CALC__vlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      x_curr = LOC_cell (s_btab, s_bcol + n, x_row);
+      x_curr = LOC_cell_at_loc (s_btab, s_bcol + n, x_row);
       if      (x_curr == NULL)          CALC_pushval (__FUNCTION__, 0);
       else if (x_curr->s == NULL)       CALC_pushval (__FUNCTION__, 0);
       else if (x_curr->t == 'n')        CALC_pushval (__FUNCTION__, x_curr->v_num);
@@ -3583,7 +3583,7 @@ CALC__hlookup      (void)
    /*---(process)------------------------*/
    for (x_col = s_bcol; x_col <= s_ecol; ++x_col) {
       DEBUG_CALC   yLOG_value   ("x_col"    , x_col);
-      x_curr = LOC_cell (s_btab, x_col, s_brow);
+      x_curr = LOC_cell_at_loc (s_btab, x_col, s_brow);
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL)                                       continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -3591,8 +3591,8 @@ CALC__hlookup      (void)
       if (x_curr->s == NULL)                                    continue;
       if (x_curr->s [0] != r [0])                               continue;
       if (strcmp (x_curr->s, r) != 0)                           continue;
-      /*> CALC_pushref (__FUNCTION__, LOC_cell (s_btab, s_bcol, x_crow));                           <*/
-      x_curr = LOC_cell (s_btab, x_col, s_brow + n);
+      /*> CALC_pushref (__FUNCTION__, LOC_cell_at_loc (s_btab, s_bcol, x_crow));                           <*/
+      x_curr = LOC_cell_at_loc (s_btab, x_col, s_brow + n);
       if (x_curr == NULL)                    { CALC_pushval (__FUNCTION__, 0); return; }
       if (x_curr->s == NULL)                 { CALC_pushval (__FUNCTION__, 0); return; }
       if (strchr ("nfl", x_curr->t) != 0) CALC_pushval (__FUNCTION__, x_curr->v_num);
@@ -3623,7 +3623,7 @@ CALC__entry        (void)
    /*---(process)------------------------*/
    for (x_row = s_me->row; x_row >= s_brow; --x_row) {
       DEBUG_CALC   yLOG_value   ("x_row"    , x_row);
-      x_curr = LOC_cell (s_btab, s_bcol, x_row);
+      x_curr = LOC_cell_at_loc (s_btab, s_bcol, x_row);
       DEBUG_CALC   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr    == NULL)                                    continue;
       DEBUG_CALC   yLOG_char    ("x_curr->t" , x_curr->t);
@@ -4566,7 +4566,7 @@ CALC_build         (tCELL *a_cell)
          rc = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
          DEBUG_CALC   yLOG_value   ("rc"        , rc);
          if (rc == 0) {
-            dest = LOC_cell (x_tab, x_col, x_row);
+            dest = LOC_cell_at_loc (x_tab, x_col, x_row);
             DEBUG_CALC   yLOG_point   ("dest"      , dest);
             if (dest == NULL)  dest = CELL_change (CHG_NOHIST, x_tab, x_col, x_row, "");
             DEBUG_CALC   yLOG_point   ("dest"      , dest);
@@ -4640,7 +4640,7 @@ CALC_build         (tCELL *a_cell)
     *> if (label [0] != '-') {                                                           <* 
     *>    rc = LOC_legal (a_cell->tab, a_cell->col + 1, a_cell->row, CELL_FIXED);        <* 
     *>    if (rc == 0) {                                                                 <* 
-    *>       dest = LOC_cell (a_cell->tab, a_cell->col + 1, a_cell->row);                <* 
+    *>       dest = LOC_cell_at_loc (a_cell->tab, a_cell->col + 1, a_cell->row);                <* 
     *>       if (dest == NULL || dest->t == 'l') {                                       <* 
     *>          dest = CELL_change (a_cell->tab, a_cell->col + 1, a_cell->row, label);   <* 
     *>          dest->t = 'l';                                                           <* 

@@ -74,6 +74,7 @@ MOVE_prep          (void)
 char
 MOVE_done          (void)
 {
+   tCELL      *x_curr      = NULL;
    /*---(show updated)----------------*/
    DEBUG_USER   yLOG_note    ("show updated col pos...");
    DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
@@ -111,8 +112,9 @@ MOVE_done          (void)
    VISU_update  (CTAB, CCOL, CROW);
    /*---(update contents)-------------*/
    DEBUG_USER  yLOG_note    ("update current contents");
-   if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[CCOL][CROW]->s != NULL) {
-      strncpy (g_contents, p_tab->sheet[CCOL][CROW]->s, LEN_RECD);
+   x_curr = LOC_cell_at_curr ();
+   if (x_curr != NULL && x_curr->s != NULL) {
+      strncpy (g_contents, x_curr->s, LEN_RECD);
    } else {
       strncpy (g_contents, ""                       , LEN_RECD);
    }
@@ -176,8 +178,8 @@ MOVE_edges         (
    case 't' : case 'K' :
       /*---(top)-------------------------*/
       for (y_fin = 0; y_fin < NROW; ++y_fin) {
-         if (a_dir == 't' && p_tab->rows [y_fin].c == 0)          continue;
-         if (a_dir == 'K' && p_tab->sheet[CCOL][y_fin] == NULL)   continue;
+         if (a_dir == 't' && p_tab->rows [y_fin].c == 0)             continue;
+         if (a_dir == 'K' && LOC_cell_at_loc (CTAB, CCOL, y_fin) == NULL)   continue;
          break;
       }
       if (y_fin == NROW)  y_fin = y_beg;
@@ -185,8 +187,8 @@ MOVE_edges         (
    case 'b' : case 'J' :
       /*---(bottom)----------------------*/
       for (y_fin = NROW - 1; y_fin >= 0; --y_fin) {
-         if (a_dir == 'b' && p_tab->rows [y_fin].c == 0)          continue;
-         if (a_dir == 'J' && p_tab->sheet[CCOL][y_fin] == NULL)   continue;
+         if (a_dir == 'b' && p_tab->rows [y_fin].c == 0)             continue;
+         if (a_dir == 'J' && LOC_cell_at_loc (CTAB, CCOL, y_fin) == NULL)   continue;
          break;
       }
       if (y_fin <  0   )  y_fin = y_beg;
@@ -194,8 +196,8 @@ MOVE_edges         (
    case 's' : case 'H' :
       /*---(left)------------------------*/
       for (x_fin = 0; x_fin < NCOL; ++x_fin) {
-         if (a_dir == 's' && p_tab->cols [x_fin].c == 0)          continue;
-         if (a_dir == 'H' && p_tab->sheet[x_fin][CROW] == NULL)   continue;
+         if (a_dir == 's' && p_tab->cols [x_fin].c == 0)             continue;
+         if (a_dir == 'H' && LOC_cell_at_loc (CTAB, x_fin, CROW) == NULL)   continue;
          break;
       }
       if (x_fin == NCOL)  x_fin = x_beg;
@@ -203,8 +205,8 @@ MOVE_edges         (
    case 'e' : case 'L' :
       /*---(right)-----------------------*/
       for (x_fin = NCOL - 1; x_fin >= 0; --x_fin) {
-         if (a_dir == 'e' && p_tab->cols [x_fin].c == 0)          continue;
-         if (a_dir == 'L' && p_tab->sheet[x_fin][CROW] == NULL)   continue;
+         if (a_dir == 'e' && p_tab->cols [x_fin].c == 0)             continue;
+         if (a_dir == 'L' && LOC_cell_at_loc (CTAB, x_fin, CROW) == NULL)   continue;
          break;
       }
       if (x_fin <  0   )  x_fin = x_beg;
@@ -260,9 +262,9 @@ MOVE_ends          (char a_dir)
    DEBUG_USER  yLOG_value   ("x_cur"     , x_cur);
    DEBUG_USER  yLOG_value   ("y_cur"     , y_cur);
    /*---(check current)------------------*/
-   if (p_tab->sheet[x_cur][y_cur] != NULL) {
+   if (LOC_cell_at_loc (CTAB, x_cur, y_cur) != NULL) {
       x_type = 'f';
-      if (p_tab->sheet[x_cur + x_inc][y_cur + y_inc] == NULL)  x_type = '-';
+      if (LOC_cell_at_loc (CTAB, x_cur + x_inc, y_cur + y_inc) == NULL)  x_type = '-';
    }
    DEBUG_USER  yLOG_char    ("x_type"    , x_type);
    /*---(process cells)------------------*/
@@ -280,7 +282,7 @@ MOVE_ends          (char a_dir)
       /*---(test)------------------------*/
       switch (x_type) {
       case  '-' :
-         if (p_tab->sheet[x_cur][y_cur] != NULL) {
+         if (LOC_cell_at_loc (CTAB, x_cur, y_cur) != NULL) {
             DEBUG_USER  yLOG_note    ("found a occupied cell");
             x_fin  = x_cur;
             y_fin  = y_cur;
@@ -288,7 +290,7 @@ MOVE_ends          (char a_dir)
          }
          break;
       case  'f' :
-         if (p_tab->sheet[x_cur][y_cur] == NULL) {
+         if (LOC_cell_at_loc (CTAB, x_cur, y_cur) == NULL) {
             DEBUG_USER  yLOG_note    ("found a null cell");
             x_fin  = x_cur - x_inc;
             y_fin  = y_cur - y_inc;
@@ -554,38 +556,6 @@ KEYS_col           (char a_major, char a_minor)
    }
    /*---(update screen)---------------*/
    MOVE_done   ();
-   /*> /+---(check min/max)---------------+/                                          <* 
-    *> DEBUG_USER  yLOG_note    ("correct for min/max violations");                   <* 
-    *> if (CCOL <  0        )    CCOL =    0;                                         <* 
-    *> if (CCOL >= NCOL)    CCOL = NCOL - 1;                                          <* 
-    *> /+---(check bcol)------------------+/                                          <* 
-    *> DEBUG_USER  yLOG_note    ("correct for beginning violations");                 <* 
-    *> if (BCOL <  0        )      BCOL   =    0;                                     <* 
-    *> if (BCOL >= NCOL)      BCOL   = NCOL - 1;                                      <* 
-    *> /+---(check ecol)------------------+/                                          <* 
-    *> DEBUG_USER  yLOG_note    ("correct for ending violations");                    <* 
-    *> if (ECOL <  0        )      ECOL   =    0;                                     <* 
-    *> if (ECOL >= NCOL)      ECOL   = NCOL - 1;                                      <* 
-    *> /+---(adjust screen)---------------+/                                          <* 
-    *> DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");               <* 
-    *> if (CCOL < BCOL)       BCOL = CCOL;                                            <* 
-    *> if (CCOL > ECOL)       ECOL = CCOL;                                            <* 
-    *> /+---(update contents)-------------+/                                          <* 
-    *> DEBUG_USER  yLOG_note    ("update current contents");                          <* 
-    *> if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[CCOL][CROW]->s != NULL) {     <* 
-    *>    strncpy (g_contents, p_tab->sheet[CCOL][CROW]->s, LEN_RECD);                     <* 
-    *> } else {                                                                       <* 
-    *>    strncpy (g_contents, ""                  , LEN_RECD);                          <* 
-    *> }                                                                              <* 
-    *> /+---(check for selection)---------+/                                          <* 
-    *> DEBUG_USER  yLOG_note    ("update selection if necessary");                    <* 
-    *> if (a_minor   != 'w')  VISU_update   (CTAB, CCOL, CROW);                       <* 
-    *> /+---(check for update)------------+/                                          <* 
-    *> DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);                                <* 
-    *> DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);                                <* 
-    *> DEBUG_USER  yLOG_note    ("update column headings if necessary");              <* 
-    *> if      (BCOL != s_beg) { KEYS_bcol (BCOL); CURS_colhead(); }                  <* 
-    *> else if (ECOL != s_end) { KEYS_ecol (ECOL); CURS_colhead(); }                  <*/
    /*---(complete)--------------------*/
    DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1015,37 +985,6 @@ KEYS_row           (char a_major, char a_minor)
    }
    /*---(update screen)---------------*/
    MOVE_done   ();
-   /*> /+---(check min/max)---------------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("correct for min/max violations");                        <* 
-    *> if (CROW <     0     )    CROW =    0;                                              <* 
-    *> if (CROW >= NROW)    CROW = NROW - 1;                                               <* 
-    *> /+---(check brow)------------------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("correct for beginning violations");                      <* 
-    *> if (BROW <     0     )      BROW   =    0;                                          <* 
-    *> if (BROW >= NROW)      BROW   = NROW - 1;                                           <* 
-    *> /+---(check erow)------------------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("correct for ending violations");                         <* 
-    *> if (EROW <     0     )      EROW   =    0;                                          <* 
-    *> if (EROW >= NROW)      EROW   = NROW - 1;                                           <* 
-    *> /+---(adjust screen)---------------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");                    <* 
-    *> if (CROW < BROW)       BROW   = CROW;                                               <* 
-    *> if (CROW > EROW)       EROW   = CROW;                                               <* 
-    *> /+---(update contents)-------------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("update current contents");                               <* 
-    *> if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[CCOL][CROW]->s != NULL) {          <* 
-    *>    strncpy(g_contents, p_tab->sheet[CCOL][CROW]->s, LEN_RECD);                           <* 
-    *> } else {                                                                            <* 
-    *>    strncpy(g_contents, ""                  , LEN_RECD);                                <* 
-    *> }                                                                                   <* 
-    *> /+---(check for selection)---------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("update selection if necessary");                         <* 
-    *> VISU_update  (CTAB, CCOL, CROW);                                                    <* 
-    *> /+---(check for update)------------+/                                               <* 
-    *> DEBUG_USER  yLOG_note    ("update row headings if necessary");                      <* 
-    *> if      (BROW != s_beg) { KEYS_brow (BROW); CURS_rowhead(); }                       <* 
-    *> else if (EROW != s_end) { KEYS_erow (EROW); CURS_rowhead(); }                       <* 
-    *> /+> else if (CROW != s_cur) CURS_rowhead();                                   <+/   <*/
    /*---(complete)--------------------*/
    DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;

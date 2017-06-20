@@ -248,7 +248,7 @@ VISU_start         (int a_tab, int a_col, int a_row, char a_mode)
    s_visu.ocol  = s_visu.bcol  = s_visu.ecol  = s_visu.ccol  = s_visu.scol  = a_col;
    s_visu.orow  = s_visu.brow  = s_visu.erow  = s_visu.crow  = s_visu.srow  = a_row;
    /*---(locations)----------------------*/
-   s_visu.home  = s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.bcol][s_visu.brow];
+   s_visu.home  = s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.bcol, s_visu.brow);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -280,7 +280,7 @@ VISU_increase      (int a_tab, int a_col, int a_row)
    s_visu.ccol  = a_col;
    s_visu.crow  = a_row;
    /*---(locations)----------------------*/
-   s_visu.home  = s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.bcol][s_visu.brow];
+   s_visu.home  = s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.bcol, s_visu.brow);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -330,7 +330,7 @@ VISU_set           (
    s_visu.orow  = s_visu.brow  = s_visu.crow  = a_brow;
    s_visu.erow                          = a_erow;
    /*---(locations)----------------------*/
-   s_visu.home  = s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.bcol][s_visu.brow];
+   s_visu.home  = s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.bcol, s_visu.brow);
    s_visu.curr  = s_visu.home;
    /*---(complete)-----------------------*/
    return 0;
@@ -460,12 +460,12 @@ VISU_first         (
       if (a_tab != NULL)  *a_tab = CTAB;
       if (a_col != NULL)  *a_col = CCOL;
       if (a_row != NULL)  *a_row = CROW;
-      return tabs[CTAB].sheet[CCOL][CROW];
+      return LOC_cell_at_curr ();
    }
    /*---(set to beginning)---------------*/
    s_visu.ccol  = s_visu.bcol;
    s_visu.crow  = s_visu.brow;
-   s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow];
+   s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow);
    /*---(set the return)-----------------*/
    if (a_tab != NULL)  *a_tab = s_visu.otab;
    if (a_col != NULL)  *a_col = s_visu.ccol;
@@ -513,7 +513,7 @@ VISU_next          (
    if (a_tab != NULL) *a_tab = s_visu.otab;
    if (a_col != NULL) *a_col = s_visu.ccol;
    if (a_row != NULL) *a_row = s_visu.crow;
-   s_visu.curr  = tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow];
+   s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow);
    /*---(complete)-----------------------*/
    return s_visu.curr;
 }
@@ -1295,7 +1295,7 @@ VISU__unit         (char *a_question, char a_reg)
    }
    else if (strcmp (a_question, "sel_full")       == 0) {
       if (s_visu.curr != DONE_DONE) {
-         snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, tabs[s_visu.otab].sheet[s_visu.ccol][s_visu.crow]);
+         snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow));
       } else {
          snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
       }

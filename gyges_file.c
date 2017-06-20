@@ -180,70 +180,6 @@ FILE_version       (char *a_ver, char *a_final)
    return 0;
 }
 
-char         /*--> clear a tab entry ---------------------[ petal -[--------]-*/
-TAB_init           (int a_tab)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   int         j           = 0;
-   char        t           [100];
-   char        x_new       = 'y';
-   /*---(check for new tab)-----------*/
-   if (tabs[a_tab].active != 'y')  x_new = '-';
-   /*---(main config)-----------------*/
-   tabs[a_tab].active  = '-';
-   sprintf (t, "tab%02d", a_tab);
-   strcpy  (tabs[a_tab].name, t);
-   tabs[a_tab].c       =    0;
-   /*---(size limits)-----------------*/
-   tabs[a_tab].ncol    = DEF_COLS;
-   tabs[a_tab].nrow    = DEF_ROWS;
-   /*---(current position)------------*/
-   tabs[a_tab].ccol    =    0;
-   tabs[a_tab].crow    =    0;
-   /*---(screen position)-------------*/
-   tabs[a_tab].bcol    =    0;
-   tabs[a_tab].brow    =    0;
-   tabs[a_tab].ecol    =    0;
-   tabs[a_tab].erow    =    0;
-   /*---(initialize columns)----------*/
-   for (i = 0; i < MAX_COLS; ++i) {
-      tabs[a_tab].cols[i].w        = DEF_WIDTH;
-      tabs[a_tab].cols[i].x        = 0;
-      tabs[a_tab].cols[i].c        = 0;
-      if        (i < 26)  {
-         tabs[a_tab].cols[i].l[0] = '-';
-         tabs[a_tab].cols[i].l[1] = i + 'a';
-      } else  {
-         tabs[a_tab].cols[i].l[0] = (i / 26) - 1 + 'a';
-         tabs[a_tab].cols[i].l[1] = (i % 26) + 'a';
-      }
-      tabs[a_tab].cols[i].l[2] = '\0';
-   }
-   /*---(initialize rows)-------------*/
-   for (i = 0; i < MAX_ROWS; ++i) {
-      tabs[a_tab].rows[i].h = DEF_HEIGHT;
-      tabs[a_tab].rows[i].y = 0;
-      tabs[a_tab].rows[i].c = 0;
-   }
-   /*---(clean cells)-----------------*/
-   for (i = 0; i < MAX_COLS; ++i) {
-      for (j = 0; j < MAX_ROWS; ++j) {
-         tabs[a_tab].sheet[i][j] = NULL;
-      }
-   }
-   /*---(locked row/col)--------------*/
-   tabs[a_tab].froz_col  = '-';
-   tabs[a_tab].froz_bcol = 0;
-   tabs[a_tab].froz_ecol = 0;
-   tabs[a_tab].froz_row  = '-';
-   tabs[a_tab].froz_brow = 0;
-   tabs[a_tab].froz_erow = 0;
-   /*---(deactivate tab)--------------*/
-   tabs[a_tab].active  = '-';
-   /*---(done)------------------------*/
-   return 0;
-}
 
 
 
@@ -785,8 +721,6 @@ INPT_tab_new       (void)
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
             return rce + i;
          }
-         DEBUG_INPT   yLOG_note    ("initializing tab");
-         TAB_init (x_tab);
          break;
       case  FIELD_MAX   : /*---(size of sheet)-----*/
          rc = INPT_rowcol (p, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
@@ -881,8 +815,6 @@ INPT_tabF          (void)
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
             return rce + i;
          }
-         DEBUG_INPT   yLOG_note    ("initializing tab");
-         TAB_init (x_tab);
          break;
       case  2 : /*---(size of sheet)-----*/
          rc = INPT_rowcol (p, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
@@ -1435,7 +1367,7 @@ INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_sou
    /*---(check for a merged cell)--*/
    DEBUG_INPT   yLOG_note    ("check for rightward merged cells");
    for (i = x_new->col + 1; i < tabs [a_tab].ncol; i++) {
-      x_merge = LOC_cell (a_tab, i, a_row);
+      x_merge = LOC_cell_at_loc (a_tab, i, a_row);
       if (x_merge == NULL)    break;
       if (x_merge->a != '+')  break;
       DEP_create (G_DEP_MERGED, x_new, x_merge);
@@ -1640,7 +1572,7 @@ INPT_cellD         (cchar *a_recd)
          /*---(check for a merged cell)--*/
          DEBUG_INPT   yLOG_note    ("check for rightward merged cells");
          for (i = x_new->col + 1; i < tabs [x_tab].ncol; i++) {
-            x_merge = LOC_cell (x_tab, i, x_row);
+            x_merge = LOC_cell_at_loc (x_tab, i, x_row);
             if (x_merge == NULL)    break;
             if (x_merge->a != '+')  break;
             DEP_create (G_DEP_MERGED, x_new, x_merge);
@@ -2295,6 +2227,7 @@ FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
    char        rc          = 0;             /* generic return code            */
    char        rce         = -10;           /* return code for errors         */
    char        x_label     [20];            /* holder for cell address        */
+   tCELL      *x_curr      = NULL;
    /*---(defenses)-----------------------*/
    --rce;  if (a_file == NULL)                   return rce;
    --rce;  if (*a_seq <  0)                      return rce;
@@ -2313,12 +2246,13 @@ FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
    /*---(cells)--------------------------*/
    for (x = a_bcol; x <= a_ecol; ++x) {
       for (y = a_brow; y <= a_erow; ++y) {
-         if (tabs[a_tab].sheet[x][y]    == NULL)        continue;
-         if (tabs[a_tab].sheet[x][y]->s == NULL)        continue;
-         if (tabs[a_tab].sheet[x][y]->t == '-'    )     continue;
-         if (tabs[a_tab].sheet[x][y]->t == 'l'    )     continue;
-         if (tabs[a_tab].sheet[x][y]->u == a_stamp)     continue;
-         OUTP_cell (a_file, "cell_free", *a_seq, "", tabs[a_tab].sheet[x][y]);
+         x_curr = LOC_cell_at_loc (a_tab, x, y);
+         if (x_curr    == NULL)        continue;
+         if (x_curr->s == NULL)        continue;
+         if (x_curr->t == '-'    )     continue;
+         if (x_curr->t == 'l'    )     continue;
+         if (x_curr->u == a_stamp)     continue;
+         OUTP_cell (a_file, "cell_free", *a_seq, "", x_curr);
          ++(*a_seq);
       }
    }

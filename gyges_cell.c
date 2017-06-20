@@ -623,7 +623,7 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    rc          = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    DEBUG_CELL   yLOG_value   ("LOC_legal" , rc);
    --rce;  if (rc < 0)             return rce;
-   curr        = LOC_cell (a_tab, a_col, a_row);
+   curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("curr"      , curr);
    --rce;  if (curr == NULL)       return rce;
    /*---(save before)-----------------*/
@@ -647,7 +647,7 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
    --rce;  if (rc < 0)             return rce;
    /*---(see if its still there)------*/
-   curr        = LOC_cell (a_tab, a_col, a_row);
+   curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
    if (curr == NULL) {
       DEBUG_CELL   yLOG_note    ("cell already removed, moving on");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -736,7 +736,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       return NULL;
    }
    /*---(cell present)-------------------*/
-   curr        = LOC_cell (a_tab, a_col, a_row);
+   curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("curr cell" , curr);
    /*---(check merge)--------------------*/
    if (curr != NULL) {
@@ -758,7 +758,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       DEBUG_CELL   yLOG_note    ("wipe existing cell");
       rc   = CELL__wipe (curr);
       DEBUG_CELL   yLOG_value   ("rc"        , rc);
-      curr        = LOC_cell (a_tab, a_col, a_row);
+      curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
       DEBUG_CELL   yLOG_point   ("curr now"  , curr);
    }
    if (curr == NULL) {
@@ -1018,7 +1018,7 @@ CELL__merges       (tCELL *a_cell)
    DEBUG_CELL   yLOG_value   ("x_col"     , x_col);
    DEBUG_CELL   yLOG_value   ("NCOL"      , NCOL);
    while (x_col <  NCOL) {
-      x_next = LOC_cell (a_cell->tab, x_col, a_cell->row);
+      x_next = LOC_cell_at_loc (a_cell->tab, x_col, a_cell->row);
       DEBUG_CELL   yLOG_point   ("next cell" , x_next);
       if (x_next    == NULL)  break;
       DEBUG_CELL   yLOG_char    ("type"      , x_next->a);
@@ -1163,7 +1163,7 @@ CELL__interpret    (
             DEBUG_CELL   yLOG_exit    (__FUNCTION__);
             return rce;
          }
-         x_like = LOC_cell (x_tab, x_col, x_row);
+         x_like = LOC_cell_at_loc (x_tab, x_col, x_row);
          DEBUG_CELL   yLOG_point   ("x_like"    , x_like);
          --rce;
          if (x_like == NULL) {
@@ -1258,7 +1258,7 @@ CELL__merge_left     (tCELL *a_curr)
    /*---(find real head)-----------------*/
    x_save = a_curr;
    for (i = a_curr->col - 1; i >= 0; --i) {
-      x_left  = LOC_cell (a_curr->tab, i, a_curr->row);
+      x_left  = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
       if (x_left    == NULL)                      return x_save;
       x_save = x_left;
       if (x_left->l == 1 && x_left->s[0] == '<') continue;  /* should merge  */
@@ -1286,7 +1286,7 @@ CELL__merge_right    (tCELL *a_left)
    /*---(merge)--------------------------*/
    for (i = a_left->col + 1; i <  NCOL; ++i) {
       /*---(get next)--------------------*/
-      x_right = LOC_cell (a_left->tab, i, a_left->row);
+      x_right = LOC_cell_at_loc (a_left->tab, i, a_left->row);
       /*---(filter)----------------------*/
       if (CELL__merge_valid (x_right) < 0)  return 0;
       /*---(label)-----------------------*/
@@ -1319,7 +1319,7 @@ CELL__unmerge_right  (tCELL *a_left)
    /*---(merge)--------------------------*/
    for (i = a_left->col + 1; i <  NCOL; ++i) {
       /*---(get next)--------------------*/
-      x_right = LOC_cell (a_left->tab, i, a_left->row);
+      x_right = LOC_cell_at_loc (a_left->tab, i, a_left->row);
       /*---(filter)----------------------*/
       if (CELL__merge_valid (x_right) < 0)  return 0;
       /*---(label)-----------------------*/
@@ -1672,7 +1672,7 @@ CELL_width         (char a_mode, char a_num)
        *> }                                                                                          <*/
       /*---(update column printables)----*/
       for (j = 0; j < NROW; ++j) {
-         x_cell = LOC_cell (x_tab, i, j);
+         x_cell = LOC_cell_at_loc (x_tab, i, j);
          if (x_cell == NULL) continue;
          /*---(update merged cells)----------*/
          if (x_cell->t == CTYPE_MERGE)  SEQ_calc_up (x_cell);
@@ -1749,8 +1749,8 @@ CELL_height        (char a_mode, char a_num)
          curr->h = x_height;
          /*---(update column printables)----*/
          for (i = 0; i < NCOL; ++i) {
-            if (LOC_cell (x_tab, i, x_row) == NULL) continue;
-            CELL_printable (LOC_cell (x_tab, i, x_row));
+            if (LOC_cell_at_loc (x_tab, i, x_row) == NULL) continue;
+            CELL_printable (LOC_cell_at_loc (x_tab, i, x_row));
          }
          /*---(reset headers)---------------*/
          KEYS_brow    (BROW);
@@ -2317,7 +2317,7 @@ CELL_printable     (tCELL *a_curr) {
    w = tabs[a_curr->tab].cols[a_curr->col].w;
    /*> w = p_tab->cols[a_curr->col].w;                                                  <*/
    for (i = a_curr->col + 1; i < tabs[a_curr->tab].ncol; ++i) {
-      x_curr = LOC_cell (a_curr->tab, i, a_curr->row);
+      x_curr = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
       if (x_curr    == NULL)         break;
       if (x_curr->t != CTYPE_MERGE)  break;
       w    += tabs[a_curr->tab].cols[i].w;
@@ -2394,7 +2394,7 @@ CELL_printable     (tCELL *a_curr) {
          while (pp == NULL)  pp = (char*) malloc(w + 1);
          sprintf (pp, "%-*.*s", w, w, p + wa);
          DEBUG_CELL  yLOG_info  ("#1p", pp);
-         x_next = LOC_cell (a_curr->tab, a_curr->col + i, a_curr->row);
+         x_next = LOC_cell_at_loc (a_curr->tab, a_curr->col + i, a_curr->row);
          if (x_next->p != NULL) {
             free (x_next->p);
             x_next->p = NULL;
@@ -2502,7 +2502,7 @@ CELL__unitnew      (
          sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;
       }
-      x_cell = LOC_cell  (x_tab, x_col, x_row);
+      x_cell = LOC_cell_at_loc  (x_tab, x_col, x_row);
       /*> if (x_cell == NULL) {                                                         <* 
        *>    sprintf (unit_answer, "s_celln          : label <%s> is NULL", a_label);   <* 
        *>    return unit_answer;                                                        <* 

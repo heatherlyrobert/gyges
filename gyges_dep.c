@@ -866,7 +866,7 @@ DEP_delmergeroot   (tCELL *a_target)
       return rce;
    }
    DEBUG_DEPS   yLOG_info    ("label"     , a_target->label);
-   x_source = LOC_cell (a_target->tab, a_target->col + 1, a_target->row);
+   x_source = LOC_cell_at_loc (a_target->tab, a_target->col + 1, a_target->row);
    --rce;  if (x_source    == NULL       ) {
       DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -924,7 +924,7 @@ DEP_delmerge       (
    /*---(delete ref and to right)--------*/
    for (i = a_source->col; i < NCOL; ++i) {
       DEBUG_DEPS   yLOG_value   ("check col" , i);
-      x_testing = LOC_cell (a_source->tab, i, a_source->row);
+      x_testing = LOC_cell_at_loc (a_source->tab, i, a_source->row);
       DEBUG_DEPS   yLOG_point   ("cell"      , x_testing);
       if (x_testing            == NULL       )  break;
       DEBUG_DEPS   yLOG_info    ("label"     , x_testing->label);
@@ -1258,7 +1258,7 @@ DEP_range          (
    for (r = a_brow; r <= a_erow; ++r) {
       for (c = a_bcol; c <= a_ecol; ++c) {
          /*---(get existing)-------------*/
-         x_dest  = LOC_cell (a_btab, c, r);
+         x_dest  = LOC_cell_at_loc (a_btab, c, r);
          DEBUG_DEPS    yLOG_complex ("target"    , "col=%4d, row=%4d, ptr=%9p", c, r, x_dest);
          /*---(create if null)-----------*/
          if (x_dest    == NULL)        x_dest = CELL_change (CHG_NOHIST, a_btab, c, r, "");
@@ -2303,12 +2303,12 @@ DEP_dump           (void)
    char xlabel[LEN_RECD];
    endwin();
    DEP_show  (0, s_root);
-   DEP_trace (0, LOC_cell (0, 2, 11));
+   DEP_trace (0, LOC_cell_at_loc (0, 2, 11));
    DEP_full  ();
-   /*> printf ("0c12  = %9p\n", LOC_cell (0, 2, 11));                                <*/
-   DEP_disp_pros (LOC_cell (0, 2, 11), xlabel);
+   /*> printf ("0c12  = %9p\n", LOC_cell_at_loc (0, 2, 11));                                <*/
+   DEP_disp_pros (LOC_cell_at_loc (0, 2, 11), xlabel);
    /*> printf ("deps  = %s\n",  xlabel);                                              <*/
-   DEP_disp_reqs (LOC_cell (0, 2, 11), xlabel);
+   DEP_disp_reqs (LOC_cell_at_loc (0, 2, 11), xlabel);
    /*> printf ("reqs  = %s\n",  xlabel);                                              <*/
    /*> printf ("s_root = %9p\n", s_root);                                               <*/
    DEP_disp_pros (s_root, xlabel);
@@ -2362,7 +2362,7 @@ DEP_unit           (
          sprintf (unit_answer, "s_dep            : label <%s> not legal, rc = %d", a_label, rc);
          return unit_answer;
       }
-      x_cell = LOC_cell  (x_tab, x_col, x_row);
+      x_cell = LOC_cell_at_loc  (x_tab, x_col, x_row);
       /*> if (x_cell == NULL) {                                                         <* 
        *>    sprintf (unit_answer, "s_dep            : label <%s> is NULL", a_label);   <* 
        *>    return unit_answer;                                                        <* 
