@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1i"
-#define     VER_TXT   "unit tested all date and time functions"
+#define     VER_NUM   "2.1j"
+#define     VER_TXT   "successfully cleaned and moved tab and sheet setup to LOC"
 
 
 
@@ -580,7 +580,8 @@ struct cTAB {
    /* tabs are pre-allocated and can put into and taken out of use simply by  */
    /* flipping the active flag and updating the name as desired.              */
    char        active;                      /* currently in use?  0=no, 1=yes */
-   char        name  [LEN_RECD ];            /* tab name for user reference    */
+   short       tab;                         /* number of tab                  */
+   char        name  [LEN_RECD ];           /* tab name for user reference    */
    /*---(contents)-----------------------*/
    /* tabs pull three other data structures together in a package: column     */
    /* characteristics, row characteristics, and a grid on which to hang cells.*/
@@ -617,26 +618,27 @@ struct cTAB {
    /*---(end)----------------------------*/
 };
 tTAB     tabs [MAX_TABS];
-tTAB    *tab;                          /* current tab                         */
+tTAB    *p_tab;                        /* current tab pointer                 */
 
 
 
 #define     NTAB        my.ntab
 #define     CTAB        my.ctab
+#define     PTAB        tabs [my.ctab]
 
-#define     NROW        tab->nrow
-#define     CROW        tab->crow
-#define     BROW        tab->brow
-#define     EROW        tab->erow
+#define     NROW        p_tab->nrow
+#define     CROW        p_tab->crow
+#define     BROW        p_tab->brow
+#define     EROW        p_tab->erow
 
-#define     NCOL        tab->ncol
-#define     CCOL        tab->ccol
-#define     BCOL        tab->bcol
-#define     ECOL        tab->ecol
+#define     NCOL        p_tab->ncol
+#define     CCOL        p_tab->ccol
+#define     BCOL        p_tab->bcol
+#define     ECOL        p_tab->ecol
 
 #define     NCEL        ncell
 #define     ACEL        acell
-#define     CCEL        tab[my.ctab].sheet[tab->ccol][tab->crow]
+#define     CCEL        tab[my.ctab].sheet[p_tab->ccol][p_tab->crow]
 
 
 
@@ -1193,6 +1195,14 @@ char      HIST_undo          (void);
 char      HIST_redo          (void);
 
 
+/*345678901-12345678901234567890->--------------------------------------------*/
+/*---(program)-------------------*/
+char        LOC_init             (void);
+char        LOC__clear_cols      (short a_tab);
+char        LOC__clear_rows      (short a_tab);
+char        LOC__clear_cells     (short a_tab);
+char        LOC__purge           (void);
+char        LOC_wrap             (void);
 
 char      LOC_hook           /* ------ */  (tCELL *a_cell, int a_tab, int a_col, int a_row);
 char      LOC_unhook         /* ------ */  (tCELL *a_cell);

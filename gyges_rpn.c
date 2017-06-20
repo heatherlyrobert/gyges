@@ -221,14 +221,14 @@ RPN_makelike       (tCELL *a_curr, char *a_label)
    int      xtab, xcol, xrow;
    tCELL   *dest   = NULL;
    LOC_parse (a_label, &xtab, &xcol, &xrow, NULL);
-   if (tab->sheet[xcol][xrow] == NULL || tab->sheet[xcol][xrow]->s == NULL) {
+   if (p_tab->sheet[xcol][xrow] == NULL || p_tab->sheet[xcol][xrow]->s == NULL) {
       rpn__offcol = 0;
       rpn__offrow = 0;
       strncpy(rpn__working, "", LEN_RECD);
    } else {
       rpn__offcol = a_curr->col - xcol;
       rpn__offrow = a_curr->row - xrow;
-      strncpy(rpn__working, tab->sheet[xcol][xrow]->s, LEN_RECD);
+      strncpy(rpn__working, p_tab->sheet[xcol][xrow]->s, LEN_RECD);
    }
    return 0;
 }

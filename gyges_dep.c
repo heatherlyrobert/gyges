@@ -1212,7 +1212,7 @@ DEP_range          (
    /*---(locals)-----------+-----------+-*//*---------------------------------*/
    int         r           = 0;             /* iterator -- rows               */
    int         c           = 0;             /* iterator -- columns            */
-   tCELL      *dest        = NULL;          /* cell at current tab, col, row  */
+   tCELL      *x_dest      = NULL;          /* cell at current tab, col, row  */
    char        rc          = 0;             /* generic return code character  */
    tCELL      *rcp         = NULL;          /* generic return code pointer    */
    char        rce         = -10;           /* return code for errors         */
@@ -1258,19 +1258,19 @@ DEP_range          (
    for (r = a_brow; r <= a_erow; ++r) {
       for (c = a_bcol; c <= a_ecol; ++c) {
          /*---(get existing)-------------*/
-         dest  = tabs[a_btab].sheet[c][r];
-         DEBUG_DEPS    yLOG_complex ("target"    , "col=%4d, row=%4d, ptr=%9p", c, r, dest);
+         x_dest  = LOC_cell (a_btab, c, r);
+         DEBUG_DEPS    yLOG_complex ("target"    , "col=%4d, row=%4d, ptr=%9p", c, r, x_dest);
          /*---(create if null)-----------*/
-         if (dest    == NULL)          dest = CELL_change (CHG_NOHIST, a_btab, c, r, "");
-         if (dest    == NULL)        { rce_save = rce;     break; }
+         if (x_dest    == NULL)        x_dest = CELL_change (CHG_NOHIST, a_btab, c, r, "");
+         if (x_dest    == NULL)      { rce_save = rce;     break; }
          /*---(add source if blank)------*/
-         rcp = dest;   /* must initialize */
-         if (dest->s == NULL)          rcp  = CELL_change (CHG_NOHIST, a_btab, c, r, "");
+         rcp = x_dest;   /* must initialize */
+         if (x_dest->s == NULL)        rcp  = CELL_change (CHG_NOHIST, a_btab, c, r, "");
          if (rcp == NULL)            { rce_save = rce - 1; break; }
-         if (rcp != dest)            { rce_save = rce - 2; break; }
+         if (rcp != x_dest)          { rce_save = rce - 2; break; }
          /*---(create dependency)--------*/
-         DEBUG_DEPS    yLOG_info    ("target"    , dest->label);
-         rc  = DEP_create (G_DEP_RANGE, a_cell, dest);
+         DEBUG_DEPS    yLOG_info    ("target"    , x_dest->label);
+         rc  = DEP_create (G_DEP_RANGE, a_cell, x_dest);
          if (rc  <  0)               { rce_save = rce - 3; break; }
       }
       if (rce_save < 0) break;
@@ -2303,12 +2303,12 @@ DEP_dump           (void)
    char xlabel[LEN_RECD];
    endwin();
    DEP_show  (0, s_root);
-   DEP_trace (0, tabs[0].sheet[2][11]);
+   DEP_trace (0, LOC_cell (0, 2, 11));
    DEP_full  ();
-   /*> printf ("0c12  = %9p\n", tabs[0].sheet[2][11]);                                <*/
-   DEP_disp_pros (tabs[0].sheet[2][11], xlabel);
+   /*> printf ("0c12  = %9p\n", LOC_cell (0, 2, 11));                                <*/
+   DEP_disp_pros (LOC_cell (0, 2, 11), xlabel);
    /*> printf ("deps  = %s\n",  xlabel);                                              <*/
-   DEP_disp_reqs (tabs[0].sheet[2][11], xlabel);
+   DEP_disp_reqs (LOC_cell (0, 2, 11), xlabel);
    /*> printf ("reqs  = %s\n",  xlabel);                                              <*/
    /*> printf ("s_root = %9p\n", s_root);                                               <*/
    DEP_disp_pros (s_root, xlabel);

@@ -690,7 +690,7 @@ BUF_switch         (int a_tab)
    int xtab = a_tab - '0';
    if (xtab >= 0 && xtab < NTAB) {
       CTAB = xtab;
-      tab  = &tabs[CTAB];
+      p_tab  = &tabs[CTAB];
       BCOL = 0;
       ECOL = 0;
       BROW = 0;
@@ -817,8 +817,8 @@ MODE_source   (char a_major, char a_minor)
          break;
       case  27  : case  'U' :
          DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
-         if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
-            strncpy (g_contents, tab->sheet[tab->ccol][CROW]->s, LEN_RECD); 
+         if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[p_tab->ccol][CROW]->s != NULL) {
+            strncpy (g_contents, p_tab->sheet[p_tab->ccol][CROW]->s, LEN_RECD); 
          }
          EDIT_pos     ('r');
          yVIKEYS_mode_exit  ();
@@ -1158,8 +1158,8 @@ MODE_input         (char  a_major, char  a_minor)
          CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
       }
       if (a_minor == 27 && yVIKEYS_mode_prev() == MODE_MAP) {
-         if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[tab->ccol][CROW]->s != NULL) {
-            strlcpy (g_contents, tab->sheet[tab->ccol][CROW]->s, LEN_RECD); 
+         if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[p_tab->ccol][CROW]->s != NULL) {
+            strlcpy (g_contents, p_tab->sheet[p_tab->ccol][CROW]->s, LEN_RECD); 
          } else {
             strlcpy (g_contents, ""                            , LEN_RECD); 
          }
@@ -1205,7 +1205,7 @@ char       /*----: process keys for formatting mode --------------------------*/
 SMOD_format        (char a_major, char a_minor)
 {
    /*---(current cell -- whether good or not)---*/
-   tCELL   *curr = tab->sheet[CCOL][CROW];
+   tCELL   *curr = p_tab->sheet[CCOL][CROW];
    /*---(check for control keys)----------------*/
    switch (a_minor) {
    case   10 :
@@ -1295,13 +1295,13 @@ SMOD_format        (char a_major, char a_minor)
 char
 KEYS_unlock        (void)
 {
-   tab->froz_col  = '-';
-   tab->froz_bcol = 0;
-   tab->froz_ecol = 0;
+   p_tab->froz_col  = '-';
+   p_tab->froz_bcol = 0;
+   p_tab->froz_ecol = 0;
    MOVE_horz ('r');
-   tab->froz_row  = '-';
-   tab->froz_brow = 0;
-   tab->froz_erow = 0;
+   p_tab->froz_row  = '-';
+   p_tab->froz_brow = 0;
+   p_tab->froz_erow = 0;
    MOVE_vert ('r');
 }
 
@@ -1384,38 +1384,38 @@ cmd_exec           (char *a_command)
          KEYS_unlock ();
          return 0;
       }
-      rc = LOC_parse (p, NULL, &tab->froz_bcol, &tab->froz_brow, NULL);
+      rc = LOC_parse (p, NULL, &p_tab->froz_bcol, &p_tab->froz_brow, NULL);
       if (rc < 0) {
          KEYS_unlock ();
          return 0;
       }
-      tab->froz_ecol = tab->froz_bcol;
-      tab->froz_erow = tab->froz_brow;
+      p_tab->froz_ecol = p_tab->froz_bcol;
+      p_tab->froz_erow = p_tab->froz_brow;
       p = strtok (NULL  , q);
       if (p != NULL) {
-         rc = LOC_parse (p, NULL, &tab->froz_ecol, &tab->froz_erow, NULL);
+         rc = LOC_parse (p, NULL, &p_tab->froz_ecol, &p_tab->froz_erow, NULL);
          if (rc < 0) {
-            tab->froz_ecol = tab->froz_bcol;
-            tab->froz_erow = tab->froz_brow;
+            p_tab->froz_ecol = p_tab->froz_bcol;
+            p_tab->froz_erow = p_tab->froz_brow;
          }
       }
       switch (x_flag) {
-      case  'c' : tab->froz_col  = 'y';
-                  BCOL = CCOL = tab->froz_ecol + 1;
-                  BROW = CROW = tab->froz_erow;
-                  tab->froz_brow = 0;
-                  tab->froz_erow = 0;
+      case  'c' : p_tab->froz_col  = 'y';
+                  BCOL = CCOL = p_tab->froz_ecol + 1;
+                  BROW = CROW = p_tab->froz_erow;
+                  p_tab->froz_brow = 0;
+                  p_tab->froz_erow = 0;
                   break;
-      case  'r' : tab->froz_row  = 'y';
-                  BCOL = CCOL = tab->froz_ecol;
-                  BROW = CROW = tab->froz_erow + 1;
-                  tab->froz_bcol = 0;
-                  tab->froz_ecol = 0;
+      case  'r' : p_tab->froz_row  = 'y';
+                  BCOL = CCOL = p_tab->froz_ecol;
+                  BROW = CROW = p_tab->froz_erow + 1;
+                  p_tab->froz_bcol = 0;
+                  p_tab->froz_ecol = 0;
                   break;
-      case  '-' : tab->froz_col = 'y';
-                  tab->froz_row = 'y';
-                  BCOL = CCOL = tab->froz_ecol + 1;
-                  BROW = CROW = tab->froz_erow + 1;
+      case  '-' : p_tab->froz_col = 'y';
+                  p_tab->froz_row = 'y';
+                  BCOL = CCOL = p_tab->froz_ecol + 1;
+                  BROW = CROW = p_tab->froz_erow + 1;
                   break;
       default   : KEYS_unlock ();
                   break;
@@ -1494,7 +1494,7 @@ SMOD_wander        (char a_prev, char a_curr)
                CTAB = wtab;
                tabs[CTAB].ccol = wcol;
                tabs[CTAB].crow = wrow;
-               tab = &tabs[CTAB];
+               p_tab = &tabs[CTAB];
                my.cpos = wpos;
                strcpy (g_contents, wsave);
                if (strcmp (wref2, "") != 0) {

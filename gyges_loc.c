@@ -6,6 +6,205 @@
 static char    s_label     [LEN_RECD]   = "";
 
 
+
+/*====================------------------------------------====================*/
+/*===----                        program level                         ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___PROGRAM_________o () { return; }
+
+char         /*--> initialize location function ----------[ shoot  [ ------ ]-*/
+LOC_init             (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(set defaults)-------------------*/
+   NTAB    = 1;
+   CTAB    = 0;
+   p_tab   = &tabs [CTAB];
+   /*---(clean tabs)---------------------*/
+   LOC__purge    ();
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> clear all column customizations -------[ leaf   [ ------ ]-*/
+LOC__clear_cols      (short a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   short       x_col       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab <  0) {
+      DEBUG_LOCS   yLOG_snote   ("tab too small");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_tab >= NTAB) {
+      DEBUG_LOCS   yLOG_snote   ("tab too big");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(initialize columns)-------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear columns to defaults");
+   DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
+   for (x_col = 0; x_col < MAX_COLS; ++x_col) {
+      /*---(characteristics)-------------*/
+      tabs [a_tab].cols [x_col].w       = DEF_WIDTH;
+      tabs [a_tab].cols [x_col].x       = 0;
+      tabs [a_tab].cols [x_col].c       = 0;
+      /*---(labels)----------------------*/
+      if        (x_col < 26)  {
+         tabs [a_tab].cols [x_col].l[0] = '-';
+         tabs [a_tab].cols [x_col].l[1] = x_col + 'a';
+      } else  {
+         tabs [a_tab].cols [x_col].l[0] = (x_col / 26) - 1 + 'a';
+         tabs [a_tab].cols [x_col].l[1] = (x_col % 26) + 'a';
+      }
+      tabs [a_tab].cols [x_col].l[2] = '\0';
+      /*---(done)------------------------*/
+   }
+   /*---(clear frozen cols)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear any frozen columns");
+   tabs [a_tab].froz_col  = '-';
+   tabs [a_tab].froz_bcol = 0;
+   tabs [a_tab].froz_ecol = 0;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> clear all row customizations ----------[ leaf   [ ------ ]-*/
+LOC__clear_rows      (short a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   short       x_row       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab <  0) {
+      DEBUG_LOCS   yLOG_snote   ("tab too small");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_tab >= NTAB) {
+      DEBUG_LOCS   yLOG_snote   ("tab too big");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(initialize rows)----------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");
+   DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
+   for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
+      tabs [a_tab].rows [x_row].h = DEF_HEIGHT;
+      tabs [a_tab].rows [x_row].y = 0;
+      tabs [a_tab].rows [x_row].c = 0;
+   }
+   /*---(clear frozen rows)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear any frozen rows");
+   tabs [a_tab].froz_row  = '-';
+   tabs [a_tab].froz_brow = 0;
+   tabs [a_tab].froz_erow = 0;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> clear all cell placements -------------[ leaf   [ ------ ]-*/
+LOC__clear_cells     (short a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   short       x_col       =   0;
+   short       x_row       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab <  0) {
+      DEBUG_LOCS   yLOG_snote   ("tab too small");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_tab >= NTAB) {
+      DEBUG_LOCS   yLOG_snote   ("tab too big");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(unhook all cells)---------------*/
+   /* tbd */
+   /*---(initialize cells)---------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear cells off sheet");
+   DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
+   DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
+   for (x_col = 0; x_col < MAX_COLS; ++x_col) {
+      for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
+         tabs [a_tab].sheet [x_col][x_row] = NULL;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> clean all tab and sheet locations -----[ stem   [ ------ ]-*/
+LOC__purge           (void)
+{  /*---(design notes)--------------------------------------------------------*/
+   /* run CELL_wrap/purge before LOC_wrap/purge so all cells are unhooked     */
+   /*---(locals)-----------+-----------+-*/
+   int         x_tab       = 0;
+   char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(initialize tabs)----------------*/
+   for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
+      DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+      /*---(main config)-----------------*/
+      DEBUG_LOCS   yLOG_note    ("reset naming");
+      tabs [x_tab].active  = '-';
+      sprintf (t, "tab_%02d", x_tab);
+      strlcpy (tabs [x_tab].name, t, LEN_RECD);
+      tabs [x_tab].c       =    0;
+      /*---(size limits)-----------------*/
+      DEBUG_LOCS   yLOG_note    ("reset default size");
+      DEBUG_LOCS   yLOG_value   ("DEF_COLS"  , DEF_COLS);
+      DEBUG_LOCS   yLOG_value   ("DEF_ROWS"  , DEF_ROWS);
+      tabs [x_tab].ncol    = DEF_COLS;
+      tabs [x_tab].nrow    = DEF_ROWS;
+      /*---(current position)------------*/
+      DEBUG_LOCS   yLOG_note    ("reset current position");
+      tabs [x_tab].ccol    =    0;
+      tabs [x_tab].crow    =    0;
+      /*---(screen position)-------------*/
+      DEBUG_LOCS   yLOG_note    ("reset beginning and ending cells");
+      tabs [x_tab].bcol    =    0;
+      tabs [x_tab].brow    =    0;
+      tabs [x_tab].ecol    =    0;
+      tabs [x_tab].erow    =    0;
+      /*---(initialize)------------------*/
+      LOC__clear_cols   (x_tab);
+      LOC__clear_rows   (x_tab);
+      LOC__clear_cells  (x_tab);
+      /*---(done)------------------------*/
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> wrap up location function -------------[ shoot  [ ------ ]-*/
+LOC_wrap             (void)
+{
+   LOC__purge  ();
+}
+
+
+
 /*====================------------------------------------====================*/
 /*===----                     hooking and unhooking                    ----===*/
 /*====================------------------------------------====================*/
@@ -244,7 +443,7 @@ LOC_jump           (
    if (rc < 0)    return rc;
    /*---(update globals)-----------------*/
    CTAB          = a_tab;
-   tab           = &tabs[CTAB];
+   p_tab         = &tabs[CTAB];
    CCOL          = a_col;
    CROW          = a_row;
    /*---(selection)----------------------*/

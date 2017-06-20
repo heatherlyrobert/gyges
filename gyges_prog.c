@@ -167,66 +167,9 @@ PROG_begin         (void)
    CELL_init ();
    MARK_init ();
    /*---(overall tab settings)-----------*/
-   DEBUG_PROG  yLOG_note  ("clean tab settings");
-   NTAB    = 1;
-   CTAB    = 0;
-   tab  = &tabs[CTAB];
-   /*---(clean each tab)-----------------*/
-   DEBUG_PROG  yLOG_note  ("clean tabs contents");
-   for (i = 0; i < MAX_TABS; ++i) {
-      /*---(main config)-----------------*/
-      tabs[i].active  = '-';
-      sprintf (tmp, "tab%02d", i);
-      strcpy  (tabs[i].name, tmp);
-      tabs[i].c       =    0;
-      /*---(size limits)-----------------*/
-      tabs[i].ncol    = DEF_COLS;
-      tabs[i].nrow    = DEF_ROWS;
-      /*---(current position)------------*/
-      tabs[i].ccol    =    0;
-      tabs[i].crow    =    0;
-      /*---(screen position)-------------*/
-      tabs[i].bcol    =    0;
-      tabs[i].brow    =    0;
-      tabs[i].ecol    =    0;
-      tabs[i].erow    =    0;
-      /*---(initialize columns)----------*/
-      for (j = 0; j < MAX_COLS; ++j) {
-         tabs[i].cols[j].w        = DEF_WIDTH;
-         tabs[i].cols[j].x        = 0;
-         tabs[i].cols[j].c        = 0;
-         if        (j < 26)  {
-            tabs[i].cols[j].l[0] = '-';
-            tabs[i].cols[j].l[1] = j + 'a';
-         } else  {
-            tabs[i].cols[j].l[0] = (j / 26) - 1 + 'a';
-            tabs[i].cols[j].l[1] = (j % 26) + 'a';
-         }
-         tabs[i].cols[j].l[2] = '\0';
-      }
-      /*---(initialize rows)-------------*/
-      for (j = 0; j < MAX_ROWS; ++j) {
-         tabs[i].rows[j].h = DEF_HEIGHT;
-         tabs[i].rows[j].y = 0;
-         tabs[i].rows[j].c = 0;
-      }
-      /*---(clean cells)-----------------*/
-      for (j = 0; j < MAX_COLS; ++j) {
-         for (k = 0; k < MAX_ROWS; ++k) {
-            tabs[i].sheet[j][k] = NULL;
-         }
-      }
-      /*---(locked row/col)--------------*/
-      tabs[i].froz_col  = '-';
-      tabs[i].froz_bcol = 0;
-      tabs[i].froz_ecol = 0;
-      tabs[i].froz_row  = '-';
-      tabs[i].froz_brow = 0;
-      tabs[i].froz_erow = 0;
-      /*---(done)------------------------*/
-   }
+   LOC_init  ();
    /*---(locals)-------------------------*/
-   VISU_init  ();
+   VISU_init ();
    REG_init  ();
    KEYS_init ();
    /*---(column settings)----------------*/
@@ -253,6 +196,7 @@ PROG_end           (void)
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    CELL_wrap    ();
+   LOC_wrap     ();
    DEP_wrap     ();   /* disconnect all cells */
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_TOPS   yLOG_end     ();
@@ -396,7 +340,7 @@ unit_accessor(char *a_question, void *a_thing)
    int         x_back      = 0;
    /*---(sheet focus)--------------------*/
    if        (strcmp(a_question, "sheet_size")     == 0) {
-      snprintf(unit_answer, LEN_UNIT, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, tab->ncol, tab->nrow);
+      snprintf(unit_answer, LEN_UNIT, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, p_tab->ncol, p_tab->nrow);
    } else if (strcmp(a_question, "cell_list")      == 0) {
       snprintf(unit_answer, LEN_UNIT, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);
    } else if (strcmp(a_question, "cell_count")     == 0) {
@@ -435,9 +379,9 @@ unit_accessor(char *a_question, void *a_thing)
    }
    /*---(display focus)------------------*/
    else if   (strcmp(a_question, "rows")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", tab->nrow, my.y_avail, BROW, tab->crow, EROW);
+      snprintf(unit_answer, LEN_UNIT, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", p_tab->nrow, my.y_avail, BROW, p_tab->crow, EROW);
    } else if (strcmp(a_question, "cols")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", tab->ncol, my.x_avail, BCOL, tab->ccol, ECOL);
+      snprintf(unit_answer, LEN_UNIT, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", p_tab->ncol, my.x_avail, BCOL, p_tab->ccol, ECOL);
    }
    /*---(selection)----------------------*/
    /*> else if   (strcmp(a_question, "sel_range")      == 0) {                                                                                                                            <* 
@@ -447,9 +391,9 @@ unit_accessor(char *a_question, void *a_thing)
     *> } else if (strcmp(a_question, "sel_full")       == 0) {                                                                                                                            <* 
     *>    snprintf(unit_answer, LEN_UNIT, "Select Full      : st=%3d, sc=%3d, sr=%3d, sp=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);                   <*/
    else if   (strcmp(a_question, "curr_pos")       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, tab->ccol, tab->crow);
+      snprintf(unit_answer, LEN_UNIT, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, p_tab->ccol, p_tab->crow);
    } else if (strcmp(a_question, "max_pos" )       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", my.ntab, tab->ncol, tab->nrow);
+      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", my.ntab, p_tab->ncol, p_tab->nrow);
    }
    /*---(dependencies)-------------------*/
    /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 

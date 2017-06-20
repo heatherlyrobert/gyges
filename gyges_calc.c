@@ -3340,15 +3340,15 @@ CALC__quarters     (void)
    DEBUG_CALC   yLOG_complex ("x_1st1"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_1st1, entries [x_1st1], x_1stw      , entries [x_1st1] * x_1stw);
    DEBUG_CALC   yLOG_complex ("x_1st2"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_1st2, entries [x_1st2], 4.0 - x_1stw, entries [x_1st2] * (4.0 - x_1stw));
    q1 = ((entries [x_1st1] * x_1stw) + (entries [x_1st2] * (4.0 - x_1stw))) / 4.0;
-   printf ("q1 = %lf\n", q1);
+   /*> printf ("q1 = %lf\n", q1);                                                     <*/
    DEBUG_CALC   yLOG_complex ("x_1st"     , "%10.5lf", q1);
    DEBUG_CALC   yLOG_complex ("x_3rd1"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_3rd1, entries [x_3rd1], x_3rdw      , entries [x_3rd1] * x_3rdw);
    DEBUG_CALC   yLOG_complex ("x_3rd2"    , "i=%3d, v=%10.5lf, w=%4.2lf, f=%10.5lf", x_3rd2, entries [x_3rd2], 4.0 - x_3rdw, entries [x_3rd2] * (4.0 - x_3rdw));
    q3 = ((entries [x_3rd1] * x_3rdw) + (entries [x_3rd2] * (4.0 - x_3rdw))) / 4.0;
-   printf ("q3 = %lf\n", q3);
+   /*> printf ("q3 = %lf\n", q3);                                                     <*/
    DEBUG_CALC   yLOG_complex ("x_3rd"     , "%10.5lf", q3);
    qr = q3 - q1;
-   printf ("qr = %lf\n", qr);
+   /*> printf ("qr = %lf\n", qr);                                                     <*/
    /*---(complete)-----------------------*/
    return;
 }
@@ -3357,7 +3357,7 @@ PRIV void    /*--> find the interquartile range ----------[ ------ [ ------ ]-*/
 CALC__quarter1     (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
-   printf ("quarter1\n");
+   /*> printf ("quarter1\n");                                                         <*/
    CALC__quarters ();
    if (errornum <  0) {
       DEBUG_CALC   yLOG_exit    (__FUNCTION__);

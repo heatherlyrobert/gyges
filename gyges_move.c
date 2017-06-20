@@ -111,8 +111,8 @@ MOVE_done          (void)
    VISU_update  (CTAB, CCOL, CROW);
    /*---(update contents)-------------*/
    DEBUG_USER  yLOG_note    ("update current contents");
-   if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {
-      strncpy (g_contents, tab->sheet[CCOL][CROW]->s, LEN_RECD);
+   if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[CCOL][CROW]->s != NULL) {
+      strncpy (g_contents, p_tab->sheet[CCOL][CROW]->s, LEN_RECD);
    } else {
       strncpy (g_contents, ""                       , LEN_RECD);
    }
@@ -176,8 +176,8 @@ MOVE_edges         (
    case 't' : case 'K' :
       /*---(top)-------------------------*/
       for (y_fin = 0; y_fin < NROW; ++y_fin) {
-         if (a_dir == 't' && tab->rows [y_fin].c == 0)          continue;
-         if (a_dir == 'K' && tab->sheet[CCOL][y_fin] == NULL)   continue;
+         if (a_dir == 't' && p_tab->rows [y_fin].c == 0)          continue;
+         if (a_dir == 'K' && p_tab->sheet[CCOL][y_fin] == NULL)   continue;
          break;
       }
       if (y_fin == NROW)  y_fin = y_beg;
@@ -185,8 +185,8 @@ MOVE_edges         (
    case 'b' : case 'J' :
       /*---(bottom)----------------------*/
       for (y_fin = NROW - 1; y_fin >= 0; --y_fin) {
-         if (a_dir == 'b' && tab->rows [y_fin].c == 0)          continue;
-         if (a_dir == 'J' && tab->sheet[CCOL][y_fin] == NULL)   continue;
+         if (a_dir == 'b' && p_tab->rows [y_fin].c == 0)          continue;
+         if (a_dir == 'J' && p_tab->sheet[CCOL][y_fin] == NULL)   continue;
          break;
       }
       if (y_fin <  0   )  y_fin = y_beg;
@@ -194,8 +194,8 @@ MOVE_edges         (
    case 's' : case 'H' :
       /*---(left)------------------------*/
       for (x_fin = 0; x_fin < NCOL; ++x_fin) {
-         if (a_dir == 's' && tab->cols [x_fin].c == 0)          continue;
-         if (a_dir == 'H' && tab->sheet[x_fin][CROW] == NULL)   continue;
+         if (a_dir == 's' && p_tab->cols [x_fin].c == 0)          continue;
+         if (a_dir == 'H' && p_tab->sheet[x_fin][CROW] == NULL)   continue;
          break;
       }
       if (x_fin == NCOL)  x_fin = x_beg;
@@ -203,8 +203,8 @@ MOVE_edges         (
    case 'e' : case 'L' :
       /*---(right)-----------------------*/
       for (x_fin = NCOL - 1; x_fin >= 0; --x_fin) {
-         if (a_dir == 'e' && tab->cols [x_fin].c == 0)          continue;
-         if (a_dir == 'L' && tab->sheet[x_fin][CROW] == NULL)   continue;
+         if (a_dir == 'e' && p_tab->cols [x_fin].c == 0)          continue;
+         if (a_dir == 'L' && p_tab->sheet[x_fin][CROW] == NULL)   continue;
          break;
       }
       if (x_fin <  0   )  x_fin = x_beg;
@@ -260,9 +260,9 @@ MOVE_ends          (char a_dir)
    DEBUG_USER  yLOG_value   ("x_cur"     , x_cur);
    DEBUG_USER  yLOG_value   ("y_cur"     , y_cur);
    /*---(check current)------------------*/
-   if (tab->sheet[x_cur][y_cur] != NULL) {
+   if (p_tab->sheet[x_cur][y_cur] != NULL) {
       x_type = 'f';
-      if (tab->sheet[x_cur + x_inc][y_cur + y_inc] == NULL)  x_type = '-';
+      if (p_tab->sheet[x_cur + x_inc][y_cur + y_inc] == NULL)  x_type = '-';
    }
    DEBUG_USER  yLOG_char    ("x_type"    , x_type);
    /*---(process cells)------------------*/
@@ -280,7 +280,7 @@ MOVE_ends          (char a_dir)
       /*---(test)------------------------*/
       switch (x_type) {
       case  '-' :
-         if (tab->sheet[x_cur][y_cur] != NULL) {
+         if (p_tab->sheet[x_cur][y_cur] != NULL) {
             DEBUG_USER  yLOG_note    ("found a occupied cell");
             x_fin  = x_cur;
             y_fin  = y_cur;
@@ -288,7 +288,7 @@ MOVE_ends          (char a_dir)
          }
          break;
       case  'f' :
-         if (tab->sheet[x_cur][y_cur] == NULL) {
+         if (p_tab->sheet[x_cur][y_cur] == NULL) {
             DEBUG_USER  yLOG_note    ("found a null cell");
             x_fin  = x_cur - x_inc;
             y_fin  = y_cur - y_inc;
@@ -360,8 +360,8 @@ MOVE_gz_horz       (char a_major, char a_minor)
       else {
          x_col = 0;
          for (i = BCOL; i <= ECOL; ++i) {
-            DEBUG_USER   yLOG_complex ("checking"  , "col %3d at %3d", i, tab->cols[i].x);
-            if (tab->cols[i].x <= x_target)  {
+            DEBUG_USER   yLOG_complex ("checking"  , "col %3d at %3d", i, p_tab->cols[i].x);
+            if (p_tab->cols[i].x <= x_target)  {
                x_col = i;
                continue;
             }
@@ -378,11 +378,11 @@ MOVE_gz_horz       (char a_major, char a_minor)
       else if (a_minor == 'e')  ECOL = CCOL;
       else {
          BCOL = CCOL;
-         x_cum   = x_target - (tab->cols[CCOL].w / 2);
+         x_cum   = x_target - (p_tab->cols[CCOL].w / 2);
          x_col   = 0;
          for (i = CCOL - 1; i >= 0; --i) {
-            x_cum -= tab->cols[i].w;
-            DEBUG_USER   yLOG_complex ("checking"  , "col %3d wid %3d cum %3d", i, tab->cols[i].w, x_cum);
+            x_cum -= p_tab->cols[i].w;
+            DEBUG_USER   yLOG_complex ("checking"  , "col %3d wid %3d cum %3d", i, p_tab->cols[i].w, x_cum);
             if (x_cum > 0) {
                x_col = i;
                continue;
@@ -546,11 +546,11 @@ KEYS_col           (char a_major, char a_minor)
               break;
    }
    /*---(check lock)------------------*/
-   if (tab->froz_col == 'y') {
+   if (p_tab->froz_col == 'y') {
       DEBUG_USER  yLOG_note    ("correct for locked areas");
-      if (BCOL <= tab->froz_ecol)   BCOL   = tab->froz_ecol + 1;
-      if (CCOL <= tab->froz_ecol)   CCOL   = tab->froz_ecol + 1;
-      if (ECOL <= tab->froz_ecol)   ECOL   = tab->froz_ecol + 1;
+      if (BCOL <= p_tab->froz_ecol)   BCOL   = p_tab->froz_ecol + 1;
+      if (CCOL <= p_tab->froz_ecol)   CCOL   = p_tab->froz_ecol + 1;
+      if (ECOL <= p_tab->froz_ecol)   ECOL   = p_tab->froz_ecol + 1;
    }
    /*---(update screen)---------------*/
    MOVE_done   ();
@@ -572,8 +572,8 @@ KEYS_col           (char a_major, char a_minor)
     *> if (CCOL > ECOL)       ECOL = CCOL;                                            <* 
     *> /+---(update contents)-------------+/                                          <* 
     *> DEBUG_USER  yLOG_note    ("update current contents");                          <* 
-    *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {     <* 
-    *>    strncpy (g_contents, tab->sheet[CCOL][CROW]->s, LEN_RECD);                     <* 
+    *> if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[CCOL][CROW]->s != NULL) {     <* 
+    *>    strncpy (g_contents, p_tab->sheet[CCOL][CROW]->s, LEN_RECD);                     <* 
     *> } else {                                                                       <* 
     *>    strncpy (g_contents, ""                  , LEN_RECD);                          <* 
     *> }                                                                              <* 
@@ -599,11 +599,11 @@ KEYS_lcol          (void)
    int       w         = 0;                    /* col width                   */
    int       cw        = 0;                    /* cumulative col width        */
    /*---(process cols)-------------------*/
-   if (tab->froz_col != 'y')  return 0;
-   for (i = tab->froz_bcol; i <= tab->froz_ecol; ++i) {
-      w               = tab->cols[i].w;
+   if (p_tab->froz_col != 'y')  return 0;
+   for (i = p_tab->froz_bcol; i <= p_tab->froz_ecol; ++i) {
+      w               = p_tab->cols[i].w;
       if (cw + w >  my.x_avail)   break;
-      tab->cols[i].x  = cw + my.x_left;
+      p_tab->cols[i].x  = cw + my.x_left;
       cw             += w;
       if (cw == my.x_avail)       break;
    }
@@ -627,7 +627,7 @@ KEYS_bcol          (int a_beg)
    /*---(defense)------------------------*/
    BCOL = a_beg;
    if (BCOL <     0       )  BCOL = 0;
-   if (tab->froz_col == 'y' && BCOL <= tab->froz_ecol)  BCOL = tab->froz_ecol + 1;
+   if (p_tab->froz_col == 'y' && BCOL <= p_tab->froz_ecol)  BCOL = p_tab->froz_ecol + 1;
    if (BCOL >= NCOL)  BCOL = NCOL - 1;
    ECOL = BCOL;
    DEBUG_USER  yLOG_value   ("tab->bcol" , BCOL);
@@ -635,19 +635,19 @@ KEYS_bcol          (int a_beg)
    DEBUG_USER  yLOG_value   ("tab->ecol" , ECOL);
    DEBUG_USER  yLOG_value   ("avail"     , my.x_avail);
    /*---(process cols)-------------------*/
-   if (tab->froz_col == 'y')  x_1st = tab->froz_ecol + 1;
+   if (p_tab->froz_col == 'y')  x_1st = p_tab->froz_ecol + 1;
    for (i = BCOL; i >= x_1st; --i) {
-      for (j = 0; j < NCOL; ++j) tab->cols[j].x = 0;
+      for (j = 0; j < NCOL; ++j) p_tab->cols[j].x = 0;
       cw = KEYS_lcol ();
       for (j = i; j < NCOL; ++j) {
-         w          = tab->cols[j].w;
+         w          = p_tab->cols[j].w;
          DEBUG_USER  yLOG_complex ("compare"   , "beg %3d, end %3d, cw %3d, w %3d", i, j, cw, w);
          if (cw + w >  my.x_avail) {
             DEBUG_USER  yLOG_note    ("hit the max");
             x_done = 'y';
             break;
          }
-         tab->cols[j].x  = cw + my.x_left;
+         p_tab->cols[j].x  = cw + my.x_left;
          cw        += w;
          ECOL    = j;
          if (cw == my.x_avail) {
@@ -693,12 +693,12 @@ KEYS_ecol          (int a_end)
    DEBUG_USER  yLOG_value   ("tab->ecol" , ECOL);
    DEBUG_USER  yLOG_value   ("avail"     , my.x_avail);
    /*---(process cols)-----------------------*/
-   if (tab->froz_col == 'y')  x_1st = tab->froz_ecol + 1;
+   if (p_tab->froz_col == 'y')  x_1st = p_tab->froz_ecol + 1;
    for (i = ECOL; i < NCOL; ++i) {
-      for (j = x_1st; j < NCOL; ++j) tab->cols[j].x = 0;
+      for (j = x_1st; j < NCOL; ++j) p_tab->cols[j].x = 0;
       cw = KEYS_lcol ();
       for (j = i; j >= x_1st; --j) {
-         w  = tab->cols[j].w;
+         w  = p_tab->cols[j].w;
          DEBUG_USER  yLOG_complex ("compare"   , "beg %3d, end %3d, cw %3d, w %3d", j, i, cw, w);
          if (cw + w >  my.x_avail) {
             DEBUG_USER  yLOG_note    ("hit the max");
@@ -706,7 +706,7 @@ KEYS_ecol          (int a_end)
             break;
          }
          cw        += w;
-         tab->cols[j].x  = my.x_avail - cw + my.x_left;
+         p_tab->cols[j].x  = my.x_avail - cw + my.x_left;
          BCOL       = j;
          if (cw == my.x_avail) {
             DEBUG_USER  yLOG_note    ("exact match");
@@ -725,16 +725,16 @@ KEYS_ecol          (int a_end)
    /*---(fix x values)-----------------------*/
    cw = my.x_left + KEYS_lcol ();
    for (i = BCOL; i <= ECOL; ++i) {
-      tab->cols[i].x  = cw;
-      cw += tab->cols[i].w;
+      p_tab->cols[i].x  = cw;
+      cw += p_tab->cols[i].w;
    }
    /*---(test end)---------------------------*/
    for (i = ECOL + 1; i < NCOL; ++i) {
-      w  = tab->cols[i].w;
+      w  = p_tab->cols[i].w;
       if (cw + w >  my.x_avail)  break;
       DEBUG_USER  yLOG_value   ("can fit"   , i);
-      tab->cols[i].x  = cw;
-      cw += tab->cols[i].w;
+      p_tab->cols[i].x  = cw;
+      cw += p_tab->cols[i].w;
       ECOL = i;
    }
    DEBUG_USER  yLOG_value   ("tab->ecol"   , ECOL);
@@ -759,9 +759,9 @@ KEYS_pcol          (void)
    if (x_file == NULL)      return rce;
    /*---(print)--------------------------*/
    fprintf (x_file, "details of column settings\n\n");
-   fprintf (x_file, "lcol  = %c\n" , tab->froz_col);
-   fprintf (x_file, "lbcol = %3d\n", tab->froz_bcol);
-   fprintf (x_file, "lecol = %3d\n", tab->froz_ecol);
+   fprintf (x_file, "lcol  = %c\n" , p_tab->froz_col);
+   fprintf (x_file, "lbcol = %3d\n", p_tab->froz_bcol);
+   fprintf (x_file, "lecol = %3d\n", p_tab->froz_ecol);
    fprintf (x_file, "bcol  = %3d\n", BCOL);
    fprintf (x_file, "ecol  = %3d\n", ECOL);
    fprintf (x_file, "ncol  = %3d\n", NCOL);
@@ -769,7 +769,7 @@ KEYS_pcol          (void)
    fprintf (x_file, "ccol  = %3d\n", CCOL);
    for (i = 0; i < NCOL; ++i) {
       if (i % 5 == 0)  fprintf (x_file, "\ncol   label---   -c-   -w-   -x-\n");
-      fprintf (x_file, "%3d   %-8s   %3d   %3d   %3d\n", i, tab->cols[i].l, tab->cols[i].c, tab->cols[i].w, tab->cols[i].x);
+      fprintf (x_file, "%3d   %-8s   %3d   %3d   %3d\n", i, p_tab->cols[i].l, p_tab->cols[i].c, p_tab->cols[i].w, p_tab->cols[i].x);
    }
    fprintf (x_file, "\ndone\n");
    /*---(close)--------------------------*/
@@ -818,8 +818,8 @@ MOVE_gz_vert       (char a_major, char a_minor)
    if (a_major == 'g') {
       y_row = 0;
       for (i = BROW; i <= EROW; ++i) {
-         DEBUG_USER  yLOG_complex ("checking"  , "row %3d at %3d", i, tab->rows[i].y);
-         if (tab->rows[i].y <= y_target)  {
+         DEBUG_USER  yLOG_complex ("checking"  , "row %3d at %3d", i, p_tab->rows[i].y);
+         if (p_tab->rows[i].y <= y_target)  {
             y_row = i;
             continue;
          }
@@ -833,11 +833,11 @@ MOVE_gz_vert       (char a_major, char a_minor)
       else if (a_minor == 'b')  EROW = CROW;
       else {
          BROW = CROW;
-         y_cum   = y_target - (tab->rows[CROW].h / 2);
+         y_cum   = y_target - (p_tab->rows[CROW].h / 2);
          y_row   = 0;
          for (i = CROW - 1; i >= 0; --i) {
-            y_cum -= tab->rows[i].h;
-            DEBUG_USER  yLOG_complex ("checking"  , "row %3d hei %3d cum %3d", i, tab->rows[i].h, y_cum);
+            y_cum -= p_tab->rows[i].h;
+            DEBUG_USER  yLOG_complex ("checking"  , "row %3d hei %3d cum %3d", i, p_tab->rows[i].h, y_cum);
             if (y_cum > 0) {
                y_row = i;
                continue;
@@ -1007,11 +1007,11 @@ KEYS_row           (char a_major, char a_minor)
               break;
    }
    /*---(check lock)------------------*/
-   if (tab->froz_row == 'y') {
+   if (p_tab->froz_row == 'y') {
       DEBUG_USER  yLOG_note    ("correct for locked areas");
-      if (BROW <= tab->froz_erow)   BROW   = tab->froz_erow + 1;
-      if (CROW <= tab->froz_erow)   CROW   = tab->froz_erow + 1;
-      if (EROW <= tab->froz_erow)   EROW   = tab->froz_erow + 1;
+      if (BROW <= p_tab->froz_erow)   BROW   = p_tab->froz_erow + 1;
+      if (CROW <= p_tab->froz_erow)   CROW   = p_tab->froz_erow + 1;
+      if (EROW <= p_tab->froz_erow)   EROW   = p_tab->froz_erow + 1;
    }
    /*---(update screen)---------------*/
    MOVE_done   ();
@@ -1033,8 +1033,8 @@ KEYS_row           (char a_major, char a_minor)
     *> if (CROW > EROW)       EROW   = CROW;                                               <* 
     *> /+---(update contents)-------------+/                                               <* 
     *> DEBUG_USER  yLOG_note    ("update current contents");                               <* 
-    *> if (tab->sheet[CCOL][CROW] != NULL && tab->sheet[CCOL][CROW]->s != NULL) {          <* 
-    *>    strncpy(g_contents, tab->sheet[CCOL][CROW]->s, LEN_RECD);                           <* 
+    *> if (p_tab->sheet[CCOL][CROW] != NULL && p_tab->sheet[CCOL][CROW]->s != NULL) {          <* 
+    *>    strncpy(g_contents, p_tab->sheet[CCOL][CROW]->s, LEN_RECD);                           <* 
     *> } else {                                                                            <* 
     *>    strncpy(g_contents, ""                  , LEN_RECD);                                <* 
     *> }                                                                                   <* 
@@ -1059,11 +1059,11 @@ KEYS_lrow          (void)
    int         h           = 1;             /* row height                  */
    int         ch          = 0;             /* cumulative row height       */
    /*---(process cols)-------------------*/
-   if (tab->froz_row != 'y')  return 0;
-   for (i = tab->froz_brow; i <= tab->froz_erow; ++i) {
-      h               = tab->rows[i].h;
+   if (p_tab->froz_row != 'y')  return 0;
+   for (i = p_tab->froz_brow; i <= p_tab->froz_erow; ++i) {
+      h               = p_tab->rows[i].h;
       if (ch + h >  my.y_avail)   break;
-      tab->rows[i].y  = ch + row_main;
+      p_tab->rows[i].y  = ch + row_main;
       ch             += h;
       if (ch == my.y_avail)       break;
    }
@@ -1087,7 +1087,7 @@ KEYS_brow          (int a_beg)
    /*---(defense)------------------------*/
    BROW = a_beg;
    if (BROW <     0) BROW = 0;
-   if (tab->froz_row == 'y' && BROW <= tab->froz_erow)  BROW = tab->froz_erow + 1;
+   if (p_tab->froz_row == 'y' && BROW <= p_tab->froz_erow)  BROW = p_tab->froz_erow + 1;
    if (BROW >= NROW) BROW = NROW - 1;
    EROW = BROW;
    DEBUG_USER  yLOG_value   ("tab->brow"   , BROW);
@@ -1095,15 +1095,15 @@ KEYS_brow          (int a_beg)
    DEBUG_USER  yLOG_value   ("tab->erow"   , EROW);
    DEBUG_USER  yLOG_value   ("y_avail"   , my.y_avail);
    /*---(process beginning row)----------*/
-   if (tab->froz_row == 'y')  x_1st = tab->froz_erow + 1;
+   if (p_tab->froz_row == 'y')  x_1st = p_tab->froz_erow + 1;
    for (i = BROW; i >= x_1st; --i) {
       /*---(initialize row positions)----*/
-      for (j = 0; j < NROW; ++j) tab->rows[j].y = 0;
+      for (j = 0; j < NROW; ++j) p_tab->rows[j].y = 0;
       ch = KEYS_lrow ();
       /*---(check for ending row)--------*/
       for (j = i; j < NROW; ++j) {
          /*---(prepare)------------------*/
-         h  = tab->rows[j].h;
+         h  = p_tab->rows[j].h;
          DEBUG_USER  yLOG_complex ("compare"   , "beg %3d, end %3d, ch %3d, h %3d", i, j, ch, h);
          /*---(check for too far)--------*/
          if (ch + h >  my.y_avail) {
@@ -1112,7 +1112,7 @@ KEYS_brow          (int a_beg)
             break;
          }
          /*---(update)-------------------*/
-         tab->rows[j].y  = ch + row_main;
+         p_tab->rows[j].y  = ch + row_main;
          ch        += h;
          EROW    = j;
          /*---(check for just right)-----*/
@@ -1163,15 +1163,15 @@ KEYS_erow          (int a_end)
    DEBUG_USER  yLOG_value   ("tab->erow" , EROW);
    DEBUG_USER  yLOG_value   ("y_avail"   , my.y_avail);
    /*---(process ending row)-------------*/
-   if (tab->froz_row == 'y')  x_1st = tab->froz_erow + 1;
+   if (p_tab->froz_row == 'y')  x_1st = p_tab->froz_erow + 1;
    for (i = EROW; i < NROW; ++i) {
       /*---(initialize row positions)----*/
-      for (j = 0; j < NROW; ++j) tab->rows[j].y = 0;
+      for (j = 0; j < NROW; ++j) p_tab->rows[j].y = 0;
       ch = KEYS_lrow ();
       /*---(check for beginning row)-----*/
       for (j = i; j >= x_1st; --j) {
          /*---(prepare)------------------*/
-         h  = tab->rows[j].h;
+         h  = p_tab->rows[j].h;
          DEBUG_USER  yLOG_complex ("compare"   , "beg %3d, end %3d, ch %3d, h %3d", j, i, ch, h);
          /*---(check for too far)--------*/
          if (ch + h >  my.y_avail) {
@@ -1181,7 +1181,7 @@ KEYS_erow          (int a_end)
          }
          /*---(update)-------------------*/
          ch        += h;
-         tab->rows[j].y  = my.y_avail - ch + row_main;
+         p_tab->rows[j].y  = my.y_avail - ch + row_main;
          BROW       = j;
          /*---(check for just right)-----*/
          if (ch == my.y_avail) {
@@ -1205,16 +1205,16 @@ KEYS_erow          (int a_end)
    /*---(fix y values)-----------------------*/
    ch = KEYS_lrow ();
    for (i = BROW; i <= EROW; ++i) {
-      tab->rows[i].y  = ch + row_main;
-      ch += tab->rows[i].h;
+      p_tab->rows[i].y  = ch + row_main;
+      ch += p_tab->rows[i].h;
    }
    /*---(test end)---------------------------*/
    for (i = EROW + 1; i < NROW; ++i) {
-      h  = tab->rows[i].h;
+      h  = p_tab->rows[i].h;
       if (ch + h >  my.y_avail)  break;
       DEBUG_USER  yLOG_value   ("can fit"   , i);
-      tab->rows[i].y  = ch + row_main;
-      ch += tab->rows[i].h;
+      p_tab->rows[i].y  = ch + row_main;
+      ch += p_tab->rows[i].h;
       EROW = i;
    }
    DEBUG_USER  yLOG_value   ("tab->erow"   , EROW);
@@ -1239,9 +1239,9 @@ KEYS_prow          (void)
    if (x_file == NULL)      return rce;
    /*---(print)--------------------------*/
    fprintf (x_file, "details of row settings\n\n");
-   fprintf (x_file, "lrow  = %c\n" , tab->froz_row);
-   fprintf (x_file, "lbrow = %3d\n", tab->froz_brow);
-   fprintf (x_file, "lerow = %3d\n", tab->froz_erow);
+   fprintf (x_file, "lrow  = %c\n" , p_tab->froz_row);
+   fprintf (x_file, "lbrow = %3d\n", p_tab->froz_brow);
+   fprintf (x_file, "lerow = %3d\n", p_tab->froz_erow);
    fprintf (x_file, "brow  = %3d\n", BROW);
    fprintf (x_file, "erow  = %3d\n", EROW);
    fprintf (x_file, "nrow  = %3d\n", NROW);
@@ -1249,7 +1249,7 @@ KEYS_prow          (void)
    fprintf (x_file, "crow  = %3d\n", CROW);
    for (i = 0; i < NROW; ++i) {
       if (i % 5 == 0)  fprintf (x_file, "\nrow   -c-   -h-   -y-\n");
-      fprintf (x_file, "%3d   %3d   %3d   %3d\n", i, tab->rows[i].c, tab->rows[i].h, tab->rows[i].y);
+      fprintf (x_file, "%3d   %3d   %3d   %3d\n", i, p_tab->rows[i].c, p_tab->rows[i].h, p_tab->rows[i].y);
    }
    fprintf (x_file, "\ndone\n");
    /*---(close)--------------------------*/
@@ -1391,7 +1391,7 @@ row_print          (void)
    int       i         = 0;                    /* iterator -- rows            */
    /*---(process rows)-----------------------*/
    for (i = BROW; i <= EROW; ++i) {
-      /*> printf("display %3d = row %3d %s\n", tab->rows[i].y, i, (i - BROW + 2 == tab->rows[i].y) ? "good" : "FAILED");   <*/
+      /*> printf("display %3d = row %3d %s\n", p_tab->rows[i].y, i, (i - BROW + 2 == p_tab->rows[i].y) ? "good" : "FAILED");   <*/
    }
    /*---(complete)---------------------------*/
    return 0;
