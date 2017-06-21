@@ -767,9 +767,9 @@ INPT_tab_new       (void)
                0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
          break;
       case  FIELD_NAME  : /*---(name)--------------*/
-         if (x_len > 0)  strlcpy (tabs[x_tab].name, p, LEN_STR);
+         if (x_len > 0)  LOC_tab_chg_name (x_tab, p);
          DEBUG_INPT   yLOG_info    ("name"      , p);
-         tabs[x_tab].active = 'y';
+         LOC_tab_activate (x_tab);
          NTAB               = x_tab + 1;
          break;
       }

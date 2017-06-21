@@ -17,18 +17,19 @@ LOC_init             (void)
 {
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(clean tabs)---------------------*/
+   LOC__purge    ();
    /*---(set defaults)-------------------*/
    NTAB    = 1;
    CTAB    = 0;
    p_tab   = &tabs [CTAB];
-   /*---(clean tabs)---------------------*/
-   LOC__purge    ();
+   tabs [0].active  = 'y';
    /*---(column settings)----------------*/
-   BCOL =    0;
-   ECOL =    tabs[0].ncol - 1;
+   /*> BCOL =    0;                                                                   <* 
+    *> ECOL =    tabs[0].ncol - 1;                                                    <*/
    /*---(row settings)-------------------*/
-   BROW =    0;
-   EROW =    tabs[0].nrow - 1;
+   /*> BROW =    0;                                                                   <* 
+    *> EROW =    tabs[0].nrow - 1;                                                    <*/
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -85,7 +86,7 @@ LOC__purge           (void)
       DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
       /*---(main config)-----------------*/
       DEBUG_LOCS   yLOG_note    ("reset naming");
-      tabs [x_tab].active  = '-';
+      tabs [x_tab].active  = '/';
       sprintf (t, "tab_%02d", x_tab);
       strlcpy (tabs [x_tab].name, t, LEN_RECD);
       tabs [x_tab].c       =    0;
@@ -637,12 +638,58 @@ LOC_parse         (
 /*====================------------------------------------====================*/
 PRIV void  o___TABS____________o () { return; }
 
+char 
+LOC_tab_chg_max      (short a_size)
+{
+   char        rce         = -10;
+   int         i           =   0;
+   --rce;  if (a_size  <  MIN_TABS)              return rce;
+   --rce;  if (a_size  >= MAX_TABS)              return rce;
+   my.ntab = a_size;
+   for (i = 0; i < MAX_TABS; ++i) {
+      if      (i >= a_size)             tabs [i].active = '/';
+      else if (tabs [i].active == '/')  tabs [i].active = '_';
+   }
+   return 0;
+}
+
 char*
 LOC_tab_get_name     (short a_tab)
 {
    if (a_tab < 0)      return "";
    if (a_tab >= NTAB)  return "";
    return tabs [a_tab].name;
+}
+
+char 
+LOC_tab_chg_name     (short a_tab, char *a_name)
+{
+
+   char        rce         = -10;
+   --rce;  if (a_tab < 0)      return rce;
+   --rce;  if (a_tab >= NTAB)  return rce;
+   strlcpy (tabs [a_tab].name, a_name, LEN_DESC);
+   return 0;
+}
+
+char 
+LOC_tab_activate     (short a_tab)
+{
+   char        rce         = -10;
+   --rce;  if (a_tab < 0)      return rce;
+   --rce;  if (a_tab >= NTAB)  return rce;
+   tabs [a_tab].active = 'y';
+   return 0;
+}
+
+char 
+LOC_tab_deactivate   (short a_tab)
+{
+   char        rce         = -10;
+   --rce;  if (a_tab < 0)      return rce;
+   --rce;  if (a_tab >= NTAB)  return rce;
+   tabs [a_tab].active = '_';
+   return 0;
 }
 
 
@@ -719,6 +766,9 @@ LOC_col_chg_max      (short a_tab, short a_size)
    --rce;  if (a_size  <  MIN_COLS)              return rce;
    --rce;  if (a_size  >  MAX_COLS)              return rce;
    tabs [a_tab].ncol = a_size;
+   if (tabs [a_tab].bcol >= tabs [a_tab].ncol)   tabs [a_tab].bcol = tabs [a_tab].ncol - 1;
+   if (tabs [a_tab].ecol >= tabs [a_tab].ncol)   tabs [a_tab].ecol = tabs [a_tab].ncol - 1;
+   if (tabs [a_tab].ccol >= tabs [a_tab].ncol)   tabs [a_tab].ccol = tabs [a_tab].ncol - 1;
    return 0;
 }
 
@@ -815,6 +865,9 @@ LOC_row_chg_max      (short a_tab, short a_size)
    --rce;  if (a_size  <  MIN_ROWS)              return rce;
    --rce;  if (a_size  >  MAX_ROWS)              return rce;
    tabs [a_tab].nrow = a_size;
+   if (tabs [a_tab].brow >= tabs [a_tab].nrow)   tabs [a_tab].brow = tabs [a_tab].nrow - 1;
+   if (tabs [a_tab].erow >= tabs [a_tab].nrow)   tabs [a_tab].erow = tabs [a_tab].nrow - 1;
+   if (tabs [a_tab].crow >= tabs [a_tab].nrow)   tabs [a_tab].crow = tabs [a_tab].nrow - 1;
    return 0;
 }
 
@@ -843,6 +896,23 @@ LOC_row_chg_height   (short a_tab, short a_row, short a_size)
    return 0;
 }
 
+char         /*--> change the frozen rows ----------------[ stigma [ 3----- ]-*/
+LOC_row_freeze       (short a_tab, short a_brow, short a_erow)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   <  0)                     return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_brow  <  0)                     return rce;
+   --rce;  if (a_brow  >= tabs [a_tab].nrow)     return rce;
+   --rce;  if (a_erow  <  0)                     return rce;
+   --rce;  if (a_erow  >= tabs [a_tab].nrow)     return rce;
+   --rce;  if (a_brow  >  a_erow)                return rce;
+   tabs [a_tab].froz_row    = 'y';
+   tabs [a_tab].froz_brow   = a_brow;
+   tabs [a_tab].froz_erow   = a_erow;
+   return 0;
+}
+
 char         /*--> clear the frozen rows -----------------[ stigma [ 1----- ]-*/
 LOC_row_unfreeze     (short a_tab)
 {
@@ -867,23 +937,6 @@ LOC_row_get_freeze   (short a_tab, short *a_brow, short *a_erow)
    return 0;
 }
 
-char         /*--> change the frozen rows ----------------[ stigma [ 3----- ]-*/
-LOC_row_chg_freeze   (short a_tab, short a_brow, short a_erow)
-{
-   char        rce         =  -10;
-   --rce;  if (a_tab   <  0)                     return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_brow  <  0)                     return rce;
-   --rce;  if (a_brow  >= tabs [a_tab].nrow)     return rce;
-   --rce;  if (a_erow  <  0)                     return rce;
-   --rce;  if (a_erow  >= tabs [a_tab].nrow)     return rce;
-   --rce;  if (a_brow  >  a_erow)                return rce;
-   tabs [a_tab].froz_row    = 'y';
-   tabs [a_tab].froz_brow   = a_brow;
-   tabs [a_tab].froz_erow   = a_erow;
-   return 0;
-}
-
 
 
 /*====================------------------------------------====================*/
@@ -892,12 +945,45 @@ LOC_row_chg_freeze   (short a_tab, short a_brow, short a_erow)
 PRIV void  o___UNIT_TEST_______o () { return; }
 
 char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
-LOC_unit           (char *a_question, tCELL *a_cell)
+TAB__unit          (char *a_question, int a_num)
+{
+   /*---(locals)-------------------------*/
+   int         i           =  0;
+   char        x_beg       [LEN_LABEL]   = "";
+   char        x_end       [LEN_LABEL]   = "";
+   char        x_cur       [LEN_LABEL]   = "";
+   char        x_max       [LEN_LABEL]   = "";
+   /*---(preprare)-----------------------*/
+   strcpy  (unit_answer, "LOC              : question not understood");
+   LOC_ref    (a_num, tabs [a_num].bcol, tabs [a_num].brow, 0, x_beg);
+   LOC_ref    (a_num, tabs [a_num].ecol, tabs [a_num].erow, 0, x_end);
+   LOC_ref    (a_num, tabs [a_num].ccol, tabs [a_num].crow, 0, x_cur);
+   LOC_ref    (a_num, tabs [a_num].ncol - 1, tabs [a_num].nrow - 1, 0, x_max);
+   /*---(overall)------------------------*/
+   if      (strcmp(a_question, "tab_info"      ) == 0) {
+      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%1d) : %c %-10.10s %-7.7s %-7.7s %-7.7s %-7.7s %d", a_num, tabs [a_num].active, tabs [a_num].name, x_beg, x_end, x_cur, x_max, tabs [a_num].c);
+   }
+   /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
+    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].bcol, tabs [a_num].brow);   <* 
+    *> }                                                                                                                                  <* 
+    *> else if (strcmp(a_question, "tab_pos"       ) == 0) {                                                                              <* 
+    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ccol, tabs [a_num].crow);   <* 
+    *> }                                                                                                                                  <* 
+    *> else if (strcmp(a_question, "tab_max" )       == 0) {                                                                              <* 
+    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ncol, tabs [a_num].nrow);   <* 
+    *> }                                                                                                                                  <*/
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
+
+char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
+LOC__unit          (char *a_question, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
    int         rc          = -1;
    int         i           =  0;
    tCELL      *x_curr      = NULL;
+   char        t           [LEN_STR]   = "";
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "s_loc            : question not understood");
    /*---(find cell by pointer)-----------*/
@@ -940,6 +1026,27 @@ LOC_unit           (char *a_question, tCELL *a_cell)
    else if (strcmp(a_question, "loc_label")      == 0) {
       snprintf(unit_answer, LEN_UNIT, "s_loc label      : %s", s_label);
    }
+   /*---(current position)---------------*/
+   else if (strcmp(a_question, "tab_statuses"  ) == 0) {
+      for (i = 0; i < MAX_TABS; ++i) {
+         switch (tabs [i].active) {
+         case 'y':  strlcat (t, " y", LEN_STR);   break;
+         case '_':  strlcat (t, " _", LEN_STR);   break;
+         case '/':  strlcat (t, " /", LEN_STR);   break;
+         default :  strlcat (t, " ?", LEN_STR);   break;
+         }
+      }
+      snprintf (unit_answer, LEN_UNIT, "LOC tab statuses :%s", t);
+   }
+   /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
+    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].bcol, tabs [a_num].brow);   <* 
+    *> }                                                                                                                                  <* 
+    *> else if (strcmp(a_question, "tab_pos"       ) == 0) {                                                                              <* 
+    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ccol, tabs [a_num].crow);   <* 
+    *> }                                                                                                                                  <* 
+    *> else if (strcmp(a_question, "tab_max" )       == 0) {                                                                              <* 
+    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ncol, tabs [a_num].nrow);   <* 
+    *> }                                                                                                                                  <*/
    /*---(complete)-----------------------*/
    return unit_answer;
 }
