@@ -2229,20 +2229,20 @@ FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
    char        x_label     [20];            /* holder for cell address        */
    tCELL      *x_curr      = NULL;
    /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   --rce;  if (*a_seq <  0)                      return rce;
-   --rce;  if (a_tab  <  0)                      return rce;
-   --rce;  if (a_tab  >= my.ntab)                return rce;
-   --rce;  if (a_bcol <  0)                      return rce;
-   --rce;  if (a_bcol >= tabs[a_tab].ncol)       return rce;
-   --rce;  if (a_ecol <  a_bcol)                 return rce;
-   --rce;  if (a_ecol <  0)                      return rce;
-   --rce;  if (a_ecol >= tabs[a_tab].ncol)       return rce;
-   --rce;  if (a_brow <  0)                      return rce;
-   --rce;  if (a_brow >= tabs[a_tab].nrow)       return rce;
-   --rce;  if (a_erow <  a_brow)                 return rce;
-   --rce;  if (a_erow <  0)                      return rce;
-   --rce;  if (a_erow >= tabs[a_tab].nrow)       return rce;
+   --rce;  if (a_file == NULL)                        return rce;
+   --rce;  if (*a_seq <  0)                           return rce;
+   --rce;  if (a_tab  <  0)                           return rce;
+   --rce;  if (a_tab  >= my.ntab)                     return rce;
+   --rce;  if (a_bcol <  0)                           return rce;
+   --rce;  if (a_bcol >= LOC_col_get_max (a_tab))     return rce;
+   --rce;  if (a_ecol <  a_bcol)                      return rce;
+   --rce;  if (a_ecol <  0)                           return rce;
+   --rce;  if (a_ecol >= LOC_col_get_max (a_tab))     return rce;
+   --rce;  if (a_brow <  0)                           return rce;
+   --rce;  if (a_brow >= LOC_row_get_max (a_tab))     return rce;
+   --rce;  if (a_erow <  a_brow)                      return rce;
+   --rce;  if (a_erow <  0)                           return rce;
+   --rce;  if (a_erow >= LOC_row_get_max (a_tab))     return rce;
    /*---(cells)--------------------------*/
    for (x = a_bcol; x <= a_ecol; ++x) {
       for (y = a_brow; y <= a_erow; ++y) {
@@ -2294,13 +2294,13 @@ FILE_write         (char *a_name)
    /*---(column data)--------------------*/
    x_seq = 0;
    for (i = 0; i < NTAB; ++i) {
-      rc = FILE_Ocols (f, &x_seq, i, 0, tabs[i].ncol - 1);
+      rc = FILE_Ocols (f, &x_seq, i, 0, LOC_col_get_max (i) - 1);
    }
    if (x_seq == 0)  fprintf (f, "# no column widths vary from default\n");
    /*---(row data)-----------------------*/
    x_seq = 0;
    for (i = 0; i < NTAB; ++i) {
-      rc = FILE_rows    (f, &x_seq, i, 0, tabs[i].nrow - 1);
+      rc = FILE_rows  (f, &x_seq, i, 0, LOC_row_get_max (i) - 1);
    }
    if (x_seq == 0)  fprintf (f, "# no row heights vary from default\n");
    /*---(dependent cells)------------------*/
@@ -2312,7 +2312,7 @@ FILE_write         (char *a_name)
    fprintf (f, "\n\n\n#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
    x_seq     = 0;
    for (i = 0; i < NTAB; ++i) {
-      rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, tabs[i].ncol - 1, 0, tabs[i].nrow - 1);
+      rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, LOC_col_get_max (i) - 1, 0, LOC_row_get_max (i) - 1);
    }
    fprintf (f, "# independent cells complete\n");
    /*---(buffer contents)------------------*/

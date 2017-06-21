@@ -172,12 +172,6 @@ PROG_begin         (void)
    VISU_init ();
    REG_init  ();
    KEYS_init ();
-   /*---(column settings)----------------*/
-   BCOL =    0;
-   ECOL =    tabs[0].ncol - 1;
-   /*---(row settings)-------------------*/
-   BROW =    0;
-   EROW =    tabs[0].nrow - 1;
    /*---(char settings)------------------*/
    my.npos =    1;
    my.cpos =    0;

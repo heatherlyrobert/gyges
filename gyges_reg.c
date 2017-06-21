@@ -969,7 +969,7 @@ REG_valuesout     (char a_style)
       }
       /*---(fill in blank cells)---------*/
       if (curr == NULL) {
-         w = tabs [x_tab].cols [x_col].w;
+         w = LOC_col_get_width (x_tab, x_col);
          switch (a_style) {
          case 'v' : fprintf (f, "%*.*s", w, w, g_empty);
                     break;

@@ -1230,10 +1230,10 @@ SMOD_format        (char a_major, char a_minor)
    case  'w' : CELL_width    (CHG_INPUT, 'w');  break;  /* wide        */
    case  'W' : CELL_width    (CHG_INPUT, 'W');  break;  /* largest     */
 
-   case  'K' : CELL_height   (CHG_INPUT, 'K');  break;  /* set to min  */
-   case  'k' : CELL_height   (CHG_INPUT, 'k');  break;  /* less by 1   */
-   case  'j' : CELL_height   (CHG_INPUT, 'j');  break;  /* more by 1   */
-   case  'J' : CELL_height   (CHG_INPUT, 'J');  break;  /* set to max  */
+   /*> case  'K' : CELL_height   (CHG_INPUT, 'K');  break;  /+ set to min  +/         <* 
+    *> case  'k' : CELL_height   (CHG_INPUT, 'k');  break;  /+ less by 1   +/         <* 
+    *> case  'j' : CELL_height   (CHG_INPUT, 'j');  break;  /+ more by 1   +/         <* 
+    *> case  'J' : CELL_height   (CHG_INPUT, 'J');  break;  /+ set to max  +/         <*/
 
    case  '0' : CELL_decimals (CHG_INPUT, '0');  break;  /* none        */
    case  '1' : CELL_decimals (CHG_INPUT, '1');  break;  /* less by 1   */

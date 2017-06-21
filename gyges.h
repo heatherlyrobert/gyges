@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1k"
-#define     VER_TXT   "moved all references to sheet data structure into LOC"
+#define     VER_NUM   "2.1l"
+#define     VER_TXT   "moved all references to tabs data structure into LOC"
 
 
 
@@ -1197,9 +1197,7 @@ char      HIST_redo          (void);
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(program)-------------------*/
 char        LOC_init             /* shoot  0----- */  (void);
-char        LOC__clear_cols      /* septal 1----- */  (short a_tab);
-char        LOC__clear_rows      /* septal 1----- */  (short a_tab);
-char        LOC__clear_cells     /* septal 1----- */  (short a_tab);
+char        LOC__clear_locs      /* septal 1----- */  (short a_tab);
 char        LOC__purge           /* stem   0----- */  (void);
 char        LOC_wrap             /* shoot  0----- */  (void);
 
@@ -1220,6 +1218,20 @@ char        LOC_parse            /* petal  4----- */  (char *a_label, short *a_t
 char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_final);
 char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col, short a_row, char a_abs, char *a_label);
 
+char       *LOC_tab_get_name     /* petal  1----- */  (short a_tab);
+char       *LOC_tab_chg_name     /* stigma 2----- */  (short a_tab, char *a_name);
+
+char        LOC_col_clear        /* septal 1----- */  (short a_tab);
+char        LOC_col_get_width    /* petal  2----- */  (short a_tab, short a_col);
+char        LOC_col_chg_width    /* stigma 3----- */  (short a_tab, short a_col, short a_size);
+char        LOC_col_get_max      /* petal  1----- */  (short a_tab);
+char        LOC_col_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
+
+char        LOC_row_clear        /* septal 1----- */  (short a_tab);
+char        LOC_row_get_height   /* petal  2----- */  (short a_tab, short a_row);
+char        LOC_row_chg_height   /* stigma 3----- */  (short a_tab, short a_row, short a_size);
+char        LOC_row_get_max      /* petal  1----- */  (short a_tab);
+char        LOC_row_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
 
 
 

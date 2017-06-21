@@ -23,100 +23,19 @@ LOC_init             (void)
    p_tab   = &tabs [CTAB];
    /*---(clean tabs)---------------------*/
    LOC__purge    ();
+   /*---(column settings)----------------*/
+   BCOL =    0;
+   ECOL =    tabs[0].ncol - 1;
+   /*---(row settings)-------------------*/
+   BROW =    0;
+   EROW =    tabs[0].nrow - 1;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
-char         /*--> clear all column customizations -------[ leaf   [ ------ ]-*/
-LOC__clear_cols      (short a_tab)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   short       x_col       =   0;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab <  0) {
-      DEBUG_LOCS   yLOG_snote   ("tab too small");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   --rce;  if (a_tab >= NTAB) {
-      DEBUG_LOCS   yLOG_snote   ("tab too big");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(initialize columns)-------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear columns to defaults");
-   DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
-   for (x_col = 0; x_col < MAX_COLS; ++x_col) {
-      /*---(characteristics)-------------*/
-      tabs [a_tab].cols [x_col].w       = DEF_WIDTH;
-      tabs [a_tab].cols [x_col].x       = 0;
-      tabs [a_tab].cols [x_col].c       = 0;
-      /*---(labels)----------------------*/
-      if        (x_col < 26)  {
-         tabs [a_tab].cols [x_col].l[0] = '-';
-         tabs [a_tab].cols [x_col].l[1] = x_col + 'a';
-      } else  {
-         tabs [a_tab].cols [x_col].l[0] = (x_col / 26) - 1 + 'a';
-         tabs [a_tab].cols [x_col].l[1] = (x_col % 26) + 'a';
-      }
-      tabs [a_tab].cols [x_col].l[2] = '\0';
-      /*---(done)------------------------*/
-   }
-   /*---(clear frozen cols)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear any frozen columns");
-   tabs [a_tab].froz_col  = '-';
-   tabs [a_tab].froz_bcol = 0;
-   tabs [a_tab].froz_ecol = 0;
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
-char         /*--> clear all row customizations ----------[ leaf   [ ------ ]-*/
-LOC__clear_rows      (short a_tab)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   short       x_row       =   0;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab <  0) {
-      DEBUG_LOCS   yLOG_snote   ("tab too small");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   --rce;  if (a_tab >= NTAB) {
-      DEBUG_LOCS   yLOG_snote   ("tab too big");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(initialize rows)----------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");
-   DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
-   for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
-      tabs [a_tab].rows [x_row].h = DEF_HEIGHT;
-      tabs [a_tab].rows [x_row].y = 0;
-      tabs [a_tab].rows [x_row].c = 0;
-   }
-   /*---(clear frozen rows)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear any frozen rows");
-   tabs [a_tab].froz_row  = '-';
-   tabs [a_tab].froz_brow = 0;
-   tabs [a_tab].froz_erow = 0;
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
 char         /*--> clear all cell placements -------------[ leaf   [ ------ ]-*/
-LOC__clear_cells     (short a_tab)
+LOC__clear_locs      (short a_tab)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -157,7 +76,7 @@ LOC__purge           (void)
 {  /*---(design notes)--------------------------------------------------------*/
    /* run CELL_wrap/purge before LOC_wrap/purge so all cells are unhooked     */
    /*---(locals)-----------+-----------+-*/
-   int         x_tab       = 0;
+   short       x_tab       = 0;
    char        t           [LEN_RECD];
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
@@ -187,9 +106,9 @@ LOC__purge           (void)
       tabs [x_tab].ecol    =    0;
       tabs [x_tab].erow    =    0;
       /*---(initialize)------------------*/
-      LOC__clear_cols   (x_tab);
-      LOC__clear_rows   (x_tab);
-      LOC__clear_cells  (x_tab);
+      LOC_col_clear     (x_tab);
+      LOC_row_clear     (x_tab);
+      LOC__clear_locs   (x_tab);
       /*---(done)------------------------*/
    }
    /*---(complete)-----------------------*/
@@ -214,9 +133,9 @@ char         /*--> attach a cell to a location -----------[ ------ [ ------ ]-*/
 LOC_hook           (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell to be placed in a location              */
-      int         a_tab,      /* tab for target location                      */
-      int         a_col,      /* col for target location                      */
-      int         a_row)      /* row for target location                      */
+      short       a_tab,      /* tab for target location                      */
+      short       a_col,      /* col for target location                      */
+      short       a_row)      /* row for target location                      */
 {  /*---(design notes)--------------------------------------------------------*/
    /* add the cell reference to an appropriate empty location.  nothing else  */
    /* on the tab or cell should be modified.                                  */
@@ -296,12 +215,12 @@ LOC_unhook         (
 char         /*--> move a cell between locations ---------[ ------ [ ------ ]-*/
 LOC_move           (
       /*----------+-----------+-----------------------------------------------*/
-      int         a_stab,         /* tab of source cell                       */
-      int         a_scol,         /* col of source cell                       */
-      int         a_srow,         /* row of source cell                       */
-      int         a_ttab,         /* tab of target cell                       */
-      int         a_tcol,         /* col of target cell                       */
-      int         a_trow)         /* row of target cell                       */
+      short       a_stab,         /* tab of source cell                       */
+      short       a_scol,         /* col of source cell                       */
+      short       a_srow,         /* row of source cell                       */
+      short       a_ttab,         /* tab of target cell                       */
+      short       a_tcol,         /* col of target cell                       */
+      short       a_trow)         /* row of target cell                       */
 {  /*---(design notes)--------------------------------------------------------*/
    /* changes the location of the cell at the source location to the target   */
    /* location.  if there is a cell already at the target, it is deleted.  if */
@@ -346,9 +265,9 @@ PRIV void  o___LOCATION________o () { return; }
 char         /*--> verify that a location is legal -------[ ------ [ ------ ]-*/
 LOC_legal          (
       /*----------+-----------+-----------------------------------------------*/
-      int         a_tab,      /* tab number                                   */
-      int         a_col,      /* column number                                */
-      int         a_row,      /* row number                                   */
+      short       a_tab,      /* tab number                                   */
+      short       a_col,      /* column number                                */
+      short       a_row,      /* row number                                   */
       char        a_adapt)    /* y/n should enlarge boundaries to fit         */
 {  /*---(design notes)--------------------------------------------------------*/
    /* tests the tab, col, and row against minimum and maximum limits as well  */
@@ -358,8 +277,8 @@ LOC_legal          (
    /* limits.                                                                 */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
-   int         new_col     = 0;             /* holder for enlarged area       */
-   int         new_row     = 0;             /* holder for enlarged area       */
+   short       new_col     = 0;             /* holder for enlarged area       */
+   short       new_row     = 0;             /* holder for enlarged area       */
    /*---(check absolute boudaries)-------*/
    --rce;  if (a_tab <  0       )      return rce;
    --rce;  if (a_col <  0       )      return rce;
@@ -416,9 +335,9 @@ LOC_cell_labeled   (char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
-   int         x_tab       =   0;           /* working tab value              */
-   int         x_col       =   0;           /* working col value              */
-   int         x_row       =   0;           /* working row value              */
+   short       x_tab       =   0;           /* working tab value              */
+   short       x_col       =   0;           /* working col value              */
+   short       x_row       =   0;           /* working row value              */
    tCELL      *x_curr      = NULL;
    /*---(defenses)-----------------------*/
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
@@ -432,9 +351,9 @@ LOC_cell_labeled   (char *a_label)
 char         /*--> go directly to a specific cell---------[ leaf   [ 123y4x ]-*/
 LOC_jump           (
       /*----------+-----------+-----------------------------------------------*/
-      int         a_tab,      /* tab number                                   */
-      int         a_col,      /* column number                                */
-      int         a_row)      /* row number                                   */
+      short       a_tab,      /* tab number                                   */
+      short       a_col,      /* column number                                */
+      short       a_row)      /* row number                                   */
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
@@ -462,9 +381,9 @@ PRIV void  o___REFERENCES______o () { return; }
 char         /*--> convert position into label -----------[ ------ [ ------ ]-*/
 LOC_ref           (
       /*----------+-----------+-----------------------------------------------*/
-      int         a_tab,      /* tab of location                              */
-      int         a_col,      /* col of location                              */
-      int         a_row,      /* row of location                              */
+      short       a_tab,      /* tab of location                              */
+      short       a_col,      /* col of location                              */
+      short       a_row,      /* row of location                              */
       char        a_abs,      /* referencing of location                      */
       char       *a_final)    /* variable to store location reference         */
 {  /*---(design notes)-------------------*//*---------------------------------*/
@@ -545,9 +464,9 @@ char         /*--> convert a cell into a coordinates -----[ ------ [ ------ ]-*/
 LOC_coords        (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell to be converted                         */
-      int        *a_tab,      /* return variable for the tab                  */
-      int        *a_col,      /* return variable for the column               */
-      int        *a_row)      /* return variable for the row                  */
+      short      *a_tab,      /* return variable for the tab                  */
+      short      *a_col,      /* return variable for the column               */
+      short      *a_row)      /* return variable for the row                  */
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
@@ -566,9 +485,9 @@ char         /*--> convert label into tab, col, row ------[ ------ [ ------ ]-*/
 LOC_parse         (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_label,    /* cell label used for parsing                  */
-      int        *a_tab,      /* return variable for the tab                  */
-      int        *a_col,      /* return variable for the column               */
-      int        *a_row,      /* return variable for the row                  */
+      short      *a_tab,      /* return variable for the tab                  */
+      short      *a_col,      /* return variable for the column               */
+      short      *a_row,      /* return variable for the row                  */
       char       *a_abs)      /* return variable for the rel/abs markers      */
 {
    /*---(locals)-----------+-----------+-*/
@@ -709,6 +628,260 @@ LOC_parse         (
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return  0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                           tab related                        ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___TABS____________o () { return; }
+
+char*
+LOC_tab_get_name     (short a_tab)
+{
+   if (a_tab < 0)      return "";
+   if (a_tab >= NTAB)  return "";
+   return tabs [a_tab].name;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                           col related                        ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___COLUMNS_________o () { return; }
+
+char         /*--> clear all column customizations -------[ septal [ 1----- ]-*/
+LOC_col_clear        (short a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   short       x_col       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab <  0) {
+      DEBUG_LOCS   yLOG_snote   ("tab too small");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_tab >= NTAB) {
+      DEBUG_LOCS   yLOG_snote   ("tab too big");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(initialize columns)-------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear columns to defaults");
+   DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
+   for (x_col = 0; x_col < MAX_COLS; ++x_col) {
+      /*---(characteristics)-------------*/
+      tabs [a_tab].cols [x_col].w       = DEF_WIDTH;
+      tabs [a_tab].cols [x_col].x       = 0;
+      tabs [a_tab].cols [x_col].c       = 0;
+      /*---(labels)----------------------*/
+      if        (x_col < 26)  {
+         tabs [a_tab].cols [x_col].l[0] = '-';
+         tabs [a_tab].cols [x_col].l[1] = x_col + 'a';
+      } else  {
+         tabs [a_tab].cols [x_col].l[0] = (x_col / 26) - 1 + 'a';
+         tabs [a_tab].cols [x_col].l[1] = (x_col % 26) + 'a';
+      }
+      tabs [a_tab].cols [x_col].l[2] = '\0';
+      /*---(done)------------------------*/
+   }
+   /*---(clear frozen cols)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear any frozen columns");
+   tabs [a_tab].froz_col  = '-';
+   tabs [a_tab].froz_bcol = 0;
+   tabs [a_tab].froz_ecol = 0;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> return max col for tab ----------------[ petal  [ 1----- ]-*/
+LOC_col_get_max      (short a_tab)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   return tabs [a_tab].ncol;
+}
+
+char         /*--> change max col for tab ----------------[ stigma [ 2----- ]-*/
+LOC_col_chg_max      (short a_tab, short a_size)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_size  <  MIN_COLS)              return rce;
+   --rce;  if (a_size  >  MAX_COLS)              return rce;
+   tabs [a_tab].ncol = a_size;
+   return 0;
+}
+
+char         /*--> return the col width ------------------[ petal  [ 2----- ]-*/
+LOC_col_get_width    (short a_tab, short a_col)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_col   < 0)                      return rce;
+   --rce;  if (a_col   >= tabs [a_tab].ncol)     return rce;
+   return tabs [a_tab].cols [a_col].w;
+}
+
+char         /*--> change the col width ------------------[ stigma [ 3----- ]-*/
+LOC_col_chg_width    (short a_tab, short a_col, short a_size)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_col   < 0)                      return rce;
+   --rce;  if (a_col   >= tabs [a_tab].ncol)     return rce;
+   /*---(limits)-------------------------*/
+   if (a_size  < MIN_WIDTH)    a_size = MIN_WIDTH;
+   if (a_size  > MAX_WIDTH)    a_size = MAX_WIDTH;
+   /*---(set)----------------------------*/
+   tabs [a_tab].cols [a_col].w = a_size;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                           row related                        ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___ROWS____________o () { return; }
+
+char         /*--> clear all row customizations ----------[ septal [ 1----- ]-*/
+LOC_row_clear        (short a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   short       x_row       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab <  0) {
+      DEBUG_LOCS   yLOG_snote   ("tab too small");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_tab >= NTAB) {
+      DEBUG_LOCS   yLOG_snote   ("tab too big");
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(initialize rows)----------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");
+   DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
+   for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
+      tabs [a_tab].rows [x_row].h = DEF_HEIGHT;
+      tabs [a_tab].rows [x_row].y = 0;
+      tabs [a_tab].rows [x_row].c = 0;
+   }
+   /*---(clear frozen rows)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("clear any frozen rows");
+   tabs [a_tab].froz_row  = '-';
+   tabs [a_tab].froz_brow = 0;
+   tabs [a_tab].froz_erow = 0;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> return max row for tab ----------------[ petal  [ 1----- ]-*/
+LOC_row_get_max      (short a_tab)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return 0;
+   --rce;  if (a_tab   >= NTAB)                  return 0;
+   return tabs [a_tab].nrow;
+}
+
+char         /*--> change max row for tab ----------------[ stigma [ 2----- ]-*/
+LOC_row_chg_max      (short a_tab, short a_size)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_size  <  MIN_ROWS)              return rce;
+   --rce;  if (a_size  >  MAX_ROWS)              return rce;
+   tabs [a_tab].nrow = a_size;
+   return 0;
+}
+
+char         /*--> return height for a row ---------------[ petal  [ 2----- ]-*/
+LOC_row_get_height   (short a_tab, short a_row)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_row   < 0)                      return rce;
+   --rce;  if (a_row   >= tabs [a_tab].nrow)     return rce;
+   return tabs [a_tab].rows [a_row].h;
+}
+
+char         /*--> change height for a row ---------------[ stigma [ 3----- ]-*/
+LOC_row_chg_height   (short a_tab, short a_row, short a_size)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_row   < 0)                      return rce;
+   --rce;  if (a_row   >= tabs [a_tab].nrow)     return rce;
+   --rce;  if (a_size  < MIN_HEIGHT)             return rce;
+   --rce;  if (a_size  > MAX_HEIGHT)             return rce;
+   tabs [a_tab].rows [a_row].h = a_size;
+   return 0;
+}
+
+char         /*--> clear the frozen rows -----------------[ stigma [ 1----- ]-*/
+LOC_row_unfreeze     (short a_tab)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   tabs [a_tab].froz_row    = '-';
+   tabs [a_tab].froz_brow   = 0;
+   tabs [a_tab].froz_erow   = 0;
+   return 0;
+}
+
+char         /*--> return the frozen rows ----------------[ petal  [ 3----- ]-*/
+LOC_row_get_freeze   (short a_tab, short *a_brow, short *a_erow)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   < 0)                      return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (tabs [a_tab].froz_row != 'y')     return rce;
+   if (a_brow != NULL)  *a_brow = tabs [a_tab].froz_brow;
+   if (a_erow != NULL)  *a_erow = tabs [a_tab].froz_erow;
+   return 0;
+}
+
+char         /*--> change the frozen rows ----------------[ stigma [ 3----- ]-*/
+LOC_row_chg_freeze   (short a_tab, short a_brow, short a_erow)
+{
+   char        rce         =  -10;
+   --rce;  if (a_tab   <  0)                     return rce;
+   --rce;  if (a_tab   >= NTAB)                  return rce;
+   --rce;  if (a_brow  <  0)                     return rce;
+   --rce;  if (a_brow  >= tabs [a_tab].nrow)     return rce;
+   --rce;  if (a_erow  <  0)                     return rce;
+   --rce;  if (a_erow  >= tabs [a_tab].nrow)     return rce;
+   --rce;  if (a_brow  >  a_erow)                return rce;
+   tabs [a_tab].froz_row    = 'y';
+   tabs [a_tab].froz_brow   = a_brow;
+   tabs [a_tab].froz_erow   = a_erow;
+   return 0;
 }
 
 

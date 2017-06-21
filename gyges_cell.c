@@ -1610,42 +1610,39 @@ CELL_decimals      (char a_mode, char a_num)
 
 char       /*----: change the width of selected columns ----------------------*/
 CELL_width         (char a_mode, char a_num)
-{
-   DEBUG_CELL  yLOG_enter  (__FUNCTION__);
-   /*---(design notes)-------------------*/
-   /*
-    *  update all cells to new width, either a standard size, or a specific
-    *  value communicated as a negative number.
-    */
+{  /*---(design notes)-------------------*/
+   /*  update all cells to new width, either a standard size, or a specific   */
+   /*  value communicated as a negative number.                               */
    /*---(locals)-----------+-----------+-*/
    /*------(positions)-----*/
    int         x_tab       = 0;
    int         x_bcol      = 0;
    int         x_ecol      = 0;
    /*------(objects)-------*/
-   tCELL      *x_entry     = NULL;      /* selection entry                    */
-   tCOLS      *x_col       = NULL;      /* current column                     */
    tCELL      *x_cell      = NULL;      /* cell for updating                  */
    /*------(working)-------*/
-   int         i           = 0;
-   int         j           = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   int         x_last      = 0;
    int         x_width     = 0;
+   /*---(header)-----------------------------*/
+   DEBUG_CELL  yLOG_enter  (__FUNCTION__);
    /*---(defenses)---------------------------*/
-   char     *valid = "mhHlLnNwW";
+   char     *valid = "mnNwWhHlL";
    if (a_num >   0 && strchr(valid, a_num)   == 0) {
       DEBUG_CELL  yLOG_exit   (__FUNCTION__);
       return -1;
    }
    /*---(process range)----------------------*/
-   x_entry  = VISU_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
-   for (i = x_bcol; i <= x_ecol; ++i) {
+   VISU_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
+   x_last = LOC_row_get_max (x_tab);
+   for (x_col = x_bcol; x_col <= x_ecol; ++x_col) {
       DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d", x_tab, x_col);
-      x_col = &tabs[x_tab].cols[i];
-      /*---(set it)----------------------*/
+      /*---(adjust)----------------------*/
       if (a_num <   0) {
          x_width                = -(a_num);
       } else {
-         x_width = x_col->w;
+         x_width = LOC_col_get_width (x_tab, x_col);
          switch (a_num) {
          case  'm' : x_width    = 0;                           break;
          case  'n' : x_width    = 8;                           break;
@@ -1658,21 +1655,11 @@ CELL_width         (char a_mode, char a_num)
          case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
          }
       }
-      /*---(test limits)------------------*/
-      if (x_width  < MIN_WIDTH)  x_width  =  MIN_WIDTH;
-      if (x_width  > MAX_WIDTH)  x_width  =  MAX_WIDTH;
       /*---(set width)--------------------*/
-      x_col->w = x_width;
-      /*---(update history)---------------*/
-      /*> ;;                                                                                         <* 
-       *> DEBUG_CELL  yLOG_value  ("after"   , x_width);                                             <* 
-       *> if (a_mode == CHG_INPUT) {                                                                 <* 
-       *>    if (x_count == 0)  HIST_size   ("width"   , x_tab, x_col, x_row, x_ccol->w, x_width);   <* 
-       *>    else               HIST_size   ("WIDTH"   , x_tab, x_col, x_row, x_ccol->w, x_width);   <* 
-       *> }                                                                                          <*/
+      LOC_col_chg_width (x_tab, x_col, x_width);
       /*---(update column printables)----*/
-      for (j = 0; j < NROW; ++j) {
-         x_cell = LOC_cell_at_loc (x_tab, i, j);
+      for (x_row = 0; x_row < x_last; ++x_row) {
+         x_cell = LOC_cell_at_loc (x_tab, x_col, x_row);
          if (x_cell == NULL) continue;
          /*---(update merged cells)----------*/
          if (x_cell->t == CTYPE_MERGE)  SEQ_calc_up (x_cell);
@@ -1700,9 +1687,7 @@ CELL_height        (char a_mode, char a_num)
    int         x_col       = 0;
    int         x_row       = 0;
    int         s_col       = 0;
-   tCELL      *first       = NULL;
-   tCELL      *next        = first;
-   tROWS      *curr        = NULL;
+   tCELL      *next        = NULL;
    int         i           = 0;
    int         x_count     = 0;
    int         x_height    = 0;
@@ -1715,7 +1700,7 @@ CELL_height        (char a_mode, char a_num)
       return -1;
    }
    /*---(get sentinel column)----------------*/
-   first = VISU_first (&x_tab, &x_col, &x_row);
+   VISU_first (&x_tab, &x_col, &x_row);
    s_col    = x_col;
    DEBUG_CELL  yLOG_value  ("row"  , x_row);
    /*---(process range)----------------------*/
@@ -1723,9 +1708,8 @@ CELL_height        (char a_mode, char a_num)
       DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d, row=%3d", x_tab, x_col, x_row);
       if (x_col == s_col) {
          DEBUG_CELL  yLOG_value  ("column"  , x_col);
-         curr = &tabs[x_tab].rows[x_row];
-         x_height = curr->h;
-         DEBUG_CELL  yLOG_value  ("before"  , curr->h);
+         x_height = LOC_row_get_height (x_tab, x_row);
+         DEBUG_CELL  yLOG_value  ("before"  , x_height);
          /*---(set it)----------------------*/
          if (a_num <   0) {
             x_height               = -(a_num);
@@ -1742,11 +1726,7 @@ CELL_height        (char a_mode, char a_num)
          if (x_height > MAX_HEIGHT)  x_height =  MAX_HEIGHT;
          /*---(update printable)-------------*/
          DEBUG_CELL  yLOG_value  ("after"   , x_height);
-         if (a_mode == CHG_INPUT) {
-            if (x_count == 0)  HIST_size   ("height"  , x_tab, x_col, x_row, curr->h, x_height);
-            else               HIST_size   ("HEIGHT"  , x_tab, x_col, x_row, curr->h, x_height);
-         }
-         curr->h = x_height;
+         LOC_row_chg_height (x_tab, x_row, x_height);
          /*---(update column printables)----*/
          for (i = 0; i < NCOL; ++i) {
             if (LOC_cell_at_loc (x_tab, i, x_row) == NULL) continue;
@@ -2314,13 +2294,13 @@ CELL_printable     (tCELL *a_curr) {
    /*---(indented formats)---------------*/
    DEBUG_CELL  yLOG_info  ("x", x_temp);
    /*---(merge formats)------------------*/
-   w = tabs[a_curr->tab].cols[a_curr->col].w;
+   w = LOC_col_get_width (a_curr->tab, a_curr->col);
    /*> w = p_tab->cols[a_curr->col].w;                                                  <*/
-   for (i = a_curr->col + 1; i < tabs[a_curr->tab].ncol; ++i) {
+   for (i = a_curr->col + 1; i < LOC_col_get_max (a_curr->tab); ++i) {
       x_curr = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
       if (x_curr    == NULL)         break;
       if (x_curr->t != CTYPE_MERGE)  break;
-      w    += tabs[a_curr->tab].cols[i].w;
+      w    += LOC_col_get_width (a_curr->tab, i);
       ++x_merge;
    }
    DEBUG_CELL  yLOG_value ("w", w);
@@ -2389,7 +2369,7 @@ CELL_printable     (tCELL *a_curr) {
    } else {
       wa = 0;
       for (i = 0; i <= x_merge; ++i) {
-         w     = tabs[a_curr->tab].cols[a_curr->col + i].w;
+         w     = LOC_col_get_width (a_curr->tab, a_curr->col + i);
          DEBUG_CELL  yLOG_value ("#w", w);
          while (pp == NULL)  pp = (char*) malloc(w + 1);
          sprintf (pp, "%-*.*s", w, w, p + wa);
@@ -2543,7 +2523,7 @@ CELL__unitnew      (
       else                             snprintf(unit_answer, LEN_UNIT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    else if (strcmp(a_question, "cell_size"    )  == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_celln size     : width=%3d, height=%3d", tabs[x_tab].cols[x_col].w, tabs[x_tab].rows[x_row].h);
+      snprintf(unit_answer, LEN_UNIT, "s_celln size     : width=%3d, height=%3d", LOC_col_get_width (x_tab, x_col), LOC_row_get_height (x_tab, x_row));
    }
    /*---(cell contents)------------------*/
    else if (strcmp(a_question, "cell_rpn")       == 0) {

@@ -397,10 +397,10 @@ char       /*----: simplifier for starting at current point ------------------*/
 VISU_from          (void) { return VISU_start  (CTAB, CCOL, CROW, VISU_CUM); }
 
 char       /*----: convert to whole-column selection -------------------------*/
-VISU_col           (void) { s_visu.brow = 0; s_visu.erow = tabs[s_visu.otab].nrow - 1; return 0; }
+VISU_col           (void) { s_visu.brow = 0; s_visu.erow = LOC_row_get_max (s_visu.otab) - 1; return 0; }
 
 char       /*----: convert to whole-row selection ----------------------------*/
-VISU_row           (void) { s_visu.bcol = 0; s_visu.ecol = tabs[s_visu.otab].ncol - 1; return 0; }
+VISU_row           (void) { s_visu.bcol = 0; s_visu.ecol = LOC_col_get_max (s_visu.otab) - 1; return 0; }
 
 
 
