@@ -700,6 +700,8 @@ INPT_tab_new       (void)
    int         x_col       = 0;
    int         x_row       = 0;
    char        x_type      = 0;
+   char        x_fcol      = '-';
+   char        x_frow      = '-';
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(read fields)--------------------*/
    for (i = FIELD_TAB; i <= FIELD_NAME; ++i) {
@@ -721,22 +723,23 @@ INPT_tab_new       (void)
             DEBUG_INPT  yLOG_exit    (__FUNCTION__);
             return rce + i;
          }
+         LOC_jump (x_tab, 0, 0);
          break;
       case  FIELD_MAX   : /*---(size of sheet)-----*/
-         rc = INPT_rowcol (p, &(tabs[x_tab].ncol), &(tabs[x_tab].nrow),
-               1, DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);
+         rc = INPT_rowcol (p, &x_col, &x_row, 1, DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);
+         if (rc < 0) break;
+         LOC_col_chg_max (x_col);
+         LOC_row_chg_max (x_row);
          break;
       case  FIELD_TOP   : /*---(top of screen)-----*/
-         rc = INPT_rowcol (p, &(tabs[x_tab].bcol), &(tabs[x_tab].brow),
-               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
-         DEBUG_INPT   yLOG_value   ("bcol"      , tabs[x_tab].bcol);
-         DEBUG_INPT   yLOG_value   ("brow"      , tabs[x_tab].brow);
+         rc = INPT_rowcol (p, &(BCOL), &(BROW), 0, 0, 0, NCOL, NROW);
+         DEBUG_INPT   yLOG_value   ("bcol"      , BCOL);
+         DEBUG_INPT   yLOG_value   ("brow"      , BROW);
          break;
       case  FIELD_CUR   : /*---(cur position)------*/
-         rc = INPT_rowcol (p, &(tabs[x_tab].ccol), &(tabs[x_tab].crow),
-               0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
-         tabs[x_tab].ecol = tabs[x_tab].ccol;
-         tabs[x_tab].erow = tabs[x_tab].crow;
+         rc = INPT_rowcol (p, &(CCOL), &(CROW), 0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);
+         ECOL = CCOL;
+         EROW = CROW;
          break;
       case  FIELD_FTYPE : /*---(freeze type)-------*/
          DEBUG_INPT   yLOG_char    ("freeze"    , p[0]);

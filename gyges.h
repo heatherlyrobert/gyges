@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1m"
-#define     VER_TXT   "created basic unit test of tab handling ;)"
+#define     VER_NUM   "2.1n"
+#define     VER_TXT   "unit tested new LOC functions successfully"
 
 
 
@@ -190,7 +190,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     LEN_UNIT    500
 #define     LEN_STR     500
 #define     LEN_DESC    100
-#define     LEN_LABEL   20
+#define     LEN_ABBR    10
 /*---(registers)----------------------*/
 
 
@@ -581,7 +581,7 @@ struct cTAB {
    /* flipping the active flag and updating the name as desired.              */
    char        active;                      /* currently in use?  0=no, 1=yes */
    short       tab;                         /* number of tab                  */
-   char        name  [LEN_RECD ];           /* tab name for user reference    */
+   char        name  [LEN_ABBR];            /* tab name for user reference    */
    /*---(contents)-----------------------*/
    /* tabs pull three other data structures together in a package: column     */
    /* characteristics, row characteristics, and a grid on which to hang cells.*/
@@ -617,7 +617,7 @@ struct cTAB {
    short       froz_erow;                   /* bottom of frozen rows          */
    /*---(end)----------------------------*/
 };
-tTAB     tabs [MAX_TABS];
+tTAB     s_tabs [MAX_TABS];
 tTAB    *p_tab;                        /* current tab pointer                 */
 
 
@@ -637,7 +637,7 @@ tTAB    *p_tab;                        /* current tab pointer                 */
 
 #define     NCEL        ncell
 #define     ACEL        acell
-#define     CCEL        tab[my.ctab].sheet[p_tab->ccol][p_tab->crow]
+#define     CCEL        s_tab[my.ctab].sheet[p_tab->ccol][p_tab->crow]
 
 
 
@@ -1227,13 +1227,13 @@ char        LOC_tab_deactivate   (short a_tab);
 char        LOC_col_clear        /* septal 1----- */  (short a_tab);
 char        LOC_col_get_width    /* petal  2----- */  (short a_tab, short a_col);
 char        LOC_col_chg_width    /* stigma 3----- */  (short a_tab, short a_col, short a_size);
-char        LOC_col_get_max      /* petal  1----- */  (short a_tab);
+short       LOC_col_get_max      /* petal  1----- */  (short a_tab);
 char        LOC_col_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
 
 char        LOC_row_clear        /* septal 1----- */  (short a_tab);
 char        LOC_row_get_height   /* petal  2----- */  (short a_tab, short a_row);
 char        LOC_row_chg_height   /* stigma 3----- */  (short a_tab, short a_row, short a_size);
-char        LOC_row_get_max      /* petal  1----- */  (short a_tab);
+short       LOC_row_get_max      /* petal  1----- */  (short a_tab);
 char        LOC_row_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
 
 char*       LOC__unit            /* petal  2----- */  (char *a_question, tCELL *a_cell);
