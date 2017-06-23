@@ -690,7 +690,7 @@ BUF_switch         (int a_tab)
    int xtab = a_tab - '0';
    if (xtab >= 0 && xtab < NTAB) {
       CTAB = xtab;
-      p_tab  = &tabs[CTAB];
+      p_tab  = &s_tabs[CTAB];
       BCOL = 0;
       ECOL = 0;
       BROW = 0;
@@ -1494,11 +1494,11 @@ SMOD_wander        (char a_prev, char a_curr)
    case  ')' : post = a_curr;
    case  10  :
    case  27  : VISU_clear ();
-               LOC_ref (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref);
+               LOC_ref (CTAB, s_tabs[CTAB].ccol, s_tabs[CTAB].crow, 0, wref);
                CTAB = wtab;
-               tabs[CTAB].ccol = wcol;
-               tabs[CTAB].crow = wrow;
-               p_tab = &tabs[CTAB];
+               s_tabs[CTAB].ccol = wcol;
+               s_tabs[CTAB].crow = wrow;
+               p_tab = &s_tabs[CTAB];
                my.cpos = wpos;
                strcpy (g_contents, wsave);
                if (strcmp (wref2, "") != 0) {
@@ -1539,8 +1539,8 @@ SMOD_wander        (char a_prev, char a_curr)
     *> case 'r'      : VISU_row();          break;                                    <* 
     *> }                                                                              <*/
    if (a_curr == ':') {
-      LOC_ref    (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, 0, wref2);
-      VISU_start (CTAB, tabs[CTAB].ccol, tabs[CTAB].crow, VISU_FROM);
+      LOC_ref    (CTAB, s_tabs[CTAB].ccol, s_tabs[CTAB].crow, 0, wref2);
+      VISU_start (CTAB, s_tabs[CTAB].ccol, s_tabs[CTAB].crow, VISU_FROM);
    }
    /*---(complete)-----------------------*/
    return  0;

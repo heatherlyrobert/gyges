@@ -1488,13 +1488,13 @@ MOVE_unit          (char *a_question, int a_num)
       snprintf(unit_answer, LEN_UNIT, "s_move tab cur   : tab=%4d, col=%4d, row=%4d", CTAB, CCOL, CROW);
    }
    else if (strcmp(a_question, "tab_beg"       ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].bcol, tabs [a_num].brow);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);
    }
    else if (strcmp(a_question, "tab_pos"       ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ccol, tabs [a_num].crow);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ccol, s_tabs [a_num].crow);
    }
    else if (strcmp(a_question, "tab_max" )       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, tabs [a_num].ncol, tabs [a_num].nrow);
+      snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ncol, s_tabs [a_num].nrow);
    }
    else if (strcmp(a_question, "edit_con")       == 0) {
       snprintf(unit_answer, LEN_UNIT, "s_move edit con  : :%-*.*s:", my.apos, my.apos, g_contents + my.bpos);

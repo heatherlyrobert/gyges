@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1n"
-#define     VER_TXT   "unit tested new LOC functions successfully"
+#define     VER_NUM   "2.1o"
+#define     VER_TXT   "file reading isolated from tabs and sheet ];>"
 
 
 
@@ -1290,8 +1290,16 @@ char      FILE_version       (char *a_ver, char *a_final);
 char      FILE_bump          (char a_type, char *a_ver);
 
 char      INPT_cell          (cchar *a_recd);
-char      INPT_tab           (cchar *a_recd);
-char      INPT_main          (char *a_name);
+
+char      INPT_tab           (char *a_label, char *a_name);
+char      INPT_width         (char *a_label, int   a_size);
+char      INPT_height        (char *a_label, int   a_size);
+
+char      INPT_open          (cchar *a_name);
+char      INPT_read          (void);
+char      INPT_parse         (cchar *a_recd);
+char      INPT_close         (void);
+char      INPT_main          (cchar *a_name);
 
 char      FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
 char      FILE_write         (char *a_name);

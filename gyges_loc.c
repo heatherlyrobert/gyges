@@ -71,11 +71,13 @@ LOC__purge           (void)
 {  /*---(design notes)--------------------------------------------------------*/
    /* run CELL_wrap/purge before LOC_wrap/purge so all cells are unhooked     */
    /*---(locals)-----------+-----------+-*/
+   short       x_ntab      = NTAB;
    short       x_tab       = 0;
    char        t           [LEN_RECD];
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/
+   NTAB    = 10;
    for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
       DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
       /*---(main config)-----------------*/
@@ -106,6 +108,7 @@ LOC__purge           (void)
       LOC__clear_locs   (x_tab);
       /*---(done)------------------------*/
    }
+   NTAB = x_ntab;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -775,12 +778,12 @@ LOC_col_chg_max      (short a_tab, short a_size)
    --rce;  if (a_tab   < 0)                      return rce;
    --rce;  if (a_tab   >= NTAB)                  return rce;
    --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (a_size  <  MIN_COLS)              return rce;
-   --rce;  if (a_size  >  MAX_COLS)              return rce;
+   if (a_size  <  MIN_COLS)         a_size = MIN_COLS;
+   if (a_size  >  MAX_COLS)         a_size = MAX_COLS;
    s_tabs [a_tab].ncol = a_size;
-   if (s_tabs [a_tab].bcol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].bcol = s_tabs [a_tab].ncol - 1;
-   if (s_tabs [a_tab].ecol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].ecol = s_tabs [a_tab].ncol - 1;
-   if (s_tabs [a_tab].ccol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].ccol = s_tabs [a_tab].ncol - 1;
+   /*> if (s_tabs [a_tab].bcol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].bcol = s_tabs [a_tab].ncol - 1;   <* 
+    *> if (s_tabs [a_tab].ecol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].ecol = s_tabs [a_tab].ncol - 1;   <* 
+    *> if (s_tabs [a_tab].ccol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].ccol = s_tabs [a_tab].ncol - 1;   <*/
    return 0;
 }
 
@@ -878,12 +881,12 @@ LOC_row_chg_max      (short a_tab, short a_size)
    --rce;  if (a_tab   < 0)                      return rce;
    --rce;  if (a_tab   >= NTAB)                  return rce;
    --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (a_size  <  MIN_ROWS)              return rce;
-   --rce;  if (a_size  >  MAX_ROWS)              return rce;
+   if (a_size  <  MIN_ROWS)         a_size = MIN_ROWS;
+   if (a_size  >  MAX_ROWS)         a_size = MAX_ROWS;
    s_tabs [a_tab].nrow = a_size;
-   if (s_tabs [a_tab].brow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].brow = s_tabs [a_tab].nrow - 1;
-   if (s_tabs [a_tab].erow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].erow = s_tabs [a_tab].nrow - 1;
-   if (s_tabs [a_tab].crow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].crow = s_tabs [a_tab].nrow - 1;
+   /*> if (s_tabs [a_tab].brow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].brow = s_tabs [a_tab].nrow - 1;   <* 
+    *> if (s_tabs [a_tab].erow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].erow = s_tabs [a_tab].nrow - 1;   <* 
+    *> if (s_tabs [a_tab].crow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].crow = s_tabs [a_tab].nrow - 1;   <*/
    return 0;
 }
 
