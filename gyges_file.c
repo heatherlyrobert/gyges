@@ -511,168 +511,14 @@ static void   o___TABS____________o (void) { return; }
  * F) tab         ver  tab#  --max--  --beg--  --cur--  t  lockbeg  lockend  name-------------------
  *    tab         -F-     0  0az999   0a1      0g5      b  0a5      0b5      one
  *
+ * G) tab         ver  --max--  name-------------------
+ *    tab         -G-  0az999   one
+ *
  *
  *
  *
  */
 
-char
-INPT_rowcol        (
-      char  *a_cell,
-      short *a_col   , short *a_row   , int  a_min,
-      int    a_defcol, int    a_defrow,
-      int    a_maxcol, int    a_maxrow)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *  this function is infrequently used, so i made it highly defensive.
-    *  i don't want messed up files to blow up the system ;)
-    *
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   char        rc          = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_senter  (__FUNCTION__);
-   DEBUG_INPT   yLOG_spoint  (a_cell);
-   /*---(defense)------------------------*/
-   --rce;  if (a_cell == NULL) {
-      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_INPT   yLOG_sinfo   ("a_cell"    , a_cell);
-   /*---(fixing limits and defaults)-----*/
-   if (a_defcol < 0)         a_defcol = DEF_COLS;
-   if (a_defcol > MAX_COLS)  a_defcol = MAX_COLS;
-   if (a_maxcol < 0)         a_maxcol = DEF_COLS;
-   if (a_maxcol > MAX_COLS)  a_maxcol = MAX_COLS;
-   if (a_defrow < 0)         a_defrow = DEF_ROWS;
-   if (a_defrow > MAX_ROWS)  a_defrow = MAX_ROWS;
-   if (a_maxrow < 0)         a_maxrow = DEF_ROWS;
-   if (a_maxrow > MAX_ROWS)  a_maxrow = MAX_ROWS;
-   /*---(parse)--------------------------*/
-   rc = LOC_parse (a_cell, NULL, &x_col, &x_row, NULL);
-   DEBUG_INPT   yLOG_sint    (rc);
-   /*---(add min value)------------------*/
-   x_col += a_min;
-   x_row += a_min;
-   /*---(column checking)----------------*/
-   if (rc < 0 || x_col <= 0)  x_col = a_defcol;
-   if (x_col >  a_maxcol)     x_col = a_maxcol;
-   /*---(row checking)-------------------*/
-   if (rc < 0 || x_row <= 0)  x_row = a_defrow;
-   if (x_row >  a_maxrow)     x_row = a_maxrow;
-   /*---(display)------------------------*/
-   DEBUG_INPT   yLOG_sint    (x_col);
-   DEBUG_INPT   yLOG_sint    (x_row);
-   /*---(assign)-------------------------*/
-   if (a_col != NULL)  *a_col = x_col;
-   if (a_row != NULL)  *a_row = x_row;
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
-#define     FIELD_RREG     1
-#define     FIELD_RTAB     2
-#define     FIELD_RBEG     3
-#define     FIELD_REND     4
-#define     FIELD_RMIN     5
-#define     FIELD_RMAX     6
-#define     FIELD_RTYPE    7
-#define     FIELD_RDATA    8
-
-char         /*--> parse a register entry ----------------[ flower [--------]-*/
-INPT_register      (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   char        rc          = 0;
-   int         i           = 0;
-   char       *p           = NULL;               /* strtok return pointer     */
-   int         x_len       = 0;
-   int         x_tab       = 0;
-   char        x_regid     = ' ';
-   char        x_beg       [10];
-   char        x_end       [10];
-   char        x_min       [10];
-   char        x_max       [10];
-   char        x_type      = ' ';
-   char        x_regtest   [LEN_RECD];
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(read fields)--------------------*/
-   for (i = FIELD_RREG; i <= FIELD_RDATA; ++i) {
-      DEBUG_INPT   yLOG_note    ("read next field");
-      p = strtok_r (NULL  , s_q, &s_context);
-      --rce;  if (p == NULL) {
-         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
-         break;
-      }
-      if (i != FIELD_RDATA)  strltrim (p, ySTR_BOTH, LEN_RECD);
-      /*> if (p [0] == '-')  p[0] = '\0';                                             <*/
-      x_len = strlen (p);
-      switch (i) {
-      case  FIELD_RREG :  /*--------------*/
-         --rce;  if (x_len != 1)  {
-            DEBUG_INPT  yLOG_note    ("reg id not correct");
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         x_regid = p[0];
-         DEBUG_INPT  yLOG_char    ("regid"     , x_regid);
-         break;
-      case  FIELD_RTAB  : /*-------------*/
-         x_tab = atoi (p);
-         DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);
-         --rce;  if (x_tab == 0 && strcmp (p, "0") != 0) {
-            DEBUG_INPT  yLOG_note    ("tab number not correct");
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         --rce;  if (x_tab >= 10) {
-            DEBUG_INPT  yLOG_note    ("tab number too large");
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         DEBUG_INPT   yLOG_note    ("initializing tab");
-         break;
-      case  FIELD_RBEG  : /*-------------*/
-         strlcpy (x_beg, p, 10);
-         break;
-      case  FIELD_REND  : /*-------------*/
-         strlcpy (x_end, p, 10);
-         break;
-      case  FIELD_RMIN  : /*-------------*/
-         strlcpy (x_min, p, 10);
-         break;
-      case  FIELD_RMAX  : /*-------------*/
-         strlcpy (x_max, p, 10);
-         break;
-      case  FIELD_RTYPE : /*-------------*/
-         --rce;  if (x_len != 1)  {
-            DEBUG_INPT  yLOG_note    ("reg type not correct");
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         x_type = p[0];
-         DEBUG_INPT  yLOG_char    ("type"      , x_type);
-         if (x_type != 't')  REG_read (x_regid, x_tab, x_beg, x_end, x_min, x_max, x_type);
-         break;
-      case  FIELD_RDATA : /*-------------*/
-         if (x_type == 't')  TREG_read (x_regid, x_beg, atoi (x_min), atoi (x_max), p + 1);
-         break;
-      }
-      DEBUG_INPT   yLOG_note    ("done with loop");
-   } 
-   DEBUG_INPT   yLOG_note    ("done parsing fields");
-   REG_entry (x_regid, x_regtest);
-   DEBUG_INPT   yLOG_info    ("regtest"   , x_regtest);
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
 
 
 
@@ -682,55 +528,6 @@ INPT_register      (void)
 PRIV void  o___SIZES___________o () { return; }
 
 
-/* initial version
- *
- *   A   #---------  ver  mark  ---loc-- 
- *       mark        -A-   a    0b16     
- *
- *
- */
-
-char
-INPT_mark          (void)
-{
-   char        rce         = -11;
-   char        rc          = 0;
-   char       *p           = NULL;
-   char        x_mark      = ' ';
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(mark)---------------------------*/
-   p = strtok_r (NULL, s_q, &s_context);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strltrim  (p, ySTR_BOTH, LEN_RECD);
-   --rce;  if (strlen (p) != 1) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   x_mark = p[0];
-   DEBUG_INPT   yLOG_char    ("mark"      , x_mark);
-   /*---(location)-----------------------*/
-   p = strtok_r (NULL, s_q, &s_context);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strltrim  (p, ySTR_BOTH, LEN_RECD);
-   DEBUG_INPT   yLOG_info    ("label"     , p);
-   /*---(process mark)-------------------*/
-   rc = MARK_read (x_mark, p);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
 
 char         /* parse a cell entry -----------------------[--------[--------]-*/
 INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_source)
@@ -771,41 +568,6 @@ INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_sou
 #define     FIELD_LOC      3
 #define     FIELD_FOR      4
 #define     FIELD_SRC      5
-
-char         /* parse a cell entry -----------------------[--------[--------]-*/
-INPT_cellreg       (char a_reg, char *a_label, char *a_format, char *a_source)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   char        rc          =   0;                /* generic return code       */
-   tCELL      *x_new       = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(create)-------------------------*/
-   x_new = CELL__new (LINKED);
-   DEBUG_INPT  yLOG_point   ("new"       , x_new);
-   --rce;  if (x_new == NULL) {
-      DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(hook to register)---------------*/
-   rc = REG__hook  (x_new, a_reg, '-');
-   DEBUG_INPT  yLOG_value   ("rc"        , rc);
-   --rce;  if (rc <  0) {
-      DEBUG_INPT  yLOG_warn    ("reg_hook"  , "could not hook to register");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(update fields)------------------*/
-   x_new->f = a_format [0];
-   x_new->a = a_format [1];
-   x_new->d = a_format [2];
-   strlcpy (x_new->label, a_label , 10);
-   x_new->s = strndup (a_source, LEN_RECD);
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-}
 
 char         /* parse a cell entry -----------------------[--------[--------]-*/
 INPT_cell_new      (void)
@@ -878,8 +640,6 @@ INPT_cell_new      (void)
             INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
          else if (strcmp ("cell_free", my.f_type) == 0) 
             INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
-         else if (strcmp ("cell_reg" , my.f_type) == 0) 
-            INPT_cellreg  (x_regid, x_label, x_bformat, p + 1);
          break;
       }
       DEBUG_INPT   yLOG_note    ("done with loop");
@@ -1279,24 +1039,55 @@ INPT_tab           (char *a_label, char *a_name)
    int         x_tab       = 0;
    int         x_col       = 0;
    int         x_row       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
+   DEBUG_INPT  yLOG_point   ("a_name"    , a_name);
    /*---(parse address)------------*/
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   --rce;  if (rc < 0)         return rce;
+   DEBUG_INPT  yLOG_value   ("parse"     , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("a_label"   , a_label);
    /*---(expand tabs as needed)----------*/
    if (NTAB <= x_tab)  rc = LOC_tab_count (x_tab + 1);
-   --rce;  if (rc < 0)         return rce;
+   DEBUG_INPT  yLOG_value   ("count"     , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(update size)--------------*/
    rc = LOC_col_chg_max    (x_tab, x_col + 1);
-   --rce;  if (rc < 0)         return rce;
+   DEBUG_INPT  yLOG_value   ("col_max"   , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    rc = LOC_row_chg_max    (x_tab, x_row + 1);
-   --rce;  if (rc < 0)         return rce;
+   DEBUG_INPT  yLOG_value   ("row_max"   , rc);
+   --rce;  if (rc < 0)   {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(activate)-----------------*/
    rc = LOC_tab_activate   (x_tab);
-   --rce;  if (rc < 0)         return rce;
+   DEBUG_INPT  yLOG_value   ("activate"  , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(change name)--------------*/
    rc = LOC_tab_rename     (x_tab, a_name);
-   --rce;  if (rc < 0)         return rce;
+   DEBUG_INPT  yLOG_value   ("rename"    , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("a_name"    , a_name);
    /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1425,18 +1216,9 @@ INPT_main          (cchar *a_name)
                  else if (strcmp ("-G-", s_fields [1]) == 0)
                     INPT_tab  (s_fields [2], s_fields [3]);
                  break;
-      case 'm' : if (strcmp ("-A-", s_fields [1]) == 0)
-                    rc = INPT_mark     ();
-                 break;
       case 'c' : if (strcmp ("-D-", s_fields [1]) == 0)
                     rc = INPT_cell_new ();
                  if (rc < 0)  ++x_cellbad;
-                 break;
-      case 'r' : if (strcmp ("-A-", s_fields [1]) == 0)
-                    INPT_register ();
-                 break;
-      case 's' : if (strcmp ("-A-", s_fields [1]) == 0)
-                    INPT_register ();
                  break;
       }
    }

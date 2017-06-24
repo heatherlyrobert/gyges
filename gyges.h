@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1p"
-#define     VER_TXT   "many improvements to s_tab and sheet handling"
+#define     VER_NUM   "2.1q"
+#define     VER_TXT   "new tab reading routine working well"
 
 
 
