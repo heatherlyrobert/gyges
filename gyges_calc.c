@@ -2507,7 +2507,8 @@ CALC__tabname       (void)
 {
    SHARED__address (__FUNCTION__, 't');
    n = CALC__popval (__FUNCTION__, ++s_narg);
-   CALC_pushstr (__FUNCTION__, LOC_tab_get_name (n));
+   LOC_tab_name (n, t);
+   CALC_pushstr (__FUNCTION__, t);
    return;
 }
 

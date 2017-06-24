@@ -377,9 +377,6 @@ HIST_undo          (void)
    } else if (strcmp ("width"   , x_lower) == 0) {
       DEBUG_HIST  yLOG_note    ("call CELL_width");
       CELL_width    (CHG_NOHIST, -(atoi (hist[chist].before)));
-   } else if (strcmp ("height"  , x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_height");
-      CELL_height   (CHG_NOHIST, -(atoi (hist[chist].before)));
    }
    /*---(uptate)-------------------------*/
    --chist;
@@ -452,8 +449,6 @@ HIST_redo          (void)
       CELL_format   (CHG_NOHIST, hist[chist].after[0]);
    } else if (strcmp ("width"   , x_lower) == 0) {
       CELL_width    (CHG_NOHIST, -(atoi (hist[chist].after )));
-   } else if (strcmp ("height"  , x_lower) == 0) {
-      CELL_height   (CHG_NOHIST, -(atoi (hist[chist].after )));
    }
    /*---(tail recursion)-----------------*/
    if (chist <  nhist - 1) {
@@ -676,237 +671,6 @@ INPT_register      (void)
    REG_entry (x_regid, x_regtest);
    DEBUG_INPT   yLOG_info    ("regtest"   , x_regtest);
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-#define     FIELD_TAB      1
-#define     FIELD_MAX      2
-#define     FIELD_TOP      3
-#define     FIELD_CUR      4
-#define     FIELD_FTYPE    5
-#define     FIELD_FBEG     6
-#define     FIELD_FEND     7
-#define     FIELD_NAME     8
-
-/*> char         /+--> parse a tab entry ---------------------[ flower [--------]-+/   <* 
- *> INPT_tab           (short a_tab, char *a_name, short a_col, short a_row)           <* 
- *> {                                                                                  <* 
- *>    /+---(locals)-----------+-----------+-+/                                        <* 
- *>    char        rce         = -10;                /+ return code for errors    +/   <* 
- *>    char        rc          = 0;                                                    <* 
- *>    /+---(number)-------------------------+/                                        <* 
- *>    DEBUG_INPT  yLOG_value   ("tab num"   , a_tab);                                 <* 
- *>    --rce;  if (a_tab == 0 && strcmp (s_fields [2], "0") != 0) {                    <* 
- *>       DEBUG_INPT  yLOG_note    ("tab number is incorrect");                        <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    /+---(expand tabs as needed)----------+/                                        <* 
- *>    if (NTAB <= a_tab)  rc = LOC_tab_chg_max (a_tab + 1);                           <* 
- *>    DEBUG_INPT  yLOG_value   ("chg_max"   , rc);                                    <* 
- *>    --rce;  if (rc < 0) {                                                           <* 
- *>       DEBUG_INPT  yLOG_note    ("tab could not be activated");                     <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    /+---(activate)-----------------------+/                                        <* 
- *>    rc = LOC_tab_activate (a_tab);                                                  <* 
- *>    DEBUG_INPT  yLOG_value   ("activate"  , rc);                                    <* 
- *>    --rce;  if (rc < 0) {                                                           <* 
- *>       DEBUG_INPT  yLOG_note    ("tab could not be activated");                     <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    /+---(go to tab)----------------------+/                                        <* 
- *>    rc = LOC_jump (a_tab, 0, 0);                                                    <* 
- *>    DEBUG_INPT  yLOG_value   ("LOC_jump"  , rc);                                    <* 
- *>    --rce;  if (rc < 0) {                                                           <* 
- *>       DEBUG_INPT  yLOG_note    ("tab number is out-of-bounds");                    <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    /+---(tab name)-----------------------+/                                        <* 
- *>    rc = LOC_tab_chg_name (a_tab, a_name);                                          <* 
- *>    DEBUG_INPT  yLOG_value   ("chg_name"  , rc);                                    <* 
- *>    --rce;  if (rc < 0) {                                                           <* 
- *>       DEBUG_INPT  yLOG_note    ("tab name not acceptable");                        <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    /+---(size of sheet)------------------+/                                        <* 
- *>    rc = LOC_col_chg_max  (a_tab, a_col);                                           <* 
- *>    DEBUG_INPT  yLOG_value   ("col_chg"   , rc);                                    <* 
- *>    --rce;  if (rc < 0) {                                                           <* 
- *>       DEBUG_INPT  yLOG_note    ("column not acceptable");                          <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    rc = LOC_row_chg_max  (a_tab, a_row);                                           <* 
- *>    DEBUG_INPT  yLOG_value   ("row_chg"   , rc);                                    <* 
- *>    --rce;  if (rc < 0) {                                                           <* 
- *>       DEBUG_INPT  yLOG_note    ("row not acceptable");                             <* 
- *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                <* 
- *>       return rce;                                                                  <* 
- *>    }                                                                               <* 
- *>    /+---(complete)-----------------------+/                                        <* 
- *>    return 0;                                                                       <* 
- *> }                                                                                  <*/
-
-/*> char         /+--> parse a tab entry ---------------------[ flower [--------]-+/                <* 
- *> INPT_tab_old       (void)                                                                       <* 
- *> {                                                                                               <* 
- *>    /+---(locals)-----------+-----------+-+/                                                     <* 
- *>    char        rce         = -10;                /+ return code for errors    +/                <* 
- *>    char        rc          = 0;                                                                 <* 
- *>    int         i           = 0;                                                                 <* 
- *>    char       *p           = NULL;               /+ strtok return pointer     +/                <* 
- *>    char       *q           = "";               /+ strtok delimeters         +/                 <* 
- *>    int         x_len       = 0;                                                                 <* 
- *>    int         x_tab       = 0;                                                                 <* 
- *>    int         x_col       = 0;                                                                 <* 
- *>    int         x_row       = 0;                                                                 <* 
- *>    char        x_type      = 0;                                                                 <* 
- *>    char        x_fcol      = '-';                                                               <* 
- *>    char        x_frow      = '-';                                                               <* 
- *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                    <* 
- *>    /+---(read fields)--------------------+/                                                     <* 
- *>    for (i = FIELD_TAB; i <= FIELD_NAME; ++i) {                                                  <* 
- *>       DEBUG_INPT   yLOG_note    ("read next field");                                            <* 
- *>       p = strtok_r (NULL  , q, &s_context);                                                     <* 
- *>       --rce;  if (p == NULL) {                                                                  <* 
- *>          DEBUG_INPT   yLOG_note    ("strtok_r came up empty");                                  <* 
- *>          break;                                                                                 <* 
- *>       }                                                                                         <* 
- *>       strltrim (p, ySTR_BOTH, LEN_RECD);                                                        <* 
- *>       /+> if (p [0] == '-')  p[0] = '\0';                                             <+/       <* 
- *>       x_len = strlen (p);                                                                       <* 
- *>       switch (i) {                                                                              <* 
- *>       case  FIELD_TAB   :  /+---(tab number)-------+/                                           <* 
- *>          x_tab = atoi (p);                                                                      <* 
- *>          DEBUG_INPT  yLOG_value   ("tab num"   , x_tab);                                        <* 
- *>          if (x_tab == 0 && strcmp (p, "0") != 0) {                                              <* 
- *>             DEBUG_INPT  yLOG_note    ("tab number not correct");                                <* 
- *>             DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                            <* 
- *>             return rce + i;                                                                     <* 
- *>          }                                                                                      <* 
- *>          LOC_jump (x_tab, 0, 0);                                                                <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_MAX   : /+---(size of sheet)-----+/                                           <* 
- *>          rc = INPT_rowcol (p, &x_col, &x_row, 1, DEF_COLS, DEF_ROWS, MAX_COLS, MAX_ROWS);       <* 
- *>          if (rc < 0) break;                                                                     <* 
- *>          LOC_col_chg_max (x_col);                                                               <* 
- *>          LOC_row_chg_max (x_row);                                                               <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_TOP   : /+---(top of screen)-----+/                                           <* 
- *>          rc = INPT_rowcol (p, &(BCOL), &(BROW), 0, 0, 0, NCOL, NROW);                           <* 
- *>          DEBUG_INPT   yLOG_value   ("bcol"      , BCOL);                                        <* 
- *>          DEBUG_INPT   yLOG_value   ("brow"      , BROW);                                        <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_CUR   : /+---(cur position)------+/                                           <* 
- *>          rc = INPT_rowcol (p, &(CCOL), &(CROW), 0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);   <* 
- *>          ECOL = CCOL;                                                                           <* 
- *>          EROW = CROW;                                                                           <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_FTYPE : /+---(freeze type)-------+/                                           <* 
- *>          DEBUG_INPT   yLOG_char    ("freeze"    , p[0]);                                        <* 
- *>          switch (p[0]) {                                                                        <* 
- *>          case  '-' : tabs[x_tab].froz_col  = '-';                                               <* 
- *>                      tabs[x_tab].froz_row  = '-';                                               <* 
- *>                      break;                                                                     <* 
- *>          case  'r' : tabs[x_tab].froz_col  = '-';                                               <* 
- *>                      tabs[x_tab].froz_row  = 'y';                                               <* 
- *>                      break;                                                                     <* 
- *>          case  'c' : tabs[x_tab].froz_col  = 'y';                                               <* 
- *>                      tabs[x_tab].froz_row  = '-';                                               <* 
- *>                      break;                                                                     <* 
- *>          case  'b' : tabs[x_tab].froz_col  = 'y';                                               <* 
- *>                      tabs[x_tab].froz_row  = 'y';                                               <* 
- *>                      break;                                                                     <* 
- *>          default   : tabs[x_tab].froz_col  = '-';                                               <* 
- *>                      tabs[x_tab].froz_row  = '-';                                               <* 
- *>                      break;                                                                     <* 
- *>          }                                                                                      <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_FBEG  : /+---(freeze beg)--------+/                                           <* 
- *>          rc = INPT_rowcol (p, &(tabs[x_tab].froz_bcol), &(tabs[x_tab].froz_brow),               <* 
- *>                0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);                                    <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_FEND  : /+---(freeze end)--------+/                                           <* 
- *>          rc = INPT_rowcol (p, &(tabs[x_tab].froz_ecol), &(tabs[x_tab].froz_erow),               <* 
- *>                0, 0, 0, tabs[x_tab].ncol, tabs[x_tab].nrow);                                    <* 
- *>          break;                                                                                 <* 
- *>       case  FIELD_NAME  : /+---(name)--------------+/                                           <* 
- *>          if (x_len > 0)  LOC_tab_chg_name (x_tab, p);                                           <* 
- *>          DEBUG_INPT   yLOG_info    ("name"      , p);                                           <* 
- *>          LOC_tab_activate (x_tab);                                                              <* 
- *>          NTAB               = x_tab + 1;                                                        <* 
- *>          break;                                                                                 <* 
- *>       }                                                                                         <* 
- *>       DEBUG_INPT   yLOG_note    ("done with loop");                                             <* 
- *>    }                                                                                            <* 
- *>    DEBUG_INPT   yLOG_note    ("done parsing fields");                                           <* 
- *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                    <* 
- *>    return 0;                                                                                    <* 
- *> }                                                                                               <*/
-
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
-FILE_Otabs         (FILE *a_file, int *a_seq, int a_btab, int a_etab)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;             /* iterator -- tab                */
-   char        rc          = 0;             /* generic return code            */
-   char        rce         = -10;           /* return code for errors         */
-   char        x_type      = '-';
-   char        x_addr      [25]        = "";
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   --rce;  if (*a_seq <  0)                      return rce;
-   --rce;  if (a_btab <  0)                      return rce;
-   --rce;  if (a_btab >= my.ntab)                return rce;
-   --rce;  if (a_etab <  a_btab)                 return rce;
-   --rce;  if (a_etab <  0)                      return rce;
-   --rce;  if (a_etab >= my.ntab)                return rce;
-   /*---(header)-------------------------*/
-   if (*a_seq == 0) {
-      fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ TABS AND SIZES ]]================================================================================================\n");
-      fprintf (a_file, "#--------- %c ver %c tab# %c --max-- %c --beg-- %c --cur-- %c f %c --top-- %c --bot-- %c ---name------------------------\n", 31, 31, 31, 31, 31, 31, 31, 31, 31);
-   }
-   /*---(tabs)---------------------------*/
-   for (i = a_btab; i <= a_etab; ++i) {
-      /*---(lead)--------------*/
-      fprintf (a_file, "tab        %c -%c- %c %4d ", 31, 'F', 31, i);
-      /*---(max)---------------*/
-      rc = LOC_ref (i, s_tabs[i].ncol - 1, s_tabs[i].nrow - 1, 0, x_addr);
-      if (rc < 0)  LOC_ref (i, DEF_COLS - 1, DEF_ROWS - 1, 0, x_addr);
-      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
-      /*---(beg)---------------*/
-      rc = LOC_ref (i, s_tabs[i].bcol, s_tabs[i].brow, 0, x_addr);
-      if (rc < 0)  strcpy (x_addr, "------");
-      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
-      /*---(cur)---------------*/
-      rc = LOC_ref (i, s_tabs[i].ccol, s_tabs[i].crow, 0, x_addr);
-      if (rc < 0)  strcpy (x_addr, "------");
-      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
-      /*---(frozen type)-------*/
-      x_type = '-';
-      if      (s_tabs[i].froz_col == 'y' && s_tabs[i].froz_row == 'y')  x_type = 'b';
-      else if (s_tabs[i].froz_col == 'y' && s_tabs[i].froz_row != 'y')  x_type = 'c';
-      else if (s_tabs[i].froz_col != 'y' && s_tabs[i].froz_row == 'y')  x_type = 'r';
-      fprintf (a_file, "%c %c "            , 31, x_type);
-      /*---(frozen near)-------*/
-      rc = LOC_ref (i, s_tabs[i].froz_bcol, s_tabs[i].froz_brow, 0, x_addr);
-      if (rc < 0)  strcpy (x_addr, "------");
-      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
-      /*---(frozen far)--------*/
-      rc = LOC_ref (i, s_tabs[i].froz_ecol, s_tabs[i].froz_erow, 0, x_addr);
-      if (rc < 0)  strcpy (x_addr, "------");
-      fprintf (a_file, "%c %-7.7s "        , 31, x_addr);
-      /*---(name)--------------*/
-      fprintf (a_file, "%c %s", 31, s_tabs[i].name);
-   }
-   /*---(complete)-----------------------*/
-   fflush (a_file);
    return 0;
 }
 
@@ -1519,7 +1283,7 @@ INPT_tab           (char *a_label, char *a_name)
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
    --rce;  if (rc < 0)         return rce;
    /*---(expand tabs as needed)----------*/
-   if (NTAB <= x_tab)  rc = LOC_tab_chg_max (x_tab + 1);
+   if (NTAB <= x_tab)  rc = LOC_tab_count (x_tab + 1);
    --rce;  if (rc < 0)         return rce;
    /*---(update size)--------------*/
    rc = LOC_col_chg_max    (x_tab, x_col + 1);
@@ -1530,7 +1294,7 @@ INPT_tab           (char *a_label, char *a_name)
    rc = LOC_tab_activate   (x_tab);
    --rce;  if (rc < 0)         return rce;
    /*---(change name)--------------*/
-   rc = LOC_tab_chg_name   (x_tab, a_name);
+   rc = LOC_tab_rename     (x_tab, a_name);
    --rce;  if (rc < 0)         return rce;
    /*---(complete)-----------------*/
    return 0;
@@ -1549,28 +1313,7 @@ INPT_width         (char *a_label, int a_size)
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
    --rce;  if (rc < 0)         return rce;
    /*---(update size)--------------*/
-   rc = LOC_col_chg_width  (x_tab, x_col, a_size);
-   --rce;  if (rc < 0)         return rce;
-   /*---(activate)-----------------*/
-   rc = LOC_tab_activate   (x_tab);
-   --rce;  if (rc < 0)         return rce;
-   /*---(complete)-----------------*/
-   return 0;
-}
-
-char         /*--> process a row height record -----------[ leaf   [ ------ ]-*/
-INPT_height        (char *a_label, int a_size)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   int         x_tab       = 0;
-   int         x_row       = 0;
-   /*---(parse address)------------*/
-   rc = LOC_parse (a_label, &x_tab, NULL, &x_row, NULL);
-   --rce;  if (rc < 0)         return rce;
-   /*---(update size)--------------*/
-   rc = LOC_row_chg_height (x_tab, x_row, a_size);
+   rc = LOC_col_widen      (x_tab, x_col, a_size);
    --rce;  if (rc < 0)         return rce;
    /*---(activate)-----------------*/
    rc = LOC_tab_activate   (x_tab);
@@ -1677,24 +1420,22 @@ INPT_main          (cchar *a_name)
       case 'v' : /* versioned   */ break;
       case 'w' : INPT_width   (s_fields [2], atoi (s_fields [3]));
                  break;
-      case 'h' : INPT_height  (s_fields [2], atoi (s_fields [3]));
-                 break;
-      case 't' : if      (strcmp ("-F-", my.f_vers) == 0)
+      case 't' : if      (strcmp ("-F-", s_fields [1]) == 0)
                     INPT_tab  (s_fields [3], s_fields [9]);
-                 else if (strcmp ("-G-", my.f_vers) == 0)
+                 else if (strcmp ("-G-", s_fields [1]) == 0)
                     INPT_tab  (s_fields [2], s_fields [3]);
                  break;
-      case 'm' : if (strcmp ("-A-", my.f_vers) == 0)
+      case 'm' : if (strcmp ("-A-", s_fields [1]) == 0)
                     rc = INPT_mark     ();
                  break;
-      case 'c' : if (strcmp ("-D-", my.f_vers) == 0)
+      case 'c' : if (strcmp ("-D-", s_fields [1]) == 0)
                     rc = INPT_cell_new ();
                  if (rc < 0)  ++x_cellbad;
                  break;
-      case 'r' : if (strcmp ("-A-", my.f_vers) == 0)
+      case 'r' : if (strcmp ("-A-", s_fields [1]) == 0)
                     INPT_register ();
                  break;
-      case 's' : if (strcmp ("-A-", my.f_vers) == 0)
+      case 's' : if (strcmp ("-A-", s_fields [1]) == 0)
                     INPT_register ();
                  break;
       }
@@ -1714,7 +1455,7 @@ INPT_main          (cchar *a_name)
 PRIV void  o___WRITE___________o () { return; }
 
 char         /*--> write file header ---------------------[ leaf   [ ------ ]-*/
-FILE_header        (FILE *a_file)
+OUTP_header        (FILE *a_file)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;             /* iterator -- tab                */
@@ -1742,6 +1483,32 @@ FILE_header        (FILE *a_file)
    if (ver_ctrl == 'y') {
       fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",
             31, ver_num, 31, ver_txt, 31);
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+OUTP_tabs          (FILE *a_file)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;             /* iterator -- tab                */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_type      = '-';
+   char        x_addr      [25]        = "";
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   /*---(header)-------------------------*/
+   fprintf (a_file, "\n\n\n");
+   fprintf (a_file, "#===[[ TABS ]]============================\n");
+   fprintf (a_file, "#---------  ver  --max--  ---name----- \n");
+   /*---(tabs)---------------------------*/
+   for (i = 0; i <= MAX_TABS; ++i) {
+      if (s_tabs [i].active == '/')  continue;
+      rc = LOC_ref (i, s_tabs[i].ncol - 1, s_tabs[i].nrow - 1, 0, x_addr);
+      fprintf (a_file, "tab         -G-  %-7s  %-12.12s ", x_addr, s_tabs [i].name);
    }
    /*---(complete)-----------------------*/
    fflush (a_file);
@@ -1943,7 +1710,7 @@ FILE_write         (char *a_name)
    char       *x_bufs      = "abcdefghijklmnopqrstuvwxyz";
    int         x_len       = 0;
    /*---(header)-------------------------*/
-   DEBUG_INPT yLOG_enter   (__FUNCTION__);
+   DEBUG_OUTP yLOG_enter   (__FUNCTION__);
    /*---(defense: name)------------------*/
    if (a_name == NULL) return -1;
    /*---(prepare versioning)-------------*/
@@ -1955,10 +1722,9 @@ FILE_write         (char *a_name)
    f = fopen(a_name, "w");
    if (f == NULL)      return -2;
    /*---(header)-------------------------*/
-   FILE_header (f);
+   OUTP_header (f);
    /*---(tab data)-----------------------*/
-   x_seq = 0;
-   rc = FILE_Otabs    (f, &x_seq, 0, my.ntab - 1);
+   OUTP_tabs   (f);
    /*---(column data)--------------------*/
    x_seq = 0;
    for (i = 0; i < NTAB; ++i) {

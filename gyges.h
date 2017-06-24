@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1o"
-#define     VER_TXT   "file reading isolated from tabs and sheet ];>"
+#define     VER_NUM   "2.1p"
+#define     VER_TXT   "many improvements to s_tab and sheet handling"
 
 
 
@@ -621,6 +621,9 @@ tTAB     s_tabs [MAX_TABS];
 tTAB    *p_tab;                        /* current tab pointer                 */
 
 
+#define     G_TAB_NOT   '/'
+#define     G_TAB_FROZE '_'
+#define     G_TAB_LIVE  'y'
 
 #define     NTAB        my.ntab
 #define     CTAB        my.ctab
@@ -1218,21 +1221,21 @@ char        LOC_parse            /* petal  4----- */  (char *a_label, short *a_t
 char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_final);
 char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col, short a_row, char a_abs, char *a_label);
 
-char        LOC_tab_chg_max      (short a_size);
-char       *LOC_tab_get_name     /* petal  1----- */  (short a_tab);
-char        LOC_tab_chg_name     /* stigma 2----- */  (short a_tab, char *a_name);
-char        LOC_tab_activate     (short a_tab);
-char        LOC_tab_deactivate   (short a_tab);
+char        LOC_tab_count        /* stigma 1----- */  (short a_size);
+char        LOC_tab_name         /* petal  2----- */  (short a_tab, char *a_name);
+char        LOC_tab_rename       /* stigma 2----- */  (short a_tab, char *a_name);
+char        LOC_tab_activate     /* stigma 1----- */  (short a_tab);
+char        LOC_tab_deactivate   /* stigma 1----- */  (short a_tab);
+char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max);
 
 char        LOC_col_clear        /* septal 1----- */  (short a_tab);
-char        LOC_col_get_width    /* petal  2----- */  (short a_tab, short a_col);
-char        LOC_col_chg_width    /* stigma 3----- */  (short a_tab, short a_col, short a_size);
+char        LOC_col_width        /* petal  2----- */  (short a_tab, short a_col);
+char        LOC_col_widen        /* stigma 3----- */  (short a_tab, short a_col, short a_size);
 short       LOC_col_get_max      /* petal  1----- */  (short a_tab);
 char        LOC_col_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
 
 char        LOC_row_clear        /* septal 1----- */  (short a_tab);
-char        LOC_row_get_height   /* petal  2----- */  (short a_tab, short a_row);
-char        LOC_row_chg_height   /* stigma 3----- */  (short a_tab, short a_row, short a_size);
+char        LOC_row_height       /* petal  2----- */  (short a_tab, short a_row);
 short       LOC_row_get_max      /* petal  1----- */  (short a_tab);
 char        LOC_row_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
 
@@ -1274,7 +1277,6 @@ char      CELL_align         (char a_mode, char a_align);
 char      CELL_decimals      (char a_mode, char a_num);
 char      CELL_format        (char a_mode, char a_num);
 char      CELL_width         (char a_mode, char a_num);
-char      CELL_height        (char a_mode, char a_num);
 char      CELL__print_comma  (char a_format, char a_decimal, double a_num, char *a_text);
 char      CELL__print_number (char a_format, char a_decimal, double a_num, char *a_text);
 char      CELL__print_special(char a_format, char a_decimal, double a_num, char *a_text);
@@ -1293,13 +1295,15 @@ char      INPT_cell          (cchar *a_recd);
 
 char      INPT_tab           (char *a_label, char *a_name);
 char      INPT_width         (char *a_label, int   a_size);
-char      INPT_height        (char *a_label, int   a_size);
 
 char      INPT_open          (cchar *a_name);
 char      INPT_read          (void);
 char      INPT_parse         (cchar *a_recd);
 char      INPT_close         (void);
 char      INPT_main          (cchar *a_name);
+
+char      OUTP_header        (FILE *a_file);
+char      OUTP_tabs          (FILE *a_file);
 
 char      FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
 char      FILE_write         (char *a_name);
