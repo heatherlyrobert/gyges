@@ -2534,7 +2534,7 @@ DEP_disp_sort      (char *a_list)
       --x_col;
       --x_row;
       DEBUG_SORT    yLOG_complex ("parts"     , "tab=%04d, col=%04d, row=%04d, abs=%d", x_tab, x_col, x_row, x_abs);
-      rc = LOC_ref (x_tab, x_col, x_row, x_abs, x_label);
+      LOC_ref (x_tab, x_col, x_row, x_abs, x_label);
       DEBUG_SORT    yLOG_value   ("label"   , x_label);
       DEBUG_SORT    yLOG_pair    (i         , x_label);
       strcat (a_list, x_label);

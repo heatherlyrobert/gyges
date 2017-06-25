@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.1q"
-#define     VER_TXT   "new tab reading routine working well"
+#define     VER_NUM   "2.2a"
+#define     VER_TXT   "totally isolated s_tab and sheet to LOC tab.  freaking painful"
 
 
 
@@ -227,12 +227,26 @@ struct cACCESSOR {
    int         f_lines;                     /* file line number               */
    char        f_recd      [LEN_RECD];       /* current file record            */
    char        f_type      [LEN_RECD];       /* current record verb            */
-   char        f_vers      [LEN_RECD];       /* current record version         */
-   /*---(tab vars)--------*/
-   int         ntab;           /* number of worksheet tabs                         */
-   int         ctab;           /* current tab                                      */
-   int         tab1;           /* tab of source                                    */
-   int         tab2;           /* tab of destination                               */
+   char        f_vers;                       /* current record version         */
+   /*---(LOC vars)--------*/
+   short       ntab;           /* number of worksheet tabs                         */
+   short       ctab;           /* current tab                                      */
+   short       ncol;
+   short       ccol;
+   short       bcol;
+   short       ecol;
+   short       nrow;
+   short       crow;
+   short       brow;
+   short       erow;
+   short       tab1;           /* tab of source                                    */
+   short       tab2;           /* tab of destination                               */
+   char        froz_col;
+   short       froz_bcol;
+   short       froz_ecol;
+   char        froz_row;
+   short       froz_brow;
+   short       froz_erow;
    /*---(horizontal size)----------------*/
    int         x_full;         // total screen size in chars
    int         x_left;         // number of chars for row labels to left
@@ -499,128 +513,6 @@ extern char G_CELL_FPRE   [20];     /* formula prefixes                       */
 
 
 
-/*====================-----------------+------------------====================*/
-/*===----                  ROW & COL DATA STRUCTURES                   ----===*/
-/*====================-----------------+------------------====================*/
-/*
- *
- *   general discussion...
- *
- *   second, in order to define the tab/sheet data structure, we must first
- *   define the information to be stored about the rows and columns.
- *
- *   for columns, the simple one is column width.  for easing the program and
- *   speeding refreshes, it is valuable to store the column label as converted
- *   from the index, i.e., column 0 is A, 3 is C, and 26 is AA.  this only need
- *   be figured out once and the reused each time.  additionally, we'll store
- *   the screen position as well to speed display.
- *
- *   for rows, this initial version will not allow multi-line rows which are
- *   only really handy for entering gobs of text -- not our intent.  also, the
- *   screen labels are the numbers themselves, so the only valuable piece of
- *   information we need at this point is the screen position for each row.
- *   
- *   to conserve a little room, i assumed that there would never be a cell wider
- *   that 255 characters (uchar).
- *
- *
- *   actual data structures...
- *
- */
-struct cCOLS {
-   char      l[3];            /* column label                                 */
-   uchar     w;               /* column width                                 */
-   ushort    x;               /* starting horizonal position on screen        */
-   int       c;               /* optional: count of entries in column         */
-};
-struct cROWS {
-   ushort    h;               /* row height                                   */
-   ushort    y;               /* starting vertical position on screen         */
-   int       c;               /* optional: count of entries in row            */
-};
-
-
-
-
-
-
-
-
-/*====================-----------------+------------------====================*/
-/*===----                      TAB DATA STRUCTURE                      ----===*/
-/*====================-----------------+------------------====================*/
-/*
- *
- *   general discussion...
- *
- *   third we define the overarching tab/sheet data structure that provides
- *   the iconic spreadsheet feel to the program.  a tab is simply a name
- *   associated with a retangle of potenial cells and a set of basic
- *   characteristics, such as width and height.
- *
- *   the formost simplification is that a retangular matrix of cell pointers
- *   is created from the get go rather than using a clever data structure that
- *   conserves more memory.  while it only allocates pointers, that's still a
- *   great deal of space that will never get used.  but, on the performance
- *   side, a two-dimensional array provides direct access without any need to
- *   search a data structure, no matter how efficient.  it also provides a very
- *   efficient means of conducting operations on visual ranges like columns,
- *   rows, and retangular selections.  i think its well worth it -- you can
- *   adapt it in the long run if you wish.
- *
- *   just like the cell data structure, i have divided it into sections and
- *   provided a little commentary for each.
- *
- *
- *   actual data structure...
- *
- */
-struct cTAB {
-   /*---(header)-------------------------*/
-   /* tabs are pre-allocated and can put into and taken out of use simply by  */
-   /* flipping the active flag and updating the name as desired.              */
-   char        active;                      /* currently in use?  0=no, 1=yes */
-   short       tab;                         /* number of tab                  */
-   char        name  [LEN_ABBR];            /* tab name for user reference    */
-   /*---(contents)-----------------------*/
-   /* tabs pull three other data structures together in a package: column     */
-   /* characteristics, row characteristics, and a grid on which to hang cells.*/
-   tCOLS       cols  [MAX_COLS];            /* column characteristics         */
-   tROWS       rows  [MAX_ROWS];            /* row characteristics            */
-   tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
-   int         c;                           /* count of entries in sheet      */
-   /*---(current size limits)------------*/
-   /* while a maximum size sheet is allocated, there are logical user set     */
-   /* maximums in order to manage the complexity.                             */
-   short       ncol;                        /* current limit on cols          */
-   short       nrow;                        /* current limit on rows          */
-   /*---(current position)---------------*/
-   /* while working, a user changes position to review and manipulate and     */
-   /* these variables store the current screen position.                      */
-   short       ccol;                        /* current column                 */
-   short       crow;                        /* current row                    */
-   /*---(screen limits)------------------*/
-   /* given user movement, the program calculates and stores the first (beg)  */
-   /* and last (end) cols and rows which can be seen.                         */
-   short       bcol;                        /* beginning column               */
-   short       brow;                        /* beginning row                  */
-   short       ecol;                        /* ending column                  */
-   short       erow;                        /* ending row                     */
-   /*---(frozen rows and cols)-----------*/
-   /* in order to handle large volumes of data in a table, it is necessary to */
-   /* be able to freeze cols and/or rows so they remain visible               */
-   char        froz_col;                    /* are the cols frozen            */
-   short       froz_bcol;                   /* left of frozen cols            */
-   short       froz_ecol;                   /* right of frozen cols           */
-   char        froz_row;                    /* are the rows frozen            */
-   short       froz_brow;                   /* top of frozen rows             */
-   short       froz_erow;                   /* bottom of frozen rows          */
-   /*---(end)----------------------------*/
-};
-tTAB     s_tabs [MAX_TABS];
-tTAB    *p_tab;                        /* current tab pointer                 */
-
-
 #define     G_TAB_NOT   '/'
 #define     G_TAB_FROZE '_'
 #define     G_TAB_LIVE  'y'
@@ -628,19 +520,24 @@ tTAB    *p_tab;                        /* current tab pointer                 */
 #define     NTAB        my.ntab
 #define     CTAB        my.ctab
 
-#define     NROW        p_tab->nrow
-#define     CROW        p_tab->crow
-#define     BROW        p_tab->brow
-#define     EROW        p_tab->erow
+#define     NCOL        my.ncol
+#define     CCOL        my.ccol
+#define     BCOL        my.bcol
+#define     ECOL        my.ecol
+#define     FR_COL      my.froz_col
+#define     FR_BCOL     my.froz_bcol
+#define     FR_ECOL     my.froz_ecol
 
-#define     NCOL        p_tab->ncol
-#define     CCOL        p_tab->ccol
-#define     BCOL        p_tab->bcol
-#define     ECOL        p_tab->ecol
+#define     NROW        my.nrow
+#define     CROW        my.crow
+#define     BROW        my.brow
+#define     EROW        my.erow
+#define     FR_ROW      my.froz_row
+#define     FR_BROW     my.froz_brow
+#define     FR_EROW     my.froz_erow
 
 #define     NCEL        ncell
 #define     ACEL        acell
-#define     CCEL        s_tab[my.ctab].sheet[p_tab->ccol][p_tab->crow]
 
 
 
@@ -878,6 +775,8 @@ char      PROG_layout_entry    (int a_num, char *a_line);
 char     *unit_accessor      (char *a_question, void *a_thing);
 char      PROG_testing       (void);
 char      PROG_testloud      (void);
+char      PROG_testquiet     (void);
+char      PROG_testend       (void);
 
 
 
@@ -1049,8 +948,8 @@ char*     MOVE_unit          (char *a_question, int a_num);
 char      CURS_begin           (void);
 char      CURS_end             (void);
 int       CURS_main            (void);
-char      CURS_colhead         (void);
-char      CURS_rowhead         (void);
+char      CURS_col_head        (void);
+char      CURS_row_head        (void);
 char      CURS_cell            (int  a_col, int a_row);
 char      CURS_size            (void);
 char      CURS_info_cell       (void);
@@ -1220,27 +1119,38 @@ char        LOC_parse            /* petal  4----- */  (char *a_label, short *a_t
 
 char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_final);
 char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col, short a_row, char a_abs, char *a_label);
-
-char        LOC_tab_count        /* stigma 1----- */  (short a_size);
+/*---(tabs)----------------------*/
+char        LOC_tab_valid        /* petal  1----- */  (short a_tab);
 char        LOC_tab_name         /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_rename       /* stigma 2----- */  (short a_tab, char *a_name);
-char        LOC_tab_activate     /* stigma 1----- */  (short a_tab);
-char        LOC_tab_deactivate   /* stigma 1----- */  (short a_tab);
 char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max);
-
+char        LOC_tab_resize       /* stigma 1----- */  (char *a_max);
+/*---(columns)-------------------*/
 char        LOC_col_clear        /* septal 1----- */  (short a_tab);
+char        LOC_col_valid        /* petal  2----- */  (short a_tab, short a_col);
+short       LOC_col_max          /* petal  1----- */  (short a_tab);
+short       LOC_col_used         /* petal  2----- */  (short a_tab, short a_col);
+short       LOC_col_xpos         /* petal  2----- */  (short a_tab, short a_col);
+char        LOC_col_xset         /* stigma 3----- */  (short a_tab, short a_col, short a_pos);
+char        LOC_col_label        /* petal  3----- */  (short a_tab, short a_col, char *a_label);
 char        LOC_col_width        /* petal  2----- */  (short a_tab, short a_col);
 char        LOC_col_widen        /* stigma 3----- */  (short a_tab, short a_col, short a_size);
-short       LOC_col_get_max      /* petal  1----- */  (short a_tab);
-char        LOC_col_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
-
+/*---(rows)----------------------*/
 char        LOC_row_clear        /* septal 1----- */  (short a_tab);
+char        LOC_row_valid        /* petal  2----- */  (short a_tab, short a_row);
+short       LOC_row_max          /* petal  1----- */  (short a_tab);
+short       LOC_row_used         /* petal  2----- */  (short a_tab, short a_row);
+short       LOC_row_ypos         /* petal  2----- */  (short a_tab, short a_row);
+char        LOC_row_yset         /* sigma  3----- */  (short a_tab, short a_row, short a_pos);
+char        LOC_row_label        /* petal  3----- */  (short a_tab, short a_row, char *a_label);
 char        LOC_row_height       /* petal  2----- */  (short a_tab, short a_row);
-short       LOC_row_get_max      /* petal  1----- */  (short a_tab);
-char        LOC_row_chg_max      /* stigma 2----- */  (short a_tab, short a_size);
-
-char*       LOC__unit            /* petal  2----- */  (char *a_question, tCELL *a_cell);
+/*---(unit testing)--------------*/
+char*       LOC__unit            /* petal  2----- */  (char *a_question, char *a_label);
 char*       TAB__unit            /* petal  2----- */  (char *a_question, int a_num);
+char*       LOC__unit_OLD        /* petal  2----- */  (char *a_question, tCELL *a_cell);
+
+
+
 
 char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 
@@ -1248,7 +1158,8 @@ char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 
 
 #define   CELL_FIXED         'n'
-#define   CELL_ADAPT         'y'
+#define   CELL_GROW          'y'
+#define   CELL_EXACT         'e'
 
 tCELL    *CELL__create       (int  a_tab, int  a_col, int  a_row);
 char      CELL__delete       (char a_mode, int  a_tab, int  a_col, int  a_row);

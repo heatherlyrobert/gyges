@@ -455,8 +455,8 @@ CURS_formula       (tCELL *a_curr)
       /*---(1st 12 chars)---*/
       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
       /*---(2nd 13 chars)---*/
-      if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "   , p_tab->cols[CCOL].w, a_curr->t, a_curr->f, a_curr->d, a_curr->a);
-      else                 mvprintw (row_formula, 12, " %02d                []", p_tab->cols[CCOL].w);
+      if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "    , LOC_col_width (NTAB, CCOL), a_curr->t, a_curr->f, a_curr->d, a_curr->a);
+      else                 mvprintw (row_formula, 12, " %02d                []", LOC_col_width (NTAB, CCOL));
       /*---(3rd  5 chars)---*/
       mvprintw (row_formula, 25, "%4d", len);
       /*---(4th 14 chars)---*/
@@ -579,8 +579,8 @@ CURS_status        (tCELL *a_curr)
       break;
    case 'v' : /* file version */
    default  :
-      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", my.f_name, p_tab->ncol, p_tab->nrow, ver_num, ver_txt);
-      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", my.f_name, p_tab->ncol, p_tab->nrow);
+      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", my.f_name, NCOL, NROW, ver_num, ver_txt);
+      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", my.f_name, NCOL, NROW);
       break;
    }
    if (sta_error == 'y')  attron (S_COLOR_STATUSE);
@@ -607,8 +607,18 @@ CURS_message       (void)
    return 0;
 }
 
+char
+CURS_col_color     (short a_col)
+{
+   if      (a_col == CCOL)                       attron  (S_COLOR_HEADY   );
+   else if (a_col <= FR_ECOL)                    attron  (S_COLOR_HEADL   );
+   else if (LOC_col_used (CTAB, a_col) >  0)     attron  (S_COLOR_HEADF   );
+   else                                          attron  (S_COLOR_HEADN   );
+   return 0;
+}
+
 char         /*--> update the column labels --------------[ ------ [ ------ ]-*/
-CURS_colhead       (void)
+CURS_col_head      (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;                  /* iterator -- columns       */
@@ -620,25 +630,19 @@ CURS_colhead       (void)
    /*---(begin)--------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(process locked)-----------------*/
-   if (p_tab->froz_col == 'y') {
-      for (i = p_tab->froz_bcol; i <=  p_tab->froz_ecol; ++i) {
+   if (FR_COL == 'y') {
+      for (i = FR_BCOL; i <=  FR_ECOL; ++i) {
          if (i >= NCOL) break;
          /*---(prepare)---------------------*/
-         w     = p_tab->cols[i].w;
+         w     = LOC_col_width (CTAB, i);
          wa    = w - 4;
-         cw    = p_tab->cols[i].x + w;
-         strcpy(label, p_tab->cols[i].l);
+         cw    = LOC_col_xpos  (CTAB, i) + w;
+         LOC_col_label (CTAB, i, label);
          /*---(output)----------------------*/
          snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
-         if      (i == CCOL          )  attron  (S_COLOR_HEADY   );
-         else if (i <= p_tab->froz_ecol)  attron  (S_COLOR_HEADL   );
-         else if (p_tab->cols[i].c >  0)  attron  (S_COLOR_HEADF   );
-         else                           attron  (S_COLOR_HEADN   );
-         mvprintw (row_chead, p_tab->cols[i].x, msg);
-         if      (i == CCOL          )  attroff (S_COLOR_HEADY   );
-         else if (i <= p_tab->froz_ecol)  attroff (S_COLOR_HEADL   );
-         else if (p_tab->cols[i].c >  0)  attroff (S_COLOR_HEADF   );
-         else                           attroff (S_COLOR_HEADN   );
+         CURS_col_color  (i);
+         mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);
+         attrset (0);
       }
    }
    /*---(process oolumns)----------------*/
@@ -647,42 +651,48 @@ CURS_colhead       (void)
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/
-      w     = p_tab->cols[i].w;
+      w     = LOC_col_width (CTAB, i);
       wa    = w - 4;
-      cw    = p_tab->cols[i].x + w;
-      strcpy(label, p_tab->cols[i].l);
+      cw    = LOC_col_xpos  (CTAB, i) + w;
+      LOC_col_label (CTAB, i, label);
       /*---(output)----------------------*/
       snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
-      if      (i == CCOL          )  attron  (S_COLOR_HEADY   );
-      else if (p_tab->cols[i].c >  0)  attron  (S_COLOR_HEADF   );
-      else                           attron  (S_COLOR_HEADN   );
-      mvprintw (row_chead, p_tab->cols[i].x, msg);
-      if      (i == CCOL          )  attroff (S_COLOR_HEADY   );
-      else if (p_tab->cols[i].c >  0)  attroff (S_COLOR_HEADF   );
-      else                           attroff (S_COLOR_HEADN   );
+      CURS_col_color  (i);
+      mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);
+      attrset (0);
    }
    /*---(fill in right side)-------------*/
    if (cw < (my.x_full - my.x_right)) {
       w     = my.x_full - cw;
       wa    = w - 4;
-      strcpy(label, p_tab->cols[ECOL + 1].l);
+      LOC_col_label (CTAB, ECOL + 1, label);
       if (ECOL < NCOL - 1){
          if      (w == 1) snprintf(msg, 500, ">");
          else if (w == 2) snprintf(msg, 500, "\[>");
          else if (w == 3) snprintf(msg, 500, "\[->");
          else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);
       } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);
-      if (p_tab->cols[ECOL + 1].c == 0)  attron  (S_COLOR_HEADN   );
+      CURS_col_color  (ECOL + 1);
       mvprintw (row_chead, cw, msg);
-      if (p_tab->cols[ECOL + 1].c == 0)  attroff (S_COLOR_HEADN   );
+      attrset (0);
    }
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
+char
+CURS_row_color       (short a_row)
+{
+   if      (a_row == CROW)                       attron  (S_COLOR_HEADY   );
+   else if (a_row <= FR_EROW)                    attron  (S_COLOR_HEADL   );
+   else if (LOC_row_used (CTAB, a_row) >  0)     attron  (S_COLOR_HEADF   );
+   else                                          attron  (S_COLOR_HEADN   );
+   return 0;
+}
+
 char         /*--> update row labels ---------------------[ ------ [ ------ ]-*/
-CURS_rowhead       (void)
+CURS_row_head      (void)
 {
    /*---(locals)-----------------------------*/
    int       i         = 0;                    /* iterator -- rows            */
@@ -692,48 +702,26 @@ CURS_rowhead       (void)
    /*---(header)-----------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(process locked rows)----------------*/
-   if (p_tab->froz_row == 'y') {
-      for (i = p_tab->froz_brow; i <=  p_tab->froz_erow; ++i) {
+   if (FR_ROW == 'y') {
+      for (i = FR_BROW; i <=  FR_EROW; ++i) {
          if (i >= NROW)  break;
          /*---(prepare)----------------------------*/
-         h     = p_tab->rows[i].h;
+         h     = LOC_row_height (CTAB, i);
          ch   += h;
-         if      (i == CROW          )  attron  (S_COLOR_HEADY   );
-         else if (i <= p_tab->froz_erow)  attron  (S_COLOR_HEADL   );
-         else if (p_tab->rows[i].c >  0)  attron  (S_COLOR_HEADF   );
-         else                           attron  (S_COLOR_HEADN   );
-         for (j = 0; j < h; ++j) {
-            /*> if (ch + j > my.y_avail)  break;                                         <*/
-            switch (j) {
-            case  0 : mvprintw (p_tab->rows[i].y    , 0, "%4d ", i + 1);   break;
-            default : mvprintw (p_tab->rows[i].y + j, 0, "   . ");         break;
-            }
-         }
-         if      (i == CROW          )  attroff (S_COLOR_HEADY   );
-         else if (i <= p_tab->froz_erow)  attroff (S_COLOR_HEADL   );
-         else if (p_tab->rows[i].c >  0)  attroff (S_COLOR_HEADF   );
-         else                           attroff (S_COLOR_HEADN   );
+         CURS_row_color  (i);
+         mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);
+         attrset (0);
       }
    }
    /*---(process rows)-----------------------*/
    for (i = BROW; i <=  EROW; ++i) {
       if (i >= NROW)  break;
       /*---(prepare)----------------------------*/
-      h     = p_tab->rows[i].h;
+      h     = LOC_row_height (CTAB, i);
       ch   += h;
-      if      (i == CROW          )  attron  (S_COLOR_HEADY   );
-      else if (p_tab->rows[i].c >  0)  attron  (S_COLOR_HEADF   );
-      else                           attron  (S_COLOR_HEADN   );
-      for (j = 0; j < h; ++j) {
-         /*> if (ch + j > my.y_avail)  break;                                         <*/
-         switch (j) {
-         case  0 : mvprintw (p_tab->rows[i].y    , 0, "%4d ", i + 1);   break;
-         default : mvprintw (p_tab->rows[i].y + j, 0, "   . ");         break;
-         }
-      }
-      if      (i == CROW          )  attroff (S_COLOR_HEADY   );
-      else if (p_tab->rows[i].c >  0)  attroff (S_COLOR_HEADF   );
-      else                           attroff (S_COLOR_HEADN   );
+      CURS_row_color  (i);
+      mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);
+      attrset (0);
    }
    /*---(complete)---------------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -1115,11 +1103,11 @@ CURS_main          (void)
    /*---(initialize)---------------------*/
    switch (my.layout_formula) {
    case G_FORMULA_DEBUG : my.apos = my.x_full - 29 - 15 -  2;
-                     break;
+                          break;
    case G_FORMULA_SMALL : my.apos = my.x_full -  6 -  5 -  2;
-                     break;
+                          break;
    case G_FORMULA_TINY  : my.apos = my.x_full -  0 -  0 -  2;
-                     break;
+                          break;
    }
    curr    = LOC_cell_at_curr ();
    strncpy (reqs , "+", LEN_RECD);
@@ -1135,23 +1123,23 @@ CURS_main          (void)
    /*---(update cells)-------------------*/
    CURS_formula   (curr);
    CURS_status    (curr);
-   CURS_colhead   ();
-   CURS_rowhead   ();
+   CURS_col_head   ();
+   CURS_row_head  ();
    CURS_page      ();
    CURS_message   ();
    switch (my.info_win) {
    case G_INFO_MARK   : CURS_listmark    ();
-                       break;
+                        break;
    case G_INFO_REGS   : CURS_listreg     ();
-                       break;
+                        break;
    case G_INFO_TREG   : CURS_listtreg    ();
-                       break;
+                        break;
    case G_INFO_CELL   : CURS_info_cell   ();
-                       break;
+                        break;
    case G_INFO_ERROR  : CURS_listerror   (curr);
-                       break;
+                        break;
    case G_INFO_LAYOUT : CURS_info_layout ();
-                       break;
+                        break;
    }
    if (my.menu != MENU_NONE) {
       CURS_menuroot (my.menu);
@@ -1173,7 +1161,7 @@ CURS_main          (void)
    else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
-      move (p_tab->rows[CROW].y, p_tab->cols[CCOL].x + p_tab->cols[CCOL].w - 1);
+      move (LOC_row_ypos (CTAB, CROW), LOC_row_ypos (CTAB, CCOL) + LOC_row_height (CTAB, CCOL) - 1);
    /*---(refresh)------------------------*/
    my.info_win = G_INFO_NONE;
    refresh ();
@@ -1254,22 +1242,9 @@ CURS_cell          (int a_col, int a_row)
    }
    /*---(display cell)---------------------*/
    if (curr == NULL || curr->p == NULL) 
-      mvprintw (p_tab->rows[a_row].y + i, p_tab->cols[a_col].x, "%*.*s", p_tab->cols[a_col].w, p_tab->cols[a_col].w, g_empty);
+      mvprintw (LOC_row_ypos (CTAB, a_row) + i, LOC_row_ypos (CTAB, a_col), "%*.*s", LOC_col_width (CTAB, a_col), LOC_col_width (CTAB, a_col), g_empty);
    else
-      mvprintw (p_tab->rows[a_row].y + i, p_tab->cols[a_col].x, curr->p);
-   /*> for (i = 0; i < p_tab->rows[a_row].h; ++i) {                                                                                <* 
-    *>    if (curr == NULL || curr->p == NULL) {                                                                                 <* 
-    *>       mvprintw (p_tab->rows[a_row].y + i, p_tab->cols[a_col].x, "%*.*s", p_tab->cols[a_col].w, p_tab->cols[a_col].w, g_empty);      <* 
-    *>    } else {                                                                                                               <* 
-    *>       if (i == 0) {                                                                                                       <* 
-    *>          sprintf (xdisp, "%-*.*s", xmax, xmax, curr->p);                                                                  <* 
-    *>          if (xmax < strlen(curr->p)) xdisp[xmax - 1] = '>';                                                               <* 
-    *>          mvprintw (p_tab->rows[a_row].y + i, p_tab->cols[a_col].x, xdisp);                                                    <* 
-    *>       } else {                                                                                                            <* 
-    *>          mvprintw (p_tab->rows[a_row].y + i, p_tab->cols[a_col].x, "%*.*s", p_tab->cols[a_col].w, p_tab->cols[a_col].w, g_empty);   <* 
-    *>       }                                                                                                                   <* 
-    *>    }                                                                                                                      <* 
-    *> }                                                                                                                         <*/
+      mvprintw (LOC_row_ypos (CTAB, a_row) + i, LOC_row_ypos (CTAB, a_col), curr->p);
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-------------------------*/
@@ -1281,6 +1256,42 @@ CURS_cell          (int a_col, int a_row)
 /*====================------------------------------------====================*/
 /*===----                      private functions                       ----===*/
 /*====================------------------------------------====================*/
+
+PRIV int
+CURS_line          (int a_ch, int a_brow, int a_erow)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         y_cur       = 0;
+   int         x_cur       = 0;
+   int         x_end       = 0;
+   int         x_avail     = my.x_full - 1;
+   int         x_left      = 0;
+   int         i           = 0;
+   for (y_cur = a_brow; y_cur <= a_erow; ++y_cur) {
+      /*---(prepare)---------------------*/
+      a_ch += LOC_row_height (CTAB, y_cur);
+      /*---(cycle normal columns)--------*/
+      for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
+         CURS_cell (x_cur, y_cur);
+      }
+      /*---(cycle locked columns)--------*/
+      if (FR_COL == 'y') {
+         for (x_cur = FR_ECOL; x_cur >= FR_BCOL; --x_cur) {
+            CURS_cell (x_cur, y_cur);
+         }
+      }
+      /*---(fill in at end)--------------*/
+      x_end  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);
+      x_left = x_avail - x_end + 1;
+      if (x_left > 0) {
+         for (i = 0; i < LOC_row_height (CTAB, y_cur); ++i) {
+            mvprintw (LOC_row_ypos (CTAB, y_cur) + i, x_end, "%*.*s", x_left, x_left, g_empty);
+         }
+      }
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
 
 PRIV char       /* PURPOSE : redisplay all cell data on the screen --------*/
 CURS_page          (void)
@@ -1296,56 +1307,11 @@ CURS_page          (void)
    int         ch          = 0;
    int         i           = 0;
    /*---(cycle rows)---------------------*/
-   if (p_tab->froz_row == 'y') {
-      for (y_cur = p_tab->froz_brow; y_cur <= p_tab->froz_erow; ++y_cur) {
-         /*---(prepare)---------------------*/
-         ch += p_tab->rows[y_cur].h;
-         /*---(cycle normal columns)-----------*/
-         for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
-            CURS_cell (x_cur, y_cur);
-         }
-         /*---(cycle locked columns)-----------*/
-         if (p_tab->froz_col == 'y') {
-            for (x_cur = p_tab->froz_ecol; x_cur >= p_tab->froz_bcol; --x_cur) {
-               CURS_cell (x_cur, y_cur);
-            }
-         }
-         /*---(fill in at end)-----------*/
-         end  = p_tab->cols[ECOL].x + p_tab->cols[ECOL].w;
-         left = avail - end + 1;
-         if (left > 0) {
-            for (i = 0; i < p_tab->rows[y_cur].h; ++i) {
-               mvprintw (p_tab->rows[y_cur].y + i, end, "%*.*s", left, left, g_empty);
-            }
-         }
-      }
-   }
-   /*---(cycle rows)---------------------*/
-   for (y_cur = BROW; y_cur <= EROW; ++y_cur) {
-      /*---(prepare)---------------------*/
-      ch += p_tab->rows[y_cur].h;
-      /*---(cycle normal columns)-----------*/
-      for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
-         CURS_cell (x_cur, y_cur);
-      }
-      /*---(cycle locked columns)-----------*/
-      if (p_tab->froz_col == 'y') {
-         for (x_cur = p_tab->froz_ecol; x_cur >= p_tab->froz_bcol; --x_cur) {
-            CURS_cell (x_cur, y_cur);
-         }
-      }
-      /*---(fill in at end)-----------*/
-      end  = p_tab->cols[ECOL].x + p_tab->cols[ECOL].w;
-      left = avail - end + 1;
-      if (left > 0) {
-         for (i = 0; i < p_tab->rows[y_cur].h; ++i) {
-            mvprintw (p_tab->rows[y_cur].y + i, end, "%*.*s", left, left, g_empty);
-         }
-      }
-   }
+   if (FR_ROW == 'y')  ch = CURS_line (ch, FR_BROW, FR_EROW);
+   ch = CURS_line (ch, BROW, EROW);
    /*---(fill in bottom)-----------------*/
    for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {
-      mvprintw (p_tab->rows[y_cur].y, 5, "%*.*s", my.x_avail, my.x_avail, g_empty);
+      mvprintw (LOC_row_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);
    }
    /*---(complete)------------------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);

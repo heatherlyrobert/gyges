@@ -593,7 +593,7 @@ tCELL*
 CELL__create       (int a_tab, int a_col, int a_row)
 {
    /*---(defenses)-----------------------*/
-   if (LOC_legal (a_tab, a_col, a_row, CELL_ADAPT) != 0)  return NULL;
+   if (LOC_legal (a_tab, a_col, a_row, CELL_GROW) != 0)  return NULL;
    /*---(locals)----------------------*/
    tCELL    *curr      = NULL;
    /*---(create cell)-----------------*/
@@ -1635,7 +1635,7 @@ CELL_width         (char a_mode, char a_num)
    }
    /*---(process range)----------------------*/
    VISU_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
-   x_last = LOC_row_get_max (x_tab);
+   x_last = LOC_row_max (x_tab);
    for (x_col = x_bcol; x_col <= x_ecol; ++x_col) {
       DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d", x_tab, x_col);
       /*---(adjust)----------------------*/
@@ -1669,7 +1669,7 @@ CELL_width         (char a_mode, char a_num)
    }
    /*---(reset headers)---------------*/
    KEYS_bcol    (BCOL);
-   CURS_colhead ();
+   CURS_col_head ();
    /*---(complete)---------------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
@@ -2225,7 +2225,7 @@ CELL_printable     (tCELL *a_curr) {
    /*---(merge formats)------------------*/
    w = LOC_col_width (a_curr->tab, a_curr->col);
    /*> w = p_tab->cols[a_curr->col].w;                                                  <*/
-   for (i = a_curr->col + 1; i < LOC_col_get_max (a_curr->tab); ++i) {
+   for (i = a_curr->col + 1; i < LOC_col_max (a_curr->tab); ++i) {
       x_curr = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
       if (x_curr    == NULL)         break;
       if (x_curr->t != CTYPE_MERGE)  break;
@@ -2450,9 +2450,6 @@ CELL__unitnew      (
    else if (strcmp(a_question, "cell_contents")  == 0) {
       if      (x_cell       == NULL)   snprintf(unit_answer, LEN_UNIT, "s_celln cont (-) : (--:--) ::");
       else                             snprintf(unit_answer, LEN_UNIT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
-   }
-   else if (strcmp(a_question, "cell_size"    )  == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_celln size     : width=%3d, height=%3d", LOC_col_width (x_tab, x_col), LOC_row_height (x_tab, x_row));
    }
    /*---(cell contents)------------------*/
    else if (strcmp(a_question, "cell_rpn")       == 0) {

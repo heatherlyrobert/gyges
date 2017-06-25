@@ -35,9 +35,9 @@ main (int argc, char *argv[])
    if (strcmp (my.f_name, FILE_BLANK) != 0)  INPT_main (my.f_title);
    KEYS_basics (' ', 'r');
    KEYS_bcol (BCOL);
-   CURS_colhead();
+   CURS_col_head();
    KEYS_brow (BROW);
-   CURS_rowhead();
+   CURS_row_head();
    SEQ_calc_full ();
    hist_active = 'y';
    /*---(process)------------------------*/

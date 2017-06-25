@@ -1,6 +1,124 @@
 /*============================----beg-of-source---============================*/
-
 #include   "gyges.h"
+
+
+
+/*====================-----------------+------------------====================*/
+/*===----                  ROW & COL DATA STRUCTURES                   ----===*/
+/*====================-----------------+------------------====================*/
+/*
+ *
+ *   general discussion...
+ *
+ *   second, in order to define the tab/sheet data structure, we must first
+ *   define the information to be stored about the rows and columns.
+ *
+ *   for columns, the simple one is column width.  for easing the program and
+ *   speeding refreshes, it is valuable to store the column label as converted
+ *   from the index, i.e., column 0 is A, 3 is C, and 26 is AA.  this only need
+ *   be figured out once and the reused each time.  additionally, we'll store
+ *   the screen position as well to speed display.
+ *
+ *   for rows, this initial version will not allow multi-line rows which are
+ *   only really handy for entering gobs of text -- not our intent.  also, the
+ *   screen labels are the numbers themselves, so the only valuable piece of
+ *   information we need at this point is the screen position for each row.
+ *   
+ *   to conserve a little room, i assumed that there would never be a cell wider
+ *   that 255 characters (uchar).
+ *
+ *
+ *   actual data structures...
+ *
+ */
+struct cCOLS {
+   char      l[3];            /* column label                                 */
+   uchar     w;               /* column width                                 */
+   ushort    x;               /* starting horizonal position on screen        */
+   int       c;               /* optional: count of entries in column         */
+};
+struct cROWS {
+   ushort    h;               /* row height                                   */
+   ushort    y;               /* starting vertical position on screen         */
+   int       c;               /* optional: count of entries in row            */
+};
+
+
+
+/*====================-----------------+------------------====================*/
+/*===----                      TAB DATA STRUCTURE                      ----===*/
+/*====================-----------------+------------------====================*/
+/*
+ *
+ *   general discussion...
+ *
+ *   third we define the overarching tab/sheet data structure that provides
+ *   the iconic spreadsheet feel to the program.  a tab is simply a name
+ *   associated with a retangle of potenial cells and a set of basic
+ *   characteristics, such as width and height.
+ *
+ *   the formost simplification is that a retangular matrix of cell pointers
+ *   is created from the get go rather than using a clever data structure that
+ *   conserves more memory.  while it only allocates pointers, that's still a
+ *   great deal of space that will never get used.  but, on the performance
+ *   side, a two-dimensional array provides direct access without any need to
+ *   search a data structure, no matter how efficient.  it also provides a very
+ *   efficient means of conducting operations on visual ranges like columns,
+ *   rows, and retangular selections.  i think its well worth it -- you can
+ *   adapt it in the long run if you wish.
+ *
+ *   just like the cell data structure, i have divided it into sections and
+ *   provided a little commentary for each.
+ *
+ *
+ *   actual data structure...
+ *
+ */
+struct cTAB {
+   /*---(header)-------------------------*/
+   /* tabs are pre-allocated and can put into and taken out of use simply by  */
+   /* starting to use them.                                                   */
+   short       tab;                         /* number of tab                  */
+   char        name  [LEN_ABBR];            /* tab name for user reference    */
+   /*---(contents)-----------------------*/
+   /* tabs pull three other data structures together in a package: column     */
+   /* characteristics, row characteristics, and a grid on which to hang cells.*/
+   tCOLS       cols  [MAX_COLS];            /* column characteristics         */
+   tROWS       rows  [MAX_ROWS];            /* row characteristics            */
+   tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
+   int         c;                           /* count of entries in sheet      */
+   /*---(current size limits)------------*/
+   /* while a maximum size sheet is allocated, there are logical user set     */
+   /* maximums in order to manage the complexity.                             */
+   short       ncol;                        /* current limit on cols          */
+   short       nrow;                        /* current limit on rows          */
+   /*---(current position)---------------*/
+   /* while working, a user changes position to review and manipulate and     */
+   /* these variables store the current screen position.                      */
+   short       ccol;                        /* current column                 */
+   short       crow;                        /* current row                    */
+   /*---(screen limits)------------------*/
+   /* given user movement, the program calculates and stores the first (beg)  */
+   /* and last (end) cols and rows which can be seen.                         */
+   short       bcol;                        /* beginning column               */
+   short       brow;                        /* beginning row                  */
+   short       ecol;                        /* ending column                  */
+   short       erow;                        /* ending row                     */
+   /*---(frozen rows and cols)-----------*/
+   /* in order to handle large volumes of data in a table, it is necessary to */
+   /* be able to freeze cols and/or rows so they remain visible               */
+   char        froz_col;                    /* are the cols frozen            */
+   short       froz_bcol;                   /* left of frozen cols            */
+   short       froz_ecol;                   /* right of frozen cols           */
+   char        froz_row;                    /* are the rows frozen            */
+   short       froz_brow;                   /* top of frozen rows             */
+   short       froz_erow;                   /* bottom of frozen rows          */
+   /*---(end)----------------------------*/
+};
+tTAB     s_tabs [MAX_TABS];
+tTAB    *p_tab;                        /* current tab pointer                 */
+
+
 
 
 static char    s_label     [LEN_RECD]   = "";
@@ -20,10 +138,9 @@ LOC_init             (void)
    /*---(clean tabs)---------------------*/
    LOC__purge    ();
    /*---(set defaults)-------------------*/
-   NTAB    = 1;
+   NTAB    = 10;
    CTAB    = 0;
    p_tab   = &s_tabs [CTAB];
-   s_tabs [0].active  = G_TAB_LIVE;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -82,7 +199,6 @@ LOC__purge           (void)
       DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
       /*---(main config)-----------------*/
       DEBUG_LOCS   yLOG_note    ("reset naming");
-      s_tabs [x_tab].active  = G_TAB_NOT;
       sprintf (t, "tab_%02d", x_tab);
       strlcpy (s_tabs [x_tab].name, t, LEN_RECD);
       s_tabs [x_tab].tab     = x_tab;
@@ -261,51 +377,48 @@ LOC_move           (
 /*====================------------------------------------====================*/
 PRIV void  o___LOCATION________o () { return; }
 
-char         /*--> verify that a location is legal -------[ ------ [ ------ ]-*/
-LOC_legal          (
-      /*----------+-----------+-----------------------------------------------*/
-      short       a_tab,      /* tab number                                   */
-      short       a_col,      /* column number                                */
-      short       a_row,      /* row number                                   */
-      char        a_adapt)    /* y/n should enlarge boundaries to fit         */
+char         /*--> verify that a location is legal -------[ leafy  [ ------ ]-*/
+LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
 {  /*---(design notes)--------------------------------------------------------*/
    /* tests the tab, col, and row against minimum and maximum limits as well  */
    /* as against current limits as a service to other functions.              */
    /* additionally, if requested, the function can expand the current limits  */
-   /* to include the requested row and column if it is within the maximum     */
-   /* limits.                                                                 */
+   /* to include the requested row and column if it is within the max limits. */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
-   short       new_col     = 0;             /* holder for enlarged area       */
-   short       new_row     = 0;             /* holder for enlarged area       */
+   short       x_max       = 0;             /* maximum used col/row in tab    */
+   int         i           = 0;
    /*---(check absolute boudaries)-------*/
-   --rce;  if (a_tab <  0       )      return rce;
-   --rce;  if (a_col <  0       )      return rce;
-   --rce;  if (a_row <  0       )      return rce;
-   --rce;  if (a_tab >= MAX_TABS)      return rce;
-   --rce;  if (a_col >= MAX_COLS)      return rce;
-   --rce;  if (a_row >= MAX_ROWS)      return rce;
-   /*---(check tab out of range)---------*/
-   --rce;  if (a_tab >= NTAB )      return rce;
-   /*---(save values)--------------------*/
-   new_col = s_tabs[a_tab].ncol;
-   new_row = s_tabs[a_tab].nrow;
-   /*---(check current col limits)-------*/
-   --rce;
-   if (a_col >= s_tabs[a_tab].ncol) {
-      if (a_adapt == CELL_ADAPT)   new_col = a_col + 1;
-      else                             return rce;
+   --rce;  if (a_tab <  0       )                return rce;
+   --rce;  if (a_tab >= MAX_TABS)                return rce;
+   --rce;  if (a_col <  0       )                return rce;
+   --rce;  if (a_col >= MAX_COLS)                return rce;
+   --rce;  if (a_row <  0       )                return rce;
+   --rce;  if (a_row >= MAX_ROWS)                return rce;
+   /*---(if fixed)-----------------------*/
+   if (a_adapt == CELL_FIXED) {
+      --rce;  if (a_col >= s_tabs[a_tab].ncol)   return rce;
+      --rce;  if (a_row >= s_tabs[a_tab].nrow)   return rce;
    }
-   /*---(check current row limits)-------*/
-   --rce;
-   if (a_row >= s_tabs[a_tab].nrow) {
-      if (a_adapt == CELL_ADAPT)   new_row = a_row + 1;
-      else                             return rce;
+   /*---(if adapting)--------------------*/
+   else if (a_adapt == CELL_GROW ) {
+      if (a_col >=  s_tabs[a_tab].ncol)     s_tabs[a_tab].ncol = a_col  + 1;
+      if (a_row >=  s_tabs[a_tab].nrow)     s_tabs[a_tab].nrow = a_row  + 1;
    }
-   /*---(make changes if requested)------*/
-   if (a_adapt == CELL_ADAPT) {
-      if (new_col != s_tabs[a_tab].ncol)  s_tabs[a_tab].ncol = new_col;
-      if (new_row != s_tabs[a_tab].nrow)  s_tabs[a_tab].nrow = new_row;
+   /*---(if forcing)---------------------*/
+   else if (a_adapt == CELL_EXACT) {
+      /*---(cols)-----------*/
+      for (i = 0; i < s_tabs [a_tab].ncol; ++i) {
+         if (s_tabs [a_tab].cols [i].c > 0)  x_max   = i;
+      }
+      if      (a_col >=  x_max  )          s_tabs[a_tab].ncol = a_col   + 1;
+      else                                 s_tabs[a_tab].ncol = x_max   + 1;
+      /*---(rows)-----------*/
+      for (i = 0; i < s_tabs [a_tab].nrow; ++i) {
+         if (s_tabs [a_tab].rows [i].c > 0)  x_max   = i;
+      }
+      if      (a_row >=  x_max  )          s_tabs[a_tab].nrow = a_row   + 1;
+      else                                 s_tabs[a_tab].nrow = x_max   + 1;
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -636,30 +749,14 @@ LOC_parse         (
 /*====================------------------------------------====================*/
 PRIV void  o___TABS____________o () { return; }
 
-char 
-LOC_tab_count        (short a_size)
+char
+LOC_tab_valid        (short a_tab)
 {
-   char        rce         = -10;
-   int         i           =   0;
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
    /*---(defense)------------------------*/
-   --rce;  if (a_size  <  MIN_TABS)              return rce;
-   --rce;  if (a_size  >= MAX_TABS)              return rce;
-   --rce;
-   /*---(add tabs)-----------------------*/
-   if (a_size >  my.ntab) {
-      my.ntab = a_size;
-      for (i = 0; i < my.ntab; ++i) {
-         if (s_tabs [i].active == G_TAB_NOT)  s_tabs [i].active = G_TAB_FROZE;
-      }
-   }
-   /*---(reduce tabs)--------------------*/
-   else if (a_size < my.ntab) {
-      for (i = my.ntab - 1;  i >= a_size; --i) {
-         if (s_tabs [i].c > 0)  return rce;
-         s_tabs [i].active = G_TAB_NOT;
-         my.ntab = i;
-      }
-   }
+   --rce;  if (a_tab   < 0)                           return rce;
+   --rce;  if (a_tab   >= MAX_TABS)                   return rce;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -667,11 +764,9 @@ LOC_tab_count        (short a_size)
 char 
 LOC_tab_name         (short a_tab, char *a_name)
 {
-   char        rce         = -10;
-   --rce;  if (a_tab   < 0)                           return rce;
-   --rce;  if (a_tab   >= NTAB)                       return rce;
-   --rce;  if (a_tab   >= my.ntab)                    return rce;
-   --rce;  if (s_tabs [a_tab].active == G_TAB_NOT)    return rce;
+   char        rce         =  -20;
+   char rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
    --rce;  if (a_name  == NULL)                       return rce;
    strlcpy (a_name, s_tabs [a_tab].name, LEN_ABBR);
    return 0;
@@ -680,12 +775,9 @@ LOC_tab_name         (short a_tab, char *a_name)
 char 
 LOC_tab_rename       (short a_tab, char *a_name)
 {
-
-   char        rce         = -10;
-   --rce;  if (a_tab   < 0)                           return rce;
-   --rce;  if (a_tab   >= NTAB)                       return rce;
-   --rce;  if (a_tab   >= my.ntab)                    return rce;
-   --rce;  if (s_tabs [a_tab].active == G_TAB_NOT)    return rce;
+   char        rce         =  -20;
+   char rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
    --rce;  if (a_name  == NULL)                       return rce;
    --rce;  if (a_name [0] == '\0')                    return rce;
    --rce;  if (strlen (a_name) >= LEN_ABBR)           return rce;
@@ -694,38 +786,28 @@ LOC_tab_rename       (short a_tab, char *a_name)
 }
 
 char 
-LOC_tab_activate     (short a_tab)
-{
-   char        rce         = -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   s_tabs [a_tab].active = G_TAB_LIVE;
-   return 0;
-}
-
-char 
-LOC_tab_deactivate   (short a_tab)
-{
-   char        rce         = -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (s_tabs [a_tab].c > 0)             return rce;
-   s_tabs [a_tab].active = G_TAB_FROZE;
-   return 0;
-}
-
-char 
 LOC_tab_size         (short a_tab, char *a_max)
 {
-   char        rce         = -10;
-   --rce;  if (a_tab   < 0)                           return rce;
-   --rce;  if (a_tab   >= NTAB)                       return rce;
-   --rce;  if (a_tab   >= my.ntab)                    return rce;
-   --rce;  if (s_tabs [a_tab].active == G_TAB_NOT)    return rce;
+   char        rce         =  -20;
+   char rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
    --rce;  if (a_max   == NULL)                       return rce;
    LOC_ref (a_tab, s_tabs[a_tab].ncol - 1, s_tabs[a_tab].nrow - 1, 0, a_max);
+   return 0;
+}
+
+char 
+LOC_tab_resize       (char *a_max)
+{
+   char        rce         = -10;
+   char        rc          =   0;
+   int         x_tab       =   0;
+   int         x_col       =   0;
+   int         x_row       =   0;
+   rc = LOC_parse  (a_max, &x_tab, &x_col, &x_row, NULL);
+   --rce;  if (rc < 0)                                return rce;
+   rc = LOC_legal  (x_tab, x_col, x_row, CELL_EXACT);
+   --rce;  if (rc < 0)                                return rce;
    return 0;
 }
 
@@ -785,61 +867,108 @@ LOC_col_clear        (short a_tab)
    return 0;
 }
 
-short        /*--> return max col for tab ----------------[ petal  [ 1----- ]-*/
-LOC_col_get_max      (short a_tab)
+char
+LOC_col_valid        (short a_tab, short a_col)
 {
+   /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab   < 0)                           return rce;
+   --rce;  if (a_tab   >= MAX_TABS)                   return rce;
+   --rce;  if (a_col   < 0)                           return rce;
+   --rce;  if (a_col   >= MAX_COLS)                   return rce;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+short        /*--> return max col for tab ----------------[ petal  [ 1----- ]-*/
+LOC_col_max          (short a_tab)
+{
+   char rc = LOC_col_valid (a_tab, 0);
+   if (rc < 0) return rc;
    return s_tabs [a_tab].ncol;
 }
 
-char         /*--> change max col for tab ----------------[ stigma [ 2----- ]-*/
-LOC_col_chg_max      (short a_tab, short a_size)
+short        /*--> indicate if column is used ------------[ petal  [ 2----- ]-*/
+LOC_col_used         (short a_tab, short a_col)
 {
-   char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   if (a_size  <  MIN_COLS)         a_size = MIN_COLS;
-   if (a_size  >  MAX_COLS)         a_size = MAX_COLS;
-   s_tabs [a_tab].ncol = a_size;
-   /*> if (s_tabs [a_tab].bcol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].bcol = s_tabs [a_tab].ncol - 1;   <* 
-    *> if (s_tabs [a_tab].ecol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].ecol = s_tabs [a_tab].ncol - 1;   <* 
-    *> if (s_tabs [a_tab].ccol >= s_tabs [a_tab].ncol)   s_tabs [a_tab].ccol = s_tabs [a_tab].ncol - 1;   <*/
+   char rc = LOC_col_valid (a_tab, a_col);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].cols [a_col].c;
+}
+
+short        /*--> return the col xpos -------------------[ petal  [ 2----- ]-*/
+LOC_col_xpos         (short a_tab, short a_col)
+{
+   char rc = LOC_col_valid (a_tab, a_col);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].cols [a_col].x;
+}
+
+char         /*--> set a new col x-pos -------------------[ stigma [ 3----- ]-*/
+LOC_col_xset         (short a_tab, short a_col, short x_pos)
+{
+   char rc = LOC_col_valid (a_tab, a_col);
+   if (rc < 0) return rc;
+   s_tabs [a_tab].cols [a_col].x = x_pos;
+   return 0;
+}
+
+char         /*--> return the col xpos -------------------[ petal  [ 2----- ]-*/
+LOC_col_label        (short a_tab, short a_col, char *a_label)
+{
+   char rc = LOC_col_valid (a_tab, a_col);
+   if (rc < 0) return rc;
+   if (a_label != NULL)  strlcpy (a_label, s_tabs [a_tab].cols [a_col].l, LEN_LABEL);
    return 0;
 }
 
 char         /*--> return the col width ------------------[ petal  [ 2----- ]-*/
 LOC_col_width        (short a_tab, short a_col)
 {
-   char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (a_col   < 0)                      return rce;
-   --rce;  if (a_col   >= s_tabs [a_tab].ncol)     return rce;
+   char rc = LOC_col_valid (a_tab, a_col);
+   if (rc < 0) return rc;
    return s_tabs [a_tab].cols [a_col].w;
 }
 
 char         /*--> change the col width ------------------[ stigma [ 3----- ]-*/
 LOC_col_widen        (short a_tab, short a_col, short a_size)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (a_col   < 0)                      return rce;
-   --rce;  if (a_col   >= s_tabs [a_tab].ncol)     return rce;
-   /*---(limits)-------------------------*/
+   char rc = LOC_col_valid (a_tab, a_col);
+   if (rc < 0) return rc;
    if (a_size  < MIN_WIDTH)    a_size = MIN_WIDTH;
    if (a_size  > MAX_WIDTH)    a_size = MAX_WIDTH;
-   /*---(set)----------------------------*/
    s_tabs [a_tab].cols [a_col].w = a_size;
-   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> change the frozen cols ----------------[ stigma [ 3----- ]-*/
+LOC_col_freeze       (short a_tab, short a_bcol, short a_ecol)
+{
+   char rc = LOC_col_valid (a_tab, a_bcol);
+   if (rc < 0) return rc;
+   rc = LOC_col_valid (a_tab, a_ecol);
+   if (rc < 0) return rc;
+   short  x_col;
+   if (a_bcol  >  a_ecol) {
+      x_col   = a_bcol;
+      a_bcol  = a_ecol;
+      a_ecol  = x_col;
+   }
+   s_tabs [a_tab].froz_col    = 'y';
+   s_tabs [a_tab].froz_bcol   = a_bcol;
+   s_tabs [a_tab].froz_ecol   = a_ecol;
+   return 0;
+}
+
+char         /*--> clear the frozen cols -----------------[ stigma [ 1----- ]-*/
+LOC_col_unfreeze     (short a_tab)
+{
+   char rc = LOC_col_valid (a_tab, 0);
+   if (rc < 0) return rc;
+   s_tabs [a_tab].froz_col    = '-';
+   s_tabs [a_tab].froz_bcol   = 0;
+   s_tabs [a_tab].froz_ecol   = 0;
    return 0;
 }
 
@@ -888,57 +1017,74 @@ LOC_row_clear        (short a_tab)
    return 0;
 }
 
-short        /*--> return max row for tab ----------------[ petal  [ 1----- ]-*/
-LOC_row_get_max      (short a_tab)
+char
+LOC_row_valid        (short a_tab, short a_row)
 {
+   /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab   < 0)                           return rce;
+   --rce;  if (a_tab   >= MAX_TABS)                   return rce;
+   --rce;  if (a_row   < 0)                           return rce;
+   --rce;  if (a_row   >= MAX_ROWS)                   return rce;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+short        /*--> return max row for tab ----------------[ petal  [ 1----- ]-*/
+LOC_row_max          (short a_tab)
+{
+   char rc = LOC_row_valid (a_tab, 0);
+   if (rc < 0) return rc;
    return s_tabs [a_tab].nrow;
 }
 
-char         /*--> change max row for tab ----------------[ stigma [ 2----- ]-*/
-LOC_row_chg_max      (short a_tab, short a_size)
+short        /*--> return the row used -------------------[ petal  [ 2----- ]-*/
+LOC_row_used         (short a_tab, short a_row)
 {
-   char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   if (a_size  <  MIN_ROWS)         a_size = MIN_ROWS;
-   if (a_size  >  MAX_ROWS)         a_size = MAX_ROWS;
-   s_tabs [a_tab].nrow = a_size;
-   /*> if (s_tabs [a_tab].brow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].brow = s_tabs [a_tab].nrow - 1;   <* 
-    *> if (s_tabs [a_tab].erow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].erow = s_tabs [a_tab].nrow - 1;   <* 
-    *> if (s_tabs [a_tab].crow >= s_tabs [a_tab].nrow)   s_tabs [a_tab].crow = s_tabs [a_tab].nrow - 1;   <*/
+   char rc = LOC_row_valid (a_tab, 0);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].rows [a_row].c;
+}
+
+short        /*--> return the row ypos -------------------[ petal  [ 2----- ]-*/
+LOC_row_ypos         (short a_tab, short a_row)
+{
+   char rc = LOC_row_valid (a_tab, 0);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].rows [a_row].y;
+}
+
+char         /*--> set a new row y-pos -------------------[ stigma [ 3----- ]-*/
+LOC_row_yset         (short a_tab, short a_row, short x_pos)
+{
+   char rc = LOC_row_valid (a_tab, a_row);
+   if (rc < 0) return rc;
+   s_tabs [a_tab].rows [a_row].y = x_pos;
    return 0;
 }
 
 char         /*--> return height for a row ---------------[ petal  [ 2----- ]-*/
 LOC_row_height       (short a_tab, short a_row)
 {
-   char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (a_row   < 0)                      return rce;
-   --rce;  if (a_row   >= s_tabs [a_tab].nrow)     return rce;
+   char rc = LOC_row_valid (a_tab, a_row);
+   if (rc < 0) return rc;
    return s_tabs [a_tab].rows [a_row].h;
 }
-
 
 char         /*--> change the frozen rows ----------------[ stigma [ 3----- ]-*/
 LOC_row_freeze       (short a_tab, short a_brow, short a_erow)
 {
-   char        rce         =  -10;
-   --rce;  if (a_tab   <  0)                     return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (a_brow  <  0)                     return rce;
-   --rce;  if (a_brow  >= s_tabs [a_tab].nrow)     return rce;
-   --rce;  if (a_erow  <  0)                     return rce;
-   --rce;  if (a_erow  >= s_tabs [a_tab].nrow)     return rce;
-   --rce;  if (a_brow  >  a_erow)                return rce;
+   char rc = LOC_row_valid (a_tab, a_brow);
+   if (rc < 0) return rc;
+   rc = LOC_row_valid (a_tab, a_erow);
+   if (rc < 0) return rc;
+   short  x_row;
+   if (a_brow  >  a_erow) {
+      x_row   = a_brow;
+      a_brow  = a_erow;
+      a_erow  = x_row;
+   }
    s_tabs [a_tab].froz_row    = 'y';
    s_tabs [a_tab].froz_brow   = a_brow;
    s_tabs [a_tab].froz_erow   = a_erow;
@@ -948,26 +1094,11 @@ LOC_row_freeze       (short a_tab, short a_brow, short a_erow)
 char         /*--> clear the frozen rows -----------------[ stigma [ 1----- ]-*/
 LOC_row_unfreeze     (short a_tab)
 {
-   char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
+   char rc = LOC_row_valid (a_tab, 0);
+   if (rc < 0) return rc;
    s_tabs [a_tab].froz_row    = '-';
    s_tabs [a_tab].froz_brow   = 0;
    s_tabs [a_tab].froz_erow   = 0;
-   return 0;
-}
-
-char         /*--> return the frozen rows ----------------[ petal  [ 3----- ]-*/
-LOC_row_get_freeze   (short a_tab, short *a_brow, short *a_erow)
-{
-   char        rce         =  -10;
-   --rce;  if (a_tab   < 0)                      return rce;
-   --rce;  if (a_tab   >= NTAB)                  return rce;
-   --rce;  if (a_tab   >= my.ntab)               return rce;
-   --rce;  if (s_tabs [a_tab].froz_row != 'y')     return rce;
-   if (a_brow != NULL)  *a_brow = s_tabs [a_tab].froz_brow;
-   if (a_erow != NULL)  *a_erow = s_tabs [a_tab].froz_erow;
    return 0;
 }
 
@@ -979,23 +1110,36 @@ LOC_row_get_freeze   (short a_tab, short *a_brow, short *a_erow)
 PRIV void  o___UNIT_TEST_______o () { return; }
 
 char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
-TAB__unit          (char *a_question, int a_num)
+LOC__unit          (char *a_question, char *a_label)
 {
    /*---(locals)-------------------------*/
+   char        rc          =  0;
    int         i           =  0;
+   int         x_tab       =  0;
+   int         x_col       =  0;
+   int         x_row       =  0;
    char        x_beg       [LEN_LABEL]   = "";
    char        x_end       [LEN_LABEL]   = "";
    char        x_cur       [LEN_LABEL]   = "";
    char        x_max       [LEN_LABEL]   = "";
-   /*---(preprare)-----------------------*/
-   strcpy  (unit_answer, "LOC              : question not understood");
-   LOC_ref    (a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow, 0, x_beg);
-   LOC_ref    (a_num, s_tabs [a_num].ecol, s_tabs [a_num].erow, 0, x_end);
-   LOC_ref    (a_num, s_tabs [a_num].ccol, s_tabs [a_num].crow, 0, x_cur);
-   LOC_ref    (a_num, s_tabs [a_num].ncol - 1, s_tabs [a_num].nrow - 1, 0, x_max);
+   /*---(parse location)-----------------*/
+   strcpy  (unit_answer, "LOC              : label could not be parsed");
+   if (rc >= 0)  rc = LOC_parse  (a_label, &x_tab, &x_col, &x_row, NULL);
+   if (rc <  0)  return unit_answer;
+   /*---(prepare data)-------------------*/
+   strcpy  (unit_answer, "LOC              : locations could not be prepared");
+   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, x_beg);
+   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, x_end);
+   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, x_cur);
+   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, x_max);
+   if (rc <  0)  return unit_answer;
    /*---(overall)------------------------*/
+   strcpy  (unit_answer, "LOC              : question not understood");
    if      (strcmp(a_question, "tab_info"      ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%1d) : %c %-10.10s %-7.7s %-7.7s %-7.7s %-7.7s %d", a_num, s_tabs [a_num].active, s_tabs [a_num].name, x_beg, x_end, x_cur, x_max, s_tabs [a_num].c);
+      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%1d) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_tab, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
+   }
+   else if (strcmp(a_question, "cell_size"    )  == 0) {
+      snprintf(unit_answer, LEN_UNIT, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
@@ -1011,7 +1155,7 @@ TAB__unit          (char *a_question, int a_num)
 }
 
 char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
-LOC__unit          (char *a_question, tCELL *a_cell)
+LOC__unit_OLD      (char *a_question, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
    int         rc          = -1;
@@ -1059,18 +1203,6 @@ LOC__unit          (char *a_question, tCELL *a_cell)
    }
    else if (strcmp(a_question, "loc_label")      == 0) {
       snprintf(unit_answer, LEN_UNIT, "s_loc label      : %s", s_label);
-   }
-   /*---(current position)---------------*/
-   else if (strcmp(a_question, "tab_statuses"  ) == 0) {
-      for (i = 0; i < MAX_TABS; ++i) {
-         switch (s_tabs [i].active) {
-         case G_TAB_LIVE  :  strlcat (t, " y", LEN_STR);   break;
-         case G_TAB_FROZE :  strlcat (t, " _", LEN_STR);   break;
-         case G_TAB_NOT   :  strlcat (t, " /", LEN_STR);   break;
-         default :  strlcat (t, " ?", LEN_STR);   break;
-         }
-      }
-      snprintf (unit_answer, LEN_UNIT, "LOC tab statuses :%s", t);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 

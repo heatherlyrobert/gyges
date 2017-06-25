@@ -690,7 +690,6 @@ BUF_switch         (int a_tab)
    int xtab = a_tab - '0';
    if (xtab >= 0 && xtab < NTAB) {
       CTAB = xtab;
-      p_tab  = &s_tabs[CTAB];
       BCOL = 0;
       ECOL = 0;
       BROW = 0;
@@ -1294,13 +1293,13 @@ SMOD_format        (char a_major, char a_minor)
 char
 KEYS_unlock        (void)
 {
-   p_tab->froz_col  = '-';
-   p_tab->froz_bcol = 0;
-   p_tab->froz_ecol = 0;
+   FR_COL  = '-';
+   FR_BCOL = 0;
+   FR_ECOL = 0;
    MOVE_horz ('r');
-   p_tab->froz_row  = '-';
-   p_tab->froz_brow = 0;
-   p_tab->froz_erow = 0;
+   FR_ROW  = '-';
+   FR_BROW = 0;
+   FR_EROW = 0;
    MOVE_vert ('r');
 }
 
@@ -1383,41 +1382,45 @@ cmd_exec           (char *a_command)
          KEYS_unlock ();
          return 0;
       }
-      rc = LOC_parse (p, NULL, &p_tab->froz_bcol, &p_tab->froz_brow, NULL);
+      rc = LOC_parse (p, NULL, &FR_BCOL, &FR_BROW, NULL);
       if (rc < 0) {
          KEYS_unlock ();
          return 0;
       }
-      p_tab->froz_ecol = p_tab->froz_bcol;
-      p_tab->froz_erow = p_tab->froz_brow;
+      FR_ECOL = FR_BCOL;
+      FR_EROW = FR_BROW;
       p = strtok (NULL  , q);
       if (p != NULL) {
-         rc = LOC_parse (p, NULL, &p_tab->froz_ecol, &p_tab->froz_erow, NULL);
+         rc = LOC_parse (p, NULL, &FR_ECOL, &FR_EROW, NULL);
          if (rc < 0) {
-            p_tab->froz_ecol = p_tab->froz_bcol;
-            p_tab->froz_erow = p_tab->froz_brow;
+            FR_ECOL = FR_BCOL;
+            FR_EROW = FR_BROW;
          }
       }
       switch (x_flag) {
-      case  'c' : p_tab->froz_col  = 'y';
-                  BCOL = CCOL = p_tab->froz_ecol + 1;
-                  BROW = CROW = p_tab->froz_erow;
-                  p_tab->froz_brow = 0;
-                  p_tab->froz_erow = 0;
-                  break;
-      case  'r' : p_tab->froz_row  = 'y';
-                  BCOL = CCOL = p_tab->froz_ecol;
-                  BROW = CROW = p_tab->froz_erow + 1;
-                  p_tab->froz_bcol = 0;
-                  p_tab->froz_ecol = 0;
-                  break;
-      case  '-' : p_tab->froz_col = 'y';
-                  p_tab->froz_row = 'y';
-                  BCOL = CCOL = p_tab->froz_ecol + 1;
-                  BROW = CROW = p_tab->froz_erow + 1;
-                  break;
-      default   : KEYS_unlock ();
-                  break;
+      case  'c' :
+         FR_COL  = 'y';
+         BCOL = CCOL = FR_ECOL + 1;
+         BROW = CROW = FR_EROW;
+         FR_BROW = 0;
+         FR_EROW = 0;
+         break;
+      case  'r' :
+         FR_ROW  = 'y';
+         BCOL = CCOL = FR_ECOL;
+         BROW = CROW = FR_EROW + 1;
+         FR_BCOL = 0;
+         FR_ECOL = 0;
+         break;
+      case  '-' :
+         FR_COL  = 'y';
+         FR_ROW  = 'y';
+         BCOL = CCOL = FR_ECOL + 1;
+         BROW = CROW = FR_EROW + 1;
+         break;
+      default   :
+         KEYS_unlock ();
+         break;
       }
       MOVE_horz ('r');
       MOVE_vert ('r');
@@ -1489,11 +1492,10 @@ SMOD_wander        (char a_prev, char a_curr)
    case  ')' : post = a_curr;
    case  10  :
    case  27  : VISU_clear ();
-               LOC_ref (CTAB, s_tabs[CTAB].ccol, s_tabs[CTAB].crow, 0, wref);
+               LOC_ref (CTAB, CCOL, CROW, 0, wref);
                CTAB = wtab;
-               s_tabs[CTAB].ccol = wcol;
-               s_tabs[CTAB].crow = wrow;
-               p_tab = &s_tabs[CTAB];
+               CCOL = wcol;
+               CROW = wrow;
                my.cpos = wpos;
                strcpy (g_contents, wsave);
                if (strcmp (wref2, "") != 0) {
@@ -1534,8 +1536,8 @@ SMOD_wander        (char a_prev, char a_curr)
     *> case 'r'      : VISU_row();          break;                                    <* 
     *> }                                                                              <*/
    if (a_curr == ':') {
-      LOC_ref    (CTAB, s_tabs[CTAB].ccol, s_tabs[CTAB].crow, 0, wref2);
-      VISU_start (CTAB, s_tabs[CTAB].ccol, s_tabs[CTAB].crow, VISU_FROM);
+      LOC_ref    (CTAB, CCOL, CROW, 0, wref2);
+      VISU_start (CTAB, CCOL, CROW, VISU_FROM);
    }
    /*---(complete)-----------------------*/
    return  0;

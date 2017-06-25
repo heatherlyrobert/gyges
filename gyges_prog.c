@@ -334,7 +334,7 @@ unit_accessor(char *a_question, void *a_thing)
    int         x_back      = 0;
    /*---(sheet focus)--------------------*/
    if        (strcmp(a_question, "sheet_size")     == 0) {
-      snprintf(unit_answer, LEN_UNIT, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, p_tab->ncol, p_tab->nrow);
+      snprintf(unit_answer, LEN_UNIT, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, NCOL, NROW);
    } else if (strcmp(a_question, "cell_list")      == 0) {
       snprintf(unit_answer, LEN_UNIT, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);
    } else if (strcmp(a_question, "cell_count")     == 0) {
@@ -373,9 +373,9 @@ unit_accessor(char *a_question, void *a_thing)
    }
    /*---(display focus)------------------*/
    else if   (strcmp(a_question, "rows")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", p_tab->nrow, my.y_avail, BROW, p_tab->crow, EROW);
+      snprintf(unit_answer, LEN_UNIT, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NROW, my.y_avail, BROW, CROW, EROW);
    } else if (strcmp(a_question, "cols")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", p_tab->ncol, my.x_avail, BCOL, p_tab->ccol, ECOL);
+      snprintf(unit_answer, LEN_UNIT, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NCOL, my.x_avail, BCOL, CCOL, ECOL);
    }
    /*---(selection)----------------------*/
    /*> else if   (strcmp(a_question, "sel_range")      == 0) {                                                                                                                            <* 
@@ -385,9 +385,9 @@ unit_accessor(char *a_question, void *a_thing)
     *> } else if (strcmp(a_question, "sel_full")       == 0) {                                                                                                                            <* 
     *>    snprintf(unit_answer, LEN_UNIT, "Select Full      : st=%3d, sc=%3d, sr=%3d, sp=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);                   <*/
    else if   (strcmp(a_question, "curr_pos")       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, p_tab->ccol, p_tab->crow);
+      snprintf(unit_answer, LEN_UNIT, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, CCOL, CROW);
    } else if (strcmp(a_question, "max_pos" )       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", my.ntab, p_tab->ncol, p_tab->nrow);
+      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", my.ntab, NCOL, NROW);
    }
    /*---(dependencies)-------------------*/
    /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 
