@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2e"
-#define     VER_TXT   "LOC unit test for LOC_cell_at, LOC_label, LOC_coords good"
+#define     VER_NUM   "2.2f"
+#define     VER_TXT   "LOC unit test added INPT_width and INPT_height to INPT_tab"
 
 
 
@@ -1135,6 +1135,8 @@ char        LOC_col_xset         /* stigma 3----- */  (short a_tab, short a_col,
 char        LOC_col_label        /* petal  3----- */  (short a_tab, short a_col, char *a_label);
 char        LOC_col_width        /* petal  2----- */  (short a_tab, short a_col);
 char        LOC_col_widen        /* stigma 3----- */  (short a_tab, short a_col, short a_size);
+char        LOC_col_freeze       (short a_tab, short a_bcol, short a_ecol);
+char        LOC_col_unfreeze     (short a_tab);
 /*---(rows)----------------------*/
 char        LOC_row_clear        /* septal 1----- */  (short a_tab);
 char        LOC_row_valid        /* petal  2----- */  (short a_tab, short a_row);
@@ -1144,6 +1146,9 @@ short       LOC_row_ypos         /* petal  2----- */  (short a_tab, short a_row)
 char        LOC_row_yset         /* sigma  3----- */  (short a_tab, short a_row, short a_pos);
 char        LOC_row_label        /* petal  3----- */  (short a_tab, short a_row, char *a_label);
 char        LOC_row_height       /* petal  2----- */  (short a_tab, short a_row);
+char        LOC_row_heighten     /* sigma  3----- */  (short a_tab, short a_row, short a_size);
+char        LOC_row_freeze       (short a_tab, short a_brow, short a_erow);
+char        LOC_row_unfreeze     (short a_tab);
 /*---(unit testing)--------------*/
 char*       LOC__unit            /* petal  2----- */  (char *a_question, char *a_label);
 char*       TAB__unit            /* petal  2----- */  (char *a_question, int a_num);
@@ -1206,6 +1211,7 @@ char      INPT_cell          (cchar *a_recd);
 
 char      INPT_tab           (char *a_label, char *a_name);
 char      INPT_width         (char *a_label, int   a_size);
+char      INPT_height        (char *a_label, int   a_size);
 
 char      INPT_open          (cchar *a_name);
 char      INPT_read          (void);

@@ -258,122 +258,6 @@ SCRP          v21  (gyges_loc) create and parse labels                        
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (gyges_loc) convert cells to labels and back                 LOC_label, LOC_parse                                                    ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-#   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
-#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-#
-#   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
-#     code     v21  create a custom expect string        - - - - - - - - - -   char x_label [2000];                                                                                                                                           
-#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_one   = NULL;                                                                                                                                         
-#     code     v21  create a pointer to another          - - - - - - - - - -   tCELL *x_temp  = NULL;                                                                                                                                         
-#     code     v21  create a tab index                   - - - - - - - - - -   short  x_tab   = 0;                                                                                                                                            
-#     code     v21  create a col index                   - - - - - - - - - -   short  x_col   = 0;                                                                                                                                            
-#     code     v21  create a row index                   - - - - - - - - - -   short  x_row   = 0;                                                                                                                                            
-#
-#   COND       v21  update the number of tabs                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     code     v21  modify the tab number                - - - - - - - - - -   my.ntab = 3;                                                                                                                                                   
-#     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      =   40;                                                                                                                                      
-#     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      =   40;                                                                                                                                      
-#     code     v21  number of rows                       - - - - - - - - - -   s_tabs[1].nrow      = 1000;                                                                                                                                      
-#     code     v21  number of cols                       - - - - - - - - - -   s_tabs[1].ncol      =   72;                                                                                                                                      
-#     code     v21  number of rows                       - - - - - - - - - -   s_tabs[2].nrow      =  500;                                                                                                                                      
-#     code     v21  number of cols                       - - - - - - - - - -   s_tabs[2].ncol      =   20;                                                                                                                                      
-#
-#   COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL__create          0,  5,  5                                                               p_exists    0                                                                      
-#     code     v21  save cell pointer                    - - - - - - - - - -   x_one  = yUNIT_p_rc;                                                                                                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=   0, col=   5, row=   5", x_one);                                                                           
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_loc occupant   : ptr=%9p, tab=   0, col=   5, row=   5", x_one);                                                                           
-#     get      v21  check the sheet location             LOC__unit_OLD         "loc_who"  ,     s_tabs[0].sheet[ 5][ 5]                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   1, head=%9p, tail=%9p", x_one , x_one );                                                                           
-#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                           
-#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   2, num=   1, fore=   1, back=   1            
-#
-#   COND       v21  get the label of cell one                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  create the label                     LOC_label             x_one, x_label                                                          i_equal     0                                                                      
-#     exec     v21  check the label                      LOC__unit_OLD         "loc_label"      , NULL                                                 s_equal     s_loc label      : 0f6                                                 
-#
-#   COND       v21  get a location                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  get the location                     LOC_parse             "0f6", &x_tab, &x_col, &x_row, NULL                                     i_equal     0                                                                      
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=   0, col=   5, row=   5", x_one);                                                                           
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_one , x_tab, x_col, x_row);                                                        
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#
-#   COND       v21  move the cell and check                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  move a cell                          LOC_move              0,  5,  5, 0, 20, 15                                                    i_equal     0                                                                      
-#     exec     v21  create the label                     LOC_label             x_one, x_label                                                          i_equal     0                                                                      
-#     exec     v21  check the label                      LOC__unit_OLD         "loc_label"      , NULL                                                 s_equal     s_loc label      : 0u16                                                
-#
-#   COND       v21  get a location                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  get the location                     LOC_parse             "0u16", &x_tab, &x_col, &x_row, NULL                                    i_equal     0                                                                      
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=   0, col=  20, row=  15", x_one);                                                                           
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_one , x_tab, x_col, x_row);                                                        
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#
-#   COND       v21  change to two worksheets                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     code     v21  modify a variable                    - - - - - - - - - -   my.ntab += 1;                                                                                                                                                  
-#
-#   COND       v21  move the cell and check                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  move a cell                          LOC_move              0, 20, 15, 1, 26,100                                                    i_equal     0                                                                      
-#     exec     v21  create the label                     LOC_label             x_one, x_label                                                          i_equal     0                                                                      
-#     exec     v21  check the label                      LOC__unit_OLD         "loc_label"      , NULL                                                 s_equal     s_loc label      : 1aa101                                              
-#
-#   COND       v21  get a location                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  get the location                     LOC_parse             "1aa101", &x_tab, &x_col, &x_row, NULL                                  i_equal     0                                                                      
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=   1, col=  26, row= 100", x_one);                                                                           
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_one , x_tab, x_col, x_row);                                                        
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#
-#   COND       v21  change to three worksheets                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     code     v21  modify a variable                    - - - - - - - - - -   my.ntab += 1;                                                                                                                                                  
-#
-#   COND       v21  move the cell and check                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  move a cell                          LOC_move              1, 26,100, 2,  1,  6                                                    i_equal     0                                                                      
-#     exec     v21  create the label                     LOC_label             x_one, x_label                                                          i_equal     0                                                                      
-#     exec     v21  check the label                      LOC__unit_OLD         "loc_label"      , NULL                                                 s_equal     s_loc label      : 2b7                                                 
-#
-#   COND       v21  get a location                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  get the location                     LOC_parse             "2b7"   , &x_tab, &x_col, &x_row, NULL                                  i_equal     0                                                                      
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=   2, col=   1, row=   6", x_one);                                                                           
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_one , x_tab, x_col, x_row);                                                        
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#
-#   COND       v21  move to a very large cell (catch column errors)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  move a cell                          LOC_move              2,  1,  6, 1, 54,551                                                    i_equal     0                                                                      
-#     exec     v21  create the label                     LOC_label             x_one, x_label                                                          i_equal     0                                                                      
-#     exec     v21  check the label                      LOC__unit_OLD         "loc_label"      , NULL                                                 s_equal     s_loc label      : 1bc552                                              
-#
-#   COND       v21  get a location                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  get the location                     LOC_parse             "1bc552", &x_tab, &x_col, &x_row, NULL                                  i_equal     0                                                                      
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=   1, col=  54, row= 551", x_one);                                                                           
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#     code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell location  : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_one , x_tab, x_col, x_row);                                                        
-#     get      v21  check the cell's location            CELL__unit            "cell_where",    x_one                                                  s_equal     [[ CUSTOM ]]                                                           
-#
-#   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
-#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-#
-#   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
-#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
-
-
-
-
-#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
-#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
 SCRP          v21  (gyges_loc) location validation and adaptation               LOC_legal                                                               ((02.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -1899,10 +1783,12 @@ SCRP          v21  (loc   ) tab setup and control                             
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (loc   ) verify the reading of tab records                   INPT_tab                                                                ((40.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (loc   ) verify tab, col, and row records                    INPT_tab, INPT_width, INPT_height                                       ((40.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+
+   GROUP      v21  test tab handling                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  review tab information (defaults)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  get tab info                         LOC__unit             "tab_info"     , "0a1"                                                  s_equal     LOC tab info (0) : tab_00       0a1     0a1     0a1     0z100   0      
@@ -2008,6 +1894,76 @@ SCRP          v21  (loc   ) verify the reading of tab records                 
    COND       v21  redo an existing tab                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  call the tab handler                 INPT_tab              "4t20"         , "else"                                                 i_equal     0                                                                      
      get      v21  get tab info                         LOC__unit             "tab_info"     , "4a1"                                                  s_equal     LOC tab info (4) : else         4a1     4a1     4a1     4t20    0      
+
+   GROUP      v21  test column handling                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  start simple                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "0a1"          , 5                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "0a1"                                                  s_equal     LOC col stats    : tab=   0, col=   0, width =   5, used=   0          
+
+   COND       v21  larger label and col                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "0f5"          , 12                                                     i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "0f5"                                                  s_equal     LOC col stats    : tab=   0, col=   5, width =  12, used=   0          
+
+   COND       v21  switch tabs                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "1t20"         , 30                                                     i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "1t20"                                                 s_equal     LOC col stats    : tab=   1, col=  19, width =  30, used=   0          
+
+   COND       v21  much bigger label                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "6z100"        , 25                                                     i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "6z100"                                                s_equal     LOC col stats    : tab=   6, col=  25, width =  25, used=   0          
+
+   COND       v21  switch an updated one                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "0a1"          , 6                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "0a1"                                                  s_equal     LOC col stats    : tab=   0, col=   0, width =   6, used=   0          
+
+   COND       v21  try to go too small                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "0c4"          , 2                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "0c4"                                                  s_equal     LOC col stats    : tab=   0, col=   2, width =   4, used=   0          
+
+   COND       v21  try to go negative                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "0d4"          , -1                                                     i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "0d4"                                                  s_equal     LOC col stats    : tab=   0, col=   3, width =   4, used=   0          
+
+   COND       v21  try to go too big                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_width            "0d4"          , 120                                                    i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_col"      , "0d4"                                                  s_equal     LOC col stats    : tab=   0, col=   3, width = 100, used=   0          
+
+   GROUP      v21  test row handling                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  start simple                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "0a1"          , 2                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "0a1"                                                  s_equal     LOC row stats    : tab=   0, row=   0, height=   2, used=   0          
+
+   COND       v21  larger label and row                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "0f5"          , 4                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "0f5"                                                  s_equal     LOC row stats    : tab=   0, row=   4, height=   4, used=   0          
+
+   COND       v21  switch tabs                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "1t20"         , 2                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "1t20"                                                 s_equal     LOC row stats    : tab=   1, row=  19, height=   2, used=   0          
+
+   COND       v21  much bigger label                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "6z100"        , 3                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "6z100"                                                s_equal     LOC row stats    : tab=   6, row=  99, height=   3, used=   0          
+
+   COND       v21  switch an updated one                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "0a1"          , 1                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "0a1"                                                  s_equal     LOC row stats    : tab=   0, row=   0, height=   1, used=   0          
+
+   COND       v21  try zero                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "6z100"        , 0                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "6z100"                                                s_equal     LOC row stats    : tab=   6, row=  99, height=   1, used=   0          
+
+   COND       v21  try too big                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "6z100"        , 6                                                      i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "6z100"                                                s_equal     LOC row stats    : tab=   6, row=  99, height=   4, used=   0          
+
+   COND       v21  try negative                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  call the tab handler                 INPT_height           "6z100"        , -2                                                     i_equal     0                                                                      
+     get      v21  get tab info                         LOC__unit             "loc_row"      , "6z100"                                                s_equal     LOC row stats    : tab=   6, row=  99, height=   1, used=   0          
+
+   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((40.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      

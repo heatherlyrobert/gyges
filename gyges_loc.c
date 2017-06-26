@@ -115,8 +115,8 @@ struct cTAB {
    short       froz_erow;                   /* bottom of frozen rows          */
    /*---(end)----------------------------*/
 };
-tTAB     s_tabs [MAX_TABS];
-tTAB    *p_tab;                        /* current tab pointer                 */
+static tTAB     s_tabs [MAX_TABS];
+static tTAB    *p_tab;                        /* current tab pointer                 */
 
 
 
@@ -1080,6 +1080,17 @@ LOC_row_height       (short a_tab, short a_row)
    char rc = LOC_row_valid (a_tab, a_row);
    if (rc < 0) return rc;
    return s_tabs [a_tab].rows [a_row].h;
+}
+
+char         /*--> change the row height -----------------[ stigma [ 3----- ]-*/
+LOC_row_heighten     (short a_tab, short a_row, short a_size)
+{
+   char rc = LOC_row_valid (a_tab, a_row);
+   if (rc < 0) return rc;
+   if (a_size  < MIN_HEIGHT)   a_size = MIN_HEIGHT;
+   if (a_size  > MAX_HEIGHT)   a_size = MAX_HEIGHT;
+   s_tabs [a_tab].rows [a_row].h = a_size;
+   return 0;
 }
 
 char         /*--> change the frozen rows ----------------[ stigma [ 3----- ]-*/

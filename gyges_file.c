@@ -848,6 +848,38 @@ INPT_width         (char *a_label, int a_size)
    return 0;
 }
 
+char         /*--> process a row height record -----------[ leaf   [ ------ ]-*/
+INPT_height        (char *a_label, int a_size)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         rc          = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
+   DEBUG_INPT  yLOG_value   ("a_size"    , a_size);
+   /*---(parse address)------------*/
+   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_INPT  yLOG_value   ("parse"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update size)--------------*/
+   rc = LOC_row_heighten   (x_tab, x_row, a_size);
+   DEBUG_INPT  yLOG_value   ("heighten"  , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /* file reading driver ----------------------[--------[--------]-*/
 INPT_read          (void)
 {
