@@ -1138,8 +1138,11 @@ LOC__unit          (char *a_question, char *a_label)
    if      (strcmp(a_question, "tab_info"      ) == 0) {
       snprintf(unit_answer, LEN_UNIT, "LOC tab info (%1d) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_tab, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
    }
-   else if (strcmp(a_question, "cell_size"    )  == 0) {
+   else if (strcmp(a_question, "cell_size"     ) == 0) {
       snprintf(unit_answer, LEN_UNIT, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
+   }
+   else if (strcmp(a_question, "loc_who"       )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "LOC occupant/who : ptr=%9p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 

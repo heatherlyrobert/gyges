@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2a"
-#define     VER_TXT   "totally isolated s_tab and sheet to LOC tab.  freaking painful"
+#define     VER_NUM   "2.2b"
+#define     VER_TXT   "LOC unit test for LOC_legal now expanded and updated"
 
 
 
