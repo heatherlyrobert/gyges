@@ -671,13 +671,16 @@ LOC_parse         (
    DEBUG_LOCS   yLOG_value   ("s_tab"     , s_tab);
    /*---(parse tab characters)-----------*/
    s_col = s_tab;
-   for (i = s_tab; i < s_tab + 2; ++i) {
+   for (i = s_tab; i < s_tab + 1; ++i) {
       DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
       if (strchr ("0123456789", a_label[i]) == 0)   break;
       if (i >  s_tab)  x_tab *= 10;
       x_tab += a_label[i] - '0';
       ++s_col;
    }
+   /*> printf ("x_tab = %d\n", x_tab);                                                <*/
+   --rce;  if (x_tab + 1 <  MIN_TABS)    return rce;
+   --rce;  if (x_tab + 1 >  MAX_TABS)    return rce;
    if (s_col == s_tab && x_abs == 4)  x_abs = 1;
    DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
    DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
@@ -707,6 +710,9 @@ LOC_parse         (
       return rce;
    }
    --x_col;
+   /*> printf ("x_col = %d\n", x_col);                                                <*/
+   --rce;  if (x_col + 1 <  MIN_COLS)    return rce;
+   --rce;  if (x_col + 1 >  MAX_COLS)    return rce;
    DEBUG_LOCS   yLOG_value   ("x_col fix" , x_col);
    if (a_col != NULL)  *a_col = x_col;
    /*---(look for absolute row)----------*/
@@ -736,6 +742,9 @@ LOC_parse         (
       return rce;
    }
    --x_row;
+   /*> printf ("x_row = %d\n", x_row);                                                <*/
+   --rce;  if (x_row + 1 <  MIN_ROWS)    return rce;
+   --rce;  if (x_row + 1 >  MAX_ROWS)    return rce;
    if (a_row != NULL)  *a_row = x_row;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -1118,13 +1127,14 @@ LOC__unit          (char *a_question, char *a_label)
    int         x_tab       =  0;
    int         x_col       =  0;
    int         x_row       =  0;
+   char        x_abs       =  0;
    char        x_beg       [LEN_LABEL]   = "";
    char        x_end       [LEN_LABEL]   = "";
    char        x_cur       [LEN_LABEL]   = "";
    char        x_max       [LEN_LABEL]   = "";
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "LOC              : label could not be parsed");
-   if (rc >= 0)  rc = LOC_parse  (a_label, &x_tab, &x_col, &x_row, NULL);
+   if (rc >= 0)  rc = LOC_parse  (a_label, &x_tab, &x_col, &x_row, &x_abs);
    if (rc <  0)  return unit_answer;
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "LOC              : locations could not be prepared");
