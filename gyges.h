@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2d"
-#define     VER_TXT   "LOC unit test for LOC_parse and ref are done, again"
+#define     VER_NUM   "2.2e"
+#define     VER_TXT   "LOC unit test for LOC_cell_at, LOC_label, LOC_coords good"
 
 
 

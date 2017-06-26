@@ -560,10 +560,11 @@ LOC_label         (
    char        label       [100]       = "";
    char        rce         = -10;           /* return code for errors         */
    char        rc          =   0;           /* return code                    */
-   /*---(defense: valid cell)------------*/
-   --rce;  if (a_cell  == NULL)             return rce;
    /*---(defense: valid output)----------*/
    --rce;  if (a_final == NULL)             return rce;
+   strlcpy (a_final, "((null))", LEN_LABEL);
+   /*---(defense: valid cell)------------*/
+   --rce;  if (a_cell  == NULL)             return rce;
    /*---(fiugure out reference)----------*/
    rc = LOC_ref (a_cell->tab, a_cell->col, a_cell->row, 0, a_final);
    --rce;  if (rc <  0)                     return rce;
