@@ -1142,7 +1142,13 @@ LOC__unit          (char *a_question, char *a_label)
       snprintf(unit_answer, LEN_UNIT, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
    }
    else if (strcmp(a_question, "loc_who"       )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "LOC occupant/who : ptr=%9p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);
+      snprintf (unit_answer, LEN_UNIT, "LOC occupant/who : ptr=%10p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);
+   }
+   else if (strcmp(a_question, "loc_col"       )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "LOC col stats    : tab=%4d, col=%4d, width =%4d, used=%4d", x_tab, x_col, s_tabs[x_tab].cols[x_col].w, s_tabs[x_tab].cols[x_col].c);
+   }
+   else if (strcmp(a_question, "loc_row"       )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
