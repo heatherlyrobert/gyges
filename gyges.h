@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2f"
-#define     VER_TXT   "LOC unit test added INPT_width and INPT_height to INPT_tab"
+#define     VER_NUM   "2.2g"
+#define     VER_TXT   "LOC unit test fixed CELL_merge given better return values"
 
 
 
@@ -181,6 +181,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     MAX_WIDTH   100
 #define     DEF_WIDTH   8
 #define     MIN_WIDTH   4
+#define     MAX_MERGE   10
 /*---(cell height)--------------------*/
 #define     MAX_HEIGHT  4
 #define     DEF_HEIGHT  1

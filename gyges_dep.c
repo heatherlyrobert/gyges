@@ -1466,7 +1466,7 @@ char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_ma
 /*====================------------------------------------====================*/
 PRIV void  o___MERGES__________o () { return; }
 
-tCELL*       /*--> find the merge source -----------------[--------[--------]-*/
+tCELL*       /*--> find the merge source -----------------[ petal  [--------]-*/
 DEP_merge_source   (tCELL *a_curr)
 {  /*---(design notes)--------------------------------------------------------*/
    /* identify the source of the current cells merge                          */

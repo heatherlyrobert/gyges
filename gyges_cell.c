@@ -1251,17 +1251,17 @@ CELL__merge_left     (tCELL *a_curr)
    /* if possible, merge with the cells to the left                           */
    /*---(locals)-----------+-----------+-*/
    tCELL      *x_left      = NULL;
-   tCELL      *x_save      = NULL;
+   /*> tCELL      *x_save      = NULL;                                                <*/
    int         i           = 0;
    /*---(defenses)-----------------------*/
    if (CELL__merge_valid (a_curr) < 0)  return a_curr;
    /*---(find real head)-----------------*/
-   x_save = a_curr;
+   /*> x_save = a_curr;                                                               <*/
    for (i = a_curr->col - 1; i >= 0; --i) {
       x_left  = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
-      if (x_left    == NULL)                      return x_save;
-      x_save = x_left;
-      if (x_left->l == 1 && x_left->s[0] == '<') continue;  /* should merge  */
+      if (x_left    == NULL)                      return NULL;
+      if (x_left->l == 1 && x_left->s[0] == '<')  continue;  /* should merge  */
+      /*> x_save = x_left;                                                            <*/
       break;
       /*> if (x_left    == NULL)                      return NULL;                     <* 
        *> if (x_left->a == '+' )                      continue;  /+ is merged     +/   <* 
@@ -1277,32 +1277,39 @@ CELL__merge_right    (tCELL *a_left)
 {  /*---(design notes)--------------------------------------------------------*/
    /* add all applicable cells to the right into the merge                    */
    /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
+   char        rce         =  -10;
+   char        rc          =    0;
    tCELL      *x_right     = NULL;
    tCELL      *x_merged    = NULL;
-   int         i           = 0;
+   int         i           =    0;
+   int         c           =    0;
+   /*---(header)-------------------------*/
    /*---(defenses)-----------------------*/
    --rce;  if (a_left == NULL)  return rce;
    /*---(merge)--------------------------*/
-   for (i = a_left->col + 1; i <  NCOL; ++i) {
+   for (i = 1; i <= MAX_MERGE; ++i) {
       /*---(get next)--------------------*/
-      x_right = LOC_cell_at_loc (a_left->tab, i, a_left->row);
+      x_right = LOC_cell_at_loc (a_left->tab, a_left->col + i, a_left->row);
       /*---(filter)----------------------*/
-      if (CELL__merge_valid (x_right) < 0)  return 0;
+      if (CELL__merge_valid (x_right) < 0)  return c;
+      ++c;
       /*---(label)-----------------------*/
       x_right->t = CTYPE_MERGE;
       x_right->f = '+';
       x_right->a = '+';
-      /*---(merge)-----------------------*/
-      if (x_right->a == '+' ) {
-         x_merged = DEP_merge_source (x_right);
+      /*---(check existing)--------------*/
+      x_merged = DEP_merge_source (x_right);
+      if (x_merged != NULL) {
          if (x_merged == a_left)                 continue; /* already correct */
-         DEP_delete (G_DEP_MERGED, x_merged, x_right);
+         rc = DEP_delete (G_DEP_MERGED, x_merged, x_right);
+         --rce;  if (rc < 0)  return rce;
       }
-      DEP_create (G_DEP_MERGED, a_left, x_right);
+      /*---(new merge)-------------------*/
+      rc = DEP_create (G_DEP_MERGED, a_left, x_right);
+      --rce;  if (rc < 0)  return rce;
    }
    /*---(complete)-----------------------*/
-   return 0;
+   return c;
 }
 
 char         /*--> remove merges to right ----------------[--------[--------]-*/
@@ -1349,7 +1356,7 @@ CELL_merge           (tCELL *a_curr)
    /*---(look left)----------------------*/
    x_left = CELL__merge_left (a_curr);
    /*---(check for broken merge)---------*/
-   if (CELL__merge_valid (x_left) >= 0) {
+   if (x_left == NULL && CELL__merge_valid (a_curr) >= 0) {
       x_left->t = CTYPE_STR;
       x_left->f = '?';
       x_left->a = '<';
