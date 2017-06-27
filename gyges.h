@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2g"
-#define     VER_TXT   "LOC unit test fixed CELL_merge given better return values"
+#define     VER_NUM   "2.2h"
+#define     VER_TXT   "DEP unit test all fixed including merges"
 
 
 

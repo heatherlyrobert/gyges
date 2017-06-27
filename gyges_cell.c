@@ -1317,31 +1317,55 @@ CELL__unmerge_right  (tCELL *a_left)
 {  /*---(design notes)--------------------------------------------------------*/
    /* remove merge from all applicable cells to the right                     */
    /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
+   char        rce         =  -10;
+   char        rc          =    0;
    tCELL      *x_right     = NULL;
    tCELL      *x_merged    = NULL;
-   int         i           = 0;
+   int         i           =    0;
+   /*---(header)-----------------------------*/
+   DEBUG_CELL  yLOG_enter  (__FUNCTION__);
+   DEBUG_CELL  yLOG_point  ("a_left"    , a_left);
    /*---(defenses)-----------------------*/
-   --rce;  if (a_left == NULL)  return rce;
+   --rce;  if (a_left == NULL) {
+      DEBUG_CELL  yLOG_exitr  (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(merge)--------------------------*/
-   for (i = a_left->col + 1; i <  NCOL; ++i) {
+   for (i = 1; i < MAX_MERGE; ++i) {
+      DEBUG_CELL  yLOG_value  ("i"         , i);
       /*---(get next)--------------------*/
-      x_right = LOC_cell_at_loc (a_left->tab, i, a_left->row);
+      x_right = LOC_cell_at_loc (a_left->tab, a_left->col + i, a_left->row);
+      DEBUG_CELL  yLOG_point  ("x_right"   , x_right);
+      if (x_right == NULL) {
+         DEBUG_CELL  yLOG_exit   (__FUNCTION__);
+         return 0;
+      }
       /*---(filter)----------------------*/
-      if (CELL__merge_valid (x_right) < 0)  return 0;
+      rc = CELL__merge_valid (x_right);
+      DEBUG_CELL  yLOG_value  ("valid_rc"  , rc);
+      if (rc < 0) {
+         DEBUG_CELL  yLOG_exit   (__FUNCTION__);
+         return 0;
+      }
       /*---(label)-----------------------*/
+      DEBUG_CELL  yLOG_note   ("turn into string");
       x_right->t = CTYPE_STR;
       x_right->f = '?';
       x_right->a = '<';
       /*---(unmerge)---------------------*/
       x_merged = DEP_merge_source (x_right);
+      DEBUG_CELL  yLOG_point  ("x_merged"  , x_merged);
       if (x_merged != NULL) {
-         DEP_delete (G_DEP_MERGED, x_merged, x_right);
+         rc = DEP_delete (G_DEP_MERGED, x_merged, x_right);
+         DEBUG_CELL  yLOG_value  ("dep_rc"    , rc);
       }
       /*---(reprint)---------------------*/
-      CELL_printable (x_right);  /* with no dependency now, not automatic */
+      rc = CELL_printable (x_right);  /* with no dependency now, not automatic */
+      DEBUG_CELL  yLOG_value  ("print_rc"  , rc);
    }
+   DEBUG_CELL  yLOG_note   ("done with loop");
    /*---(complete)-----------------------*/
+   DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
 }
 
@@ -1356,12 +1380,17 @@ CELL_merge           (tCELL *a_curr)
    /*---(look left)----------------------*/
    x_left = CELL__merge_left (a_curr);
    /*---(check for broken merge)---------*/
-   if (x_left == NULL && CELL__merge_valid (a_curr) >= 0) {
-      x_left->t = CTYPE_STR;
-      x_left->f = '?';
-      x_left->a = '<';
-      CELL__unmerge_right (x_left);
-      return 0;
+   --rce;  if (x_left == NULL) {
+      rc = CELL__merge_valid (a_curr);
+      if (rc >=  0) {
+         a_curr->t = CTYPE_STR;
+         a_curr->f = '?';
+         a_curr->a = '<';
+         rc = CELL__unmerge_right (a_curr);
+         if (rc < 0)  return rce;
+         return rce + 1;
+      }
+      x_left = a_curr;
    }
    /*---(merge right)--------------------*/
    rc = CELL__merge_right (x_left);
