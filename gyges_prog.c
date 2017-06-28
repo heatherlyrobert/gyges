@@ -270,7 +270,7 @@ PROG_layout_list    (char *a_who)
    char        x_save      [LEN_LABEL] = "";
    char        x_cli       [LEN_DESC];
    char        x_cmd       [LEN_DESC];
-   char       *x_title     = "   ---option-----------  ---command----------  ---description--------------------------";
+   char       *x_title     = "   ---option-----------  ---command----------  ---description------------------------";
    /*---(defense)------------------------*/
    if (a_who == NULL)  return -1;
    if (strcmp (a_who, "cmd") == 0) {

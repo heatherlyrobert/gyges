@@ -287,7 +287,7 @@ CELL__purge        (void)
       DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
       rc = LOC_unhook   (curr);
       DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
-      rc = CELL__free    (curr, LINKED);
+      rc = CELL__free    (&curr, LINKED);
       DEBUG_CELL   yLOG_value   ("free rc"   , rc);
       DEBUG_CELL   yLOG_point   ("next"      , next);
    }
@@ -321,84 +321,100 @@ CELL_wrap          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___BASICS__________o () { return; }
 
-tCELL*       /*> create a new free-floating cell ---------[ leaf   [ ------ ]-*/
-CELL__new          (char a_linked)     /* cell goes into the linked list ?    */
+char         /*--> create a single new empty cell --------[ pistil [ 2c---- ]-*/
+CELL__new          (tCELL **a_cell, char a_linked)
 {
-   /*---(notes)--------------------------*/
-   /*
-    *   this function allocates and initializes a new cell
-    *   as well as places it into the cell linked list (normal)
-    *   unless requested to leave it out (exception only).
-    */
    /*---(locals)-----------+-----------+-*/
-   tCELL      *x_curr      = NULL;
-   int         x_tries     = 0;
+   char        rce         =  -10;
+   int         x_tries     =    0;
    /*---(begin)--------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   DEBUG_CELL   yLOG_value   ("a_linked"  , a_linked);
+   /*---(defense)------------------------*/
+   DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL) {
+      DEBUG_CELL   yLOG_note    ("pointer can not be null (no point)");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_CELL   yLOG_point   ("*a_cell"   , *a_cell);
+   --rce;  if (*a_cell != NULL) {
+      DEBUG_CELL   yLOG_note    ("cell pointer already contains a value");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(create cell)--------------------*/
-   while (x_curr == NULL) {
+   while (*a_cell == NULL) {
       ++x_tries;
-      x_curr = (tCELL *) malloc (sizeof (tCELL));
-      if (x_tries > 10)   return NULL;
+      *a_cell = (tCELL *) malloc (sizeof (tCELL));
+      if (x_tries > 10)   break;
+   }
+   DEBUG_CELL   yLOG_value   ("x_tries"   , x_tries);
+   DEBUG_CELL   yLOG_point   ("*a_cell"   , *a_cell);
+   --rce;  if (*a_cell == NULL) {
+      DEBUG_CELL   yLOG_note    ("cell could not be created");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    ++ACEL;
    DEBUG_CELL   yLOG_value   ("ACEL"      , ACEL);
    /*---(into linked list)---------------*/
-   x_curr->linked  = a_linked;
-   x_curr->next    = NULL;
-   x_curr->prev    = NULL;
+   DEBUG_CELL   yLOG_value   ("a_linked"  , a_linked);
+   (*a_cell)->linked  = a_linked;
+   (*a_cell)->next    = NULL;
+   (*a_cell)->prev    = NULL;
    if (a_linked != UNLINKED) {
-      x_curr->linked  = LINKED;
+      (*a_cell)->linked  = LINKED;
       if (tcell == NULL) {
-         hcell        = x_curr;
-         tcell        = x_curr;
+         hcell           = *a_cell;
+         tcell           = *a_cell;
       } else {
-         x_curr->prev = tcell;
-         x_curr->next = NULL;
-         tcell->next  = x_curr;
-         tcell        = x_curr;
+         (*a_cell)->prev = tcell;
+         (*a_cell)->next = NULL;
+         tcell->next     = *a_cell;
+         tcell           = *a_cell;
       }
       ++NCEL;
    }
    DEBUG_CELL   yLOG_value   ("NCEL"      , NCEL);
    /*---(location)-----------------------*/
-   x_curr->tab       = UNHOOKED;
-   x_curr->col       = UNHOOKED;
-   x_curr->row       = UNHOOKED;
-   strcpy (x_curr->label, "tbd");
+   DEBUG_CELL   yLOG_note    ("assign default values/init");
+   (*a_cell)->tab       = UNHOOKED;
+   (*a_cell)->col       = UNHOOKED;
+   (*a_cell)->row       = UNHOOKED;
+   strcpy ((*a_cell)->label, "tbd");
    /*---(source)------------------------*/
-   x_curr->s         = NULL;
-   x_curr->l         = 0;
+   (*a_cell)->s         = NULL;
+   (*a_cell)->l         = 0;
    /*---(results)-----------------------*/
-   x_curr->t         = '-';
-   x_curr->v_num     = 0.0;
-   x_curr->v_str     = NULL;
+   (*a_cell)->t         = '-';
+   (*a_cell)->v_num     = 0.0;
+   (*a_cell)->v_str     = NULL;
    /*---(formatting)--------------------*/
-   x_curr->a         = '?';
-   x_curr->d         = '0';
-   x_curr->f         = '?';
-   x_curr->p         = NULL;
-   x_curr->n         = '-';
+   (*a_cell)->a         = '?';
+   (*a_cell)->d         = '0';
+   (*a_cell)->f         = '?';
+   (*a_cell)->p         = NULL;
+   (*a_cell)->n         = '-';
    /*---(calculations)-------------------*/
-   x_curr->rpn       = NULL;
-   x_curr->nrpn      = 0;
-   x_curr->calc      = NULL;
-   x_curr->clevel    = -1;
-   x_curr->cprev     = NULL;
-   x_curr->cnext     = NULL;
+   (*a_cell)->rpn       = NULL;
+   (*a_cell)->nrpn      = 0;
+   (*a_cell)->calc      = NULL;
+   (*a_cell)->clevel    = -1;
+   (*a_cell)->cprev     = NULL;
+   (*a_cell)->cnext     = NULL;
    /*---(dependencies)-------------------*/
-   x_curr->requires  = NULL;
-   x_curr->nrequire  = 0;
-   x_curr->provides  = NULL;
-   x_curr->nprovide  = 0;
-   x_curr->u         = 0;
+   (*a_cell)->requires  = NULL;
+   (*a_cell)->nrequire  = 0;
+   (*a_cell)->provides  = NULL;
+   (*a_cell)->nprovide  = 0;
+   (*a_cell)->u         = 0;
    /*---(errors)-------------------------*/
-   x_curr->nerror    = 0;
-   x_curr->errors    = NULL;
+   (*a_cell)->nerror    = 0;
+   (*a_cell)->errors    = NULL;
+   DEBUG_CELL   yLOG_note    ("successful");
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-   return x_curr;
+   return 0;
 }
 
 char       /*LG--: wipe the contents of a cell -------------------------------*/
@@ -471,66 +487,88 @@ CELL__valid        (tCELL *a_cell, char a_linked)
     *
     */
    /*---(static locals)----+-----------+-*/
-   static      tCELL      *x_curr      = NULL;
-   static      int         found       =  -1;
+   static      tCELL      *x_save      = NULL;
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
    int         i           =   0;           /* iterator -- cell               */
-   /*---(quick path: already found)------*/
-   if  (a_cell == x_curr) {
-      if (found == 0)  found = 1;
-      return found;
-   }
-   /*---(defense: null pointer)----------*/
-   --rce;
-   if (a_cell == NULL) {
-      found = rce;
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_senter  (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_CELL   yLOG_spoint  (a_cell);
+   --rce;  if (a_cell == NULL) {
+      DEBUG_CELL   yLOG_snote   ("null cell");
+      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   /*---(find cell by pointer)-----------*/
-   if (a_linked == UNLINKED) {
-      found = 0;
-   } else {
-      found   = -1;
-      x_curr  = hcell;
-      --rce;
-      for (i = 0; i < NCEL; ++i) {
-         if (x_curr == NULL) {
-            found = rce;
-            break;
-         }
-         if (x_curr == a_cell) {
-            found = 0;
-            break;
-         }
-         x_curr = x_curr->next;
-      }
+   /*---(quick path: already found)------*/
+   DEBUG_CELL   yLOG_spoint  (x_save);
+   if  (a_cell == x_save) {
+      DEBUG_CELL   yLOG_snote   ("quick path");
+      DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
+      return 1;
    }
+   /*---(check for unlinked)-------------*/
+   DEBUG_CELL   yLOG_schar   (a_linked);
+   if (a_linked == UNLINKED) {
+      DEBUG_CELL   yLOG_snote   ("can not verify unlinked");
+      DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
+      return 0;
+   }
+   /*---(find cell by pointer)-----------*/
+   DEBUG_CELL   yLOG_snote   ("search");
+   x_save  = hcell;
+   while (x_save != NULL) {
+      if (a_cell == x_save) {
+         DEBUG_CELL   yLOG_snote   ("found");
+         DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
+         return 0;
+      }
+      x_save = x_save->next;
+   }
+   DEBUG_CELL   yLOG_snote   ("NOT found");
+   --rce;
    /*---(complete)-----------------------*/
-   return found;
+   DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
+   return rce;
 }
 
 char         /*> remove a cell completely ----------------[ ------ [ ------ ]-*/
-CELL__free         (tCELL *a_cell, char a_linked)
+CELL__free         (tCELL **a_cell, char a_linked)
 {
-   /*---(locals)-----------+--------+-*/
-   char        rce         = -10;
-   /*---(defense: valid cell)---------*/
-   --rce;
-   if (CELL__valid (a_cell, a_linked) < 0)        return rce;
-   /*---(into linked list)---------------*/
-   if (a_cell->linked == LINKED) {
-      if (a_cell->next != NULL)   a_cell->next->prev = a_cell->prev;
-      else                        tcell              = a_cell->prev;
-      if (a_cell->prev != NULL)   a_cell->prev->next = a_cell->next;
-      else                        hcell              = a_cell->next;
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(defense: valid cell)------------*/
+   DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL) {
+      DEBUG_CELL   yLOG_note    ("no null pointers (no poin)");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_CELL   yLOG_point   ("*a_cell"   , *a_cell);
+   rc = CELL__valid (*a_cell, a_linked);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(out of linked list)-------------*/
+   if ((*a_cell)->linked == LINKED) {
+      DEBUG_CELL   yLOG_note    ("linked cell, unlinking now");
+      if ((*a_cell)->next != NULL)   (*a_cell)->next->prev = (*a_cell)->prev;
+      else                           tcell                 = (*a_cell)->prev;
+      if ((*a_cell)->prev != NULL)   (*a_cell)->prev->next = (*a_cell)->next;
+      else                           hcell                 = (*a_cell)->next;
       --NCEL;
    }
    /*---(free main)----------------------*/
-   free (a_cell);
-   a_cell = NULL;
+   DEBUG_CELL   yLOG_note    ("freeing and nulling");
+   free (*a_cell);
+   *a_cell = NULL;
    --ACEL;
    /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -578,7 +616,7 @@ PRIV void  o___SETUP___________o () { return; }
 char         /*> delete a register cell ------------------[--------[--------]-*/
 CELL_regdel        (tCELL *a_curr)
 {
-   CELL__free (a_curr, LINKED);
+   CELL__free (&a_curr, LINKED);
    return 0;
 }
 
@@ -589,20 +627,21 @@ CELL_regdel        (tCELL *a_curr)
 /*====================------------------------------------====================*/
 PRIV void  o___EXISTANCE_______o () { return; }
 
-tCELL*
-CELL__create       (int a_tab, int a_col, int a_row)
+char
+CELL__create       (tCELL *a_cell, int a_tab, int a_col, int a_row)
 {
-   /*---(defenses)-----------------------*/
-   if (LOC_legal (a_tab, a_col, a_row, CELL_GROW) != 0)  return NULL;
    /*---(locals)----------------------*/
-   tCELL    *curr      = NULL;
+   char        rc          =    0;
+   /*---(defenses)-----------------------*/
+   rc = LOC_legal (a_tab, a_col, a_row, CELL_GROW);
+   if (rc != 0)  return NULL;
    /*---(create cell)-----------------*/
-   curr       = CELL__new (LINKED);
-   if (curr == NULL)    return NULL;
+   rc = CELL__new (&a_cell, LINKED);
+   if (a_cell == NULL)    return NULL;
    /*---(clear it out)----------------*/
-   LOC_hook     (curr, a_tab, a_col, a_row);
+   rc = LOC_hook  (a_cell, a_tab, a_col, a_row);
    /*---(complete)--------------------*/
-   return curr;
+   return 0;
 }
 
 char
@@ -660,7 +699,7 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
       rc = LOC_unhook  (curr);
       DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
       if (rc < 0)          return rce;
-      rc = CELL__free   (curr, LINKED);
+      rc = CELL__free   (&curr, LINKED);
       DEBUG_CELL   yLOG_value   ("free rc"   , rc);
       if (rc < 0)          return rce - 1;
    } else {
@@ -681,7 +720,8 @@ CELL_dup           (tCELL *a_old)
    /*---(defenses)-----------------------*/
    if (a_old  == NULL)                 return NULL; /* nothing to move */
    /*---(clear it out)-------------------*/
-   tCELL   *new = CELL__new (LINKED);
+   tCELL   *new = NULL;
+   CELL__new (&new , LINKED);
    if (new == NULL)                    return NULL;
    /*---(copy source)--------------------*/
    if (a_old->s == NULL)    new->s = NULL;
@@ -762,7 +802,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       DEBUG_CELL   yLOG_point   ("curr now"  , curr);
    }
    if (curr == NULL) {
-      curr = CELL__create (a_tab, a_col, a_row);
+      rc = CELL__create (curr, a_tab, a_col, a_row);
       DEBUG_CELL   yLOG_point   ("new cell"  , curr);
       if (curr == NULL) {
          DEBUG_CELL   yLOG_value   ("FAILED"    , rce);
@@ -2388,7 +2428,7 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "cell_where")    == 0) {
       if (x_found == 'y')  snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
-      else                 snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10s, tab=%4d, col=%4d, row=%4d", "not-exist"  , -10        , -10        , -10        );
+      else                 snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, -10        , -10        , -10        );
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
       snprintf(unit_answer, LEN_UNIT, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);

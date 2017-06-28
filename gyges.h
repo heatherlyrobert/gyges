@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2h"
-#define     VER_TXT   "DEP unit test all fixed including merges"
+#define     VER_NUM   "2.2i"
+#define     VER_TXT   "CELL unit test revamped cell creation and destruction"
 
 
 
@@ -475,8 +475,8 @@ int         acell;           /* count of all cells                            */
  *   data structure with the following two constants.
  *
  */
-#define     LINKED       1
-#define     UNLINKED     0
+#define     LINKED       'y'
+#define     UNLINKED     '-'
 
 #define     UNHOOKED    -1
 
@@ -1068,11 +1068,12 @@ char     *DEP_unit           (char *a_question, char *a_label);
 
 
 /*---(basics)----------------------------*/
-tCELL    *CELL__new          /* ------ */  (char a_linked);
-char      CELL__valid        /* ------ */  (tCELL *a_cell, char a_linked);
-char      CELL__free         /* ------ */  (tCELL *a_cell, char a_linked);
+/*345678901-12345678901234567890->--------------------------------------------*/
+char        CELL__new            /* ------ */  (tCELL **a_cell, char a_linked);
+char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
+char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
 
-char      CELL_regdel        (tCELL *a_curr);
+char        CELL_regdel        (tCELL *a_curr);
 
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(merge-specific)-----------------*/
@@ -1167,7 +1168,7 @@ char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 #define   CELL_GROW          'y'
 #define   CELL_EXACT         'e'
 
-tCELL    *CELL__create       (int  a_tab, int  a_col, int  a_row);
+char      CELL__create       (tCELL *a_cell, int  a_tab, int  a_col, int  a_row);
 char      CELL__delete       (char a_mode, int  a_tab, int  a_col, int  a_row);
 
 

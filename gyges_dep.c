@@ -226,7 +226,7 @@ DEP_init           (void)
    int         x_pros      = 0;
    int         t           [5];
    /*---(root tree)----------------------*/
-   s_root = CELL__new (UNLINKED);
+   CELL__new (&s_root, UNLINKED);
    --rce;  if (s_root == NULL) {
       return rce;
    }
@@ -317,7 +317,7 @@ DEP_wrap           (void)
    DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(dependencies)-------------------*/
    DEP__purge ();
-   CELL__free (s_root, UNLINKED);
+   CELL__free (&s_root, UNLINKED);
    s_hdep  = NULL;
    s_tdep  = NULL;
    s_ndep   = 0;
