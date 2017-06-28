@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2i"
-#define     VER_TXT   "CELL unit test revamped cell creation and destruction"
+#define     VER_NUM   "2.2j"
+#define     VER_TXT   "CELL and CALC unit tests back working again"
 
 
 
@@ -1066,13 +1066,6 @@ char      DEP_writescreen    (void);
 char     *DEP_unit           (char *a_question, char *a_label);
 
 
-
-/*---(basics)----------------------------*/
-/*345678901-12345678901234567890->--------------------------------------------*/
-char        CELL__new            /* ------ */  (tCELL **a_cell, char a_linked);
-char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
-char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
-
 char        CELL_regdel        (tCELL *a_curr);
 
 /*345678901-12345678901234567890->--------------------------------------------*/
@@ -1168,8 +1161,18 @@ char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 #define   CELL_GROW          'y'
 #define   CELL_EXACT         'e'
 
-char      CELL__create       (tCELL *a_cell, int  a_tab, int  a_col, int  a_row);
-char      CELL__delete       (char a_mode, int  a_tab, int  a_col, int  a_row);
+
+
+/*---(basics)----------------------------*/
+char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
+/*345678901-12345678901234567890->--------------------------------------------*/
+/*---(memory)----------------------------*/
+char        CELL__new            /* ------ */  (tCELL **a_cell, char a_linked);
+char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
+char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
+char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
+
+char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_col, int  a_row);
 
 
 #define   CHG_INPUT          'i'
@@ -1178,7 +1181,6 @@ char      CELL__delete       (char a_mode, int  a_tab, int  a_col, int  a_row);
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
-tCELL    *CELL_dup           (tCELL* a_old);
 tCELL    *CELL_change        (char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
 tCELL    *CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 

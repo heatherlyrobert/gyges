@@ -628,24 +628,26 @@ CELL_regdel        (tCELL *a_curr)
 PRIV void  o___EXISTANCE_______o () { return; }
 
 char
-CELL__create       (tCELL *a_cell, int a_tab, int a_col, int a_row)
+CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
 {
    /*---(locals)----------------------*/
+   char        rce         =  -10;
    char        rc          =    0;
    /*---(defenses)-----------------------*/
    rc = LOC_legal (a_tab, a_col, a_row, CELL_GROW);
-   if (rc != 0)  return NULL;
+   --rce;  if (rc <  0)  return rce;
    /*---(create cell)-----------------*/
-   rc = CELL__new (&a_cell, LINKED);
-   if (a_cell == NULL)    return NULL;
+   rc = CELL__new (a_cell, LINKED);
+   --rce;  if (rc <  0)  return rce;
    /*---(clear it out)----------------*/
-   rc = LOC_hook  (a_cell, a_tab, a_col, a_row);
+   rc = LOC_hook  (*a_cell, a_tab, a_col, a_row);
+   --rce;  if (rc <  0)  return rce;
    /*---(complete)--------------------*/
    return 0;
 }
 
 char
-CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
+CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -714,25 +716,28 @@ CELL__delete       (char a_mode, int a_tab, int a_col, int a_row)
    return 0;
 }
 
-tCELL*       /*> create a duplicate locationless cell ----[ ------ [ ------ ]-*/
-CELL_dup           (tCELL *a_old)
+char         /*> create a duplicate locationless cell ----[ ------ [ ------ ]-*/
+CELL_dup           (tCELL **a_new, tCELL *a_old)
 {
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
    /*---(defenses)-----------------------*/
-   if (a_old  == NULL)                 return NULL; /* nothing to move */
+   --rce;  if (a_new  == NULL)           return rce; /* nothing to move */
+   --rce;  if (*a_new != NULL)           return rce; /* nothing to move */
+   --rce;  if (a_old  == NULL)           return rce; /* nothing to move */
    /*---(clear it out)-------------------*/
-   tCELL   *new = NULL;
-   CELL__new (&new , LINKED);
-   if (new == NULL)                    return NULL;
+   CELL__new (a_new , LINKED);
+   --rce;  if (*a_new == NULL)           return rce;
    /*---(copy source)--------------------*/
-   if (a_old->s == NULL)    new->s = NULL;
-   else                     new->s = strndup (a_old->s, LEN_RECD);
-   new->l        = a_old->l;
+   if (a_old->s == NULL)    (*a_new)->s = NULL;
+   else                     (*a_new)->s = strndup (a_old->s, LEN_RECD);
+   (*a_new)->l        = a_old->l;
    /*---(copy formatting)----------------*/
-   new->a        = a_old->a;
-   new->d        = a_old->d;
-   new->f        = a_old->f;
+   (*a_new)->a        = a_old->a;
+   (*a_new)->d        = a_old->d;
+   (*a_new)->f        = a_old->f;
    /*---(complete)-----------------------*/
-   return  new;
+   return  0;
 }
 
 char      xlabel    [200] = "";
@@ -802,7 +807,7 @@ CELL_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       DEBUG_CELL   yLOG_point   ("curr now"  , curr);
    }
    if (curr == NULL) {
-      rc = CELL__create (curr, a_tab, a_col, a_row);
+      rc = CELL__create (&curr, a_tab, a_col, a_row);
       DEBUG_CELL   yLOG_point   ("new cell"  , curr);
       if (curr == NULL) {
          DEBUG_CELL   yLOG_value   ("FAILED"    , rce);
@@ -1550,8 +1555,8 @@ CELL_erase         (void)
    /*---(process independent cells)----------*/
    x_next = VISU_first(NULL, &x_col, &x_row);
    do {
-      if (x_count == 0)  CELL__delete (CHG_INPUT   , CTAB, x_col, x_row);
-      else               CELL__delete (CHG_INPUTAND, CTAB, x_col, x_row);
+      if (x_count == 0)  CELL_delete (CHG_INPUT   , CTAB, x_col, x_row);
+      else               CELL_delete (CHG_INPUTAND, CTAB, x_col, x_row);
       /*> CELL_printable (x_next);                                                      <*/
       ++x_count;
       x_next  = VISU_next(NULL, &x_col, &x_row);

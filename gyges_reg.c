@@ -496,8 +496,8 @@ REG_deps           (tCELL *a_curr, long a_stamp)
    rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);
    --rce;  if (rc == 0)                  return rce;
    /*---(make a copy)--------------------*/
-   x_copy = CELL_dup (a_curr);
-   --rce;  if (x_copy == NULL)           return rce;
+   rc = CELL_dup (&x_copy, a_curr);
+   --rce;  if (rc < 0 )                  return rce;
    /*---(move in critical data)----------*/
    strcpy (x_copy->label, a_curr->label);
    x_copy->t   = a_curr->t;
@@ -686,7 +686,7 @@ REG_save           (char a_type)
        *>    continue;                                                                    <* 
        *> }                                                                               <*/
       ++x_processed;
-      x_copy = CELL_dup (curr);
+      rc = CELL_dup (&x_copy, curr);
       strcpy (x_copy->label, curr->label);
       x_copy->t   = curr->t;
       x_copy->f   = curr->f;
@@ -718,8 +718,8 @@ REG_save           (char a_type)
          }
          curr = LOC_cell_at_loc (x_tab, x_col, x_row);
          DEBUG_REGS   yLOG_complex ("erasing"   , "idx=%4d, ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", i, curr, x_tab, x_col, x_row, curr->t, curr->u);
-         if (x_count == 0)  rc = CELL__delete (CHG_INPUT   , x_tab, x_col, x_row);
-         else               rc = CELL__delete (CHG_INPUTAND, x_tab, x_col, x_row);
+         if (x_count == 0)  rc = CELL_delete (CHG_INPUT   , x_tab, x_col, x_row);
+         else               rc = CELL_delete (CHG_INPUTAND, x_tab, x_col, x_row);
          if (rc < 0) {
             DEBUG_REGS   yLOG_value   ("CELL_delet", rc);
             DEBUG_REGS   yLOG_exit    (__FUNCTION__);

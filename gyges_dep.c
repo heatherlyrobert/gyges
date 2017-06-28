@@ -1169,7 +1169,7 @@ DEP_delete        (
       }
    } else if (a_target->t == '-') {
       DEBUG_DEPS   yLOG_note    ("target is a zombie and not required, delete");
-      rc = CELL__delete (CHG_NOHIST, a_target->tab, a_target->col, a_target->row);
+      rc = CELL_delete (CHG_NOHIST, a_target->tab, a_target->col, a_target->row);
       if (rc != 0) {
          DEBUG_DEPS   yLOG_note    ("target could not be properly deleted");
          DEBUG_DEPS   yLOG_exit    (__FUNCTION__);

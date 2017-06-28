@@ -355,7 +355,7 @@ LOC_move           (
    target      = s_tabs[a_ttab].sheet[a_tcol][a_trow];
    /*---(overwrite as necessary)---------*/
    if (target  != NULL) {
-      CELL__delete (CHG_NOHIST, a_ttab, a_tcol, a_trow);
+      CELL_delete (CHG_NOHIST, a_ttab, a_tcol, a_trow);
    }
    /*---(set location)-------------------*/
    if (source != NULL) {
