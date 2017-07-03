@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2k"
-#define     VER_TXT   "broke out all numeric recognition and tested like crazy"
+#define     VER_NUM   "2.2l"
+#define     VER_TXT   "broke out all formula recognition and tested like crazy"
 
 
 
@@ -1193,6 +1193,11 @@ char      CELL__hex          (char *a_text, double *a_value);
 char      CELL__float        (char *a_text, double *a_value);
 char      CELL__numerics     (tCELL *a_cell);
 
+char      CELL__rpn          (tCELL *a_cell);
+char      CELL__build        (tCELL *a_cell);
+char      CELL__like         (tCELL *a_cell);
+char      CELL__point        (tCELL *a_cell);
+char      CELL__eval         (tCELL *a_cell);
 char      CELL__formulas     (tCELL *a_cell);
 
 char      CELL__ftype        (char a_prefix);

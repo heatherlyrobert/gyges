@@ -1211,6 +1211,7 @@ CELL__numerics     (tCELL *a_cell)
    /*---(header)-------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);
+   a_cell->v_num = x_value;
    /*---(defense)------------------------*/
    DEBUG_CELL   yLOG_value   ("l"         , a_cell->l);
    DEBUG_CELL   yLOG_char    ("s [0]"     , a_cell->s [0]);
@@ -1243,10 +1244,8 @@ CELL__numerics     (tCELL *a_cell)
       rc = CELL__float   (a_cell->s, &x_value);
    }
    /*---(judge outcome)------------------*/
-   if (rc >= 0) {
-      a_cell->t     = CTYPE_NUM;
-      a_cell->v_num = x_value;
-   }
+   if (rc >= 0)  a_cell->t     = CTYPE_NUM;
+   a_cell->v_num = x_value;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1259,6 +1258,145 @@ CELL__numerics     (tCELL *a_cell)
 /*====================------------------------------------====================*/
 PRIV void  o___FORMULAS________o () { return; }
 
+char         /*-> build any/all formulas ------------------[ petal  [ 1c---- ]*/
+CELL__rpn          (tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_type      =  '-';
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(set type)-----------------------*/
+   x_type = a_cell->s [0];
+   DEBUG_CELL   yLOG_char    ("s [0]"     , x_type);
+   a_cell->t = CELL__ftype (x_type);
+   DEBUG_CELL   yLOG_char    ("ftype"     , a_cell->t);
+   /*---(tighten)------------------------*/
+   strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
+   DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
+   a_cell->l = strlen  (a_cell->s);
+   DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
+   /*---(rpn)----------------------------*/
+   rc = RPN_convert (a_cell);
+   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   /*---(troubles)-----------------------*/
+   --rce;  if (rc <  0) {
+      DEBUG_CELL   yLOG_note    ("failed");
+      a_cell->t     = CTYPE_ERROR;
+      a_cell->v_str = strndup ("#.rpn", LEN_RECD);
+      CALC_free   (a_cell);
+      DEP_cleanse (a_cell);
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_CELL   yLOG_info    ("rpn"       , a_cell->rpn);
+   /*---(complete)----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> build any/all formulas ------------------[ petal  [ 1c---- ]*/
+CELL__build        (tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(calc)---------------------------*/
+   rc = CALC_build  (a_cell);
+   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   /*---(troubles)-----------------------*/
+   --rce;  if (rc <  0) {
+      DEBUG_CELL   yLOG_note    ("failed");
+      a_cell->t     = CTYPE_ERROR;
+      a_cell->v_str = strndup ("#.build", LEN_RECD);
+      CALC_free   (a_cell);
+      DEP_cleanse (a_cell);
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char         /*-> build any/all formulas ------------------[ petal  [ 1c---- ]*/
+CELL__like         (tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   short       x_tab       =    0;
+   short       x_col       =    0;
+   short       x_row       =    0;
+   tCELL      *x_like      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   --rce;  if (a_cell->t != CTYPE_FLIKE && a_cell->t != CTYPE_MLIKE) {
+      DEBUG_CELL   yLOG_note    ("unnecessary");
+      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+      return -(rce);
+   }
+   /*---(parse master cell)--------------*/
+   rc = LOC_parse (a_cell->s + 1, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_CELL   yLOG_value   ("parse rc"  , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get master cell)----------------*/
+   x_like = LOC_cell_at_loc (x_tab, x_col, x_row);
+   DEBUG_CELL   yLOG_point   ("x_like"    , x_like);
+   --rce;  if (x_like == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(create dependency)--------------*/
+   rc = DEP_create (G_DEP_SOURCE, a_cell, x_like);
+   DEBUG_CELL   yLOG_value   ("dep rc"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> build any/all formulas ------------------[ petal  [ 1c---- ]*/
+CELL__point        (tCELL *a_cell)
+{
+   if (a_cell->t != CTYPE_RANGE && a_cell->t != CTYPE_ADDR )  return 0;
+}
+
+char         /*-> build any/all formulas ------------------[ petal  [ 1c---- ]*/
+CELL__eval         (tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(eval)---------------------------*/
+   rc = CALC_eval   (a_cell);
+   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   /*---(troubles)-----------------------*/
+   --rce;  if (rc < 0) {
+      a_cell->t     = CTYPE_ERROR;
+      a_cell->v_str = strndup ("#.eval", LEN_RECD);
+      CALC_free   (a_cell);
+      DEP_cleanse (a_cell);
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
 char         /*-> interpret any/all formulas --------------[ floret [ 1a---- ]*/
 CELL__formulas     (tCELL *a_cell)
 {
@@ -1268,9 +1406,10 @@ CELL__formulas     (tCELL *a_cell)
    char        x_type      =  '-';
    /*---(header)-------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);
    /*---(defense)------------------------*/
-   DEBUG_CELL   yLOG_value   ("l"         , a_cell->l);
    x_type = a_cell->s [0];
    DEBUG_CELL   yLOG_char    ("s [0]"     , x_type);
    DEBUG_CELL   yLOG_info    ("valid"     , G_CELL_FPRE);
@@ -1278,34 +1417,44 @@ CELL__formulas     (tCELL *a_cell)
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(set type)-----------------------*/
-   DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
-   a_cell->t = CELL__ftype (x_type);
-   /*---(tighten)------------------------*/
-   DEBUG_CELL   yLOG_char    ("ftype"     , a_cell->t);
-   strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
-   DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
-   a_cell->l = strlen  (a_cell->s);
-   DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
-   /*---(rpn)----------------------------*/
-   rc = RPN_convert (a_cell);
-   --rce;  if (rc < 0)  a_cell->v_str = strndup ("#.rpn", LEN_RECD);
-   DEBUG_CELL   yLOG_info    ("rpn"       , a_cell->rpn);
-   /*---(calc)---------------------------*/
-   if (rc >= 0) {
-      rc = CALC_build  (a_cell);
-      --rce;  if (rc < 0)  a_cell->v_str = strndup ("#.build", LEN_RECD);
+   /*---(build)--------------------------*/
+   rc = CELL__rpn    (a_cell);
+   DEBUG_CELL   yLOG_value   ("rpn rc"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   if (rc <= 0) {
-      a_cell->t = CTYPE_ERROR;
-      CALC_free   (a_cell);
-      DEP_cleanse (a_cell);
-      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   /*---(build)--------------------------*/
+   rc = CELL__build  (a_cell);
+   DEBUG_CELL   yLOG_value   ("build rc"  , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(like)---------------------------*/
+   rc = CELL__like    (a_cell);
+   DEBUG_CELL   yLOG_value   ("like rc"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(pointer)------------------------*/
+   rc = CELL__point   (a_cell);
+   DEBUG_CELL   yLOG_value   ("point rc"  , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(exec)---------------------------*/
+   rc = CELL__eval    (a_cell);
+   DEBUG_CELL   yLOG_value   ("eval rc"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-   return rc;
+   return 0;
 }
 
 
@@ -1437,104 +1586,106 @@ CELL__interpret    (
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   if (strchr (G_CELL_FPRE, x_pre) != 0) {
-      DEBUG_CELL   yLOG_complex ("type"      , "formula which is an %c", a_cell->t);
-      DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);
-      a_cell->t = CELL__ftype (x_pre);
-      DEBUG_CELL   yLOG_char    ("ftype"     , a_cell->t);
-      strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);
-      DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);
-      a_cell->l = strlen  (a_cell->s);
-      if (a_cell->a == '?')  {
-         if (x_pre == '#')  a_cell->a = '<';
-         else               a_cell->a = '>';
-      }
-      DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);
-      DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");
-      rc = RPN_convert (a_cell);
-      --rce;  if (rc < 0) {
-         a_cell->t = CTYPE_ERROR;
-         a_cell->v_str = strndup ("#.rpn", LEN_RECD);
-         CALC_free   (a_cell);
-         DEP_cleanse (a_cell);
-         DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-         return rce;
-      }
-      DEBUG_CELL   yLOG_info    ("rpn"       , a_cell->rpn);
-      DEBUG_CELL   yLOG_info    ("CALC"      , "call calc build");
-      rc = CALC_build  (a_cell);
-      if (rc < 0) {
-         a_cell->t = CTYPE_ERROR;
-         a_cell->v_str = strndup ("#.build", LEN_RECD);
-         CALC_free   (a_cell);
-         DEP_cleanse (a_cell);
-         DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-         return rce - 1;
-      }
-      /*---(like dependency)-------------*/
-      if (temp[0] == '~') {
-         DEBUG_CELL   yLOG_note    ("processing a like formula");
-         rc = LOC_parse (a_cell->s + 1, &x_tab, &x_col, &x_row, NULL);
-         DEBUG_CELL   yLOG_value   ("parse rc"  , rc);
-         --rce;
-         if (rc < 0) {
-            DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         x_like = LOC_cell_at_loc (x_tab, x_col, x_row);
-         DEBUG_CELL   yLOG_point   ("x_like"    , x_like);
-         --rce;
-         if (x_like == NULL) {
-            DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         rc = DEP_create (G_DEP_SOURCE, a_cell, x_like);
-         DEBUG_CELL   yLOG_value   ("dep rc"    , rc);
-         if (rc < 0) {
-            DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-      }
-      /*---(pointers)--------------------*/
-      if (temp [0] == '&') {
-         DEBUG_CELL   yLOG_info    ("POINTER"   , "mark as a pointer");
-         CALC_checkpointer (a_cell);
-      }
-      /*---(other)-----------------------*/
-      else {
-         DEBUG_CELL   yLOG_info    ("CALC"      , "call calc eval");
-         rc = CALC_eval   (a_cell);
-         if (rc < 0) {
-            a_cell->t = CTYPE_ERROR;
-            a_cell->v_str = strndup ("#.eval", LEN_RECD);
-            CALC_free   (a_cell);
-            DEP_cleanse (a_cell);
-            DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-            return rce - 2;
-         }
-      }
-      CELL__merges (a_cell);
-      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(check for non-numbers)----------*/
-   a_cell->t = CTYPE_NUM;
-   for (i = 0; i < len; ++i) {
-      if (strchr(sv_numeric, temp[i])  != 0) continue;
-      a_cell->t = CTYPE_STR;
-   }
-   /*---(therefore, number)-----------*/
-   if (a_cell->t == CTYPE_NUM) {
-      a_cell->v_num = atof (a_cell->s);
-      if (a_cell->a == '?')  a_cell->a = '>';
-      DEBUG_CELL   yLOG_complex ("type"      , "numeric which is an %c", a_cell->t);
-   }
-   /*---(then string)-----------------*/
-   else {
-      if (a_cell->a == '?')  a_cell->a = '<';
-      DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
-      CELL__merges (a_cell);
-   }
+   /*> if (strchr (G_CELL_FPRE, x_pre) != 0) {                                             <* 
+    *>    DEBUG_CELL   yLOG_complex ("type"      , "formula which is an %c", a_cell->t);   <* 
+    *>    DEBUG_CELL   yLOG_info    ("source"    , a_cell->s);                             <* 
+    *>    a_cell->t = CELL__ftype (x_pre);                                                 <* 
+    *>    DEBUG_CELL   yLOG_char    ("ftype"     , a_cell->t);                             <* 
+    *>    strltrim (a_cell->s, ySTR_EVERY, LEN_RECD);                                      <* 
+    *>    DEBUG_CELL   yLOG_info    ("compressed", a_cell->s);                             <* 
+    *>    a_cell->l = strlen  (a_cell->s);                                                 <* 
+    *>    if (a_cell->a == '?')  {                                                         <* 
+    *>       if (x_pre == '#')  a_cell->a = '<';                                           <* 
+    *>       else               a_cell->a = '>';                                           <* 
+    *>    }                                                                                <* 
+    *>    DEBUG_CELL   yLOG_value   ("rev len"   , a_cell->l);                             <* 
+    *>    DEBUG_CELL   yLOG_info    ("RPN"       , "call rpn converion");                  <* 
+    *>    rc = RPN_convert (a_cell);                                                       <* 
+    *>    --rce;  if (rc < 0) {                                                            <* 
+    *>       a_cell->t = CTYPE_ERROR;                                                      <* 
+    *>       a_cell->v_str = strndup ("#.rpn", LEN_RECD);                                  <* 
+    *>       CALC_free   (a_cell);                                                         <* 
+    *>       DEP_cleanse (a_cell);                                                         <* 
+    *>       DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                     <* 
+    *>       return rce;                                                                   <* 
+    *>    }                                                                                <* 
+    *>    DEBUG_CELL   yLOG_info    ("rpn"       , a_cell->rpn);                           <* 
+    *>    DEBUG_CELL   yLOG_info    ("CALC"      , "call calc build");                     <* 
+    *>    rc = CALC_build  (a_cell);                                                       <* 
+    *>    if (rc < 0) {                                                                    <* 
+    *>       a_cell->t = CTYPE_ERROR;                                                      <* 
+    *>       a_cell->v_str = strndup ("#.build", LEN_RECD);                                <* 
+    *>       CALC_free   (a_cell);                                                         <* 
+    *>       DEP_cleanse (a_cell);                                                         <* 
+    *>       DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                     <* 
+    *>       return rce - 1;                                                               <* 
+    *>    }                                                                                <* 
+    *>    /+---(like dependency)-------------+/                                            <* 
+    *>    if (temp[0] == '~') {                                                            <* 
+    *>       DEBUG_CELL   yLOG_note    ("processing a like formula");                      <* 
+    *>       rc = LOC_parse (a_cell->s + 1, &x_tab, &x_col, &x_row, NULL);                 <* 
+    *>       DEBUG_CELL   yLOG_value   ("parse rc"  , rc);                                 <* 
+    *>       --rce;                                                                        <* 
+    *>       if (rc < 0) {                                                                 <* 
+    *>          DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                  <* 
+    *>          return rce;                                                                <* 
+    *>       }                                                                             <* 
+    *>       x_like = LOC_cell_at_loc (x_tab, x_col, x_row);                               <* 
+    *>       DEBUG_CELL   yLOG_point   ("x_like"    , x_like);                             <* 
+    *>       --rce;                                                                        <* 
+    *>       if (x_like == NULL) {                                                         <* 
+    *>          DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                  <* 
+    *>          return rce;                                                                <* 
+    *>       }                                                                             <* 
+    *>       rc = DEP_create (G_DEP_SOURCE, a_cell, x_like);                               <* 
+    *>       DEBUG_CELL   yLOG_value   ("dep rc"    , rc);                                 <* 
+    *>       if (rc < 0) {                                                                 <* 
+    *>          DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                  <* 
+    *>          return rce;                                                                <* 
+    *>       }                                                                             <* 
+    *>    }                                                                                <* 
+    *>    /+---(pointers)--------------------+/                                            <* 
+    *>    if (temp [0] == '&') {                                                           <* 
+    *>       DEBUG_CELL   yLOG_info    ("POINTER"   , "mark as a pointer");                <* 
+    *>       CALC_checkpointer (a_cell);                                                   <* 
+    *>    }                                                                                <* 
+    *>    /+---(other)-----------------------+/                                            <* 
+    *>    else {                                                                           <* 
+    *>       DEBUG_CELL   yLOG_info    ("CALC"      , "call calc eval");                   <* 
+    *>       rc = CALC_eval   (a_cell);                                                    <* 
+    *>       if (rc < 0) {                                                                 <* 
+    *>          a_cell->t = CTYPE_ERROR;                                                   <* 
+    *>          a_cell->v_str = strndup ("#.eval", LEN_RECD);                              <* 
+    *>          CALC_free   (a_cell);                                                      <* 
+   *>          DEP_cleanse (a_cell);                                                      <* 
+      *>          DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                  <* 
+      *>          return rce - 2;                                                            <* 
+      *>       }                                                                             <* 
+      *>    }                                                                                <* 
+      *>    CELL__merges (a_cell);                                                           <* 
+      *>    DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                        <* 
+      *>    return 0;                                                                        <* 
+      *> }                                                                                   <*/
+      /*---(check for non-numbers)----------*/
+      /*> a_cell->t = CTYPE_NUM;                                                         <* 
+       *> for (i = 0; i < len; ++i) {                                                    <* 
+       *>    if (strchr(sv_numeric, temp[i])  != 0) continue;                            <* 
+       *>    a_cell->t = CTYPE_STR;                                                      <* 
+       *> }                                                                              <*/
+      /*---(therefore, number)-----------*/
+      /*> if (a_cell->t == CTYPE_NUM) {                                                       <* 
+       *>    a_cell->v_num = atof (a_cell->s);                                                <* 
+       *>    if (a_cell->a == '?')  a_cell->a = '>';                                          <* 
+       *>    DEBUG_CELL   yLOG_complex ("type"      , "numeric which is an %c", a_cell->t);   <* 
+       *> }                                                                                   <*/
+      /*---(then string)-----------------*/
+      /*> else {                                                                         <*/
+
+   a_cell->t = CTYPE_STR;
+   if (a_cell->a == '?')  a_cell->a = '<';
+   DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
+   CELL__merges (a_cell);
+   /*> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
