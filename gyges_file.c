@@ -352,7 +352,7 @@ HIST_undo          (void)
       if (strcmp (hist[chist].before, "[<{(null)}>]") == 0) {
          CELL_delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
       } else {
-         CELL_change  (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
+         CELL_change  (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
       }
    } else if (strcmp ("overwrite", x_lower) == 0) {
       DEBUG_HIST  yLOG_note    ("call CELL_overwrite");
@@ -364,7 +364,7 @@ HIST_undo          (void)
       }
    } else if (strcmp ("delete", x_lower) == 0) {
       DEBUG_HIST  yLOG_note    ("call CELL_delete");
-      CELL_change   (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
+      CELL_change   (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
    } else if (strcmp ("decimals", x_lower) == 0) {
       DEBUG_HIST  yLOG_note    ("call CELL_decimals");
       CELL_decimals (CHG_NOHIST, hist[chist].before[0]);
@@ -429,7 +429,7 @@ HIST_redo          (void)
       if (strcmp (hist[chist].after , "[<{(null)}>]") == 0) {
          CELL_delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
       } else {
-         CELL_change (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].after);
+         CELL_change (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].after);
       }
    } else if (strcmp ("overwrite", x_lower) == 0) {
       DEBUG_HIST  yLOG_note    ("call CELL_overwrite");

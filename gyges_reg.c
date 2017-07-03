@@ -913,7 +913,7 @@ REG_valuesin      (char a_style)
          strldchg (p, 127, G_CHAR_BS   , LEN_RECD);   /* del       */
          DEBUG_INPT  yLOG_info    ("value"     , p);
          DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
-         x_curr = CELL_change (CHG_INPUT, CTAB, x_col, x_row, p);
+         CELL_change (&x_curr, CHG_INPUT, CTAB, x_col, x_row, p);
          DEBUG_INPT  yLOG_point   ("x_curr"    , x_curr);
          ++x_col;
          p = strtok_r (NULL, q, &s);

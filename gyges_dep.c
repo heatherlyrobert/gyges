@@ -1261,11 +1261,11 @@ DEP_range          (
          x_dest  = LOC_cell_at_loc (a_btab, c, r);
          DEBUG_DEPS    yLOG_complex ("target"    , "col=%4d, row=%4d, ptr=%9p", c, r, x_dest);
          /*---(create if null)-----------*/
-         if (x_dest    == NULL)        x_dest = CELL_change (CHG_NOHIST, a_btab, c, r, "");
+         if (x_dest    == NULL)        CELL_change (&x_dest, CHG_NOHIST, a_btab, c, r, "");
          if (x_dest    == NULL)      { rce_save = rce;     break; }
          /*---(add source if blank)------*/
          rcp = x_dest;   /* must initialize */
-         if (x_dest->s == NULL)        rcp  = CELL_change (CHG_NOHIST, a_btab, c, r, "");
+         if (x_dest->s == NULL)        CELL_change (&rcp   , CHG_NOHIST, a_btab, c, r, "");
          if (rcp == NULL)            { rce_save = rce - 1; break; }
          if (rcp != x_dest)          { rce_save = rce - 2; break; }
          /*---(create dependency)--------*/
@@ -1534,7 +1534,7 @@ DEP_updatelikes    (tCELL  *a_me)
       x_col = x_likes [i]->col;
       x_row = x_likes [i]->row;
       x_src = strdup (x_likes [i]->s);
-      CELL_change (CHG_NOHIST, x_tab, x_col, x_row, x_src);
+      CELL_change (NULL, CHG_NOHIST, x_tab, x_col, x_row, x_src);
       free (x_src);
    }
    /*---(complete)--------------------*/

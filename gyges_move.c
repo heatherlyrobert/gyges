@@ -39,7 +39,7 @@ char          /* PURPOSE : place recent input into the right cell ------------*/
 save_saved    (void)
 {
    strncpy(g_contents, saved, LEN_RECD);
-   CELL_change (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+   CELL_change (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
    return 0;
 }
 

@@ -4569,7 +4569,7 @@ CALC_build         (tCELL *a_cell)
          if (rc == 0) {
             dest = LOC_cell_at_loc (x_tab, x_col, x_row);
             DEBUG_CALC   yLOG_point   ("dest"      , dest);
-            if (dest == NULL)  dest = CELL_change (CHG_NOHIST, x_tab, x_col, x_row, "");
+            if (dest == NULL)  CELL_change (&dest, CHG_NOHIST, x_tab, x_col, x_row, "");
             DEBUG_CALC   yLOG_point   ("dest"      , dest);
             if (dest == NULL)  {
                a_cell->t = 'E';
@@ -4631,23 +4631,23 @@ CALC_build         (tCELL *a_cell)
       return rce - 4;
    }
    /*---(auto-labeling)--------------------*/
-   /*> rc = CALC_checkpointer (a_cell);                                                  <* 
-    *> if (rc == 1)   strcpy (label, "pointer");                                         <* 
-    *> if (rc == 3)   strcpy (label, "dataset");                                         <* 
-    *> if (label [0] == '\0' || label [0] == '-')  {                                     <* 
-    *>    strcpy (label, a_cell->s);                                                     <* 
-    *>    label [0] = ':';                                                               <* 
-    *> }                                                                                 <* 
-    *> if (label [0] != '-') {                                                           <* 
-    *>    rc = LOC_legal (a_cell->tab, a_cell->col + 1, a_cell->row, CELL_FIXED);        <* 
-    *>    if (rc == 0) {                                                                 <* 
-    *>       dest = LOC_cell_at_loc (a_cell->tab, a_cell->col + 1, a_cell->row);                <* 
-    *>       if (dest == NULL || dest->t == 'l') {                                       <* 
-    *>          dest = CELL_change (a_cell->tab, a_cell->col + 1, a_cell->row, label);   <* 
-    *>          dest->t = 'l';                                                           <* 
-    *>       }                                                                           <* 
-    *>    }                                                                              <* 
-    *> }                                                                                 <*/
+   /*> rc = CALC_checkpointer (a_cell);                                                <* 
+    *> if (rc == 1)   strcpy (label, "pointer");                                       <* 
+    *> if (rc == 3)   strcpy (label, "dataset");                                       <* 
+    *> if (label [0] == '\0' || label [0] == '-')  {                                   <* 
+    *>    strcpy (label, a_cell->s);                                                   <* 
+    *>    label [0] = ':';                                                             <* 
+    *> }                                                                               <* 
+    *> if (label [0] != '-') {                                                         <* 
+    *>    rc = LOC_legal (a_cell->tab, a_cell->col + 1, a_cell->row, CELL_FIXED);      <* 
+    *>    if (rc == 0) {                                                               <* 
+    *>       dest = LOC_cell_at_loc (a_cell->tab, a_cell->col + 1, a_cell->row);       <* 
+    *>       if (dest == NULL || dest->t == 'l') {                                     <* 
+    *>          CELL_change (&dest, a_cell->tab, a_cell->col + 1, a_cell->row, label);        <* 
+    *>          dest->t = 'l';                                                         <* 
+    *>       }                                                                         <* 
+    *>    }                                                                            <* 
+    *> }                                                                               <*/
    /*---(complete)-------------------------*/
    DEBUG_CALC   yLOG_exit    (__FUNCTION__);
    return 0;

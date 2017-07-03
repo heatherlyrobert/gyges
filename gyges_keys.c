@@ -809,7 +809,7 @@ MODE_source   (char a_major, char a_minor)
       switch (a_minor) {
       case  10  :
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
-         CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+         CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
          EDIT_pos     ('r');
          yVIKEYS_mode_exit  ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -1157,7 +1157,7 @@ MODE_input         (char  a_major, char  a_minor)
       if (a_major == 'a')  --(my.cpos);
       EDIT_done   ();
       if (a_minor == 10 && yVIKEYS_mode_prev() == MODE_MAP) {
-         CELL_change  (CHG_INPUT, CTAB, CCOL, CROW, g_contents);
+         CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
       }
       if (a_minor == 27 && yVIKEYS_mode_prev() == MODE_MAP) {
          x_curr = LOC_cell_at_curr ();

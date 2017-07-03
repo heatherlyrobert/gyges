@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2j"
-#define     VER_TXT   "CELL and CALC unit tests back working again"
+#define     VER_NUM   "2.2k"
+#define     VER_TXT   "broke out all numeric recognition and tested like crazy"
 
 
 
@@ -1181,13 +1181,21 @@ char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
-tCELL    *CELL_change        (char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
+char      CELL_change        (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
 tCELL    *CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 
 char      CELL__depwipe      (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
 char      CELL__purge        (void);
 
+char      CELL__binary       (char *a_text, double *a_value);
+char      CELL__octal        (char *a_text, double *a_value);
+char      CELL__hex          (char *a_text, double *a_value);
+char      CELL__float        (char *a_text, double *a_value);
+char      CELL__numerics     (tCELL *a_cell);
 
+char      CELL__formulas     (tCELL *a_cell);
+
+char      CELL__ftype        (char a_prefix);
 char      CELL_init          (void);
 char      CELL_wrap          (void);
 char      CELL__interpret    (tCELL *a_curr);
