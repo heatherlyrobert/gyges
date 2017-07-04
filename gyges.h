@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2l"
-#define     VER_TXT   "broke out all formula recognition and tested like crazy"
+#define     VER_NUM   "2.2m"
+#define     VER_TXT   "all gyges_calc unit tests updating and working"
 
 
 

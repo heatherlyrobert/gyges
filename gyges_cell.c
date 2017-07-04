@@ -1244,8 +1244,11 @@ CELL__numerics     (tCELL *a_cell)
       rc = CELL__float   (a_cell->s, &x_value);
    }
    /*---(judge outcome)------------------*/
-   if (rc >= 0)  a_cell->t     = CTYPE_NUM;
-   a_cell->v_num = x_value;
+   if (rc >= 0) {
+      a_cell->t     = CTYPE_NUM;
+      a_cell->v_num = x_value;
+      if (a_cell->a == '?')  a_cell->a = '>';
+   }
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1451,6 +1454,21 @@ CELL__formulas     (tCELL *a_cell)
    --rce;  if (rc < 0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
+   }
+   /*---(sort aligment)------------------*/
+   if (a_cell->a == '?') {
+      switch (a_cell->t) {
+      case CTYPE_FORM  :
+      case CTYPE_FLIKE :
+         a_cell->a = '>';
+         break;
+      case CTYPE_MOD   :
+      case CTYPE_MLIKE :
+      case CTYPE_ADDR  :
+      case CTYPE_RANGE :
+         a_cell->a = '<';
+         break;
+      }
    }
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1820,7 +1838,7 @@ CELL__unmerge_right  (tCELL *a_left)
       DEBUG_CELL  yLOG_note   ("turn into string");
       x_right->t = CTYPE_STR;
       x_right->f = '?';
-      x_right->a = '<';
+      /*> x_right->a = '<';                                                           <*/
       /*---(unmerge)---------------------*/
       x_merged = DEP_merge_source (x_right);
       DEBUG_CELL  yLOG_point  ("x_merged"  , x_merged);
@@ -1884,7 +1902,7 @@ CELL_unmerge         (tCELL *a_curr)
    if (x_merged != NULL)  DEP_delete (G_DEP_MERGED, x_merged, a_curr);
    a_curr->t = CTYPE_STR;
    a_curr->f = '?';
-   a_curr->a = '<';
+   /*> a_curr->a = '<';                                                               <*/
    /*---(merge right)--------------------*/
    rc = CELL__merge_right (a_curr);
    --rce;  if (rc < 0)  return rce;
