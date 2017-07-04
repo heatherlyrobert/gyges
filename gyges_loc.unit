@@ -1034,7 +1034,7 @@ SCRP          v21  (loc   ) convert between cell, coords, and labels          
      echo     v21  check label                          - - - - - - - - - -   x_label                                                                 s_equal     ((null))                                                                                             
 
    COND       v21  add the first cell                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  0,  0, "first"                                           p_exists    0                                                                                                     p  x_1st                
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT, 0,  0,  0, "first"                                     i_pass      0                                                                                                    
 
    COND       v21  review cells by locations                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  get cell at location                 LOC_cell_at_loc       0           , 0          , 0                                            p_equal     x_1st                                                                                                
@@ -1068,7 +1068,7 @@ SCRP          v21  (loc   ) convert between cell, coords, and labels          
      echo     v21  check label                          - - - - - - - - - -   x_label                                                                 s_equal     ((null))                                                                                             
 
    COND       v21  add the second cell                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  6,  6, "second"                                          p_exists    0                                                                                                     p  x_2nd                
+     exec     v21  add a cell                           CELL_change           &x_2nd, CHG_INPUT, 0,  6,  6, "second"                                          i_pass      0                                                                                                    
 
    COND       v21  review cells by locations                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  get cell at location                 LOC_cell_at_loc       0           , 0          , 0                                            p_equal     x_1st                                                                                                
@@ -1102,7 +1102,7 @@ SCRP          v21  (loc   ) convert between cell, coords, and labels          
      echo     v21  check label                          - - - - - - - - - -   x_label                                                                 s_equal     ((null))                                                                                             
 
    COND       v21  add the third cell                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 1,  7,  7, "third"                                           p_exists    0                                                                                                     p  x_3rd                
+     exec     v21  add a cell                           CELL_change           &x_3rd, CHG_INPUT, 1,  7,  7, "third"                                           i_pass      0                                                                                                    
 
    COND       v21  review cells by locations                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  get cell at location                 LOC_cell_at_loc       0           , 0          , 0                                            p_equal     x_1st                                                                                                
@@ -1406,7 +1406,7 @@ SCRP          v21  (loc   ) tab setup and control                             
    GROUP      v21  add a cell and test resizing                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  add a cell to a tab                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 8, 19, 1999, "place_holder"                                  p_exists    0                                                                                                    
+     exec     v21  add a cell                           CELL_change           NULL, CHG_INPUT, 8, 19, 1999, "place_holder"                                  i_pass      0                                                                                                    
      get      v21  get tab info                         LOC__unit             "tab_info"     , "8a1"                                                  s_equal     LOC tab info (8) : tab_08       8a1     8a1     8a1     8dz9999 1                                    
 
    COND       v21  make the tab just big enough                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
