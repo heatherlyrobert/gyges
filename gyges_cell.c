@@ -1699,7 +1699,7 @@ CELL__interpret    (
       /*---(then string)-----------------*/
       /*> else {                                                                         <*/
 
-   a_cell->t = CTYPE_STR;
+      a_cell->t = CTYPE_STR;
    if (a_cell->a == '?')  a_cell->a = '<';
    DEBUG_CELL   yLOG_complex ("type"      , "string which is an %c", a_cell->t);
    CELL__merges (a_cell);
@@ -1748,12 +1748,7 @@ CELL__merge_left     (tCELL *a_curr)
       x_left  = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
       if (x_left    == NULL)                      return NULL;
       if (x_left->l == 1 && x_left->s[0] == '<')  continue;  /* should merge  */
-      /*> x_save = x_left;                                                            <*/
       break;
-      /*> if (x_left    == NULL)                      return NULL;                     <* 
-       *> if (x_left->a == '+' )                      continue;  /+ is merged     +/   <* 
-       *> if (x_left->l == 1 && x_left->s[0] == '<')  continue;  /+ should merge  +/   <* 
-       *> break;                                                                       <*/
    }
    /*---(complete)-----------------------*/
    return x_left;
@@ -1838,7 +1833,7 @@ CELL__unmerge_right  (tCELL *a_left)
       DEBUG_CELL  yLOG_note   ("turn into string");
       x_right->t = CTYPE_STR;
       x_right->f = '?';
-      /*> x_right->a = '<';                                                           <*/
+      x_right->a = '<';
       /*---(unmerge)---------------------*/
       x_merged = DEP_merge_source (x_right);
       DEBUG_CELL  yLOG_point  ("x_merged"  , x_merged);
@@ -1899,10 +1894,12 @@ CELL_unmerge         (tCELL *a_curr)
    /*---(check merge status)-------------*/
    x_merged = DEP_merge_source (a_curr);
    /*---(unmerge)------------------------*/
-   if (x_merged != NULL)  DEP_delete (G_DEP_MERGED, x_merged, a_curr);
-   a_curr->t = CTYPE_STR;
-   a_curr->f = '?';
-   /*> a_curr->a = '<';                                                               <*/
+   if (x_merged != NULL) {
+      DEP_delete (G_DEP_MERGED, x_merged, a_curr);
+      a_curr->t = CTYPE_STR;
+      a_curr->f = '?';
+      a_curr->a = '<';
+   }
    /*---(merge right)--------------------*/
    rc = CELL__merge_right (a_curr);
    --rce;  if (rc < 0)  return rce;
