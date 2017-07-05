@@ -488,29 +488,57 @@ REG_deps           (tCELL *a_curr, long a_stamp)
    char        rce         = -10;
    char        rc          = 0;
    tCELL      *x_copy      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   --rce;  if (a_curr    == NULL)        return rce;     /* no cell                       */
-   --rce;  if (a_curr->s == NULL)        return rce;     /* nothing to write              */
-   --rce;  if (a_curr->t == '-')         return rce;     /* don't write, recreate on read */
+   DEBUG_REGS   yLOG_point   ("a_curr"    , a_curr);
+   --rce;  if (a_curr    == NULL) {
+      DEBUG_REGS   yLOG_note    ("original cell null");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;     /* no cell                       */
+   }
+   DEBUG_REGS   yLOG_point   ("s"         , a_curr->s);
+   --rce;  if (a_curr->s == NULL) {
+      DEBUG_REGS   yLOG_note    ("no source");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;     /* nothing to write              */
+   }
+   DEBUG_REGS   yLOG_char    ("t"         , a_curr->t);
+   --rce;  if (a_curr->t == '-')  {
+      DEBUG_REGS   yLOG_note    ("could not copy an empty");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;     /* don't write, recreate on read */
+   }
    /*---(check for bounds)---------------*/
    rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);
-   --rce;  if (rc == 0)                  return rce;
+   DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
+   --rce;  if (rc == 0)  {
+      DEBUG_REGS   yLOG_note    ("could not get cell");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(make a copy)--------------------*/
    rc = CELL_dup (&x_copy, a_curr);
-   --rce;  if (rc < 0 )                  return rce;
+   DEBUG_REGS   yLOG_value   ("dup_rc"    , rc);
+   --rce;  if (rc < 0 ) {
+      DEBUG_REGS   yLOG_note    ("could not duplicate");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(move in critical data)----------*/
-   strcpy (x_copy->label, a_curr->label);
-   x_copy->t   = a_curr->t;
-   x_copy->f   = a_curr->f;
-   x_copy->d   = a_curr->d;
-   x_copy->a   = a_curr->a;
-   x_copy->u   = a_stamp;
+   strlcpy (x_copy->label, a_curr->label, LEN_LABEL);
    a_curr->u   = a_stamp;
    DEBUG_REGS   yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
    /*---(place in buffer)----------------*/
    rc = REG__hook   (x_copy, my.reg_curr, 'd');
-   --rce;  if (rc < 0)                   return rce;
+   DEBUG_REGS   yLOG_value   ("hook_rc"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_note    ("could not hook to register");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -620,7 +648,7 @@ REG_save           (char a_type)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
-   tCELL      *curr        = NULL;
+   tCELL      *x_curr      = NULL;
    tCELL      *x_copy      = NULL;
    int         x_tab       = 0;
    int         x_col       = 0;
@@ -666,37 +694,34 @@ REG_save           (char a_type)
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
    /*---(process independent cells)------*/
    DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
-   curr  = VISU_first (&x_tab, &x_col, &x_row);
+   x_curr  = VISU_first (&x_tab, &x_col, &x_row);
    /*> s_reg[x_reg].scol = x_col;                                                       <* 
     *> s_reg[x_reg].srow = x_row;                                                       <*/
-   while (curr != DONE_DONE) {
+   while (x_curr != DONE_DONE) {
       ++x_total;
-      DEBUG_REGS   yLOG_point   ("curr"      , curr);
-      if (curr == NULL) {
+      DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
+      if (x_curr == NULL) {
          DEBUG_REGS   yLOG_note    ("skipping, nobody home");
          ++x_skipped;
-         curr  = VISU_next (&x_tab, &x_col, &x_row);
+         x_curr  = VISU_next (&x_tab, &x_col, &x_row);
          continue;
       }
-      DEBUG_REGS   yLOG_complex ("current"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, x_tab, x_col, x_row, curr->t, curr->u);
-      /*> if (curr->u == x_stamp) {                                                       <* 
-       *>    DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");   <* 
-       *>    ++x_skipped;                                                                 <* 
-       *>    curr  = VISU_next (&x_tab, &x_col, &x_row);                                  <* 
-       *>    continue;                                                                    <* 
-       *> }                                                                               <*/
+      DEBUG_REGS   yLOG_complex ("current"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", x_curr, x_tab, x_col, x_row, x_curr->t, x_curr->u);
+      if (x_curr->u == x_stamp) {
+         DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");
+         ++x_skipped;
+         x_curr  = VISU_next (&x_tab, &x_col, &x_row);
+         continue;
+      }
       ++x_processed;
-      rc = CELL_dup (&x_copy, curr);
-      strcpy (x_copy->label, curr->label);
-      x_copy->t   = curr->t;
-      x_copy->f   = curr->f;
-      x_copy->d   = curr->d;
-      x_copy->a   = curr->a;
-      x_copy->u = x_stamp;
-      REG__hook   (x_copy, my.reg_curr, '-');
+      x_copy  = NULL;
+      rc = CELL_dup (&x_copy, x_curr);
+      strlcpy (x_copy->label, x_curr->label, LEN_LABEL);
+      x_copy->u   = x_stamp;
+      rc = REG__hook   (x_copy, my.reg_curr, '-');
       ++x_seq;
       DEBUG_REGS   yLOG_note    ("copied");
-      curr  = VISU_next (&x_tab, &x_col, &x_row);
+      x_curr  = VISU_next (&x_tab, &x_col, &x_row);
    };
    DEBUG_REGS   yLOG_value   ("x_seq"     , x_seq);
    DEBUG_REGS   yLOG_value   ("x_total"   , x_total);
@@ -716,8 +741,8 @@ REG_save           (char a_type)
             DEBUG_REGS   yLOG_exit    (__FUNCTION__);
             return rce;
          }
-         curr = LOC_cell_at_loc (x_tab, x_col, x_row);
-         DEBUG_REGS   yLOG_complex ("erasing"   , "idx=%4d, ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", i, curr, x_tab, x_col, x_row, curr->t, curr->u);
+         x_curr = LOC_cell_at_loc (x_tab, x_col, x_row);
+         DEBUG_REGS   yLOG_complex ("erasing"   , "idx=%4d, ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", i, x_curr, x_tab, x_col, x_row, x_curr->t, x_curr->u);
          if (x_count == 0)  rc = CELL_delete (CHG_INPUT   , x_tab, x_col, x_row);
          else               rc = CELL_delete (CHG_INPUTAND, x_tab, x_col, x_row);
          if (rc < 0) {

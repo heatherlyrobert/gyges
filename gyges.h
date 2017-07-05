@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2o"
-#define     VER_TXT   "all gyges_dep unit tests updating and working"
+#define     VER_NUM   "2.2p"
+#define     VER_TXT   "all gyges_reg unit tests updating and working"
 
 
 

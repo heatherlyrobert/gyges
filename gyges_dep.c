@@ -2501,7 +2501,7 @@ DEP_disp_sort      (char *a_list)
       b = x_array [i];
       DEBUG_SORT    yLOG_complex ("current"   , "compare i,%3d (t,%3d) =  a,%10d to b,%10d", i, tele, a, b);
       /*---(compare)---------------------*/
-      if (i == 0 || a < b) {
+      if (i == 0 || a <= b) {
          if (tele >= 0) {
             i    = tele;
             tele = -1;

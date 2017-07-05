@@ -719,24 +719,51 @@ CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
 char         /*> create a duplicate locationless cell ----[ ------ [ ------ ]-*/
 CELL_dup           (tCELL **a_new, tCELL *a_old)
 {
-   /*---(locals)-----------+-----------+-*/
+   /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   char        rc          =    0;
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   --rce;  if (a_new  == NULL)           return rce; /* nothing to move */
-   --rce;  if (*a_new != NULL)           return rce; /* nothing to move */
-   --rce;  if (a_old  == NULL)           return rce; /* nothing to move */
+   DEBUG_CELL   yLOG_point   ("a_new"     , a_new);
+   --rce;  if (a_new  == NULL) {
+      DEBUG_CELL   yLOG_note    ("must be null contents to start");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce; /* nothing to move */
+   }
+   DEBUG_CELL   yLOG_point   ("*a_new"    , *a_new);
+   --rce;  if (*a_new != NULL) {
+      DEBUG_CELL   yLOG_note    ("must be a valid pointer");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce; /* nothing to move */
+   }
+   DEBUG_CELL   yLOG_point   ("a_old"     , a_old);
+   --rce;  if (a_old  == NULL)  {
+      DEBUG_CELL   yLOG_note    ("can not be null, no point");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce; /* nothing to move */
+   }
    /*---(clear it out)-------------------*/
-   CELL__new (a_new , LINKED);
-   --rce;  if (*a_new == NULL)           return rce;
+   rc = CELL__new (a_new , LINKED);
+   DEBUG_CELL   yLOG_point   ("*a_new"    , *a_new);
+   --rce;  if (*a_new == NULL)  {
+      DEBUG_CELL   yLOG_note    ("new cell could not be created");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(copy source)--------------------*/
+   DEBUG_CELL   yLOG_note    ("copy old source and length");
    if (a_old->s == NULL)    (*a_new)->s = NULL;
    else                     (*a_new)->s = strndup (a_old->s, LEN_RECD);
    (*a_new)->l        = a_old->l;
    /*---(copy formatting)----------------*/
-   (*a_new)->a        = a_old->a;
-   (*a_new)->d        = a_old->d;
+   DEBUG_CELL   yLOG_note    ("copy old type and formatting");
+   (*a_new)->t        = a_old->t;
    (*a_new)->f        = a_old->f;
+   (*a_new)->d        = a_old->d;
+   (*a_new)->a        = a_old->a;
    /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return  0;
 }
 
@@ -1407,8 +1434,6 @@ CELL__formulas     (tCELL *a_cell)
    char        rce         =  -10;
    char        rc          =   -1;
    char        x_type      =  '-';
-   /*---(header)-------------------------*/
-   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(header)-------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);

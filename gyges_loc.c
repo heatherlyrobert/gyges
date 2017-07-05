@@ -625,7 +625,7 @@ LOC_parse         (
    /*---(defense: empty label)-----------*/
    --rce;  if (a_label == NULL) {
       DEBUG_LOCS   yLOG_note    ("aborting, no a_label means no point");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(check sizes)--------------------*/
@@ -633,28 +633,28 @@ LOC_parse         (
    DEBUG_LOCS   yLOG_value   ("len"       , len);
    --rce;  if (len <=  0) {
       DEBUG_LOCS   yLOG_note    ("aborting, a_label contains nothing, no point");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (len >  12) {  /* a1 to $24$ab$12345 */
       DEBUG_LOCS   yLOG_note    ("aborting, a_label too long for legal address");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(defense: check special)---------*/
    --rce;  if (strcmp (a_label, "root") == 0) {
       DEBUG_LOCS   yLOG_note    ("aborting, no need to parse root");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (strcmp (a_label, ".") == 0) {
       DEBUG_LOCS   yLOG_note    ("aborting, no need to parse dot (.)");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (strcmp (a_label, "-") == 0) {
       DEBUG_LOCS   yLOG_note    ("aborting, no need to parse dash (-)");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(look for absolute tab)----------*/
@@ -680,8 +680,14 @@ LOC_parse         (
       ++s_col;
    }
    /*> printf ("x_tab = %d\n", x_tab);                                                <*/
-   --rce;  if (x_tab + 1 <  MIN_TABS)    return rce;
-   --rce;  if (x_tab + 1 >  MAX_TABS)    return rce;
+   --rce;  if (x_tab + 1 <  MIN_TABS) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (x_tab + 1 >  MAX_TABS) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    if (s_col == s_tab && x_abs == 4)  x_abs = 1;
    DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
    DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
@@ -707,13 +713,19 @@ LOC_parse         (
    DEBUG_LOCS   yLOG_value   ("s_row"     , s_row);
    --rce;  if (s_row == s_col) {
       DEBUG_LOCS   yLOG_note    ("aborting, no column found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --x_col;
    /*> printf ("x_col = %d\n", x_col);                                                <*/
-   --rce;  if (x_col + 1 <  MIN_COLS)    return rce;
-   --rce;  if (x_col + 1 >  MAX_COLS)    return rce;
+   --rce;  if (x_col + 1 <  MIN_COLS) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (x_col + 1 >  MAX_COLS) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    DEBUG_LOCS   yLOG_value   ("x_col fix" , x_col);
    if (a_col != NULL)  *a_col = x_col;
    /*---(look for absolute row)----------*/
@@ -739,13 +751,19 @@ LOC_parse         (
    DEBUG_LOCS   yLOG_value   ("e_row"     , e_row);
    --rce;  if (e_row != len  ) {
       DEBUG_LOCS   yLOG_note    ("aborting, no row found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --x_row;
    /*> printf ("x_row = %d\n", x_row);                                                <*/
-   --rce;  if (x_row + 1 <  MIN_ROWS)    return rce;
-   --rce;  if (x_row + 1 >  MAX_ROWS)    return rce;
+   --rce;  if (x_row + 1 <  MIN_ROWS) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (x_row + 1 >  MAX_ROWS) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    if (a_row != NULL)  *a_row = x_row;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
