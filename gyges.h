@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2r"
-#define     VER_TXT   "all gyges_unit tests updating and compile, not all working yet"
+#define     VER_NUM   "2.2s"
+#define     VER_TXT   "tab writing is unit tested"
 
 
 
@@ -1116,6 +1116,7 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col, short a_row, char a_abs, char *a_label);
 /*---(tabs)----------------------*/
 char        LOC_tab_valid        /* petal  1----- */  (short a_tab);
+char        LOC_tab_defname      /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_name         /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_rename       /* stigma 2----- */  (short a_tab, char *a_name);
 char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max);
@@ -1123,6 +1124,7 @@ char        LOC_tab_resize       /* stigma 1----- */  (char *a_max);
 /*---(columns)-------------------*/
 char        LOC_col_clear        /* septal 1----- */  (short a_tab);
 char        LOC_col_valid        /* petal  2----- */  (short a_tab, short a_col);
+short       LOC_col_defmax       /* petal  0----- */  (void);
 short       LOC_col_max          /* petal  1----- */  (short a_tab);
 short       LOC_col_used         /* petal  2----- */  (short a_tab, short a_col);
 short       LOC_col_xpos         /* petal  2----- */  (short a_tab, short a_col);
@@ -1135,6 +1137,7 @@ char        LOC_col_unfreeze     (short a_tab);
 /*---(rows)----------------------*/
 char        LOC_row_clear        /* septal 1----- */  (short a_tab);
 char        LOC_row_valid        /* petal  2----- */  (short a_tab, short a_row);
+short       LOC_row_defmax       /* petal  0----- */  (void);
 short       LOC_row_max          /* petal  1----- */  (short a_tab);
 short       LOC_row_used         /* petal  2----- */  (short a_tab, short a_row);
 short       LOC_row_ypos         /* petal  2----- */  (short a_tab, short a_row);
@@ -1226,7 +1229,12 @@ char      FILE_bump          (char a_type, char *a_ver);
 
 char      INPT_cell          (cchar *a_recd);
 
-char      INPT_tab           (char *a_label, char *a_name);
+char      INPT_tab             (char *a_label, char *a_name);
+char      OUTP_tab             (int   a_tab  );
+char      OUTP_tab_head        (FILE *a_file );
+char      OUTP_tab_foot        (FILE *a_file , int   a_count);
+char      OUTP_tabs            (FILE *a_file);
+
 char      INPT_width         (char *a_label, int   a_size);
 char      INPT_height        (char *a_label, int   a_size);
 
@@ -1237,7 +1245,6 @@ char      INPT_close         (void);
 char      INPT_main          (cchar *a_name);
 
 char      OUTP_header        (FILE *a_file);
-char      OUTP_tabs          (FILE *a_file);
 
 char      FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
 char      FILE_write         (char *a_name);

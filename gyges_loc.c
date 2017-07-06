@@ -790,6 +790,18 @@ LOC_tab_valid        (short a_tab)
 }
 
 char 
+LOC_tab_defname      (short a_tab, char *a_name)
+{
+   char        rce         =  -20;
+   char        rc          =    0;
+   rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
+   --rce;  if (a_name  == NULL)                       return rce;
+   sprintf (a_name, "tab_%02d", a_tab);
+   return 0;
+}
+
+char 
 LOC_tab_name         (short a_tab, char *a_name)
 {
    char        rce         =  -20;
@@ -907,6 +919,12 @@ LOC_col_valid        (short a_tab, short a_col)
    --rce;  if (a_col   >= MAX_COLS)                   return rce;
    /*---(complete)-----------------------*/
    return 0;
+}
+
+short        /*--> return default col size ---------------[ petal  [ 1----- ]-*/
+LOC_col_defmax       (void)
+{
+   return DEF_COLS;
 }
 
 short        /*--> return max col for tab ----------------[ petal  [ 1----- ]-*/
@@ -1057,6 +1075,12 @@ LOC_row_valid        (short a_tab, short a_row)
    --rce;  if (a_row   >= MAX_ROWS)                   return rce;
    /*---(complete)-----------------------*/
    return 0;
+}
+
+short        /*--> return default row size ---------------[ petal  [ 1----- ]-*/
+LOC_row_defmax       (void)
+{
+   return DEF_ROWS;
 }
 
 short        /*--> return max row for tab ----------------[ petal  [ 1----- ]-*/
