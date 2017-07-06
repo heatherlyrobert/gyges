@@ -28,18 +28,8 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      code     v21  create a register list holder        - - - - - - - - - -   char x_updated[2000];                                                                                                                                          
      code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
 
-   COND       v21  change to three worksheets                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  modify a variable                    - - - - - - - - - -   my.ntab =  3;                                                                                                                                                  
-     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      = 200;                                                                                                                                       
-     code     v21  number of rows                       - - - - - - - - - -   s_tabs[1].nrow      = 200;                                                                                                                                       
-     code     v21  number of rows                       - - - - - - - - - -   s_tabs[2].nrow      = 200;                                                                                                                                       
-     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      =  72;                                                                                                                                       
-     code     v21  number of cols                       - - - - - - - - - -   s_tabs[1].ncol      =  72;                                                                                                                                       
-     code     v21  number of cols                       - - - - - - - - - -   s_tabs[2].ncol      =  72;                                                                                                                                       
-
    COND       v21  setup a cell                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=1c3"                                    p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=1c3"                            i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    4) :=1c3:                                      
 
    COND       v21  adjust cell elements greater by one                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -79,7 +69,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
    COND       v21  push the elements out of bounds                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  call the formula adjustment          RPN_adjust            x_1st   ,    -2,     0,     0, x_updated                                i_equal     0                                                                      
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = #REF                                              
-     exec     v21  call the formula adjustment          RPN_adjust            x_1st   ,     2,     0,     0, x_updated                                i_equal     0                                                                      
+     exec     v21  call the formula adjustment          RPN_adjust            x_1st   ,    10,     0,     0, x_updated                                i_equal     0                                                                      
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = #REF                                              
      exec     v21  call the formula adjustment          RPN_adjust            x_1st   ,     0,    -3,     0, x_updated                                i_equal     0                                                                      
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = #REF                                              
@@ -91,8 +81,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = #REF                                              
 
    COND       v21  change the cell to absolute row                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=1c$3"                                   p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=1c$3"                           i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    5) :=1c$3:                                     
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -108,8 +97,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0f$3                                              
 
    COND       v21  change the cell to absolute col                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=1$c3"                                   p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=1$c3"                           i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    5) :=1$c3:                                     
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -125,8 +113,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$c2                                              
 
    COND       v21  change the cell to absolute tab                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=$1c3"                                   p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=$1c3"                           i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    5) :=$1c3:                                     
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -142,8 +129,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = $1f2                                              
 
    COND       v21  change the cell to all absolutes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=$1$c$3"                                 p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=$1$c$3"                         i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    7) :=$1$c$3:                                   
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -159,8 +145,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = @1c3                                              
 
    COND       v21  change the cell to non-formula                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "testing"                                 p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "testing"                         i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    7) :testing:                                   
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -172,8 +157,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : testing                                             
 
    COND       v21  change the cell to several addresses                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=1c$3+1$d3-$1e3"                         p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=1c$3+1$d3-$1e3"                 i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (   15) :=1c$3+1$d3-$1e3:                           
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -189,8 +173,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0f$3 + 0$d2 - $1h2                                
 
    COND       v21  change the cell to addresses and numbers                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=((3.42*1c$3)+1$d3-$1e3)/5"              p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=((3.42*1c$3)+1$d3-$1e3)/5"      i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (   26) :=((3.42*1c$3)+1$d3-$1e3)/5:                
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -222,15 +205,13 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                 
 
    COND       v21  change the cell to an empty string                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, ""                                        p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, ""                                i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    0) ::                                          
      exec     v21  call the formula adjustment          RPN_adjust            x_1st   ,     0,     1,     0, x_updated                                i_lesser    0                                                                      
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                 
 
    COND       v21  change the cell to an fully absolute address                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=@f4"                                    p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=@f4"                            i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    4) :=@f4:                                      
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -246,8 +227,7 @@ SCRP          v21  (s_rpn ) adjusting formulas to account for cell movement   
      get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = @0f4                                              
 
    COND       v21  change the cell to a shortened absolute address              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT,   0,    10,    10, "=$f4"                                    p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_1st  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT,   0,    10,    10, "=$f4"                            i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source", x_1st                                                    s_equal     Cell Source      : (    4) :=$f4:                                      
 
    COND       v21  adjust cell elements around                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -275,6 +255,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a custom expect string        - - - - - - - - - -   char custom [2000];                                                                                                                                            
+     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -282,9 +263,6 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
-
-   COND       v21  change to three worksheets                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  modify a variable                    - - - - - - - - - -   my.ntab += 2;                                                                                                                                                  
 
    COND       v21  check the sheet sources (initial state)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0d11"                                               s_equal     s_celln source   : (----) ::                                           
@@ -324,7 +302,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL__create          0, 3, 10                                                                p_exists    0                                                                      
+     exec     v21  add a cell                           CELL__create          &x_1st, 0, 3, 10                                                        i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   2, num=   1, fore=   1, back=   1            
 
    COND       v21  check cell sources (0d11 there but null)                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -365,7 +343,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change first cell to a simple cell reference formula         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11"                                            p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11"                                     i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 
    COND       v21  check cell sources (0d11 now there, and null 0e11)           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -387,7 +365,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (0d11 now there, and null 0e11)          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  1 r=  1 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  1 r=  1 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=- f=? d=0 a=? c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
@@ -406,7 +384,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  put a value in the second cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 4, 10, "20"                                              p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 4, 10, "20"                                       i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 
    COND       v21  check cell sources (changes 0e11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -428,8 +406,8 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (0e11 changes to a number)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  1 r=  1 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  1 r=  1 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
@@ -447,7 +425,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change the value in second cell                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 4, 10, "100"                                             p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 4, 10, "100"                                      i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 
    COND       v21  check cell sources (changes 0e11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -469,8 +447,8 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (no changes)                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  1 r=  1 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  1 r=  1 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
@@ -488,7 +466,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change the formula in the first cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11+12"                                         p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+12"                                  i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 
    COND       v21  check cell sources (changes 0d11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -510,8 +488,8 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (changes 0d11)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  1 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  1 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
@@ -539,7 +517,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
 
    COND       v21  check cell settings (changes 0d11)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.042))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
@@ -557,7 +535,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  add a formula to the first cell again)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11*f11"                                        p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11*f11"                                 i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  check cell sources (changes 0d11, adds 0f11)                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -579,8 +557,8 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (changes 0d11)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.048))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=- f=? d=0 a=? c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
@@ -598,7 +576,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  put a value in the third cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 5, 10, "5"                                               p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 5, 10, "5"                                        i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  check cell sources (changes 0e11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -620,9 +598,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (changes 0f11 only)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.054))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
    COND       v21  check dependencies (no changes)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.055))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -639,7 +617,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change the formula in the first cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11+f11"                                        p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+f11"                                 i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  check cell sources (changes 0d11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.057))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -661,9 +639,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (changes 0f11 only)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.060))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
    COND       v21  check dependencies (no changes)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.061))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -702,8 +680,8 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (changes 0f11 only)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.066))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=- f=? d=0 a=? c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
@@ -721,11 +699,11 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change the value in third cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.068))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 5, 10, "5"                                               p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 5, 10, "5"                                        i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  change the formula, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.069))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11/f11"                                        p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11/f11"                                 i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  check cell sources (changes 0f11 and 0d11)                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.070))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -747,9 +725,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (changes 0f11 only)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.073))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
    COND       v21  check dependencies (no changes)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.074))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -766,7 +744,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change the value in third cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.075))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 5, 10, "35"                                              p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 5, 10, "35"                                       i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  check cell sources (changes 0f11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.076))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -788,9 +766,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (no changes)                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.079))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  3 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  3 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
    COND       v21  check dependencies (no changes)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.080))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -807,7 +785,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  change the formula, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.081))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11+f11+e11"                                    p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+f11+e11"                             i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 
    COND       v21  check cell sources (changes 0d11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.082))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -829,9 +807,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :         ---.------                                  
 
    COND       v21  check cell settings (no changes)                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.085))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  5 r=  2 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  5 r=  2 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 
    COND       v21  check dependencies (no changes)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.086))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -848,7 +826,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 
    COND       v21  make formula include forth cell (second sheet)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.087))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, "=e11+f11+(e11*1g11)"                             p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+f11+(e11*1g11)"                      i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   5, num=   4, fore=   4, back=   4            
 
    COND       v21  check cell sources (changes 0d11 and adds 1g11)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.088))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -870,9 +848,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :           0.000000                                  
 
    COND       v21  check cell settings (changes 0d11 and 1g11)                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.091))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  7 r=  3 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  7 r=  3 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : t=- f=? d=0 a=? c=  0 r=  0 d=  1                   
 
    COND       v21  check dependencies (addresses add of 1g11)                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.092))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -889,7 +867,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : 1g11  ( 1) ,0d11,                                   
 
    COND       v21  change the value in the forth cell                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.093))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  1, 6, 10, "40"                                              p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  1, 6, 10, "40"                                       i_equal     0                                                                      
      get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   5, num=   4, fore=   4, back=   4            
 
    COND       v21  check cell sources (changes 1g11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.094))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -911,10 +889,10 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the cell's value               CELL__unitnew         "cell_value"     , "1g11"                                               s_equal     s_celln value    :          40.000000                                  
 
    COND       v21  check cell settings (changes 1g11)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.097))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=< c=  7 r=  3 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=f f=? d=0 a=> c=  7 r=  3 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  1                   
 
    COND       v21  check dependencies (no changes)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.098))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   8, fore=   8, back=   8                      
@@ -930,7 +908,7 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
      get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : 1g11  ( 1) ,0d11,                                   
 
    COND       v21  clear the formula (and kills all dependencies)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.099))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 3, 10, ""                                                p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, ""                                         i_equal     0                                                                      
 
    COND       v21  check cell sources (changes 1g11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.100))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0d11"                                               s_equal     s_celln source   : (   0) ::                                           
@@ -952,9 +930,9 @@ SCRP          v21  (s_calc) basic cell reference formulas                     
 
    COND       v21  check cell settings (changes each a little)                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.103))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0d11"                                               s_equal     s_celln info     : t=- f=? d=0 a=? c=  0 r=  0 d=  0                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  0                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  0                   
-     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : t=n f=? d=0 a=< c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0e11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "0f11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
+     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
 
    COND       v21  check dependencies (blank slate)                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.104))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                      
@@ -984,14 +962,15 @@ SCRP          v21  (s_cell) verify cell width setting                         
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
 
    COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
 
    COND       v21  add first couple cells                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10, 10, "test"                                            p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 10, "first"                                           p_exists    0                                                                      
-     exec     v21  add a cell                           CELL__create          0, 12, 10                                                               p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10, 10, "test"                                     i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "first"                                    i_equal     0                                                                      
+     exec     v21  add a cell                           CELL__create          &x_1st , 0, 12, 10                                                      i_equal     0                                                                      
 
    COND       v21  check cell sources (initial setting)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (   4) :test:                                       
@@ -1006,8 +985,8 @@ SCRP          v21  (s_cell) verify cell width setting                         
      get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 
    COND       v21  add next couple cells                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 12, 10, "second"                                          p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 13, 10, "a_longer_one_in_here"                            p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12, 10, "second"                                   i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 13, 10, "a_longer_one_in_here"                     i_equal     0                                                                      
 
    COND       v21  check cell sources (0m11 and 0n11 updated)                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (   4) :test:                                       
@@ -1232,8 +1211,7 @@ SCRP          v21  single cell string formatting                              
      code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_one  = NULL;                                                                                                                                          
 
    COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL__create          0, 10, 10                                                               p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_one  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL__create          &x_one, 0, 10, 10                                                       i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (    0) :%-.40s:", "(null)");                                                                                              
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=? d=0 a=? c=  0 r=  0 d=  0                   
@@ -1242,7 +1220,7 @@ SCRP          v21  single cell string formatting                              
      exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 
    COND       v21  get small amount of text in the cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "test"                                            p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "test"                                     i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (    4) :%-.40s:", "test");                                                                                                
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
@@ -1315,7 +1293,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :-------test :                               
 
    COND       v21  get a empty string in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, ""                                                p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, ""                                         i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   0, "");                                                                                                 
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=- d=0 a=? c=  0 r=  0 d=  0                   
@@ -1328,7 +1306,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :          - :                               
 
    COND       v21  get a longer value in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT,  0, 10, 10, "testing"                                        p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 10, 10, "testing"                                 i_equal     0                                                                      
      exec     v21  change the formatting                CELL_format           CHG_INPUT, ' '                                                          i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   7, "testing");                                                                                          
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
@@ -1372,7 +1350,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :--testing-- :                               
 
    COND       v21  get a almost max length string in cell                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "eleventeen"                                      p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "eleventeen"                               i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  10, "eleventeen");                                                                                       
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0                   
@@ -1395,7 +1373,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) : eleventeen :                               
 
    COND       v21  get a longer value in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "eleventeeny"                                     p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "eleventeeny"                              i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  11, "eleventeeny");                                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0                   
@@ -1423,7 +1401,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeeny :                               
 
    COND       v21  get a over long string in the cell                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "supercalafragalistic"                            p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "supercalafragalistic"                     i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  20, "supercalafragalistic");                                                                             
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=< c=  0 r=  0 d=  0                   
@@ -1446,7 +1424,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :<calafraga> :                               
 
    COND       v21  get a over long string with spaces                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.042))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "super alaf agal stic"                            p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "super alaf agal stic"                     i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  20, "super alaf agal stic");                                                                             
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=| c=  0 r=  0 d=  0                   
@@ -1481,7 +1459,7 @@ SCRP          v21  single cell string formatting                              
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[super alaf agal stic========]:             
 
    COND       v21  put a medium size string in the cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.048))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "super calaf"                                     p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "super calaf"                              i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  11, "super calaf");                                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=[ c=  0 r=  0 d=  0                   
@@ -1533,7 +1511,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
      code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
 
    COND       v21  add a long cell                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10, 10, "testing one, two, three"                         p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10, 10, "testing one, two, three"                  i_equal     0                                                                      
 
    COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1554,7 +1532,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
      get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 
    COND       v21  add a merge marker on next cell                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 10, "<"                                               p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "<"                                        i_equal     0                                                                      
 
    COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1575,7 +1553,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
      get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 
    COND       v21  take away merge marker, add other content                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 10, "NOPE"                                            p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "NOPE"                                     i_equal     0                                                                      
 
    COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1596,7 +1574,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
      get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 
    COND       v21  add a merge marker on a further cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 12, 10, "<"                                               p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12, 10, "<"                                        i_equal     0                                                                      
 
    COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1617,7 +1595,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
      get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 
    COND       v21  blank out the middle cell                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change cell to empty                 CELL_change           CHG_INPUT, 0, 11, 10, ""                                                p_exists    0                                                                      
+     exec     v21  change cell to empty                 CELL_change           NULL , CHG_INPUT, 0, 11, 10, ""                                         i_equal     0                                                                      
 
    COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1638,7 +1616,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
      get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 
    COND       v21  change middle cell to merge marker                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 10, "<"                                               p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "<"                                        i_equal     0                                                                      
 
    COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1726,8 +1704,7 @@ SCRP          v21  single cell numeric formatting                             
      code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_one  = NULL;                                                                                                                                          
 
    COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL__create          0, 10, 10                                                               p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_one  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL__create          &x_one, 0, 10, 10                                                       i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (    0) :%-.40s:", "(null)");                                                                                              
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=? d=0 a=? c=  0 r=  0 d=  0                   
@@ -1736,7 +1713,7 @@ SCRP          v21  single cell numeric formatting                             
      exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 
    COND       v21  get a solid number in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "54321.6789"                                      p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "54321.6789"                               i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  10, "54321.6789");                                                                                       
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
@@ -1858,7 +1835,7 @@ SCRP          v21  single cell numeric formatting                             
      get      v21  check the cell's printable string    unit_accessor         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 
    COND       v21  get a small number in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "21"                                              p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "21"                                       i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   2, "21");                                                                                               
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0                   
@@ -1896,8 +1873,7 @@ SCRP          v21  alter cell alignment                                       
      code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_one  = NULL;                                                                                                                                          
 
    COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL__create          0, 10, 10                                                               p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_one  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL__create          &x_one, 0, 10, 10                                                       i_equal     0                                                                      
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (    0) :%-.40s:", "(null)");                                                                                              
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=? d=0 a=? c=  0 r=  0 d=  0                   
@@ -1906,7 +1882,7 @@ SCRP          v21  alter cell alignment                                       
      exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 
    COND       v21  add some contents                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the source string             CELL_change           CHG_INPUT, 0, 10, 10, "test"                                            p_exists    0                                                                      
+     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "test"                                     i_equal     0                                                                      
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
 
    COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3054,7 +3030,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
    COND       v21  get out of input mode                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  send a character to input            MODE_input            'i', 10                                                                 i_equal                                                                            
+     exec     v21  send a character to input            MODE_input            'i', 10                                                                 i_equal     0                                                                      
      get      v21  check the contents                   unit_accessor         "cell_contents", NULL                                                   s_equal     Contents     (t) : ( 0: 9) :te_joe_st:                                 
      get      v21  check the mode                       unit_accessor         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
@@ -3117,8 +3093,7 @@ SCRP          v21  test vi_source mode                                        
      code     v21  set the available content display    - - - - - - - - - -   my.apos = 50;                                                                                                                                                  
 
    COND       v21  add first cell                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL__create          0, 10, 10                                                               p_exists    0                                                                      
-     code     v21  save cell pointer                    - - - - - - - - - -   x_one  = yUNIT_p_rc;                                                                                                                                           
+     exec     v21  add a cell                           CELL__create          &x_one, 0, 10, 10                                                       i_equal     0                                                                      
      get      v21  check the cell's source string       unit_accessor         "cell_source",   x_one                                                  s_equal     Cell Source      : (    0) :(null):                                    
      get      v21  check the cell's information         unit_accessor         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=? d=0 a=? c=  0 r=  0 d=  0                   
 
@@ -3383,9 +3358,9 @@ SCRP          v21  test vi_source mode                                        
 
    COND       v21  verify that all cells are detached                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.061))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Sheet Location   : p=%9p",  NULL);                                                                                                            
-     get      v21  check the sheet location             unit_accessor         "sheet_who",     s_tabs[0].sheet[1][1]                                    s_equal     [[ CUSTOM ]]                                                           
+#     get      v21  check the sheet location             unit_accessor         "sheet_who",     s_tabs[0].sheet[1][1]                                    s_equal     [[ CUSTOM ]]                                                           
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Sheet Location   : p=%9p",  NULL);                                                                                                            
-     get      v21  check the sheet location             unit_accessor         "sheet_who",     s_tabs[0].sheet[1][2]                                    s_equal     [[ CUSTOM ]]                                                           
+#     get      v21  check the sheet location             unit_accessor         "sheet_who",     s_tabs[0].sheet[1][2]                                    s_equal     [[ CUSTOM ]]                                                           
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.062))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
@@ -3511,25 +3486,25 @@ SCRP          v21  verify row movement                                        
    COND       v21  setup custom variables                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
 
-   COND       v21  setup initial vertical values                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#   COND       v21  setup initial vertical values                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  window size full                     - - - - - - - - - -   my.y_full         =  44;                                                                                                                                       
      code     v21  window size top                      - - - - - - - - - -   my.y_top          =   2;                                                                                                                                       
      code     v21  window size bottom                   - - - - - - - - - -   my.y_bottom       =   2;                                                                                                                                       
      code     v21  window size avail                    - - - - - - - - - -   my.y_avail        =  40;                                                                                                                                       
-     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      = 200;                                                                                                                                       
+#     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      = 200;                                                                                                                                       
      code     v21  beginning row                        - - - - - - - - - -   BROW              =   0;                                                                                                                                       
      code     v21  ending row                           - - - - - - - - - -   EROW              =   0;                                                                                                                                       
-     code     v21  current row                          - - - - - - - - - -   s_tabs[0].crow      =   0;                                                                                                                                       
+#     code     v21  current row                          - - - - - - - - - -   s_tabs[0].crow      =   0;                                                                                                                                       
 
    COND       v21  setup initial horizonal values                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  window size full                     - - - - - - - - - -   my.x_full         =  80;                                                                                                                                       
      code     v21  window size left                     - - - - - - - - - -   my.x_left         =   5;                                                                                                                                       
      code     v21  window size right                    - - - - - - - - - -   my.x_right        =   0;                                                                                                                                       
      code     v21  window size availible                - - - - - - - - - -   my.x_avail        =  75;                                                                                                                                       
-     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      = 100;                                                                                                                                       
+#     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      = 100;                                                                                                                                       
      code     v21  beginning col                        - - - - - - - - - -   BCOL              =   0;                                                                                                                                       
      code     v21  ending col                           - - - - - - - - - -   ECOL              =   0;                                                                                                                                       
-     code     v21  current cols                         - - - - - - - - - -   s_tabs[0].ccol      =   0;                                                                                                                                       
+#     code     v21  current cols                         - - - - - - - - - -   s_tabs[0].ccol      =   0;                                                                                                                                       
 
    COND       v21  initialize the variables                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  process row movement                 KEYS_row              ' ', 'r'                                                                i_equal     0                                                                      
@@ -3866,47 +3841,47 @@ SCRP          v21  (s_move) verify end and edge movements (MAP mode)          
      code     v21  create a custom expect string        - - - - - - - - - -   char x_custom [2000];                                                                                                                                          
      code     v21  create a register list holder        - - - - - - - - - -   char x_list   [2000];                                                                                                                                          
 
-   COND       v21  size sheet one                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      =  40;                                                                                                                                       
-     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      =  40;                                                                                                                                       
+#   COND       v21  size sheet one                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      =  40;                                                                                                                                       
+#     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      =  40;                                                                                                                                       
 
    COND       v21  setup a center table of cells                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  3,  3, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  3,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  3,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  4,  3, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  4,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  4,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  3, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5,  5, "+10"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  3,  3, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  3,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  3,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  4,  3, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  4,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  4,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  5,  3, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  5,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  5,  5, "+10"                                      i_equal     0                                                                      
      get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   9, f=   9, b=   9                              
 
    COND       v21  setup a second table of cells (slightly askew)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 10,  6, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11,  6, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 12,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 12,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 12,  6, "+10"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10,  6, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11,  6, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12,  6, "+10"                                      i_equal     0                                                                      
      get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=  18, f=  18, b=  18                              
 
    COND       v21  setup a smaller table to right of both                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 20,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 20,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 21,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 21,  5, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 22,  4, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 22,  5, "+10"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 20,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 20,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 21,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 21,  5, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 22,  4, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 22,  5, "+10"                                      i_equal     0                                                                      
      get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=  24, f=  24, b=  24                              
 
    COND       v21  place a couple of outliers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  2,  1, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0, 11, 15, "+10"                                             p_exists    0                                                                      
-     exec     v21  add a cell                           CELL_change           CHG_INPUT, 0,  5, 30, "+10"                                             p_exists    0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  2,  1, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 15, "+10"                                      i_equal     0                                                                      
+     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0,  5, 30, "+10"                                      i_equal     0                                                                      
      get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=  27, f=  27, b=  27                              
 
    COND       v21  move to a neutral cell                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((45.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
