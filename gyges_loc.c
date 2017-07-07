@@ -952,11 +952,11 @@ LOC_col_xpos         (short a_tab, short a_col)
 }
 
 char         /*--> set a new col x-pos -------------------[ stigma [ 3----- ]-*/
-LOC_col_xset         (short a_tab, short a_col, short x_pos)
+LOC_col_xset         (short a_tab, short a_col, short a_pos)
 {
    char rc = LOC_col_valid (a_tab, a_col);
    if (rc < 0) return rc;
-   s_tabs [a_tab].cols [a_col].x = x_pos;
+   s_tabs [a_tab].cols [a_col].x = a_pos;
    return 0;
 }
 
@@ -1108,11 +1108,11 @@ LOC_row_ypos         (short a_tab, short a_row)
 }
 
 char         /*--> set a new row y-pos -------------------[ stigma [ 3----- ]-*/
-LOC_row_yset         (short a_tab, short a_row, short x_pos)
+LOC_row_yset         (short a_tab, short a_row, short a_pos)
 {
    char rc = LOC_row_valid (a_tab, a_row);
    if (rc < 0) return rc;
-   s_tabs [a_tab].rows [a_row].y = x_pos;
+   s_tabs [a_tab].rows [a_row].y = a_pos;
    return 0;
 }
 

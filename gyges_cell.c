@@ -907,8 +907,11 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(formatting)---------------------*/
    DEBUG_CELL   yLOG_note    ("update format fields");
    x_new->f = a_format[0];
+   DEBUG_CELL   yLOG_char    ("f"         , x_new->f);
    x_new->a = a_format[1];
+   DEBUG_CELL   yLOG_char    ("a"         , x_new->a);
    x_new->d = a_format[2];
+   DEBUG_CELL   yLOG_char    ("d"         , x_new->d);
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("call printable");
    rc = CELL_printable (x_new);
@@ -2029,8 +2032,15 @@ CELL_erase         (void)
    return 0;
 }
 
+char               /* PURPOSE : change horizontal alignment for cells --------*/
+CELL_format_valid    (char a_format)
+{
+   if (strchr (sv_formats, a_format) == 0)   return '?';
+   return a_format;
+}
+
 char               /* PURPOSE : change number formatting for cells -----------*/
-CELL_format        (char a_mode, char a_type)
+CELL_format        (char a_mode, char a_format)
 {
    /*---(design notes)-------------------*/
    /*
@@ -2044,22 +2054,22 @@ CELL_format        (char a_mode, char a_type)
    int         x_row       = 0;
    int         x_count     = 0;
    /*---(defenses)-----------------------*/
-   if (strchr (sv_formats, a_type)  == 0) return -1;
+   if (strchr (sv_formats, a_format)  == 0) return -1;
    /*---(prepare)------------------------*/
    x_next  = VISU_first (&x_tab, &x_col, &x_row);
-   if (a_type == '"')  a_type = x_next->f;
+   if (a_format == '"')  a_format = x_next->f;
    /*---(process range)------------------*/
    do {
       if (x_next != NULL) {
          if (x_next->a != '+') {
             if (a_mode == CHG_INPUT) {
-               if (x_count == 0)  HIST_format ("format", x_tab, x_col, x_row, x_next->f, a_type);
-               else               HIST_format ("FORMAT", x_tab, x_col, x_row, x_next->f, a_type);
+               if (x_count == 0)  HIST_format ("format", x_tab, x_col, x_row, x_next->f, a_format);
+               else               HIST_format ("FORMAT", x_tab, x_col, x_row, x_next->f, a_format);
             }
-            if      (strchr (G_CELL_STR , x_next->t) != 0 && strchr (sv_fillers, a_type) != NULL)
-               x_next->f = a_type;
-            else if (strchr (G_CELL_NUM , x_next->t) != 0 && strchr (sv_fillers, a_type) == NULL)
-               x_next->f = a_type;
+            if      (strchr (G_CELL_STR , x_next->t) != 0 && strchr (sv_fillers, a_format) != NULL)
+               x_next->f = a_format;
+            else if (strchr (G_CELL_NUM , x_next->t) != 0 && strchr (sv_fillers, a_format) == NULL)
+               x_next->f = a_format;
             ++x_count;
          }
          CELL_printable (x_next);
@@ -2068,6 +2078,13 @@ CELL_format        (char a_mode, char a_type)
    } while (x_next != DONE_DONE);
    /*---(complete)-----------------------*/
    return 0;
+}
+
+char               /* PURPOSE : change horizontal alignment for cells --------*/
+CELL_align_valid   (char a_align)
+{
+   if (strchr (sv_align, a_align) == 0)   return '?';
+   return a_align;
 }
 
 char               /* PURPOSE : change horizontal alignment for cells --------*/
@@ -2110,6 +2127,13 @@ CELL_align         (char a_mode, char a_align)
    } while (x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    return 0;
+}
+
+char               /* PURPOSE : change horizontal alignment for cells --------*/
+CELL_decimals_valid  (char a_decs)
+{
+   if (strchr ("0123456789\"", a_decs) == 0)   return '0';
+   return a_decs;
 }
 
 char               /* PURPOSE : change decimal places shown for cells --------*/
@@ -2604,7 +2628,7 @@ CELL__print_number (
       return rce;
    }
    /*---(defense: text)------------------*/
-   DEBUG_CELL  yLOG_point   ("a_decimal" , a_decimal);
+   DEBUG_CELL  yLOG_char    ("a_decimal" , a_decimal);
    --rce;
    if (a_decimal < 0 || a_decimal > 9) {
       DEBUG_CELL  yLOG_note    ("decimal places value out of range");
@@ -2705,6 +2729,8 @@ CELL_printable     (tCELL *a_curr) {
    DEBUG_CELL  yLOG_value ("row"       , a_curr->row);
    DEBUG_CELL  yLOG_char  ("type"      , a_curr->t);
    DEBUG_CELL  yLOG_char  ("format"    , a_curr->f);
+   DEBUG_CELL  yLOG_char  ("align"     , a_curr->a);
+   DEBUG_CELL  yLOG_char  ("decs"      , a_curr->d);
    /*---(check for hidden)---------------*/
    if (a_curr->t == CTYPE_MERGE) {
       DEBUG_CELL  yLOG_note  ("merged cell");

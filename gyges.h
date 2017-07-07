@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2t"
-#define     VER_TXT   "tab and col reading and writing tested"
+#define     VER_NUM   "2.2u"
+#define     VER_TXT   "spreadsheets can be loaded again ;)  no segfault and major display issues"
 
 
 
@@ -1208,11 +1208,14 @@ char      CELL_init          (void);
 char      CELL_wrap          (void);
 char      CELL__interpret    (tCELL *a_curr);
 
-char      CELL_erase         (void);
-char      CELL_align         (char a_mode, char a_align);
-char      CELL_decimals      (char a_mode, char a_num);
-char      CELL_format        (char a_mode, char a_num);
-char      CELL_width         (char a_mode, char a_num);
+char      CELL_erase           (void);
+char      CELL_align_valid     (char a_align);
+char      CELL_align           (char a_mode, char a_align);
+char      CELL_decimals_valid  (char a_decs);
+char      CELL_decimals        (char a_mode, char a_decs);
+char      CELL_format_valid    (char a_format);
+char      CELL_format          (char a_mode, char a_format);
+char      CELL_width           (char a_mode, char a_num);
 char      CELL__print_comma  (char a_format, char a_decimal, double a_num, char *a_text);
 char      CELL__print_number (char a_format, char a_decimal, double a_num, char *a_text);
 char      CELL__print_special(char a_format, char a_decimal, double a_num, char *a_text);

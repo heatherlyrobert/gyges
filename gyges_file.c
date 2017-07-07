@@ -789,14 +789,17 @@ PRIV void  o___CELLS___________o () { return; }
 char
 INPT_celln         (char *a_label, char *a_format, char *a_source)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   char        x_format    [LEN_LABEL] = "";
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         rc          =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   char        x_string    [LEN_LABEL] = "?0?";
    tCELL      *x_new       = NULL;
+   char        x_format    =  '?';
+   char        x_decs      =  '0';
+   char        x_align     =  '?';
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
@@ -821,11 +824,19 @@ INPT_celln         (char *a_label, char *a_format, char *a_source)
       return rce;
    }
    /*---(fix format)---------------------*/
-   sprintf (x_format, "%c%c%c", a_format [2], a_format [4], a_format [6]);
-   DEBUG_INPT  yLOG_info    ("format"    , x_format);
-   DEBUG_INPT  yLOG_info    ("source"    , a_source);
+   if (strlen (a_format) == 9) {
+      x_format  = CELL_format_valid   (a_format [2]);
+      DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
+      x_decs    = CELL_decimals_valid (a_format [4]);
+      DEBUG_INPT  yLOG_char    ("x_decs"    , x_decs);
+      x_align   = CELL_align_valid    (a_format [6]);
+      DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
+      sprintf (x_string, "%c%c%c", x_format, x_align, x_decs);
+   }
+   DEBUG_INPT  yLOG_info    ("x_string"  , x_string);
    /*---(update)-------------------------*/
-   x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, a_source, x_format);
+   DEBUG_INPT  yLOG_info    ("a_source"  , a_source);
+   x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, a_source, x_string);
    DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);

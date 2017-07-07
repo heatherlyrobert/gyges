@@ -455,8 +455,8 @@ CURS_formula       (tCELL *a_curr)
       /*---(1st 12 chars)---*/
       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);
       /*---(2nd 13 chars)---*/
-      if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  "    , LOC_col_width (NTAB, CCOL), a_curr->t, a_curr->f, a_curr->d, a_curr->a);
-      else                 mvprintw (row_formula, 12, " %02d                []", LOC_col_width (NTAB, CCOL));
+      if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  ", LOC_col_width (CTAB, CCOL), a_curr->t, a_curr->f, a_curr->d, a_curr->a);
+      else                 mvprintw (row_formula, 12, " %02d - - - -  "    , LOC_col_width (CTAB, CCOL));
       /*---(3rd  5 chars)---*/
       mvprintw (row_formula, 25, "%4d", len);
       /*---(4th 14 chars)---*/
@@ -517,11 +517,15 @@ CURS_formula       (tCELL *a_curr)
    /*---(boundary markers)---------------*/
    attron (S_COLOR_VISUAL );
    sprintf (msg, "%c", G_CHAR_NULL );
+   /*---(beginning)---------*/
    if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);
    else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");
    else                              mvprintw (row_formula, s_start - 1, "<");
-   if      (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");
+   /*---(ending)------------*/
+   if      (my.npos == 0)            mvprintw (row_formula, s_start + s_space, msg);
+   else if (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");
    else                              mvprintw (row_formula, s_start + s_space, ">");
+   /*---(done)--------------*/
    attrset (0);
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -611,7 +615,7 @@ char
 CURS_col_color     (short a_col)
 {
    if      (a_col == CCOL)                       attron  (S_COLOR_HEADY   );
-   else if (a_col <= FR_ECOL)                    attron  (S_COLOR_HEADL   );
+   else if (FR_COL == 'y' && a_col <= FR_ECOL)   attron  (S_COLOR_HEADL   );
    else if (LOC_col_used (CTAB, a_col) >  0)     attron  (S_COLOR_HEADF   );
    else                                          attron  (S_COLOR_HEADN   );
    return 0;
@@ -647,7 +651,6 @@ CURS_col_head      (void)
    }
    /*---(process oolumns)----------------*/
    KEYS_pcol ();
-   KEYS_prow ();
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/
@@ -685,7 +688,7 @@ char
 CURS_row_color       (short a_row)
 {
    if      (a_row == CROW)                       attron  (S_COLOR_HEADY   );
-   else if (a_row <= FR_EROW)                    attron  (S_COLOR_HEADL   );
+   else if (FR_ROW == 'y' && a_row <= FR_EROW)   attron  (S_COLOR_HEADL   );
    else if (LOC_row_used (CTAB, a_row) >  0)     attron  (S_COLOR_HEADF   );
    else                                          attron  (S_COLOR_HEADN   );
    return 0;
@@ -706,19 +709,16 @@ CURS_row_head      (void)
       for (i = FR_BROW; i <=  FR_EROW; ++i) {
          if (i >= NROW)  break;
          /*---(prepare)----------------------------*/
-         h     = LOC_row_height (CTAB, i);
-         ch   += h;
          CURS_row_color  (i);
          mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);
          attrset (0);
       }
    }
+   KEYS_prow ();
    /*---(process rows)-----------------------*/
    for (i = BROW; i <=  EROW; ++i) {
       if (i >= NROW)  break;
       /*---(prepare)----------------------------*/
-      h     = LOC_row_height (CTAB, i);
-      ch   += h;
       CURS_row_color  (i);
       mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);
       attrset (0);
@@ -1123,7 +1123,7 @@ CURS_main          (void)
    /*---(update cells)-------------------*/
    CURS_formula   (curr);
    CURS_status    (curr);
-   CURS_col_head   ();
+   CURS_col_head  ();
    CURS_row_head  ();
    CURS_page      ();
    CURS_message   ();
@@ -1161,7 +1161,7 @@ CURS_main          (void)
    else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)
       move (row_formula, s_start + my.cpos - my.bpos);
    else
-      move (LOC_row_ypos (CTAB, CROW), LOC_row_ypos (CTAB, CCOL) + LOC_row_height (CTAB, CCOL) - 1);
+      move (LOC_row_ypos (CTAB, CROW), LOC_col_xpos (CTAB, CCOL) + LOC_col_width (CTAB, CCOL) - 1);
    /*---(refresh)------------------------*/
    my.info_win = G_INFO_NONE;
    refresh ();
@@ -1185,19 +1185,14 @@ char               /* PURPOSE : display an individual cell                    */
 CURS_cell          (int a_col, int a_row)
 {
    /*---(locals)---------------------------*/
-   tCELL    *curr      = LOC_cell_at_loc (CTAB, a_col, a_row);
-   tCELL    *next      = NULL;
-   char      label[LEN_RECD] = "zzz";
-   char      l[LEN_RECD]  = "";
-   int       i         = 0;
-   uint      xmax      = 0;
-   int       xcol      = 0;
-   char      xdisp [LEN_RECD];
+   tCELL      *x_curr      = LOC_cell_at_loc (CTAB, a_col, a_row);
+   char        label     [LEN_RECD] = "zzz";
+   char        l         [LEN_RECD]  = "";
    /*---(check for merges)-----------------*/
-   /*> if (curr != NULL && curr->a == '+')  return 0;                                 <*/
+   /*> if (x_curr != NULL && x_curr->a == '+')  return 0;                                 <*/
    /*---(identify cell)--------------------*/
-   if (curr != NULL) {
-      LOC_label  (curr, l);
+   if (x_curr != NULL) {
+      LOC_label  (x_curr, l);
       sprintf    (label, ",%s,", l);
    } else {
       LOC_ref    (CTAB, a_col, a_row, 0, l);
@@ -1206,45 +1201,46 @@ CURS_cell          (int a_col, int a_row)
    /*---(current)--------------------------*/
    if      (a_col == CCOL && a_row == CROW)     attron (S_COLOR_CURRENT);
    /*---(visual-range)---------------------*/
-   else if (VISU_root     (CTAB, a_col, a_row))  attron (S_COLOR_ROOT   );
-   else if (VISU_selected (CTAB, a_col, a_row))  attron (S_COLOR_VISUAL );
+   else if (VISU_root     (CTAB, a_col, a_row)) attron (S_COLOR_ROOT   );
+   else if (VISU_selected (CTAB, a_col, a_row)) attron (S_COLOR_VISUAL );
    /*---(marks)----------------------------*/
    else if (my.mark_show  == 'y' && strstr (my.mark_list, label) != NULL)  attron (S_COLOR_MARK     );
    /*---(content-based)--------------------*/
-   else if (curr != NULL) {
+   else if (x_curr != NULL) {
       /*---(trouble)--------------------------*/
-      if      (curr->t == CTYPE_ERROR)          attron (S_COLOR_ERROR  );
-      else if (curr->t == CTYPE_WARN )          attron (S_COLOR_ERROR  );
+      if      (x_curr->t == CTYPE_ERROR)        attron (S_COLOR_ERROR  );
+      else if (x_curr->t == CTYPE_WARN )        attron (S_COLOR_ERROR  );
       /*---(related)--------------------------*/
       else if (strstr (reqs, label) != NULL)    attron (S_COLOR_REQS   );
       else if (strstr (deps, label) != NULL)    attron (S_COLOR_PROS   );
       else if (strstr (like, label) != NULL)    attron (S_COLOR_LIKE   );
       /*---(pointers)-------------------------*/
-      else if (curr->t == CTYPE_RANGE)          attron (S_COLOR_POINTER);
-      else if (curr->t == CTYPE_ADDR )          attron (S_COLOR_POINTER);
+      else if (x_curr->t == CTYPE_RANGE)        attron (S_COLOR_POINTER);
+      else if (x_curr->t == CTYPE_ADDR )        attron (S_COLOR_POINTER);
       /*---(numbers)--------------------------*/
-      else if (curr->t == CTYPE_NUM  )          attron (S_COLOR_NUMBER );
-      else if (curr->t == CTYPE_FORM ) {
-         if   (curr->nrequire < 5)              attron (S_COLOR_FSIMPLE);
+      else if (x_curr->t == CTYPE_NUM  )        attron (S_COLOR_NUMBER );
+      else if (x_curr->t == CTYPE_FORM ) {
+         if   (x_curr->nrequire < 5)            attron (S_COLOR_FSIMPLE);
          else                                   attron (S_COLOR_FDANGER);
       }
-      else if (curr->t == CTYPE_FLIKE)          attron (S_COLOR_FLIKE  );
+      else if (x_curr->t == CTYPE_FLIKE)        attron (S_COLOR_FLIKE  );
       /*---(strings)--------------------------*/
-      else if (curr->t == CTYPE_STR  )          attron (S_COLOR_STRING );
-      else if (curr->t == CTYPE_MOD  ) {
-         if   (curr->nrequire < 5)              attron (S_COLOR_FSTRING);
+      else if (x_curr->t == CTYPE_STR  )        attron (S_COLOR_STRING );
+      else if (x_curr->t == CTYPE_MOD  ) {
+         if   (x_curr->nrequire < 5)            attron (S_COLOR_FSTRING);
          else                                   attron (S_COLOR_FSTRDAG);
       }
-      else if (curr->t == CTYPE_MLIKE)          attron (S_COLOR_MLIKE  );
+      else if (x_curr->t == CTYPE_MLIKE)        attron (S_COLOR_MLIKE  );
       /*---(constants)------------------------*/
-      else if (curr->t == CTYPE_BLANK)          attron (S_COLOR_NULL   );
+      else if (x_curr->t == CTYPE_BLANK)        attron (S_COLOR_NULL   );
       else                                      attron (S_COLOR_STRING );
    }
    /*---(display cell)---------------------*/
-   if (curr == NULL || curr->p == NULL) 
-      mvprintw (LOC_row_ypos (CTAB, a_row) + i, LOC_row_ypos (CTAB, a_col), "%*.*s", LOC_col_width (CTAB, a_col), LOC_col_width (CTAB, a_col), g_empty);
+   if (x_curr == NULL || x_curr->p == NULL) 
+      mvprintw (LOC_row_ypos (CTAB, a_row), LOC_col_xpos (CTAB, a_col), "%*.*s", LOC_col_width (CTAB, a_col), LOC_col_width (CTAB, a_col), g_empty);
+      /*> mvprintw (LOC_row_ypos (CTAB, a_row), LOC_col_xpos (CTAB, a_col), "%*.*s", LOC_col_width (CTAB, a_col), LOC_col_width (CTAB, a_col), "- - - - - - - - - - -");   <*/
    else
-      mvprintw (LOC_row_ypos (CTAB, a_row) + i, LOC_row_ypos (CTAB, a_col), curr->p);
+      mvprintw (LOC_row_ypos (CTAB, a_row), LOC_col_xpos (CTAB, a_col), x_curr->p);
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-------------------------*/
@@ -1290,7 +1286,7 @@ CURS_line          (int a_ch, int a_brow, int a_erow)
       }
    }
    /*---(complete)-----------------------*/
-   return 0;
+   return a_ch;
 }
 
 PRIV char       /* PURPOSE : redisplay all cell data on the screen --------*/
