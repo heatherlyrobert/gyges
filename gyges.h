@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2s"
-#define     VER_TXT   "tab writing is unit tested"
+#define     VER_NUM   "2.2t"
+#define     VER_TXT   "tab and col reading and writing tested"
 
 
 
@@ -1229,14 +1229,21 @@ char      FILE_bump          (char a_type, char *a_ver);
 
 char      INPT_cell          (cchar *a_recd);
 
-char      INPT_tab             (char *a_label, char *a_name);
-char      OUTP_tab             (int   a_tab  );
-char      OUTP_tab_head        (FILE *a_file );
-char      OUTP_tab_foot        (FILE *a_file , int   a_count);
-char      OUTP_tabs            (FILE *a_file);
+/*---(tabs)------------------*/
+char      INPT_tab             (char  *a_label, char *a_name);
+char      OUTP_tab             (short  a_tab  );
+char      OUTP_tab_head        (FILE  *a_file );
+char      OUTP_tab_foot        (FILE  *a_file , int   a_count);
+int       OUTP_tabs            (FILE  *a_file );
+/*---(columns)---------------*/
+char      INPT_col             (char  *a_label, int   a_size);
+char      OUTP_col             (short  a_tab  , short a_col);
+char      OUTP_col_head        (FILE  *a_file );
+char      OUTP_col_foot        (FILE  *a_file , int   a_count);
+int       OUTP_cols            (FILE  *a_file );
 
-char      INPT_width         (char *a_label, int   a_size);
-char      INPT_height        (char *a_label, int   a_size);
+
+
 
 char      INPT_open          (cchar *a_name);
 char      INPT_read          (void);

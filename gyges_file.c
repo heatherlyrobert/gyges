@@ -561,7 +561,7 @@ INPT_tab           (char *a_label, char *a_name)
 }
 
 char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
-OUTP_tab             (int a_tab)
+OUTP_tab             (short a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;          /* generic return code            */
@@ -572,11 +572,11 @@ OUTP_tab             (int a_tab)
    char        x_addr      [25]        = "";
    char        x_name      [25]        = "";
    char        x_default   [25]        = "";
+   /*---(prepare)------------------------*/
+   sprintf (my.f_recd, "");
    /*---(defense)------------------------*/
    rc = LOC_tab_valid (a_tab);
    --rce;  if (rc      <  0)                     return rce;
-   /*---(prepare)------------------------*/
-   sprintf (my.f_recd, "");
    /*---(gather size)--------------------*/
    x_cols = LOC_col_max (a_tab);
    /*> printf ("x_cols = %4d, default = %4d\n", x_cols, LOC_col_defmax());            <*/
@@ -630,20 +630,142 @@ OUTP_tab_foot        (FILE *a_file, int a_count)
    return 0;
 }
 
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+int          /*--> write file tab information ------------[ leaf   [ ------ ]-*/
 OUTP_tabs            (FILE *a_file)
 {
    int i = 0;
    int c = 0;
    char rc = 0;
-   OUTP_tab_head  (a_file);
+   rc = OUTP_tab_head  (a_file);
    for (i = 0; i <= MAX_TABS; ++i) {
       rc = OUTP_tab    (i);
       if (rc <= 0)   continue;
-      fprintf (a_file, my.f_recd);
+      if (a_file != NULL)  fprintf (a_file, my.f_recd);
       ++c;
    }
-   OUTP_tab_foot  (a_file, c);
+   rc = OUTP_tab_foot  (a_file, c);
+   return c;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       column width                           ----===*/
+/*====================------------------------------------====================*/
+static void   o___WIDTH___________o (void) { return; }
+
+char         /*--> process a column width record ---------[ leaf   [ ------ ]-*/
+INPT_col           (char *a_label, int a_size)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   int         rc          = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
+   DEBUG_INPT  yLOG_value   ("a_size"    , a_size);
+   /*---(parse address)------------*/
+   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_INPT  yLOG_value   ("parse"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("a_label"   , a_label);
+   DEBUG_INPT  yLOG_value   ("tab"       , x_tab);
+   DEBUG_INPT  yLOG_value   ("col"       , x_col);
+   /*---(update size)--------------*/
+   rc = LOC_col_widen      (x_tab, x_col, a_size);
+   DEBUG_INPT  yLOG_value   ("widen"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> write file col information ------------[ leaf   [ ------ ]-*/
+OUTP_col             (short a_tab, short a_col)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;          /* generic return code            */
+   char        rce         =  -10;          /* return code for errors         */
+   char        x_write     =  '-';
+   short       x_cols      =    0;
+   short       x_size      =    0;
+   char        x_addr      [25]        = "";
+   /*---(prepare)------------------------*/
+   sprintf (my.f_recd, "");
+   /*---(defense)------------------------*/
+   rc = LOC_col_valid (a_tab, a_col);
+   --rce;  if (rc      <  0)                     return rce;
+   /*---(gather size)--------------------*/
+   x_cols = LOC_col_max   (a_tab);
+   --rce;  if (a_col > x_cols)                   return 0;
+   x_size = LOC_col_width (a_tab, a_col);
+   --rce;  if (x_size == DEF_WIDTH)              return 0;
+   /*---(create a label)-----------------*/
+   LOC_ref (a_tab, a_col, 0, 0, x_addr);
+   /*---(build record)-------------------*/
+   sprintf (my.f_recd, "width       %-8s  %4d ", x_addr, x_size);
+   /*---(complete)-----------------------*/
+   return 1;
+}
+
+char         /*--> write file col header -----------------[ leaf   [ ------ ]-*/
+OUTP_col_head        (FILE *a_file)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;           /* return code for errors         */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   /*---(header)-------------------------*/
+   fprintf (a_file, "#===[[ COLUMN WIDTHS, changes only ]]========================================================================\n");
+   fprintf (a_file, "#---------  ---loc--  size \n");
+   fflush  (a_file);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> write file col footer -----------------[ leaf   [ ------ ]-*/
+OUTP_col_foot        (FILE *a_file, int a_count)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;           /* return code for errors         */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   /*---(header)-------------------------*/
+   if (a_count == 0)  fprintf (a_file, "# no special or unique col information\n");
+   else               fprintf (a_file, "#---------  ---loc--  size \n");
+   fprintf (a_file, "\n\n\n");
+   fflush  (a_file);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+int          /*--> write file col section ----------------[ leaf   [ ------ ]-*/
+OUTP_cols            (FILE *a_file)
+{
+   int i = 0;
+   int j = 0;
+   int c = 0;
+   char rc = 0;
+   rc = OUTP_col_head  (a_file);
+   for (i = 0; i <= MAX_TABS; ++i) {
+      for (j = 0; j <= MAX_COLS; ++j) {
+         rc = OUTP_col    (i, j);
+         if (rc <= 0)   continue;
+         if (a_file != NULL)  fprintf (a_file, my.f_recd);
+         ++c;
+      }
+   }
+   rc = OUTP_col_foot  (a_file, c);
+   return c;
 }
 
 
@@ -652,7 +774,7 @@ OUTP_tabs            (FILE *a_file)
 /*====================------------------------------------====================*/
 /*===----                    reading and writing cells                 ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___SIZES___________o () { return; }
+PRIV void  o___CELLS___________o () { return; }
 
 
 /* cell records are allowed to evolve separately from other input types as the
@@ -688,6 +810,9 @@ INPT_celln         (char *a_label, char *a_format, char *a_source)
       return rce;
    }
    DEBUG_INPT  yLOG_info    ("a_label"   , a_label);
+   DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
+   DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
    /*---(expand everything as needed)----*/
    rc = LOC_legal (x_tab, x_col, x_row, CELL_GROW);
    DEBUG_INPT  yLOG_value   ("legal"     , rc);
@@ -902,70 +1027,6 @@ INPT_close         (void)
    return 0;
 }
 
-char         /*--> process a column width record ---------[ leaf   [ ------ ]-*/
-INPT_width         (char *a_label, int a_size)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_value   ("a_size"    , a_size);
-   /*---(parse address)------------*/
-   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   DEBUG_INPT  yLOG_value   ("parse"     , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(update size)--------------*/
-   rc = LOC_col_widen      (x_tab, x_col, a_size);
-   DEBUG_INPT  yLOG_value   ("widen"     , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*--> process a row height record -----------[ leaf   [ ------ ]-*/
-INPT_height        (char *a_label, int a_size)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_value   ("a_size"    , a_size);
-   /*---(parse address)------------*/
-   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   DEBUG_INPT  yLOG_value   ("parse"     , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(update size)--------------*/
-   rc = LOC_row_heighten   (x_tab, x_row, a_size);
-   DEBUG_INPT  yLOG_value   ("heighten"  , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 char         /* file reading driver ----------------------[--------[--------]-*/
 INPT_read          (void)
 {
@@ -1067,7 +1128,8 @@ INPT_main          (cchar *a_name)
       /*---(handle types)----------------*/
       switch (my.f_type [0]) {
       case 'w' :
-         if  (my.f_vers == 'A')  rc = INPT_width (s_fields [2], atoi (s_fields [3]));
+         if  (my.f_vers == 'A')  rc = INPT_col   (s_fields [2], atoi (s_fields [3]));
+         if  (my.f_vers == '?')  rc = INPT_col   (s_fields [1], atoi (s_fields [2]));
          break;
       case 't' :
          if  (my.f_vers == 'F')  rc = INPT_tab   (s_fields [3], s_fields [9]);
@@ -1122,100 +1184,6 @@ OUTP_header        (FILE *a_file)
    if (ver_ctrl == 'y') {
       fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",
             31, ver_num, 31, ver_txt, 31);
-   }
-   /*---(complete)-----------------------*/
-   fflush (a_file);
-   return 0;
-}
-
-char         /*--> write file column widths --------------[ leaf   [ ------ ]-*/
-FILE_Ocols         (FILE *a_file, int *a_seq, int a_tab, int a_bcol, int a_ecol)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;             /* iterator -- column             */
-   char        rc          = 0;             /* generic return code            */
-   char        rce         = -10;           /* return code for errors         */
-   char        x_label     [20];            /* holder for cell address        */
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   --rce;  if (*a_seq <  0)                      return rce;
-   --rce;  if (a_tab  <  0)                      return rce;
-   --rce;  if (a_tab  >= my.ntab)                return rce;
-   --rce;  if (a_bcol <  0)                      return rce;
-   --rce;  if (a_bcol >= MAX_COLS)               return rce;
-   --rce;  if (a_ecol <  a_bcol)                 return rce;
-   --rce;  if (a_ecol <  0)                      return rce;
-   --rce;  if (a_ecol >= MAX_COLS)               return rce;
-   /*---(header)-------------------------*/
-   if (*a_seq == 0) {
-      fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ COLUMN WIDTHS, changes only ]]========================================================================\n");
-      fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
-      fprintf (a_file, "width_def  %c -------- %c %4d %c\n", 31, 31, DEF_WIDTH, 31);
-   }
-   /*---(columns)------------------------*/
-   for (i = a_bcol; i <= a_ecol; ++i) {
-      /*---(filter unchanged)------------*/
-      if (LOC_col_width (a_tab, i) == DEF_WIDTH)  continue;
-      /*---(break every five)------------*/
-      if (*a_seq % 5 == 0)  {
-         fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
-      }
-      /*---(make column address)---------*/
-      rc = LOC_ref (a_tab, i, 0, 0, x_label);
-      if (rc < 0) continue;
-      /*---(write exception)-------------*/
-      fprintf (a_file, "width      %c %-8.8s %c %4d %c\n",
-            31, x_label, 31, LOC_col_width (a_tab, i), 31);
-      /*---(prepare for next)------------*/
-      ++(*a_seq);
-   }
-   /*---(complete)-----------------------*/
-   fflush (a_file);
-   return 0;
-}
-
-char         /*--> write file row heights ----------------[ leaf   [ ------ ]-*/
-FILE_rows          (FILE *a_file, int *a_seq, int a_tab, int a_brow, int a_erow)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;             /* iterator -- row                */
-   char        rc          = 0;             /* generic return code            */
-   char        rce         = -10;           /* return code for errors         */
-   char        x_label     [20];            /* holder for cell address        */
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   --rce;  if (*a_seq <  0)                      return rce;
-   --rce;  if (a_tab  <  0)                      return rce;
-   --rce;  if (a_tab  >= my.ntab)                return rce;
-   --rce;  if (a_brow <  0)                      return rce;
-   --rce;  if (a_brow >= MAX_ROWS)               return rce;
-   --rce;  if (a_erow <  a_brow)                 return rce;
-   --rce;  if (a_erow <  0)                      return rce;
-   --rce;  if (a_erow >= MAX_ROWS)               return rce;
-   /*---(header)-------------------------*/
-   if (*a_seq == 0) {
-      fprintf (a_file, "\n\n\n");
-      fprintf (a_file, "#===[[ ROW HEIGHTS, changes only ]]==========================================================================\n");
-      fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
-      fprintf (a_file, "height_def %c -------- %c %4d %c\n", 31, 31, DEF_HEIGHT, 31);
-   }
-   /*---(rows)---------------------------*/
-   for (i = a_brow; i <= a_erow; ++i) {
-      /*---(filter unchanged)------------*/
-      if (LOC_row_height (a_tab, i) == DEF_HEIGHT)  continue;
-      /*---(break every five)------------*/
-      if (*a_seq % 5 == 0)  {
-         fprintf (a_file, "#--------- %c ---loc-- %c size %c\n", 31, 31, 31);
-      }
-      /*---(make row address)------------*/
-      rc = LOC_ref (a_tab, 0, i, 0, x_label);
-      if (rc < 0) continue;
-      /*---(write exception)-------------*/
-      fprintf (a_file, "height     %c %-8.8s %c %4d %c\n",
-            31, x_label, 31, LOC_row_height (a_tab, i), 31);
-      /*---(prepare for next)------------*/
-      ++(*a_seq);
    }
    /*---(complete)-----------------------*/
    fflush (a_file);
@@ -1339,17 +1307,7 @@ FILE_write         (char *a_name)
    /*---(tab data)-----------------------*/
    OUTP_tabs   (f);
    /*---(column data)--------------------*/
-   x_seq = 0;
-   for (i = 0; i < NTAB; ++i) {
-      rc = FILE_Ocols (f, &x_seq, i, 0, LOC_col_max (i) - 1);
-   }
-   if (x_seq == 0)  fprintf (f, "# no column widths vary from default\n");
-   /*---(row data)-----------------------*/
-   x_seq = 0;
-   for (i = 0; i < NTAB; ++i) {
-      rc = FILE_rows  (f, &x_seq, i, 0, LOC_row_max (i) - 1);
-   }
-   if (x_seq == 0)  fprintf (f, "# no row heights vary from default\n");
+   OUTP_cols   (f);
    /*---(dependent cells)------------------*/
    fprintf (f, "\n\n\n#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");
    x_stamp   = rand ();
