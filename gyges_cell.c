@@ -1256,22 +1256,26 @@ CELL__numerics     (tCELL *a_cell)
       switch (a_cell->s [1]) {
       case 'b':  case 'B':
          DEBUG_CELL   yLOG_note    ("binary");
-         rc = CELL__binary  (a_cell->s, &x_value);
+         /*> rc = CELL__binary  (a_cell->s, &x_value);                                <*/
+         rc = strl2bin  (a_cell->s, &x_value, LEN_RECD);
          break;
       case 'o':  default :
          DEBUG_CELL   yLOG_note    ("octal");
-         rc = CELL__octal   (a_cell->s, &x_value);
+         /*> rc = CELL__octal   (a_cell->s, &x_value);                                <*/
+         rc = strl2oct  (a_cell->s, &x_value, LEN_RECD);
          break;
       case 'x':  case 'X':
          DEBUG_CELL   yLOG_note    ("hexadecimal");
-         rc = CELL__hex     (a_cell->s, &x_value);
+         /*> rc = CELL__hex     (a_cell->s, &x_value);                                <*/
+         rc = strl2hex  (a_cell->s, &x_value, LEN_RECD);
          break;
       }
    }
    /*---(float, int)---------------------*/
    if (rc < 0) {
       DEBUG_CELL   yLOG_note    ("float/int");
-      rc = CELL__float   (a_cell->s, &x_value);
+      /*> rc = CELL__float   (a_cell->s, &x_value);                                   <*/
+      rc = strl2real (a_cell->s, &x_value, LEN_RECD);
    }
    /*---(judge outcome)------------------*/
    if (rc >= 0) {
