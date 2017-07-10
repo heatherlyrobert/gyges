@@ -125,8 +125,9 @@ char        g_pluses      [200] = "+++++++++++++++++++++++++++++++++++++++++++++
 
 
 static char sv_formats     [50] = "";
-static char sv_nums        [20] = "?irgpeE";
-static char sv_commas      [20] = ",a$s#%";
+static char sv_nums        [20] = "?ifgeE";
+static char sv_commas      [20] = "cCaA$sS#p";
+static char sv_roman       [20] = "rR";
 static char sv_special     [20] = "xXbBoO";
 static char sv_times       [20] = "tTdD";
 static char sv_fillers     [20] = " -=_+.";
@@ -206,6 +207,7 @@ CELL_init          (void)
    /*---(prepare validatations)----------*/
    DEBUG_CELL   yLOG_note    ("concatinate format types");
    strcpy (sv_formats, sv_commas);
+   strcpy (sv_formats, sv_roman );
    strcat (sv_formats, sv_nums);
    strcat (sv_formats, sv_special);
    strcat (sv_formats, sv_times);
@@ -939,298 +941,6 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
 /*====================------------------------------------====================*/
 PRIV void  o___NUMERICS________o () { return; }
 
-char         /*-> interpret binary numbers ----------------[ petal  [ 2f---- ]*/
-CELL__binary       (char *a_text, double *a_value)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;               /* return code for errors    */
-   int         x_len       =    0;
-   int         x_base      =    2;               /* base position             */
-   char        x_curr      =  '-';               /* current character         */
-   int         x_digit     =    0;               /* digit value               */
-   int         x_place     =    1;               /* base position             */
-   long        x_final     =    0;               /* final value               */
-   int         i           =    0;               /* iterator -- character     */
-   /*---(header)-------------------------*/
-   DEBUG_CELL   yLOG_senter  (__FUNCTION__);
-   if (a_value != NULL)  *a_value = 0.0;
-   /*---(defense)------------------------*/
-   DEBUG_CELL   yLOG_spoint  (a_text);
-   --rce; if (a_text == NULL) {
-      DEBUG_CELL   yLOG_snote   ("null input");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_snote   (a_text);
-   x_len = strllen (a_text, LEN_STR);
-   DEBUG_CELL   yLOG_sint    (x_len);
-   --rce; if (x_len <= 2) {
-      DEBUG_CELL   yLOG_snote   ("too short");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_schar   (a_text [0]);
-   --rce; if (a_text [0] != '0') {
-      DEBUG_CELL   yLOG_snote   ("wrong prefix");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_schar   (a_text [1]);
-   --rce; if (tolower (a_text [1]) != 'b') {
-      DEBUG_CELL   yLOG_snote   ("no binary prefix");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(run digits)---------------------*/
-   DEBUG_CELL   yLOG_sint    (x_base);
-   DEBUG_CELL   yLOG_snote   (sv_binary);
-   --rce;  for (i = x_len - 1; i > 1; --i) {
-      x_curr = a_text [i];
-      DEBUG_CELL   yLOG_schar   (x_curr);
-      if (strchr (sv_binary, x_curr)  == 0) {
-         DEBUG_CELL   yLOG_snote   ("BOOM");
-         DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-         return rce;
-      }
-      x_digit  = x_curr - '0';
-      x_final += x_digit * x_place;
-      DEBUG_CELL   yLOG_sint    (x_final);
-      x_place *= x_base;
-   }
-   /*---(return value)-------------------*/
-   DEBUG_CELL   yLOG_snote   ("assigning");
-   if (a_value != NULL)  *a_value = (double) x_final;
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> interpret octal numbers -----------------[ petal  [ 2e---- ]*/
-CELL__octal        (char *a_text, double *a_value)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;               /* return code for errors    */
-   int         x_len       =    0;
-   int         x_base      =    8;               /* base position             */
-   char        x_curr      =  '-';               /* current character         */
-   int         x_digit     =    0;               /* digit value               */
-   int         x_place     =    1;               /* base position             */
-   long        x_final     =    0;               /* final value               */
-   int         i           =    0;               /* iterator -- character     */
-   int         x_min       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_CELL   yLOG_senter  (__FUNCTION__);
-   if (a_value != NULL)  *a_value = 0.0;
-   /*---(defense)------------------------*/
-   DEBUG_CELL   yLOG_spoint  (a_text);
-   --rce; if (a_text == NULL) {
-      DEBUG_CELL   yLOG_snote   ("null input");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_snote   (a_text);
-   x_len = strllen (a_text, LEN_STR);
-   DEBUG_CELL   yLOG_sint    (x_len);
-   --rce; if (x_len <= 1) {
-      DEBUG_CELL   yLOG_snote   ("too short");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_schar   (a_text [0]);
-   --rce; if (a_text [0] != '0') {
-      DEBUG_CELL   yLOG_snote   ("wrong prefix");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_schar   (a_text [1]);
-   if (a_text [1] == 'o')   x_min = 1;
-   /*---(run digits)---------------------*/
-   DEBUG_CELL   yLOG_sint    (x_base);
-   DEBUG_CELL   yLOG_snote   (sv_octal);
-   --rce;  for (i = x_len - 1; i > x_min; --i) {
-      x_curr = a_text [i];
-      DEBUG_CELL   yLOG_schar   (x_curr);
-      if (strchr (sv_octal , x_curr)  == 0) {
-         DEBUG_CELL   yLOG_snote   ("BOOM");
-         DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-         return rce;
-      }
-      x_digit  = x_curr - '0';
-      x_final += x_digit * x_place;
-      DEBUG_CELL   yLOG_sint    (x_final);
-      x_place *= x_base;
-   }
-   /*---(return value)-------------------*/
-   DEBUG_CELL   yLOG_snote   ("assigning");
-   if (a_value != NULL)  *a_value = (double) x_final;
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> interpret hexadecimal numbers -----------[ petal  [ 2f---- ]*/
-CELL__hex          (char *a_text, double *a_value)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;               /* return code for errors    */
-   int         x_len       =    0;
-   int         x_base      =   16;               /* base position             */
-   char        x_curr      =  '-';               /* current character         */
-   int         x_digit     =    0;               /* digit value               */
-   int         x_place     =    1;               /* base position             */
-   long        x_final     =    0;               /* final value               */
-   int         i           =    0;               /* iterator -- character     */
-   /*---(header)-------------------------*/
-   DEBUG_CELL   yLOG_senter  (__FUNCTION__);
-   if (a_value != NULL)  *a_value = 0.0;
-   /*---(defense)------------------------*/
-   DEBUG_CELL   yLOG_spoint  (a_text);
-   --rce; if (a_text == NULL) {
-      DEBUG_CELL   yLOG_snote   ("null input");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_snote   (a_text);
-   x_len = strllen (a_text, LEN_STR);
-   DEBUG_CELL   yLOG_sint    (x_len);
-   --rce; if (x_len <= 2) {
-      DEBUG_CELL   yLOG_snote   ("too short");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_schar   (a_text [0]);
-   --rce; if (a_text [0] != '0') {
-      DEBUG_CELL   yLOG_snote   ("wrong prefix");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_schar   (a_text [1]);
-   --rce; if (tolower (a_text [1]) != 'x') {
-      DEBUG_CELL   yLOG_snote   ("no hex prefix");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(run digits)---------------------*/
-   DEBUG_CELL   yLOG_sint    (x_base);
-   DEBUG_CELL   yLOG_snote   (sv_hex);
-   --rce;  for (i = x_len - 1; i > 1; --i) {
-      x_curr = tolower (a_text [i]);
-      DEBUG_CELL   yLOG_schar   (x_curr);
-      if (strchr (sv_hex   , x_curr    )  == 0) {
-         DEBUG_CELL   yLOG_snote   ("BOOM");
-         DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-         return rce;
-      }
-      if (x_curr >= '0' && x_curr <= '9')   x_digit  = x_curr - '0';
-      else                                  x_digit  = x_curr - 'a' + 10;
-      x_final += x_digit * x_place;
-      DEBUG_CELL   yLOG_sint    (x_final);
-      x_place *= x_base;
-   }
-   /*---(return value)-------------------*/
-   DEBUG_CELL   yLOG_snote   ("assigning");
-   if (a_value != NULL)  *a_value = (double) x_final;
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> interpret float/int numbers -------------[ petal  [ 2g---- ]*/
-CELL__float        (char *a_text, double *a_value)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;               /* return code for errors    */
-   int         x_len       =    0;
-   char        x_temp      [LEN_STR ] = "";      /* temp version              */
-   int         i           =    0;               /* iterator -- character     */
-   char        x_curr      =  '-';               /* current character         */
-   int         x_exp       =   -1;
-   int         x_dec       =   -1;
-   double      x_final     =    0;               /* final value               */
-   double      x_power     =    1;               /* exponent                  */
-   /*---(header)-------------------------*/
-   DEBUG_CELL   yLOG_senter  (__FUNCTION__);
-   if (a_value != NULL)  *a_value = 0.0;
-   /*---(defense)------------------------*/
-   DEBUG_CELL   yLOG_spoint  (a_text);
-   --rce; if (a_text == NULL) {
-      DEBUG_CELL   yLOG_snote   ("null input");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_CELL   yLOG_snote   (a_text);
-   x_len = strllen (a_text, LEN_STR);
-   DEBUG_CELL   yLOG_sint    (x_len);
-   --rce; if (a_text [0] == '0' && (a_text [1] != '\0' && a_text [1] != '.')) {
-      DEBUG_CELL   yLOG_snote   ("bad leading zero");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   strlcpy (x_temp, a_text, LEN_STR);
-   DEBUG_CELL   yLOG_snote   (x_temp);
-   /*---(run digits)---------------------*/
-   DEBUG_CELL   yLOG_snote   (sv_octal);
-   --rce;  for (i = x_len - 1; i >= 0 ; --i) {
-      x_curr = x_temp [i];
-      DEBUG_CELL   yLOG_schar   (x_curr);
-      /*---(find exponent)---------------*/
-      if (x_curr == 'e' || x_curr == 'E') {
-         DEBUG_CELL   yLOG_snote   ("exp");
-         if (x_exp < 0)   x_exp = i;
-         else {
-            DEBUG_CELL   yLOG_snote   ("BOOM");
-            DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-            return rce;
-         }
-         continue;
-      }
-      /*---(find decimal)----------------*/
-      if (x_curr == '.') {
-         DEBUG_CELL   yLOG_snote   ("dec");
-         if (x_dec < 0)   x_dec = i;
-         else {
-            DEBUG_CELL   yLOG_snote   ("BOOM");
-            DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-            return rce - 1;
-         }
-         continue;
-      }
-      /*---(check rest)------------------*/
-      if (strchr (sv_numeric, x_curr)  == 0) {
-         DEBUG_CELL   yLOG_snote   ("BOOM");
-         DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-         return rce - 2;
-      }
-   }
-   rce -= 2;
-   /*---(check positions)----------------*/
-   --rce;  if (x_exp > 0 && x_dec > 0 && x_exp < x_dec) {
-      DEBUG_CELL   yLOG_snote   ("BOOM");
-      DEBUG_CELL   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(parse value)--------------------*/
-   if (x_exp > 0)  x_temp [x_exp] = '\0';
-   x_final = atof (x_temp);
-   if (x_exp > 0) {
-      if (x_temp [x_exp + 1] != '\0')  {
-         x_power = atof (x_temp + x_exp + 1);
-         if (x_power != 0.0)  x_power = pow (10, x_power);
-      } else {
-         x_power = 0.0;
-      }
-   }
-   if      (x_power >  0)  x_final = x_final * x_power;
-   else if (x_power <  0)  x_final = x_final / (-x_power);
-   else                    x_final = 0.0;
-   /*---(return value)-------------------*/
-   DEBUG_CELL   yLOG_snote   ("assigning");
-   if (a_value != NULL)  *a_value = x_final;
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
-
 char         /*-> interpret any/all numbers ---------------[ floret [ 1a---- ]*/
 CELL__numerics     (tCELL *a_cell)
 {
@@ -1256,17 +966,14 @@ CELL__numerics     (tCELL *a_cell)
       switch (a_cell->s [1]) {
       case 'b':  case 'B':
          DEBUG_CELL   yLOG_note    ("binary");
-         /*> rc = CELL__binary  (a_cell->s, &x_value);                                <*/
          rc = strl2bin  (a_cell->s, &x_value, LEN_RECD);
          break;
       case 'o':  default :
          DEBUG_CELL   yLOG_note    ("octal");
-         /*> rc = CELL__octal   (a_cell->s, &x_value);                                <*/
          rc = strl2oct  (a_cell->s, &x_value, LEN_RECD);
          break;
       case 'x':  case 'X':
          DEBUG_CELL   yLOG_note    ("hexadecimal");
-         /*> rc = CELL__hex     (a_cell->s, &x_value);                                <*/
          rc = strl2hex  (a_cell->s, &x_value, LEN_RECD);
          break;
       }
@@ -1274,7 +981,6 @@ CELL__numerics     (tCELL *a_cell)
    /*---(float, int)---------------------*/
    if (rc < 0) {
       DEBUG_CELL   yLOG_note    ("float/int");
-      /*> rc = CELL__float   (a_cell->s, &x_value);                                   <*/
       rc = strl2real (a_cell->s, &x_value, LEN_RECD);
    }
    /*---(judge outcome)------------------*/
@@ -2688,6 +2394,7 @@ CELL__print_number (
       if (x_sign > 0)  strcpy (x_work, "+");
       else             strcpy (x_work, "-");
       sprintf (x_temp, "%.*e", a_decimal, a_num * x_sign);
+
       x_temp [a_decimal + 8] = '\0';
       x_temp [a_decimal + 7] = x_temp [a_decimal + 5];
       x_temp [a_decimal + 6] = x_temp [a_decimal + 4];
@@ -2746,15 +2453,32 @@ CELL_printable     (tCELL *a_curr) {
    if (strchr (G_CELL_NUM, a_curr->t) != 0) {
       DEBUG_CELL  yLOG_note  ("number");
       if (strchr (sv_commas, a_curr->f) != 0)  {
-         CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
+         strl4comma  (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+         /*> CELL__print_comma  (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);   <*/
       } else if (strchr (sv_nums, a_curr->f) != 0)  {
-         CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
+         strl4comma  (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+         /*> CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);   <*/
+      } else if (strchr (sv_roman, a_curr->f) != 0)  {
+         strl4roman  (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+         /*> CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);   <*/
       } else if (strchr (sv_times, a_curr->f) != 0)  {
          CELL__print_times  (a_curr->f, a_curr->v_num, x_temp);
       } else if (strchr (sv_special, a_curr->f) != 0)  {
-         CELL__print_special(a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
+         switch (a_curr->f) {
+         case 'b': case 'B':
+            strl4bin    (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+            break;
+         case 'o': case 'O':
+            strl4oct    (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+            break;
+         case 'x': case 'X':
+            strl4hex    (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+            break;
+         }
+         /*> CELL__print_special(a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);   <*/
       } else {
-         CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);
+         strl4comma  (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+         /*> CELL__print_number (a_curr->f, a_curr->d - '0', a_curr->v_num, x_temp);   <*/
       }
    }
    /*---(calced tsrings------------------*/

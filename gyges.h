@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2v"
-#define     VER_TXT   "moved all numeric interpretation functions to ySTR"
+#define     VER_NUM   "2.2w"
+#define     VER_TXT   "moved all number printables (except date) to ySTR"
 
 
 
