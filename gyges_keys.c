@@ -1266,7 +1266,8 @@ SMOD_format        (char a_major, char a_minor)
    case  's' : CELL_format   (CHG_INPUT, 's');  break;  /* signed          */
    case  'S' : CELL_format   (CHG_INPUT, 'S');  break;  /* signed          */
    case  '#' : CELL_format   (CHG_INPUT, '#');  CELL_decimals (CHG_INPUT, '6'); break;  /* technical       */
-   case  'p' : CELL_format   (CHG_INPUT, 'p');  CELL_decimals (CHG_INPUT, '2'); break;  /* percent         */
+   case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* bullet point    */
+   case  'P' : CELL_format   (CHG_INPUT, 'P');  break;  /* bullet point    */
 
    case  'r' : CELL_format   (CHG_INPUT, 'r');  break;  /* roman           */
    case  'R' : CELL_format   (CHG_INPUT, 'R');  break;  /* roman upper     */
@@ -1288,6 +1289,8 @@ SMOD_format        (char a_major, char a_minor)
    case  '_' : CELL_format   (CHG_INPUT, '_');  break;  /* filled under    */
    case  '.' : CELL_format   (CHG_INPUT, '.');  break;  /* filled period   */
    case  '+' : CELL_format   (CHG_INPUT, '+');  break;  /* filled plus     */
+   case  '/' : CELL_format   (CHG_INPUT, '/');  break;  /* filled divs     */
+   case  '\"': CELL_format   (CHG_INPUT, '\"'); break;  /* filled euro quot*/
    case  ' ' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
 
                /*> case  '"' : CELL_format   (CHG_INPUT, '"'); CELL_align    (CHG_INPUT, '"'); CELL_decimals (CHG_INPUT, '"');  break;  /+ filled empty    +/   <*/
