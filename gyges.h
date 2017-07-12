@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3a"
-#define     VER_TXT   "remove old INPT_cell... cruft to start upgrading cell logic"
+#define     VER_NUM   "2.3b"
+#define     VER_TXT   "basic unit testing and fixes for INPT_cell..."
 
 
 
@@ -1233,6 +1233,9 @@ char      OUTP_col_foot        (FILE  *a_file , int   a_count);
 int       OUTP_cols            (FILE  *a_file );
 /*---(cells)-----------------*/
 char      INPT_cell            (char *a_label, char *a_format, char *a_source);
+char      OUTP_cell            (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr);
+char      OUTP_cell_dep        (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
+char      OUTP_cell_free       (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow);
 
 
 
@@ -1245,7 +1248,6 @@ char      INPT_main          (cchar *a_name);
 
 char      OUTP_header        (FILE *a_file);
 
-char      FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
 char      FILE_write         (char *a_name);
 char      XML3_read          (char *a_name);
 

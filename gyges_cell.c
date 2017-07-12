@@ -906,11 +906,11 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    if (a_mode == CHG_OVERAND)  HIST_overwrite ("OVERWRITE", a_tab, a_col, a_row, s_bsource, s_bformat, a_source, a_format);
    /*---(formatting)---------------------*/
    DEBUG_CELL   yLOG_note    ("update format fields");
-   x_new->f = a_format[0];
+   if (a_format [0] != '?')  x_new->f = a_format[0];
    DEBUG_CELL   yLOG_char    ("f"         , x_new->f);
-   x_new->a = a_format[1];
+   if (a_format [1] != '?')  x_new->a = a_format[1];
    DEBUG_CELL   yLOG_char    ("a"         , x_new->a);
-   x_new->d = a_format[2];
+   if (a_format [2] != '0')  x_new->d = a_format[2];
    DEBUG_CELL   yLOG_char    ("d"         , x_new->d);
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("call printable");
@@ -2051,15 +2051,7 @@ CELL_printable     (tCELL *a_curr) {
       if      (a_curr->t == CTYPE_STR)   strcat (x_temp, a_curr->s);
       else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
       else if (a_curr->t == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);
-      else {
-         if (a_curr->p != NULL) {
-            free (a_curr->p);
-            a_curr->p = NULL;
-         }
-         DEBUG_CELL  yLOG_note  ("unknown string type");
-         DEBUG_CELL  yLOG_exit  (__FUNCTION__);
-         return rce;
-      }
+      else                               strcat (x_temp, "");
    }
    /*---(empty)--------------------------*/
    else if (a_curr->t == CTYPE_BLANK) {

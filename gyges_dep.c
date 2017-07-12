@@ -1852,7 +1852,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
             CELL__wipe     (x_cell);
             break;
          case 'f' :  /* write to a file           */
-            FILE_dep       (a_file, x_tot, x_off, x_cell);
+            OUTP_cell_dep  (a_file, x_tot, x_off, x_cell);
             break;
          case 'r' :  /* write to a register       */
             REG_deps       (x_cell, a_stamp);

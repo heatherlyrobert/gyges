@@ -652,7 +652,7 @@ OUTP_tabs            (FILE *a_file)
 /*====================------------------------------------====================*/
 /*===----                       column width                           ----===*/
 /*====================------------------------------------====================*/
-static void   o___WIDTH___________o (void) { return; }
+static void   o___COLUMNS_________o (void) { return; }
 
 char         /*--> process a column width record ---------[ leaf   [ ------ ]-*/
 INPT_col           (char *a_label, int a_size)
@@ -741,7 +741,7 @@ OUTP_col_foot        (FILE *a_file, int a_count)
    --rce;  if (a_file == NULL)                   return rce;
    /*---(header)-------------------------*/
    if (a_count == 0)  fprintf (a_file, "# no special or unique col information\n");
-                      fprintf (a_file, "#---------  ver  ---loc--  size \n");
+   fprintf (a_file, "#---------  ver  ---loc--  size \n");
    fprintf (a_file, "\n\n\n");
    fflush  (a_file);
    /*---(complete)-----------------------*/
@@ -785,7 +785,6 @@ PRIV void  o___CELLS___________o () { return; }
  *
  */
 
-
 char
 INPT_cell          (char *a_label, char *a_format, char *a_source)
 {
@@ -802,10 +801,18 @@ INPT_cell          (char *a_label, char *a_format, char *a_source)
    char        x_align     =  '?';
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_point   ("a_format"  , a_format);
+   /*---(defence)------------------*/
    DEBUG_INPT  yLOG_point   ("a_source"  , a_source);
+   --rce;  if (a_source == NULL)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(parse address)------------*/
+   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
+   --rce;  if (a_label  == NULL)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
    DEBUG_INPT  yLOG_value   ("parse"     , rc);
    --rce;  if (rc < 0)  {
@@ -824,7 +831,9 @@ INPT_cell          (char *a_label, char *a_format, char *a_source)
       return rce;
    }
    /*---(fix format)---------------------*/
-   if (strlen (a_format) == 9) {
+   if (a_format == NULL) {
+      strcpy  (x_string, "??0");
+   } else if (strlen (a_format) == 9) {
       x_format  = CELL_format_valid   (a_format [2]);
       DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
       x_decs    = CELL_decimals_valid (a_format [4]);
@@ -833,7 +842,7 @@ INPT_cell          (char *a_label, char *a_format, char *a_source)
       DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
       sprintf (x_string, "%c%c%c", x_format, x_align, x_decs);
    } else {
-      strcpy  (x_string, "?0?");
+      strcpy  (x_string, "??0");
    }
    DEBUG_INPT  yLOG_info    ("x_string"  , x_string);
    /*---(update)-------------------------*/
@@ -846,6 +855,93 @@ INPT_cell          (char *a_label, char *a_format, char *a_source)
    }
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> write a single cell to a file ---------[ leaf   [ ------ ]-*/
+OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_type  == NULL)   return rce;
+   --rce;  if (a_level == NULL)   return rce;
+   --rce;  if (a_curr  == NULL)   return rce;
+   /*---(header)-------------------------*/
+   if ((a_seq % 5) == 0 && a_file != NULL) {
+      fprintf (a_file, "#---------  ver  ---lvl/reg--  -seq-  ---loc-- ");
+      fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
+   }
+   /*---(build record)-------------------*/
+   sprintf (my.f_recd, "%-10.10s  -D-  %-12.12s  %5d  %-8.8s  %c %c %c %c %c  %s",
+         a_type, a_level, a_seq,
+         a_curr->label,
+         a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n,
+         a_curr->s);
+   /*---(write entry)--------------------*/
+   if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> write file dependent cells ------------[ leaf   [ ------ ]-*/
+OUTP_cell_dep      (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_pre       [50]        = "-           ";
+   /*---(defense)------------------------*/
+   if (a_curr    == NULL)        return;     /* no cell                       */
+   if (a_curr->s == NULL)        return;     /* nothing to write              */
+   if (a_curr->t == '-')         return;     /* don't write, recreate on read */
+   /*---(prepare)------------------------*/
+   if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");
+   else                 sprintf (x_pre, "            +");
+   /*---(print)--------------------------*/
+   OUTP_cell (a_file, "cell_dep", a_seq, x_pre, a_curr);
+   /*---(complete)-----------------------*/
+   fflush (a_file);
+   return 0;
+}
+
+char         /*--> write file independent cells ----------[ left   [ ------ ]-*/
+OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x           = 0;             /* iterator -- columns            */
+   int         y           = 0;             /* iterator -- row                */
+   char        rc          = 0;             /* generic return code            */
+   char        rce         = -10;           /* return code for errors         */
+   char        x_label     [20];            /* holder for cell address        */
+   tCELL      *x_curr      = NULL;
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                        return rce;
+   --rce;  if (*a_seq <  0)                           return rce;
+   --rce;  if (a_tab  <  0)                           return rce;
+   --rce;  if (a_tab  >= my.ntab)                     return rce;
+   --rce;  if (a_bcol <  0)                           return rce;
+   --rce;  if (a_bcol >= LOC_col_max (a_tab))         return rce;
+   --rce;  if (a_ecol <  a_bcol)                      return rce;
+   --rce;  if (a_ecol <  0)                           return rce;
+   --rce;  if (a_ecol >= LOC_col_max (a_tab))         return rce;
+   --rce;  if (a_brow <  0)                           return rce;
+   --rce;  if (a_brow >= LOC_row_max (a_tab))         return rce;
+   --rce;  if (a_erow <  a_brow)                      return rce;
+   --rce;  if (a_erow <  0)                           return rce;
+   --rce;  if (a_erow >= LOC_row_max (a_tab))         return rce;
+   /*---(cells)--------------------------*/
+   for (x = a_bcol; x <= a_ecol; ++x) {
+      for (y = a_brow; y <= a_erow; ++y) {
+         x_curr = LOC_cell_at_loc (a_tab, x, y);
+         if (x_curr    == NULL)                       continue;
+         if (x_curr->s == NULL)                       continue;
+         if (x_curr->t == CTYPE_BLANK)                continue;
+         if (x_curr->u == a_stamp)                    continue;
+         OUTP_cell (a_file, "cell_free", *a_seq, "", x_curr);
+         ++(*a_seq);
+      }
+   }
+   /*---(complete)-----------------------*/
+   fflush (a_file);
    return 0;
 }
 
@@ -1082,93 +1178,6 @@ OUTP_header        (FILE *a_file)
    return 0;
 }
 
-char         /*--> write a single cell to a file ---------[ leaf   [ ------ ]-*/
-OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file  == NULL)   return rce;
-   --rce;  if (a_type  == NULL)   return rce;
-   --rce;  if (a_level == NULL)   return rce;
-   --rce;  if (a_curr  == NULL)   return rce;
-   /*---(header)-------------------------*/
-   if ((a_seq % 5) == 0) {
-      fprintf (a_file, "#---------  ver  ---lvl/reg--  -seq-  ---loc-- ");
-      fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
-   }
-   /*---(write entry)--------------------*/
-   fprintf (a_file, "%-10.10s  -D-  %-12.12s  %5d  %-8.8s  %c %c %c %c %c  %s\n",
-         a_type, a_level, a_seq,
-         a_curr->label,
-         a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n,
-         a_curr->s);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*--> write file dependent cells ------------[ leaf   [ ------ ]-*/
-FILE_dep           (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        x_pre       [50]        = "-           ";
-   /*---(defense)------------------------*/
-   if (a_curr    == NULL)        return;     /* no cell                       */
-   if (a_curr->s == NULL)        return;     /* nothing to write              */
-   if (a_curr->t == '-')         return;     /* don't write, recreate on read */
-   /*---(prepare)------------------------*/
-   if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");
-   else                 sprintf (x_pre, "            +");
-   /*---(print)--------------------------*/
-   OUTP_cell (a_file, "cell_dep", a_seq, x_pre, a_curr);
-   /*---(complete)-----------------------*/
-   fflush (a_file);
-   return 0;
-}
-
-char         /*--> write file independent cells ----------[ left   [ ------ ]-*/
-FILE_cells         (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x           = 0;             /* iterator -- columns            */
-   int         y           = 0;             /* iterator -- row                */
-   char        rc          = 0;             /* generic return code            */
-   char        rce         = -10;           /* return code for errors         */
-   char        x_label     [20];            /* holder for cell address        */
-   tCELL      *x_curr      = NULL;
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                        return rce;
-   --rce;  if (*a_seq <  0)                           return rce;
-   --rce;  if (a_tab  <  0)                           return rce;
-   --rce;  if (a_tab  >= my.ntab)                     return rce;
-   --rce;  if (a_bcol <  0)                           return rce;
-   --rce;  if (a_bcol >= LOC_col_max (a_tab))         return rce;
-   --rce;  if (a_ecol <  a_bcol)                      return rce;
-   --rce;  if (a_ecol <  0)                           return rce;
-   --rce;  if (a_ecol >= LOC_col_max (a_tab))         return rce;
-   --rce;  if (a_brow <  0)                           return rce;
-   --rce;  if (a_brow >= LOC_row_max (a_tab))         return rce;
-   --rce;  if (a_erow <  a_brow)                      return rce;
-   --rce;  if (a_erow <  0)                           return rce;
-   --rce;  if (a_erow >= LOC_row_max (a_tab))         return rce;
-   /*---(cells)--------------------------*/
-   for (x = a_bcol; x <= a_ecol; ++x) {
-      for (y = a_brow; y <= a_erow; ++y) {
-         x_curr = LOC_cell_at_loc (a_tab, x, y);
-         if (x_curr    == NULL)        continue;
-         if (x_curr->s == NULL)        continue;
-         if (x_curr->t == '-'    )     continue;
-         if (x_curr->t == 'l'    )     continue;
-         if (x_curr->u == a_stamp)     continue;
-         OUTP_cell (a_file, "cell_free", *a_seq, "", x_curr);
-         ++(*a_seq);
-      }
-   }
-   /*---(complete)-----------------------*/
-   fflush (a_file);
-   return 0;
-}
-
 char
 FILE_write         (char *a_name)
 {
@@ -1209,7 +1218,7 @@ FILE_write         (char *a_name)
    fprintf (f, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
    x_seq     = 0;
    for (i = 0; i < NTAB; ++i) {
-      rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);
+      rc = OUTP_cell_free (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);
    }
    fprintf (f, "# independent cells complete\n\n\n\n");
    /*---(footer data)----------------------*/
