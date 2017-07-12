@@ -118,10 +118,6 @@
 
 char        g_empty       [200] = "                                                                                                                                                                                                       ";
 char        g_dashes      [200] = "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
-char        g_equals      [200] = "=======================================================================================================================================================================================================";
-char        g_unders      [200] = "_______________________________________________________________________________________________________________________________________________________________________________________________________";
-char        g_dots        [200] = ".......................................................................................................................................................................................................";
-char        g_pluses      [200] = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
 
 static char sv_formats     [50] = "";
@@ -129,7 +125,7 @@ static char sv_nums        [20] = "?if";
 static char sv_commas      [20] = "cCaAsS$#p";
 static char sv_sci         [20] = "eE";
 static char sv_roman       [20] = "rR";
-static char sv_bases       [20] = "bBoOxX";
+static char sv_bases       [20] = "bBoOxXzZ";
 static char sv_times       [20] = "tTdD";
 static char sv_fillers     [20] = " -=_+./\"";
 
@@ -1965,6 +1961,55 @@ PRIV void  o___DISPLAY_________o () { return; }
 
 char        s_print     [LEN_RECD] = "";
 
+char         /*--> determine full print width ------------[ ------ [ ------ ]-*/
+CELL_print_width     (tCELL *a_curr, int *a_width, int *a_merge)
+{
+   /*---(locals)-------------------------*/
+   tCELL      *x_curr      = NULL;
+   int         i           = 0;
+   /*---(initialize)---------------------*/
+   *a_merge = 0;
+   *a_width = LOC_col_width (a_curr->tab, a_curr->col);
+   /*---(look for mergse)----------------*/
+   for (i = a_curr->col + 1; i < LOC_col_max (a_curr->tab); ++i) {
+      x_curr = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
+      if (x_curr    == NULL)         break;
+      if (x_curr->t != CTYPE_MERGE)  break;
+      *a_width += LOC_col_width (a_curr->tab, i);
+      ++(*a_merge);
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> parse print into merged cells ---------[ ------ [ ------ ]-*/
+CELL_print_parse     (tCELL *a_curr, char *p, int a_merge)
+{
+   /*---(locals)-------------------------*/
+   tCELL      *x_curr      = NULL;
+   int         w           = 0;             /* available printing width       */
+   int         wa          = 0;             /* adjusted width                 */
+   int         i           = 0;
+   char       *pp          = NULL;
+   for (i = 0; i <= a_merge; ++i) {
+      w     = LOC_col_width (a_curr->tab, a_curr->col + i);
+      DEBUG_CELL  yLOG_value ("#w", w);
+      while (pp == NULL)  pp = (char*) malloc(w + 1);
+      sprintf (pp, "%-*.*s", w, w, p + wa);
+      DEBUG_CELL  yLOG_info  ("#1p", pp);
+      x_curr = LOC_cell_at_loc (a_curr->tab, a_curr->col + i, a_curr->row);
+      if (x_curr->p != NULL) {
+         free (x_curr->p);
+         x_curr->p = NULL;
+      }
+      x_curr->p = pp;
+      pp    = NULL;
+      wa   += w;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 char               /* PURPOSE : create a curses printable image of the cell --*/
 CELL_printable     (tCELL *a_curr) {
    /*---(locals)-------------------------*/
@@ -1973,19 +2018,10 @@ CELL_printable     (tCELL *a_curr) {
    int         len         = 0;             /* string length                  */
    int         w           = 0;             /* available printing width       */
    int         wa          = 0;             /* adjusted width                 */
-   int         pad1        = 0;             /* leading edge padding           */
-   int         pad2        = 0;             /* trailing edge padding          */
-   int         start       = 0;             /* starting character to print    */
    char        x_temp      [LEN_RECD] = "";  /* temp working string            */
    char        x_work      [LEN_RECD] = "";  /* temp working string            */
-   char        x_final     [LEN_RECD] = "";  /* temp working string            */
    char       *p           = NULL;          /* final printable string         */
-   char       *x_filler    = g_empty;
    int         x_merge     = 0;             /* merged cells to right          */
-   tCELL      *x_next      = NULL;
-   tCELL      *x_curr      = NULL;
-   int         i           = 0;
-   char       *pp          = NULL;
    /*---(defense)------------------------*/
    --rce;  if (a_curr    == NULL) return rce;     /* cell does not exist                */
    --rce;  if (a_curr->s == NULL) return rce;     /* nothing to do without source       */
@@ -2050,20 +2086,13 @@ CELL_printable     (tCELL *a_curr) {
    /*---(indented formats)---------------*/
    DEBUG_CELL  yLOG_info  ("x", x_temp);
    /*---(get width)----------------------*/
-   w = LOC_col_width (a_curr->tab, a_curr->col);
-   for (i = a_curr->col + 1; i < LOC_col_max (a_curr->tab); ++i) {
-      x_curr = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);
-      if (x_curr    == NULL)         break;
-      if (x_curr->t != CTYPE_MERGE)  break;
-      w    += LOC_col_width (a_curr->tab, i);
-      ++x_merge;
-   }
+   CELL_print_width (a_curr, &w, &x_merge);
    DEBUG_CELL  yLOG_value ("w", w);
    wa    = w - 1;
    if (strchr (G_CELL_NUM, a_curr->t) != 0)
-     strlpad (x_temp, x_work, ' '      , a_curr->a, wa);
+      strlpad (x_temp, x_work, ' '      , a_curr->a, wa);
    else
-     strlpad (x_temp, x_work, a_curr->f, a_curr->a, wa);
+      strlpad (x_temp, x_work, a_curr->f, a_curr->a, wa);
    /*---(prepare)------*/
    if (a_curr->p != NULL) {
       free (a_curr->p);
@@ -2076,22 +2105,7 @@ CELL_printable     (tCELL *a_curr) {
    if (x_merge == 0) {
       a_curr->p = p;
    } else {
-      wa = 0;
-      for (i = 0; i <= x_merge; ++i) {
-         w     = LOC_col_width (a_curr->tab, a_curr->col + i);
-         DEBUG_CELL  yLOG_value ("#w", w);
-         while (pp == NULL)  pp = (char*) malloc(w + 1);
-         sprintf (pp, "%-*.*s", w, w, p + wa);
-         DEBUG_CELL  yLOG_info  ("#1p", pp);
-         x_next = LOC_cell_at_loc (a_curr->tab, a_curr->col + i, a_curr->row);
-         if (x_next->p != NULL) {
-            free (x_next->p);
-            x_next->p = NULL;
-         }
-         x_next->p = pp;
-         pp    = NULL;
-         wa   += w;
-      }
+      CELL_print_parse (a_curr, p, x_merge);
       free (p);
       p = NULL;
    }

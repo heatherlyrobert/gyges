@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.2x"
-#define     VER_TXT   "moved all print format/alignment to ySTR in strlpad"
+#define     VER_NUM   "2.3a"
+#define     VER_TXT   "remove old INPT_cell... cruft to start upgrading cell logic"
 
 
 
@@ -708,10 +708,6 @@ extern char    special;
 
 extern char      g_empty    [200];
 extern char      g_dashes   [200];
-extern char      g_equals   [200];
-extern char      g_unders   [200];
-extern char      g_dots     [200];
-extern char      g_pluses   [200];
 
 extern char      ver_ctrl;
 extern char      ver_num  [10];
@@ -1222,7 +1218,6 @@ char      SYLK_write         (char *a_name, char a_variation);
 char      FILE_version       (char *a_ver, char *a_final);
 char      FILE_bump          (char a_type, char *a_ver);
 
-char      INPT_cell          (cchar *a_recd);
 
 /*---(tabs)------------------*/
 char      INPT_tab             (char  *a_label, char *a_name);
@@ -1236,6 +1231,8 @@ char      OUTP_col             (short  a_tab  , short a_col);
 char      OUTP_col_head        (FILE  *a_file );
 char      OUTP_col_foot        (FILE  *a_file , int   a_count);
 int       OUTP_cols            (FILE  *a_file );
+/*---(cells)-----------------*/
+char      INPT_cell            (char *a_label, char *a_format, char *a_source);
 
 
 

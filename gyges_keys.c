@@ -1278,6 +1278,8 @@ SMOD_format        (char a_major, char a_minor)
    case  'X' : CELL_format   (CHG_INPUT, 'X');  break;  /* spaced hex      */
    case  'b' : CELL_format   (CHG_INPUT, 'b');  break;  /* binary          */
    case  'B' : CELL_format   (CHG_INPUT, 'B');  break;  /* spaced binary   */
+   case  'z' : CELL_format   (CHG_INPUT, 'z');  break;  /* base-62         */
+   case  'Z' : CELL_format   (CHG_INPUT, 'Z');  break;  /* spaced base-62  */
 
    case  't' : CELL_format   (CHG_INPUT, 't');  break;  /* time            */
    case  'T' : CELL_format   (CHG_INPUT, 'T');  break;  /* timestamp       */

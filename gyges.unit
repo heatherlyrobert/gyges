@@ -1000,10 +1000,8 @@ SCRP          v21  (s_cell) verify cell width setting                         
      get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0m11"                                               s_equal     s_celln print    : (   8) :second  :                                   
      get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (   8) :a_long> :                                   
 
-   COND       v21  select the first cell                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+   COND       v21  select and widen the first cell                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
-
-   COND       v21  widen to big-normal                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  change the width                     CELL_width            CHG_INPUT, 'N'                                                          i_equal     0                                                                      
 
    COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  

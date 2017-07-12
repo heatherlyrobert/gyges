@@ -607,8 +607,8 @@ OUTP_tab_head        (FILE *a_file)
    /*---(defenses)-----------------------*/
    --rce;  if (a_file == NULL)                   return rce;
    /*---(header)-------------------------*/
-   fprintf (a_file, "#===[[ TABS ]]============================\n");
-   fprintf (a_file, "#---------  ver  --max--  ---name----- \n");
+   fprintf (a_file, "#===[[ TAB LAYOUT ]]=================================================================================================#\n");
+   fprintf (a_file, "#---------  ver  --max---  ---name----- \n");
    fflush  (a_file);
    /*---(complete)-----------------------*/
    return 0;
@@ -623,7 +623,7 @@ OUTP_tab_foot        (FILE *a_file, int a_count)
    --rce;  if (a_file == NULL)                   return rce;
    /*---(header)-------------------------*/
    if (a_count == 0)  fprintf (a_file, "# no special or unique tab information\n");
-   else               fprintf (a_file, "#---------  ver  --max--  ---name----- \n");
+   else               fprintf (a_file, "#---------  ver  --max---  ---name----- \n");
    fprintf (a_file, "\n\n\n");
    fflush  (a_file);
    /*---(complete)-----------------------*/
@@ -640,7 +640,7 @@ OUTP_tabs            (FILE *a_file)
    for (i = 0; i <= MAX_TABS; ++i) {
       rc = OUTP_tab    (i);
       if (rc <= 0)   continue;
-      if (a_file != NULL)  fprintf (a_file, my.f_recd);
+      if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
       ++c;
    }
    rc = OUTP_tab_foot  (a_file, c);
@@ -712,7 +712,7 @@ OUTP_col             (short a_tab, short a_col)
    /*---(create a label)-----------------*/
    LOC_ref (a_tab, a_col, 0, 0, x_addr);
    /*---(build record)-------------------*/
-   sprintf (my.f_recd, "width       %-8s  %4d ", x_addr, x_size);
+   sprintf (my.f_recd, "width       -A-  %-8s  %4d ", x_addr, x_size);
    /*---(complete)-----------------------*/
    return 1;
 }
@@ -725,8 +725,8 @@ OUTP_col_head        (FILE *a_file)
    /*---(defenses)-----------------------*/
    --rce;  if (a_file == NULL)                   return rce;
    /*---(header)-------------------------*/
-   fprintf (a_file, "#===[[ COLUMN WIDTHS, changes only ]]========================================================================\n");
-   fprintf (a_file, "#---------  ---loc--  size \n");
+   fprintf (a_file, "#===[[ COLUMN WIDTHS ]]==============================================================================================#\n");
+   fprintf (a_file, "#---------  ver  ---loc--  size \n");
    fflush  (a_file);
    /*---(complete)-----------------------*/
    return 0;
@@ -741,7 +741,7 @@ OUTP_col_foot        (FILE *a_file, int a_count)
    --rce;  if (a_file == NULL)                   return rce;
    /*---(header)-------------------------*/
    if (a_count == 0)  fprintf (a_file, "# no special or unique col information\n");
-   else               fprintf (a_file, "#---------  ---loc--  size \n");
+                      fprintf (a_file, "#---------  ver  ---loc--  size \n");
    fprintf (a_file, "\n\n\n");
    fflush  (a_file);
    /*---(complete)-----------------------*/
@@ -760,7 +760,7 @@ OUTP_cols            (FILE *a_file)
       for (j = 0; j <= MAX_COLS; ++j) {
          rc = OUTP_col    (i, j);
          if (rc <= 0)   continue;
-         if (a_file != NULL)  fprintf (a_file, my.f_recd);
+         if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
          ++c;
       }
    }
@@ -787,7 +787,7 @@ PRIV void  o___CELLS___________o () { return; }
 
 
 char
-INPT_celln         (char *a_label, char *a_format, char *a_source)
+INPT_cell          (char *a_label, char *a_format, char *a_source)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -832,6 +832,8 @@ INPT_celln         (char *a_label, char *a_format, char *a_source)
       x_align   = CELL_align_valid    (a_format [6]);
       DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
       sprintf (x_string, "%c%c%c", x_format, x_align, x_decs);
+   } else {
+      strcpy  (x_string, "?0?");
    }
    DEBUG_INPT  yLOG_info    ("x_string"  , x_string);
    /*---(update)-------------------------*/
@@ -844,129 +846,6 @@ INPT_celln         (char *a_label, char *a_format, char *a_source)
    }
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-
-char         /* parse a cell entry -----------------------[--------[--------]-*/
-INPT_cellreal      (int a_tab, int a_col, int a_row, char *a_format, char *a_source)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   tCELL      *x_new       = NULL;
-   tCELL      *x_merge     = NULL;
-   int         i           = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(create)-------------------------*/
-   x_new = CELL_overwrite (CHG_NOHIST, a_tab, a_col, a_row, a_source, a_format);
-   DEBUG_INPT  yLOG_point   ("new"       , x_new);
-   --rce;  if (x_new == NULL) {
-      DEBUG_INPT  yLOG_warn    ("creation"  , "new cell failed");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(activate tab)-------------*/
-   DEBUG_INPT   yLOG_note    ("activate tab");
-   /*> s_tabs [a_tab].active = 'y';                                                   <*/
-   /*---(check for a merged cell)--*/
-   DEBUG_INPT   yLOG_note    ("check for rightward merged cells");
-   for (i = x_new->col + 1; i < LOC_col_max (a_tab); i++) {
-      x_merge = LOC_cell_at_loc (a_tab, i, a_row);
-      if (x_merge == NULL)    break;
-      if (x_merge->a != '+')  break;
-      DEP_create (G_DEP_MERGED, x_new, x_merge);
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-
-#define     FIELD_LVL      1
-#define     FIELD_SEQ      2
-#define     FIELD_LOC      3
-#define     FIELD_FOR      4
-#define     FIELD_SRC      5
-
-char         /* parse a cell entry -----------------------[--------[--------]-*/
-INPT_cell_new      (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   char        rc          = 0;
-   char       *p           = NULL;
-   int         i           = 0;
-   int         x_len       = 0;
-   char        x_label     [10]        = "";
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   char        x_format    = '-';
-   char        x_decs      = '0';
-   char        x_align     = '-';
-   char        x_bformat   [10]        = "";
-   char        x_regid     = '-';
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(read fields)--------------------*/
-   for (i = FIELD_LVL; i <= FIELD_SRC ; ++i) {
-      /*---(parse field)-----------------*/
-      DEBUG_INPT   yLOG_note    ("read next field");
-      p = strtok_r (NULL  , s_q, &s_context);
-      --rce;  if (p == NULL) {
-         DEBUG_INPT   yLOG_note    ("strtok_r came up empty");
-         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-         break;
-      }
-      if (i != FIELD_SRC) strltrim (p, ySTR_BOTH, LEN_RECD);
-      x_len = strlen (p);
-      DEBUG_INPT  yLOG_info    ("field"     , p);
-      /*---(handle)----------------------*/
-      switch (i) {
-      case  FIELD_LVL :  /*--------------*/
-         if (x_len == 1)  {
-            x_regid = p[0];
-            DEBUG_INPT  yLOG_char    ("regid"     , x_regid);
-         }
-         break;
-      case  FIELD_SEQ :  /*--------------*/
-         break;
-      case  FIELD_LOC :  /*--------------*/
-         strlcpy (x_label, p, LEN_RECD);
-         rc = LOC_parse (p, &x_tab, &x_col, &x_row, NULL);
-         DEBUG_INPT  yLOG_value   ("rc"        , rc);
-         --rce;  if (rc < 0) {
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", x_tab, x_col, x_row);
-         break;
-      case  FIELD_FOR :  /*--------------*/
-         --rce;  if (x_len != 9) {
-            DEBUG_INPT  yLOG_warn    ("format len", "len wrong");
-            DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         x_format = p [2];
-         x_decs   = p [4];
-         x_align  = p [6];
-         sprintf (x_bformat, "%c%c%c", x_format, x_align, x_decs);
-         DEBUG_INPT  yLOG_info    ("format"    , x_bformat);
-         break;
-      case  FIELD_SRC :  /*--------------*/
-         DEBUG_INPT  yLOG_info    ("source"    , p + 1);
-         if      (strcmp ("cell_dep" , my.f_type) == 0) 
-            INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
-         else if (strcmp ("cell_free", my.f_type) == 0) 
-            INPT_cellreal (x_tab, x_col, x_row, x_bformat, p + 1);
-         break;
-      }
-      DEBUG_INPT   yLOG_note    ("done with loop");
-   } 
-   DEBUG_INPT   yLOG_note    ("done parsing fields");
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1147,7 +1026,7 @@ INPT_main          (cchar *a_name)
          if  (my.f_vers == 'G')  rc = INPT_tab   (s_fields [2], s_fields [3]);
          break;
       case 'c' :
-         if  (my.f_vers == 'D')  rc = INPT_celln (s_fields [4], s_fields [5], s_fields [6]);
+         if  (my.f_vers == 'D')  rc = INPT_cell  (s_fields [4], s_fields [5], s_fields [6]);
          if (rc < 0)  ++x_cellbad;
          break;
       }
@@ -1182,22 +1061,24 @@ OUTP_header        (FILE *a_file)
    fprintf (a_file, "#   generated by the heatherly spreadsheet tool gyges-hekatonkheires (hundred-handed)\n");
    /*---(write header)---------------------*/
    fprintf (a_file, "\n\n\n");
-   fprintf (a_file, "#===[[ GENERAL INFO AND SETTINGS ]]==========================================================================\n");
+   fprintf (a_file, "#===[[ GENERAL ]]====================================================================================================#\n");
    fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);
    /*---(format identifiers)---------------*/
    fprintf (a_file, "gyges      %c %5s %c %-60.60s %c\n", 31, VER_NUM, 31, VER_TXT                      , 31);
-   fprintf (a_file, "format     %c %5d %c %-60.60s %c\n", 31, 9      , 31, "improved tab records"       , 31);
    /*---(timestamp)------------------------*/
    x_time = time(NULL);
-   strftime (x_temp, 100, "%y.%m.%d.%H.%M.%S", localtime(&x_time));
+   strftime (x_temp, 100, "%Y.%m.%d.%H.%M.%S", localtime(&x_time));
    fprintf (a_file, "timestamp  %c %5s %c %-60.60s %c\n", 31, "-----", 31, x_temp                       , 31);
    /*---(version)------------------------*/
    if (ver_ctrl == 'y') {
       fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",
             31, ver_num, 31, ver_txt, 31);
    }
+   /*---(finish)-------------------------*/
+   fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);
+   fprintf (a_file, "\n\n\n");
+   fflush  (a_file);
    /*---(complete)-----------------------*/
-   fflush (a_file);
    return 0;
 }
 
@@ -1320,44 +1201,19 @@ FILE_write         (char *a_name)
    /*---(column data)--------------------*/
    OUTP_cols   (f);
    /*---(dependent cells)------------------*/
-   fprintf (f, "\n\n\n#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");
+   fprintf (f, "#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");
    x_stamp   = rand ();
    rc = SEQ_file_deps (x_stamp, f);
-   fprintf (f, "# dependent cells complete\n");
+   fprintf (f, "# dependent cells complete\n\n\n\n");
    /*---(non-dependency cells)-------------*/
-   fprintf (f, "\n\n\n#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
+   fprintf (f, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
    x_seq     = 0;
    for (i = 0; i < NTAB; ++i) {
       rc = FILE_cells   (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);
    }
-   fprintf (f, "# independent cells complete\n");
-   /*---(buffer contents)------------------*/
-   fprintf (f, "\n\n\n#===[[ REGISTER CELLS, in proper order ]]============================================================================#\n");
-   x_seq     = 0;
-   x_len     = strlen (x_bufs);
-   for (i = 0; i < x_len; ++i) {
-      rc = REG_write    (f, &x_seq, x_bufs [i]);
-   }
-   if (x_seq == 0)  fprintf (f, "# no cells in any lettered registers\n");
-   else             fprintf (f, "# register cells complete, count = %d\n", x_seq);
-   /*---(buffer contents)------------------*/
-   fprintf (f, "\n\n\n#===[[ TEXT REGISTERS ]]=============================================================================================#\n");
-   x_seq     = 0;
-   x_len     = strlen (x_bufs);
-   for (i = 0; i < x_len; ++i) {
-      rc = TREG_write   (f, &x_seq, x_bufs [i]);
-   }
-   if (x_seq == 0)  fprintf (f, "# no cells in any lettered registers\n");
-   else             fprintf (f, "# register cells complete, count = %d\n", x_seq);
-   /*---(marks)----------------------------*/
-   fprintf (f, "\n\n\n#===[[ LOCATION and OBJECT MARKS ]]==================================================================================#\n");
-   x_seq     = 0;
-   rc = MARK_write (f, &x_seq);
-   if      (rc    <  0)  fprintf (f, "# ERROR writing marks\n");
-   else if (x_seq == 0)  fprintf (f, "# no lettered marks\n");
-   else                  fprintf (f, "# lettered marks complete, count = %d\n", x_seq);
+   fprintf (f, "# independent cells complete\n\n\n\n");
    /*---(footer data)----------------------*/
-   fprintf (f, "\n\n\n# done, finito, complete\n");
+   fprintf (f, "# done, finito, complete\n");
    /*---(close file)-----------------------*/
    fclose  (f);
    /*---(make version)---------------------*/
