@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3b"
-#define     VER_TXT   "basic unit testing and fixes for INPT_cell..."
+#define     VER_NUM   "2.3c"
+#define     VER_TXT   "clearing up number formats and error message display"
 
 
 

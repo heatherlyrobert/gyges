@@ -2027,43 +2027,47 @@ CELL_printable     (tCELL *a_curr) {
    --rce;  if (a_curr->s == NULL) return rce;     /* nothing to do without source       */
    /*---(header)-------------------------*/
    DEBUG_CELL  yLOG_enter (__FUNCTION__);
-   DEBUG_CELL  yLOG_value ("col"       , a_curr->col);
-   DEBUG_CELL  yLOG_value ("row"       , a_curr->row);
-   DEBUG_CELL  yLOG_char  ("type"      , a_curr->t);
-   DEBUG_CELL  yLOG_char  ("format"    , a_curr->f);
-   DEBUG_CELL  yLOG_char  ("align"     , a_curr->a);
-   DEBUG_CELL  yLOG_char  ("decs"      , a_curr->d);
+   /*---(prepare)------------------------*/
+   char x_type   = a_curr->t;
+   char x_format = a_curr->f;
+   char x_align  = a_curr->a;
+   char x_decs   = a_curr->d - '0';
+   DEBUG_CELL  yLOG_info  ("label"     , a_curr->l);
+   DEBUG_CELL  yLOG_char  ("type"      , x_type);
+   DEBUG_CELL  yLOG_char  ("format"    , x_format);
+   DEBUG_CELL  yLOG_char  ("align"     , x_align);
+   DEBUG_CELL  yLOG_value ("decs"      , x_decs);
    /*---(check for hidden)---------------*/
-   if (a_curr->t == CTYPE_MERGE) {
+   if (x_type == CTYPE_MERGE) {
       DEBUG_CELL  yLOG_note  ("merged cell");
       DEBUG_CELL  yLOG_exit  (__FUNCTION__);
       return 0;
    }
    /*---(numbers)------------------------*/
    --rce;
-   if (strchr (G_CELL_NUM, a_curr->t) != 0) {
+   if (strchr (G_CELL_NUM, x_type) != 0) {
       DEBUG_CELL  yLOG_note  ("number");
-      rc = strl4main   (a_curr->v_num, x_temp, a_curr->d - '0', a_curr->f, LEN_RECD);
+      rc = strl4main   (a_curr->v_num, x_temp, x_decs, x_format, LEN_RECD);
    }
    /*---(calced tsrings------------------*/
-   else if (strchr (G_CELL_STR, a_curr->t) != 0) {
+   else if (strchr (G_CELL_STR, x_type) != 0) {
       DEBUG_CELL  yLOG_note  ("string");
-      if      (a_curr->t == CTYPE_STR)   strcat (x_temp, a_curr->s);
-      else if (a_curr->t == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
-      else if (a_curr->t == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);
+      if      (x_type == CTYPE_STR)   strcat (x_temp, a_curr->s);
+      else if (x_type == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
+      else if (x_type == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);
       else                               strcat (x_temp, "");
    }
    /*---(empty)--------------------------*/
-   else if (a_curr->t == CTYPE_BLANK) {
+   else if (x_type == CTYPE_BLANK) {
       DEBUG_CELL  yLOG_note  ("empty");
       strcat (x_temp, "-");
    }
    /*---(troubles)-----------------------*/
-   else if (strchr(G_CELL_ERR, a_curr->t) != 0) {
+   else if (strchr(G_CELL_ERR, x_type) != 0) {
       DEBUG_CELL  yLOG_note  ("error");
       /*> strcat (x_temp, a_curr->s);                                                 <*/
       strcat (x_temp, a_curr->v_str);
-      a_curr->a = '<';
+      x_align = '<';
    }
    /*---(detault)-----------------------*/
    else {
@@ -2071,20 +2075,20 @@ CELL_printable     (tCELL *a_curr) {
       strcat (x_temp, a_curr->s);
    }
    /*---(formatting errors)--------------*/
-   /*> if (strchr ("WE", a_curr->t) == 0 && strncmp (x_temp, "#.", 2) == 0) {         <* 
-    *>    a_curr->t = 'w';                                                            <* 
-    *>    a_curr->a = '<';                                                            <* 
-    *> }                                                                              <*/
+   if (strncmp (x_temp, "#.", 2) == 0) {
+      x_type  = 'w';
+      x_align = '<';
+   }
    /*---(indented formats)---------------*/
    DEBUG_CELL  yLOG_info  ("x", x_temp);
    /*---(get width)----------------------*/
    CELL_print_width (a_curr, &w, &x_merge);
    DEBUG_CELL  yLOG_value ("w", w);
    wa    = w - 1;
-   if (strchr (G_CELL_NUM, a_curr->t) != 0)
-      strlpad (x_temp, x_work, ' '      , a_curr->a, wa);
+   if (strchr (G_CELL_NUM, x_type) != 0)
+      strlpad (x_temp, x_work, ' '      , x_align, wa);
    else
-      strlpad (x_temp, x_work, a_curr->f, a_curr->a, wa);
+      strlpad (x_temp, x_work, x_format, x_align, wa);
    /*---(prepare)------*/
    if (a_curr->p != NULL) {
       free (a_curr->p);
