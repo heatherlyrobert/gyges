@@ -1203,22 +1203,18 @@ MODE_god           (char a_prev, char a_curr)
    return 0;
 }
 
-
-char       /*----: process keys for formatting mode --------------------------*/
+char       /*----: process keys for formatting sub-mode ----------------------*/
 SMOD_format        (char a_major, char a_minor)
 {
-   /*---(current cell -- whether good or not)---*/
-   tCELL   *curr = LOC_cell_at_curr ();
-   /*---(check for control keys)----------------*/
+   /*---(check for control keys)---------*/
    switch (a_minor) {
    case   10 :
-   case   27 : VISU_clear  ();
-               yVIKEYS_mode_exit ();
-               return 0;   /* escape  */
+   case   27 :
+      yVIKEYS_mode_exit ();
+      return 0;   /* escape  */
    }
-   /*---(check for alignment prefixes)----------*/
+   /*---(column widths)------------------*/
    switch (a_minor) {
-
    case  'm' : CELL_width    (CHG_INPUT, 'm');  break;  /* smallest    */
    case  'h' : CELL_width    (CHG_INPUT, 'h');  break;  /* less by 1   */
    case  'H' : CELL_width    (CHG_INPUT, 'H');  break;  /* less by 5   */
@@ -1228,7 +1224,9 @@ SMOD_format        (char a_major, char a_minor)
    case  'N' : CELL_width    (CHG_INPUT, 'N');  break;  /* normal-plus */
    case  'w' : CELL_width    (CHG_INPUT, 'w');  break;  /* wide        */
    case  'W' : CELL_width    (CHG_INPUT, 'W');  break;  /* largest     */
-
+   }
+   /*---(decimal places)-----------------*/
+   switch (a_minor) {
    case  '0' : CELL_decimals (CHG_INPUT, '0');  break;  /* none        */
    case  '1' : CELL_decimals (CHG_INPUT, '1');  break;  /* less by 1   */
    case  '2' : CELL_decimals (CHG_INPUT, '2');  break;  /* exactly 2   */
@@ -1239,7 +1237,9 @@ SMOD_format        (char a_major, char a_minor)
    case  '7' : CELL_decimals (CHG_INPUT, '7');  break;  /* exactly 7   */
    case  '8' : CELL_decimals (CHG_INPUT, '8');  break;  /* exactly 8   */
    case  '9' : CELL_decimals (CHG_INPUT, '9');  break;  /* exactly 9   */
-
+   }
+   /*---(horizontal alignments)----------*/
+   switch (a_minor) {
    case  '<' : CELL_align    (CHG_INPUT, '<');  break;  /* left        */
    case  '|' : CELL_align    (CHG_INPUT, '|');  break;  /* center      */
    case  '>' : CELL_align    (CHG_INPUT, '>');  break;  /* right       */
@@ -1248,16 +1248,22 @@ SMOD_format        (char a_major, char a_minor)
    case  ']' : CELL_align    (CHG_INPUT, ']');  break;  /* right dec   */
    case  '}' : CELL_align    (CHG_INPUT, '}');  break;  /* right +2    */
    case  '{' : CELL_align    (CHG_INPUT, '{');  break;  /* left  +2    */
-
+   }
+   /*---(merging)------------------------*/
+   switch (a_minor) {
    case  'M' : CELL_merge_visu ();              break;  /* merge       */
    case  'U' : CELL_unmerge_visu ();            break;  /* unmerge     */
-
+   }
+   /*---(integer formats)----------------*/
+   switch (a_minor) {
    case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /* integer         */
    case  'f' : CELL_format   (CHG_INPUT, 'f');  CELL_decimals (CHG_INPUT, '3'); break;  /* real/float      */
    case  'g' : CELL_format   (CHG_INPUT, 'f');  CELL_decimals (CHG_INPUT, '6'); break;  /* real/float      */
    case  'e' : CELL_format   (CHG_INPUT, 'e');  CELL_decimals (CHG_INPUT, '3'); break;  /* exponencial     */
    case  'E' : CELL_format   (CHG_INPUT, 'E');  CELL_decimals (CHG_INPUT, '3'); break;  /* spaced exponent */
-
+   }
+   /*---(comma formats)------------------*/
+   switch (a_minor) {
    case  'c' : CELL_format   (CHG_INPUT, 'c');  break;  /* comma           */
    case  'C' : CELL_format   (CHG_INPUT, 'C');  break;  /* comma           */
    case  'a' : CELL_format   (CHG_INPUT, 'a');  break;  /* accounting      */
@@ -1268,10 +1274,14 @@ SMOD_format        (char a_major, char a_minor)
    case  '#' : CELL_format   (CHG_INPUT, '#');  CELL_decimals (CHG_INPUT, '6'); break;  /* technical       */
    case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* bullet point    */
    case  'P' : CELL_format   (CHG_INPUT, 'P');  break;  /* bullet point    */
-
+   }
+   /*---(roman numerals)-----------------*/
+   switch (a_minor) {
    case  'r' : CELL_format   (CHG_INPUT, 'r');  break;  /* roman           */
    case  'R' : CELL_format   (CHG_INPUT, 'R');  break;  /* roman upper     */
-
+   }
+   /*---(special formats)----------------*/
+   switch (a_minor) {
    case  'o' : CELL_format   (CHG_INPUT, 'o');  break;  /* octal           */
    case  'O' : CELL_format   (CHG_INPUT, 'O');  break;  /* spaced octal    */
    case  'x' : CELL_format   (CHG_INPUT, 'x');  break;  /* hex             */
@@ -1280,12 +1290,16 @@ SMOD_format        (char a_major, char a_minor)
    case  'B' : CELL_format   (CHG_INPUT, 'B');  break;  /* spaced binary   */
    case  'z' : CELL_format   (CHG_INPUT, 'z');  break;  /* base-62         */
    case  'Z' : CELL_format   (CHG_INPUT, 'Z');  break;  /* spaced base-62  */
-
+   }
+   /*---(time and date)------------------*/
+   switch (a_minor) {
    case  't' : CELL_format   (CHG_INPUT, 't');  break;  /* time            */
    case  'T' : CELL_format   (CHG_INPUT, 'T');  break;  /* timestamp       */
    case  'd' : CELL_format   (CHG_INPUT, 'd');  break;  /* date            */
    case  'D' : CELL_format   (CHG_INPUT, 'D');  break;  /* full date       */
-
+   }
+   /*---(string fills)-------------------*/
+   switch (a_minor) {
    case  '-' : CELL_format   (CHG_INPUT, '-');  break;  /* filled dash     */
    case  '=' : CELL_format   (CHG_INPUT, '=');  break;  /* filled equal    */
    case  '_' : CELL_format   (CHG_INPUT, '_');  break;  /* filled under    */
@@ -1294,9 +1308,8 @@ SMOD_format        (char a_major, char a_minor)
    case  '/' : CELL_format   (CHG_INPUT, '/');  break;  /* filled divs     */
    case  '\"': CELL_format   (CHG_INPUT, '\"'); break;  /* filled euro quot*/
    case  ' ' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
-
-               /*> case  '"' : CELL_format   (CHG_INPUT, '"'); CELL_align    (CHG_INPUT, '"'); CELL_decimals (CHG_INPUT, '"');  break;  /+ filled empty    +/   <*/
    }
+   /*---(complete)-----------------------*/
    return 0;
 }
 

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3d"
-#define     VER_TXT   "visual mode now calls format sub-mode correctly"
+#define     VER_NUM   "2.3e"
+#define     VER_TXT   "cleaned up key handling in formatting sub-mode"
 
 
 
