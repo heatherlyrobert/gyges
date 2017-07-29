@@ -1076,16 +1076,21 @@ VISU_mode          (char a_major, char a_minor)
       }
       /*---(actions)---------------------*/
       switch (a_minor) {
-      case 'v'      : VISU_reverse ();
-                      break;
-      case '<'      : CELL_align (CHG_INPUT, '<');
-                      break;
-      case '|'      : CELL_align (CHG_INPUT, '|');
-                      break;
-      case '>'      : CELL_align (CHG_INPUT, '>');
-                      break;
-      case 'x'      : REG_cut   ();
-                      break;
+      case 'v'      :
+         VISU_reverse      ();
+         break;
+      case 'y'      :
+         REG_copy          ();
+         VISU_clear        ();
+         yVIKEYS_mode_exit ();
+         return  0;
+         break;
+      case 'x'      :
+         REG_cut           ();
+         VISU_clear        ();
+         yVIKEYS_mode_exit ();
+         return  0;
+         break;
       }
       /*---(actions)---------------------*/
       /*> switch (a_minor) {                                                          <* 
@@ -1189,10 +1194,10 @@ char      SELC_mode          (char  a_major, char  a_minor)
       }
       /*---(actions)---------------------*/
       switch (a_minor) {
-      /*> case 'v'      : VISU_reverse ();                                            <* 
-       *>                 break;                                                      <*/
-      /*> case 'x'      : REG_cut   ();                                               <* 
-       *>                 break;                                                      <*/
+         /*> case 'v'      : VISU_reverse ();                                            <* 
+          *>                 break;                                                      <*/
+         /*> case 'x'      : REG_cut   ();                                               <* 
+          *>                 break;                                                      <*/
       }
       /*---(basic movement)--------------*/
       switch (a_minor) {

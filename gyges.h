@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3e"
-#define     VER_TXT   "cleaned up key handling in formatting sub-mode"
+#define     VER_NUM   "2.3f"
+#define     VER_TXT   "brought back keys for visual copy and cut"
 
 
 

@@ -1765,7 +1765,7 @@ CELL_format        (char a_mode, char a_format)
    if (strchr (sv_formats, a_format)  == 0) return -1;
    /*---(prepare)------------------------*/
    x_next  = VISU_first (&x_tab, &x_col, &x_row);
-   if (a_format == '"')  a_format = x_next->f;
+   /*> if (a_format == '"')  a_format = x_next->f;                                    <*/
    /*---(process range)------------------*/
    do {
       if (x_next != NULL) {

@@ -196,7 +196,7 @@ MOVE_edges         (
    case 's' : case 'H' :
       /*---(left)------------------------*/
       for (x_fin = 0; x_fin < NCOL; ++x_fin) {
-         if (a_dir == 's' && LOC_row_used    (CTAB, y_fin) == 0)            continue;
+         if (a_dir == 's' && LOC_col_used    (CTAB, x_fin) == 0)            continue;
          if (a_dir == 'H' && LOC_cell_at_loc (CTAB, x_fin, CROW) == NULL)   continue;
          break;
       }
@@ -205,7 +205,7 @@ MOVE_edges         (
    case 'e' : case 'L' :
       /*---(right)-----------------------*/
       for (x_fin = NCOL - 1; x_fin >= 0; --x_fin) {
-         if (a_dir == 'e' && LOC_row_used    (CTAB, y_fin) == 0)            continue;
+         if (a_dir == 'e' && LOC_col_used    (CTAB, x_fin) == 0)            continue;
          if (a_dir == 'L' && LOC_cell_at_loc (CTAB, x_fin, CROW) == NULL)   continue;
          break;
       }

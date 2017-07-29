@@ -190,7 +190,9 @@ KEYS_e_family      (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
-   char        x_minors    [LEN_RECD]  = "tKkjJbsHhlLeaonfSETBAONF";
+   /*-------------------------------------(-horz--)(-vert--)(-zoom--)(-edge--)*/
+   char        x_minors    [LEN_RECD]  = "SsHhclLeETtKkmjJbBNnOo.iIfFaAzZ+uUdD";
+   char        x_nothere   [LEN_RECD]  = "NnOo.iIfF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -235,13 +237,13 @@ KEYS_e_family      (char a_major, char a_minor)
    case 'a' : rc = MOVE_edges ('s');
               rc = MOVE_edges ('t');
               break;
-   case 'o' : rc = MOVE_edges ('e');
+   case 'z' : rc = MOVE_edges ('e');
               rc = MOVE_edges ('b');
               break;
-   case 'n' : rc = MOVE_edges ('e');
+   case 'u' : rc = MOVE_edges ('e');
               rc = MOVE_edges ('t');
               break;
-   case 'f' : rc = MOVE_edges ('s');
+   case 'd' : rc = MOVE_edges ('s');
               rc = MOVE_edges ('b');
               break;
    }
@@ -261,13 +263,13 @@ KEYS_e_family      (char a_major, char a_minor)
    case 'A' : rc = MOVE_horz    ('0');            /* ALPHA = origin      */
               rc = MOVE_vert    ('_');
               break;
-   case 'O' : rc = MOVE_horz    ('$');            /* OMEGA = maximum     */
+   case 'Z' : rc = MOVE_horz    ('$');            /* OMEGA = maximum     */
               rc = MOVE_vert    ('G');
               break;
-   case 'N' : rc = MOVE_horz    ('$');            /* NEAR  = maximum     */
+   case 'U' : rc = MOVE_horz    ('$');            /* NEAR  = maximum     */
               rc = MOVE_vert    ('_');
               break;
-   case 'F' : rc = MOVE_horz    ('0');            /* FAR   = maximum     */
+   case 'D' : rc = MOVE_horz    ('0');            /* FAR   = maximum     */
               rc = MOVE_vert    ('G');
               break;
    }
@@ -1208,8 +1210,7 @@ SMOD_format        (char a_major, char a_minor)
 {
    /*---(check for control keys)---------*/
    switch (a_minor) {
-   case   10 :
-   case   27 :
+   case   10 : case   27 :
       yVIKEYS_mode_exit ();
       return 0;   /* escape  */
    }
@@ -1306,8 +1307,8 @@ SMOD_format        (char a_major, char a_minor)
    case  '.' : CELL_format   (CHG_INPUT, '.');  break;  /* filled period   */
    case  '+' : CELL_format   (CHG_INPUT, '+');  break;  /* filled plus     */
    case  '/' : CELL_format   (CHG_INPUT, '/');  break;  /* filled divs     */
-   case  '\"': CELL_format   (CHG_INPUT, '\"'); break;  /* filled euro quot*/
-   case  ' ' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
+   case  '"' : CELL_format   (CHG_INPUT, '"');  break;  /* filled euro quot*/
+   case  '!' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
    }
    /*---(complete)-----------------------*/
    return 0;
