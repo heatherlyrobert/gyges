@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3f"
-#define     VER_TXT   "brought back keys for visual copy and cut"
+#define     VER_NUM   "2.3g"
+#define     VER_TXT   "visual writing to and reading from vi_clip.txt working"
 
 
 
@@ -657,7 +657,6 @@ extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 /*---(layout_status)---------------------*/
 #define     G_STATUS_HIDE       ' '
 #define     G_STATUS_FILE       'f'
-#define     G_STATUS_VISUAL     'v'
 #define     G_STATUS_DEPS       'd'
 #define     G_STATUS_REGS       '"'
 #define     G_STATUS_TREG       't'
@@ -668,6 +667,7 @@ extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 #define     G_STATUS_MODELIST   'M'
 #define     G_STATUS_ERRORS     'E'
 #define     G_STATUS_BUFFER     'B'
+#define     G_STATUS_VISUAL     'V'
 /*---(layout_command)--------------------*/
 #define     G_COMMAND_SHOW      's'
 #define     G_COMMAND_HIDE      'h'
@@ -816,6 +816,7 @@ char      VISU_row           (void);
 char      VISU_range         (int*, int*, int*, int*, int*);
 tCELL*    VISU_first         (int*, int*, int*);
 tCELL*    VISU_next          (int*, int*, int*);
+char      VISU_status        (char *a_msg);
 
 char      SELC_clear         (void);
 char      SELC_save          (void);

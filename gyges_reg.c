@@ -359,9 +359,10 @@ static void  o___KEYS____________o () { return; }
 char          /* PURPOSE : process keys for register actions -----------------*/
 REG_mode           (int a_major, int a_minor)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         x_buf       =  -1;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         x_buf       =   -1;
+   char       *p           = NULL;
    /*---(defenses)-----------------------*/
    --rce;  if (yVIKEYS_mode_not (SMOD_REGISTER)) {
       return rce;
@@ -388,11 +389,21 @@ REG_mode           (int a_major, int a_minor)
       }
       return rce;
    }
-   --rce;  if (a_major == ' ' && strchr ("+-", my.reg_curr) != 0) {
+   --rce;  if (a_major == ' ' && my.reg_curr == '+') {
+      p = strchr ("ctr"      , a_minor);
+      if (p != NULL)   REG_valuesin (a_minor);
+      REG_set ('"');
+      yVIKEYS_mode_exit ();
+      if (p == NULL)   return rce;
+      return 0;
+   }
+   --rce;  if (a_major == ' ' && my.reg_curr == '-') {
       switch (a_minor) {
       case  'v' : REG_valuesout('v');
                   break;
       case  'V' : REG_valuesout('V');
+                  break;
+      case  'r' : REG_valuesout('r');
                   break;
       case  'm' : REG_valuesout('m');
                   break;
@@ -882,7 +893,7 @@ REG_paste          (char a_adapt)
 char
 REG_valuesin      (char a_style)
 {
-   /*---(locals)-----------+-----------+-*/
+   /*---(locals)-----+-----+-----+-----+-*/
    char        rce         = -10;
    char        rc          = 0;
    FILE       *f           = NULL;
@@ -892,7 +903,7 @@ REG_valuesin      (char a_style)
    char        x_recd      [LEN_RECD];
    int         x_len       = 0;
    char       *p           = NULL;
-   char       *q           = "\t";
+   char        q           [LEN_LABEL] = "\t";
    char       *s           = NULL;
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
@@ -908,6 +919,12 @@ REG_valuesin      (char a_style)
    /*---(prepare)------------------------*/
    x_col = CCOL;
    x_row = CROW;
+   switch (a_style) {
+   case 't'  : strlcpy (q, "\t" , 5);   break;
+   case 'c'  : strlcpy (q, ","  , 5);   break;
+   case 'r'  :
+   default   : strlcpy (q, "" , 5);   break;
+   }
    /*---(process lines)------------------*/
    while (1) {
       /*---(read and clean)--------------*/
@@ -923,6 +940,8 @@ REG_valuesin      (char a_style)
          DEBUG_INPT  yLOG_note    ("record empty");
          continue;
       }
+      if (x_recd [0] == '#')  continue;
+      if (x_recd [0] == ' ')  continue;
       x_recd [--x_len] = '\0';
       DEBUG_INPT  yLOG_value   ("length"    , x_len);
       DEBUG_INPT  yLOG_info    ("fixed"     , x_recd);
@@ -930,16 +949,25 @@ REG_valuesin      (char a_style)
       p = strtok_r (x_recd, q, &s);
       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
       while (p != NULL) {
-         DEBUG_INPT  yLOG_point   ("p"         , p);
-         strldchg (p,  29, G_CHAR_GROUP, LEN_RECD);   /* group     */
-         strldchg (p,  31, G_CHAR_FIELD, LEN_RECD);   /* field     */
-         strldchg (p,   9, G_CHAR_TAB  , LEN_RECD);   /* tab       */
-         strldchg (p,  27, G_CHAR_ESC  , LEN_RECD);   /* escape    */
-         strldchg (p, 127, G_CHAR_BS   , LEN_RECD);   /* del       */
-         DEBUG_INPT  yLOG_info    ("value"     , p);
-         DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
-         CELL_change (&x_curr, CHG_INPUT, CTAB, x_col, x_row, p);
-         DEBUG_INPT  yLOG_point   ("x_curr"    , x_curr);
+         if (strlen (p) != 0) {
+            if (a_style == 'c') {
+               p [0]              = ' ';
+               p [strlen (p) - 1] = ' ';
+            }
+            strltrim (p, ySTR_BOTH, LEN_RECD);
+            if (strlen (p) != 0) {
+               DEBUG_INPT  yLOG_point   ("p"         , p);
+               strldchg (p,  29, G_CHAR_GROUP, LEN_RECD);   /* group     */
+               strldchg (p,  31, G_CHAR_FIELD, LEN_RECD);   /* field     */
+               strldchg (p,   9, G_CHAR_TAB  , LEN_RECD);   /* tab       */
+               strldchg (p,  27, G_CHAR_ESC  , LEN_RECD);   /* escape    */
+               strldchg (p, 127, G_CHAR_BS   , LEN_RECD);   /* del       */
+               DEBUG_INPT  yLOG_info    ("value"     , p);
+               DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
+               CELL_change (&x_curr, CHG_INPUT, CTAB, x_col, x_row, p);
+               DEBUG_INPT  yLOG_point   ("x_curr"    , x_curr);
+            }
+         }
          ++x_col;
          p = strtok_r (NULL, q, &s);
       }
@@ -967,10 +995,10 @@ REG_valuesout     (char a_style)
    int         x_row       = 0;
    int         x_rowsave   = 0;
    int         w           = 0;
-   int         x_print     [LEN_RECD];
-   int         x_trim      [LEN_RECD];
-   int         x_source    [LEN_RECD];
-   int         x_full      [LEN_RECD];
+   char        x_print     [LEN_RECD]  = "";
+   char        x_trim      [LEN_RECD]  = "";
+   char        x_source    [LEN_RECD]  = "";
+   char        x_full      [LEN_RECD]  = "";
    int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -989,56 +1017,76 @@ REG_valuesout     (char a_style)
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
       ++c;
       /*---(look for line break)---------*/
-      if (strchr ("vVmMcCtT", a_style) != 0 && x_row != x_rowsave) {
+      if (strchr ("vVmMcCtTrR", a_style) != 0 && x_row != x_rowsave) {
+         DEBUG_REGS   yLOG_note    ("line break");
          fprintf (f, "\n");
       }
       /*---(fill in blank cells)---------*/
       if (curr == NULL) {
+         DEBUG_REGS   yLOG_note    ("NULL cell");
          w = LOC_col_width (x_tab, x_col);
          switch (a_style) {
-         case 'v' : fprintf (f, "%*.*s", w, w, g_empty);
-                    break;
-         case 'V' : break;
+         case 'v' : case 'r' : case 'R' : 
+            fprintf (f, "%*.*s", w, w, g_empty);
+            break;
          case 'c' : case 'C' :
-                    fprintf (f, "\"\",");
-                    break;
+            fprintf (f, "\"\",");
+            break;
          case 't' : case 'T' :
-                    fprintf (f, "\t");
-                    break;
-         case 's' : case 'S' :
-                    break;
-         case 'f' : case 'F' :
-                    break;
+            fprintf (f, "\t");
+            break;
          }
       }
       /*---(write filled cells)----------*/
       else {
+         DEBUG_REGS   yLOG_info    ("cell"      , curr->label);
+         /*---(source)-------------------*/
+         if (curr->s != NULL) {
+            DEBUG_REGS   yLOG_note    ("convert source string");
+            strlcpy  (x_source, curr->s, LEN_RECD);
+            strldchg (x_source, G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
+            strldchg (x_source, G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
+            strldchg (x_source, G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
+            strldchg (x_source, G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
+            strldchg (x_source, G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+         } else {
+            DEBUG_REGS   yLOG_note    ("source is NULL");
+         }
+         DEBUG_REGS   yLOG_info    ("source"    , x_source);
+         /*---(full outcome)-------------*/
+         if (curr->v_str != NULL) {
+            DEBUG_REGS   yLOG_note    ("convert modified string");
+            strlcpy  (x_full  , curr->v_str, LEN_RECD);
+            strldchg (x_full  , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
+            strldchg (x_full  , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
+            strldchg (x_full  , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
+            strldchg (x_full  , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
+            strldchg (x_full  , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+         } else {
+            DEBUG_REGS   yLOG_note    ("modified is NULL");
+         }
          /*---(printable)----------------*/
-         strlcpy  (x_print , curr->p, LEN_RECD);
-         strldchg (x_print , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
-         strldchg (x_print , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
-         strldchg (x_print , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
-         strldchg (x_print , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
-         strldchg (x_print , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
-         strlcpy  (x_trim  , x_print, LEN_RECD);
+         if (curr->p != NULL) {
+            DEBUG_REGS   yLOG_note    ("convert printable");
+            strlcpy  (x_print , curr->p, LEN_RECD);
+            strldchg (x_print , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
+            strldchg (x_print , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
+            strldchg (x_print , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
+            strldchg (x_print , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
+            strldchg (x_print , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+            strlcpy  (x_trim  , x_print, LEN_RECD);
+         } else {
+            DEBUG_REGS   yLOG_note    ("printable is NULL");
+         }
          /*---(trimmed printable)--------*/
          strltrim (x_trim, ySTR_BOTH, LEN_RECD);
-         /*---(full outcome)-------------*/
-         strlcpy  (x_full  , curr->v_str, LEN_RECD);
-         strldchg (x_full  , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
-         strldchg (x_full  , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
-         strldchg (x_full  , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
-         strldchg (x_full  , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
-         strldchg (x_full  , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
-         /*---(source)-------------------*/
-         strlcpy  (x_source, curr->s, LEN_RECD);
-         strldchg (x_source, G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
-         strldchg (x_source, G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
-         strldchg (x_source, G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
-         strldchg (x_source, G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
-         strldchg (x_source, G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+         DEBUG_REGS   yLOG_info    ("printable" , x_trim);
+         DEBUG_REGS   yLOG_info    ("modified"  , x_full);
+         DEBUG_REGS   yLOG_note    ("handle");
          switch (a_style) {
          case 'v' : fprintf (f, "%s"                  , x_print);
+                    break;
+         case 'r' : fprintf (f, "%s  "              , x_print);
                     break;
          case 'V' : fprintf (f, "%s "                 , x_trim);
                     break;

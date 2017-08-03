@@ -140,14 +140,16 @@ VISU_init          (void)
 char         /*--> clear the selection -------------------[ leaf   [ ------ ]-*/
 VISU_clear          (void)
 {
+   /*---(backup)-------------------------*/
+   VISU_save   ();
    /*---(back to original cell)----------*/
    if (s_visu.live == VISU_YES) {
+      MOVE_prep   ();
       CTAB = s_visu.otab;
       CCOL = s_visu.ocol;
       CROW = s_visu.orow;
+      MOVE_done   ();
    }
-   /*---(backup)-------------------------*/
-   VISU_save   ();
    /*---(status)-------------------------*/
    s_visu.live  = VISU_NOT;
    s_visu.mode  = VISU_NONE;
@@ -217,9 +219,11 @@ VISU_restore       (void)
    s_visu.home  = s_save.home;
    s_visu.curr  = s_save.curr;
    /*---(go to the right place)----------*/
+   MOVE_prep    ();
    CTAB = s_visu.otab;
-   CCOL = s_visu.ccol;
-   CROW = s_visu.crow;
+   CCOL = s_visu.ecol;
+   CROW = s_visu.erow;
+   MOVE_done    ();
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -340,6 +344,7 @@ char         /*--> swap the corners ----------------------[ ------ [ ------ ]-*/
 VISU_reverse       (void)
 {
    /*---(change root)--------------------*/
+   MOVE_prep ();
    if (s_visu.ccol == s_visu.ecol && s_visu.crow == s_visu.erow) {
       s_visu.ocol = s_visu.ecol;
       s_visu.orow = s_visu.erow;
@@ -351,6 +356,7 @@ VISU_reverse       (void)
       CCOL = s_visu.ccol = s_visu.ecol;
       CROW = s_visu.crow = s_visu.erow;
    }
+   MOVE_done ();
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1042,6 +1048,35 @@ MARK_read          (char a_mark, char *a_label)
 /*====================------------------------------------====================*/
 static void  o___KEYS____________o () { return; }
 
+char
+VISU_status        (char *a_msg)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_orig      [LEN_LABEL] = "";
+   char        x_beg       [LEN_LABEL] = "";
+   char        x_end       [LEN_LABEL] = "";
+   char        x_curr      [LEN_LABEL] = "";
+   char        x_sorig     [LEN_LABEL] = "";
+   char        x_sbeg      [LEN_LABEL] = "";
+   char        x_send      [LEN_LABEL] = "";
+   char        x_scurr     [LEN_LABEL] = "";
+   /*---(make labels)--------------------*/
+   LOC_ref  (s_visu.otab, s_visu.ocol, s_visu.orow, 0, x_orig);
+   LOC_ref  (s_visu.otab, s_visu.bcol, s_visu.brow, 0, x_beg );
+   LOC_ref  (s_visu.otab, s_visu.ecol, s_visu.erow, 0, x_end );
+   LOC_ref  (s_visu.otab, s_visu.ccol, s_visu.crow, 0, x_curr);
+   LOC_ref  (s_save.otab, s_save.ocol, s_save.orow, 0, x_sorig);
+   LOC_ref  (s_save.otab, s_save.bcol, s_save.brow, 0, x_sbeg );
+   LOC_ref  (s_save.otab, s_save.ecol, s_save.erow, 0, x_send );
+   LOC_ref  (s_save.otab, s_save.ccol, s_save.crow, 0, x_scurr);
+   /*---(make string)--------------------*/
+   snprintf (a_msg, 500, "[ %d   curr o=%-6.6s b=%-6.6s e=%-6.6s c=%-6.6s   save o=%-6.6s b=%-6.6s e=%-6.6s c=%-6.6s]", 
+         s_visu.live,
+         x_orig , x_beg  , x_end  , x_curr ,
+         x_sorig, x_sbeg , x_send , x_scurr);
+   return 0;
+}
+
 char          /* PURPOSE : process keys for marks ----------------------------*/
 VISU_mode          (char a_major, char a_minor)
 {
@@ -1081,13 +1116,13 @@ VISU_mode          (char a_major, char a_minor)
          break;
       case 'y'      :
          REG_copy          ();
-         VISU_clear        ();
+         /*> VISU_clear        ();                                                    <*/
          yVIKEYS_mode_exit ();
          return  0;
          break;
       case 'x'      :
          REG_cut           ();
-         VISU_clear        ();
+         /*> VISU_clear        ();                                                    <*/
          yVIKEYS_mode_exit ();
          return  0;
          break;

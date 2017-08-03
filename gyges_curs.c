@@ -578,6 +578,9 @@ CURS_status        (tCELL *a_curr)
    case G_STATUS_MODELIST :
       yVIKEYS_mode_list (msg);
       break;
+   case G_STATUS_VISUAL   :
+      VISU_status (msg);
+      break;
    case G_STATUS_ERRORS   :
       snprintf (msg, 500, "errors (%3d)", nerror);
       break;
