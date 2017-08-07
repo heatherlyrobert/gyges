@@ -1116,13 +1116,11 @@ VISU_mode          (char a_major, char a_minor)
          break;
       case 'y'      :
          REG_copy          ();
-         /*> VISU_clear        ();                                                    <*/
          yVIKEYS_mode_exit ();
          return  0;
          break;
       case 'x'      :
          REG_cut           ();
-         /*> VISU_clear        ();                                                    <*/
          yVIKEYS_mode_exit ();
          return  0;
          break;

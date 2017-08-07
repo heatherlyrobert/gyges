@@ -347,20 +347,23 @@ MOVE_gz_horz       (char a_major, char a_minor)
    DEBUG_USER   yLOG_value   ("my.x_avail", my.x_avail);
    x_target = my.x_left;
    switch (a_minor) {
-   case 's' :  x_target += 0;                        break;
-   case 'h' :  x_target += my.x_avail / 4;           break;
-   case 'c' :  x_target += my.x_avail / 2;           break;
-   case 'l' :  x_target += (my.x_avail / 4) * 3;     break;
-   case 'e' :  x_target += my.x_avail;               break;
+   case 's' :  x_target +=  0;                        break;
+   case 'h' :  x_target += (my.x_avail / 4);          break;
+   case 'c' :  x_target += (my.x_avail / 2);          break;
+   case 'l' :  x_target += (my.x_avail / 4) * 3;      break;
+   case 'e' :  x_target +=  my.x_avail;               break;
    }
    DEBUG_USER   yLOG_value   ("x_target"  , x_target);
    /*---(process gotos)------------------*/
+   --rce;
    if (a_major == 'g') {
       DEBUG_USER   yLOG_note    ("handle a g=goto type");
-      if      (a_minor == 's')  CCOL = BCOL;
-      else if (a_minor == 'e')  CCOL = ECOL;
-      else {
-         x_col = 0;
+      switch (a_minor) {
+      case 's' : 
+         CCOL = BCOL; break;
+      case 'e' :
+         CCOL = ECOL; break;
+      case 'h' : case 'c' : case 'l' :
          for (i = BCOL; i <= ECOL; ++i) {
             DEBUG_USER   yLOG_complex ("checking"  , "col %3d at %3d", i, LOC_col_xpos (CTAB, i));
             if (LOC_col_xpos (CTAB, i) <= x_target)  {
@@ -371,14 +374,18 @@ MOVE_gz_horz       (char a_major, char a_minor)
             break;
          }
          CCOL = x_col;
+         break;
       }
    }
    /*---(process scrolls)----------------*/
    else if (a_major == 'z') {
       DEBUG_USER   yLOG_note    ("handle a z=scroll type");
-      if      (a_minor == 's')  BCOL = CCOL;
-      else if (a_minor == 'e')  ECOL = CCOL;
-      else {
+      switch (a_minor) {
+      case 't' :
+         BCOL = CCOL; break;
+      case 'b' : 
+         ECOL = CCOL; break;
+      case 'k' : case 'm' : case 'j' :
          BCOL = CCOL;
          x_cum   = x_target - (LOC_col_width (CTAB, CCOL) / 2);
          x_col   = 0;

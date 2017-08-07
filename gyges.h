@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3g"
-#define     VER_TXT   "visual writing to and reading from vi_clip.txt working"
+#define     VER_NUM   "2.3h"
+#define     VER_TXT   "clean up record type reading from vi_clip.txt"
 
 
 
@@ -187,7 +187,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     DEF_HEIGHT  1
 #define     MIN_HEIGHT  1
 /*---(string length)------------------*/
-#define     LEN_RECD    2000
+#define     LEN_RECD    4000
 #define     LEN_UNIT    500
 #define     LEN_STR     500
 #define     LEN_DESC    100

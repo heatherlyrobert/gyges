@@ -119,7 +119,7 @@ KEYS_gz_family     (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;                /* return code for errors    */
    char        rc          =   0;                /* generic return code       */
-   char        x_minors    [LEN_RECD]  = "shcletkmjbaonf.AONF";
+   char        x_minors    [LEN_RECD]  = "shcletkmjbaonf.SHLETKJBAONF";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -140,20 +140,29 @@ KEYS_gz_family     (char a_major, char a_minor)
    MOVE_prep    ();
    /*---(horizontal)---------------------*/
    switch (a_minor) {
-   case 's' : rc = MOVE_gz_horz (a_major, a_minor);   break;
-   case 'h' : rc = MOVE_gz_horz (a_major, a_minor);   break;
-   case 'c' : rc = MOVE_gz_horz (a_major, a_minor);   break;
-   case 'l' : rc = MOVE_gz_horz (a_major, a_minor);   break;
-   case 'e' : rc = MOVE_gz_horz (a_major, a_minor);   break;
+   case 's' : case 'h' : case 'c' : case 'l' : case 'e' :
+      rc = MOVE_gz_horz (a_major, a_minor);
+      break;
+   case 'S' :
+      rc = MOVE_gz_horz ('g', 's');
+      rc = MOVE_gz_horz ('z', 'e');
+      break;
+   case 'H' :
+      rc = MOVE_gz_horz ('g', 's');
+      rc = MOVE_gz_horz ('z', 'c');
+      break;
+   case 'L' :
+      rc = MOVE_gz_horz ('g', 'e');
+      rc = MOVE_gz_horz ('z', 'c');
+      break;
+   case 'E' :
+      rc = MOVE_gz_horz ('g', 'e');
+      rc = MOVE_gz_horz ('z', 's');
+      break;
    }
    /*---(vertical)-----------------------*/
-   switch (a_minor) {
-   case 't' : rc = MOVE_gz_vert (a_major, a_minor);   break;
-   case 'k' : rc = MOVE_gz_vert (a_major, a_minor);   break;
-   case 'm' : rc = MOVE_gz_vert (a_major, a_minor);   break;
-   case 'j' : rc = MOVE_gz_vert (a_major, a_minor);   break;
-   case 'b' : rc = MOVE_gz_vert (a_major, a_minor);   break;
-   }
+   if (strchr ("tkmjbTKJB", a_minor) != NULL)
+      rc = MOVE_gz_vert (a_major, a_minor);
    /*---(combination)--------------------*/
    switch (a_minor) {
    case 'a' : rc = MOVE_gz_horz (a_major, 's');   /* alpha = top-left    */

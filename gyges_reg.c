@@ -906,6 +906,7 @@ REG_valuesin      (char a_style)
    char        q           [LEN_LABEL] = "\t";
    char       *s           = NULL;
    tCELL      *x_curr      = NULL;
+   short       x_widths    [MAX_COLS];
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(open output file)---------------*/
@@ -940,28 +941,22 @@ REG_valuesin      (char a_style)
          DEBUG_INPT  yLOG_note    ("record empty");
          continue;
       }
-      if (x_recd [0] == '#')  continue;
-      if (x_recd [0] == ' ')  continue;
       x_recd [--x_len] = '\0';
       DEBUG_INPT  yLOG_value   ("length"    , x_len);
       DEBUG_INPT  yLOG_info    ("fixed"     , x_recd);
+      if (x_recd [0] == '\0')                      continue;
+      if (x_recd [0] == ' ' )                      continue;
+      if (x_recd [0] == '#' && x_recd [1] != '>')  continue;
       /*---(process cells)------------------*/
       p = strtok_r (x_recd, q, &s);
       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
       while (p != NULL) {
          if (strlen (p) != 0) {
-            if (a_style == 'c') {
-               p [0]              = ' ';
-               p [strlen (p) - 1] = ' ';
-            }
+            if (a_style == 'c')  p [0] = p [strlen (p) - 1] = ' ';
             strltrim (p, ySTR_BOTH, LEN_RECD);
             if (strlen (p) != 0) {
                DEBUG_INPT  yLOG_point   ("p"         , p);
-               strldchg (p,  29, G_CHAR_GROUP, LEN_RECD);   /* group     */
-               strldchg (p,  31, G_CHAR_FIELD, LEN_RECD);   /* field     */
-               strldchg (p,   9, G_CHAR_TAB  , LEN_RECD);   /* tab       */
-               strldchg (p,  27, G_CHAR_ESC  , LEN_RECD);   /* escape    */
-               strldchg (p, 127, G_CHAR_BS   , LEN_RECD);   /* del       */
+               strlencode   (p, LEN_RECD);
                DEBUG_INPT  yLOG_info    ("value"     , p);
                DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
                CELL_change (&x_curr, CHG_INPUT, CTAB, x_col, x_row, p);
@@ -1043,12 +1038,8 @@ REG_valuesout     (char a_style)
          /*---(source)-------------------*/
          if (curr->s != NULL) {
             DEBUG_REGS   yLOG_note    ("convert source string");
-            strlcpy  (x_source, curr->s, LEN_RECD);
-            strldchg (x_source, G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
-            strldchg (x_source, G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
-            strldchg (x_source, G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
-            strldchg (x_source, G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
-            strldchg (x_source, G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+            strlcpy      (x_source, curr->s, LEN_RECD);
+            strldecode   (x_source, LEN_RECD);
          } else {
             DEBUG_REGS   yLOG_note    ("source is NULL");
          }
@@ -1056,12 +1047,8 @@ REG_valuesout     (char a_style)
          /*---(full outcome)-------------*/
          if (curr->v_str != NULL) {
             DEBUG_REGS   yLOG_note    ("convert modified string");
-            strlcpy  (x_full  , curr->v_str, LEN_RECD);
-            strldchg (x_full  , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
-            strldchg (x_full  , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
-            strldchg (x_full  , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
-            strldchg (x_full  , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
-            strldchg (x_full  , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+            strlcpy      (x_full  , curr->v_str, LEN_RECD);
+            strldecode   (x_full, LEN_RECD);
          } else {
             DEBUG_REGS   yLOG_note    ("modified is NULL");
          }
@@ -1069,11 +1056,7 @@ REG_valuesout     (char a_style)
          if (curr->p != NULL) {
             DEBUG_REGS   yLOG_note    ("convert printable");
             strlcpy  (x_print , curr->p, LEN_RECD);
-            strldchg (x_print , G_CHAR_GROUP,  29, LEN_RECD);   /* group     */
-            strldchg (x_print , G_CHAR_FIELD,  31, LEN_RECD);   /* field     */
-            strldchg (x_print , G_CHAR_TAB  ,   9, LEN_RECD);   /* tab       */
-            strldchg (x_print , G_CHAR_ESC  ,  27, LEN_RECD);   /* escape    */
-            strldchg (x_print , G_CHAR_BS   , 127, LEN_RECD);   /* del       */
+            strldecode   (x_print, LEN_RECD);
             strlcpy  (x_trim  , x_print, LEN_RECD);
          } else {
             DEBUG_REGS   yLOG_note    ("printable is NULL");
