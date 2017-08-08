@@ -1185,7 +1185,7 @@ CURS_main          (void)
 }
 
 char               /* PURPOSE : display an individual cell                    */
-CURS_cell          (int a_col, int a_row)
+CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wide)
 {
    /*---(locals)---------------------------*/
    tCELL      *x_curr      = LOC_cell_at_loc (CTAB, a_col, a_row);
@@ -1240,10 +1240,9 @@ CURS_cell          (int a_col, int a_row)
    }
    /*---(display cell)---------------------*/
    if (x_curr == NULL || x_curr->p == NULL) 
-      mvprintw (LOC_row_ypos (CTAB, a_row), LOC_col_xpos (CTAB, a_col), "%*.*s", LOC_col_width (CTAB, a_col), LOC_col_width (CTAB, a_col), g_empty);
-      /*> mvprintw (LOC_row_ypos (CTAB, a_row), LOC_col_xpos (CTAB, a_col), "%*.*s", LOC_col_width (CTAB, a_col), LOC_col_width (CTAB, a_col), "- - - - - - - - - - -");   <*/
+      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, g_empty);
    else
-      mvprintw (LOC_row_ypos (CTAB, a_row), LOC_col_xpos (CTAB, a_col), x_curr->p);
+      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->p);
    /*---(highlight off)--------------------*/
    attrset (0);
    /*---(complete)-------------------------*/
@@ -1262,31 +1261,33 @@ CURS_line          (int a_ch, int a_brow, int a_erow)
    /*---(locals)-----------+-----------+-*/
    int         y_cur       = 0;
    int         x_cur       = 0;
-   int         x_end       = 0;
    int         x_avail     = my.x_full - 1;
-   int         x_left      = 0;
    int         i           = 0;
+   short       x_ypos      = 0;
+   short       x_xpos      = 0;
+   int         x_wide      = 0;
    for (y_cur = a_brow; y_cur <= a_erow; ++y_cur) {
       /*---(prepare)---------------------*/
-      a_ch += LOC_row_height (CTAB, y_cur);
+      a_ch   += LOC_row_height (CTAB, y_cur);
+      x_ypos  = LOC_row_ypos   (CTAB, y_cur);
       /*---(cycle normal columns)--------*/
       for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
-         CURS_cell (x_cur, y_cur);
+         x_xpos  = LOC_col_xpos   (CTAB, x_cur);
+         x_wide  = LOC_col_width  (CTAB, x_cur);
+         CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);
       }
       /*---(cycle locked columns)--------*/
       if (FR_COL == 'y') {
          for (x_cur = FR_ECOL; x_cur >= FR_BCOL; --x_cur) {
-            CURS_cell (x_cur, y_cur);
+            x_xpos  = LOC_col_xpos   (CTAB, x_cur);
+            x_wide  = LOC_col_width  (CTAB, x_cur);
+            CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);
          }
       }
       /*---(fill in at end)--------------*/
-      x_end  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);
-      x_left = x_avail - x_end + 1;
-      if (x_left > 0) {
-         for (i = 0; i < LOC_row_height (CTAB, y_cur); ++i) {
-            mvprintw (LOC_row_ypos (CTAB, y_cur) + i, x_end, "%*.*s", x_left, x_left, g_empty);
-         }
-      }
+      x_xpos  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);
+      x_wide = x_avail - x_xpos + 1;
+      if (x_wide > 0)  CURS_cell (ECOL + 1, y_cur, x_ypos, x_xpos, x_wide);
    }
    /*---(complete)-----------------------*/
    return a_ch;

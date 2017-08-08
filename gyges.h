@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3i"
-#define     VER_TXT   "reads explicit line sizing from vi_clip.txt"
+#define     VER_NUM   "2.3j"
+#define     VER_TXT   "now shows partial columns, when necessary, at the left"
 
 
 
@@ -948,7 +948,7 @@ char      CURS_end             (void);
 int       CURS_main            (void);
 char      CURS_col_head        (void);
 char      CURS_row_head        (void);
-char      CURS_cell            (int  a_col, int a_row);
+char      CURS_cell            (int a_col, int a_row, short a_ypos, short a_xpos, short a_wide);
 char      CURS_size            (void);
 char      CURS_info_cell       (void);
 char      CURS_info_layout     (void);
