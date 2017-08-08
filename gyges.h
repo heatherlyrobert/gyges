@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3j"
-#define     VER_TXT   "now shows partial columns, when necessary, at the left"
+#define     VER_NUM   "2.3k"
+#define     VER_TXT   "fix gz movements to keep them simple"
 
 
 

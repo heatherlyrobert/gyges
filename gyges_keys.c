@@ -119,7 +119,7 @@ KEYS_gz_family     (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;                /* return code for errors    */
    char        rc          =   0;                /* generic return code       */
-   char        x_minors    [LEN_RECD]  = "shcletkmjbaonf.SHLETKJBAONF";
+   char        x_minors    [LEN_RECD]  = "shcletkmjbazudno.ifSHLETKJBNOIFAZUD";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -138,43 +138,62 @@ KEYS_gz_family     (char a_major, char a_minor)
    }
    /*---(prepare)------------------------*/
    MOVE_prep    ();
-   /*---(horizontal)---------------------*/
-   switch (a_minor) {
-   case 's' : case 'h' : case 'c' : case 'l' : case 'e' :
+   /*---(horizontal, simple)-------------*/
+   if (strchr ("shcle", a_minor) != NULL)
       rc = MOVE_gz_horz (a_major, a_minor);
-      break;
-   case 'S' :
+   /*---(horizontal, complex)------------*/
+   switch (a_minor) {
+   case 'S' : case 'A' :
       rc = MOVE_gz_horz ('g', 's');
       rc = MOVE_gz_horz ('z', 'e');
       break;
-   case 'H' :
+   case 'H' : case 'D' :
       rc = MOVE_gz_horz ('g', 's');
       rc = MOVE_gz_horz ('z', 'c');
       break;
-   case 'L' :
+   case 'L' : case 'U' :
       rc = MOVE_gz_horz ('g', 'e');
       rc = MOVE_gz_horz ('z', 'c');
       break;
-   case 'E' :
+   case 'E' : case 'Z' :
       rc = MOVE_gz_horz ('g', 'e');
       rc = MOVE_gz_horz ('z', 's');
       break;
    }
-   /*---(vertical)-----------------------*/
-   if (strchr ("tkmjbTKJB", a_minor) != NULL)
+   /*---(vertical, simple)---------------*/
+   if (strchr ("tkmjb", a_minor) != NULL)
       rc = MOVE_gz_vert (a_major, a_minor);
+   /*---(vertical, complex)--------------*/
+   switch (a_minor) {
+   case 'T' : case 'A' :
+      rc = MOVE_gz_vert ('g', 't');
+      rc = MOVE_gz_vert ('z', 'b');
+      break;
+   case 'K' : case 'U' :
+      rc = MOVE_gz_vert ('g', 't');
+      rc = MOVE_gz_vert ('z', 'm');
+      break;
+   case 'J' : case 'D' :
+      rc = MOVE_gz_vert ('g', 'b');
+      rc = MOVE_gz_vert ('z', 'm');
+      break;
+   case 'B' : case 'Z' :
+      rc = MOVE_gz_vert ('g', 'b');
+      rc = MOVE_gz_vert ('z', 't');
+      break;
+   }
    /*---(combination)--------------------*/
    switch (a_minor) {
    case 'a' : rc = MOVE_gz_horz (a_major, 's');   /* alpha = top-left    */
               rc = MOVE_gz_vert (a_major, 't');
               break;
-   case 'o' : rc = MOVE_gz_horz (a_major, 'e');   /* omega = bot-right   */
+   case 'z' : rc = MOVE_gz_horz (a_major, 'e');   /* omega = bot-right   */
               rc = MOVE_gz_vert (a_major, 'b');
               break;
-   case 'n' : rc = MOVE_gz_horz (a_major, 'e');   /* near  = top-right   */
+   case 'u' : rc = MOVE_gz_horz (a_major, 'e');   /* near  = top-right   */
               rc = MOVE_gz_vert (a_major, 't');
               break;
-   case 'f' : rc = MOVE_gz_horz (a_major, 's');   /* far   = bot-left    */
+   case 'd' : rc = MOVE_gz_horz (a_major, 's');   /* far   = bot-left    */
               rc = MOVE_gz_vert (a_major, 'b');
               break;
    case '.' : rc = MOVE_gz_horz (a_major, 'c');   /* core  = cen-mid     */

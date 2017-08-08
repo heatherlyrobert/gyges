@@ -381,11 +381,11 @@ MOVE_gz_horz       (char a_major, char a_minor)
    else if (a_major == 'z') {
       DEBUG_USER   yLOG_note    ("handle a z=scroll type");
       switch (a_minor) {
-      case 't' :
+      case 's' :
          BCOL = CCOL; break;
-      case 'b' : 
+      case 'e' : 
          ECOL = CCOL; break;
-      case 'k' : case 'm' : case 'j' :
+      case 'h' : case 'c' : case 'l' :
          BCOL = CCOL;
          x_cum   = x_target - (LOC_col_width (CTAB, CCOL) / 2);
          x_col   = 0;
