@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3h"
-#define     VER_TXT   "clean up record type reading from vi_clip.txt"
+#define     VER_NUM   "2.3i"
+#define     VER_TXT   "reads explicit line sizing from vi_clip.txt"
 
 
 

@@ -390,7 +390,7 @@ REG_mode           (int a_major, int a_minor)
       return rce;
    }
    --rce;  if (a_major == ' ' && my.reg_curr == '+') {
-      p = strchr ("ctr"      , a_minor);
+      p = strchr ("ctrvCTRV"   , a_minor);
       if (p != NULL)   REG_valuesin (a_minor);
       REG_set ('"');
       yVIKEYS_mode_exit ();
@@ -890,88 +890,234 @@ REG_paste          (char a_adapt)
    return 0;
 }
 
+static FILE   *s_clip     = NULL;
+static int     s_lines    =    0;
+static char    s_q        [5]         = "";
+static short   s_widths   [MAX_COLS];
+
+static char    s_recd     [LEN_RECD]  = "";
+static int     s_max      =    0;
+
+static char    s_sizer    =  '-';
+static short   s_ccol     =    0;
+static short   s_crow     =    0;
+
 char
-REG_valuesin      (char a_style)
+REG_inpt_prep        (char a_style)
 {
-   /*---(locals)-----+-----+-----+-----+-*/
-   char        rce         = -10;
-   char        rc          = 0;
-   FILE       *f           = NULL;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_lines     = 0;
-   char        x_recd      [LEN_RECD];
-   int         x_len       = 0;
-   char       *p           = NULL;
-   char        q           [LEN_LABEL] = "\t";
-   char       *s           = NULL;
-   tCELL      *x_curr      = NULL;
-   short       x_widths    [MAX_COLS];
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         i           =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(clear sizer)--------------------*/
+   DEBUG_REGS   yLOG_note    ("clear sizer");
+   s_sizer = '-';
+   for (i = 0; i < MAX_COLS; ++i)  s_widths [i] = 0;
+   /*---(prepare)------------------------*/
+   DEBUG_REGS   yLOG_note    ("prepare positions");
+   s_ccol  = CCOL;
+   s_crow  = CROW;
+   s_lines = 0;
+   /*---(delimiter)----------------------*/
+   DEBUG_REGS   yLOG_note    ("set delimiter");
+   switch (a_style) {
+   case 't'  : case 'T'  :
+      strlcpy (s_q, "\t" , 5);
+      break;
+   case 'c'  : case 'C'  :
+      strlcpy (s_q, ","  , 5);
+      break;
+   case 'r'  : case 'R'  :
+      strlcpy (s_q, "" , 5);
+      break;
+   case 'v'  : case 'V'  :
+      strlcpy (s_q, ""   , 5);
+      break;
+   default   :
+      return rce;
+      break;
+   }
+   /*---(sizer)--------------------------*/
+   DEBUG_REGS   yLOG_note    ("set sizer value");
+   switch (a_style) {
+   case 'T' : case 'C' : case 'R' : case 'V' :
+      s_sizer = 'a';
+      break;
+   case 'v' :
+      s_sizer = 'f';
+      break;
+   default  :
+      s_sizer = '-';
+      break;
+   }
    /*---(open output file)---------------*/
-   f = fopen("/root/z_gehye/vi_clip.txt", "r");
-   DEBUG_REGS   yLOG_point   ("f (file)"  , f);
-   --rce;  if (f == NULL) {
+   DEBUG_REGS   yLOG_note    ("open clip file");
+   s_clip = fopen("/root/z_gehye/vi_clip.txt", "r");
+   DEBUG_REGS   yLOG_point   ("s_clip"    , s_clip);
+   --rce;  if (s_clip == NULL) {
       DEBUG_REGS   yLOG_note    ("can not open clip file");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+REG_inpt_read        (void)
+{
+   /*---(locals)-----+-----+-----+-----+-*/
+   char        rce         =  -10;
+   int         x_len       =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(read and clean)-----------------*/
+   ++s_lines;
+   DEBUG_REGS   yLOG_value   ("line"      , s_lines);
+   fgets (s_recd, LEN_RECD, s_clip);
+   if (feof (s_clip))  {
+      DEBUG_REGS   yLOG_note    ("end of file reached");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   x_len = strlen (s_recd);
+   if (x_len <= 0)  {
+      DEBUG_REGS   yLOG_note    ("record is empty");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      return -rce;
+   }
+   s_recd [--x_len] = '\0';
+   DEBUG_REGS   yLOG_value   ("length"    , x_len);
+   DEBUG_REGS   yLOG_info    ("fixed"     , s_recd);
+   if (s_recd [0] == '\0') {
+      DEBUG_REGS   yLOG_note    ("starts with a null");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      return -rce;
+   }
+   if (s_recd [0] == ' ' ) {
+      DEBUG_REGS   yLOG_note    ("starts with a space");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      return -rce;
+   }
+   if (s_recd [0] == '#' && s_recd [1] != '>') {
+      DEBUG_REGS   yLOG_note    ("starts with a comment marker");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      return -rce;
+   }
+   s_max = x_len;
+   DEBUG_REGS   yLOG_value   ("s_max"     , s_max);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+REG_inpt_done        (void)
+{
+   /*---(close file)---------------------*/
+   DEBUG_REGS   yLOG_note    ("closing file");
+   fclose  (s_clip);
+   /*---(screen)-------------------------*/
+   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
+   KEYS_basics (' ', 'r');
+   KEYS_bcol (BCOL);
+   CURS_col_head();
+   KEYS_brow (BROW);
+   CURS_row_head();
+   /*---(calculate)----------------------*/
+   DEBUG_INPT  yLOG_note    ("recalc");
+   SEQ_calc_full ();
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+REG_inpt_size        (short a_col, short a_wide)
+{
+   /*---(locals)-----+-----+-----+-----+-*/
+   short       w           =   0;
+   /*---(defense)------------------------*/
+   if (s_sizer == '-')  return 0;
+   if (s_sizer == 's')  return 0;
+   /*---(resize)-------------------------*/
+   w = s_widths [a_col];
+   if (w >= a_wide)     return 0;
+   LOC_col_widen (CTAB, a_col, a_wide);
+   s_widths [a_col] = a_wide;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+REG_valuesin      (char a_style)
+{
+   /*---(locals)-----+-----+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char       *p           = NULL;
+   char       *s           = NULL;
+   char        t           [LEN_RECD]  = "";
+   int         x_len       =    0;
+   int         w           =    0;
+   char        x_sizer     =  '-';
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
-   x_col = CCOL;
-   x_row = CROW;
-   switch (a_style) {
-   case 't'  : strlcpy (q, "\t" , 5);   break;
-   case 'c'  : strlcpy (q, ","  , 5);   break;
-   case 'r'  :
-   default   : strlcpy (q, "" , 5);   break;
+   rc = REG_inpt_prep   (a_style);
+   DEBUG_REGS   yLOG_value   ("prep rc"   , rc);
+   if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(process lines)------------------*/
    while (1) {
-      /*---(read and clean)--------------*/
-      ++x_lines;
-      DEBUG_INPT  yLOG_value   ("line"      , x_lines);
-      fgets (x_recd, LEN_RECD, f);
-      if (feof (f))  {
-         DEBUG_INPT  yLOG_note    ("end of file reached");
-         break;
-      }
-      x_len = strlen (x_recd);
-      if (x_len <= 0)  {
-         DEBUG_INPT  yLOG_note    ("record empty");
-         continue;
-      }
-      x_recd [--x_len] = '\0';
-      DEBUG_INPT  yLOG_value   ("length"    , x_len);
-      DEBUG_INPT  yLOG_info    ("fixed"     , x_recd);
-      if (x_recd [0] == '\0')                      continue;
-      if (x_recd [0] == ' ' )                      continue;
-      if (x_recd [0] == '#' && x_recd [1] != '>')  continue;
-      /*---(process cells)------------------*/
-      p = strtok_r (x_recd, q, &s);
-      DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
+      /*---(read)------------------------*/
+      rc = REG_inpt_read ();
+      if (rc >  0)  continue;
+      if (rc <  0)  break;
+      DEBUG_REGS  yLOG_value   ("s_crow"    , s_crow);
+      /*---(parse first)-----------------*/
+      if (strchr ("vV", a_style) == NULL)  p  = strtok_r (s_recd, s_q, &s);
+      else                                 p  = s_recd;
+      /*---(process cells)---------------*/
       while (p != NULL) {
-         if (strlen (p) != 0) {
-            if (a_style == 'c')  p [0] = p [strlen (p) - 1] = ' ';
-            strltrim (p, ySTR_BOTH, LEN_RECD);
-            if (strlen (p) != 0) {
-               DEBUG_INPT  yLOG_point   ("p"         , p);
-               strlencode   (p, LEN_RECD);
-               DEBUG_INPT  yLOG_info    ("value"     , p);
-               DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
-               CELL_change (&x_curr, CHG_INPUT, CTAB, x_col, x_row, p);
-               DEBUG_INPT  yLOG_point   ("x_curr"    , x_curr);
+         if (strncmp (p, "#>34"  , 4) == 0 && s_sizer == 'a') s_sizer = x_sizer = 's';
+         DEBUG_REGS  yLOG_char    ("x_sizer"   , x_sizer);
+         w     = LOC_col_width (CTAB, s_ccol);
+         DEBUG_REGS  yLOG_value   ("w"         , w);
+         if (strchr ("vV", a_style) == NULL)  strlcpy (t, p, LEN_RECD);
+         else                                 strlcpy (t, p, w);
+         DEBUG_REGS  yLOG_info    ("t (orig)"  , t);
+         x_len = strlen (t);
+         DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
+         if (x_len != 0) {
+            if (a_style == 'c')  t [0] = t [strlen (t) - 1] = ' ';
+            strltrim (t, ySTR_BOTH, LEN_RECD);
+            DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
+            x_len = strlen (t);
+            DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
+            if (x_len != 0 && x_sizer == '-') {
+               strlencode   (t, LEN_RECD);
+               DEBUG_REGS  yLOG_info    ("t (new)"   , t);
+               DEBUG_REGS  yLOG_value   ("s_ccol"    , s_ccol);
+               CELL_change (NULL   , CHG_INPUT, CTAB, s_ccol, s_crow, t);
             }
          }
-         ++x_col;
-         p = strtok_r (NULL, q, &s);
+         if (s_sizer == 's' && x_sizer == 's')  LOC_col_widen (CTAB, s_ccol, x_len + 1);
+         else                                   REG_inpt_size (s_ccol, x_len + 1);
+         ++s_ccol;
+         /*---(parse next)---------------*/
+         if (strchr ("vV", a_style) == NULL)  p  = strtok_r (NULL, s_q, &s);
+         else                                 p += w;
       }
-      x_col = CCOL;
-      ++x_row;
+      x_sizer = '-';
+      s_ccol  = CCOL;
+      ++s_crow;
    }
-   /*---(close file)---------------------*/
-   DEBUG_REGS   yLOG_note    ("closing file");
-   fclose  (f);
+   /*---(wrap up)------------------------*/
+   REG_inpt_done ();
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
