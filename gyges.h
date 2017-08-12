@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3k"
-#define     VER_TXT   "fix gz movements to keep them simple"
+#define     VER_NUM   "2.3l"
+#define     VER_TXT   "unit tested REG_inpt_sizer, _width, _values, and _delims"
 
 
 
@@ -875,7 +875,19 @@ char      REG_copy           (void);
 char      REG_cut            (void);
 char      REG_append         (void);
 char      REG_paste          (char a_adapt);
-char      REG_valuesin       (char a_trim);
+
+/*---(data import)----------*/
+char      REG__inpt_prep       (char a_style);
+char      REG__inpt_map        (void);
+char      REG__inpt_read       (void);
+char      REG__inpt_width      (short a_col, short a_wide);
+char      REG__inpt_sizer      (void);
+char      REG__inpt_place      (short a_col, short a_row, char *a_value);
+char      REG__inpt_values     (short a_row);
+char      REG__inpt_delims     (short a_row);
+char      REG__inpt_done       (void);
+char      REG_inpt_driver      (char a_style);
+
 char      REG_valuesout      (char a_trim);
 
 char      REG_entry          (char a_reg, char *a_list);

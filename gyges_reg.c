@@ -390,8 +390,10 @@ REG_mode           (int a_major, int a_minor)
       return rce;
    }
    --rce;  if (a_major == ' ' && my.reg_curr == '+') {
-      p = strchr ("ctrvCTRV"   , a_minor);
-      if (p != NULL)   REG_valuesin (a_minor);
+      p = strchr ("vsctrVSCTR", a_minor);
+      if        (p != NULL) {
+         REG_inpt_driver (a_minor);
+      }
       REG_set ('"');
       yVIKEYS_mode_exit ();
       if (p == NULL)   return rce;
@@ -426,7 +428,7 @@ REG_mode           (int a_major, int a_minor)
       case  'F' : REG_valuesout('F');
                   break;
       case  'p' : case  'P' :
-                  REG_valuesin ('-');
+                  REG_inpt_driver ('-');
                   break;
       default   : REG_set ('"');
                   yVIKEYS_mode_exit ();
@@ -890,49 +892,72 @@ REG_paste          (char a_adapt)
    return 0;
 }
 
+
+
+/*====================------------------------------------====================*/
+/*===----                         data import                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___IMPORT__________o () { return; }
+
 static FILE   *s_clip     = NULL;
 static int     s_lines    =    0;
 static char    s_q        [5]         = "";
-static short   s_widths   [MAX_COLS];
 
 static char    s_recd     [LEN_RECD]  = "";
 static int     s_max      =    0;
 
 static char    s_sizer    =  '-';
+static char    s_style    =  '-';
+static char    s_mapper   =  '-';
+static short   s_map      [MAX_COLS];
+
+static short   s_icol     =    0;
+static short   s_mcol     =    0;
 static short   s_ccol     =    0;
 static short   s_crow     =    0;
 
-char
-REG_inpt_prep        (char a_style)
+char         /*--> prepare for data import ---------------[ leaf-- [ ------ ]-*/
+REG__inpt_prep       (char a_style)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    int         i           =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(save style)---------------------*/
+   DEBUG_REGS   yLOG_note    ("save style");
+   s_style  = a_style;
    /*---(clear sizer)--------------------*/
    DEBUG_REGS   yLOG_note    ("clear sizer");
-   s_sizer = '-';
-   for (i = 0; i < MAX_COLS; ++i)  s_widths [i] = 0;
+   s_sizer  = '-';
+   /*---(clear sizer)--------------------*/
+   DEBUG_REGS   yLOG_note    ("clear map");
+   s_mapper = '-';
+   for (i = 0; i < MAX_COLS; ++i)  s_map [i] = 0;
    /*---(prepare)------------------------*/
    DEBUG_REGS   yLOG_note    ("prepare positions");
-   s_ccol  = CCOL;
-   s_crow  = CROW;
-   s_lines = 0;
+   s_icol  =    0;
+   s_mcol  =    0;
+   s_ccol  =    0;
+   s_crow  =    0;
+   s_lines =    0;
    /*---(delimiter)----------------------*/
    DEBUG_REGS   yLOG_note    ("set delimiter");
-   switch (a_style) {
-   case 't'  : case 'T'  :
-      strlcpy (s_q, "\t" , 5);
+   switch (s_style) {
+   case 's'  : case 'S'  :
+      strlcpy (s_q, " "  , 5);
       break;
    case 'c'  : case 'C'  :
       strlcpy (s_q, ","  , 5);
+      break;
+   case 't'  : case 'T'  :
+      strlcpy (s_q, "\t" , 5);
       break;
    case 'r'  : case 'R'  :
       strlcpy (s_q, "" , 5);
       break;
    case 'v'  : case 'V'  :
-      strlcpy (s_q, ""   , 5);
+      strlcpy (s_q, " "  , 5);
       break;
    default   :
       return rce;
@@ -940,8 +965,8 @@ REG_inpt_prep        (char a_style)
    }
    /*---(sizer)--------------------------*/
    DEBUG_REGS   yLOG_note    ("set sizer value");
-   switch (a_style) {
-   case 'T' : case 'C' : case 'R' : case 'V' :
+   switch (s_style) {
+   case 'T' : case 'C' : case 'R' : case 'V' : case 'S' :
       s_sizer = 'a';
       break;
    case 'v' :
@@ -965,8 +990,52 @@ REG_inpt_prep        (char a_style)
    return 0;
 }
 
-char
-REG_inpt_read        (void)
+char         /*--> process a mapping request -------------[ leaf-- [ ------ ]-*/
+REG__inpt_map        (void)
+{
+   /*---(locals)-----+-----+-----+-----+-*/
+   char        rce         =  -10;
+   int         i           =    0;
+   tCELL      *x_curr      = NULL;
+   short       x_ccol      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("s_style"   , s_style);
+   if (s_style == 'v') {
+      DEBUG_REGS   yLOG_note    ("mapping not allowed in this import style");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(import mapping)-----------------*/
+   DEBUG_REGS   yLOG_note    ("start mapping");
+   for (i = 0; i < MAX_COLS; ++i) {
+      x_ccol = CCOL + i;
+      DEBUG_REGS   yLOG_value   ("x_ccol"    , x_ccol);
+      x_curr = LOC_cell_at_loc (CTAB, x_ccol, CROW);
+      DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
+      if (x_curr == NULL)  {
+         DEBUG_REGS   yLOG_note    ("end of mapping (null cell)");
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      DEBUG_REGS   yLOG_value   ("v_num"     , x_curr->v_num);
+      if (x_curr->v_num <= 0) {
+         DEBUG_REGS   yLOG_note    ("end of mapping (zero or negative cell)");
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      s_mapper = 'y';
+      s_crow   = CROW + 1;
+      s_map [i] = x_curr->v_num;
+      DEBUG_REGS   yLOG_pair    (i          , s_map [i] );
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> read an import record -----------------[ leaf-- [ ------ ]-*/
+REG__inpt_read       (void)
 {
    /*---(locals)-----+-----+-----+-----+-*/
    char        rce         =  -10;
@@ -1001,7 +1070,7 @@ REG_inpt_read        (void)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
    }
-   if (s_recd [0] == '#' && s_recd [1] != '>') {
+   if (s_recd [0] == '#' && strchr ("<>=", s_recd [1]) == NULL) {
       DEBUG_REGS   yLOG_note    ("starts with a comment marker");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
@@ -1013,8 +1082,87 @@ REG_inpt_read        (void)
    return 0;
 }
 
-char
-REG_inpt_done        (void)
+char         /*--> adjust a column sizing ----------------[ leaf-- [ ------ ]-*/
+REG__inpt_width      (short a_col, short a_wide)
+{
+   /*---(locals)-----+-----+-----+-----+-*/
+   char        rce         =  -10;
+   short       w           =   0;
+   /*---(defense)------------------------*/
+   --rce;  if (s_sizer != 'a')      return rce;
+   /*---(resize)-------------------------*/
+   w = LOC_col_width (CTAB, CCOL + a_col);
+   --rce;  if (w >= a_wide + 1)     return rce;
+   LOC_col_widen (CTAB, CCOL + a_col, a_wide + 1);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> process a column sizing request -------[ leaf-- [ ------ ]-*/
+REG__inpt_sizer      (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char       *p           = NULL;
+   char       *s           = NULL;
+   int         x_len       =    0;
+   short       x_col       =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_REGS   yLOG_value   ("s_sizer"   , s_sizer);
+   --rce;  if (s_sizer != 'a') {
+      DEBUG_REGS   yLOG_note    ("wrong type, only 'a' allowed");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
+   --rce;  if ((s_style != 'C' && strncmp ("#<34", s_recd, 4) != 0) ||
+         (s_style == 'C' && strncmp ("\"#<34", s_recd, 5) != 0)) {
+      DEBUG_REGS   yLOG_note    ("not a sizing line");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(process)------------------------*/
+   p  = strtok_r (s_recd, s_q, &s);
+   while (p != NULL) {
+      DEBUG_REGS   yLOG_value   ("x_col"     , x_col);
+      x_len = strlen (p);
+      if (s_style == 'C' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';
+      strltrim (p, ySTR_BOTH, LEN_RECD);
+      DEBUG_REGS   yLOG_info    ("p (field)" , p);
+      x_len = strlen (p);
+      DEBUG_REGS   yLOG_value   ("x_len"     , x_len);
+      if (x_len == 0)  break;  /* stop at unsized column */
+      LOC_col_widen (CTAB, CCOL + x_col, x_len + 1);
+      ++x_col;
+      p  = strtok_r (NULL, s_q, &s);
+   }
+   /*---(update)-------------------------*/
+   DEBUG_REGS   yLOG_note    ("mark sizer processed");
+   s_sizer  = 's';
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> place import data into a cell ---------[ leaf-- [ ------ ]-*/
+REG__inpt_place      (short a_col, short a_row, char *a_value)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   /*---(non-mapped)---------------------*/
+   if (s_mapper == '-') {
+      CELL_change (NULL, CHG_INPUT, CTAB, CCOL + a_col, CROW + a_row, a_value);
+   }
+   /*---(mapped)-------------------------*/
+   else {
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--> complete data import ------------------[ leaf-- [ ------ ]-*/
+REG__inpt_done       (void)
 {
    /*---(close file)---------------------*/
    DEBUG_REGS   yLOG_note    ("closing file");
@@ -1034,90 +1182,119 @@ REG_inpt_done        (void)
 }
 
 char
-REG_inpt_size        (short a_col, short a_wide)
-{
+REG__inpt_values     (short a_row)
+{ 
    /*---(locals)-----+-----+-----+-----+-*/
-   short       w           =   0;
-   /*---(defense)------------------------*/
-   if (s_sizer == '-')  return 0;
-   if (s_sizer == 's')  return 0;
-   /*---(resize)-------------------------*/
-   w = s_widths [a_col];
-   if (w >= a_wide)     return 0;
-   LOC_col_widen (CTAB, a_col, a_wide);
-   s_widths [a_col] = a_wide;
+   short       x_col       =    0;
+   int         w           =    0;
+   int         cw          =    0;
+   char        t           [LEN_RECD]  = "";
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(process cells)---------------*/
+   while (cw < s_max) {
+      /*---(read import data)---------*/
+      w     = LOC_col_width (CTAB, CCOL + x_col);
+      DEBUG_REGS  yLOG_value   ("w"         , w);
+      strlcpy (t, s_recd + cw, w);
+      DEBUG_REGS  yLOG_info    ("t (orig)"  , t);
+      /*---(process)------------------*/
+      strltrim (t, ySTR_BOTH, LEN_RECD);
+      DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
+      strlencode   (t, LEN_RECD);
+      DEBUG_REGS  yLOG_info    ("t (new)"   , t);
+      DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
+      /*---(change)-------------------*/
+      REG__inpt_place  (x_col, a_row, t);
+      /*---(next)---------------------*/
+      ++x_col;
+      cw += w;
+   }
    /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
-REG_valuesin      (char a_style)
+REG__inpt_delims     (short a_row)
+{
+   /*---(locals)-----+-----+-----+-----+-*/
+   short       x_col       =    0;
+   char       *p           = NULL;
+   char       *s           = NULL;
+   int         x_len       =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(parse first)-----------------*/
+   p  = strtok_r (s_recd, s_q, &s);
+   /*---(process cells)---------------*/
+   while (p != NULL) {
+      /*---(read import data)---------*/
+      DEBUG_REGS  yLOG_info    ("p (orig)"  , p);
+      x_len = strlen (p);
+      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
+      /*---(process)------------------*/
+      if (s_style == 'c' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';
+      strltrim (p, ySTR_BOTH, LEN_RECD);
+      DEBUG_REGS  yLOG_info    ("p (trim)"  , p);
+      x_len = strlen (p);
+      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
+      if (s_sizer == 'a')  REG__inpt_width (x_col, x_len);
+      strlencode   (p, LEN_RECD);
+      DEBUG_REGS  yLOG_info    ("p (new)"   , p);
+      DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
+      REG__inpt_place  (x_col, a_row, p);
+      /*---(parse next)---------------*/
+      p  = strtok_r (NULL, s_q, &s);
+      ++x_col;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+REG_inpt_driver      (char a_style)
 {
    /*---(locals)-----+-----+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   char       *p           = NULL;
-   char       *s           = NULL;
-   char        t           [LEN_RECD]  = "";
-   int         x_len       =    0;
-   int         w           =    0;
-   char        x_sizer     =  '-';
+   short       x_row       =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
-   rc = REG_inpt_prep   (a_style);
+   rc = REG__inpt_prep   (a_style);
    DEBUG_REGS   yLOG_value   ("prep rc"   , rc);
-   if (rc < 0) {
+   --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   rc = REG__inpt_map ();
    /*---(process lines)------------------*/
    while (1) {
       /*---(read)------------------------*/
-      rc = REG_inpt_read ();
+      rc = REG__inpt_read ();
       if (rc >  0)  continue;
       if (rc <  0)  break;
-      DEBUG_REGS  yLOG_value   ("s_crow"    , s_crow);
-      /*---(parse first)-----------------*/
-      if (strchr ("vV", a_style) == NULL)  p  = strtok_r (s_recd, s_q, &s);
-      else                                 p  = s_recd;
       /*---(process cells)---------------*/
-      while (p != NULL) {
-         if (strncmp (p, "#>34"  , 4) == 0 && s_sizer == 'a') s_sizer = x_sizer = 's';
-         DEBUG_REGS  yLOG_char    ("x_sizer"   , x_sizer);
-         w     = LOC_col_width (CTAB, s_ccol);
-         DEBUG_REGS  yLOG_value   ("w"         , w);
-         if (strchr ("vV", a_style) == NULL)  strlcpy (t, p, LEN_RECD);
-         else                                 strlcpy (t, p, w);
-         DEBUG_REGS  yLOG_info    ("t (orig)"  , t);
-         x_len = strlen (t);
-         DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
-         if (x_len != 0) {
-            if (a_style == 'c')  t [0] = t [strlen (t) - 1] = ' ';
-            strltrim (t, ySTR_BOTH, LEN_RECD);
-            DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
-            x_len = strlen (t);
-            DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
-            if (x_len != 0 && x_sizer == '-') {
-               strlencode   (t, LEN_RECD);
-               DEBUG_REGS  yLOG_info    ("t (new)"   , t);
-               DEBUG_REGS  yLOG_value   ("s_ccol"    , s_ccol);
-               CELL_change (NULL   , CHG_INPUT, CTAB, s_ccol, s_crow, t);
-            }
-         }
-         if (s_sizer == 's' && x_sizer == 's')  LOC_col_widen (CTAB, s_ccol, x_len + 1);
-         else                                   REG_inpt_size (s_ccol, x_len + 1);
-         ++s_ccol;
-         /*---(parse next)---------------*/
-         if (strchr ("vV", a_style) == NULL)  p  = strtok_r (NULL, s_q, &s);
-         else                                 p += w;
+      DEBUG_REGS  yLOG_value   ("x_row"     , x_row);
+      /*---(check sizer)-----------------*/
+      if (strncmp (s_recd, "#<34"  , 4) == 0) {
+         REG__inpt_sizer ();
+         continue;
       }
-      x_sizer = '-';
-      s_ccol  = CCOL;
-      ++s_crow;
+      /*---(handle values)---------------*/
+      if (strchr ("Vv", s_style) != NULL) {
+         REG__inpt_values  (x_row);
+      } else {
+         REG__inpt_delims  (x_row);
+      }
+      /*---(prepare for next)------------*/
+      ++x_row;
    }
    /*---(wrap up)------------------------*/
-   REG_inpt_done ();
+   rc = REG__inpt_done ();
+   DEBUG_REGS   yLOG_value   ("done rc"   , rc);
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1843,6 +2020,9 @@ REG__setter        (char *a_request, char *a_data)
       strlcpy (s_regnames, REG_NAMES, MAX_REG);
    } else if (strcmp (a_request, "reg_curr"           ) == 0) {
       my.reg_curr = a_data [0];
+   } else if (strcmp (a_request, "s_recd"             ) == 0) {
+      strlcpy (s_recd, a_data, LEN_RECD);
+      s_max = strlen (s_recd);
    } else {
       return -1;
    }
