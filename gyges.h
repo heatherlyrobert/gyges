@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3o"
-#define     VER_TXT   "can now change the active file name"
+#define     VER_NUM   "2.3p"
+#define     VER_TXT   "tab resizing works from the command bar"
 
 
 
@@ -954,6 +954,7 @@ char*     MOVE_unit          (char *a_question, int a_num);
 
 
 /*---(ncurses)----------------------------------*/
+char      CURS_screen_reset    (void);
 char      CURS_begin           (void);
 char      CURS_end             (void);
 int       CURS_main            (void);

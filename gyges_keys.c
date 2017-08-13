@@ -1364,18 +1364,32 @@ KEYS_unlock        (void)
 char
 cmd_exec           (char *a_command)
 {
-   /*---(locals)-----------+-----------+-*/
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
    char       *p           = NULL;
    char       *q           = " ";
    char        x_work      [LEN_RECD]   = "";
-   char        rc          = 0;
    int         x_len       = 0;
    char        x_flag      = '-';
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_point   ("a_command" , a_command);
+   --rce;  if (a_command == NULL) {
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("a_command" , a_command);
    strncpy    (x_work, a_command, LEN_RECD);
    x_len = strlen (x_work);
    p = strtok (x_work, q);
+   DEBUG_USER   yLOG_point   ("p"         , p);
+   --rce;  if (p == NULL)  {
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("p"         , p);
    /*---(file commands)------------------*/
-   if (p == NULL) return 0;
    if   (strncmp(p, ":w"        , LEN_RECD) == 0 ||
          strncmp(p, ":wa"       , LEN_RECD) == 0 ||
          strncmp(p, ":wq"       , LEN_RECD) == 0 ||
@@ -1386,8 +1400,19 @@ cmd_exec           (char *a_command)
       return 0;
    }
    if (x_len >=  7 && strcmp (p, ":file") == 0) {
-      FILE_rename (p + 6);
-      return 0;
+      DEBUG_USER   yLOG_note    ("rename the file");
+      rc = FILE_rename (p + 6);
+      DEBUG_USER   yLOG_value   ("rc"        , rc);
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rc;
+   }
+   if (x_len >=  10 && strcmp (p, ":resize") == 0) {
+      DEBUG_USER   yLOG_note    ("resize a tab");
+      rc = LOC_tab_resize (p + 8);
+      DEBUG_USER   yLOG_value   ("rc"        , rc);
+      CURS_screen_reset ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rc;
    }
    if (strlen (p) == 4 && strcmp (p, ":ver") == 0) {
       ver_ctrl = 'y';

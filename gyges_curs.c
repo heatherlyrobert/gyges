@@ -265,6 +265,17 @@ CURS_info_request  (char a_type)
    return 0;
 }
 
+char
+CURS_screen_reset    (void)
+{
+   KEYS_basics   (' ', 'r');
+   KEYS_bcol     (BCOL);
+   CURS_col_head ();
+   KEYS_brow     (BROW);
+   CURS_row_head ();
+   return 0;
+}
+
 /*====================------------------------------------====================*/
 /*===----                      color configuration                     ----===*/
 /*====================------------------------------------====================*/

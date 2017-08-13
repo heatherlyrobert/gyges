@@ -388,39 +388,100 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    char        rce         = -10;           /* return code for errors         */
    short       x_max       = 0;             /* maximum used col/row in tab    */
    int         i           = 0;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(check absolute boudaries)-------*/
-   --rce;  if (a_tab <  0       )                return rce;
-   --rce;  if (a_tab >= MAX_TABS)                return rce;
-   --rce;  if (a_col <  0       )                return rce;
-   --rce;  if (a_col >= MAX_COLS)                return rce;
-   --rce;  if (a_row <  0       )                return rce;
-   --rce;  if (a_row >= MAX_ROWS)                return rce;
+   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   --rce;  if (a_tab <  0       ) {
+      DEBUG_LOCS   yLOG_note    ("tab less than zero");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_tab >= MAX_TABS) {
+      DEBUG_LOCS   yLOG_note    ("tab greater than max");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_value   ("a_col"     , a_col);
+   --rce;  if (a_col <  0       ) {
+      DEBUG_LOCS   yLOG_note    ("col less than zero");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_col >= MAX_COLS) {
+      DEBUG_LOCS   yLOG_note    ("col greater than max");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_value   ("a_row"     , a_row);
+   --rce;  if (a_row <  0       ) {
+      DEBUG_LOCS   yLOG_note    ("row less than zero");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_row >= MAX_ROWS) {
+      DEBUG_LOCS   yLOG_note    ("row greater than max");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(if fixed)-----------------------*/
    if (a_adapt == CELL_FIXED) {
-      --rce;  if (a_col >= s_tabs[a_tab].ncol)   return rce;
-      --rce;  if (a_row >= s_tabs[a_tab].nrow)   return rce;
+      DEBUG_LOCS   yLOG_note    ("checking a fixed, no expansion allowed (FIXED)");
+      DEBUG_LOCS   yLOG_value   ("ncol"      , s_tabs[a_tab].ncol);
+      --rce;  if (a_col >= s_tabs[a_tab].ncol) {
+         DEBUG_LOCS   yLOG_note    ("col greater than current size");
+         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      DEBUG_LOCS   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
+      --rce;  if (a_row >= s_tabs[a_tab].nrow) {
+         DEBUG_LOCS   yLOG_note    ("row greater than current size");
+         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
    }
    /*---(if adapting)--------------------*/
    else if (a_adapt == CELL_GROW ) {
+      DEBUG_LOCS   yLOG_note    ("checking a expansion allowed (GROW)");
       if (a_col >=  s_tabs[a_tab].ncol)     s_tabs[a_tab].ncol = a_col  + 1;
       if (a_row >=  s_tabs[a_tab].nrow)     s_tabs[a_tab].nrow = a_row  + 1;
+      /*---(update)---------*/
+      if (a_tab == CTAB) {
+         NCOL = s_tabs[a_tab].ncol;
+         NROW = s_tabs[a_tab].nrow;
+         DEBUG_LOCS   yLOG_value   ("NCOL"      , NCOL);
+         DEBUG_LOCS   yLOG_value   ("NROW"      , NROW);
+      }
    }
    /*---(if forcing)---------------------*/
    else if (a_adapt == CELL_EXACT) {
+      DEBUG_LOCS   yLOG_note    ("checking exact size, expansion allowed (EXACT)");
       /*---(cols)-----------*/
+      DEBUG_LOCS   yLOG_value   ("ncol"      , s_tabs[a_tab].ncol);
       for (i = 0; i < s_tabs [a_tab].ncol; ++i) {
          if (s_tabs [a_tab].cols [i].c > 0)  x_max   = i;
       }
+      DEBUG_LOCS   yLOG_value   ("max used"  , x_max);
       if      (a_col >=  x_max  )          s_tabs[a_tab].ncol = a_col   + 1;
       else                                 s_tabs[a_tab].ncol = x_max   + 1;
       /*---(rows)-----------*/
+      DEBUG_LOCS   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
       for (i = 0; i < s_tabs [a_tab].nrow; ++i) {
          if (s_tabs [a_tab].rows [i].c > 0)  x_max   = i;
       }
+      DEBUG_LOCS   yLOG_value   ("max used"  , x_max);
       if      (a_row >=  x_max  )          s_tabs[a_tab].nrow = a_row   + 1;
       else                                 s_tabs[a_tab].nrow = x_max   + 1;
+      /*---(update)---------*/
+      if (a_tab == CTAB) {
+         NCOL = s_tabs[a_tab].ncol;
+         NROW = s_tabs[a_tab].nrow;
+         DEBUG_LOCS   yLOG_value   ("NCOL"      , NCOL);
+         DEBUG_LOCS   yLOG_value   ("NROW"      , NROW);
+      }
    }
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -850,10 +911,21 @@ LOC_tab_resize       (char *a_max)
    int         x_tab       =   0;
    int         x_col       =   0;
    int         x_row       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    rc = LOC_parse  (a_max, &x_tab, &x_col, &x_row, NULL);
-   --rce;  if (rc < 0)                                return rce;
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    rc = LOC_legal  (x_tab, x_col, x_row, CELL_EXACT);
-   --rce;  if (rc < 0)                                return rce;
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

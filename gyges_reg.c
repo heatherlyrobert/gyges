@@ -1174,12 +1174,7 @@ REG__inpt_done       (void)
    DEBUG_REGS   yLOG_note    ("closing file");
    fclose  (s_clip);
    /*---(screen)-------------------------*/
-   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
-   KEYS_basics (' ', 'r');
-   KEYS_bcol (BCOL);
-   CURS_col_head();
-   KEYS_brow (BROW);
-   CURS_row_head();
+   CURS_screen_reset ();
    /*---(calculate)----------------------*/
    DEBUG_INPT  yLOG_note    ("recalc");
    SEQ_calc_full ();
