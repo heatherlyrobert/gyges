@@ -32,12 +32,12 @@ main (int argc, char *argv[])
       exit (-1);
    }
    /*---(file and screen)----------------*/
-   INPT_main (my.f_title);
-   KEYS_basics (' ', 'r');
-   KEYS_bcol (BCOL);
-   CURS_col_head();
-   KEYS_brow (BROW);
-   CURS_row_head();
+   INPT_main     ();
+   KEYS_basics   (' ', 'r');
+   KEYS_bcol     (BCOL);
+   CURS_col_head ();
+   KEYS_brow     (BROW);
+   CURS_row_head ();
    SEQ_calc_full ();
    hist_active = 'y';
    /*---(process)------------------------*/
@@ -99,7 +99,7 @@ main (int argc, char *argv[])
    DEBUG_TOPS  yLOG_break   ();
    DEBUG_TOPS  yLOG_note    ("exiting main processing loop");
    /*---(wrap-up)------------------------*/
-   /*> FILE_write   (my.f_title);                                                        <*/
+   /*> FILE_write   ();                                                        <*/
    CURS_end     ();
    PROG_end     ();
    /*---(complete)-----------------------*/

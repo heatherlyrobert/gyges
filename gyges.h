@@ -221,10 +221,9 @@ struct cACCESSOR {
    char        layout_command;              /* command line display mode      */
    char        message     [LEN_RECD];      /* message line                   */
    /*---(file hanndling)--*/
-   char        f_title     [LEN_RECD];      /* specific file base name        */
-   char        f_suffix    [LEN_RECD];      /* file suffix for spreadsheet    */
+   char        f_loc       [LEN_RECD];      /* specific file location         */
    char        f_name      [LEN_RECD];      /* full file name                 */
-   FILE       *f_file;                      /* file pointer                   */
+   char        f_title     [LEN_RECD];      /* specific file base name        */
    int         f_lines;                     /* file line number               */
    char        f_recd      [LEN_RECD];      /* current file record            */
    char        f_type      [LEN_RECD];      /* current record verb            */
@@ -684,8 +683,6 @@ extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 
 extern int     save;
 
-#define     FILE_BLANK  "untitled"
-#define     FILE_SUFFIX "gyges"
 #define     FILE_BUF    "/var/run/buffer.gyges"
 
 char        f_maker     [LEN_RECD];
@@ -1228,10 +1225,11 @@ char      CELL_printable       (tCELL *a_cell);
 char     *CELL__unit         (char *a_question, tCELL *a_cell);
 char     *CELL__unitnew      (char *a_question, char *a_label);
 
-char      SYLK_read          (char *a_name);
-char      SYLK_write         (char *a_name, char a_variation);
-char      FILE_version       (char *a_ver, char *a_final);
-char      FILE_bump          (char a_type, char *a_ver);
+char      SYLK_read            (char *a_name);
+char      SYLK_write           (char *a_name, char a_variation);
+char      FILE_version         (char *a_ver, char *a_final);
+char      FILE_bump            (char a_type, char *a_ver);
+char      FILE_rename          (char *a_name);
 
 
 /*---(tabs)------------------*/
@@ -1255,16 +1253,16 @@ char      OUTP_cell_free       (FILE *a_file, int *a_seq, long a_stamp, int a_ta
 
 
 
-char      INPT_open          (cchar *a_name);
-char      INPT_read          (void);
-char      INPT_parse         (cchar *a_recd);
-char      INPT_close         (void);
-char      INPT_main          (cchar *a_name);
+char      INPT_open            (void);
+char      INPT_read            (void);
+char      INPT_parse           (cchar *a_recd);
+char      INPT_close           (void);
+char      INPT_main            (void);
 
-char      OUTP_header        (FILE *a_file);
+char      OUTP_header          (FILE *a_file);
 
-char      FILE_write         (char *a_name);
-char      XML3_read          (char *a_name);
+char      FILE_write           (void);
+char      XML3_read            (char *a_name);
 
 
 

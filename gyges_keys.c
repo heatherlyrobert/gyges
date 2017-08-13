@@ -1374,14 +1374,19 @@ cmd_exec           (char *a_command)
    strncpy    (x_work, a_command, LEN_RECD);
    x_len = strlen (x_work);
    p = strtok (x_work, q);
+   /*---(file commands)------------------*/
    if (p == NULL) return 0;
    if   (strncmp(p, ":w"        , LEN_RECD) == 0 ||
          strncmp(p, ":wa"       , LEN_RECD) == 0 ||
          strncmp(p, ":wq"       , LEN_RECD) == 0 ||
          strncmp(p, ":wqa"      , LEN_RECD) == 0 ||
          strncmp(p, ":write"    , LEN_RECD) == 0) {
-      FILE_write (my.f_title);
+      FILE_write ();
       if (p [2] == 'q')  done = 0;
+      return 0;
+   }
+   if (x_len >=  7 && strcmp (p, ":file") == 0) {
+      FILE_rename (p + 6);
       return 0;
    }
    if (strlen (p) == 4 && strcmp (p, ":ver") == 0) {
@@ -1492,7 +1497,7 @@ cmd_exec           (char *a_command)
    /*> if        (strncmp(p, "o"        , LEN_RECD) == 0) {                            <* 
     *>    p = strtok(NULL, q);                                                        <* 
     *>    if (p == NULL) return 0;                                                    <* 
-    *>    INPT_main (p);                                                              <* 
+    *>    INPT_main ();                                                              <* 
     *> } else if (strncmp(p, "q"        , LEN_RECD) == 0) {                            <* 
     *>    done = 0;                                                                   <* 
     *> }                                                                              <*/

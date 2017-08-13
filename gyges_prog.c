@@ -122,9 +122,9 @@ PROG_args          (int argc, char *argv[])
    char       *a           = NULL;
    int         x_total     = 0;
    int         x_args      = 0;
+   char        x_name      [LEN_STR]   = "";
    /*---(begin)--------------------------*/
-   strlcpy (my.f_name  , FILE_BLANK , LEN_RECD);
-   strlcpy (my.f_suffix, FILE_SUFFIX, LEN_RECD);
+   FILE_rename ("");
    /*---(process)------------------------*/
    for (i = 1; i < argc; ++i) {
       a = argv[i];
@@ -132,7 +132,7 @@ PROG_args          (int argc, char *argv[])
       if (a[0] == '@')  continue;
       DEBUG_ARGS  yLOG_info    ("cli arg", a);
       ++x_args;
-      if      (strncmp (a, "-f"        ,10) == 0)  strncpy (my.f_name , argv[++i], LEN_RECD);
+      if      (strncmp (a, "-f"        ,10) == 0)  strlcpy (x_name , argv[++i], LEN_RECD);
       else if (strncmp (a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp (a, "--help"    ,10) == 0)  PROG_usage();
       /*---(prefixes)--------------------*/
@@ -142,7 +142,7 @@ PROG_args          (int argc, char *argv[])
       else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);
       else if (strncmp (a, "--function-list"     ,  9) == 0)  CALC_func_list  ();
       /*---(other)-----------------------*/
-      else if (a[0] != '-'                     )  strncpy (my.f_name , argv[i]  , LEN_RECD);
+      else if (a[0] != '-'                     )   strlcpy (x_name , argv[i]  , LEN_RECD);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);
    DEBUG_ARGS  yLOG_value  ("arguments" , x_args);
@@ -150,7 +150,7 @@ PROG_args          (int argc, char *argv[])
       DEBUG_ARGS  yLOG_note   ("no arguments identified");
    }
    /*---(update title)-------------------*/
-   sprintf(my.f_title , "%s.%s", my.f_name, my.f_suffix);
+   FILE_rename (x_name);
    /*---(complete)-----------------------*/
    DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
    return 0;

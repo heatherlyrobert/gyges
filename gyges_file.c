@@ -70,6 +70,11 @@ int         s_nfield    =   0;
 char        s_cellbad   = 0;
 
 
+#define     FILE_BLANK  "untitled"
+#define     FILE_SUFFIX "gyges"
+static char     f_suffix    [LEN_RECD];      /* file suffix for spreadsheet    */
+static FILE    *s_file;                      /* file pointer                   */
+
 
 /*====================------------------------------------====================*/
 /*===----                          versioning                          ----===*/
@@ -182,6 +187,64 @@ FILE_version       (char *a_ver, char *a_final)
    return 0;
 }
 
+char
+FILE_rename          (char *a_name)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        t           [LEN_STR]   = "";
+   char       *p           = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_INPT   yLOG_point   ("a_name"    , a_name);
+   if (a_name == NULL) {
+      DEBUG_INPT   yLOG_note    ("a_name was null, using defaults");
+      strlcpy (my.f_loc  , ""        , LEN_RECD);
+      strlcpy (my.f_name , FILE_BLANK, LEN_RECD);
+      sprintf (my.f_title, "%s.%s"   , my.f_name, FILE_SUFFIX);
+      DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
+      DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   DEBUG_INPT   yLOG_info    ("a_name"    , a_name);
+   if (a_name [0] == '\0') {
+      DEBUG_INPT   yLOG_note    ("a_name was blank, using defaults");
+      strlcpy (my.f_loc  , ""        , LEN_RECD);
+      strlcpy (my.f_name , FILE_BLANK, LEN_RECD);
+      sprintf (my.f_title, "%s.%s"   , my.f_name, FILE_SUFFIX);
+      DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
+      DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(parse base name)----------------*/
+   strlcpy (t, a_name, LEN_STR);
+   p = strrchr (t, "/");
+   DEBUG_INPT   yLOG_point   ("p"         , p);
+   if (p == NULL) {
+      DEBUG_INPT   yLOG_note    ("name only, no directory");
+      strlcpy (my.f_loc  , ""        , LEN_RECD);
+      strlcpy (my.f_name , a_name, LEN_RECD);
+      sprintf (my.f_title, "%s.%s", my.f_name, FILE_SUFFIX);
+      DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
+      DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(parse qualified name)-----------*/
+   DEBUG_INPT   yLOG_note    ("fully qualified name, with directory");
+   p = '\0';
+   strlcpy (my.f_loc  , t     , LEN_RECD);
+   strlcpy (my.f_name , p + 1 , LEN_RECD);
+   sprintf (my.f_title, "%s/%s.%s", my.f_loc, my.f_name, FILE_SUFFIX);
+   DEBUG_INPT   yLOG_info    ("my.f_loc"  , my.f_loc);
+   DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
+   DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 
 
@@ -953,34 +1016,27 @@ OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
 static void   o___READ____________o (void) { return; }
 
 char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
-INPT_open          (cchar *a_name)
+INPT_open          ()
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char       *p           = NULL;
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_point   ("filename"  , a_name);
-   /*---(defense)------------------------*/
-   --rce;  if (a_name == NULL) {
-      DEBUG_INPT  yLOG_note    ("file name can not be null");
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   DEBUG_INPT  yLOG_info    ("f_loc"     , my.f_loc);
+   DEBUG_INPT  yLOG_info    ("f_name"    , my.f_name);
+   DEBUG_INPT  yLOG_info    ("f_title"   , my.f_title);
    /*---(parse name)---------------------*/
-   strcpy (my.f_name, a_name);
-   p = strchr (my.f_name, '.');
-   if (p != NULL)  p[0] = '\0';
+   s_file = NULL;
    --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {
       DEBUG_INPT  yLOG_note    ("file name is default");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(open file)----------------------*/
-   DEBUG_INPT  yLOG_info    ("filename"  , a_name);
-   my.f_file = fopen (a_name, "r");
-   DEBUG_INPT  yLOG_point   ("f_file"    , my.f_file);
-   --rce;  if (my.f_file == NULL) {
+   s_file = fopen (my.f_title, "r");
+   DEBUG_INPT  yLOG_point   ("s_file"    , s_file);
+   --rce;  if (s_file == NULL) {
       DEBUG_INPT  yLOG_note    ("file could not be openned");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return 0;
@@ -1037,11 +1093,11 @@ INPT_close         (void)
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(close file)---------------------*/
-   if (my.f_file == NULL) {
+   if (s_file == NULL) {
       DEBUG_INPT  yLOG_note    ("no file to close");
    } else {
       DEBUG_INPT  yLOG_note    ("close file");
-      fclose  (my.f_file);
+      fclose  (s_file);
    }
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
@@ -1057,8 +1113,8 @@ INPT_read          (void)
    /*---(read and clean)--------------*/
    ++my.f_lines;
    DEBUG_INPT  yLOG_value   ("line"      , my.f_lines);
-   fgets (my.f_recd, LEN_RECD, my.f_file);
-   --rce;  if (feof (my.f_file))  {
+   fgets (my.f_recd, LEN_RECD, s_file);
+   --rce;  if (feof (s_file))  {
       DEBUG_INPT  yLOG_note    ("end of file reached");
       return rce;
    }
@@ -1118,7 +1174,7 @@ INPT_parse         (cchar *a_recd)
 }
 
 char         /* file reading driver ----------------------[--------[--------]-*/
-INPT_main          (cchar *a_name)
+INPT_main          (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1131,7 +1187,7 @@ INPT_main          (cchar *a_name)
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(open file)----------------------*/
-   rc = INPT_open   (a_name);
+   rc = INPT_open   ();
    --rce;  if (rc < 0) {
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
@@ -1139,7 +1195,7 @@ INPT_main          (cchar *a_name)
    rc = INPT_prep   ();
    /*---(read lines)---------------------*/
    DEBUG_INPT  yLOG_note    ("read lines");
-   while (my.f_file != NULL) {
+   while (s_file != NULL) {
       /*---(read and clean)--------------*/
       rc = INPT_read ();
       if (rc < 0)  break;
@@ -1216,12 +1272,12 @@ OUTP_header        (FILE *a_file)
 }
 
 char
-FILE_write         (char *a_name)
+FILE_write         (void)
 {
    /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
+   char        rce         =  -10;
+   char        rc          =    0;
    FILE       *f           = NULL;
-   char       *p;
    int         x_seq;
    int         i           = 0;       /* iterator -- columns                            */
    long        x_stamp     = 0;
@@ -1230,15 +1286,13 @@ FILE_write         (char *a_name)
    int         x_len       = 0;
    /*---(header)-------------------------*/
    DEBUG_OUTP yLOG_enter   (__FUNCTION__);
-   /*---(defense: name)------------------*/
-   if (a_name == NULL) return -1;
-   /*---(prepare versioning)-------------*/
-   strcpy (my.f_name, a_name);
-   p = strchr (my.f_name, '.');
-   if (p != NULL)  p[0] = '\0';
-   strcpy (my.f_suffix, "gyges");
    /*---(open file)----------------------*/
-   f = fopen(a_name, "w");
+   --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {
+      DEBUG_OUTP  yLOG_note    ("file name is default");
+      DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   f = fopen (my.f_title, "w");
    if (f == NULL)      return -2;
    /*---(header)-------------------------*/
    OUTP_header (f);
@@ -1264,7 +1318,7 @@ FILE_write         (char *a_name)
    fclose  (f);
    /*---(make version)---------------------*/
    if (ver_ctrl == 'y') {
-      sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", a_name, my.f_name, ver_num[0], ver_num[1], ver_num + 3);
+      sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", my.f_title, my.f_name, ver_num[0], ver_num[1], ver_num + 3);
       system (x_temp);
    }
    /*---(complete)-------------------------*/
