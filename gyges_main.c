@@ -32,7 +32,7 @@ main (int argc, char *argv[])
       exit (-1);
    }
    /*---(file and screen)----------------*/
-   if (strcmp (my.f_name, FILE_BLANK) != 0)  INPT_main (my.f_title);
+   INPT_main (my.f_title);
    KEYS_basics (' ', 'r');
    KEYS_bcol (BCOL);
    CURS_col_head();

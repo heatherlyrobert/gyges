@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3m"
-#define     VER_TXT   "updated defense in LOC_cell_at_curr to stop segfault"
+#define     VER_NUM   "2.3n"
+#define     VER_TXT   "fixed program start with no file name or new file name"
 
 
 

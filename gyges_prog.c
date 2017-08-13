@@ -123,8 +123,8 @@ PROG_args          (int argc, char *argv[])
    int         x_total     = 0;
    int         x_args      = 0;
    /*---(begin)--------------------------*/
-   strncpy(my.f_name  , FILE_BLANK , LEN_RECD);
-   strncpy(my.f_suffix, FILE_SUFFIX, LEN_RECD);
+   strlcpy (my.f_name  , FILE_BLANK , LEN_RECD);
+   strlcpy (my.f_suffix, FILE_SUFFIX, LEN_RECD);
    /*---(process)------------------------*/
    for (i = 1; i < argc; ++i) {
       a = argv[i];

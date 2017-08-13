@@ -956,14 +956,25 @@ char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
 INPT_open          (cchar *a_name)
 {
    /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
+   char        rce         =  -10;
+   char       *p           = NULL;
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    DEBUG_INPT  yLOG_point   ("filename"  , a_name);
    /*---(defense)------------------------*/
    --rce;  if (a_name == NULL) {
       DEBUG_INPT  yLOG_note    ("file name can not be null");
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(parse name)---------------------*/
+   strcpy (my.f_name, a_name);
+   p = strchr (my.f_name, '.');
+   if (p != NULL)  p[0] = '\0';
+   --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {
+      DEBUG_INPT  yLOG_note    ("file name is default");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+      return 0;
    }
    /*---(open file)----------------------*/
    DEBUG_INPT  yLOG_info    ("filename"  , a_name);
@@ -972,17 +983,47 @@ INPT_open          (cchar *a_name)
    --rce;  if (my.f_file == NULL) {
       DEBUG_INPT  yLOG_note    ("file could not be openned");
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
+      return 0;
    }
    DEBUG_INPT  yLOG_note    ("file successfully opened");
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
+INPT_prep          (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
-   DEBUG_INPT  yLOG_note    ("initializing new environment");
    strncpy (f_maker, "unknown", LEN_RECD);
    my.f_lines = 0;
+   DEBUG_INPT  yLOG_note    ("setting default size and locations");
    NCOL = DEF_COLS;
    BCOL = ECOL = 0;
    NROW = DEF_ROWS;
    BROW = EROW = 0;
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
+INPT_done          (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
+   /*---(screen)-------------------------*/
+   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
+   KEYS_basics (' ', 'r');
+   KEYS_bcol (BCOL);
+   CURS_col_head();
+   KEYS_brow (BROW);
+   CURS_row_head();
+   /*---(calculate)----------------------*/
+   DEBUG_INPT  yLOG_note    ("recalc");
+   SEQ_calc_full ();
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -996,18 +1037,12 @@ INPT_close         (void)
    /*---(header)-------------------------*/
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(close file)---------------------*/
-   DEBUG_INPT  yLOG_note    ("close file");
-   fclose  (my.f_file);
-   /*---(screen)-------------------------*/
-   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
-   KEYS_basics (' ', 'r');
-   KEYS_bcol (BCOL);
-   CURS_col_head();
-   KEYS_brow (BROW);
-   CURS_row_head();
-   /*---(calculate)----------------------*/
-   DEBUG_INPT  yLOG_note    ("recalc");
-   SEQ_calc_full ();
+   if (my.f_file == NULL) {
+      DEBUG_INPT  yLOG_note    ("no file to close");
+   } else {
+      DEBUG_INPT  yLOG_note    ("close file");
+      fclose  (my.f_file);
+   }
    /*---(complete)-----------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1101,9 +1136,10 @@ INPT_main          (cchar *a_name)
       DEBUG_INPT  yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   rc = INPT_prep   ();
    /*---(read lines)---------------------*/
    DEBUG_INPT  yLOG_note    ("read lines");
-   while (1) {
+   while (my.f_file != NULL) {
       /*---(read and clean)--------------*/
       rc = INPT_read ();
       if (rc < 0)  break;
@@ -1129,6 +1165,7 @@ INPT_main          (cchar *a_name)
    }
    /*---(close file)---------------------*/
    INPT_close ();
+   INPT_done  ();
    /*---(complete)-------------------------*/
    DEBUG_INPT yLOG_exit    (__FUNCTION__);
    return 0;
