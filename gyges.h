@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3n"
-#define     VER_TXT   "fixed program start with no file name or new file name"
+#define     VER_NUM   "2.3o"
+#define     VER_TXT   "can now change the active file name"
 
 
 
