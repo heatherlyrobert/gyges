@@ -111,11 +111,14 @@ static void  o___INTIIALIZE______o () { return; }
 char             /* clear all selections -----------------[ ------ [ ------ ]-*/
 REG_init           (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(registers)----------------------*/
    strlcpy (s_regnames , REG_NAMES, MAX_REG);
    REG_purge    ('y');
    TREG_init    ();
    /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -125,6 +128,8 @@ REG_purge          (char a_init)
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
    int         x_len       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
    my.reg_curr  = '"';
    x_len = strlen (s_regnames);
@@ -132,6 +137,7 @@ REG_purge          (char a_init)
       REG_clear (s_regnames[i], a_init);
    }
    /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

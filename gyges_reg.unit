@@ -2521,4 +2521,32 @@ SCRP          v21  (reg---) verify data import delimited values               
 
 
 
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
+SCRP          v21  (reg---) verify full import reads                            REG__inpt_driver                                                        ((02.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     code     v21  create a file object                 - - - - - - - - - -   FILE      *fCLIP     = NULL;                                                                                                                                                                 
+
+   COND       v21  check specific columns                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     get      v21  check the col                        LOC__unit             "loc_col"      , "0a1"                                                  s_equal     LOC col stats    : tab=   0, col=   0, width =   8, used=   0                                        
+     get      v21  check the col                        LOC__unit             "loc_col"      , "0b1"                                                  s_equal     LOC col stats    : tab=   0, col=   1, width =   8, used=   0                                        
+     get      v21  check the col                        LOC__unit             "loc_col"      , "0c1"                                                  s_equal     LOC col stats    : tab=   0, col=   2, width =   8, used=   0                                        
+     get      v21  check the col                        LOC__unit             "loc_col"      , "0d1"                                                  s_equal     LOC col stats    : tab=   0, col=   3, width =   8, used=   0                                        
+     get      v21  check the col                        LOC__unit             "loc_col"      , "0e1"                                                  s_equal     LOC col stats    : tab=   0, col=   4, width =   8, used=   0                                        
+     get      v21  check the col                        LOC__unit             "loc_col"      , "0f1"                                                  s_equal     LOC col stats    : tab=   0, col=   5, width =   8, used=   0                                        
+
+   COND       v21  create a clip file                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     code     v21  open the cronpulse file              - - - - - - - - - -   fCLIP = fopen  ("/root/z_gehye/vi_clip.txt", "w");                                                                                                                          
+     code     v21  write time string                    - - - - - - - - - -   fprintf (fCLIP, "testing\n");                                                                                                                             
+     code     v21  close the file                       - - - - - - - - - -   fclose  (fCLIP);                                                                                                                                               
+
+
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.099))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+
+
+
 # end-of-file

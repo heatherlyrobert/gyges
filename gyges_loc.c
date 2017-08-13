@@ -427,6 +427,12 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
 tCELL*       /*--> return the cell at current loc --------[ leaf   [ ------ ]-*/
 LOC_cell_at_curr     (void)
 {
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   /*---(defenses)-----------------------*/
+   rc = LOC_legal (CTAB, CCOL, CROW, CELL_FIXED);
+   if (rc < 0)    return NULL;
+   /*---(complete)-----------------------*/
    return s_tabs [CTAB].sheet[CCOL][CROW];
 }
 

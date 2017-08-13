@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3l"
-#define     VER_TXT   "unit tested REG_inpt_sizer, _width, _values, and _delims"
+#define     VER_NUM   "2.3m"
+#define     VER_TXT   "updated defense in LOC_cell_at_curr to stop segfault"
 
 
 
@@ -219,16 +219,18 @@ struct cACCESSOR {
    char        layout_formula;              /* formula line display mode      */
    char        layout_status;               /* status line display mode       */
    char        layout_command;              /* command line display mode      */
-   char        message     [LEN_RECD];       /* message line                   */
+   char        message     [LEN_RECD];      /* message line                   */
    /*---(file hanndling)--*/
-   char        f_title     [LEN_RECD];       /* specific file base name        */
-   char        f_suffix    [LEN_RECD];       /* file suffix for spreadsheet    */
-   char        f_name      [LEN_RECD];       /* full file name                 */
+   char        f_title     [LEN_RECD];      /* specific file base name        */
+   char        f_suffix    [LEN_RECD];      /* file suffix for spreadsheet    */
+   char        f_name      [LEN_RECD];      /* full file name                 */
    FILE       *f_file;                      /* file pointer                   */
    int         f_lines;                     /* file line number               */
-   char        f_recd      [LEN_RECD];       /* current file record            */
-   char        f_type      [LEN_RECD];       /* current record verb            */
-   char        f_vers;                       /* current record version         */
+   char        f_recd      [LEN_RECD];      /* current file record            */
+   char        f_type      [LEN_RECD];      /* current record verb            */
+   char        f_vers;                      /* current record version         */
+   /*---(reg/clip file)---*/
+   char        f_clip      [LEN_RECD];      /* register clip file             */
    /*---(LOC vars)--------*/
    short       ntab;           /* number of worksheet tabs                         */
    short       ctab;           /* current tab                                      */

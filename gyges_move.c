@@ -53,6 +53,8 @@ PRIV void  o___MOVE_WRAPPERS___o () { return; }
 char
 MOVE_prep          (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_USER  yLOG_enter   (__FUNCTION__);
    /*---(save positions)-----------------*/
    s_begc  = BCOL;
    s_begr  = BROW;
@@ -68,6 +70,7 @@ MOVE_prep          (void)
    DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
    DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
    /*---(complete)-----------------------*/
+   DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -75,6 +78,8 @@ char
 MOVE_done          (void)
 {
    tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_USER  yLOG_enter   (__FUNCTION__);
    /*---(show updated)----------------*/
    DEBUG_USER   yLOG_note    ("show updated col pos...");
    DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
@@ -111,21 +116,29 @@ MOVE_done          (void)
    /*---(update selection)------------*/
    VISU_update  (CTAB, CCOL, CROW);
    /*---(update contents)-------------*/
-   DEBUG_USER  yLOG_note    ("update current contents");
+   DEBUG_USER   yLOG_note    ("get current cell");
    x_curr = LOC_cell_at_curr ();
-   if (x_curr != NULL && x_curr->s != NULL) {
-      strncpy (g_contents, x_curr->s, LEN_RECD);
+   DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);
+   DEBUG_USER   yLOG_note    ("get current contents");
+   if (x_curr != NULL) {
+      DEBUG_USER   yLOG_info    ("x_curr->s" , x_curr->s);
+      if (x_curr->s != NULL)  strlcpy (g_contents, x_curr->s, LEN_RECD);
+      else                    strlcpy (g_contents, ""       , LEN_RECD);
    } else {
-      strncpy (g_contents, ""                       , LEN_RECD);
+      strlcpy (g_contents, ""       , LEN_RECD);
    }
+   DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);
+   DEBUG_USER   yLOG_info    ("g_contents", g_contents);
    my.npos = strlen (g_contents);
    my.bpos = 0;
    if (my.npos >= my.apos)  my.epos = my.apos;
    else                     my.epos = my.npos - 1;
    my.cpos = 0;
    /*---(update screen)---------------*/
+   DEBUG_USER  yLOG_note    ("update col headers");
    if      (BCOL != s_begc) { KEYS_bcol (BCOL); CURS_col_head(); }
    else if (ECOL != s_endc) { KEYS_ecol (ECOL); CURS_col_head(); }
+   DEBUG_USER  yLOG_note    ("update col headers");
    if      (BROW != s_begr) { KEYS_brow (BROW); CURS_row_head(); }
    else if (EROW != s_endr) { KEYS_erow (EROW); CURS_row_head(); }
    /*---(show final)------------------*/
@@ -138,6 +151,7 @@ MOVE_done          (void)
    DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
    DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
    /*---(complete)-----------------------*/
+   DEBUG_USER  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
