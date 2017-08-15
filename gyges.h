@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3p"
-#define     VER_TXT   "tab resizing works from the command bar"
+#define     VER_NUM   "2.3q"
+#define     VER_TXT   "command line uses a table and function pointers now ;))"
 
 
 
@@ -191,6 +191,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 #define     LEN_UNIT    500
 #define     LEN_STR     500
 #define     LEN_DESC    100
+#define     LEN_LABEL   20
 #define     LEN_ABBR    10
 /*---(registers)----------------------*/
 
@@ -929,6 +930,8 @@ char      KEYS_brow          (int);
 char      KEYS_erow          (int);
 char      KEYS_prow          (void);
 char*     KEYS__unit         (char *a_question);
+char        KEYS_quit        (void);
+char        KEYS_writequit   (void);
 
 /*---(key movements)--------*/
 char      MOVE_prep          (void);

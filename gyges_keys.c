@@ -2,6 +2,63 @@
 
 #include   "gyges.h"
 
+#define  MAX_CMDS      1000
+typedef  struct cCOMMAND  tCOMMAND;
+struct  cCOMMAND {
+   char        ccat;                        /* category                       */
+   char        name        [LEN_LABEL];     /* full command name              */
+   char        len;                         /* length of name                 */
+   char        abbr        [LEN_LABEL];     /* abbreviation of name           */
+   char        alen;                        /* length of abbreviation         */
+   char        active;                      /* ready to use                   */
+   char        redraw;                      /* redraw afterwards              */
+   union {
+      char        (*v   ) (void);           /* function pointer               */
+      char        (*s   ) (char*);          /* function pointer               */
+      char        (*is  ) (int  , char*);   /* function pointer               */
+      char        (*ss  ) (char*, char*);   /* function pointer               */
+   } f;
+   char        terms       [LEN_LABEL];     /* type of terms/args             */
+   char        nterm;                       /* number of terms/args           */
+   char        desc        [LEN_DESC];      /* descriptive label              */
+   char        disp        [LEN_DESC];      /* display version of command     */
+};
+static tCOMMAND  s_cmds  [MAX_CMDS] = {
+   /* 1    123456789-12   12   123    12   1    1   123456789-123456789-123456789-   12345   12   123456789-123456789-123456789-123456789-123456789-123456789-  1234 */
+   /*---(file)---------------------------*/
+   /*cat   ---name-----  len  abbrev len  act  drw  ---pointer--------------------   terms  cnt   ---desc-----------------------------------------------------  disp */
+   { 'f', "file"        ,  0, "f"   ,  0, 'y', '-', .f.s   = FILE_rename          , "s"    ,  0, "change the current spreadsheet file name"                    , "" },
+   { 'f', "read"        ,  0, "r"   ,  0, '-', '-', NULL                          , ""     ,  0, "read the current spreadsheet from file"                      , "" },
+   { 'f', "edit"        ,  0, "e"   ,  0, '-', '-', NULL                          , ""     ,  0, "re-read the current spreadsheet from file"                   , "" },
+   { 'f', "write"       ,  0, "w"   ,  0, 'y', '-', .f.v   = FILE_write           , ""     ,  0, "write the current spreadsheet to file"                       , "" },
+   { 'f', "writeall"    ,  0, "wa"  ,  0, 'y', '-', .f.v   = FILE_write           , ""     ,  0, "write the current spreadsheet to file"                       , "" },
+   { 'f', "quit"        ,  0, "q"   ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit current file (if no changes), exit if the only file"    , "" },
+   { 'f', "quitall"     ,  0, "qa"  ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit all files (if no changes), and exit"                    , "" },
+   { 'f', "writequit"   ,  0, "wq"  ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
+   { 'f', "writequitall",  0, "wqa" ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
+   { 'f', "verctrl"     ,  0, "vc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'f', "verbump"     ,  0, "vb"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   /*---(tab)----------------------------*/
+   { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.is  = LOC_tab_rename       , "is"   ,  0, "change the name of a specific tab"                           , "" },
+   { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize       , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   /*---(view)---------------------------*/
+   { 'v', "formula"     ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "status"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "command"     ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "layout"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "lock_row"    ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "lock_col"    ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   /*---(window)-------------------------*/
+   { 'w', "width"       ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window width"                               , "" },
+   { 'w', "height"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window height"                              , "" },
+   { 'w', "hide"        ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "hide the panel/window"                                       , "" },
+   { 'w', "hsplit"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "side-by-side panels/windows"                                 , "" },
+   { 'w', "vsplit"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "above-and-below panels/windows"                              , "" },
+   /*---(done)---------------------------*/
+   { '-', "END-OF-LIST" ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+};
+static int s_ncmd = 0;
+
 
 
 /*====================------------------------------------====================*/
@@ -20,8 +77,31 @@ static char   wsave [LEN_RECD];
 char
 KEYS_init          (void)
 {
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           = 0;
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_note    ("basic init");
    nkeylog = 0;
    strcpy (keylog, "");
+   s_ncmd = 0;
+   for (i = 0; i < MAX_CMDS; ++i) {
+      DEBUG_USER   yLOG_value   ("i"         , i);
+      if (strcmp (s_cmds [i].name, "END-OF-LIST") == 0)   break;
+      ++s_ncmd;
+      DEBUG_USER   yLOG_info    ("name"      , s_cmds [i].name );
+      s_cmds [i].len   = strlen (s_cmds [i].name );
+      DEBUG_USER   yLOG_value   ("len"       , s_cmds [i].len  );
+      s_cmds [i].nterm = strlen (s_cmds [i].terms);
+      DEBUG_USER   yLOG_info    ("abbr"      , s_cmds [i].abbr );
+      s_cmds [i].alen  = strlen (s_cmds [i].abbr );
+      DEBUG_USER   yLOG_value   ("alen"      , s_cmds [i].alen );
+      s_cmds [i].nterm = strlen (s_cmds [i].terms);
+      DEBUG_USER   yLOG_value   ("nterm"     , s_cmds [i].nterm);
+      if (s_cmds [i].f.v == NULL)   s_cmds [i].active = '-';
+      DEBUG_USER   yLOG_char    ("active"    , s_cmds [i].active);
+   }
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 char
@@ -1361,6 +1441,9 @@ KEYS_unlock        (void)
    MOVE_vert ('r');
 }
 
+char        KEYS_quit            (void) { done = 0; return 0; }
+char        KEYS_writequit       (void) { FILE_write (); done = 0; return 0; }
+
 char
 cmd_exec           (char *a_command)
 {
@@ -1369,9 +1452,13 @@ cmd_exec           (char *a_command)
    char        rc          =    0;
    char       *p           = NULL;
    char       *q           = " ";
+   char       *r           = NULL;
    char        x_work      [LEN_RECD]   = "";
    int         x_len       = 0;
    char        x_flag      = '-';
+   char        x_fields    [10][LEN_RECD];
+   int         x_nfield    =  0;
+   int         i           = 0;
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_point   ("a_command" , a_command);
@@ -1380,32 +1467,62 @@ cmd_exec           (char *a_command)
       return rce;
    }
    DEBUG_USER   yLOG_info    ("a_command" , a_command);
-   strncpy    (x_work, a_command, LEN_RECD);
-   x_len = strlen (x_work);
-   p = strtok (x_work, q);
-   DEBUG_USER   yLOG_point   ("p"         , p);
-   --rce;  if (p == NULL)  {
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   /*---(parse)--------------------------*/
+   strlcpy (x_work, a_command, LEN_RECD);
+   p     = strtok_r (x_work, q, &r);
+   ++p;
+   x_len = strlen (p);
+   for (i = 0; i < 10; ++i) {
+      DEBUG_USER   yLOG_value   ("i"         , i);
+      DEBUG_USER   yLOG_info    ("p"         , p);
+      strlcpy (x_fields [i], p, LEN_RECD);
+      x_nfield = i + 1;
+      p = strtok_r (NULL  , q, &r);
+      if (p == NULL)  break;
    }
-   DEBUG_USER   yLOG_info    ("p"         , p);
-   /*---(file commands)------------------*/
-   if   (strncmp(p, ":w"        , LEN_RECD) == 0 ||
-         strncmp(p, ":wa"       , LEN_RECD) == 0 ||
-         strncmp(p, ":wq"       , LEN_RECD) == 0 ||
-         strncmp(p, ":wqa"      , LEN_RECD) == 0 ||
-         strncmp(p, ":write"    , LEN_RECD) == 0) {
-      FILE_write ();
-      if (p [2] == 'q')  done = 0;
-      return 0;
-   }
-   if (x_len >=  7 && strcmp (p, ":file") == 0) {
-      DEBUG_USER   yLOG_note    ("rename the file");
-      rc = FILE_rename (p + 6);
+   /*---(run)----------------------------*/
+   for (i = 0; i < s_ncmd; ++i) {
+      DEBUG_USER   yLOG_value   ("i"         , i);
+      DEBUG_USER   yLOG_info    ("name"      , s_cmds [i].name);
+      DEBUG_USER   yLOG_info    ("abbr"      , s_cmds [i].abbr);
+      /*---(filter)----------------------*/
+      if (x_len > 3) {
+         if (s_cmds [i].len != x_len)                         continue;
+         if (s_cmds [i].name [0] != x_fields [0][0])          continue;
+         if (strcmp (s_cmds [i].name, x_fields [0]) != 0)     continue;
+      } else {
+         if (s_cmds [i].alen != x_len)                        continue;
+         if (s_cmds [i].abbr [0] != x_fields [0][0])          continue;
+         if (strcmp (s_cmds [i].abbr, x_fields [0]) != 0)     continue;
+      }
+      /*---(execute)---------------------*/
+      DEBUG_USER   yLOG_note    ("found it");
+      if        (strcmp (s_cmds [i].terms, ""    ) == 0) {
+         DEBUG_USER   yLOG_note    ("void type, no arg(s)");
+         rc = s_cmds [i].f.v   ();
+      } else if (strcmp (s_cmds [i].terms, "s"   ) == 0) {
+         DEBUG_USER   yLOG_note    ("one string arg(s)");
+         rc = s_cmds [i].f.s   (x_fields [1]);
+      } else if (strcmp (s_cmds [i].terms, "ss"  ) == 0) {
+         DEBUG_USER   yLOG_note    ("two string arg(s)");
+         rc = s_cmds [i].f.ss  (x_fields [1], x_fields [1]);
+      } else if (strcmp (s_cmds [i].terms, "is"  ) == 0) {
+         DEBUG_USER   yLOG_note    ("integer and string arg(s)");
+         rc = s_cmds [i].f.is  (atoi (x_fields [1]), x_fields [1]);
+      } else {
+         DEBUG_USER   yLOG_note    ("crazy other shit, please update or fix");
+         sta_error = 'y';
+      }
       DEBUG_USER   yLOG_value   ("rc"        , rc);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rc;
+      if (s_cmds [i].redraw == 'y')   CURS_screen_reset ();
+      break;
    }
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+
+
+   /*---(file commands)------------------*/
    if (x_len >=  10 && strcmp (p, ":resize") == 0) {
       DEBUG_USER   yLOG_note    ("resize a tab");
       rc = LOC_tab_resize (p + 8);
