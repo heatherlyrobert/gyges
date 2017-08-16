@@ -566,6 +566,9 @@ CURS_status        (tCELL *a_curr)
       }
       break;
    case G_STATUS_BUFFER   : /* buffer contents */
+      LOC_tab_status (CTAB, msg);
+      break;
+   case G_STATUS_RPN      : /* rpn contents */
       if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, LEN_RECD);
       else                                       strncpy (rpn, "((null))", LEN_RECD);
       snprintf (msg, 500, "[ %-100.100s ]", rpn);

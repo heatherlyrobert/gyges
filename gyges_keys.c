@@ -14,6 +14,7 @@ struct  cCOMMAND {
    char        redraw;                      /* redraw afterwards              */
    union {
       char        (*v   ) (void);           /* function pointer               */
+      char        (*c   ) (char);           /* function pointer               */
       char        (*s   ) (char*);          /* function pointer               */
       char        (*is  ) (int  , char*);   /* function pointer               */
       char        (*ss  ) (char*, char*);   /* function pointer               */
@@ -42,13 +43,19 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    /*---(tab)----------------------------*/
    { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.is  = LOC_tab_rename       , "is"   ,  0, "change the name of a specific tab"                           , "" },
    { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize       , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_first        , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "previous"    ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_previous     , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "next"        ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_next         , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "last"        ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_last         , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "switch"      ,  0, ""    ,  0, 'y', 'y', .f.c   = LOC_tab_switch_char  , "c"    ,  0, "change the size of a specific tab"                           , "" },
    /*---(view)---------------------------*/
    { 'v', "formula"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_formula  , "s"    ,  0, ""                                                            , "" },
    { 'v', "status"      ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_status   , "s"    ,  0, ""                                                            , "" },
    { 'v', "command"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_command  , "s"    ,  0, ""                                                            , "" },
    { 'v', "layout"      ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_layout   , "s"    ,  0, ""                                                            , "" },
-   { 'v', "lock_row"    ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'v', "lock_col"    ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "lock_head"   ,  0, "lh"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "lock_foot"   ,  0, "lf"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "lock_col"    ,  0, "lc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    /*---(window)-------------------------*/
    { 'w', "width"       ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window width"                               , "" },
    { 'w', "height"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window height"                              , "" },
@@ -800,26 +807,6 @@ KEYS__del          (char a_key)
    return 0;
 }
 
-
-char
-BUF_switch         (int a_tab)
-{
-   int xtab = a_tab - '0';
-   if (xtab >= 0 && xtab < NTAB) {
-      CTAB = xtab;
-      BCOL = 0;
-      ECOL = 0;
-      BROW = 0;
-      EROW = 0;
-      MOVE_horz ('r');
-      MOVE_vert ('r');
-      MOVE_horz ('0');
-      MOVE_vert ('_');
-      CURS_size ();
-   }
-   return 0;
-}
-
 char          /* PURPOSE : process keys for buffer movement ------------------*/
 SMOD_buffer   (char a_major, char a_minor)
 {
@@ -832,7 +819,9 @@ SMOD_buffer   (char a_major, char a_minor)
    /*---(defenses)-----------------------*/
    --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER))             return rce;
    /*---(check for control keys)---------*/
-   BUF_switch   (a_minor);
+   if (a_minor >= '0' && a_minor <= '9')   LOC_tab_switch (a_minor);
+   if (a_minor >= 'A' && a_minor <= 'Z')   LOC_tab_switch (a_minor);
+   /*> BUF_switch   (a_minor);                                                        <*/
    yVIKEYS_mode_exit  ();
    /*---(complete)-----------------------*/
    return 0;
@@ -1507,6 +1496,9 @@ cmd_exec           (char *a_command)
       if        (strcmp (s_cmds [i].terms, ""    ) == 0) {
          DEBUG_USER   yLOG_note    ("void type, no arg(s)");
          rc = s_cmds [i].f.v   ();
+      } else if (strcmp (s_cmds [i].terms, "c"   ) == 0) {
+         DEBUG_USER   yLOG_note    ("one char arg(s)");
+         rc = s_cmds [i].f.c   (x_fields [1][0]);
       } else if (strcmp (s_cmds [i].terms, "s"   ) == 0) {
          DEBUG_USER   yLOG_note    ("one string arg(s)");
          rc = s_cmds [i].f.s   (x_fields [1]);

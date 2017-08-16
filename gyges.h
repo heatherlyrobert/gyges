@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3r"
-#define     VER_TXT   "command line now handles status, formula, command, and layout"
+#define     VER_NUM   "2.3s"
+#define     VER_TXT   "command line now handles tab/buffer switches.  nice."
 
 
 
@@ -659,6 +659,7 @@ extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 /*---(layout_status)---------------------*/
 #define     G_STATUS_HIDE       ' '
 #define     G_STATUS_FILE       'f'
+#define     G_STATUS_RPN        'r'
 #define     G_STATUS_DEPS       'd'
 #define     G_STATUS_REGS       '"'
 #define     G_STATUS_TREG       't'
@@ -1137,6 +1138,13 @@ char        LOC_tab_name         /* petal  2----- */  (short a_tab, char *a_name
 char        LOC_tab_rename       /* stigma 2----- */  (short a_tab, char *a_name);
 char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max);
 char        LOC_tab_resize       /* stigma 1----- */  (char *a_max);
+char        LOC_tab_first        (void);
+char        LOC_tab_previous     (void);
+char        LOC_tab_next         (void);
+char        LOC_tab_last         (void);
+char        LOC_tab_switch       (short a_tab);
+char        LOC_tab_switch_char  (char  a_tab);
+char        LOC_tab_status       (char  a_tab, char *a_list);
 /*---(columns)-------------------*/
 char        LOC_col_clear        /* septal 1----- */  (short a_tab);
 char        LOC_col_valid        /* petal  2----- */  (short a_tab, short a_col);

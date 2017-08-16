@@ -903,6 +903,58 @@ LOC_tab_size         (short a_tab, char *a_max)
    return 0;
 }
 
+char
+LOC_tab_switch         (short a_tab)
+{
+   char        rc          = 0;
+   rc = LOC_tab_valid (a_tab);
+   if (rc < 0)  return -1;
+   /*---(save)---------------------------*/
+   s_tabs [CTAB].ncol      = NCOL;
+   s_tabs [CTAB].ccol      = CCOL;
+   s_tabs [CTAB].bcol      = BCOL;
+   s_tabs [CTAB].ecol      = ECOL;
+   s_tabs [CTAB].froz_col  = FR_COL;
+   s_tabs [CTAB].froz_bcol = FR_BCOL;
+   s_tabs [CTAB].froz_ecol = FR_ECOL;
+   s_tabs [CTAB].nrow      = NROW;
+   s_tabs [CTAB].crow      = CROW;
+   s_tabs [CTAB].brow      = BROW;
+   s_tabs [CTAB].erow      = EROW;
+   s_tabs [CTAB].froz_row  = FR_ROW;
+   s_tabs [CTAB].froz_brow = FR_BROW;
+   s_tabs [CTAB].froz_erow = FR_EROW;
+   /*---(switch)-------------------------*/
+   CTAB      = a_tab;
+   /*---(restore)------------------------*/
+   NCOL      = s_tabs [CTAB].ncol;
+   CCOL      = s_tabs [CTAB].ccol;
+   BCOL      = s_tabs [CTAB].bcol;
+   ECOL      = s_tabs [CTAB].ecol;
+   FR_COL    = s_tabs [CTAB].froz_col;
+   FR_BCOL   = s_tabs [CTAB].froz_bcol;
+   FR_ECOL   = s_tabs [CTAB].froz_ecol;
+   NROW      = s_tabs [CTAB].nrow;
+   CROW      = s_tabs [CTAB].crow;
+   BROW      = s_tabs [CTAB].brow;
+   EROW      = s_tabs [CTAB].erow;
+   FR_ROW    = s_tabs [CTAB].froz_row;
+   FR_BROW   = s_tabs [CTAB].froz_brow;
+   FR_EROW   = s_tabs [CTAB].froz_erow;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+LOC_tab_switch_char    (char a_tab)
+{
+   short       x_tab       = 0;
+   if      (a_tab >= '0' && a_tab <= '9')   x_tab = a_tab - '0';
+   else if (a_tab >= 'A' && a_tab <= 'Z')   x_tab = a_tab - 'A' + 10;
+   else    return -1;
+   return LOC_tab_switch (x_tab);
+}
+
 char 
 LOC_tab_resize       (char *a_max)
 {
@@ -928,6 +980,38 @@ LOC_tab_resize       (char *a_max)
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char
+LOC_tab_status     (char a_tab, char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_tab       = '0';
+   char        x_size      [LEN_LABEL] = "";
+   /*---(beginning)----------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
+   /*---(defenses)--------------------*/
+   if (a_list  == NULL) {
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return -1;     /* then no point                       */
+   }
+   /*---(walk the list)---------------*/
+   if      (a_tab >= 0  && a_tab <= 9 )   x_tab = a_tab + '0';
+   else if (a_tab >= 10 && a_tab <= 36)   x_tab = a_tab - 10 + 'A';
+   else                                   x_tab = '?';
+   sprintf (x_size, "%dx%d", NCOL, NROW);
+   sprintf (a_list, "[ buffer %d %c %s %-30.30s ]", a_tab, x_tab, x_size, s_tabs [a_tab].name);
+   /*---(complete)--------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char        LOC_tab_first        (void)  { return LOC_tab_switch (0); }
+char        LOC_tab_previous     (void)  { return LOC_tab_switch (CTAB - 1); }
+char        LOC_tab_next         (void)  { return LOC_tab_switch (CTAB + 1); }
+char        LOC_tab_last         (void)  { return LOC_tab_switch (NTAB - 1); }
 
 
 

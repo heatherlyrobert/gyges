@@ -18,6 +18,7 @@ tLAYOUT     g_layouts [MAX_LAYOUT] = {
    { "status"    , "mark"         , 0                   , G_STATUS_MARK       , 0                   , "details of cell and location marks"         },
    { "status"    , "cell"         , 0                   , G_STATUS_CELL       , 0                   , "details of current cell"                    },
    { "status"    , "deps"         , 0                   , G_STATUS_DEPS       , 0                   , "details of current cell dependencies"       },
+   { "status"    , "rpn"          , 0                   , G_STATUS_RPN        , 0                   , "details of current cell rpn notation"       },
    { "status"    , "keylog"       , 0                   , G_STATUS_KEYLOG     , 0                   , "key logging details for debugging"          },
    { "status"    , "history"      , 0                   , G_STATUS_HISTORY    , 0                   , "change history for debugging"               },
    { "command"   , "hide"         , 0                   , 0                   , G_COMMAND_HIDE      , "command line is not shown"                  },
