@@ -82,88 +82,92 @@ static FILE    *s_file;                      /* file pointer                   *
 PRIV void  o___VERSIONING______o () { return; }
 
 char
-FILE_bump          (char a_type, char *a_ver)
+FILE_bump          (char *a_type)
 {
    /*---(locals)-----------+-----------+-*/
-   char        x_temp      [LEN_RECD];
    char        rc          = 0;
    char        rce         = -10;
+   char        x_type      = ' ';
+   /*---(defense : not controlled)-------*/
+   --rce;  if (ver_ctrl != 'y')  return rce;
    /*---(defense: a_type)----------------*/
-   --rce;  if (strchr ("SMmf", a_type) == NULL)  return rce;
-   /*---(defense: a_ver)-----------------*/
-   --rce;  if (a_ver == NULL)                    return rce;
-   --rce;  if (FILE_version (a_ver, x_temp) < 0) return rce;
-   /*---(factor)-------------------------*/
-   if (strchr ("f", a_type) != NULL) {
-      if (a_ver [4] <  'z') {
-         ++a_ver[4];
+   --rce;  if (a_type == NULL)                   return rce;
+   --rce;  if (a_type [0] == '\0')               return rce;
+   x_type = a_type [0];
+   --rce;  if (strchr ("Mmi", x_type) == NULL)   return rce;
+   /*---(tiny)---------------------------*/
+   if (strchr ("i", x_type) != NULL) {
+      if (ver_num [3] <  'z') {
+         ++ver_num[3];
          return 0;
       }
    }
-   a_ver [4] = 'a';
+   ver_num [3] = 'a';
    /*---(minor)--------------------------*/
-   if (strchr ("mf", a_type) != NULL) {
-      if (a_ver [3] <  '9') {
-         ++a_ver[3];
+   if (strchr ("mi", x_type) != NULL) {
+      if (ver_num [2] <  '9') {
+         ++ver_num[2];
          return 0;
       }
-      if (a_ver [3] == '9') {
-         a_ver  [3] =  'A';
+      if (ver_num [2] == '9') {
+         ver_num  [2] =  'A';
          return 0;
       }
-      if (a_ver [3] <  'F') {
-         ++a_ver[3];
+      if (ver_num [2] <  'Z') {
+         ++ver_num[2];
          return 0;
       }
    }
-   a_ver [3] = '0';
+   ver_num [2] = '0';
    /*---(major)--------------------------*/
-   if (strchr ("Mmf", a_type) != NULL) {
-      if (a_ver [1] <  '9') {
-         ++a_ver[1];
+   if (strchr ("Mmi", x_type) != NULL) {
+      if (ver_num [0] <  '9') {
+         ++ver_num[0];
          return 0;
       }
-      if (a_ver [1] == '9') {
-         a_ver  [1] =  'A';
+      if (ver_num [0] == '9') {
+         ver_num  [0] =  'A';
          return 0;
       }
-      if (a_ver [1] <  'F') {
-         ++a_ver[1];
-         return 0;
-      }
-   }
-   a_ver [1] = '0';
-   /*---(super)--------------------------*/
-   if (strchr ("SMmf", a_type) != NULL) {
-      if (a_ver [0] <  '9') {
-         ++a_ver[0];
-         return 0;
-      }
-      if (a_ver [0] == '9') {
-         a_ver  [0] =  'A';
-         return 0;
-      }
-      if (a_ver [0] <  'F') {
-         ++a_ver[0];
+      if (ver_num [0] <  'Z') {
+         ++ver_num[0];
          return 0;
       }
    }
    /*---(complete)-----------------------*/
-   strcpy (a_ver, "XX.Xx");
-   return  -1;
+   strcpy (ver_num, "Z.Zz");
+   --rce;  return  rce;
 }
 
 char
-FILE_version       (char *a_ver, char *a_final)
+FILE_controlled    (char *a_yes)
+{
+   if (a_yes [0] == 'n') {
+      if (ver_ctrl == 'y') {
+         ver_ctrl = '-';
+         strcpy (ver_num, "----");
+      }
+      return 0;
+   }
+   if (a_yes [0] == 'y') {
+      if (ver_ctrl == '-') {
+         ver_ctrl = 'y';
+         strcpy (ver_num, "0.0a");
+      }
+      return 0;
+   }
+   return -1;
+}
+
+char
+FILE_version       (char *a_ver)
 {
    /*---(locals)-----------+-----------+-*/
    int         x_len       = 0;
    char        rce         = -10;
    char        x_work      [10];
-   /*---(defense : a_final)--------------*/
-   --rce;  if (a_final == NULL)             return rce;
-   /*---(set default)--------------------*/
-   strcpy (a_final, "00.0a");
+   /*---(defense : not controlled)-------*/
+   --rce;  if (ver_ctrl != 'y')  return rce;
    /*---(defense : empty)----------------*/
    --rce;  if (a_ver == NULL)               return rce;
    x_len = strlen (a_ver);
@@ -171,18 +175,25 @@ FILE_version       (char *a_ver, char *a_final)
    --rce;  if (x_len <= 0)                  return rce;
    /*---(defense: bad length)------------*/
    --rce;  if (x_len < 4)                   return rce;
-   --rce;  if (x_len > 5)                   return rce;
+   --rce;  if (x_len > 4)                   return rce;
    /*---(prepare)------------------------*/
-   if (x_len == 4)   sprintf (x_work, "0%s", a_ver);
-   else              strcpy  (x_work, a_ver);
+   strcpy  (x_work, a_ver);
    /*---(test chars)---------------------*/
-   --rce;  if (strchr ("abcdefghijklmnopqrstuvwxyz", x_work [4]) == 0)  return rce;
-   --rce;  if (strchr ("0123456789ABCDEF",           x_work [3]) == 0)  return rce;
-   --rce;  if (x_work [2] != '.')                       return rce;
-   --rce;  if (strchr ("0123456789ABCDEF",           x_work [1]) == 0)  return rce;
-   --rce;  if (strchr ("0123456789ABCDEF",           x_work [0]) == 0)  return rce;
+   --rce;  if (strchr ("abcdefghijklmnopqrstuvwxyz",           x_work [3]) == 0)  return rce;
+   --rce;  if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", x_work [2]) == 0)  return rce;
+   --rce;  if (x_work [1] != '.')                       return rce;
+   --rce;  if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", x_work [0]) == 0)  return rce;
+   /*---(check increase only)------------*/
+   --rce;  if (x_work [0] <  ver_num [0])    return rce;
+   if (x_work [0] == ver_num [0]) {
+      --rce;  if (x_work [2] <  ver_num [2])    return rce;
+      if (x_work [2] == ver_num [2]) {
+         --rce;  if (x_work [3] <  ver_num [3])    return rce;
+         --rce;  if (x_work [3] == ver_num [3])    return rce;
+      }
+   }
    /*---(finalize)-----------------------*/
-   strcpy (a_final, x_work);
+   strcpy (ver_num, x_work);
    /*---(complete)-----------------------*/
    return 0;
 }

@@ -36,16 +36,17 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'f', "quitall"     ,  0, "qa"  ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit all files (if no changes), and exit"                    , "" },
    { 'f', "writequit"   ,  0, "wq"  ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
    { 'f', "writequitall",  0, "wqa" ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
-   { 'f', "verctrl"     ,  0, "vc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'f', "verbump"     ,  0, "vb"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'f', "controlled"  ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_controlled      , "s"    ,  0, "turn version control on for current file (y/n)"              , "" },
+   { 'f', "version"     ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
+   { 'f', "bump"        ,  0, ""    ,  0, '-', '-', .f.s   = FILE_bump            , "s"    ,  0, "increment the version number (M/Major, m/minor, i/inc)"      , "" },
    /*---(tab)----------------------------*/
    { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.is  = LOC_tab_rename       , "is"   ,  0, "change the name of a specific tab"                           , "" },
    { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize       , "s"    ,  0, "change the size of a specific tab"                           , "" },
    /*---(view)---------------------------*/
-   { 'v', "formula"     ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'v', "status"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'v', "command"     ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'v', "layout"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   { 'v', "formula"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_formula  , "s"    ,  0, ""                                                            , "" },
+   { 'v', "status"      ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_status   , "s"    ,  0, ""                                                            , "" },
+   { 'v', "command"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_command  , "s"    ,  0, ""                                                            , "" },
+   { 'v', "layout"      ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_layout   , "s"    ,  0, ""                                                            , "" },
    { 'v', "lock_row"    ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    { 'v', "lock_col"    ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    /*---(window)-------------------------*/
@@ -1467,11 +1468,17 @@ cmd_exec           (char *a_command)
       return rce;
    }
    DEBUG_USER   yLOG_info    ("a_command" , a_command);
-   /*---(parse)--------------------------*/
+   /*---(prepare)------------------------*/
    strlcpy (x_work, a_command, LEN_RECD);
    p     = strtok_r (x_work, q, &r);
    ++p;
    x_len = strlen (p);
+   /*---(system commands)----------------*/
+   if (p[0] == '!') {
+      rc = system (a_command + 2);
+      return 0;
+   }
+   /*---(parse)--------------------------*/
    for (i = 0; i < 10; ++i) {
       DEBUG_USER   yLOG_value   ("i"         , i);
       DEBUG_USER   yLOG_info    ("p"         , p);
@@ -1521,35 +1528,6 @@ cmd_exec           (char *a_command)
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 
-
-   /*---(file commands)------------------*/
-   if (x_len >=  10 && strcmp (p, ":resize") == 0) {
-      DEBUG_USER   yLOG_note    ("resize a tab");
-      rc = LOC_tab_resize (p + 8);
-      DEBUG_USER   yLOG_value   ("rc"        , rc);
-      CURS_screen_reset ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rc;
-   }
-   if (strlen (p) == 4 && strcmp (p, ":ver") == 0) {
-      ver_ctrl = 'y';
-      FILE_version (NULL, ver_num);
-      return 0;
-   }
-   if (strlen (p) == 5 && strncmp (p, ":ver", 4) == 0) {
-      rc = FILE_bump (p[4], ver_num);
-      if (rc >= 0) {
-         if (x_len >= 7)  strcpy (ver_txt, p + 6);
-         else             strcpy (ver_txt, "----------");
-         return 0;
-      }
-      if (p[4] == 't') {
-         if (x_len >= 7)  strcpy (ver_txt, p + 6);
-         else             strcpy (ver_txt, "----------");
-         return 0;
-      }
-      return -1;
-   }
    if (strlen (p) == 7 && strcmp (p, ":errors") == 0) {
       ERROR_list ();
       return 0;

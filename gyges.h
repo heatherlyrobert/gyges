@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3q"
-#define     VER_TXT   "command line uses a table and function pointers now ;))"
+#define     VER_NUM   "2.3r"
+#define     VER_TXT   "command line now handles status, formula, command, and layout"
 
 
 
@@ -768,6 +768,10 @@ char      PROG_layout_init     (void);
 char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
 char      PROG_layout_list     (char *a_who);
 char      PROG_layout_entry    (int a_num, char *a_line);
+char      PROG_layout_formula  (char *a_opt);
+char      PROG_layout_status   (char *a_opt);
+char      PROG_layout_command  (char *a_opt);
+char      PROG_layout_layout   (char *a_opt);
 
 char     *unit_accessor      (char *a_question, void *a_thing);
 char      PROG_testing       (void);
@@ -1231,8 +1235,9 @@ char     *CELL__unitnew      (char *a_question, char *a_label);
 
 char      SYLK_read            (char *a_name);
 char      SYLK_write           (char *a_name, char a_variation);
-char      FILE_version         (char *a_ver, char *a_final);
-char      FILE_bump            (char a_type, char *a_ver);
+char      FILE_controlled      (char *a_yes);
+char      FILE_version         (char *a_ver);
+char      FILE_bump            (char *a_type);
 char      FILE_rename          (char *a_name);
 
 

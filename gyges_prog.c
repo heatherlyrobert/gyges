@@ -24,6 +24,7 @@ tLAYOUT     g_layouts [MAX_LAYOUT] = {
    { "command"   , "show"         , 0                   , 0                   , G_COMMAND_SHOW      , "display the command line"                   },
    { "command"   , "float"        , 0                   , 0                   , G_COMMAND_FLOAT     , "display command line when required"         },
    { "layout"    , "min"          , G_FORMULA_TINY      , G_STATUS_HIDE       , G_COMMAND_HIDE      , "greatest working room available"            },
+   { "layout"    , "normal"       , G_FORMULA_SMALL     , G_STATUS_FILE       , G_COMMAND_SHOW      , "normal working environment"                 },
    { "layout"    , "max"          , G_FORMULA_DEBUG     , G_STATUS_FILE       , G_COMMAND_SHOW      , "greatest supporting information"            },
    { ""          , ""             , 0                   , 0                   , 0                   , ""                                           },
 };
@@ -261,6 +262,11 @@ PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
    /*---(complete)-----------------------*/
    return x_found;
 }
+
+char PROG_layout_formula (char *a_opt) { return PROG_layout_set ("cmd", "formula", a_opt); }
+char PROG_layout_status  (char *a_opt) { return PROG_layout_set ("cmd", "status" , a_opt); }
+char PROG_layout_command (char *a_opt) { return PROG_layout_set ("cmd", "command", a_opt); }
+char PROG_layout_layout  (char *a_opt) { return PROG_layout_set ("cmd", "layout" , a_opt); }
 
 char
 PROG_layout_list    (char *a_who)
