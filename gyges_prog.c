@@ -211,14 +211,15 @@ PROG_layout_init    (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
-   /*---(find)---------------------------*/
+   /*---(initialize data)----------------*/
    g_nlayout = 0;
    for (i = 0; i <= MAX_LAYOUT; ++i) {
       /*---(filter)----------------------*/
       if (g_layouts [i].cat [0] == '\0')            break;
       ++g_nlayout;
    }
-   my.layout_formula     = G_FORMULA_DEBUG;
+   /*---(set defaults)-------------------*/
+   my.layout_formula     = G_FORMULA_SMALL;
    my.layout_status      = G_STATUS_FILE;
    my.layout_command     = G_COMMAND_SHOW;
    /*---(complete)-----------------------*/

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3s"
-#define     VER_TXT   "command line now handles tab/buffer switches.  nice."
+#define     VER_NUM   "2.3t"
+#define     VER_TXT   "set layout default to normal/small"
 
 
 
