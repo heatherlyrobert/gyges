@@ -880,6 +880,19 @@ LOC_tab_name         (short a_tab, char *a_name)
 }
 
 char 
+LOC_tab_rename_curr  (char *a_name)
+{
+   char        rce         =  -20;
+   char rc = LOC_tab_valid (CTAB);
+   if (rc < 0) return rc;
+   --rce;  if (a_name  == NULL)                       return rce;
+   --rce;  if (a_name [0] == '\0')                    return rce;
+   --rce;  if (strlen (a_name) >= LEN_ABBR)           return rce;
+   strlcpy (s_tabs [CTAB].name, a_name, LEN_ABBR);
+   return 0;
+}
+
+char 
 LOC_tab_rename       (short a_tab, char *a_name)
 {
    char        rce         =  -20;
@@ -953,6 +966,31 @@ LOC_tab_switch_char    (char a_tab)
    else if (a_tab >= 'A' && a_tab <= 'Z')   x_tab = a_tab - 'A' + 10;
    else    return -1;
    return LOC_tab_switch (x_tab);
+}
+
+char 
+LOC_tab_resize_curr  (char *a_max)
+{
+   char        rce         = -10;
+   char        rc          =   0;
+   int         x_col       =   0;
+   int         x_row       =   0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   rc = LOC_parse  (a_max, NULL  , &x_col, &x_row, NULL);
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = LOC_legal  (CTAB , x_col, x_row, CELL_EXACT);
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 char 

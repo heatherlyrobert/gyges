@@ -41,8 +41,8 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'f', "version"     ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
    { 'f', "bump"        ,  0, ""    ,  0, '-', '-', .f.s   = FILE_bump            , "s"    ,  0, "increment the version number (M/Major, m/minor, i/inc)"      , "" },
    /*---(tab)----------------------------*/
-   { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.is  = LOC_tab_rename       , "is"   ,  0, "change the name of a specific tab"                           , "" },
-   { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize       , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.is  = LOC_tab_rename_curr  , "s"    ,  0, "change the name of the current tab"                          , "" },
+   { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize_curr  , "s"    ,  0, "change the size of the current tab"                          , "" },
    { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_first        , "s"    ,  0, "change the size of a specific tab"                           , "" },
    { 't', "previous"    ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_previous     , "s"    ,  0, "change the size of a specific tab"                           , "" },
    { 't', "next"        ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_next         , "s"    ,  0, "change the size of a specific tab"                           , "" },

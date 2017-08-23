@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3t"
-#define     VER_TXT   "set layout default to normal/small"
+#define     VER_NUM   "2.3u"
+#define     VER_TXT   ":resize and :rename work on current tab only"
 
 
 
@@ -1136,8 +1136,10 @@ char        LOC_tab_valid        /* petal  1----- */  (short a_tab);
 char        LOC_tab_defname      /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_name         /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_rename       /* stigma 2----- */  (short a_tab, char *a_name);
+char        LOC_tab_rename_curr  /* stigma 1----- */  (char *a_name);
 char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max);
 char        LOC_tab_resize       /* stigma 1----- */  (char *a_max);
+char        LOC_tab_resize_curr  /* stigma 1----- */  (char *a_max);
 char        LOC_tab_first        (void);
 char        LOC_tab_previous     (void);
 char        LOC_tab_next         (void);
