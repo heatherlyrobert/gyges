@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.3u"
-#define     VER_TXT   ":resize and :rename work on current tab only"
+#define     VER_NUM   "2.4a"
+#define     VER_TXT   "file status uses version and :control, :nocontrol"
 
 
 
@@ -166,8 +166,8 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 
 /*===[[ CONSTANTS : LIMITS ]]=================================================*/
 /*---(tabs)---------------------------*/
-#define     MAX_TABS    10
-#define     DEF_TABS    1
+#define     MAX_TABS    36
+#define     DEF_TABS    10
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
 #define     MAX_COLS    130
@@ -516,9 +516,10 @@ extern char G_CELL_FPRE   [20];     /* formula prefixes                       */
 
 
 
-#define     G_TAB_NOT   '/'
-#define     G_TAB_FROZE '_'
-#define     G_TAB_LIVE  'y'
+#define     G_TAB_NORMAL   'y'
+#define     G_TAB_MACRO    'm'
+#define     G_TAB_TABLE    't'
+#define     G_TAB_DATA     'd'
 
 #define     NTAB        my.ntab
 #define     CTAB        my.ctab
@@ -659,6 +660,7 @@ extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 /*---(layout_status)---------------------*/
 #define     G_STATUS_HIDE       ' '
 #define     G_STATUS_FILE       'f'
+#define     G_STATUS_TAB        'T'
 #define     G_STATUS_RPN        'r'
 #define     G_STATUS_DEPS       'd'
 #define     G_STATUS_REGS       '"'
@@ -1133,6 +1135,8 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col, short a_row, char a_abs, char *a_label);
 /*---(tabs)----------------------*/
 char        LOC_tab_valid        /* petal  1----- */  (short a_tab);
+char        LOC_tab_type         (short a_tab);
+char        LOC_tab_retype       (short a_tab, char a_type);
 char        LOC_tab_defname      /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_name         /* petal  2----- */  (short a_tab, char *a_name);
 char        LOC_tab_rename       /* stigma 2----- */  (short a_tab, char *a_name);
@@ -1246,13 +1250,19 @@ char     *CELL__unitnew      (char *a_question, char *a_label);
 char      SYLK_read            (char *a_name);
 char      SYLK_write           (char *a_name, char a_variation);
 char      FILE_controlled      (char *a_yes);
+char      FILE_control         (void);
+char      FILE_nocontrol       (void);
 char      FILE_version         (char *a_ver);
+char      FILE_vertxt          (char *a_txt);
 char      FILE_bump            (char *a_type);
+char      FILE_bump_major      (void);
+char      FILE_bump_minor      (void);
+char      FILE_bump_inc        (void);
 char      FILE_rename          (char *a_name);
 
 
 /*---(tabs)------------------*/
-char      INPT_tab             (char  *a_label, char *a_name);
+char      INPT_tab             (char  *a_label, char *a_name, char a_type);
 char      OUTP_tab             (short  a_tab  );
 char      OUTP_tab_head        (FILE  *a_file );
 char      OUTP_tab_foot        (FILE  *a_file , int   a_count);

@@ -80,6 +80,7 @@ struct cTAB {
    /* starting to use them.                                                   */
    short       tab;                         /* number of tab                  */
    char        name  [LEN_ABBR];            /* tab name for user reference    */
+   char        type;                        /* tab type                       */
    /*---(contents)-----------------------*/
    /* tabs pull three other data structures together in a package: column     */
    /* characteristics, row characteristics, and a grid on which to hang cells.*/
@@ -138,7 +139,7 @@ LOC_init             (void)
    /*---(clean tabs)---------------------*/
    LOC__purge    ();
    /*---(set defaults)-------------------*/
-   NTAB    = 10;
+   NTAB    = MAX_TABS;
    CTAB    = 0;
    p_tab   = &s_tabs [CTAB];
    /*---(complete)-----------------------*/
@@ -162,7 +163,7 @@ LOC__clear_locs      (short a_tab)
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_tab >= NTAB) {
+   --rce;  if (a_tab >= MAX_TABS) {
       DEBUG_LOCS   yLOG_snote   ("tab too big");
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
@@ -188,13 +189,11 @@ LOC__purge           (void)
 {  /*---(design notes)--------------------------------------------------------*/
    /* run CELL_wrap/purge before LOC_wrap/purge so all cells are unhooked     */
    /*---(locals)-----------+-----------+-*/
-   short       x_ntab      = NTAB;
    short       x_tab       = 0;
    char        t           [LEN_RECD];
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/
-   NTAB    = 10;
    for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
       DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
       /*---(main config)-----------------*/
@@ -202,6 +201,7 @@ LOC__purge           (void)
       sprintf (t, "tab_%02d", x_tab);
       strlcpy (s_tabs [x_tab].name, t, LEN_RECD);
       s_tabs [x_tab].tab     = x_tab;
+      s_tabs [x_tab].type    = G_TAB_NORMAL;
       s_tabs [x_tab].c       =    0;
       /*---(size limits)-----------------*/
       DEBUG_LOCS   yLOG_note    ("reset default size");
@@ -225,7 +225,6 @@ LOC__purge           (void)
       LOC__clear_locs   (x_tab);
       /*---(done)------------------------*/
    }
-   NTAB = x_ntab;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -570,13 +569,14 @@ LOC_ref           (
    /* or not there is a cell there.  if the reference is outside current tab  */
    /* or sheet boundaries, it returns a warning (pos).  if it is outside the  */
    /* absolute minimum and maximum boundaries it returns an error (neg).      */
-   /*---(locals)-----------+-----------+-*/
+   /*---(locals)-----------+-----+-----+-*/
    char        x_cname     [100]       = "";
    char        x_tref      [5]         = "";
    char        x_cref      [5]         = "";
    char        x_rref      [5]         = "";
    char        rce         = -10;           /* return code for errors         */
    char        rc          = 0;             /* generic return code            */
+   char        x_tab       =  '0';
    /*---(prepare)------------------------*/
    strcpy (s_label, "n/a");
    /*---(defense: valid output)----------*/
@@ -587,6 +587,9 @@ LOC_ref           (
    if (rc < 0)                         return rc - 10;
    --rce;  if (a_abs < 0)                        return rce;
    --rce;  if (a_abs > 7)                        return rce;
+   /*---(figure out tab name)------------*/
+   if (a_tab <= 9)     x_tab = a_tab + '0';
+   else                x_tab = a_tab - 10 + 'A';
    /*---(figure out column name)---------*/
    if        (a_col < 26)  {
       x_cname[0] = a_col + 'a';
@@ -607,7 +610,7 @@ LOC_ref           (
    default: strcpy (x_tref, "@");                                             break;
    }
    /*---(create label)-------------------*/
-   sprintf (s_label, "%s%d%s%s%s%d", x_tref, a_tab, x_cref, x_cname, x_rref, a_row + 1);
+   sprintf (s_label, "%s%c%s%s%s%d", x_tref, x_tab, x_cref, x_cname, x_rref, a_row + 1);
    strcpy  (a_final, s_label);
    /*---(complete)-----------------------*/
    return  0;
@@ -689,6 +692,11 @@ LOC_parse         (
    DEBUG_LOCS   yLOG_point   ("a_col"     , a_col);
    DEBUG_LOCS   yLOG_point   ("a_row"     , a_row);
    DEBUG_LOCS   yLOG_point   ("a_abs"     , a_abs);
+   /*---(prepare values)-----------------*/
+   if (a_tab != NULL)  *a_tab = -1;
+   if (a_col != NULL)  *a_col = -1;
+   if (a_row != NULL)  *a_row = -1;
+   if (a_abs != NULL)  *a_abs =  0;
    /*---(defense: empty label)-----------*/
    --rce;  if (a_label == NULL) {
       DEBUG_LOCS   yLOG_note    ("aborting, no a_label means no point");
@@ -731,20 +739,23 @@ LOC_parse         (
       ++s_tab;
       DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
    }
-   if (a_label[s_tab] == '$') {
-      x_abs += 4;
+   else if (a_label[s_tab] == '$') {
+      x_abs  = 4;
       ++s_tab;
    }
    DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
    DEBUG_LOCS   yLOG_value   ("s_tab"     , s_tab);
    /*---(parse tab characters)-----------*/
    s_col = s_tab;
-   for (i = s_tab; i < s_tab + 1; ++i) {
-      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
-      if (strchr ("0123456789", a_label[i]) == 0)   break;
-      if (i >  s_tab)  x_tab *= 10;
-      x_tab += a_label[i] - '0';
+   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
+   if (strchr ("0123456789"                , a_label[s_tab]) != NULL) {
+      x_tab = a_label[s_tab] - '0';
       ++s_col;
+   } else if (strchr ("ABCDEFGHIJKLMNOPQRSTUVWXYZ", a_label[s_tab]) != NULL) {
+      x_tab = a_label[s_tab] - 'A' + 10;
+      ++s_col;
+   } else {
+      x_tab = CTAB;
    }
    /*> printf ("x_tab = %d\n", x_tab);                                                <*/
    --rce;  if (x_tab + 1 <  MIN_TABS) {
@@ -758,7 +769,6 @@ LOC_parse         (
    if (s_col == s_tab && x_abs == 4)  x_abs = 1;
    DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
    DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
-   if (a_tab != NULL)  *a_tab = x_tab;
    /*---(look for absolute col)----------*/
    DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_col]);
    if (a_label [s_col] == '$') {
@@ -794,7 +804,6 @@ LOC_parse         (
       return rce;
    }
    DEBUG_LOCS   yLOG_value   ("x_col fix" , x_col);
-   if (a_col != NULL)  *a_col = x_col;
    /*---(look for absolute row)----------*/
    DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_row]);
    if (a_label [s_row] == '$') {
@@ -804,7 +813,6 @@ LOC_parse         (
    DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
    DEBUG_LOCS   yLOG_value   ("s_row"     , s_row);
    if (x_abs > 7)  x_abs = 7;
-   if (a_abs != NULL)  *a_abs = x_abs;
    /*---(parse row characters)-----------*/
    e_row = s_row;
    for (i = s_row; i < len; ++i) {
@@ -831,7 +839,11 @@ LOC_parse         (
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(return values)------------------*/
+   if (a_tab != NULL)  *a_tab = x_tab;
+   if (a_col != NULL)  *a_col = x_col;
    if (a_row != NULL)  *a_row = x_row;
+   if (a_abs != NULL)  *a_abs = x_abs;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return  0;
@@ -853,6 +865,27 @@ LOC_tab_valid        (short a_tab)
    --rce;  if (a_tab   < 0)                           return rce;
    --rce;  if (a_tab   >= MAX_TABS)                   return rce;
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+LOC_tab_type         (short a_tab)
+{
+   char        rce         =  -20;
+   char        rc          =    0;
+   rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].type;
+}
+
+char
+LOC_tab_retype       (short a_tab, char a_type)
+{
+   char        rce         =  -20;
+   char        rc          =    0;
+   rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
+   s_tabs [a_tab].type = a_type;
    return 0;
 }
 
@@ -1049,7 +1082,7 @@ LOC_tab_status     (char a_tab, char *a_list)
 char        LOC_tab_first        (void)  { return LOC_tab_switch (0); }
 char        LOC_tab_previous     (void)  { return LOC_tab_switch (CTAB - 1); }
 char        LOC_tab_next         (void)  { return LOC_tab_switch (CTAB + 1); }
-char        LOC_tab_last         (void)  { return LOC_tab_switch (NTAB - 1); }
+char        LOC_tab_last         (void)  { return LOC_tab_switch (MAX_TABS - 1); }
 
 
 
@@ -1073,7 +1106,7 @@ LOC_col_clear        (short a_tab)
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_tab >= NTAB) {
+   --rce;  if (a_tab >= MAX_TABS) {
       DEBUG_LOCS   yLOG_snote   ("tab too big");
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
@@ -1240,7 +1273,7 @@ LOC_row_clear        (short a_tab)
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_tab >= NTAB) {
+   --rce;  if (a_tab >= MAX_TABS) {
       DEBUG_LOCS   yLOG_snote   ("tab too big");
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;

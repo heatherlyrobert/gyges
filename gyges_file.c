@@ -55,7 +55,7 @@
 /*---(globals)----------+-----------+-*/
 char        ver_ctrl    = '-';
 char        ver_num     [10]        = "----";
-char        ver_txt     [100]       = "----------";
+char        ver_txt     [100]       = "-----";
 
 char        s_vers      [LEN_RECD]   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 char        s_recd      [LEN_RECD];
@@ -81,6 +81,10 @@ static FILE    *s_file;                      /* file pointer                   *
 /*====================------------------------------------====================*/
 PRIV void  o___VERSIONING______o () { return; }
 
+char FILE_bump_major    (void)  { return FILE_bump ("M"); }
+char FILE_bump_minor    (void)  { return FILE_bump ("m"); }
+char FILE_bump_inc      (void)  { return FILE_bump ("i"); }
+
 char
 FILE_bump          (char *a_type)
 {
@@ -95,6 +99,7 @@ FILE_bump          (char *a_type)
    --rce;  if (a_type [0] == '\0')               return rce;
    x_type = a_type [0];
    --rce;  if (strchr ("Mmi", x_type) == NULL)   return rce;
+   FILE_vertxt (NULL);
    /*---(tiny)---------------------------*/
    if (strchr ("i", x_type) != NULL) {
       if (ver_num [3] <  'z') {
@@ -139,9 +144,13 @@ FILE_bump          (char *a_type)
    --rce;  return  rce;
 }
 
+char FILE_control       (void)  { return FILE_controlled ("y"); }
+char FILE_nocontrol     (void)  { return FILE_controlled ("n"); }
+
 char
 FILE_controlled    (char *a_yes)
 {
+   FILE_vertxt (NULL);
    if (a_yes [0] == 'n') {
       if (ver_ctrl == 'y') {
          ver_ctrl = '-';
@@ -194,7 +203,17 @@ FILE_version       (char *a_ver)
    }
    /*---(finalize)-----------------------*/
    strcpy (ver_num, x_work);
+   FILE_vertxt (NULL);
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+FILE_vertxt        (char *a_txt)
+{
+   strlcpy (ver_txt, "-----", LEN_DESC);
+   if (a_txt == NULL)  return 0;
+   strlcpy (ver_txt, a_txt, LEN_DESC);
    return 0;
 }
 
@@ -592,7 +611,7 @@ static void   o___TABS____________o (void) { return; }
  */
 
 char         /*--> process a tab size record -------------[ leaf   [ ------ ]-*/
-INPT_tab           (char *a_label, char *a_name)
+INPT_tab           (char *a_label, char *a_name, char a_type)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -646,11 +665,13 @@ OUTP_tab             (short a_tab)
    char        x_addr      [25]        = "";
    char        x_name      [25]        = "";
    char        x_default   [25]        = "";
+   char        x_type      =  '-';
    /*---(prepare)------------------------*/
    sprintf (my.f_recd, "");
    /*---(defense)------------------------*/
    rc = LOC_tab_valid (a_tab);
    --rce;  if (rc      <  0)                     return rce;
+   x_type = LOC_tab_type (a_tab);
    /*---(gather size)--------------------*/
    x_cols = LOC_col_max (a_tab);
    /*> printf ("x_cols = %4d, default = %4d\n", x_cols, LOC_col_defmax());            <*/
@@ -666,7 +687,7 @@ OUTP_tab             (short a_tab)
    if (strcmp (x_default, x_name) != 0)  x_write = 'y';
    /*---(build record)-------------------*/
    if (x_write == 'y') {
-      sprintf (my.f_recd, "tab         -G-  %-8s  %-12.12s ", x_addr, x_name);
+      sprintf (my.f_recd, "tab         -H-  %-8s  %-12.12s  %c ", x_addr, x_name, x_type);
       return 1;
    }
    /*---(complete)-----------------------*/
@@ -711,7 +732,7 @@ OUTP_tabs            (FILE *a_file)
    int c = 0;
    char rc = 0;
    rc = OUTP_tab_head  (a_file);
-   for (i = 0; i <= MAX_TABS; ++i) {
+   for (i = 0; i <  MAX_TABS; ++i) {
       rc = OUTP_tab    (i);
       if (rc <= 0)   continue;
       if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
@@ -830,7 +851,7 @@ OUTP_cols            (FILE *a_file)
    int c = 0;
    char rc = 0;
    rc = OUTP_col_head  (a_file);
-   for (i = 0; i <= MAX_TABS; ++i) {
+   for (i = 0; i < MAX_TABS; ++i) {
       for (j = 0; j <= MAX_COLS; ++j) {
          rc = OUTP_col    (i, j);
          if (rc <= 0)   continue;
@@ -991,7 +1012,7 @@ OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
    --rce;  if (a_file == NULL)                        return rce;
    --rce;  if (*a_seq <  0)                           return rce;
    --rce;  if (a_tab  <  0)                           return rce;
-   --rce;  if (a_tab  >= my.ntab)                     return rce;
+   --rce;  if (a_tab  >= MAX_TABS)                    return rce;
    --rce;  if (a_bcol <  0)                           return rce;
    --rce;  if (a_bcol >= LOC_col_max (a_tab))         return rce;
    --rce;  if (a_ecol <  a_bcol)                      return rce;
@@ -1221,8 +1242,9 @@ INPT_main          (void)
          if  (my.f_vers == '?')  rc = INPT_col   (s_fields [1], atoi (s_fields [2]));
          break;
       case 't' :
-         if  (my.f_vers == 'F')  rc = INPT_tab   (s_fields [3], s_fields [9]);
-         if  (my.f_vers == 'G')  rc = INPT_tab   (s_fields [2], s_fields [3]);
+         if  (my.f_vers == 'F')  rc = INPT_tab   (s_fields [3], s_fields [9], '-');
+         if  (my.f_vers == 'G')  rc = INPT_tab   (s_fields [2], s_fields [3], '-');
+         if  (my.f_vers == 'H')  rc = INPT_tab   (s_fields [2], s_fields [3], s_fields [4][0]);
          break;
       case 'c' :
          if  (my.f_vers == 'D')  rc = INPT_cell  (s_fields [4], s_fields [5], s_fields [6]);
@@ -1319,7 +1341,7 @@ FILE_write         (void)
    /*---(non-dependency cells)-------------*/
    fprintf (f, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
    x_seq     = 0;
-   for (i = 0; i < NTAB; ++i) {
+   for (i = 0; i < MAX_TABS; ++i) {
       rc = OUTP_cell_free (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);
    }
    fprintf (f, "# independent cells complete\n\n\n\n");
@@ -1355,6 +1377,8 @@ FILE_unit          (char *a_question, int a_ref)
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "ver_num"   )    == 0) {
       snprintf (unit_answer, LEN_UNIT, "s_file ver_num   : %s", ver_num);
+   } else if (strcmp (a_question, "version"   )    == 0) {
+      snprintf (unit_answer, LEN_UNIT, "s_file version   : %c %-4.4s %s", ver_ctrl, ver_num, ver_txt);
    } else if (strcmp (a_question, "recd"      )    == 0) {
       snprintf (unit_answer, LEN_UNIT, "s_file recd      : %s", my.f_recd);
    } else if (strcmp (a_question, "freeze"    )    == 0) {
@@ -1364,7 +1388,7 @@ FILE_unit          (char *a_question, int a_ref)
       LOC_tab_name (a_ref, x_name);
       snprintf (unit_answer, LEN_UNIT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, 'y', x_name);
    } else if (strcmp (a_question, "tab_count" )    == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_file tab count : ntab=%4d", NTAB);
+      snprintf (unit_answer, LEN_UNIT, "s_file tab count : ntab=%4d", MAX_TABS);
    } else if (strcmp (a_question, "history"   )    == 0) {
       if      (nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", nhist, chist);
       if      (chist <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", nhist, chist);

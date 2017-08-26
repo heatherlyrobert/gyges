@@ -37,11 +37,16 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'f', "quitall"     ,  0, "qa"  ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit all files (if no changes), and exit"                    , "" },
    { 'f', "writequit"   ,  0, "wq"  ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
    { 'f', "writequitall",  0, "wqa" ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
-   { 'f', "controlled"  ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_controlled      , "s"    ,  0, "turn version control on for current file (y/n)"              , "" },
-   { 'f', "version"     ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
-   { 'f', "bump"        ,  0, ""    ,  0, '-', '-', .f.s   = FILE_bump            , "s"    ,  0, "increment the version number (M/Major, m/minor, i/inc)"      , "" },
+   /*---(versioning)---------------------*/
+   { 'f', "control"     ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_control         , ""     ,  0, "turn version control ON for current file"                    , "" },
+   { 'f', "nocontrol"   ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_nocontrol       , ""     ,  0, "turn version control OFF for current file"                   , "" },
+   { 'f', "vernum"      ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
+   { 'f', "vertxt"      ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_vertxt          , "a"    ,  0, "set a file version description"                              , "" },
+   { 'f', "major"       ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_major      , ""     ,  0, "increment the version number by a MAJOR version"             , "" },
+   { 'f', "minor"       ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_minor      , ""     ,  0, "increment the version number by a MINOR version"             , "" },
+   { 'f', "bump"        ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_inc        , ""     ,  0, "increment the version number by a INC version"               , "" },
    /*---(tab)----------------------------*/
-   { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.is  = LOC_tab_rename_curr  , "s"    ,  0, "change the name of the current tab"                          , "" },
+   { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.s   = LOC_tab_rename_curr  , "s"    ,  0, "change the name of the current tab"                          , "" },
    { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize_curr  , "s"    ,  0, "change the size of the current tab"                          , "" },
    { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_first        , "s"    ,  0, "change the size of a specific tab"                           , "" },
    { 't', "previous"    ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_previous     , "s"    ,  0, "change the size of a specific tab"                           , "" },
@@ -1447,6 +1452,7 @@ cmd_exec           (char *a_command)
    int         x_len       = 0;
    char        x_flag      = '-';
    char        x_fields    [10][LEN_RECD];
+   char        x_all       [LEN_RECD]       = "";
    int         x_nfield    =  0;
    int         i           = 0;
    /*---(header)-------------------------*/
@@ -1462,6 +1468,7 @@ cmd_exec           (char *a_command)
    p     = strtok_r (x_work, q, &r);
    ++p;
    x_len = strlen (p);
+   if (strlen (x_work) > x_len)  strlcpy (x_all, p + x_len + 1, LEN_RECD);
    /*---(system commands)----------------*/
    if (p[0] == '!') {
       rc = system (a_command + 2);
@@ -1494,19 +1501,22 @@ cmd_exec           (char *a_command)
       /*---(execute)---------------------*/
       DEBUG_USER   yLOG_note    ("found it");
       if        (strcmp (s_cmds [i].terms, ""    ) == 0) {
-         DEBUG_USER   yLOG_note    ("void type, no arg(s)");
+         DEBUG_USER   yLOG_note    ("void type, no args");
          rc = s_cmds [i].f.v   ();
       } else if (strcmp (s_cmds [i].terms, "c"   ) == 0) {
-         DEBUG_USER   yLOG_note    ("one char arg(s)");
+         DEBUG_USER   yLOG_note    ("one char arg");
          rc = s_cmds [i].f.c   (x_fields [1][0]);
       } else if (strcmp (s_cmds [i].terms, "s"   ) == 0) {
-         DEBUG_USER   yLOG_note    ("one string arg(s)");
+         DEBUG_USER   yLOG_note    ("one string arg");
          rc = s_cmds [i].f.s   (x_fields [1]);
+      } else if (strcmp (s_cmds [i].terms, "a"   ) == 0) {
+         DEBUG_USER   yLOG_note    ("one long string arg");
+         rc = s_cmds [i].f.s   (x_all);
       } else if (strcmp (s_cmds [i].terms, "ss"  ) == 0) {
-         DEBUG_USER   yLOG_note    ("two string arg(s)");
+         DEBUG_USER   yLOG_note    ("two string args");
          rc = s_cmds [i].f.ss  (x_fields [1], x_fields [1]);
       } else if (strcmp (s_cmds [i].terms, "is"  ) == 0) {
-         DEBUG_USER   yLOG_note    ("integer and string arg(s)");
+         DEBUG_USER   yLOG_note    ("integer arg and string arg");
          rc = s_cmds [i].f.is  (atoi (x_fields [1]), x_fields [1]);
       } else {
          DEBUG_USER   yLOG_note    ("crazy other shit, please update or fix");

@@ -543,11 +543,16 @@ CELL__free         (tCELL **a_cell, char a_linked)
    /*---(defense: valid cell)------------*/
    DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);
    --rce;  if (a_cell == NULL) {
-      DEBUG_CELL   yLOG_note    ("no null pointers (no poin)");
+      DEBUG_CELL   yLOG_note    ("no null pointers (no reason)");
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_CELL   yLOG_point   ("*a_cell"   , *a_cell);
+   --rce;  if (*a_cell == NULL) {
+      DEBUG_CELL   yLOG_note    ("no null pointers (no reason)");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    rc = CELL__valid (*a_cell, a_linked);
    --rce;  if (rc < 0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);

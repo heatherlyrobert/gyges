@@ -1496,8 +1496,8 @@ MOVE_unit          (char *a_question, int a_num)
    if      (a_num < 0) {
       snprintf (unit_answer, LEN_UNIT, "s_move error     : tab ref (%d) is negative", a_num);
    }
-   else if (a_num >= NTAB) {
-      snprintf (unit_answer, LEN_UNIT, "s_move error     : tab ref (%d vs %d) is too high", a_num, NTAB);
+   else if (a_num >= MAX_TABS) {
+      snprintf (unit_answer, LEN_UNIT, "s_move error     : tab ref (%d vs %d) is too high", a_num, MAX_TABS);
    }
    /*---(screen location)----------------*/
    else if (strcmp(a_question, "row_stats"     ) == 0) {

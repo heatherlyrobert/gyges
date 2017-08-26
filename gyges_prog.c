@@ -10,7 +10,8 @@ tLAYOUT     g_layouts [MAX_LAYOUT] = {
    { "formula"   , "small"        , G_FORMULA_SMALL     , 0                   , 0                   , "shows tiny plus location and version"       },
    { "formula"   , "debug"        , G_FORMULA_DEBUG     , 0                   , 0                   , "shows small plus current cell info"         },
    { "status"    , "hide"         , 0                   , G_STATUS_HIDE       , 0                   , "status line is not displayed"               },
-   { "status"    , "file"         , 0                   , G_STATUS_FILE       , 0                   , "file name, dimensions, and version"         },
+   { "status"    , "file"         , 0                   , G_STATUS_FILE       , 0                   , "file name, control, and version"            },
+   { "status"    , "tab"          , 0                   , G_STATUS_TAB        , 0                   , "tab name, type, and dimensions"             },
    { "status"    , "buffer"       , 0                   , G_STATUS_BUFFER     , 0                   , "details of current buffer"                  },
    { "status"    , "visual"       , 0                   , G_STATUS_VISUAL     , 0                   , "details of visual selection"                },
    { "status"    , "regs"         , 0                   , G_STATUS_REGS       , 0                   , "details of map register contents"           },
@@ -192,8 +193,8 @@ PROG_end           (void)
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    CELL_wrap    ();
-   LOC_wrap     ();
    DEP_wrap     ();   /* disconnect all cells */
+   LOC_wrap     ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_TOPS   yLOG_end     ();
    return 0;
@@ -395,7 +396,7 @@ unit_accessor(char *a_question, void *a_thing)
    else if   (strcmp(a_question, "curr_pos")       == 0) {
       snprintf(unit_answer, LEN_UNIT, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, CCOL, CROW);
    } else if (strcmp(a_question, "max_pos" )       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", my.ntab, NCOL, NROW);
+      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", MAX_TABS, NCOL, NROW);
    }
    /*---(dependencies)-------------------*/
    /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 

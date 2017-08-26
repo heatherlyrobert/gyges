@@ -550,6 +550,7 @@ CURS_status        (tCELL *a_curr)
    int         l           = 0;             /* string length                  */
    int         i           = 0;             /* iterator -- keys               */
    char        msg[500]  = "";                   /* temporary display message   */
+   char        t  [500]  = "";                   /* temporary display message   */
    char        rpn[LEN_RECD] = "";
    if (s_status_size <= 0)  return 0;
    switch (my.layout_status) {
@@ -598,10 +599,12 @@ CURS_status        (tCELL *a_curr)
    case G_STATUS_ERRORS   :
       snprintf (msg, 500, "errors (%3d)", nerror);
       break;
-   case 'v' : /* file version */
+   case G_STATUS_TAB      :
+      LOC_tab_name (CTAB, t);
+      snprintf (msg, 500, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW);
+   case G_STATUS_FILE     :
    default  :
-      if (ver_ctrl == 'y')  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : %-5.5s, %-40.40s ]", my.f_name, NCOL, NROW, ver_num, ver_txt);
-      else                  snprintf (msg, 500, "[ file : %-40.40s ][ %dc x %dr ][ version : not  controlled                                ]", my.f_name, NCOL, NROW);
+      snprintf (msg, 500, "[ file : %s ][ ver %c, %-5.5s, %s ]", my.f_name, ver_ctrl, ver_num, ver_txt);
       break;
    }
    if (sta_error == 'y')  attron (S_COLOR_STATUSE);
