@@ -15,7 +15,7 @@ PREP          v21  include the prototype headers                              
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (file  ) verify version control                              FILE_controlled                                                         ((37.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (file  ) verify version control                              FILE_controlled, FILE_control, FILE_nocontrol                           ((37.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -107,7 +107,7 @@ SCRP          v21  (file  ) version number setting verification               
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
 
-   GROUP      v21  check controlled                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+   GROUP      v21  check before controlled                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  try without version control on                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "0.0a"                                                                  i_lesser    0                                                                      
@@ -201,73 +201,103 @@ SCRP          v21  (file  ) version number setting verification               
 
    COND       v21  try bad periods                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "1 2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Fb                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Fb -----                                        
      exec     v21  pass a simple number                 FILE_version          "1+2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Fb                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Fb -----                                        
      exec     v21  pass a simple number                 FILE_version          "1@2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Fb                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Fb -----                                        
      exec     v21  pass a simple number                 FILE_version          "192f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Fb                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Fb -----                                        
      exec     v21  pass a simple number                 FILE_version          "1A2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Fb                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Fb -----                                        
 
    GROUP      v21  check major                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  change the major number                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "1.1b"                                                                  i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 1.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.1b -----                                        
 
    COND       v21  change the major number, again                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "9.1b"                                                                  i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 9.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 9.1b -----                                        
 
    COND       v21  change the major number to test hex                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "A.1b"                                                                  i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : A.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y A.1b -----                                        
 
    COND       v21  change the major number to greatest                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "F.1b"                                                                  i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
 
    COND       v21  try bad major numbers                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "a.2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "g.2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          " .2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "+.2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
 
    COND       v21  try to go backwards                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "0.2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "8.2f"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "F.1b"                                                                  i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
 
    GROUP      v21  check other issues                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  try bad lengths                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          NULL                                                                    i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          ""                                                                      i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "5.2"                                                                   i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "05.2fj"                                                                i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
      exec     v21  pass a simple number                 FILE_version          "5.2fj"                                                                 i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
 
    COND       v21  try misaligned                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_version          "  5.2f"                                                                i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : F.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y F.1b -----                                        
+
+   GROUP      v21  check command line                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  turn off version control                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set versioning                       FILE_controlled       "n"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : ----                                                
+     exec     v21  set versioning                       FILE_nocontrol                                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
+
+   COND       v21  turn on version control                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  set versioning                       FILE_control                                                                                  i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a -----                                        
+
+   COND       v21  give a specific version                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":version 0.5d"                                                         i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.5d -----                                        
+
+   COND       v21  give a blank version                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":version"                                                              i_lesser    0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.5d -----                                        
+
+   COND       v21  give a bad version                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":version 12.2"                                                         i_lesser    0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.5d -----                                        
+
+   COND       v21  try to go backwards                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":version 0.5a"                                                         i_lesser    0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.5d -----                                        
+
+   COND       v21  give a larger version                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":version 5.Af"                                                         i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 5.Af -----                                        
+
+   COND       v21  turn version control off                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":nocontrol"                                                            i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
 
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -278,7 +308,7 @@ SCRP          v21  (file  ) version number setting verification               
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (s_file) version bumping                                     FILE_bump                                                               ((38.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+SCRP          v21  (s_file) version bumping                                     FILE_bump, FILE_bump_major, FILE_bump_minor, FILE_bump_inc              ((38.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
@@ -287,106 +317,106 @@ SCRP          v21  (s_file) version bumping                                   
 
    COND       v21  try bump without version control                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : ----                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
 
    COND       v21  turn on version control                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set versioning                       FILE_controlled       "y"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.0a                                                
+     exec     v21  set versioning                       FILE_control                                                                                  i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a -----                                        
 
    COND       v21  perform a factor bump                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.0b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0b -----                                        
 
    COND       v21  perform a factor bump, again                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.0c                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0c -----                                        
 
    COND       v21  perform a factor bump near end                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "0.0y"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.0z                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0z -----                                        
 
    COND       v21  perform a factor bump at the end                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.1a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1a -----                                        
 
    COND       v21  perform a factor bump, again                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.1b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1b -----                                        
 
    GROUP      v21  bump minor                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  perform a minor bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.2a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.2a -----                                        
 
    COND       v21  perform a minor bump, again                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.3a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.3a -----                                        
 
    COND       v21  perform a factor bump, again                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.3b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.3b -----                                        
 
    COND       v21  perform a minor bump at hex change                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "0.9c"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Aa                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Aa -----                                        
 
    COND       v21  perform a minor bump, again                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Ba                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Ba -----                                        
 
    COND       v21  perform a minor bump in middle                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "0.Fc"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 0.Ga                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.Ga -----                                        
 
    COND       v21  perform a minor bump at at end                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "0.Zc"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 1.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.0a -----                                        
 
    GROUP      v21  bump major                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  perform a major bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 2.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 2.0a -----                                        
 
    COND       v21  perform a major bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 3.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 3.0a -----                                        
 
    COND       v21  perform a factor bump                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 3.0b                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 3.0b -----                                        
 
    COND       v21  perform a minor bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 3.1a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 3.1a -----                                        
 
    COND       v21  perform a major bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : 4.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 4.0a -----                                        
 
    COND       v21  perform a major bump at hex change                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "9.5d"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : A.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y A.0a -----                                        
 
    COND       v21  perform a major bump, again                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : B.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y B.0a -----                                        
 
    COND       v21  perform a major bump in middle                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "F.Ax"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : G.0a                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y G.0a -----                                        
 
    COND       v21  perform a major bump at at end                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  push version forward                 FILE_version          "Z.0x"                                                                  i_equal     0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_lesser    0                                                                      
-     get      v21  review the version number            FILE_unit             "ver_num"        , 0                                                    s_equal     s_file ver_num   : Z.Zz                                                
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y Z.Zz -----                                        
 
    COND       v21  try bad bump types                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  pass a simple number                 FILE_bump             "-"                                                                     i_lesser    0                                                                      
@@ -394,8 +424,144 @@ SCRP          v21  (s_file) version bumping                                   
      exec     v21  pass a simple number                 FILE_bump             " "                                                                     i_lesser    0                                                                      
      exec     v21  pass a simple number                 FILE_bump             "x"                                                                     i_lesser    0                                                                      
 
+   GROUP      v21  check command line                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  turn off version control                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  set versioning                       FILE_nocontrol                                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
+
+   COND       v21  turn on version control                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  set versioning                       FILE_control                                                                                  i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a -----                                        
+
+   COND       v21  try bump                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":bump"                                                                 i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0b -----                                        
+
+   COND       v21  try minor                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":minor"                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1a -----                                        
+
+   COND       v21  try bump                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":bump"                                                                 i_equal     0                                                                      
+     exec     v21  feed the command line                cmd_exec              ":bump"                                                                 i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1c -----                                        
+
+   COND       v21  try major                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":major"                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.0a -----                                        
+
+   COND       v21  try major                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":major"                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 2.0a -----                                        
+
+   COND       v21  turn version control off                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":nocontrol"                                                            i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
 
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
+SCRP          v21  (file  ) verify version control descriptions                 FILE_vertxt                                                             ((37.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                      
+
+   GROUP      v21  check main function                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  try without version control on                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "new version"                                                           i_lesser    0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
+
+   COND       v21  turn on version control                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  set versioning                       FILE_control                                                                                  i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a -----                                        
+
+   COND       v21  change the description                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "new version"                                                           i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a new version                                  
+
+   COND       v21  change the description, again                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "much newer version"                                                    i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a much newer version                           
+
+   COND       v21  perform a inc bump                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  pass a simple number                 FILE_bump             "i"                                                                     i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0b -----                                        
+
+   COND       v21  change the description                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "after a inc bump"                                                      i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0b after a inc bump                             
+
+   COND       v21  perform a minor bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  pass a simple number                 FILE_bump             "m"                                                                     i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1a -----                                        
+
+   COND       v21  change the description                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "after a minor bump"                                                    i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1a after a minor bump                           
+
+   COND       v21  perform a major bump                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  pass a simple number                 FILE_bump             "M"                                                                     i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.0a -----                                        
+
+   COND       v21  change the description                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "after a major bump"                                                    i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.0a after a major bump                           
+
+   COND       v21  set a version directly                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  pass a simple number                 FILE_version          "1.5f"                                                                  i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.5f -----                                        
+
+   COND       v21  change the description                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  change the version text              FILE_vertxt           "after a version change"                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 1.5f after a version change                       
+
+   GROUP      v21  check command line                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  turn off version control                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  set versioning                       FILE_nocontrol                                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
+
+   COND       v21  turn on version control                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  set versioning                       FILE_control                                                                                  i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a -----                                        
+
+   COND       v21  change text                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":vertxt a starting ver text"                                           i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0a a starting ver text                          
+
+   COND       v21  try bump                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":bump"                                                                 i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0b -----                                        
+
+   COND       v21  change text                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":vertxt an updated text"                                               i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.0b an updated text                              
+
+   COND       v21  try minor                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":minor"                                                                i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1a -----                                        
+
+   COND       v21  change without text                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":vertxt"                                                               i_lesser    0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : y 0.1a -----                                        
+
+   COND       v21  turn version control off                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((37.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  feed the command line                cmd_exec              ":nocontrol"                                                            i_equal     0                                                                      
+     get      v21  review the version number            FILE_unit             "version"        , 0                                                    s_equal     s_file version   : - ---- -----                                        
+
+   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((38.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                      
+
+
+
+#end-of-file

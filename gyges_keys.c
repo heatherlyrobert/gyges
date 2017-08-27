@@ -40,7 +40,7 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    /*---(versioning)---------------------*/
    { 'f', "control"     ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_control         , ""     ,  0, "turn version control ON for current file"                    , "" },
    { 'f', "nocontrol"   ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_nocontrol       , ""     ,  0, "turn version control OFF for current file"                   , "" },
-   { 'f', "vernum"      ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
+   { 'f', "version"     ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
    { 'f', "vertxt"      ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_vertxt          , "a"    ,  0, "set a file version description"                              , "" },
    { 'f', "major"       ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_major      , ""     ,  0, "increment the version number by a MAJOR version"             , "" },
    { 'f', "minor"       ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_minor      , ""     ,  0, "increment the version number by a MINOR version"             , "" },
@@ -1472,9 +1472,10 @@ cmd_exec           (char *a_command)
    /*---(system commands)----------------*/
    if (p[0] == '!') {
       rc = system (a_command + 2);
-      return 0;
+      return rc;
    }
    /*---(parse)--------------------------*/
+   for (i = 0; i < 10; ++i)  strlcpy (x_fields [i], "", LEN_RECD);
    for (i = 0; i < 10; ++i) {
       DEBUG_USER   yLOG_value   ("i"         , i);
       DEBUG_USER   yLOG_info    ("p"         , p);
@@ -1528,7 +1529,7 @@ cmd_exec           (char *a_command)
    }
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return rc;
 
    if (strlen (p) == 7 && strcmp (p, ":errors") == 0) {
       ERROR_list ();

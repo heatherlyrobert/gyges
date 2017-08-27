@@ -211,8 +211,11 @@ FILE_version       (char *a_ver)
 char
 FILE_vertxt        (char *a_txt)
 {
+   char        rce         =  -10;
    strlcpy (ver_txt, "-----", LEN_DESC);
-   if (a_txt == NULL)  return 0;
+   --rce;  if (ver_ctrl   != 'y' )  return rce;
+   --rce;  if (a_txt      == NULL)  return rce;
+   --rce;  if (a_txt [0]  == '\0')  return rce;
    strlcpy (ver_txt, a_txt, LEN_DESC);
    return 0;
 }

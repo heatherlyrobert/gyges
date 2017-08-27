@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4a"
-#define     VER_TXT   "file status uses version and :control, :nocontrol"
+#define     VER_NUM   "2.4b"
+#define     VER_TXT   "complete unit testing on version functions"
 
 
 
