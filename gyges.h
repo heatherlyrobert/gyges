@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4b"
-#define     VER_TXT   "complete unit testing on version functions"
+#define     VER_NUM   "2.4c"
+#define     VER_TXT   "implemented default tabs in addresses and yRPN"
 
 
 

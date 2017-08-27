@@ -344,7 +344,8 @@ RPN_convert        (
    x_work [0] = '=';
    DEBUG_RPN    yLOG_info    ("x_work"    , x_work);
    DEBUG_RPN    yLOG_value   ("prefix"    , ch);
-   x_rpn = yRPN_spreadsheet (x_work, &x_ntoken);
+   DEBUG_RPN    yLOG_value   ("CTAB"      , CTAB);
+   x_rpn = yRPN_spreadsheet (x_work, &x_ntoken, CTAB);
    --rce;  if (x_rpn == NULL)            return rce;
    DEBUG_RPN    yLOG_point   ("x_rpn"     , x_rpn);
    DEBUG_RPN    yLOG_info    ("x_rpn"     , x_rpn);
