@@ -913,6 +913,54 @@ CURS_info_cell       (void)
 }
 
 char
+CURS_listbufs      (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   char        x_line      [LEN_RECD];
+   int         x_row       = 4;
+   int         x_col       = 10;
+   char       *x_title     = " # ---name-------- col rows -c- t     # ---name-------- col rows -c- t ";
+   char       *x_leave     = "         please PRESS ANY KEY to escape this information window        ";
+   /*---(header)-------------------------*/
+   attron    (S_COLOR_VISUAL);
+   mvprintw  (x_row++, x_col, x_leave);
+   attrset   (0);
+   attron    (S_COLOR_TITLE);
+   mvprintw  (x_row++, x_col, x_title);
+   attrset   (0);
+   /*---(show marks)---------------------*/
+   for (i = 0; i < 18; ++i) {
+      /*---(left)------------------------*/
+      LOC_tab_line (i, x_line);
+      if (i == CTAB     )  attron (S_COLOR_CURRENT);
+      else                 attron (S_COLOR_VISUAL);
+      mvprintw   (x_row  , x_col, x_line);
+      attrset (0);
+      /*---(separator)-------------------*/
+      attron (S_COLOR_TITLE);
+      mvprintw   (x_row  , x_col + 34, "   ");
+      attrset (0);
+      /*---(upper case)------------------*/
+      LOC_tab_line (i + 18, x_line);
+      if (i + 18 == CTAB)  attron (S_COLOR_CURRENT);
+      else                 attron (S_COLOR_VISUAL);
+      mvprintw   (x_row++, x_col + 37, x_line);
+      attrset (0);
+      /*---(done)------------------------*/
+   }
+   /*---(footer)-------------------------*/
+   attron (S_COLOR_TITLE);
+   mvprintw   (x_row++, x_col, x_title);
+   attrset (0);
+   attron    (S_COLOR_VISUAL);
+   mvprintw  (x_row++, x_col, x_leave);
+   attrset   (0);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
 CURS_listmark      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1148,6 +1196,8 @@ CURS_main          (void)
    CURS_page      ();
    CURS_message   ();
    switch (my.info_win) {
+   case G_INFO_BUFS   : CURS_listbufs    ();
+                        break;
    case G_INFO_MARK   : CURS_listmark    ();
                         break;
    case G_INFO_REGS   : CURS_listreg     ();

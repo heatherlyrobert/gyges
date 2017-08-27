@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4c"
-#define     VER_TXT   "implemented default tabs in addresses and yRPN"
+#define     VER_NUM   "2.4d"
+#define     VER_TXT   "fancy buffer list show at double-comma"
 
 
 
@@ -293,6 +293,7 @@ extern    struct cACCESSOR my;
 
 
 #define     G_INFO_NONE       ' '
+#define     G_INFO_BUFS       ','
 #define     G_INFO_MARK       '\''
 #define     G_INFO_REGS       '"'
 #define     G_INFO_TREG       't'
@@ -1151,6 +1152,7 @@ char        LOC_tab_last         (void);
 char        LOC_tab_switch       (short a_tab);
 char        LOC_tab_switch_char  (char  a_tab);
 char        LOC_tab_status       (char  a_tab, char *a_list);
+char        LOC_tab_line         (char  a_tab, char *a_list);
 /*---(columns)-------------------*/
 char        LOC_col_clear        /* septal 1----- */  (short a_tab);
 char        LOC_col_valid        /* petal  2----- */  (short a_tab, short a_col);

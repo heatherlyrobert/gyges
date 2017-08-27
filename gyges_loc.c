@@ -1053,6 +1053,35 @@ LOC_tab_resize       (char *a_max)
 }
 
 char
+LOC_tab_line       (char a_tab, char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        x_tab       = '0';
+   char        x_count     [LEN_LABEL] = "";
+   /*---(beginning)----------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
+   /*---(defenses)--------------------*/
+   if (a_list  == NULL) {
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return -1;     /* then no point                       */
+   }
+   /*---(walk the list)---------------*/
+   if      (a_tab >= 0  && a_tab <= 9 )   x_tab = a_tab + '0';
+   else if (a_tab >= 10 && a_tab <= 36)   x_tab = a_tab - 10 + 'A';
+   else                                   return -2;
+   if      (s_tabs [a_tab].c ==   0)  sprintf (x_count, "  -");
+   else if (s_tabs [a_tab].c <  999)  sprintf (x_count, "%3d", s_tabs [a_tab].c);
+   else                               sprintf (x_count, "+++");
+   sprintf (a_list, " %c %-15.15s %3d %4d %3s %c ", x_tab, s_tabs [a_tab].name, s_tabs [a_tab].ncol, s_tabs [a_tab].nrow, x_count, s_tabs [a_tab].type);
+   /*---(complete)--------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
 LOC_tab_status     (char a_tab, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1071,7 +1100,7 @@ LOC_tab_status     (char a_tab, char *a_list)
    /*---(walk the list)---------------*/
    if      (a_tab >= 0  && a_tab <= 9 )   x_tab = a_tab + '0';
    else if (a_tab >= 10 && a_tab <= 36)   x_tab = a_tab - 10 + 'A';
-   else                                   x_tab = '?';
+   else                                   return -2;
    sprintf (x_size, "%dx%d", NCOL, NROW);
    sprintf (a_list, "[ buffer %d %c %s %-30.30s ]", a_tab, x_tab, x_size, s_tabs [a_tab].name);
    /*---(complete)--------------------*/

@@ -823,11 +823,28 @@ SMOD_buffer   (char a_major, char a_minor)
    char        rce         = -10;
    /*---(defenses)-----------------------*/
    --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER))             return rce;
+   /*---(mode changes)-------------------*/
+   if (a_minor == 27) {
+      DEBUG_USER   yLOG_note    ("escape, choose nothing");
+      my.menu = ' ';
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(check for control keys)---------*/
-   if (a_minor >= '0' && a_minor <= '9')   LOC_tab_switch (a_minor);
-   if (a_minor >= 'A' && a_minor <= 'Z')   LOC_tab_switch (a_minor);
-   /*> BUF_switch   (a_minor);                                                        <*/
-   yVIKEYS_mode_exit  ();
+   if      (a_minor >= '0' && a_minor <= '9') {
+      LOC_tab_switch_char (a_minor);
+      CURS_screen_reset ();
+      yVIKEYS_mode_exit  ();
+   } else if (a_minor >= 'A' && a_minor <= 'Z') {
+      LOC_tab_switch_char (a_minor);
+      CURS_screen_reset ();
+      yVIKEYS_mode_exit  ();
+   } else if (a_minor == ',') {
+      my.info_win = G_INFO_BUFS;
+      return a_major;
+   }
+   else return -1;
    /*---(complete)-----------------------*/
    return 0;
 }
