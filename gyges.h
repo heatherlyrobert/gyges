@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4d"
-#define     VER_TXT   "fancy buffer list show at double-comma"
+#define     VER_NUM   "2.4e"
+#define     VER_TXT   "fixed unit testing dump due to s_root un-nulled pointer"
 
 
 

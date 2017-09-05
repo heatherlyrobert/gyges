@@ -604,7 +604,7 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW);
    case G_STATUS_FILE     :
    default  :
-      snprintf (msg, 500, "[ file : %s ][ ver %c, %-5.5s, %s ]", my.f_name, ver_ctrl, ver_num, ver_txt);
+      snprintf (msg, 500, " %-20.20s%*.*s%30.30s %-4.4s ", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num);
       break;
    }
    if (sta_error == 'y')  attron (S_COLOR_STATUSE);

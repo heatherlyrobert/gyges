@@ -121,7 +121,7 @@
  * that root.
  *
  */
-static tCELL    *s_root;
+static tCELL    *s_root = NULL;
 
 /*---(denpendency link)------------------*/
 /*
@@ -215,9 +215,9 @@ PRIV void  o___PROG____________o () { return; }
 char         /*--> prepare dependency capability ---------[--------[--------]-*/
 DEP_init           (void)
 {
-   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
    int         i           = 0;
    int         j           = 0;
    int         x_count     = 0;
@@ -225,9 +225,18 @@ DEP_init           (void)
    int         x_reqs      = 0;
    int         x_pros      = 0;
    int         t           [5];
+   /*---(header)-------------------------*/
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(root tree)----------------------*/
-   CELL__new (&s_root, UNLINKED);
+   s_root = NULL;
+   rc = CELL__new (&s_root, UNLINKED);
+   DEBUG_DEPS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_DEPS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    --rce;  if (s_root == NULL) {
+      DEBUG_DEPS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    strcpy (s_root->label, "root");
@@ -318,8 +327,9 @@ DEP_wrap           (void)
    /*---(dependencies)-------------------*/
    DEP__purge ();
    CELL__free (&s_root, UNLINKED);
-   s_hdep  = NULL;
-   s_tdep  = NULL;
+   s_root   = NULL;
+   s_hdep   = NULL;
+   s_tdep   = NULL;
    s_ndep   = 0;
    /*---(complete)-----------------------*/
    DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
