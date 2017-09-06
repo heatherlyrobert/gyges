@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4e"
-#define     VER_TXT   "fixed unit testing dump due to s_root un-nulled pointer"
+#define     VER_NUM   "2.4f"
+#define     VER_TXT   "added writeas (saveas) to the command line"
 
 
 
@@ -1293,6 +1293,7 @@ char      INPT_main            (void);
 char      OUTP_header          (FILE *a_file);
 
 char      FILE_write           (void);
+char      FILE_writeas         (char *a_name);
 char      XML3_read            (char *a_name);
 
 

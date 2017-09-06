@@ -1362,6 +1362,15 @@ FILE_write         (void)
    return 0;
 }
 
+char
+FILE_writeas         (char *a_name)
+{
+   char        rc          =    0;
+   if (rc >= 0)  rc = FILE_rename (a_name);
+   if (rc >= 0)  rc = FILE_write  ();
+   return rc;
+}
+
 
 
 /*====================------------------------------------====================*/

@@ -33,6 +33,7 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'f', "edit"        ,  0, "e"   ,  0, '-', '-', NULL                          , ""     ,  0, "re-read the current spreadsheet from file"                   , "" },
    { 'f', "write"       ,  0, "w"   ,  0, 'y', '-', .f.v   = FILE_write           , ""     ,  0, "write the current spreadsheet to file"                       , "" },
    { 'f', "writeall"    ,  0, "wa"  ,  0, 'y', '-', .f.v   = FILE_write           , ""     ,  0, "write the current spreadsheet to file"                       , "" },
+   { 'f', "writeas"     ,  0, "was" ,  0, 'y', '-', .f.s   = FILE_writeas         , "s"    ,  0, "change the file name and write the file"                     , "" },
    { 'f', "quit"        ,  0, "q"   ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit current file (if no changes), exit if the only file"    , "" },
    { 'f', "quitall"     ,  0, "qa"  ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit all files (if no changes), and exit"                    , "" },
    { 'f', "writequit"   ,  0, "wq"  ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
