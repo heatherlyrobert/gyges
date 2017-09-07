@@ -1366,8 +1366,11 @@ char
 FILE_writeas         (char *a_name)
 {
    char        rc          =    0;
+   char        x_name      [LEN_RECD]  = "";
+   strlcpy (x_name, my.f_name, LEN_RECD);
    if (rc >= 0)  rc = FILE_rename (a_name);
    if (rc >= 0)  rc = FILE_write  ();
+   if (rc >= 0)  rc = FILE_rename (x_name);
    return rc;
 }
 

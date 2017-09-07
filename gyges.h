@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4f"
-#define     VER_TXT   "added writeas (saveas) to the command line"
+#define     VER_NUM   "2.4g"
+#define     VER_TXT   "changed writeas (saveas) to use a temp filename"
 
 
 
