@@ -47,17 +47,20 @@ main (int argc, char *argv[])
    MOVE_horz ('r');
    sch = ' ';
    yVIKEYS_mode_mesg (my.message, g_command);
+
+   my.mode_operating = MODE_MACRO;
+   my.macro_name     = 'a';
+
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
-   my.mode_operating = MODE_MACRO;
    while (done) {
       /*---(show screen)-----------------*/
       switch (my.mode_operating) {
       case MODE_MACRO    :
          cch = CURS_playback ();
-         cch = x_macro [x_mpos++];
-         if (cch == '\0') {
+         cch = KEYS_macro ('-');
+         if (cch <= 0) {
             my.mode_operating = MODE_NORMAL;
             continue;
          }

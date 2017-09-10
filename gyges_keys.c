@@ -816,8 +816,45 @@ KEYS__del          (char a_key)
 char          /*-> next key in the macro list ----------- [ leaf   [ ------ ]-*/
 KEYS_macro         (char a_action)
 {
-   char        ch          = ' ';
-   return ch;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_ch        =  ' ';
+   char        x_macro     [LEN_RECD]   = "";
+   int         x_len       =    0;
+   /*> DEBUG_USER   yLOG_enter   (__FUNCTION__);                                      <*/
+   /*> DEBUG_USER   yLOG_note    ("escape, choose nothing");                          <*/
+   rc = CELL_macro (x_macro);
+   --rce;  if (rc    <  0)             return rce;
+   x_len = strlen (x_macro);
+   --rce;  if (x_len <= 0)             return rce;
+   ++my.macro_pos;
+   --rce;  if (x_len <= my.macro_pos)  return rce;
+   x_ch = x_macro [my.macro_pos];
+   if (x_ch == '\\') {
+      ++my.macro_pos;
+      --rce;  if (x_len <= my.macro_pos)  return rce;
+      x_ch = x_macro [my.macro_pos];
+      switch (x_ch) {
+      case 'n' :  x_ch = K_RETURN;  break;
+      case 'e' :  x_ch = K_ESCAPE;  break;
+      case 't' :  x_ch = K_TAB;     break;
+      case '"' :  x_ch = '#';       break;
+      default  :  x_ch = NULL;      break;
+      }
+   }
+   if (x_ch <  0) {
+      switch (127 - x_ch) {
+      case G_CHAR_ENTER  :  x_ch = K_RETURN;  break;
+      case G_CHAR_ESC    :  x_ch = K_ESCAPE;  break;
+      default            :  x_ch = NULL;      break;
+      }
+   }
+   if (x_ch == NULL) {
+      my.macro_pos = -1;
+   }
+   /*> DEBUG_USER   yLOG_exit    (__FUNCTION__);                                      <*/
+   return x_ch;
 }
 
 char          /* PURPOSE : process keys for buffer movement ------------------*/

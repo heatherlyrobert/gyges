@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4h"
-#define     VER_TXT   "very simple macro silent running from string constant"
+#define     VER_NUM   "2.4i"
+#define     VER_TXT   "macros now read from Z tab entries"
 
 
 
@@ -222,6 +222,8 @@ struct cACCESSOR {
    int         logger;         /* log file so that we don't close it          */
    /*---(input)-----------*/
    char        mode_operating;              /* keyboard, macro, silent        */
+   char        macro_name;                  /* current macro name             */
+   int         macro_pos;                   /* step in current macro          */
    /*---(layout)----------*/
    char        layout_formula;              /* formula line display mode      */
    char        layout_status;               /* status line display mode       */
@@ -733,6 +735,7 @@ int     col_far;
 
 #define     K_RETURN      10
 #define     K_ESCAPE      27
+#define     K_TAB          9
 
 #define     K_CTRL_B       2
 #define     K_CTRL_C       3
@@ -946,6 +949,8 @@ char      KEYS_prow          (void);
 char*     KEYS__unit         (char *a_question);
 char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
+
+char      KEYS_macro         (char a_action);
 
 /*---(key movements)--------*/
 char      MOVE_prep          (void);
@@ -1223,51 +1228,52 @@ char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
-char      CELL_change        (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
-tCELL    *CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
+char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
+tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 
-char      CELL__depwipe      (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
-char      CELL__purge        (void);
+char      CELL__depwipe        (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
+char      CELL__purge          (void);
 
-char      CELL__numerics     (tCELL *a_cell);
+char      CELL__numerics       (tCELL *a_cell);
 
-char      CELL__rpn          (tCELL *a_cell);
-char      CELL__build        (tCELL *a_cell);
-char      CELL__like         (tCELL *a_cell);
-char      CELL__point        (tCELL *a_cell);
-char      CELL__eval         (tCELL *a_cell);
-char      CELL__formulas     (tCELL *a_cell);
+char      CELL__rpn            (tCELL *a_cell);
+char      CELL__build          (tCELL *a_cell);
+char      CELL__like           (tCELL *a_cell);
+char      CELL__point          (tCELL *a_cell);
+char      CELL__eval           (tCELL *a_cell);
+char      CELL__formulas       (tCELL *a_cell);
 
-char      CELL__ftype        (char a_prefix);
-char      CELL_init          (void);
-char      CELL_wrap          (void);
-char      CELL__interpret    (tCELL *a_curr);
+char      CELL__ftype          (char a_prefix);
+char      CELL_init            (void);
+char      CELL_wrap            (void);
+char      CELL__interpret      (tCELL *a_curr);
 
 char      CELL_erase           (void);
-char      CELL_align_valid     (char a_align);
-char      CELL_align           (char a_mode, char a_align);
-char      CELL_decimals_valid  (char a_decs);
-char      CELL_decimals        (char a_mode, char a_decs);
-char      CELL_format_valid    (char a_format);
-char      CELL_format          (char a_mode, char a_format);
-char      CELL_width           (char a_mode, char a_num);
+char      CELL_align_valid     (char   a_align);
+char      CELL_align           (char   a_mode, char a_align);
+char      CELL_decimals_valid  (char   a_decs);
+char      CELL_decimals        (char   a_mode, char a_decs);
+char      CELL_format_valid    (char   a_format);
+char      CELL_format          (char   a_mode, char a_format);
+char      CELL_width           (char   a_mode, char a_num);
+char      CELL_macro           (char  *a_macro);
 char      CELL_printable       (tCELL *a_cell);
 
-char     *CELL__unit         (char *a_question, tCELL *a_cell);
-char     *CELL__unitnew      (char *a_question, char *a_label);
+char     *CELL__unit           (char  *a_question, tCELL *a_cell);
+char     *CELL__unitnew        (char  *a_question, char *a_label);
 
-char      SYLK_read            (char *a_name);
-char      SYLK_write           (char *a_name, char a_variation);
-char      FILE_controlled      (char *a_yes);
+char      SYLK_read            (char  *a_name);
+char      SYLK_write           (char  *a_name, char a_variation);
+char      FILE_controlled      (char  *a_yes);
 char      FILE_control         (void);
 char      FILE_nocontrol       (void);
-char      FILE_version         (char *a_ver);
-char      FILE_vertxt          (char *a_txt);
-char      FILE_bump            (char *a_type);
+char      FILE_version         (char  *a_ver);
+char      FILE_vertxt          (char  *a_txt);
+char      FILE_bump            (char  *a_type);
 char      FILE_bump_major      (void);
 char      FILE_bump_minor      (void);
 char      FILE_bump_inc        (void);
-char      FILE_rename          (char *a_name);
+char      FILE_rename          (char  *a_name);
 
 
 /*---(tabs)------------------*/

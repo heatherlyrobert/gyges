@@ -103,15 +103,17 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
    my.mode_operating = MODE_NORMAL;
-   hist_active = '-';
-   nhist       =  0;
-   chist       = -1;
+   my.macro_name     = 'a';
+   my.macro_pos      = 0;
+   hist_active       = '-';
+   nhist             =  0;
+   chist             = -1;
    yVIKEYS_mode_init   ();
    yVIKEYS_mode_enter  (MODE_MAP);
    PROG_layout_init    ();
    CALC_init           ();
-   my.info_win = G_INFO_NONE;
-   my.menu     = ' ';
+   my.info_win       = G_INFO_NONE;
+   my.menu           = ' ';
    /*---(complete)-----------------------*/
    DEBUG_TOPS   yLOG_exit     (__FUNCTION__);
    return 0;

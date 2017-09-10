@@ -1966,6 +1966,29 @@ PRIV void  o___DISPLAY_________o () { return; }
 
 char        s_print     [LEN_RECD] = "";
 
+char
+CELL_macro           (char *a_macro)
+{
+   char        rce         =  -10;
+   short       x_row       =    0;
+   tCELL      *x_curr      = NULL;
+   --rce;  if (a_macro   == NULL     )                      return rce;
+   --rce;  if (my.macro_name < 'a' || my.macro_name > 'z')  return rce;
+   x_row = my.macro_name - 'a';
+   x_curr = LOC_cell_at_loc ( 35, 1, x_row);
+   --rce;  if (x_curr    == NULL)                           return rce;
+   if (x_curr->t == CTYPE_STR) {
+      strlcpy (a_macro, x_curr->s    , LEN_LABEL);
+      return 0;
+   }
+   if (x_curr->t == CTYPE_MOD) {
+      strlcpy (a_macro, x_curr->v_str, LEN_LABEL);
+      return 0;
+   }
+   --rce;
+   return rce;
+}
+
 char         /*--> determine full print width ------------[ ------ [ ------ ]-*/
 CELL_print_width     (tCELL *a_curr, int *a_width, int *a_merge)
 {
@@ -2060,7 +2083,7 @@ CELL_printable     (tCELL *a_curr) {
       if      (x_type == CTYPE_STR)   strcat (x_temp, a_curr->s);
       else if (x_type == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);
       else if (x_type == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);
-      else                               strcat (x_temp, "");
+      else                            strcat (x_temp, "");
    }
    /*---(empty)--------------------------*/
    else if (x_type == CTYPE_BLANK) {
