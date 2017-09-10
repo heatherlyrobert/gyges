@@ -11,10 +11,12 @@ main (int argc, char *argv[])
 {
    /*---(locals)-----------+-----------+-*/
    int         updates     = 0;
-   int         cch         = ' ';      /* current keystroke                   */
-   int         sch         = ' ';      /* saved keystroke                     */
+   char        cch         = ' ';      /* current keystroke                   */
+   char        sch         = ' ';      /* saved keystroke                     */
    char        rc          = 0;
    char        x_savemode  = '-';
+   char        x_macro     [LEN_RECD] = "llljjhs123\n";
+   char        x_mpos      = 0;
    /*---(initialize)---------------------*/
    if (rc >= 0)  rc = yURG_logger  (argc, argv);
    if (rc >= 0)  rc = PROG_init    (argc, argv);
@@ -48,9 +50,23 @@ main (int argc, char *argv[])
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
+   my.mode_operating = MODE_MACRO;
    while (done) {
       /*---(show screen)-----------------*/
-      cch = CURS_main ();
+      switch (my.mode_operating) {
+      case MODE_MACRO    :
+         cch = CURS_playback ();
+         cch = x_macro [x_mpos++];
+         if (cch == '\0') {
+            my.mode_operating = MODE_NORMAL;
+            continue;
+         }
+         break;
+      case MODE_NORMAL   :
+      default            :
+         cch = CURS_main  ();
+         break;
+      }
       KEYS_record (cch);
       /*---(log)-------------------------*/
       ++updates;

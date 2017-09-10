@@ -102,6 +102,7 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
+   my.mode_operating = MODE_NORMAL;
    hist_active = '-';
    nhist       =  0;
    chist       = -1;

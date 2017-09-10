@@ -1160,7 +1160,17 @@ CURS_listerror     (tCELL *a_cell)
 /*====================------------------------------------====================*/
 PRIV void  o___SCREEN__________o () { return; }
 
-int                /* PURPOSE : presents the outer window frame elements      */
+char          /*-> capture keyboard input during macros --[ leaf   [--------]-*/
+CURS_playback      (void)
+{
+   char        ch          = ' ';
+   nodelay (stdscr, TRUE);
+   ch = getch ();
+   nodelay (stdscr, FALSE);
+   return ch;
+}
+
+char          /*-> present screen elements ---------------[ ------ [ ------ ]-*/
 CURS_main          (void)
 {
    /*---(locals)-----------+-----------+-*/

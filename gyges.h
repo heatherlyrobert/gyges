@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4g"
-#define     VER_TXT   "changed writeas (saveas) to use a temp filename"
+#define     VER_NUM   "2.4h"
+#define     VER_TXT   "very simple macro silent running from string constant"
 
 
 
@@ -210,12 +210,18 @@ int         nkeylog;
 
 
 
-
+#define     MODE_NORMAL        '-'      /* normal keyboard input              */
+#define     MODE_MACRO         'm'      /* macro running with redisplay       */
+#define     MODE_MPLAY         'p'      /* macro under playback controls      */
+#define     MODE_MFAST         'f'      /* macro fast and silent running      */
+#define     MODE_HISTORY       'h'      /* history playback mode              */
 
 struct cACCESSOR {
    /*---(files)----------------*/
    char        quiet;          /* bool : 0=normal, 1=quiet                    */
    int         logger;         /* log file so that we don't close it          */
+   /*---(input)-----------*/
+   char        mode_operating;              /* keyboard, macro, silent        */
    /*---(layout)----------*/
    char        layout_formula;              /* formula line display mode      */
    char        layout_status;               /* status line display mode       */
@@ -968,7 +974,8 @@ char*     MOVE_unit          (char *a_question, int a_num);
 char      CURS_screen_reset    (void);
 char      CURS_begin           (void);
 char      CURS_end             (void);
-int       CURS_main            (void);
+char      CURS_main            (void);
+char      CURS_playback        (void);
 char      CURS_col_head        (void);
 char      CURS_row_head        (void);
 char      CURS_cell            (int a_col, int a_row, short a_ypos, short a_xpos, short a_wide);

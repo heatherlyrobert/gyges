@@ -49,10 +49,10 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    /*---(tab)----------------------------*/
    { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.s   = LOC_tab_rename_curr  , "s"    ,  0, "change the name of the current tab"                          , "" },
    { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize_curr  , "s"    ,  0, "change the size of the current tab"                          , "" },
-   { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_first        , "s"    ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "prev"        ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_previous     , "s"    ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "next"        ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_next         , "s"    ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "last"        ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_last         , "s"    ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_first        , ""     ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "prev"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_previous     , ""     ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "next"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_next         , ""     ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "last"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_last         , ""     ,  0, "change the size of a specific tab"                           , "" },
    { 't', "switch"      ,  0, ""    ,  0, 'y', 'y', .f.c   = LOC_tab_switch_char  , "c"    ,  0, "change the size of a specific tab"                           , "" },
    /*---(view)---------------------------*/
    { 'v', "formula"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_formula  , "s"    ,  0, ""                                                            , "" },
@@ -813,6 +813,13 @@ KEYS__del          (char a_key)
    return 0;
 }
 
+char          /*-> next key in the macro list ----------- [ leaf   [ ------ ]-*/
+KEYS_macro         (char a_action)
+{
+   char        ch          = ' ';
+   return ch;
+}
+
 char          /* PURPOSE : process keys for buffer movement ------------------*/
 SMOD_buffer   (char a_major, char a_minor)
 {
@@ -844,13 +851,15 @@ SMOD_buffer   (char a_major, char a_minor)
    } else if (a_minor == ',') {
       my.info_win = G_INFO_BUFS;
       return a_major;
+   } else {
+      yVIKEYS_mode_exit  ();
+      return -1;
    }
-   else return -1;
    /*---(complete)-----------------------*/
    return 0;
 }
 
-char         /*--> menu sub-mode -------------------------[--------[--------]-*/
+char          /*-> menu sub-mode -------------------------[--------[--------]-*/
 SMOD_menus         (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1649,17 +1658,18 @@ cmd_exec           (char *a_command)
 char       /*----: process keys for input/append mode ------------------------*/
 MODE_command       (char a_major, char a_minor)
 {
-   /*---(locals)-----------+-----------+-*/
+   /*---(locals)-----------+-----+-----+-*/
    int         x_len       = 0;
    char        x_temp      [11]        = "";
+   char        rc          =    0;
    /*---(check for control keys)---------*/
    x_len = strlen (g_command);
    switch (a_minor) {
    case   27 : yVIKEYS_mode_exit ();
                return 0;
-   case   10 : cmd_exec (g_command);
+   case   10 : rc = cmd_exec (g_command);
                yVIKEYS_mode_exit ();
-               return 0;   /* return  */
+               return rc;   /* return  */
    }
    /*---(check for backspace)------------*/
    if (a_minor == 8 || a_minor == 127) {
