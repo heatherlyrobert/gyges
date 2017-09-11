@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4l"
-#define     VER_TXT   "very basic macro sub-mode is working"
+#define     VER_NUM   "2.4m"
+#define     VER_TXT   "fixed cell contents not clearing in null cells"
 
 
 
@@ -710,7 +710,7 @@ extern      char     *g_rcops;
 
 extern int     done;
 extern char    g_contents [LEN_RECD];
-extern char    saved      [LEN_RECD];
+extern char    g_saved    [LEN_RECD];
 extern char    cmd        [10];
 extern char    msg_type;
 extern char    message    [LEN_RECD];

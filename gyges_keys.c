@@ -969,7 +969,7 @@ SMOD_buffer   (char a_major, char a_minor)
    /*---(defenses)-----------------------*/
    --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER))             return rce;
    /*---(mode changes)-------------------*/
-   if (a_minor == 27) {
+   if (a_minor == K_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape, choose nothing");
       my.menu = ' ';
       yVIKEYS_mode_exit ();
@@ -1015,7 +1015,7 @@ SMOD_menus         (char a_major, char a_minor)
       return rce;
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == 27) {
+   if (a_minor == K_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape, choose nothing");
       my.menu = ' ';
       yVIKEYS_mode_exit ();
@@ -1088,7 +1088,7 @@ MODE_source   (char a_major, char a_minor)
       }
       /*---(mode changes)----------------*/
       switch (a_minor) {
-      case  10  :
+      case K_RETURN :
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
          CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
          EDIT_pos     ('r');
@@ -1096,7 +1096,7 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;   /* escape  */
          break;
-      case  27  : case  'U' :
+      case K_ESCAPE : case  'U' :
          DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
          x_curr = LOC_cell_at_curr ();
          if (x_curr != NULL && x_curr->s != NULL) {
@@ -1296,7 +1296,7 @@ SMOD_replace  (char a_major, char a_minor)
       }
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == 27 || a_minor == 10) {
+   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
       if (x_append == 'y') {
          g_contents [my.cpos] = '\0';
@@ -1388,7 +1388,7 @@ SMOD_error         (char a_major, char a_minor)
     *>    return rce;                                                                 <* 
     *> }                                                                              <*/
    /*---(mode changes)-------------------*/
-   /*> if (a_minor == 27 || a_minor == 10) {                                          <* 
+   /*> if (a_minor == K_ESCAPE || a_minor == K_RETURN) {                                          <* 
     *>    DEBUG_USER   yLOG_note    ("escape/return, return to previous mode");       <* 
     *>    yVIKEYS_mode_exit ();                                                             <* 
     *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
@@ -1484,15 +1484,15 @@ MODE_input         (char  a_major, char  a_minor)
       }
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == 27 || a_minor == 10) {
+   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
       for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
       if (a_major == 'a')  --(my.cpos);
       EDIT_done   ();
-      if (a_minor == 10 && yVIKEYS_mode_prev() == MODE_MAP) {
+      if (a_minor == K_RETURN && yVIKEYS_mode_prev() == MODE_MAP) {
          CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
       }
-      if (a_minor == 27 && yVIKEYS_mode_prev() == MODE_MAP) {
+      if (a_minor == K_ESCAPE && yVIKEYS_mode_prev() == MODE_MAP) {
          x_curr = LOC_cell_at_curr ();
          if (x_curr != NULL && x_curr->s != NULL) {
             strlcpy (g_contents, x_curr->s, LEN_RECD); 
@@ -1541,7 +1541,7 @@ SMOD_format        (char a_major, char a_minor)
 {
    /*---(check for control keys)---------*/
    switch (a_minor) {
-   case   10 : case   27 :
+   case   K_RETURN : case   K_ESCAPE :
       yVIKEYS_mode_exit ();
       return 0;   /* escape  */
    }
@@ -1860,9 +1860,9 @@ MODE_command       (char a_major, char a_minor)
    /*---(check for control keys)---------*/
    x_len = strlen (g_command);
    switch (a_minor) {
-   case   27 : yVIKEYS_mode_exit ();
+   case   K_ESCAPE : yVIKEYS_mode_exit ();
                return 0;
-   case   10 : rc = cmd_exec (g_command);
+   case   K_RETURN : rc = cmd_exec (g_command);
                yVIKEYS_mode_exit ();
                return rc;   /* return  */
    }
@@ -1899,8 +1899,8 @@ SMOD_wander        (char a_prev, char a_curr)
    switch (a_curr) {
    case  ',' :
    case  ')' : post = a_curr;
-   case  10  :
-   case  27  : VISU_clear ();
+   case  K_RETURN  :
+   case  K_ESCAPE  : VISU_clear ();
                LOC_ref (CTAB, CCOL, CROW, 0, wref);
                CTAB = wtab;
                CCOL = wcol;

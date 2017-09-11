@@ -10,7 +10,7 @@ int     save = 0;
 
 int     done = 1;
 char    g_contents      [LEN_RECD] = "";
-char    saved   [LEN_RECD] = "";
+char    g_saved         [LEN_RECD] = "";
 char    cmd[10] = "";
 char    message [LEN_RECD] = "";
 char    g_command [LEN_RECD] = "";
@@ -30,7 +30,7 @@ static  int   s_endr  = 0;
 char          /* PURPOSE : clear out recent editing --------------------------*/
 clear_input   (void)
 {
-   strncpy(saved   , g_contents, LEN_RECD);
+   strncpy(g_saved   , g_contents, LEN_RECD);
    strncpy(g_contents, ""      , LEN_RECD);
    return 0;
 }
@@ -38,7 +38,7 @@ clear_input   (void)
 char          /* PURPOSE : place recent input into the right cell ------------*/
 save_saved    (void)
 {
-   strncpy(g_contents, saved, LEN_RECD);
+   strncpy(g_contents, g_saved, LEN_RECD);
    CELL_change (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
    return 0;
 }
@@ -77,6 +77,7 @@ MOVE_prep          (void)
 char
 MOVE_done          (void)
 {
+   int         i           = 0;
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_USER  yLOG_enter   (__FUNCTION__);
@@ -119,6 +120,8 @@ MOVE_done          (void)
    DEBUG_USER   yLOG_note    ("get current cell");
    x_curr = LOC_cell_at_curr ();
    DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);
+   DEBUG_USER   yLOG_note    ("clear current contents");
+   for (i = 0; i < LEN_RECD; ++i)  g_contents [i] = '\0';
    DEBUG_USER   yLOG_note    ("get current contents");
    if (x_curr != NULL) {
       DEBUG_USER   yLOG_info    ("x_curr->s" , x_curr->s);
@@ -1230,10 +1233,13 @@ PRIV void  o___EDIT_WRAPPERS___o () { return; }
 char         /*--> prepare contents for new edit ---------[ leaf   [ ------ ]-*/
 EDIT_start         (char *a_prefix)
 {
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
    strlcpy (g_contents, a_prefix , LEN_RECD);
+   DEBUG_USER   yLOG_info    ("g_contents", g_contents);
    my.npos = strlen (g_contents);
    my.cpos = my.npos;
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1241,6 +1247,8 @@ char         /*--> prepare for source mode move ----------[ leaf   [ ------ ]-*/
 EDIT_prep          (void)
 {
    /*---(prepare)------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_info    ("g_contents", g_contents);
    my.npos     = strlen (g_contents);
    /*---(display debugging)--------------*/
    DEBUG_USER   yLOG_value   ("my.npos"   , my.npos);
@@ -1249,6 +1257,7 @@ EDIT_prep          (void)
    DEBUG_USER   yLOG_value   ("my.cpos"   , my.cpos);
    DEBUG_USER   yLOG_value   ("my.epos"   , my.epos);
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1256,6 +1265,8 @@ char         /*--> complete a source mode move -----------[ leaf   [ ------ ]-*/
 EDIT_done          (void)
 {
    /*---(prepare)------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_info    ("g_contents", g_contents);
    my.npos     = strlen (g_contents);
    /*---(display debugging)--------------*/
    DEBUG_USER   yLOG_value   ("my.npos"   , my.npos);
@@ -1313,6 +1324,7 @@ EDIT_done          (void)
    DEBUG_USER   yLOG_value   ("my.cpos"   , my.cpos);
    DEBUG_USER   yLOG_value   ("my.epos"   , my.epos);
    /*---(complete)--------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
