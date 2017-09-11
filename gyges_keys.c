@@ -836,17 +836,25 @@ KEYS_macro         (char a_action)
       --rce;  if (x_len <= my.macro_pos)  return rce;
       x_ch = x_macro [my.macro_pos];
       switch (x_ch) {
-      case 'n' :  x_ch = K_RETURN;  break;
-      case 'e' :  x_ch = K_ESCAPE;  break;
-      case 't' :  x_ch = K_TAB;     break;
-      case '"' :  x_ch = '#';       break;
-      default  :  x_ch = NULL;      break;
+      case 'n'  :  x_ch = K_RETURN;  break;
+      case 'e'  :  x_ch = K_ESCAPE;  break;
+      case 't'  :  x_ch = K_TAB;     break;
+      case 'b'  :  x_ch = K_BS;      break;
+      case '"'  :  x_ch = '"';       break;
+      case '\'' :  x_ch = '\'';      break;
+      case '\\' :  x_ch = '\\';      break;
+      default   :  x_ch = NULL;      break;
       }
    }
    if (x_ch <  0) {
       switch (127 - x_ch) {
       case G_CHAR_ENTER  :  x_ch = K_RETURN;  break;
       case G_CHAR_ESC    :  x_ch = K_ESCAPE;  break;
+      case G_CHAR_BS     :  x_ch = K_BS;      break;
+      case G_CHAR_TAB    :  x_ch = K_TAB;     break;
+      case G_CHAR_GROUP  :  x_ch = K_GROUP;   break;
+      case G_CHAR_FIELD  :  x_ch = K_FIELD;   break;
+      case G_CHAR_SPACE  :  x_ch = K_SPACE;   break;
       default            :  x_ch = NULL;      break;
       }
    }

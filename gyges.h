@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4i"
-#define     VER_TXT   "macros now read from Z tab entries"
+#define     VER_NUM   "2.4j"
+#define     VER_TXT   "macros now translate escaped characters"
 
 
 
@@ -736,6 +736,10 @@ int     col_far;
 #define     K_RETURN      10
 #define     K_ESCAPE      27
 #define     K_TAB          9
+#define     K_BS         127
+#define     K_GROUP       29
+#define     K_FIELD       31
+#define     K_SPACE       32
 
 #define     K_CTRL_B       2
 #define     K_CTRL_C       3
