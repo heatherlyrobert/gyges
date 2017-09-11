@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4j"
-#define     VER_TXT   "macros now translate escaped characters"
+#define     VER_NUM   "2.4k"
+#define     VER_TXT   "input and source modes can enter/edit escaped chars"
 
 
 
@@ -767,6 +767,11 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_DEGREE     176   /* °  degree mark      (  -)   */
 #define   G_CHAR_FUNKY      186   /* º  funky mark       (  -)   */
 #define   G_CHAR_STAFF      165   /* ¥  staff            (  -)   */
+#define   G_CHAR_DOT        183   /* ·  dot              (  -)   */
+#define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
+#define   G_CHAR_ALT        163   /* £  pounds           (  -)   */
+#define   G_CHAR_HALT       177   /* ±  sign-post        (  -)   */
+#define   G_CHAR_DISPLAY    208   /* ©  copyright        (  -)   */
 
 
 

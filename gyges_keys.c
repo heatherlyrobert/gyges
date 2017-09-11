@@ -840,6 +840,9 @@ KEYS_macro         (char a_action)
       case 'e'  :  x_ch = K_ESCAPE;  break;
       case 't'  :  x_ch = K_TAB;     break;
       case 'b'  :  x_ch = K_BS;      break;
+      case 'f'  :  x_ch = K_FIELD;   break;
+      case 'g'  :  x_ch = K_GROUP;   break;
+      case 's'  :  x_ch = K_SPACE;   break;
       case '"'  :  x_ch = '"';       break;
       case '\'' :  x_ch = '\'';      break;
       case '\\' :  x_ch = '\\';      break;
@@ -847,14 +850,14 @@ KEYS_macro         (char a_action)
       }
    }
    if (x_ch <  0) {
-      switch (127 - x_ch) {
+      switch (256 + x_ch) {
       case G_CHAR_ENTER  :  x_ch = K_RETURN;  break;
-      case G_CHAR_ESC    :  x_ch = K_ESCAPE;  break;
+      case G_CHAR_STAFF  :  x_ch = K_ESCAPE;  break;
       case G_CHAR_BS     :  x_ch = K_BS;      break;
       case G_CHAR_TAB    :  x_ch = K_TAB;     break;
       case G_CHAR_GROUP  :  x_ch = K_GROUP;   break;
       case G_CHAR_FIELD  :  x_ch = K_FIELD;   break;
-      case G_CHAR_SPACE  :  x_ch = K_SPACE;   break;
+      case G_CHAR_DOT    :  x_ch = K_SPACE;   break;
       default            :  x_ch = NULL;      break;
       }
    }
@@ -1146,9 +1149,10 @@ SMOD_replace  (char a_major, char a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [LEN_RECD]  = "rRm";
+   char        x_majors    [LEN_RECD]  = "rRm\\";
    static char x_append    = '-';
    static char x_saved = '\0';
+   static char x_prev  = '-';
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -1168,6 +1172,34 @@ SMOD_replace  (char a_major, char a_minor)
    }
    /*---(prepare)------------------------*/
    EDIT_prep   ();
+   /*---(escaped chars)------------------*/
+   if (a_minor == '\\' && x_prev != '\\') {
+      x_prev = '\\';
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
+   }
+   if (x_prev == '\\') {
+      x_prev = '-';
+      switch (a_minor) {
+      case 'n'  :  a_minor = G_CHAR_ENTER;   break;  /* return char           */
+      case 'e'  :  a_minor = G_CHAR_STAFF;   break;  /* escape char           */
+      case 't'  :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
+      case 'b'  :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
+      case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
+      case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
+      case 's'  :  a_minor = G_CHAR_DOT;     break;  /* visual space          */
+      case '0'  :  a_minor = G_CHAR_NULL;    break;  /* null                  */
+      case 'a'  :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
+      case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
+      case 'p'  :  a_minor = G_CHAR_LQUEST;  break;  /* break point           */
+      case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
+      case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
+      case '"'  :  a_minor = '"';            break;
+      case '\'' :  a_minor = '\'';           break;
+      case '\\' :  a_minor = '\\';           break;
+      default   :  return a_major;           break;
+      }
+   }
    /*---(mode changes)-------------------*/
    if (a_minor == 27 || a_minor == 10) {
       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
@@ -1196,12 +1228,6 @@ SMOD_replace  (char a_major, char a_minor)
          g_contents [my.cpos] = G_CHAR_PLACE;
       }
       EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   }
-   /*---(filter crazy chars)-------------*/
-   if (a_minor < 32 || a_minor >= 127) {
-      DEBUG_USER   yLOG_note    ("unacceptable character");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_major;
    }
@@ -1299,9 +1325,10 @@ MODE_input         (char  a_major, char  a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   char        x_majors    [LEN_RECD]   = "IiaAm";
+   char        x_majors    [LEN_RECD]   = "IiaAm\\";
    int         i           = 0;             /* loop iterator                  */
    tCELL      *x_curr      = NULL;
+   static char x_prev      = '-';
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -1332,6 +1359,34 @@ MODE_input         (char  a_major, char  a_minor)
       EDIT_done   ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_minor;
+   }
+   /*---(escaped chars)------------------*/
+   if (a_minor == '\\' && x_prev != '\\') {
+      x_prev = '\\';
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
+   }
+   if (x_prev == '\\') {
+      x_prev = '-';
+      switch (a_minor) {
+      case 'n'  :  a_minor = G_CHAR_ENTER;   break;  /* return char           */
+      case 'e'  :  a_minor = G_CHAR_STAFF;   break;  /* escape char           */
+      case 't'  :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
+      case 'b'  :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
+      case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
+      case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
+      case 's'  :  a_minor = G_CHAR_DOT;     break;  /* visual space          */
+      case '0'  :  a_minor = G_CHAR_NULL;    break;  /* null                  */
+      case 'a'  :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
+      case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
+      case 'p'  :  a_minor = G_CHAR_LQUEST;  break;  /* break point           */
+      case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
+      case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
+      case '"'  :  a_minor = '"';            break;
+      case '\'' :  a_minor = '\'';           break;
+      case '\\' :  a_minor = '\\';           break;
+      default   :  return a_major;           break;
+      }
    }
    /*---(mode changes)-------------------*/
    if (a_minor == 27 || a_minor == 10) {
