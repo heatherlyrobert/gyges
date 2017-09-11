@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4k"
-#define     VER_TXT   "input and source modes can enter/edit escaped chars"
+#define     VER_NUM   "2.4l"
+#define     VER_TXT   "very basic macro sub-mode is working"
 
 
 

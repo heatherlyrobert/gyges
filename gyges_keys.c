@@ -568,6 +568,12 @@ MODE_map           (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(space)--------------------------*/
+   if (a_minor == K_SPACE ) {
+      DEBUG_USER   yLOG_note    ("space, nothing to do");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return  0;
+   }
    /*---(major mode changes)-------------*/
    if (a_minor == K_RETURN) {
       yVIKEYS_mode_enter  (MODE_SOURCE);
@@ -653,28 +659,37 @@ MODE_map           (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
-      case 'F'      : yVIKEYS_mode_enter  (SMOD_FORMAT  );
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
-                      break;
-      case ','      : yVIKEYS_mode_enter  (SMOD_BUFFER  );
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return 0;
-                      break;
-      case '"'      : yVIKEYS_mode_enter  (SMOD_REGISTER);
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return '"';  /* make sure double quote goes in prev char */
-                      break;
+      case '@'      :
+         yVIKEYS_mode_enter  (SMOD_MACRO   );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+         break;
+      case 'F'      :
+         yVIKEYS_mode_enter  (SMOD_FORMAT  );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case ','      :
+         yVIKEYS_mode_enter  (SMOD_BUFFER  );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case '"'      :
+         yVIKEYS_mode_enter  (SMOD_REGISTER);
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;  /* make sure double quote goes in prev char */
+         break;
       case 'm'      : 
-      case '\''     : yVIKEYS_mode_enter  (SMOD_MARK    );
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return '\'';  /* make sure single quote goes in prev char */
-                      break;
+      case '\''     :
+         yVIKEYS_mode_enter  (SMOD_MARK    );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;  /* make sure single quote goes in prev char */
+         break;
       case 'E'      :
-                      yVIKEYS_mode_enter  (SMOD_ERROR   );
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return SMOD_ERROR;  /* make sure mode indicator goes also       */
-                      break;
+         yVIKEYS_mode_enter  (SMOD_ERROR   );
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return SMOD_ERROR;  /* make sure mode indicator goes also       */
+         break;
       }
       /*---(normal)----------------------*/
       rc = KEYS_basics   (a_major, a_minor);
@@ -822,19 +837,49 @@ KEYS_macro         (char a_action)
    char        x_ch        =  ' ';
    char        x_macro     [LEN_RECD]   = "";
    int         x_len       =    0;
-   /*> DEBUG_USER   yLOG_enter   (__FUNCTION__);                                      <*/
-   /*> DEBUG_USER   yLOG_note    ("escape, choose nothing");                          <*/
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
    rc = CELL_macro (x_macro);
-   --rce;  if (rc    <  0)             return rce;
+   DEBUG_USER   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc    <  0) {
+      my.mode_operating = MODE_NORMAL;
+      my.macro_pos = -1;
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("x_macro"   , x_macro);
    x_len = strlen (x_macro);
-   --rce;  if (x_len <= 0)             return rce;
+   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
+   --rce;  if (x_len <= 0) {
+      my.mode_operating = MODE_NORMAL;
+      my.macro_pos = -1;
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    ++my.macro_pos;
-   --rce;  if (x_len <= my.macro_pos)  return rce;
+   DEBUG_USER   yLOG_value   ("macro_pos" , my.macro_pos);
+   --rce;  if (x_len <= my.macro_pos) {
+      my.mode_operating = MODE_NORMAL;
+      my.macro_pos = -1;
+      DEBUG_USER   yLOG_note    ("past the end");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    x_ch = x_macro [my.macro_pos];
+   DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
    if (x_ch == '\\') {
+      DEBUG_USER   yLOG_note    ("escaped character");
       ++my.macro_pos;
-      --rce;  if (x_len <= my.macro_pos)  return rce;
+      DEBUG_USER   yLOG_value   ("macro_pos" , my.macro_pos);
+      --rce;  if (x_len <= my.macro_pos) {
+         my.mode_operating = MODE_NORMAL;
+         my.macro_pos = -1;
+         DEBUG_USER   yLOG_note    ("past the end");
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
       x_ch = x_macro [my.macro_pos];
+      DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
       switch (x_ch) {
       case 'n'  :  x_ch = K_RETURN;  break;
       case 'e'  :  x_ch = K_ESCAPE;  break;
@@ -848,8 +893,11 @@ KEYS_macro         (char a_action)
       case '\\' :  x_ch = '\\';      break;
       default   :  x_ch = NULL;      break;
       }
+      DEBUG_USER   yLOG_value   ("x_ch (new)", x_ch);
    }
    if (x_ch <  0) {
+      DEBUG_USER   yLOG_note    ("special character");
+      DEBUG_USER   yLOG_value   ("256 + x_ch", 256 + x_ch);
       switch (256 + x_ch) {
       case G_CHAR_ENTER  :  x_ch = K_RETURN;  break;
       case G_CHAR_STAFF  :  x_ch = K_ESCAPE;  break;
@@ -860,12 +908,53 @@ KEYS_macro         (char a_action)
       case G_CHAR_DOT    :  x_ch = K_SPACE;   break;
       default            :  x_ch = NULL;      break;
       }
+      DEBUG_USER   yLOG_value   ("x_ch (new)", x_ch);
    }
    if (x_ch == NULL) {
+      DEBUG_USER   yLOG_note    ("end of macro");
+      my.mode_operating = MODE_NORMAL;
       my.macro_pos = -1;
+      /*> CURS_screen_reset ();                                                       <*/
    }
-   /*> DEBUG_USER   yLOG_exit    (__FUNCTION__);                                      <*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return x_ch;
+}
+
+char          /*-> process macro sub-mode keys ---------- [ leaf   [ ------ ]-*/
+SMOD_macro           (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   --rce;  if (yVIKEYS_mode_not (SMOD_MACRO))  {
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(mode changes)-------------------*/
+   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
+      DEBUG_USER   yLOG_note    ("escape/return, nothing to do");
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check for execution)------------*/
+   if (a_major == '@') {
+      if (a_minor >= 'a' && a_minor <= 'z') {
+         yVIKEYS_mode_exit  ();
+         my.mode_operating = MODE_MACRO;
+         my.macro_name     = a_minor;
+         my.macro_pos      = -1;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 char          /* PURPOSE : process keys for buffer movement ------------------*/
@@ -991,6 +1080,12 @@ MODE_source   (char a_major, char a_minor)
     *> if (my.cpos >= my.npos)   my.cpos = my.npos - 1;                               <*/
    /*---(single letter)------------------*/
    if (a_major == ' ') {
+      /*---(space)--------------------------*/
+      if (a_minor == K_SPACE ) {
+         DEBUG_USER   yLOG_note    ("space, nothing to do");
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return  0;
+      }
       /*---(mode changes)----------------*/
       switch (a_minor) {
       case  10  :

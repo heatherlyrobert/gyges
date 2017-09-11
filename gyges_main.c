@@ -47,10 +47,6 @@ main (int argc, char *argv[])
    MOVE_horz ('r');
    sch = ' ';
    yVIKEYS_mode_mesg (my.message, g_command);
-
-   my.mode_operating = MODE_MACRO;
-   my.macro_name     = 'a';
-
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
@@ -60,10 +56,7 @@ main (int argc, char *argv[])
       case MODE_MACRO    :
          cch = CURS_playback ();
          cch = KEYS_macro ('-');
-         if (cch <= 0) {
-            my.mode_operating = MODE_NORMAL;
-            continue;
-         }
+         if (cch < 0)   continue;
          break;
       case MODE_NORMAL   :
       default            :
@@ -95,6 +88,7 @@ main (int argc, char *argv[])
       case SMOD_REGISTER : rc = REG_mode      (sch, cch); break;
       case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
       case SMOD_MENUS    : rc = SMOD_menus    (sch, cch); break;
+      case SMOD_MACRO    : rc = SMOD_macro    (sch, cch); break;
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(translate unprintable)-------*/
