@@ -53,12 +53,18 @@ main (int argc, char *argv[])
    while (done) {
       /*---(show screen)-----------------*/
       switch (my.mode_operating) {
-      case MODE_MACRO    :
+      case RUN_MACRO    :
+      case RUN_PLAYBACK :
+         KEYS_macro_load ();
+         CURS_main  ();
          cch = CURS_playback ();
-         cch = KEYS_macro ('-');
-         if (cch < 0)   continue;
+         cch = KEYS_macro      ('-');
+         if (cch <= 0) {
+            x_savemode = -1;
+            cch        =  0;
+         }
          break;
-      case MODE_NORMAL   :
+      case RUN_NORMAL   :
       default            :
          cch = CURS_main  ();
          break;
@@ -68,7 +74,6 @@ main (int argc, char *argv[])
       ++updates;
       DEBUG_LOOP  yLOG_complex ("update"    , "loop = %6d, val = %4d, cch = %c", updates, cch, (cch > 32) ? cch : '-');
       /*---(handle keystroke)------------*/
-      x_savemode = yVIKEYS_mode_curr ();
       switch (yVIKEYS_mode_curr ()) {
          /*---(major)--------------------*/
       case MODE_GOD      : rc = MODE_god      (sch, cch); break;
@@ -92,13 +97,14 @@ main (int argc, char *argv[])
       default            : rc = MODE_map      (sch, cch); break;
       }
       /*---(translate unprintable)-------*/
-      if      (cch ==  0 )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_NULL );
-      else if (cch == 10 )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_ENTER);
-      else if (cch == 27 )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_ESC  );
-      else if (cch == 32 )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_SPACE);
-      else if (cch == 127)  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_BS   );
-      else if (cch <= 32 )  snprintf (cmd,   9, " %c %02x", sch, cch);
-      else                  snprintf (cmd,   9, " %c %c " , sch, cch);
+      if      (cch == 0       )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_NULL  );
+      else if (cch == K_RETURN)  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_RETURN);
+      else if (cch == K_ESCAPE)  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_ESCAPE);
+      else if (cch == K_TAB   )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_TAB   );
+      else if (cch == K_BS    )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_BS    );
+      else if (cch == K_SPACE )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_SPACE );
+      else if (cch <= K_SPACE )  snprintf (cmd,   9, " %c %02x", sch, cch);
+      else                       snprintf (cmd,   9, " %c %c " , sch, cch);
       /*---(setup for next keystroke)----*/
       if      (rc == 0)    sch = ' ';
       else if (rc >  0)    sch = rc;
@@ -107,6 +113,10 @@ main (int argc, char *argv[])
       if   (x_savemode != yVIKEYS_mode_curr() || yVIKEYS_mode_curr() == MODE_COMMAND) {
          yVIKEYS_mode_mesg (my.message, g_command);
       }
+      if   (my.mode_operating == RUN_PLAYBACK) {
+         strlcpy (my.message, "[M@] RUN : macro execution mode", LEN_DESC);
+      }
+      x_savemode = yVIKEYS_mode_curr ();
       /*---(done)------------------------*/
    }
    DEBUG_TOPS  yLOG_break   ();

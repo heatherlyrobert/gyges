@@ -828,6 +828,49 @@ KEYS__del          (char a_key)
    return 0;
 }
 
+char
+KEYS_macro_reset     (void)
+{
+   int         i           = 0;
+   my.mode_operating = RUN_NORMAL;
+   my.macro_pos  =  0;
+   my.macro_len  =  0;
+   my.macro_char =  0;
+   for (i = 0; i < LEN_RECD; ++i)  my.macro_keys [i] = '\0';
+   return 0;
+}
+
+char
+KEYS_macro_load      (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_ch        =  ' ';
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   rc = CELL_macro (my.macro_keys);
+   DEBUG_USER   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc    <  0) {
+      KEYS_macro_reset ();
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_USER   yLOG_info    ("macro"     , my.macro_keys);
+   my.macro_len = strlen (my.macro_keys);
+   DEBUG_USER   yLOG_value   ("len"       , my.macro_len);
+   --rce;  if (my.macro_len <= 0) {
+      KEYS_macro_reset ();
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   my.macro_keys [my.macro_len++] = G_CHAR_NULL;
+   my.macro_keys [my.macro_len  ] = '\0';
+   my.macro_char = my.macro_keys [my.macro_pos];
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char          /*-> next key in the macro list ----------- [ leaf   [ ------ ]-*/
 KEYS_macro         (char a_action)
 {
@@ -835,63 +878,47 @@ KEYS_macro         (char a_action)
    char        rce         =  -10;
    char        rc          =    0;
    char        x_ch        =  ' ';
-   char        x_macro     [LEN_RECD]   = "";
-   int         x_len       =    0;
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   rc = CELL_macro (x_macro);
-   DEBUG_USER   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc    <  0) {
-      my.mode_operating = MODE_NORMAL;
-      my.macro_pos = -1;
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_macro"   , x_macro);
-   x_len = strlen (x_macro);
-   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-   --rce;  if (x_len <= 0) {
-      my.mode_operating = MODE_NORMAL;
-      my.macro_pos = -1;
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   ++my.macro_pos;
    DEBUG_USER   yLOG_value   ("macro_pos" , my.macro_pos);
-   --rce;  if (x_len <= my.macro_pos) {
-      my.mode_operating = MODE_NORMAL;
-      my.macro_pos = -1;
+   --rce;  if (my.macro_pos >= my.macro_len) {
+      KEYS_macro_reset ();
       DEBUG_USER   yLOG_note    ("past the end");
       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   x_ch = x_macro [my.macro_pos];
+   x_ch = my.macro_keys [my.macro_pos];
    DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
    if (x_ch == '\\') {
       DEBUG_USER   yLOG_note    ("escaped character");
       ++my.macro_pos;
       DEBUG_USER   yLOG_value   ("macro_pos" , my.macro_pos);
-      --rce;  if (x_len <= my.macro_pos) {
-         my.mode_operating = MODE_NORMAL;
-         my.macro_pos = -1;
+      --rce;  if (my.macro_pos >= my.macro_len) {
+         KEYS_macro_reset ();
          DEBUG_USER   yLOG_note    ("past the end");
          DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      x_ch = x_macro [my.macro_pos];
+      x_ch = my.macro_keys [my.macro_pos];
       DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
       switch (x_ch) {
-      case 'n'  :  x_ch = K_RETURN;  break;
-      case 'e'  :  x_ch = K_ESCAPE;  break;
-      case 't'  :  x_ch = K_TAB;     break;
-      case 'b'  :  x_ch = K_BS;      break;
-      case 'f'  :  x_ch = K_FIELD;   break;
-      case 'g'  :  x_ch = K_GROUP;   break;
-      case 's'  :  x_ch = K_SPACE;   break;
-      case '"'  :  x_ch = '"';       break;
-      case '\'' :  x_ch = '\'';      break;
-      case '\\' :  x_ch = '\\';      break;
-      default   :  x_ch = NULL;      break;
+      case 'n'  :  x_ch = K_RETURN;           break;
+      case 'e'  :  x_ch = K_ESCAPE;           break;
+      case 't'  :  x_ch = K_TAB;              break;
+      case 'b'  :  x_ch = K_BS;               break;
+      case 's'  :  x_ch = K_SPACE;            break;
+      case 'f'  :  x_ch = K_FIELD;            break;
+      case 'g'  :  x_ch = K_GROUP;            break;
+      case 'a'  :  x_ch = G_CHAR_ALT;         break;
+      case 'c'  :  x_ch = G_CHAR_CONTROL;     break;
+      case 'w'  :  x_ch = G_CHAR_WAIT;        break;
+      case 'p'  :  x_ch = G_CHAR_BREAK;       break;
+      case 'h'  :  x_ch = G_CHAR_HALT;        break;
+      case 'd'  :  x_ch = G_CHAR_DISPLAY;     break;
+      case '"'  :  x_ch = '"';                break;
+      case '\'' :  x_ch = '\'';               break;
+      case '\\' :  x_ch = '\\';               break;
+      default   :  x_ch = NULL;               break;
       }
       DEBUG_USER   yLOG_value   ("x_ch (new)", x_ch);
    }
@@ -899,23 +926,29 @@ KEYS_macro         (char a_action)
       DEBUG_USER   yLOG_note    ("special character");
       DEBUG_USER   yLOG_value   ("256 + x_ch", 256 + x_ch);
       switch (256 + x_ch) {
-      case G_CHAR_ENTER  :  x_ch = K_RETURN;  break;
-      case G_CHAR_STAFF  :  x_ch = K_ESCAPE;  break;
-      case G_CHAR_BS     :  x_ch = K_BS;      break;
-      case G_CHAR_TAB    :  x_ch = K_TAB;     break;
-      case G_CHAR_GROUP  :  x_ch = K_GROUP;   break;
-      case G_CHAR_FIELD  :  x_ch = K_FIELD;   break;
-      case G_CHAR_DOT    :  x_ch = K_SPACE;   break;
-      default            :  x_ch = NULL;      break;
+      case G_CHAR_RETURN  :  x_ch = K_RETURN;  break;
+      case G_CHAR_ESCAPE  :  x_ch = K_ESCAPE;  break;
+      case G_CHAR_BS      :  x_ch = K_BS;      break;
+      case G_CHAR_TAB     :  x_ch = K_TAB;     break;
+      case G_CHAR_SPACE   :  x_ch = K_SPACE;   break;
+      case G_CHAR_GROUP   :  x_ch = K_GROUP;   break;
+      case G_CHAR_FIELD   :  x_ch = K_FIELD;   break;
+      case G_CHAR_ALT     :                    break;
+      case G_CHAR_CONTROL :                    break;
+      case G_CHAR_WAIT    :                    break;
+      case G_CHAR_BREAK   :                    break;
+      case G_CHAR_HALT    :                    break;
+      case G_CHAR_DISPLAY :                    break;
+      case G_CHAR_NULL    :  x_ch = NULL;      break;
+      default             :  x_ch = NULL;      break;
       }
       DEBUG_USER   yLOG_value   ("x_ch (new)", x_ch);
    }
    if (x_ch == NULL) {
       DEBUG_USER   yLOG_note    ("end of macro");
-      my.mode_operating = MODE_NORMAL;
-      my.macro_pos = -1;
-      /*> CURS_screen_reset ();                                                       <*/
+      KEYS_macro_reset ();
    }
+   ++my.macro_pos;
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return x_ch;
 }
@@ -945,9 +978,9 @@ SMOD_macro           (char a_major, char a_minor)
    if (a_major == '@') {
       if (a_minor >= 'a' && a_minor <= 'z') {
          yVIKEYS_mode_exit  ();
-         my.mode_operating = MODE_MACRO;
+         my.mode_operating = RUN_PLAYBACK;
          my.macro_name     = a_minor;
-         my.macro_pos      = -1;
+         my.macro_pos      = 0;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }
@@ -1276,17 +1309,17 @@ SMOD_replace  (char a_major, char a_minor)
    if (x_prev == '\\') {
       x_prev = '-';
       switch (a_minor) {
-      case 'n'  :  a_minor = G_CHAR_ENTER;   break;  /* return char           */
-      case 'e'  :  a_minor = G_CHAR_STAFF;   break;  /* escape char           */
+      case 'n'  :  a_minor = G_CHAR_RETURN;  break;  /* return char           */
+      case 'e'  :  a_minor = G_CHAR_ESCAPE;  break;  /* escape char           */
       case 't'  :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
       case 'b'  :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
+      case 's'  :  a_minor = G_CHAR_SPACE;   break;  /* visual space          */
       case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
       case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
-      case 's'  :  a_minor = G_CHAR_DOT;     break;  /* visual space          */
       case '0'  :  a_minor = G_CHAR_NULL;    break;  /* null                  */
       case 'a'  :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
       case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
-      case 'p'  :  a_minor = G_CHAR_LQUEST;  break;  /* break point           */
+      case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
       case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
       case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
       case '"'  :  a_minor = '"';            break;
@@ -1464,17 +1497,18 @@ MODE_input         (char  a_major, char  a_minor)
    if (x_prev == '\\') {
       x_prev = '-';
       switch (a_minor) {
-      case 'n'  :  a_minor = G_CHAR_ENTER;   break;  /* return char           */
-      case 'e'  :  a_minor = G_CHAR_STAFF;   break;  /* escape char           */
+      case 'n'  :  a_minor = G_CHAR_RETURN;  break;  /* return char           */
+      case 'e'  :  a_minor = G_CHAR_ESCAPE;  break;  /* escape char           */
       case 't'  :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
       case 'b'  :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
+      case 's'  :  a_minor = G_CHAR_SPACE;   break;  /* visual space          */
       case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
       case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
-      case 's'  :  a_minor = G_CHAR_DOT;     break;  /* visual space          */
       case '0'  :  a_minor = G_CHAR_NULL;    break;  /* null                  */
       case 'a'  :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
       case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
-      case 'p'  :  a_minor = G_CHAR_LQUEST;  break;  /* break point           */
+      case 'w'  :  a_minor = G_CHAR_WAIT;    break;  /* wait/pause            */
+      case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
       case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
       case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
       case '"'  :  a_minor = '"';            break;

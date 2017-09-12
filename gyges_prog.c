@@ -102,9 +102,8 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
-   my.mode_operating = MODE_NORMAL;
-   my.macro_name     = 'a';
-   my.macro_pos      = 0;
+   KEYS_macro_reset     ();
+   my.macro_name     = '-';
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4m"
-#define     VER_TXT   "fixed cell contents not clearing in null cells"
+#define     VER_NUM   "2.4n"
+#define     VER_TXT   "basic playback status and tracking in place"
 
 
 
@@ -210,11 +210,10 @@ int         nkeylog;
 
 
 
-#define     MODE_NORMAL        '-'      /* normal keyboard input              */
-#define     MODE_MACRO         'm'      /* macro running with redisplay       */
-#define     MODE_MPLAY         'p'      /* macro under playback controls      */
-#define     MODE_MFAST         'f'      /* macro fast and silent running      */
-#define     MODE_HISTORY       'h'      /* history playback mode              */
+#define     RUN_NORMAL         '-'      /* normal keyboard input              */
+#define     RUN_MACRO          'm'      /* macro running with redisplay       */
+#define     RUN_PLAYBACK       'p'      /* macro under playback controls      */
+#define     RUN_HISTORY        'h'      /* history playback mode              */
 
 struct cACCESSOR {
    /*---(files)----------------*/
@@ -224,6 +223,9 @@ struct cACCESSOR {
    char        mode_operating;              /* keyboard, macro, silent        */
    char        macro_name;                  /* current macro name             */
    int         macro_pos;                   /* step in current macro          */
+   int         macro_len;                   /* length of macro                */
+   char        macro_keys  [LEN_RECD];      /* macro contents                 */
+   char        macro_char;                  /* interpreted current char       */
    /*---(layout)----------*/
    char        layout_formula;              /* formula line display mode      */
    char        layout_status;               /* status line display mode       */
@@ -737,9 +739,10 @@ int     col_far;
 #define     K_ESCAPE      27
 #define     K_TAB          9
 #define     K_BS         127
+#define     K_SPACE       32
+
 #define     K_GROUP       29
 #define     K_FIELD       31
-#define     K_SPACE       32
 
 #define     K_CTRL_B       2
 #define     K_CTRL_C       3
@@ -753,26 +756,26 @@ extern      char          unit_answer [LEN_UNIT];
 
 
 /*---(character constants)------------*/
-#define   G_CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
+/*---(convert)---------*/
+#define   G_CHAR_RETURN     182   /* ¶  return/newline   ( 10)   */
+#define   G_CHAR_ESCAPE     165   /* ¥  staff            (  -)   */
+#define   G_CHAR_TAB        187   /* »  tab              (  9)   */
+#define   G_CHAR_BS         171   /* «  backspace        (127)   */
+#define   G_CHAR_SPACE      183   /* ·  dot              (  -)   */
 #define   G_CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
 #define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
-#define   G_CHAR_BS         171   /* «  backspace        (127)   */
-#define   G_CHAR_ENTER      182   /* ¶  return/newline   ( 10)   */
-#define   G_CHAR_TAB        187   /* »  tab              (  9)   */
-#define   G_CHAR_MARK       215   /* ×  mark             (  -)   */
-#define   G_CHAR_NULL       216   /* Ø  null             (  0)   */
-#define   G_CHAR_ESC        234   /* ê  escape           ( 27)   */
-#define   G_CHAR_SPACE      223   /* ß  space            ( 32)   */
-#define   G_CHAR_LQUEST     191   /* ¿  lead question    (  -)   */
-#define   G_CHAR_DEGREE     176   /* °  degree mark      (  -)   */
-#define   G_CHAR_FUNKY      186   /* º  funky mark       (  -)   */
-#define   G_CHAR_STAFF      165   /* ¥  staff            (  -)   */
-#define   G_CHAR_DOT        183   /* ·  dot              (  -)   */
-#define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
+/*---(control)---------*/
 #define   G_CHAR_ALT        163   /* £  pounds           (  -)   */
+#define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
+#define   G_CHAR_WAIT       186   /* º  funky mark       (  -)   */
+#define   G_CHAR_BREAK      191   /* ¿  lead question    (  -)   */
 #define   G_CHAR_HALT       177   /* ±  sign-post        (  -)   */
-#define   G_CHAR_DISPLAY    208   /* ©  copyright        (  -)   */
-
+#define   G_CHAR_DISPLAY    208   /* Ð  weird d          (  -)   */
+/*---(other)-----------*/
+#define   G_CHAR_NULL       216   /* Ø  null             (  0)   */
+#define   G_CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
+#define   G_CHAR_MARK       215   /* ×  mark             (  -)   */
+#define   G_CHAR_DEGREE     176   /* °  degree mark      (  -)   */
 
 
 /*===[[ PROTOTYPES ]]=====================================*/
@@ -959,7 +962,8 @@ char*     KEYS__unit         (char *a_question);
 char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
 
-char      KEYS_macro         (char a_action);
+char      KEYS_macro_reset     (void);
+char      KEYS_macro           (char a_action);
 
 /*---(key movements)--------*/
 char      MOVE_prep          (void);
