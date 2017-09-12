@@ -58,8 +58,21 @@ main (int argc, char *argv[])
          KEYS_macro_load ();
          CURS_main  ();
          cch = CURS_playback ();
+         switch (cch) {
+         case K_ESCAPE : KEYS_macro_reset (); cch = 0;      break;
+         case K_RETURN : my.mode_operating = RUN_MACRO;     break;
+         }
          cch = KEYS_macro      ('-');
-         if (cch <= 0) {
+         if (cch <  0) {
+            switch (256 + cch) {
+            case G_CHAR_WAIT    : sleep (1);                         break;
+            case G_CHAR_BREAK   : my.mode_operating = RUN_PLAYBACK;  break;
+            case G_CHAR_HALT    : KEYS_macro_reset (); cch = 0;      break;
+            case G_CHAR_DISPLAY : CURS_screen_reset ();              break;
+            default             : KEYS_macro_reset (); cch = 0;      break;
+            }
+         }
+         if (cch == 0) {
             x_savemode = -1;
             cch        =  0;
          }
@@ -82,7 +95,7 @@ main (int argc, char *argv[])
       case MODE_SOURCE   : rc = MODE_source   (sch, cch); break;
       case MODE_INPUT    : rc = MODE_input    (sch, cch); break;
       case MODE_COMMAND  : rc = MODE_command  (' ', cch); break;
-         /*---(submodes)-----------------*/
+                           /*---(submodes)-----------------*/
       case SMOD_ERROR    : rc = SMOD_error    (sch, cch); break;
       case SMOD_SELECT   : rc = SELC_mode     (sch, cch); break;
       case SMOD_TEXTREG  : rc = TREG_mode     (sch, cch); break;

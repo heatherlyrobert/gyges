@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4n"
-#define     VER_TXT   "basic playback status and tracking in place"
+#define     VER_NUM   "2.4o"
+#define     VER_TXT   "macro breakpoint and halt now working"
 
 
 
