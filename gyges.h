@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4o"
-#define     VER_TXT   "macro breakpoint and halt now working"
+#define     VER_NUM   "2.4p"
+#define     VER_TXT   "macro debug vs normal working, plus pause/wait"
 
 
 

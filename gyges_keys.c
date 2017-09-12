@@ -978,8 +978,16 @@ SMOD_macro           (char a_major, char a_minor)
    if (a_major == '@') {
       if (a_minor >= 'a' && a_minor <= 'z') {
          yVIKEYS_mode_exit  ();
-         my.mode_operating = RUN_PLAYBACK;
+         my.mode_operating = RUN_MACRO;
          my.macro_name     = a_minor;
+         my.macro_pos      = 0;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      if (a_minor >= 'A' && a_minor <= 'Z') {
+         yVIKEYS_mode_exit  ();
+         my.mode_operating = RUN_PLAYBACK;
+         my.macro_name     = tolower (a_minor);
          my.macro_pos      = 0;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
