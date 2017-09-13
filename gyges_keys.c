@@ -833,9 +833,10 @@ KEYS_macro_reset     (void)
 {
    int         i           = 0;
    my.mode_operating = RUN_NORMAL;
-   my.macro_pos  =  0;
-   my.macro_len  =  0;
-   my.macro_char =  0;
+   my.macro_pos   =   0;
+   my.macro_len   =   0;
+   my.macro_char  =   0;
+   my.macro_delay = '0';
    for (i = 0; i < LEN_RECD; ++i)  my.macro_keys [i] = '\0';
    return 0;
 }
@@ -970,15 +971,17 @@ SMOD_macro           (char a_major, char a_minor)
    /*---(mode changes)-------------------*/
    if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
       DEBUG_USER   yLOG_note    ("escape/return, nothing to do");
+      KEYS_macro_reset ();
       yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(check for execution)------------*/
-   if (a_major == '@') {
+   --rce;  if (a_major == '@') {
       if (a_minor >= 'a' && a_minor <= 'z') {
          yVIKEYS_mode_exit  ();
-         my.mode_operating = RUN_MACRO;
+         if (my.macro_delay    != '0'       )  my.mode_operating = RUN_DELAY;
+         if (my.mode_operating == RUN_NORMAL)  my.mode_operating = RUN_MACRO;
          my.macro_name     = a_minor;
          my.macro_pos      = 0;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -992,6 +995,21 @@ SMOD_macro           (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }
+      if (a_minor == '@') {
+         yVIKEYS_mode_exit  ();
+         if (my.macro_delay    != '0'       )  my.mode_operating = RUN_DELAY;
+         if (my.mode_operating == RUN_NORMAL)  my.mode_operating = RUN_MACRO;
+         my.macro_pos      = 0;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      if (a_minor >= '0' && a_minor <= '9') {
+         my.macro_delay    = a_minor;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_major;
+      }
+      KEYS_macro_reset ();
+      return rce;
    }
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -1355,7 +1373,7 @@ SMOD_replace  (char a_major, char a_minor)
    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
    DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
    /*---(check for backspace)------------*/
-   if (a_major == 'R' && (a_minor == 8 || a_minor == 127)) {
+   if (a_major == 'R' && (a_minor == K_DEL || a_minor == K_BS)) {
       DEBUG_USER   yLOG_note    ("handle a backspace/delete");
       if (my.cpos > 0) {
          g_contents [my.cpos] = x_saved;
@@ -1548,7 +1566,7 @@ MODE_input         (char  a_major, char  a_minor)
       return 0;
    }
    /*---(check for backspace)------------*/
-   if (a_minor == 8 || a_minor == 127) {
+   if (a_minor == K_DEL || a_minor == K_BS) {
       DEBUG_USER   yLOG_note    ("handle a backspace/delete");
       if (my.cpos > 0) {
          --(my.cpos);
@@ -1909,7 +1927,7 @@ MODE_command       (char a_major, char a_minor)
                return rc;   /* return  */
    }
    /*---(check for backspace)------------*/
-   if (a_minor == 8 || a_minor == 127) {
+   if (a_minor == K_DEL || a_minor == K_BS) {
       --x_len;
       if (x_len < 0)   x_len = 0;
       g_command [x_len] = '\0';

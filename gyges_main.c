@@ -17,6 +17,7 @@ main (int argc, char *argv[])
    char        x_savemode  = '-';
    char        x_macro     [LEN_RECD] = "llljjhs123\n";
    char        x_mpos      = 0;
+   struct timespec x_delay;
    /*---(initialize)---------------------*/
    if (rc >= 0)  rc = yURG_logger  (argc, argv);
    if (rc >= 0)  rc = PROG_init    (argc, argv);
@@ -54,6 +55,7 @@ main (int argc, char *argv[])
       /*---(show screen)-----------------*/
       switch (my.mode_operating) {
       case RUN_MACRO    :
+      case RUN_DELAY    :
       case RUN_PLAYBACK :
          KEYS_macro_load ();
          CURS_main  ();
@@ -130,6 +132,22 @@ main (int argc, char *argv[])
          strlcpy (my.message, "[M@] RUN : macro execution mode", LEN_DESC);
       }
       x_savemode = yVIKEYS_mode_curr ();
+      if (my.mode_operating == RUN_DELAY && my.macro_pos > 0) {
+         switch (my.macro_delay) {
+         case '9' : x_delay.tv_sec = 3; x_delay.tv_nsec =         0; break;
+         case '8' : x_delay.tv_sec = 2; x_delay.tv_nsec =         0; break;
+         case '7' : x_delay.tv_sec = 1; x_delay.tv_nsec = 750000000; break;
+         case '6' : x_delay.tv_sec = 1; x_delay.tv_nsec = 500000000; break;
+         case '5' : x_delay.tv_sec = 1; x_delay.tv_nsec = 250000000; break;
+         case '4' : x_delay.tv_sec = 1; x_delay.tv_nsec =         0; break;
+         case '3' : x_delay.tv_sec = 0; x_delay.tv_nsec = 750000000; break;
+         case '2' : x_delay.tv_sec = 0; x_delay.tv_nsec = 500000000; break;
+         case '1' : x_delay.tv_sec = 0; x_delay.tv_nsec = 250000000; break;
+         case '0' : x_delay.tv_sec = 0; x_delay.tv_nsec =         0; break;
+         default  : x_delay.tv_sec = 0; x_delay.tv_nsec =         0; break;
+         }
+         nanosleep (&x_delay, NULL);
+      }
       /*---(done)------------------------*/
    }
    DEBUG_TOPS  yLOG_break   ();

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4p"
-#define     VER_TXT   "macro debug vs normal working, plus pause/wait"
+#define     VER_NUM   "2.4q"
+#define     VER_TXT   "macro run in delay mode is now working"
 
 
 
@@ -212,6 +212,7 @@ int         nkeylog;
 
 #define     RUN_NORMAL         '-'      /* normal keyboard input              */
 #define     RUN_MACRO          'm'      /* macro running with redisplay       */
+#define     RUN_DELAY          'd'      /* macro delay playback controls      */
 #define     RUN_PLAYBACK       'p'      /* macro under playback controls      */
 #define     RUN_HISTORY        'h'      /* history playback mode              */
 
@@ -226,6 +227,7 @@ struct cACCESSOR {
    int         macro_len;                   /* length of macro                */
    char        macro_keys  [LEN_RECD];      /* macro contents                 */
    char        macro_char;                  /* interpreted current char       */
+   char        macro_delay;                 /* time between steps             */
    /*---(layout)----------*/
    char        layout_formula;              /* formula line display mode      */
    char        layout_status;               /* status line display mode       */
@@ -740,6 +742,7 @@ int     col_far;
 #define     K_TAB          9
 #define     K_BS         127
 #define     K_SPACE       32
+#define     K_DEL          8
 
 #define     K_GROUP       29
 #define     K_FIELD       31
@@ -765,7 +768,7 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
 #define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
 /*---(control)---------*/
-#define   G_CHAR_ALT        163   /* £  pounds           (  -)   */
+#define   G_CHAR_ALT        198   /* Æ  ae mark          (  -)   */
 #define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
 #define   G_CHAR_WAIT       186   /* º  funky mark       (  -)   */
 #define   G_CHAR_BREAK      191   /* ¿  lead question    (  -)   */

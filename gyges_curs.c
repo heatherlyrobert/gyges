@@ -607,18 +607,19 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, " %-20.20s%*.*s%30.30s %-4.4s ", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num);
       break;
    }
-   if (my.mode_operating == RUN_PLAYBACK) {
-      snprintf (msg, 500, "macro %c %3d %02x %3d:%s", my.macro_name, my.macro_pos, (uchar) my.macro_char, my.macro_len, my.macro_keys);
+   if (my.mode_operating == RUN_PLAYBACK || my.mode_operating == RUN_DELAY) {
+      snprintf (msg, 500, "macro %c %c %3d %02x %3d:%s", my.macro_name, my.macro_delay, my.macro_pos, (uchar) my.macro_char, my.macro_len, my.macro_keys);
    }
    if      (sta_error         == 'y')           attron (S_COLOR_STATUSE);
    else if (my.mode_operating == RUN_PLAYBACK)  attron (S_COLOR_STATUSE);
+   else if (my.mode_operating == RUN_DELAY   )  attron (S_COLOR_STATUSE);
    else                                         attron (S_COLOR_STATUS);
    mvprintw(s_status_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);
    mvprintw(s_status_row, 0, msg);
    attrset    (0);
-   if (my.mode_operating == RUN_PLAYBACK) {
+   if (my.mode_operating == RUN_PLAYBACK || my.mode_operating == RUN_DELAY) {
       attron   (S_COLOR_CONTENT);
-      mvprintw (s_status_row, 19 + my.macro_pos, "%c", my.macro_keys [my.macro_pos]);
+      mvprintw (s_status_row, 21 + my.macro_pos, "%c", my.macro_keys [my.macro_pos]);
       attrset  (0);
    }
    sta_error = '-';
@@ -1172,9 +1173,9 @@ char          /*-> capture keyboard input during macros --[ leaf   [--------]-*/
 CURS_playback      (void)
 {
    char        ch          = ' ';
-   if (my.mode_operating == RUN_MACRO)  nodelay (stdscr, TRUE );
+   if (my.mode_operating == RUN_MACRO || my.mode_operating == RUN_DELAY)  nodelay (stdscr, TRUE );
    ch = getch ();
-   if (my.mode_operating == RUN_MACRO)  nodelay (stdscr, FALSE);
+   if (my.mode_operating == RUN_MACRO || my.mode_operating == RUN_DELAY)  nodelay (stdscr, FALSE);
    return ch;
 }
 
