@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4q"
-#define     VER_TXT   "macro run in delay mode is now working"
+#define     VER_NUM   "2.4r"
+#define     VER_TXT   "macro delay/playback switch working, added main loop debugging"
 
 
 
@@ -211,9 +211,9 @@ int         nkeylog;
 
 
 #define     RUN_NORMAL         '-'      /* normal keyboard input              */
-#define     RUN_MACRO          'm'      /* macro running with redisplay       */
-#define     RUN_DELAY          'd'      /* macro delay playback controls      */
-#define     RUN_PLAYBACK       'p'      /* macro under playback controls      */
+#define     RUN_MACRO          'M'      /* macro running with redisplay       */
+#define     RUN_DELAY          'D'      /* macro delay playback controls      */
+#define     RUN_PLAYBACK       'P'      /* macro under playback controls      */
 #define     RUN_HISTORY        'h'      /* history playback mode              */
 
 struct cACCESSOR {

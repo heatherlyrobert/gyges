@@ -13,6 +13,7 @@ main (int argc, char *argv[])
    int         updates     = 0;
    char        cch         = ' ';      /* current keystroke                   */
    char        sch         = ' ';      /* saved keystroke                     */
+   char        x_play      = ' ';      /* playback keystroke                  */
    char        rc          = 0;
    char        x_savemode  = '-';
    char        x_macro     [LEN_RECD] = "llljjhs123\n";
@@ -53,18 +54,19 @@ main (int argc, char *argv[])
    DEBUG_TOPS   yLOG_break   ();
    while (done) {
       /*---(show screen)-----------------*/
-      switch (my.mode_operating) {
-      case RUN_MACRO    :
-      case RUN_DELAY    :
-      case RUN_PLAYBACK :
+      DEBUG_LOOP   yLOG_note    ("top of main event loop");
+      DEBUG_LOOP   yLOG_char    ("mode"      , my.mode_operating);
+      DEBUG_LOOP   yLOG_char    ("delay"     , my.macro_delay);
+      DEBUG_LOOP   yLOG_value   ("pos"       , my.macro_pos);
+      if (my.mode_operating == RUN_NORMAL) {
+         DEBUG_LOOP   yLOG_note    ("run_normal");
+         cch = CURS_main  ();
+      } else {
+         DEBUG_LOOP   yLOG_note    ("run_macro, run_playback, or run_delay");
          KEYS_macro_load ();
-         CURS_main  ();
-         cch = CURS_playback ();
-         switch (cch) {
-         case K_ESCAPE : KEYS_macro_reset (); cch = 0;      break;
-         case K_RETURN : my.mode_operating = RUN_MACRO;     break;
-         }
+         DEBUG_LOOP   yLOG_note    ("read macro keystroke");
          cch = KEYS_macro      ('-');
+         DEBUG_LOOP   yLOG_value   ("cch"       , cch);
          if (cch <  0) {
             switch (256 + cch) {
             case G_CHAR_WAIT    : sleep (1);                         break;
@@ -78,12 +80,53 @@ main (int argc, char *argv[])
             x_savemode = -1;
             cch        =  0;
          }
-         break;
-      case RUN_NORMAL   :
-      default            :
-         cch = CURS_main  ();
-         break;
+         DEBUG_LOOP   yLOG_note    ("show screen");
+         CURS_main  ();
+         if (my.mode_operating == RUN_DELAY) {
+            DEBUG_LOOP   yLOG_note    ("process a delay");
+            switch (my.macro_delay) {
+            case '9' : x_delay.tv_sec = 3; x_delay.tv_nsec =         0; break;
+            case '8' : x_delay.tv_sec = 2; x_delay.tv_nsec =         0; break;
+            case '7' : x_delay.tv_sec = 1; x_delay.tv_nsec = 750000000; break;
+            case '6' : x_delay.tv_sec = 1; x_delay.tv_nsec = 500000000; break;
+            case '5' : x_delay.tv_sec = 1; x_delay.tv_nsec = 250000000; break;
+            case '4' : x_delay.tv_sec = 1; x_delay.tv_nsec =         0; break;
+            case '3' : x_delay.tv_sec = 0; x_delay.tv_nsec = 750000000; break;
+            case '2' : x_delay.tv_sec = 0; x_delay.tv_nsec = 500000000; break;
+            case '1' : x_delay.tv_sec = 0; x_delay.tv_nsec = 250000000; break;
+            case '0' : x_delay.tv_sec = 0; x_delay.tv_nsec =         0; break;
+            default  : x_delay.tv_sec = 0; x_delay.tv_nsec =         0; break;
+            }
+            nanosleep (&x_delay, NULL);
+         }
+         DEBUG_LOOP   yLOG_note    ("read playback keystroke");
+         x_play = CURS_playback ();
+         DEBUG_LOOP   yLOG_value   ("x_play"    , x_play);
+         switch (x_play) {
+         case '.'      :
+            DEBUG_LOOP   yLOG_note    ("user entered dot (.)");
+            if      (my.mode_operating == RUN_PLAYBACK)  {
+               DEBUG_LOOP   yLOG_note    ("change playback to delay");
+               my.mode_operating = RUN_DELAY;
+            }
+            else if (my.mode_operating == RUN_DELAY   )  {
+               DEBUG_LOOP   yLOG_note    ("change delay to playback");
+               my.mode_operating = RUN_PLAYBACK;
+               continue;
+            }
+            break;
+         case K_ESCAPE :
+            DEBUG_LOOP   yLOG_note    ("user entered escape");
+            KEYS_macro_reset ();
+            cch = 0;
+            break;
+         case K_RETURN :
+            DEBUG_LOOP   yLOG_note    ("user entered return");
+            my.mode_operating = RUN_MACRO;
+            break;
+         }
       }
+      DEBUG_LOOP   yLOG_note    ("handle keystroke normally");
       KEYS_record (cch);
       /*---(log)-------------------------*/
       ++updates;
@@ -132,22 +175,7 @@ main (int argc, char *argv[])
          strlcpy (my.message, "[M@] RUN : macro execution mode", LEN_DESC);
       }
       x_savemode = yVIKEYS_mode_curr ();
-      if (my.mode_operating == RUN_DELAY && my.macro_pos > 0) {
-         switch (my.macro_delay) {
-         case '9' : x_delay.tv_sec = 3; x_delay.tv_nsec =         0; break;
-         case '8' : x_delay.tv_sec = 2; x_delay.tv_nsec =         0; break;
-         case '7' : x_delay.tv_sec = 1; x_delay.tv_nsec = 750000000; break;
-         case '6' : x_delay.tv_sec = 1; x_delay.tv_nsec = 500000000; break;
-         case '5' : x_delay.tv_sec = 1; x_delay.tv_nsec = 250000000; break;
-         case '4' : x_delay.tv_sec = 1; x_delay.tv_nsec =         0; break;
-         case '3' : x_delay.tv_sec = 0; x_delay.tv_nsec = 750000000; break;
-         case '2' : x_delay.tv_sec = 0; x_delay.tv_nsec = 500000000; break;
-         case '1' : x_delay.tv_sec = 0; x_delay.tv_nsec = 250000000; break;
-         case '0' : x_delay.tv_sec = 0; x_delay.tv_nsec =         0; break;
-         default  : x_delay.tv_sec = 0; x_delay.tv_nsec =         0; break;
-         }
-         nanosleep (&x_delay, NULL);
-      }
+      if (my.mode_operating != RUN_NORMAL)  ++my.macro_pos;
       /*---(done)------------------------*/
    }
    DEBUG_TOPS  yLOG_break   ();

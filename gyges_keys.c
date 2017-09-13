@@ -833,7 +833,7 @@ KEYS_macro_reset     (void)
 {
    int         i           = 0;
    my.mode_operating = RUN_NORMAL;
-   my.macro_pos   =   0;
+   my.macro_pos   =  -1;
    my.macro_len   =   0;
    my.macro_char  =   0;
    my.macro_delay = '0';
@@ -890,39 +890,6 @@ KEYS_macro         (char a_action)
    }
    x_ch = my.macro_keys [my.macro_pos];
    DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
-   if (x_ch == '\\') {
-      DEBUG_USER   yLOG_note    ("escaped character");
-      ++my.macro_pos;
-      DEBUG_USER   yLOG_value   ("macro_pos" , my.macro_pos);
-      --rce;  if (my.macro_pos >= my.macro_len) {
-         KEYS_macro_reset ();
-         DEBUG_USER   yLOG_note    ("past the end");
-         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-      x_ch = my.macro_keys [my.macro_pos];
-      DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
-      switch (x_ch) {
-      case 'n'  :  x_ch = K_RETURN;           break;
-      case 'e'  :  x_ch = K_ESCAPE;           break;
-      case 't'  :  x_ch = K_TAB;              break;
-      case 'b'  :  x_ch = K_BS;               break;
-      case 's'  :  x_ch = K_SPACE;            break;
-      case 'f'  :  x_ch = K_FIELD;            break;
-      case 'g'  :  x_ch = K_GROUP;            break;
-      case 'a'  :  x_ch = G_CHAR_ALT;         break;
-      case 'c'  :  x_ch = G_CHAR_CONTROL;     break;
-      case 'w'  :  x_ch = G_CHAR_WAIT;        break;
-      case 'p'  :  x_ch = G_CHAR_BREAK;       break;
-      case 'h'  :  x_ch = G_CHAR_HALT;        break;
-      case 'd'  :  x_ch = G_CHAR_DISPLAY;     break;
-      case '"'  :  x_ch = '"';                break;
-      case '\'' :  x_ch = '\'';               break;
-      case '\\' :  x_ch = '\\';               break;
-      default   :  x_ch = NULL;               break;
-      }
-      DEBUG_USER   yLOG_value   ("x_ch (new)", x_ch);
-   }
    if (x_ch <  0) {
       DEBUG_USER   yLOG_note    ("special character");
       DEBUG_USER   yLOG_value   ("256 + x_ch", 256 + x_ch);
@@ -949,7 +916,6 @@ KEYS_macro         (char a_action)
       DEBUG_USER   yLOG_note    ("end of macro");
       KEYS_macro_reset ();
    }
-   ++my.macro_pos;
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return x_ch;
 }
@@ -983,7 +949,7 @@ SMOD_macro           (char a_major, char a_minor)
          if (my.macro_delay    != '0'       )  my.mode_operating = RUN_DELAY;
          if (my.mode_operating == RUN_NORMAL)  my.mode_operating = RUN_MACRO;
          my.macro_name     = a_minor;
-         my.macro_pos      = 0;
+         my.macro_pos      = -1;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }
@@ -991,7 +957,7 @@ SMOD_macro           (char a_major, char a_minor)
          yVIKEYS_mode_exit  ();
          my.mode_operating = RUN_PLAYBACK;
          my.macro_name     = tolower (a_minor);
-         my.macro_pos      = 0;
+         my.macro_pos      = -1;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }
@@ -999,7 +965,7 @@ SMOD_macro           (char a_major, char a_minor)
          yVIKEYS_mode_exit  ();
          if (my.macro_delay    != '0'       )  my.mode_operating = RUN_DELAY;
          if (my.mode_operating == RUN_NORMAL)  my.mode_operating = RUN_MACRO;
-         my.macro_pos      = 0;
+         my.macro_pos      = -1;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }
