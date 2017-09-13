@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4u"
-#define     VER_TXT   "macro speed < and > controls added in playback mode"
+#define     VER_NUM   "2.4v"
+#define     VER_TXT   "update keyboard macro documentation in yVIKEYS"
 
 
 
