@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4t"
-#define     VER_TXT   "macro recording appends and encodes special chars"
+#define     VER_NUM   "2.4u"
+#define     VER_TXT   "macro speed < and > controls added in playback mode"
 
 
 

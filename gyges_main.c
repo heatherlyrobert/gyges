@@ -124,6 +124,14 @@ main (int argc, char *argv[])
                continue;
             }
             break;
+         case '<'      :
+            if (my.macro_delay > '0')  --my.macro_delay;
+            continue;
+            break;
+         case '>'      :
+            if (my.macro_delay < '9')  ++my.macro_delay;
+            continue;
+            break;
          case K_ESCAPE :
             DEBUG_LOOP   yLOG_note    ("user entered escape");
             KEYS_macro_reset ();
