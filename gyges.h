@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4s"
-#define     VER_TXT   "macro recording is working well, including delete"
+#define     VER_NUM   "2.4t"
+#define     VER_TXT   "macro recording appends and encodes special chars"
 
 
 
@@ -976,6 +976,7 @@ char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
 
 char      KEYS_macro_reset     (void);
+char      KEYS_macro_curr      (char a_action);
 char      KEYS_macro_get       (void);
 char      KEYS_macro_set       (void);
 

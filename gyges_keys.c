@@ -131,6 +131,13 @@ KEYS_record        (char a_curr)
    ++nkeylog;
    /*---(macro)--------------------------*/
    IF_MACRO_RECORDING {
+      switch (a_curr) {
+      case K_RETURN  :  a_curr  = G_CHAR_RETURN;  break;  /* return char           */
+      case K_ESCAPE  :  a_curr  = G_CHAR_ESCAPE;  break;  /* escape char           */
+      case K_TAB     :  a_curr  = G_CHAR_TAB;     break;  /* tab char              */
+      case K_BS      :  a_curr  = G_CHAR_BS;      break;  /* backspace char        */
+      case K_SPACE   :  a_curr  = G_CHAR_SPACE;   break;  /* visual space          */
+      }
       my.macro_char                  = a_curr;
       my.macro_keys [my.macro_len++] = a_curr;
       my.macro_keys [my.macro_len  ] = '\0';
@@ -916,7 +923,7 @@ KEYS_macro_get       (void)
 }
 
 char          /*-> next key in the macro list ----------- [ leaf   [ ------ ]-*/
-KEYS_macro         (char a_action)
+KEYS_macro_curr    (char a_action)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -992,6 +999,18 @@ SMOD_macro           (char a_major, char a_minor)
          KEYS_macro_reset ();
          my.mode_operating = MACRO_RECORD;
          my.macro_name     = a_minor;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      if (a_minor >= 'A' && a_minor <= 'Z') {
+         yVIKEYS_mode_exit  ();
+         KEYS_macro_reset ();
+         my.macro_name     = tolower (a_minor);
+         KEYS_macro_get   ();
+         my.macro_keys [--my.macro_len] = '\0';
+         my.macro_pos      = my.macro_len - 1;
+         my.macro_char     = my.macro_keys [my.macro_pos];
+         my.mode_operating = MACRO_RECORD;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }

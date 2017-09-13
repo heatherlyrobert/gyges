@@ -73,7 +73,7 @@ main (int argc, char *argv[])
          DEBUG_LOOP   yLOG_note    ("run_macro, run_playback, or run_delay");
          KEYS_macro_get  ();
          DEBUG_LOOP   yLOG_note    ("read macro keystroke");
-         cch = KEYS_macro      ('-');
+         cch = KEYS_macro_curr ('-');
          DEBUG_LOOP   yLOG_value   ("cch"       , cch);
          if (cch <  0) {
             switch (256 + cch) {
