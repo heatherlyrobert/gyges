@@ -58,31 +58,40 @@ main (int argc, char *argv[])
       DEBUG_LOOP   yLOG_char    ("mode"      , my.mode_operating);
       DEBUG_LOOP   yLOG_char    ("delay"     , my.macro_delay);
       DEBUG_LOOP   yLOG_value   ("pos"       , my.macro_pos);
-      if (my.mode_operating == RUN_NORMAL) {
+      switch (my.mode_operating) {
+      case MACRO_OFF        :
          DEBUG_LOOP   yLOG_note    ("run_normal");
          cch = CURS_main  ();
-      } else {
+         break;
+      case MACRO_RECORD     :
+         DEBUG_LOOP   yLOG_note    ("run_recording");
+         cch = CURS_main  ();
+         break;
+      case MACRO_RUN        :
+      case MACRO_DELAY      :
+      case MACRO_PLAYBACK   :
          DEBUG_LOOP   yLOG_note    ("run_macro, run_playback, or run_delay");
-         KEYS_macro_load ();
+         KEYS_macro_get  ();
          DEBUG_LOOP   yLOG_note    ("read macro keystroke");
          cch = KEYS_macro      ('-');
          DEBUG_LOOP   yLOG_value   ("cch"       , cch);
          if (cch <  0) {
             switch (256 + cch) {
-            case G_CHAR_WAIT    : sleep (1);                         break;
-            case G_CHAR_BREAK   : my.mode_operating = RUN_PLAYBACK;  break;
-            case G_CHAR_HALT    : KEYS_macro_reset (); cch = 0;      break;
-            case G_CHAR_DISPLAY : CURS_screen_reset ();              break;
-            default             : KEYS_macro_reset (); cch = 0;      break;
+            case G_CHAR_WAIT    : sleep (1);                           break;
+            case G_CHAR_BREAK   : my.mode_operating = MACRO_PLAYBACK;  break;
+            case G_CHAR_HALT    : KEYS_macro_reset (); cch = 0;        break;
+            case G_CHAR_DISPLAY : CURS_screen_reset ();                break;
+            default             : KEYS_macro_reset (); cch = 0;        break;
             }
          }
          if (cch == 0) {
             x_savemode = -1;
             cch        =  0;
+            break;
          }
          DEBUG_LOOP   yLOG_note    ("show screen");
          CURS_main  ();
-         if (my.mode_operating == RUN_DELAY) {
+         IF_MACRO_DELAY {
             DEBUG_LOOP   yLOG_note    ("process a delay");
             switch (my.macro_delay) {
             case '9' : x_delay.tv_sec = 3; x_delay.tv_nsec =         0; break;
@@ -105,13 +114,13 @@ main (int argc, char *argv[])
          switch (x_play) {
          case '.'      :
             DEBUG_LOOP   yLOG_note    ("user entered dot (.)");
-            if      (my.mode_operating == RUN_PLAYBACK)  {
+            if      (my.mode_operating == MACRO_PLAYBACK)  {
                DEBUG_LOOP   yLOG_note    ("change playback to delay");
-               my.mode_operating = RUN_DELAY;
+               my.mode_operating = MACRO_DELAY;
             }
-            else if (my.mode_operating == RUN_DELAY   )  {
+            IF_MACRO_DELAY {
                DEBUG_LOOP   yLOG_note    ("change delay to playback");
-               my.mode_operating = RUN_PLAYBACK;
+               my.mode_operating = MACRO_PLAYBACK;
                continue;
             }
             break;
@@ -122,9 +131,10 @@ main (int argc, char *argv[])
             break;
          case K_RETURN :
             DEBUG_LOOP   yLOG_note    ("user entered return");
-            my.mode_operating = RUN_MACRO;
+            my.mode_operating = MACRO_RUN;
             break;
          }
+         break;
       }
       DEBUG_LOOP   yLOG_note    ("handle keystroke normally");
       KEYS_record (cch);
@@ -171,11 +181,11 @@ main (int argc, char *argv[])
       if   (x_savemode != yVIKEYS_mode_curr() || yVIKEYS_mode_curr() == MODE_COMMAND) {
          yVIKEYS_mode_mesg (my.message, g_command);
       }
-      if   (my.mode_operating == RUN_PLAYBACK) {
+      IF_MACRO_PLAYBACK {
          strlcpy (my.message, "[M@] RUN : macro execution mode", LEN_DESC);
       }
       x_savemode = yVIKEYS_mode_curr ();
-      if (my.mode_operating != RUN_NORMAL)  ++my.macro_pos;
+      IF_MACRO_ON  ++my.macro_pos;
       /*---(done)------------------------*/
    }
    DEBUG_TOPS  yLOG_break   ();

@@ -1967,7 +1967,7 @@ PRIV void  o___DISPLAY_________o () { return; }
 char        s_print     [LEN_RECD] = "";
 
 char
-CELL_macro           (char *a_macro)
+CELL_macro_get       (char *a_macro)
 {
    char        rce         =  -10;
    short       x_row       =    0;
@@ -1987,6 +1987,27 @@ CELL_macro           (char *a_macro)
    }
    --rce;
    return rce;
+}
+
+char
+CELL_macro_set       (char *a_macro)
+{
+   char        rce         =  -10;
+   short       x_row       =    0;
+   char        t           [LEN_LABEL]   = "";
+   tCELL      *x_curr      = NULL;
+   --rce;  if (a_macro   == NULL     )                      return rce;
+   --rce;  if (my.macro_name < 'a' || my.macro_name > 'z')  return rce;
+   x_row = my.macro_name - 'a';
+   if (my.macro_len == 0) {
+      CELL_delete (CHG_NOHIST  , 35, 0, x_row);
+      CELL_delete (CHG_NOHIST  , 35, 1, x_row);
+   } else {
+      sprintf (t, "%c", my.macro_name);
+      CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, t      );
+      CELL_change (NULL, CHG_NOHIST, 35, 1, x_row, a_macro);
+   }
+   return 0;
 }
 
 char         /*--> determine full print width ------------[ ------ [ ------ ]-*/

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4r"
-#define     VER_TXT   "macro delay/playback switch working, added main loop debugging"
+#define     VER_NUM   "2.4s"
+#define     VER_TXT   "macro recording is working well, including delete"
 
 
 
@@ -210,11 +210,20 @@ int         nkeylog;
 
 
 
-#define     RUN_NORMAL         '-'      /* normal keyboard input              */
-#define     RUN_MACRO          'M'      /* macro running with redisplay       */
-#define     RUN_DELAY          'D'      /* macro delay playback controls      */
-#define     RUN_PLAYBACK       'P'      /* macro under playback controls      */
-#define     RUN_HISTORY        'h'      /* history playback mode              */
+#define     MACRO_OFF          '-'      /* normal keyboard input              */
+#define     MACRO_RUN          'M'      /* macro running with redisplay       */
+#define     MACRO_DELAY        'D'      /* macro delay playback controls      */
+#define     MACRO_PLAYBACK     'P'      /* macro under playback controls      */
+#define     MACRO_RECORD       'r'      /* macro recording                    */
+
+#define     IF_MACRO_OFF         if (my.mode_operating == MACRO_OFF      ) 
+#define     IF_MACRO_RUN         if (my.mode_operating == MACRO_RUN      ) 
+#define     IF_MACRO_DELAY       if (my.mode_operating == MACRO_DELAY    ) 
+#define     IF_MACRO_PLAYBACK    if (my.mode_operating == MACRO_PLAYBACK ) 
+#define     IF_MACRO_MOVING      if (my.mode_operating == MACRO_RUN      || my.mode_operating == MACRO_DELAY   ) 
+#define     IF_MACRO_NOT_PLAYING if (my.mode_operating == MACRO_OFF      || my.mode_operating == MACRO_RECORD  )
+#define     IF_MACRO_RECORDING   if (my.mode_operating == MACRO_RECORD   ) 
+#define     IF_MACRO_ON          if (my.mode_operating != MACRO_OFF      ) 
 
 struct cACCESSOR {
    /*---(files)----------------*/
@@ -950,7 +959,8 @@ char      SMOD_error         (char  a_major, char  a_minor);
 char      SMOD_menus         (char  a_major, char  a_minor);
 
 char      KEYS_init          (void);
-char      KEYS_record        (int   a_curr);
+char      KEYS_record        (char  a_curr);
+char      KEYS_reverse       (char  a_curr);
 char      KEYS_status        (char *msg);
 char      KEYS_z_family      (char  a_major, char  a_minor);
 char      KEYS_col           (char  a_major, char  a_minor);
@@ -966,7 +976,8 @@ char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
 
 char      KEYS_macro_reset     (void);
-char      KEYS_macro           (char a_action);
+char      KEYS_macro_get       (void);
+char      KEYS_macro_set       (void);
 
 /*---(key movements)--------*/
 char      MOVE_prep          (void);
@@ -1272,7 +1283,8 @@ char      CELL_decimals        (char   a_mode, char a_decs);
 char      CELL_format_valid    (char   a_format);
 char      CELL_format          (char   a_mode, char a_format);
 char      CELL_width           (char   a_mode, char a_num);
-char      CELL_macro           (char  *a_macro);
+char      CELL_macro_get       (char  *a_macro);
+char      CELL_macro_set       (char  *a_macro);
 char      CELL_printable       (tCELL *a_cell);
 
 char     *CELL__unit           (char  *a_question, tCELL *a_cell);

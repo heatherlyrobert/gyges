@@ -607,17 +607,16 @@ CURS_status        (tCELL *a_curr)
       snprintf (msg, 500, " %-20.20s%*.*s%30.30s %-4.4s ", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num);
       break;
    }
-   if (my.mode_operating == RUN_PLAYBACK || my.mode_operating == RUN_DELAY) {
+   IF_MACRO_ON {
       snprintf (msg, 500, "macro %c %c %c %3d %02x %3d:%s", my.macro_name, my.mode_operating, my.macro_delay, my.macro_pos, (uchar) my.macro_char, my.macro_len, my.macro_keys);
    }
    if      (sta_error         == 'y')           attron (S_COLOR_STATUSE);
-   else if (my.mode_operating == RUN_PLAYBACK)  attron (S_COLOR_STATUSE);
-   else if (my.mode_operating == RUN_DELAY   )  attron (S_COLOR_STATUSE);
    else                                         attron (S_COLOR_STATUS);
+   IF_MACRO_ON                                  attron (S_COLOR_STATUSE);
    mvprintw(s_status_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);
    mvprintw(s_status_row, 0, msg);
    attrset    (0);
-   if (my.mode_operating == RUN_PLAYBACK || my.mode_operating == RUN_DELAY) {
+   IF_MACRO_ON {
       attron   (S_COLOR_CONTENT);
       mvprintw (s_status_row, 23 + my.macro_pos, "%c", my.macro_keys [my.macro_pos]);
       attrset  (0);
@@ -1173,9 +1172,9 @@ char          /*-> capture keyboard input during macros --[ leaf   [--------]-*/
 CURS_playback      (void)
 {
    char        ch          = ' ';
-   if (my.mode_operating == RUN_MACRO || my.mode_operating == RUN_DELAY)  nodelay (stdscr, TRUE );
+   IF_MACRO_MOVING nodelay (stdscr, TRUE );
    ch = getch ();
-   if (my.mode_operating == RUN_MACRO || my.mode_operating == RUN_DELAY)  nodelay (stdscr, FALSE);
+   IF_MACRO_MOVING nodelay (stdscr, FALSE);
    return ch;
 }
 
@@ -1186,7 +1185,7 @@ CURS_main          (void)
    int         ch          = 0;
    tCELL      *curr        = NULL;
    /*---(defense)------------------------*/
-   if (my.mode_operating == RUN_MACRO)  return 0;
+   IF_MACRO_RUN     return 0;
    /*---(header)-------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
@@ -1256,7 +1255,7 @@ CURS_main          (void)
    /*---(refresh)------------------------*/
    my.info_win = G_INFO_NONE;
    refresh ();
-   if (my.mode_operating == RUN_NORMAL) {
+   IF_MACRO_NOT_PLAYING {
       ch = getch ();
       DEBUG_GRAF  yLOG_value   ("key"       , ch);
    }

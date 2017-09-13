@@ -119,7 +119,7 @@ KEYS_init          (void)
 }
 
 char
-KEYS_record        (int a_curr)
+KEYS_record        (char a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        t           [10];
@@ -129,6 +129,14 @@ KEYS_record        (int a_curr)
    sprintf (t, "%c:%02x ", x_key, a_curr);
    strcat  (keylog, t);
    ++nkeylog;
+   /*---(macro)--------------------------*/
+   IF_MACRO_RECORDING {
+      my.macro_char                  = a_curr;
+      my.macro_keys [my.macro_len++] = a_curr;
+      my.macro_keys [my.macro_len  ] = '\0';
+      my.macro_pos                   = my.macro_len - 1;
+   }
+   /*---(complete)-----------------------*/
    return 0;
 }
 
@@ -660,9 +668,22 @@ MODE_map           (char a_major, char a_minor)
          return 0;
          break;
       case '@'      :
+         KEYS_macro_reset ();
          yVIKEYS_mode_enter  (SMOD_MACRO   );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;
+         break;
+      case 'q'      :
+         IF_MACRO_OFF {
+            yVIKEYS_mode_enter  (SMOD_MACRO   );
+            DEBUG_USER   yLOG_exit    (__FUNCTION__);
+            return a_minor;
+         } else {
+            KEYS_macro_set ();
+            my.mode_operating = MACRO_OFF;
+            DEBUG_USER   yLOG_exit    (__FUNCTION__);
+            return 0;
+         }
          break;
       case 'F'      :
          yVIKEYS_mode_enter  (SMOD_FORMAT  );
@@ -706,9 +727,6 @@ MODE_map           (char a_major, char a_minor)
       switch (a_minor) {
       case K_CTRL_L : clear ();                       break;
       case 'P'      : DEP_writeall (); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;
-                      /*---(clearing cells)-----------*/
-                      /*> case 'x'      : REG_cut   ();                   break;                      <*/
-                      /*> case 'd'      : CELL_erase ();                  break;                      <*/
                       /*---(formatting)---------------*/
       case '<'      : CELL_align (CHG_INPUT, '<');               break;
       case '|'      : CELL_align (CHG_INPUT, '|');               break;
@@ -832,7 +850,7 @@ char
 KEYS_macro_reset     (void)
 {
    int         i           = 0;
-   my.mode_operating = RUN_NORMAL;
+   my.mode_operating = MACRO_OFF;
    my.macro_pos   =  -1;
    my.macro_len   =   0;
    my.macro_char  =   0;
@@ -842,7 +860,7 @@ KEYS_macro_reset     (void)
 }
 
 char
-KEYS_macro_load      (void)
+KEYS_macro_set       (void)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -850,7 +868,32 @@ KEYS_macro_load      (void)
    char        x_ch        =  ' ';
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   rc = CELL_macro (my.macro_keys);
+   /*---(trim)---------------------------*/
+   if (my.macro_len > 0)  --my.macro_len;
+   my.macro_keys [my.macro_len] = '\0';
+   /*---(save)---------------------------*/
+   rc = CELL_macro_set (my.macro_keys);
+   DEBUG_USER   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc    <  0) {
+      KEYS_macro_reset ();
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+KEYS_macro_get       (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_ch        =  ' ';
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   rc = CELL_macro_get (my.macro_keys);
    DEBUG_USER   yLOG_value   ("rc"        , rc);
    --rce;  if (rc    <  0) {
       KEYS_macro_reset ();
@@ -942,12 +985,24 @@ SMOD_macro           (char a_major, char a_minor)
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   /*---(check for recording)------------*/
+   --rce;  if (a_major == 'q') {
+      if (a_minor >= 'a' && a_minor <= 'z') {
+         yVIKEYS_mode_exit  ();
+         KEYS_macro_reset ();
+         my.mode_operating = MACRO_RECORD;
+         my.macro_name     = a_minor;
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      return rce;
+   }
    /*---(check for execution)------------*/
    --rce;  if (a_major == '@') {
       if (a_minor >= 'a' && a_minor <= 'z') {
          yVIKEYS_mode_exit  ();
-         if (my.macro_delay    != '0'       )  my.mode_operating = RUN_DELAY;
-         if (my.mode_operating == RUN_NORMAL)  my.mode_operating = RUN_MACRO;
+         if (my.macro_delay    != '0'       )  my.mode_operating = MACRO_DELAY;
+         IF_MACRO_OFF                          my.mode_operating = MACRO_RUN;
          my.macro_name     = a_minor;
          my.macro_pos      = -1;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -955,7 +1010,7 @@ SMOD_macro           (char a_major, char a_minor)
       }
       if (a_minor >= 'A' && a_minor <= 'Z') {
          yVIKEYS_mode_exit  ();
-         my.mode_operating = RUN_PLAYBACK;
+         my.mode_operating = MACRO_PLAYBACK;
          my.macro_name     = tolower (a_minor);
          my.macro_pos      = -1;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -963,8 +1018,8 @@ SMOD_macro           (char a_major, char a_minor)
       }
       if (a_minor == '@') {
          yVIKEYS_mode_exit  ();
-         if (my.macro_delay    != '0'       )  my.mode_operating = RUN_DELAY;
-         if (my.mode_operating == RUN_NORMAL)  my.mode_operating = RUN_MACRO;
+         if (my.macro_delay    != '0'       )  my.mode_operating = MACRO_DELAY;
+         IF_MACRO_OFF                          my.mode_operating = MACRO_RUN;
          my.macro_pos      = -1;
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
@@ -1887,10 +1942,10 @@ MODE_command       (char a_major, char a_minor)
    x_len = strlen (g_command);
    switch (a_minor) {
    case   K_ESCAPE : yVIKEYS_mode_exit ();
-               return 0;
+                     return 0;
    case   K_RETURN : rc = cmd_exec (g_command);
-               yVIKEYS_mode_exit ();
-               return rc;   /* return  */
+                     yVIKEYS_mode_exit ();
+                     return rc;   /* return  */
    }
    /*---(check for backspace)------------*/
    if (a_minor == K_DEL || a_minor == K_BS) {
@@ -1927,25 +1982,25 @@ SMOD_wander        (char a_prev, char a_curr)
    case  ')' : post = a_curr;
    case  K_RETURN  :
    case  K_ESCAPE  : VISU_clear ();
-               LOC_ref (CTAB, CCOL, CROW, 0, wref);
-               CTAB = wtab;
-               CCOL = wcol;
-               CROW = wrow;
-               my.cpos = wpos;
-               strcpy (g_contents, wsave);
-               if (strcmp (wref2, "") != 0) {
-                  strcat (g_contents, wref2);
-                  strcat (g_contents, ":");
-               }
-               strcat (g_contents, wref);
-               my.npos = strlen(g_contents);
-               if (post != ' ') {
-                  g_contents[my.npos]   = post;
-                  g_contents[++my.npos] = '\0';
-               }
-               my.cpos = my.npos;
-               yVIKEYS_mode_exit ();
-               return  0;   /* escape -- back to source mode */
+                     LOC_ref (CTAB, CCOL, CROW, 0, wref);
+                     CTAB = wtab;
+                     CCOL = wcol;
+                     CROW = wrow;
+                     my.cpos = wpos;
+                     strcpy (g_contents, wsave);
+                     if (strcmp (wref2, "") != 0) {
+                        strcat (g_contents, wref2);
+                        strcat (g_contents, ":");
+                     }
+                     strcat (g_contents, wref);
+                     my.npos = strlen(g_contents);
+                     if (post != ' ') {
+                        g_contents[my.npos]   = post;
+                        g_contents[++my.npos] = '\0';
+                     }
+                     my.cpos = my.npos;
+                     yVIKEYS_mode_exit ();
+                     return  0;   /* escape -- back to source mode */
    }
    /*---(basic movement)-----------*/
    /*> switch (a_curr) {                                                              <* 
