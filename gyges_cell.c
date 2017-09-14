@@ -1978,11 +1978,11 @@ CELL_macro_get       (char *a_macro)
    x_curr = LOC_cell_at_loc ( 35, 1, x_row);
    --rce;  if (x_curr    == NULL)                           return rce;
    if (x_curr->t == CTYPE_STR) {
-      strlcpy (a_macro, x_curr->s    , LEN_LABEL);
+      strlcpy (a_macro, x_curr->s    , LEN_RECD);
       return 0;
    }
    if (x_curr->t == CTYPE_MOD) {
-      strlcpy (a_macro, x_curr->v_str, LEN_LABEL);
+      strlcpy (a_macro, x_curr->v_str, LEN_RECD);
       return 0;
    }
    --rce;

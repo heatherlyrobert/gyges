@@ -124,6 +124,7 @@ KEYS_record        (char a_curr)
    /*---(locals)-----------+-----------+-*/
    char        t           [10];
    int         x_key       =0;
+   /*---(normal)-------------------------*/
    x_key = '_';
    if (a_curr >= ' ' && a_curr <= '~')  x_key = a_curr;
    sprintf (t, "%c:%02x ", x_key, a_curr);
@@ -131,17 +132,7 @@ KEYS_record        (char a_curr)
    ++nkeylog;
    /*---(macro)--------------------------*/
    IF_MACRO_RECORDING {
-      switch (a_curr) {
-      case K_RETURN  :  a_curr  = G_CHAR_RETURN;  break;  /* return char           */
-      case K_ESCAPE  :  a_curr  = G_CHAR_ESCAPE;  break;  /* escape char           */
-      case K_TAB     :  a_curr  = G_CHAR_TAB;     break;  /* tab char              */
-      case K_BS      :  a_curr  = G_CHAR_BS;      break;  /* backspace char        */
-      case K_SPACE   :  a_curr  = G_CHAR_SPACE;   break;  /* visual space          */
-      }
-      my.macro_char                  = a_curr;
-      my.macro_keys [my.macro_len++] = a_curr;
-      my.macro_keys [my.macro_len  ] = '\0';
-      my.macro_pos                   = my.macro_len - 1;
+      MACRO_record_add (a_curr);
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -675,7 +666,7 @@ MODE_map           (char a_major, char a_minor)
          return 0;
          break;
       case '@'      :
-         KEYS_macro_reset ();
+         MACRO_reset  ();
          yVIKEYS_mode_enter  (SMOD_MACRO   );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return a_minor;
@@ -685,12 +676,10 @@ MODE_map           (char a_major, char a_minor)
             yVIKEYS_mode_enter  (SMOD_MACRO   );
             DEBUG_USER   yLOG_exit    (__FUNCTION__);
             return a_minor;
-         } else {
-            KEYS_macro_set ();
-            my.mode_operating = MACRO_OFF;
-            DEBUG_USER   yLOG_exit    (__FUNCTION__);
-            return 0;
          }
+         MACRO_record_end ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
          break;
       case 'F'      :
          yVIKEYS_mode_enter  (SMOD_FORMAT  );
@@ -850,209 +839,6 @@ KEYS__del          (char a_key)
    /*---(adjust for delete)--------------*/
    /*> if (my.cpos >=  my.npos) my.cpos = my.npos - 1;                                <*/
    /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-KEYS_macro_reset     (void)
-{
-   int         i           = 0;
-   my.mode_operating = MACRO_OFF;
-   my.macro_pos   =  -1;
-   my.macro_len   =   0;
-   my.macro_char  =   0;
-   my.macro_delay = '0';
-   for (i = 0; i < LEN_RECD; ++i)  my.macro_keys [i] = '\0';
-   return 0;
-}
-
-char
-KEYS_macro_set       (void)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char        x_ch        =  ' ';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   /*---(trim)---------------------------*/
-   if (my.macro_len > 0)  --my.macro_len;
-   my.macro_keys [my.macro_len] = '\0';
-   /*---(save)---------------------------*/
-   rc = CELL_macro_set (my.macro_keys);
-   DEBUG_USER   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc    <  0) {
-      KEYS_macro_reset ();
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-KEYS_macro_get       (void)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char        x_ch        =  ' ';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   rc = CELL_macro_get (my.macro_keys);
-   DEBUG_USER   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc    <  0) {
-      KEYS_macro_reset ();
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("macro"     , my.macro_keys);
-   my.macro_len = strlen (my.macro_keys);
-   DEBUG_USER   yLOG_value   ("len"       , my.macro_len);
-   --rce;  if (my.macro_len <= 0) {
-      KEYS_macro_reset ();
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   my.macro_keys [my.macro_len++] = G_CHAR_NULL;
-   my.macro_keys [my.macro_len  ] = '\0';
-   my.macro_char = my.macro_keys [my.macro_pos];
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char          /*-> next key in the macro list ----------- [ leaf   [ ------ ]-*/
-KEYS_macro_curr    (char a_action)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char        x_ch        =  ' ';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_value   ("macro_pos" , my.macro_pos);
-   --rce;  if (my.macro_pos >= my.macro_len) {
-      KEYS_macro_reset ();
-      DEBUG_USER   yLOG_note    ("past the end");
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   x_ch = my.macro_keys [my.macro_pos];
-   DEBUG_USER   yLOG_char    ("x_ch"      , x_ch);
-   if (x_ch <  0) {
-      DEBUG_USER   yLOG_note    ("special character");
-      DEBUG_USER   yLOG_value   ("256 + x_ch", 256 + x_ch);
-      switch (256 + x_ch) {
-      case G_CHAR_RETURN  :  x_ch = K_RETURN;  break;
-      case G_CHAR_ESCAPE  :  x_ch = K_ESCAPE;  break;
-      case G_CHAR_BS      :  x_ch = K_BS;      break;
-      case G_CHAR_TAB     :  x_ch = K_TAB;     break;
-      case G_CHAR_SPACE   :  x_ch = K_SPACE;   break;
-      case G_CHAR_GROUP   :  x_ch = K_GROUP;   break;
-      case G_CHAR_FIELD   :  x_ch = K_FIELD;   break;
-      case G_CHAR_ALT     :                    break;
-      case G_CHAR_CONTROL :                    break;
-      case G_CHAR_WAIT    :                    break;
-      case G_CHAR_BREAK   :                    break;
-      case G_CHAR_HALT    :                    break;
-      case G_CHAR_DISPLAY :                    break;
-      case G_CHAR_NULL    :  x_ch = NULL;      break;
-      default             :  x_ch = NULL;      break;
-      }
-      DEBUG_USER   yLOG_value   ("x_ch (new)", x_ch);
-   }
-   if (x_ch == NULL) {
-      DEBUG_USER   yLOG_note    ("end of macro");
-      KEYS_macro_reset ();
-   }
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return x_ch;
-}
-
-char          /*-> process macro sub-mode keys ---------- [ leaf   [ ------ ]-*/
-SMOD_macro           (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   --rce;  if (yVIKEYS_mode_not (SMOD_MACRO))  {
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(mode changes)-------------------*/
-   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
-      DEBUG_USER   yLOG_note    ("escape/return, nothing to do");
-      KEYS_macro_reset ();
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(check for recording)------------*/
-   --rce;  if (a_major == 'q') {
-      if (a_minor >= 'a' && a_minor <= 'z') {
-         yVIKEYS_mode_exit  ();
-         KEYS_macro_reset ();
-         my.mode_operating = MACRO_RECORD;
-         my.macro_name     = a_minor;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      if (a_minor >= 'A' && a_minor <= 'Z') {
-         yVIKEYS_mode_exit  ();
-         KEYS_macro_reset ();
-         my.macro_name     = tolower (a_minor);
-         KEYS_macro_get   ();
-         my.macro_keys [--my.macro_len] = '\0';
-         my.macro_pos      = my.macro_len - 1;
-         my.macro_char     = my.macro_keys [my.macro_pos];
-         my.mode_operating = MACRO_RECORD;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      return rce;
-   }
-   /*---(check for execution)------------*/
-   --rce;  if (a_major == '@') {
-      if (a_minor >= 'a' && a_minor <= 'z') {
-         yVIKEYS_mode_exit  ();
-         if (my.macro_delay    != '0'       )  my.mode_operating = MACRO_DELAY;
-         IF_MACRO_OFF                          my.mode_operating = MACRO_RUN;
-         my.macro_name     = a_minor;
-         my.macro_pos      = -1;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      if (a_minor >= 'A' && a_minor <= 'Z') {
-         yVIKEYS_mode_exit  ();
-         my.mode_operating = MACRO_PLAYBACK;
-         my.macro_name     = tolower (a_minor);
-         my.macro_pos      = -1;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      if (a_minor == '@') {
-         yVIKEYS_mode_exit  ();
-         if (my.macro_delay    != '0'       )  my.mode_operating = MACRO_DELAY;
-         IF_MACRO_OFF                          my.mode_operating = MACRO_RUN;
-         my.macro_pos      = -1;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      if (a_minor >= '0' && a_minor <= '9') {
-         my.macro_delay    = a_minor;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_major;
-      }
-      KEYS_macro_reset ();
-      return rce;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

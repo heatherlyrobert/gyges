@@ -55,10 +55,10 @@ main (int argc, char *argv[])
    while (done) {
       /*---(show screen)-----------------*/
       DEBUG_LOOP   yLOG_note    ("top of main event loop");
-      DEBUG_LOOP   yLOG_char    ("mode"      , my.mode_operating);
+      DEBUG_LOOP   yLOG_char    ("mode"      , my.macro_mode);
       DEBUG_LOOP   yLOG_char    ("delay"     , my.macro_delay);
       DEBUG_LOOP   yLOG_value   ("pos"       , my.macro_pos);
-      switch (my.mode_operating) {
+      switch (my.macro_mode) {
       case MACRO_OFF        :
          DEBUG_LOOP   yLOG_note    ("run_normal");
          cch = CURS_main  ();
@@ -71,17 +71,17 @@ main (int argc, char *argv[])
       case MACRO_DELAY      :
       case MACRO_PLAYBACK   :
          DEBUG_LOOP   yLOG_note    ("run_macro, run_playback, or run_delay");
-         KEYS_macro_get  ();
+         MACRO_fetch  (my.macro_name);
          DEBUG_LOOP   yLOG_note    ("read macro keystroke");
-         cch = KEYS_macro_curr ('-');
+         cch = MACRO_curr_key ();
          DEBUG_LOOP   yLOG_value   ("cch"       , cch);
          if (cch <  0) {
             switch (256 + cch) {
             case G_CHAR_WAIT    : sleep (1);                           break;
-            case G_CHAR_BREAK   : my.mode_operating = MACRO_PLAYBACK;  break;
-            case G_CHAR_HALT    : KEYS_macro_reset (); cch = 0;        break;
+            case G_CHAR_BREAK   : SET_MACRO_PLAYBACK;                  break;
+            case G_CHAR_HALT    : MACRO_reset  (); cch = 0;            break;
             case G_CHAR_DISPLAY : CURS_screen_reset ();                break;
-            default             : KEYS_macro_reset (); cch = 0;        break;
+            default             : MACRO_reset  (); cch = 0;            break;
             }
          }
          if (cch == 0) {
@@ -114,13 +114,13 @@ main (int argc, char *argv[])
          switch (x_play) {
          case '.'      :
             DEBUG_LOOP   yLOG_note    ("user entered dot (.)");
-            if      (my.mode_operating == MACRO_PLAYBACK)  {
+            IF_MACRO_PLAYBACK {
                DEBUG_LOOP   yLOG_note    ("change playback to delay");
-               my.mode_operating = MACRO_DELAY;
+               SET_MACRO_DELAY;
             }
             IF_MACRO_DELAY {
                DEBUG_LOOP   yLOG_note    ("change delay to playback");
-               my.mode_operating = MACRO_PLAYBACK;
+               SET_MACRO_PLAYBACK;
                continue;
             }
             break;
@@ -134,12 +134,12 @@ main (int argc, char *argv[])
             break;
          case K_ESCAPE :
             DEBUG_LOOP   yLOG_note    ("user entered escape");
-            KEYS_macro_reset ();
+            MACRO_reset ();
             cch = 0;
             break;
          case K_RETURN :
             DEBUG_LOOP   yLOG_note    ("user entered return");
-            my.mode_operating = MACRO_RUN;
+            SET_MACRO_RUN;
             break;
          }
          break;
@@ -152,25 +152,25 @@ main (int argc, char *argv[])
       /*---(handle keystroke)------------*/
       switch (yVIKEYS_mode_curr ()) {
          /*---(major)--------------------*/
-      case MODE_GOD      : rc = MODE_god      (sch, cch); break;
-      case MODE_MAP      : rc = MODE_map      (sch, cch); break;
-      case MODE_VISUAL   : rc = VISU_mode     (sch, cch); break;
-      case MODE_SOURCE   : rc = MODE_source   (sch, cch); break;
-      case MODE_INPUT    : rc = MODE_input    (sch, cch); break;
-      case MODE_COMMAND  : rc = MODE_command  (' ', cch); break;
+      case MODE_GOD      : rc = MODE_god       (sch, cch); break;
+      case MODE_MAP      : rc = MODE_map       (sch, cch); break;
+      case MODE_VISUAL   : rc = VISU_mode      (sch, cch); break;
+      case MODE_SOURCE   : rc = MODE_source    (sch, cch); break;
+      case MODE_INPUT    : rc = MODE_input     (sch, cch); break;
+      case MODE_COMMAND  : rc = MODE_command   (' ', cch); break;
                            /*---(submodes)-----------------*/
-      case SMOD_ERROR    : rc = SMOD_error    (sch, cch); break;
-      case SMOD_SELECT   : rc = SELC_mode     (sch, cch); break;
-      case SMOD_TEXTREG  : rc = TREG_mode     (sch, cch); break;
-      case SMOD_REPLACE  : rc = SMOD_replace  (sch, cch); break;
-      case SMOD_FORMAT   : rc = SMOD_format   (' ', cch); break;
-      case SMOD_BUFFER   : rc = SMOD_buffer   (' ', cch); break;
-      case SMOD_WANDER   : rc = SMOD_wander   (' ', cch); break;
-      case SMOD_REGISTER : rc = REG_mode      (sch, cch); break;
-      case SMOD_MARK     : rc = MARK_mode     (sch, cch); break;
-      case SMOD_MENUS    : rc = SMOD_menus    (sch, cch); break;
-      case SMOD_MACRO    : rc = SMOD_macro    (sch, cch); break;
-      default            : rc = MODE_map      (sch, cch); break;
+      case SMOD_ERROR    : rc = SMOD_error     (sch, cch); break;
+      case SMOD_SELECT   : rc = SELC_mode      (sch, cch); break;
+      case SMOD_TEXTREG  : rc = TREG_mode      (sch, cch); break;
+      case SMOD_REPLACE  : rc = SMOD_replace   (sch, cch); break;
+      case SMOD_FORMAT   : rc = SMOD_format    (' ', cch); break;
+      case SMOD_BUFFER   : rc = SMOD_buffer    (' ', cch); break;
+      case SMOD_WANDER   : rc = SMOD_wander    (' ', cch); break;
+      case SMOD_REGISTER : rc = REG_mode       (sch, cch); break;
+      case SMOD_MARK     : rc = MARK_mode      (sch, cch); break;
+      case SMOD_MENUS    : rc = SMOD_menus     (sch, cch); break;
+      case SMOD_MACRO    : rc = MACRO_submode  (sch, cch); break;
+      default            : rc = MODE_map       (sch, cch); break;
       }
       /*---(translate unprintable)-------*/
       if      (cch == 0       )  snprintf (cmd,   9, " %c %c " , sch, G_CHAR_NULL  );

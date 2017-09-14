@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4v"
-#define     VER_TXT   "update keyboard macro documentation in yVIKEYS"
+#define     VER_NUM   "2.4w"
+#define     VER_TXT   "added macro unit testing for init, fetch, and save"
 
 
 
@@ -216,21 +216,27 @@ int         nkeylog;
 #define     MACRO_PLAYBACK     'P'      /* macro under playback controls      */
 #define     MACRO_RECORD       'r'      /* macro recording                    */
 
-#define     IF_MACRO_OFF         if (my.mode_operating == MACRO_OFF      ) 
-#define     IF_MACRO_RUN         if (my.mode_operating == MACRO_RUN      ) 
-#define     IF_MACRO_DELAY       if (my.mode_operating == MACRO_DELAY    ) 
-#define     IF_MACRO_PLAYBACK    if (my.mode_operating == MACRO_PLAYBACK ) 
-#define     IF_MACRO_MOVING      if (my.mode_operating == MACRO_RUN      || my.mode_operating == MACRO_DELAY   ) 
-#define     IF_MACRO_NOT_PLAYING if (my.mode_operating == MACRO_OFF      || my.mode_operating == MACRO_RECORD  )
-#define     IF_MACRO_RECORDING   if (my.mode_operating == MACRO_RECORD   ) 
-#define     IF_MACRO_ON          if (my.mode_operating != MACRO_OFF      ) 
+#define     IF_MACRO_OFF         if (my.macro_mode == MACRO_OFF      ) 
+#define     IF_MACRO_RUN         if (my.macro_mode == MACRO_RUN      ) 
+#define     IF_MACRO_DELAY       if (my.macro_mode == MACRO_DELAY    ) 
+#define     IF_MACRO_PLAYBACK    if (my.macro_mode == MACRO_PLAYBACK ) 
+#define     IF_MACRO_MOVING      if (my.macro_mode == MACRO_RUN      || my.macro_mode == MACRO_DELAY   ) 
+#define     IF_MACRO_NOT_PLAYING if (my.macro_mode == MACRO_OFF      || my.macro_mode == MACRO_RECORD  )
+#define     IF_MACRO_RECORDING   if (my.macro_mode == MACRO_RECORD   ) 
+#define     IF_MACRO_ON          if (my.macro_mode != MACRO_OFF      ) 
+
+#define     SET_MACRO_OFF        my.macro_mode = MACRO_OFF
+#define     SET_MACRO_RUN        my.macro_mode = MACRO_RUN
+#define     SET_MACRO_PLAYBACK   my.macro_mode = MACRO_PLAYBACK
+#define     SET_MACRO_DELAY      my.macro_mode = MACRO_DELAY
+#define     SET_MACRO_RECORD     my.macro_mode = MACRO_RECORD
 
 struct cACCESSOR {
    /*---(files)----------------*/
    char        quiet;          /* bool : 0=normal, 1=quiet                    */
    int         logger;         /* log file so that we don't close it          */
-   /*---(input)-----------*/
-   char        mode_operating;              /* keyboard, macro, silent        */
+   /*---(keyboard macro)-------*/
+   char        macro_mode;                  /* keyboard, macro, silent        */
    char        macro_name;                  /* current macro name             */
    int         macro_pos;                   /* step in current macro          */
    int         macro_len;                   /* length of macro                */
@@ -975,11 +981,6 @@ char*     KEYS__unit         (char *a_question);
 char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
 
-char      KEYS_macro_reset     (void);
-char      KEYS_macro_curr      (char a_action);
-char      KEYS_macro_get       (void);
-char      KEYS_macro_set       (void);
-
 /*---(key movements)--------*/
 char      MOVE_prep          (void);
 char      MOVE_done          (void);
@@ -1338,6 +1339,22 @@ char      FILE_write           (void);
 char      FILE_writeas         (char *a_name);
 char      XML3_read            (char *a_name);
 
+
+/*===[ SCRP   ]===============================================================*/
+/*345678901-12345678901234567890->--------------------------------------------*/
+/*---(macros)------------------*/
+char        MACRO_name_valid     (char  a_name);
+char        MACRO_reset          (void);
+char        MACRO_record_beg     (char  a_name);
+char        MACRO_record_add     (char  a_key);
+char        MACRO_record_end     (void);
+char        MACRO_fetch          (char  a_name);
+char        MACRO_push_keys      (char *a_keys);
+char        MACRO_save           (void);
+char        MACRO_curr_key       (void);
+char        MACRO_submode        (char  a_major, char a_minor);
+/*---(unit_test)---------------*/
+char*       MACRO_unit           (char *a_question, char a_macro);
 
 
 #endif

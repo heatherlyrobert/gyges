@@ -608,7 +608,7 @@ CURS_status        (tCELL *a_curr)
       break;
    }
    IF_MACRO_ON {
-      snprintf (msg, 500, "macro %c %c %c %3d %02x %3d:%s", my.macro_name, my.mode_operating, my.macro_delay, my.macro_pos, (uchar) my.macro_char, my.macro_len, my.macro_keys);
+      snprintf (msg, 500, "macro %c %c %c %3d %02x %3d:%s", my.macro_name, my.macro_mode, my.macro_delay, my.macro_pos, (uchar) my.macro_char, my.macro_len, my.macro_keys);
    }
    if      (sta_error         == 'y')           attron (S_COLOR_STATUSE);
    else                                         attron (S_COLOR_STATUS);
