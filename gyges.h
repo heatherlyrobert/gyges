@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4y"
-#define     VER_TXT   "broke out main loop to enable greater unit testing of macros"
+#define     VER_NUM   "2.5a"
+#define     VER_TXT   "finished simplifying main loop to almost nothing ;)"
 
 
 
@@ -811,6 +811,7 @@ char      PROG_urgsmass        (char  a_set, char a_extra);
 char      PROG_urgs            (int   argc, char *argv[]);
 char      PROG_args            (int   argc, char *argv[]);
 char      PROG_begin           (void);
+char      PROG_final           (void);
 char      PROG_main_input      (char  a_mode, char a_key);
 char      PROG_main_handle     (char  a_key);
 char      PROG_end             (void);

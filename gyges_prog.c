@@ -188,6 +188,23 @@ PROG_begin         (void)
    return 0;
 }
 
+char                /* PURPOSE : initialize program and key variables --------*/
+PROG_final         (void)
+{
+   CURS_begin ();
+   INPT_main         ();
+   CURS_screen_reset ();
+   SEQ_calc_full     ();
+   hist_active = 'y';
+   /*---(process)------------------------*/
+   MOVE_vert ('r');
+   MOVE_horz ('r');
+   yVIKEYS_mode_mesg (my.message, g_command);
+   /*---(complete)-----------------------*/
+   DEBUG_PROG  yLOG_exit  (__FUNCTION__);
+   return 0;
+}
+
 char          /*-> gather main loop keyboard input ------ [ ------ [ ------ ]-*/
 PROG_main_input    (char a_mode, char a_key)
 {
