@@ -1172,6 +1172,7 @@ char          /*-> capture keyboard input during macros --[ leaf   [--------]-*/
 CURS_playback      (void)
 {
    char        ch          = ' ';
+   IF_MACRO_OFF    return 0;
    IF_MACRO_MOVING nodelay (stdscr, TRUE );
    ch = getch ();
    IF_MACRO_MOVING nodelay (stdscr, FALSE);
@@ -1184,8 +1185,6 @@ CURS_main          (void)
    /*---(locals)-----------+-----------+-*/
    int         ch          = 0;
    tCELL      *curr        = NULL;
-   /*---(defense)------------------------*/
-   IF_MACRO_RUN     return 0;
    /*---(header)-------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
@@ -1259,10 +1258,7 @@ CURS_main          (void)
       ch = getch ();
       DEBUG_GRAF  yLOG_value   ("key"       , ch);
    }
-   /*> if (ch == 3) {                                                                 <* 
-    *>    endwin();                                                                   <* 
-    *>    exit(-1);                                                                   <* 
-    *> }                                                                              <*/
+   /*---(check layout)-------------------*/
    if (ch == KEY_RESIZE) {
       CURS_size ();
       MOVE_horz  ('r');

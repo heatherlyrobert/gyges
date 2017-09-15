@@ -136,14 +136,15 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.4w"
-#define     VER_TXT   "added macro unit testing for init, fetch, and save"
+#define     VER_NUM   "2.4y"
+#define     VER_TXT   "broke out main loop to enable greater unit testing of macros"
 
 
 
 
 /*===[[ TYPEDEFS : COMBINATIONS ]]============================================*/
 /*---(basics)--------------------------*/
+typedef     signed   char         schar;
 typedef     unsigned char         uchar;
 typedef     const    char         cchar;
 typedef     unsigned short        ushort;
@@ -208,7 +209,8 @@ char        keylog      [10000];
 int         nkeylog;
 
 
-
+#define     RUN_USER           'i'      /* running in user mode (ncurses)     */
+#define     RUN_TEST           '-'      /* running as a test    (no ncurses)  */
 
 #define     MACRO_OFF          '-'      /* normal keyboard input              */
 #define     MACRO_RUN          'M'      /* macro running with redisplay       */
@@ -218,10 +220,12 @@ int         nkeylog;
 
 #define     IF_MACRO_OFF         if (my.macro_mode == MACRO_OFF      ) 
 #define     IF_MACRO_RUN         if (my.macro_mode == MACRO_RUN      ) 
+#define     IF_MACRO_NOT_RUN     if (my.macro_mode != MACRO_RUN      ) 
 #define     IF_MACRO_DELAY       if (my.macro_mode == MACRO_DELAY    ) 
 #define     IF_MACRO_PLAYBACK    if (my.macro_mode == MACRO_PLAYBACK ) 
 #define     IF_MACRO_MOVING      if (my.macro_mode == MACRO_RUN      || my.macro_mode == MACRO_DELAY   ) 
 #define     IF_MACRO_NOT_PLAYING if (my.macro_mode == MACRO_OFF      || my.macro_mode == MACRO_RECORD  )
+#define     IF_MACRO_PLAYING     if (my.macro_mode != MACRO_OFF      && my.macro_mode != MACRO_RECORD  )
 #define     IF_MACRO_RECORDING   if (my.macro_mode == MACRO_RECORD   ) 
 #define     IF_MACRO_ON          if (my.macro_mode != MACRO_OFF      ) 
 
@@ -758,6 +762,7 @@ int     col_far;
 #define     K_BS         127
 #define     K_SPACE       32
 #define     K_DEL          8
+#define     K_NULL      '\0'
 
 #define     K_GROUP       29
 #define     K_FIELD       31
@@ -801,16 +806,18 @@ extern      char          unit_answer [LEN_UNIT];
 int       main               (int argc, char *argv[]);
 
 /*---(from s.c)----------------------------*/
-char      PROG_init            (int argc, char *argv[]);
-char      PROG_urgsmass        (char a_set, char a_extra);
-char      PROG_urgs            (int argc, char *argv[]);
-char      PROG_args            (int argc, char *argv[]);
+char      PROG_init            (int   argc, char *argv[]);
+char      PROG_urgsmass        (char  a_set, char a_extra);
+char      PROG_urgs            (int   argc, char *argv[]);
+char      PROG_args            (int   argc, char *argv[]);
 char      PROG_begin           (void);
+char      PROG_main_input      (char  a_mode, char a_key);
+char      PROG_main_handle     (char  a_key);
 char      PROG_end             (void);
 char      PROG_layout_init     (void);
 char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
 char      PROG_layout_list     (char *a_who);
-char      PROG_layout_entry    (int a_num, char *a_line);
+char      PROG_layout_entry    (int   a_num, char *a_line);
 char      PROG_layout_formula  (char *a_opt);
 char      PROG_layout_status   (char *a_opt);
 char      PROG_layout_command  (char *a_opt);
@@ -1342,16 +1349,29 @@ char      XML3_read            (char *a_name);
 
 /*===[ SCRP   ]===============================================================*/
 /*345678901-12345678901234567890->--------------------------------------------*/
-/*---(macros)------------------*/
+/*---(program)-----------------*/
+char        MACRO_init           (void);
+/*---(utility)-----------------*/
 char        MACRO_name_valid     (char  a_name);
 char        MACRO_reset          (void);
+/*---(saving)------------------*/
+char        MACRO_save           (void);
+char        MACRO_fetch          (char  a_name);
+/*---(recording)---------------*/
 char        MACRO_record_beg     (char  a_name);
 char        MACRO_record_add     (char  a_key);
+char        MACRO_record_addstr  (char *a_keys);
 char        MACRO_record_end     (void);
-char        MACRO_fetch          (char  a_name);
-char        MACRO_push_keys      (char *a_keys);
-char        MACRO_save           (void);
-char        MACRO_curr_key       (void);
+/*---(execution)---------------*/
+char        MACRO_delay_set      (char  a_delay);
+char        MACRO_delay          (void);
+char        MACRO_exec_beg       (char  a_name);
+char        MACRO_exec_adv       (void);
+char        MACRO_exec_key       (void);
+char        MACRO_exec_control   (char  a_key);
+char        MACRO_exec_playback  (char  a_key);
+char        MACRO_exec_wait      (void);
+/*---(mode)--------------------*/
 char        MACRO_submode        (char  a_major, char a_minor);
 /*---(unit_test)---------------*/
 char*       MACRO_unit           (char *a_question, char a_macro);

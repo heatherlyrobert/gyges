@@ -188,6 +188,120 @@ PROG_begin         (void)
    return 0;
 }
 
+char          /*-> gather main loop keyboard input ------ [ ------ [ ------ ]-*/
+PROG_main_input    (char a_mode, char a_key)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        x_ch        = ' ';
+   char        x_play      = ' ';
+   /*---(header)-------------------------*/
+   DEBUG_LOOP_M yLOG_enter   (__FUNCTION__);
+   DEBUG_LOOP_M yLOG_char    ("a_mode"    , a_mode);
+   DEBUG_LOOP_M yLOG_value   ("a_key"     , a_key);
+   DEBUG_LOOP_M yLOG_char    ("m mode"    , my.macro_mode);
+   DEBUG_LOOP_M yLOG_char    ("m delay"   , my.macro_delay);
+   DEBUG_LOOP_M yLOG_value   ("m pos"     , my.macro_pos);
+   /*---(normal)-------------------------*/
+   IF_MACRO_OFF {
+      DEBUG_LOOP_M yLOG_note    ("normal/macro off");
+      if (a_mode == RUN_USER)  x_ch   = CURS_main  ();
+      else                     x_ch   = a_key;
+   }
+   /*---(recording)----------------------*/
+   else IF_MACRO_RECORDING {
+      DEBUG_LOOP_M yLOG_note    ("macro recording");
+      if (a_mode == RUN_USER) {
+         IF_MACRO_NOT_RUN      x_ch   = CURS_main  ();
+      }
+      else                     x_ch   = a_key;
+   }
+   /*---(run, delay, or playback)--------*/
+   else IF_MACRO_PLAYING {
+      DEBUG_LOOP_M yLOG_note    ("macro running, delay, or playback");
+      x_ch = MACRO_exec_key  ();
+      IF_MACRO_OFF {
+         DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+         return -1;
+      }
+      DEBUG_LOOP_M yLOG_note    ("show screen");
+      if (a_mode == RUN_USER)  CURS_main  ();
+      MACRO_exec_wait     ();
+      DEBUG_LOOP_M yLOG_note    ("read playback keystroke");
+      if (a_mode == RUN_USER)  x_play = CURS_playback ();
+      else                     x_play = a_key;
+      DEBUG_LOOP_M yLOG_value   ("x_play"    , x_play);
+      if (MACRO_exec_playback (x_play) < 0) {
+         DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+         return -1;
+      }
+   }
+   /*---(record)-------------------------*/
+   DEBUG_LOOP_M yLOG_note    ("handle keystroke normally");
+   KEYS_record (x_ch);
+   /*---(complete)-----------------------*/
+   DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+   return x_ch;
+}
+
+char          /*-> process main loop keyboard input ----- [ ------ [ ------ ]-*/
+PROG_main_handle   (char a_key)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   static char x_save      = ' ';      /* saved keystroke                     */
+   static char x_savemode  = '-';
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_LOOP_M yLOG_enter   (__FUNCTION__);
+   DEBUG_LOOP_M yLOG_value   ("a_key"     , a_key);
+   /*---(handle keystroke)---------------*/
+   switch (yVIKEYS_mode_curr ()) {
+
+   case MODE_GOD      : rc = MODE_god       (x_save , a_key);  break;
+   case MODE_MAP      : rc = MODE_map       (x_save , a_key);  break;
+   case MODE_VISUAL   : rc = VISU_mode      (x_save , a_key);  break;
+   case MODE_SOURCE   : rc = MODE_source    (x_save , a_key);  break;
+   case MODE_INPUT    : rc = MODE_input     (x_save , a_key);  break;
+   case MODE_COMMAND  : rc = MODE_command   (K_SPACE, a_key);  break;
+
+   case SMOD_ERROR    : rc = SMOD_error     (x_save , a_key);  break;
+   case SMOD_SELECT   : rc = SELC_mode      (x_save , a_key);  break;
+   case SMOD_TEXTREG  : rc = TREG_mode      (x_save , a_key);  break;
+   case SMOD_REPLACE  : rc = SMOD_replace   (x_save , a_key);  break;
+   case SMOD_FORMAT   : rc = SMOD_format    (K_SPACE, a_key);  break;
+   case SMOD_BUFFER   : rc = SMOD_buffer    (K_SPACE, a_key);  break;
+   case SMOD_WANDER   : rc = SMOD_wander    (K_SPACE, a_key);  break;
+   case SMOD_REGISTER : rc = REG_mode       (x_save , a_key);  break;
+   case SMOD_MARK     : rc = MARK_mode      (x_save , a_key);  break;
+   case SMOD_MENUS    : rc = SMOD_menus     (x_save , a_key);  break;
+   case SMOD_MACRO    : rc = MACRO_submode  (x_save , a_key);  break;
+
+   default            : rc = MODE_map       (x_save , a_key);  break;
+   }
+   /*---(translate unprintable)----------*/
+   if      (a_key == 0       )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_NULL  );
+   else if (a_key == K_RETURN)  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_RETURN);
+   else if (a_key == K_ESCAPE)  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_ESCAPE);
+   else if (a_key == K_TAB   )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_TAB   );
+   else if (a_key == K_BS    )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_BS    );
+   else if (a_key == K_SPACE )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_SPACE );
+   else if (a_key <= K_SPACE )  snprintf (cmd,   9, " %c %02x", x_save, a_key);
+   else                         snprintf (cmd,   9, " %c %c " , x_save, a_key);
+   /*---(setup for next keystroke)-------*/
+   if      (rc == 0)    x_save = ' ';
+   else if (rc >  0)    x_save = rc;
+   else               { x_save = ' ';  sta_error = 'y'; }
+   /*---(setup status line)--------------*/
+   if   (x_savemode != yVIKEYS_mode_curr() || yVIKEYS_mode_curr() == MODE_COMMAND) {
+      yVIKEYS_mode_mesg (my.message, g_command);
+   }
+   x_savemode = yVIKEYS_mode_curr ();
+   /*---(advance macros)-----------------*/
+   IF_MACRO_ON  MACRO_exec_adv ();
+   /*---(complete)-----------------------*/
+   DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char                /* PURPOSE : shutdown program and free memory ------------*/
 PROG_end           (void)
 {
