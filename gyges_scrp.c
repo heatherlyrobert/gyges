@@ -253,6 +253,43 @@ MACRO_record_end     (void)
    return 0;
 }
 
+char          /*-> enter a macro directly --------------- [ whorl  [ ------ ]-*/
+MACRO_define         (char *a_string)
+{
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_len       =    0;
+   --rce;  if (a_string == NULL)          return rce;
+   --rce;  if (strlen (a_string) <  3)     return rce;
+   --rce;  if (a_string [1]      != '=')   return rce;
+   rc = MACRO_record_beg     (a_string [0]);
+   if (rc < 0) {
+      MACRO_reset ();
+      return rc;
+   }
+   if (a_string [2] != K_DQUOTE) {
+      rc = MACRO_record_addstr  (a_string + 2);
+   } else {
+      x_len = strlen (a_string);
+      if (a_string [x_len - 1] != K_DQUOTE) {
+         rc = MACRO_record_addstr  (a_string + 2);
+      } else {
+         a_string [--x_len] = K_NULL;
+         rc = MACRO_record_addstr  (a_string + 3);
+      }
+   }
+   if (rc < 0) {
+      MACRO_reset ();
+      return rc;
+   }
+   rc = MACRO_record_end     ();
+   if (rc < 0) {
+      MACRO_reset ();
+      return rc;
+   }
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/

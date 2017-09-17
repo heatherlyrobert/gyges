@@ -68,6 +68,8 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'v', "lock_head"   ,  0, "lh"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    { 'v', "lock_foot"   ,  0, "lf"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    { 'v', "lock_col"    ,  0, "lc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
+   /*---(config)-------------------------*/
+   { 'c', "macro"       ,  0, ""    ,  0, 'y', '-', .f.s   = MACRO_define         , "a"    ,  0, "direct definition of a keyboard macro"                       , "" },
    /*---(window)-------------------------*/
    { 'w', "width"       ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window width"                               , "" },
    { 'w', "height"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window height"                              , "" },
@@ -1590,10 +1592,18 @@ CMDS_execute       (char *a_command)
    DEBUG_USER   yLOG_info    ("a_command" , a_command);
    /*---(prepare)------------------------*/
    strlcpy (x_work, a_command, LEN_RECD);
+   x_len = strlen (x_work);
+   for (i = 0; i < x_len; ++i) {
+      if ((uchar) x_work [i] == G_CHAR_SPACE)   x_work [i] = K_SPACE;
+   }
+   DEBUG_USER   yLOG_info    ("x_work"    , x_work);
+   /*---(parse command)------------------*/
    p     = strtok_r (x_work, q, &r);
    ++p;
    x_len = strlen (p);
+   DEBUG_USER   yLOG_info    ("cmd"       , p);
    if (strlen (x_work) > x_len)  strlcpy (x_all, p + x_len + 1, LEN_RECD);
+   DEBUG_USER   yLOG_info    ("x_all"     , x_all);
    /*---(system commands)----------------*/
    if (p[0] == '!') {
       rc = system (a_command + 2);
@@ -1772,7 +1782,7 @@ CMDS_mode          (char a_major, char a_minor)
    x_len = strlen (s_command);
    DEBUG_USER   yLOG_value   ("x_len"     , x_len);
    /*---(check for quoting)--------------*/
-   if (a_minor == K_DQUOTE) {
+   if (x_escaped != 'y' && a_minor == K_DQUOTE) {
       if (x_quoted != 'y') {
          DEBUG_USER   yLOG_note    ("entering quoted string");
          x_quoted = 'y';
@@ -1805,6 +1815,7 @@ CMDS_mode          (char a_major, char a_minor)
       case 'p'      :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
       case 'h'      :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
       case 'd'      :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
+      case K_DQUOTE :  a_minor = K_DQUOTE;       break;  /* quote without quoting */
       default       :  a_minor = G_CHAR_SPACE;   break;
       }
    }

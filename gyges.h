@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5b"
-#define     VER_TXT   "updated command to takes quotes and spec chars, plus unit testing"
+#define     VER_NUM   "2.5d"
+#define     VER_TXT   ": allows escaped quotes and man updated for macros"
 
 
 
@@ -1377,6 +1377,7 @@ char        MACRO_record_beg     (char  a_name);
 char        MACRO_record_add     (char  a_key);
 char        MACRO_record_addstr  (char *a_keys);
 char        MACRO_record_end     (void);
+char        MACRO_define         (char *a_string);
 /*---(execution)---------------*/
 char        MACRO_delay_set      (char  a_delay);
 char        MACRO_delay          (void);
