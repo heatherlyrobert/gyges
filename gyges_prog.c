@@ -199,7 +199,7 @@ PROG_final         (void)
    /*---(process)------------------------*/
    MOVE_vert ('r');
    MOVE_horz ('r');
-   yVIKEYS_mode_mesg (my.message, g_command);
+   yVIKEYS_mode_mesg (my.message, CMDS_current ());
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -249,7 +249,7 @@ PROG_main_input    (char a_mode, char a_key)
       DEBUG_LOOP_M yLOG_value   ("x_play"    , x_play);
       if (MACRO_exec_playback (x_play) < 0) {
          DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
-         return -1;
+         return -2;
       }
    }
    /*---(record)-------------------------*/
@@ -270,6 +270,11 @@ PROG_main_handle   (char a_key)
    /*---(header)-------------------------*/
    DEBUG_LOOP_M yLOG_enter   (__FUNCTION__);
    DEBUG_LOOP_M yLOG_value   ("a_key"     , a_key);
+   /*---(defense)------------------------*/
+   if (a_key == K_DONE) {
+      DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+      return a_key;
+   }
    /*---(handle keystroke)---------------*/
    switch (yVIKEYS_mode_curr ()) {
 
@@ -278,7 +283,7 @@ PROG_main_handle   (char a_key)
    case MODE_VISUAL   : rc = VISU_mode      (x_save , a_key);  break;
    case MODE_SOURCE   : rc = MODE_source    (x_save , a_key);  break;
    case MODE_INPUT    : rc = MODE_input     (x_save , a_key);  break;
-   case MODE_COMMAND  : rc = MODE_command   (K_SPACE, a_key);  break;
+   case MODE_COMMAND  : rc = CMDS_mode      (x_save , a_key);  break;
 
    case SMOD_ERROR    : rc = SMOD_error     (x_save , a_key);  break;
    case SMOD_SELECT   : rc = SELC_mode      (x_save , a_key);  break;
@@ -309,7 +314,7 @@ PROG_main_handle   (char a_key)
    else               { x_save = ' ';  sta_error = 'y'; }
    /*---(setup status line)--------------*/
    if   (x_savemode != yVIKEYS_mode_curr() || yVIKEYS_mode_curr() == MODE_COMMAND) {
-      yVIKEYS_mode_mesg (my.message, g_command);
+      yVIKEYS_mode_mesg (my.message, CMDS_current ());
    }
    x_savemode = yVIKEYS_mode_curr ();
    /*---(advance macros)-----------------*/

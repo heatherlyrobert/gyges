@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5a"
-#define     VER_TXT   "finished simplifying main loop to almost nothing ;)"
+#define     VER_NUM   "2.5b"
+#define     VER_TXT   "updated command to takes quotes and spec chars, plus unit testing"
 
 
 
@@ -208,16 +208,17 @@ char        bufc        [LEN_RECD];
 char        keylog      [10000];
 int         nkeylog;
 
-
+/*---(macros)-------------------------*/
+/*---(run as)----------*/
 #define     RUN_USER           'i'      /* running in user mode (ncurses)     */
 #define     RUN_TEST           '-'      /* running as a test    (no ncurses)  */
-
+/*---(mode)------------*/
 #define     MACRO_OFF          '-'      /* normal keyboard input              */
 #define     MACRO_RUN          'M'      /* macro running with redisplay       */
 #define     MACRO_DELAY        'D'      /* macro delay playback controls      */
 #define     MACRO_PLAYBACK     'P'      /* macro under playback controls      */
 #define     MACRO_RECORD       'r'      /* macro recording                    */
-
+/*---(conditions)------*/
 #define     IF_MACRO_OFF         if (my.macro_mode == MACRO_OFF      ) 
 #define     IF_MACRO_RUN         if (my.macro_mode == MACRO_RUN      ) 
 #define     IF_MACRO_NOT_RUN     if (my.macro_mode != MACRO_RUN      ) 
@@ -228,12 +229,14 @@ int         nkeylog;
 #define     IF_MACRO_PLAYING     if (my.macro_mode != MACRO_OFF      && my.macro_mode != MACRO_RECORD  )
 #define     IF_MACRO_RECORDING   if (my.macro_mode == MACRO_RECORD   ) 
 #define     IF_MACRO_ON          if (my.macro_mode != MACRO_OFF      ) 
-
+/*---(setting)---------*/
 #define     SET_MACRO_OFF        my.macro_mode = MACRO_OFF
 #define     SET_MACRO_RUN        my.macro_mode = MACRO_RUN
 #define     SET_MACRO_PLAYBACK   my.macro_mode = MACRO_PLAYBACK
 #define     SET_MACRO_DELAY      my.macro_mode = MACRO_DELAY
 #define     SET_MACRO_RECORD     my.macro_mode = MACRO_RECORD
+
+
 
 struct cACCESSOR {
    /*---(files)----------------*/
@@ -738,7 +741,6 @@ extern char    cmd        [10];
 extern char    msg_type;
 extern char    message    [LEN_RECD];
 extern char    sta_error;
-extern char    g_command    [LEN_RECD];
 extern char    special;
 
 extern char      g_empty    [200];
@@ -762,10 +764,15 @@ int     col_far;
 #define     K_BS         127
 #define     K_SPACE       32
 #define     K_DEL          8
-#define     K_NULL      '\0'
+#define     K_NULL         0
+#define     K_SQUOTE      39
+#define     K_DQUOTE      34
+#define     K_BSLASH      92
 
 #define     K_GROUP       29
 #define     K_FIELD       31
+
+#define     K_DONE        -1
 
 #define     K_CTRL_B       2
 #define     K_CTRL_C       3
@@ -785,8 +792,10 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_TAB        187   /* »  tab              (  9)   */
 #define   G_CHAR_BS         171   /* «  backspace        (127)   */
 #define   G_CHAR_SPACE      183   /* ·  dot              (  -)   */
-#define   G_CHAR_GROUP      166   /* ¦  group separator  ( 29)   */
+/*---(special)---------*/
+#define   G_CHAR_GROUP      166   /* ¦  double bar       ( 29)   */
 #define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
+#define   G_CHAR_DQUOTE     163   /* ¢  cents     t      ( 34)   */
 /*---(control)---------*/
 #define   G_CHAR_ALT        198   /* Æ  ae mark          (  -)   */
 #define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
@@ -834,7 +843,13 @@ char      PROG_testend       (void);
 
 char      save_saved         (void);
 char      clear_input        (void);
-char      cmd_exec           (char*);
+
+char        CMDS_start           (void);
+char        CMDS_clear           (void);
+char*       CMDS_current         (void);
+char        CMDS_execute         (char*);
+char        CMDS_mode            (char  a_major, char  a_minor);
+char*       CMDS__unit           (char *a_question);
 
 /*---(screen formatting)------------------------*/
 
@@ -963,7 +978,6 @@ char      MODE_god           (char  a_major, char  a_minor);
 char      MODE_map           (char  a_major, char  a_minor);
 char      MODE_source        (char  a_major, char  a_minor);
 char      MODE_input         (char  a_major, char  a_minor);
-char      MODE_command       (char  a_major, char  a_minor);
 /*---(sub-modes)------------*/
 char      SMOD_buffer        (char  a_major, char  a_minor);
 char      SMOD_replace       (char  a_major, char  a_minor);

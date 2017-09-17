@@ -2,6 +2,12 @@
 
 #include   "gyges.h"
 
+
+
+char    s_command    [LEN_RECD];
+
+
+
 #define  MAX_CMDS      1000
 typedef  struct cCOMMAND  tCOMMAND;
 struct  cCOMMAND {
@@ -615,8 +621,8 @@ MODE_map           (char a_major, char a_minor)
          return 0;
          break;
       case ':'      :
-         strncpy     (g_command , ":", LEN_RECD);
          yVIKEYS_mode_enter  (MODE_COMMAND);
+         CMDS_start ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
@@ -1547,8 +1553,19 @@ KEYS_unlock        (void)
 char        KEYS_quit            (void) { done = 0; return 0; }
 char        KEYS_writequit       (void) { FILE_write (); done = 0; return 0; }
 
+
+
+/*====================------------------------------------====================*/
+/*===----                        command line                          ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___COMMAND_________o () { return; }
+
+char        CMDS_start           (void) { strncpy     (s_command , ":", LEN_RECD); return 0; }
+char        CMDS_clear           (void) { strncpy     (s_command , "" , LEN_RECD); return 0; }
+char*       CMDS_current         (void) { return s_command; }
+
 char
-cmd_exec           (char *a_command)
+CMDS_execute       (char *a_command)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -1737,32 +1754,106 @@ cmd_exec           (char *a_command)
 }
 
 char       /*----: process keys for input/append mode ------------------------*/
-MODE_command       (char a_major, char a_minor)
+CMDS_mode          (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         x_len       = 0;
    char        x_temp      [11]        = "";
    char        rc          =    0;
+   char        x_majors    [LEN_LABEL] = ": ";
+   static char x_quoted    = '-';
+   static char x_escaped   = '-';
+   /*---(header)--------------------s----*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_value   ("a_major"   , a_major);
+   DEBUG_USER   yLOG_value   ("a_minor"   , a_minor);
+   /*---(get existing len)---------------*/
+   DEBUG_USER   yLOG_info    ("s_command" , s_command);
+   x_len = strlen (s_command);
+   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
+   /*---(check for quoting)--------------*/
+   if (a_minor == K_DQUOTE) {
+      if (x_quoted != 'y') {
+         DEBUG_USER   yLOG_note    ("entering quoted string");
+         x_quoted = 'y';
+      } else {
+         DEBUG_USER   yLOG_note    ("exiting quoted string");
+         x_quoted = '-';
+      }
+   }
+   /*---(check for special codes)--------*/
+   if (x_escaped != 'y' && a_minor == K_BSLASH) {
+      x_escaped = 'y';
+      DEBUG_USER   yLOG_note    ("begin escaped character");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   } else if (x_escaped == 'y') {
+      x_escaped = '-';
+      DEBUG_USER   yLOG_note    ("convert escaped character");
+      switch (a_minor) {
+      case 'n'      :  a_minor = G_CHAR_RETURN;  break;  /* return char           */
+      case 'e'      :  a_minor = G_CHAR_ESCAPE;  break;  /* escape char           */
+      case 't'      :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
+      case 'b'      :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
+      case 's'      :  a_minor = G_CHAR_SPACE;   break;  /* visual space          */
+      case 'f'      :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
+      case 'g'      :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
+      case '0'      :  a_minor = G_CHAR_NULL;    break;  /* null                  */
+      case 'a'      :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
+      case 'c'      :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
+      case 'w'      :  a_minor = G_CHAR_WAIT;    break;  /* wait/pause            */
+      case 'p'      :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
+      case 'h'      :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
+      case 'd'      :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
+      default       :  a_minor = G_CHAR_SPACE;   break;
+      }
+   }
    /*---(check for control keys)---------*/
-   x_len = strlen (g_command);
-   switch (a_minor) {
-   case   K_ESCAPE : yVIKEYS_mode_exit ();
-                     return 0;
-   case   K_RETURN : rc = cmd_exec (g_command);
-                     yVIKEYS_mode_exit ();
-                     return rc;   /* return  */
+   if (x_quoted != 'y') {
+      switch (a_minor) {
+      case   K_RETURN : yVIKEYS_mode_exit ();
+                        rc = CMDS_execute (s_command);
+                        DEBUG_USER   yLOG_note    ("return, execute command");
+                        DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                        return rc;   /* return  */
+      case   K_ESCAPE : yVIKEYS_mode_exit ();
+                        CMDS_clear ();
+                        DEBUG_USER   yLOG_note    ("escape, ignore command");
+                        DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                        return 0;
+      }
    }
    /*---(check for backspace)------------*/
    if (a_minor == K_DEL || a_minor == K_BS) {
+      DEBUG_USER   yLOG_note    ("bs/del, remove character");
       --x_len;
+      if (s_command [x_len] == K_DQUOTE) {
+         if (x_quoted == 'y')  x_quoted = '-';
+         else                  x_quoted = 'y';
+      }
       if (x_len < 0)   x_len = 0;
-      g_command [x_len] = '\0';
+      s_command [x_len] = '\0';
+      DEBUG_USER   yLOG_info    ("s_command" , s_command);
+      DEBUG_USER   yLOG_value   ("x_len"     , x_len);
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   /*---(handle space)-------------------*/
    /*---(normal characters)--------------*/
+   DEBUG_USER   yLOG_note    ("update command line");
+   if (a_minor == K_RETURN)    a_minor = G_CHAR_RETURN;
+   if (a_minor == K_ESCAPE)    a_minor = G_CHAR_ESCAPE;
+   if (a_minor == K_TAB   )    a_minor = G_CHAR_TAB;
+   if (a_minor == K_BS    )    a_minor = G_CHAR_BS;
+   if (a_minor == K_SPACE )    a_minor = G_CHAR_SPACE;
+   /*> if (a_minor == K_DQUOTE)    a_minor = G_CHAR_DQUOTE;                           <*/
    snprintf (x_temp, 10, "%c", a_minor);
-   strcat   (g_command, x_temp);
+   strcat   (s_command, x_temp);
+   x_len = strlen (s_command);
+   DEBUG_USER   yLOG_info    ("s_command" , s_command);
+   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1844,6 +1935,21 @@ SMOD_wander        (char a_prev, char a_curr)
 /*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
+
+char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
+CMDS__unit         (char *a_question)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        x_list      [LEN_RECD];
+   /*---(preprare)-----------------------*/
+   strcpy  (unit_answer, "cmds             : question not understood");
+   /*---(selection)----------------------*/
+   if      (strcmp (a_question, "current"      )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "cmds current     : %2d%-.45s", strlen (s_command), s_command);
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
 
 char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
 KEYS__unit         (char *a_question)

@@ -11,10 +11,26 @@ gyges (j-eye-j-ees) is a light, clean, powerful, technical, aesthetic, and
 keyboard-centric console spreadsheet focused on functionality, analytics,
 interfacing, scripting, and tailored usage.
 
+.SH KEYBOARD MACROS
+gyges implements keyboard macros exactly according to the yVIKEYS standard.
+to review the standard, use "man 6 yVIKEYS" and search for the "keyboard
+macros" section.  below are some gyges specifics...
 
+.B modes.  
+recording (q) and execution (@) keys are only available in map and god mode.
+to finish recording, make sure to exit source or input modes.
 
+.B editing.  
+keyboard macros are saved on tab Z in the first 26 rows -- name in col A and
+macro in col B.  you can edit them like any other text string cell.
 
+.B computed contents.  
+the keyboard macro can be the result of string formulas.  gyges will then
+take the result and execute it.
 
+.B copy, paste, and transfer.  
+since keyboard macros are stored as odinary text in normal cells, you can
+use any gyges select, copy, paste, and register exporting to transfer them.
 
 
 .SH SEE ALSO

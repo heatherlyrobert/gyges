@@ -1104,8 +1104,8 @@ VISU_mode          (char a_major, char a_minor)
       case 'F'      : yVIKEYS_mode_enter  (SMOD_FORMAT);
                       return 0;
                       break;
-      case ':'      : strncpy (g_command , ":", LEN_RECD);
-                      yVIKEYS_mode_enter  (MODE_COMMAND);
+      case ':'      : yVIKEYS_mode_enter  (MODE_COMMAND);
+                      CMDS_start ();
                       return 0;
                       break;
       }
