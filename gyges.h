@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5d"
-#define     VER_TXT   ": allows escaped quotes and man updated for macros"
+#define     VER_NUM   "2.5e"
+#define     VER_TXT   ":mark a=<addr> works and mark unit test working again"
 
 
 
@@ -168,7 +168,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 /*===[[ CONSTANTS : LIMITS ]]=================================================*/
 /*---(tabs)---------------------------*/
 #define     MAX_TABS    36
-#define     DEF_TABS    10
+#define     DEF_TABS    36
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
 #define     MAX_COLS    130
@@ -734,10 +734,10 @@ extern      char     *g_rcops;
 
 
 
-extern int     done;
+extern int     g_done;
 extern char    g_contents [LEN_RECD];
 extern char    g_saved    [LEN_RECD];
-extern char    cmd        [10];
+extern char    g_cmd      [10];
 extern char    msg_type;
 extern char    message    [LEN_RECD];
 extern char    sta_error;
@@ -795,7 +795,6 @@ extern      char          unit_answer [LEN_UNIT];
 /*---(special)---------*/
 #define   G_CHAR_GROUP      166   /* ¦  double bar       ( 29)   */
 #define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
-#define   G_CHAR_DQUOTE     163   /* ¢  cents     t      ( 34)   */
 /*---(control)---------*/
 #define   G_CHAR_ALT        198   /* Æ  ae mark          (  -)   */
 #define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
@@ -823,6 +822,7 @@ char      PROG_begin           (void);
 char      PROG_final           (void);
 char      PROG_main_input      (char  a_mode, char a_key);
 char      PROG_main_handle     (char  a_key);
+char      PROG_main_string     (char *a_keys);
 char      PROG_end             (void);
 char      PROG_layout_init     (void);
 char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
@@ -899,18 +899,19 @@ char      SELC_islive        (void);
 int       SELC_from          (void);
 int       SELC_to            (void);
 
-char      MARK_mode          (char  a_major, char a_minor);
-char      MARK_init          (void);
-char      MARK_unset         (char  a_mark);
-char      MARK_prev          (void);
-char      MARK_next          (void);
-char      MARK_set           (char  a_mark);
-char      MARK_label         (char  a_mark, char *a_label);
-char      MARK_return        (char  a_mark);
-char      MARK_list          (char *a_list);
-char      MARK_listplus      (char *a_list);
-char      MARK_write         (FILE *a_file, int *a_seq);
-char      MARK_read          (char a_mark, char *a_label);
+char      MARK_mode            (char  a_major, char a_minor);
+char      MARK_init            (void);
+char      MARK_unset           (char  a_mark);
+char      MARK_prev            (void);
+char      MARK_next            (void);
+char      MARK_set             (char  a_mark);
+char      MARK_label           (char  a_mark, char *a_label);
+char      MARK_return          (char  a_mark);
+char      MARK_list            (char *a_list);
+char      MARK_listplus        (char *a_list);
+char      MARK_write           (FILE *a_file, int *a_seq);
+char      MARK_read            (char  a_mark, char *a_label);
+char      MARK_define          (char *a_string);
 
 
 /*===[ REG  ]=================================================================*/

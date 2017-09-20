@@ -1239,7 +1239,7 @@ CURS_main          (void)
    /*---(label/keys)---------------------*/
    if (my.layout_formula == G_FORMULA_DEBUG || my.layout_formula == G_FORMULA_SMALL) {
       attron   (S_COLOR_KEYS);
-      mvprintw (row_chead, 0, cmd);
+      mvprintw (row_chead, 0, g_cmd);
       attroff  (S_COLOR_KEYS);
    } else {
       mvprintw (row_chead, 0, s_label + 1);

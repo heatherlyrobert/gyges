@@ -8,10 +8,10 @@ struct cACCESSOR my;
 
 int     save = 0;
 
-int     done = 1;
+int     g_done = 1;
 char    g_contents      [LEN_RECD] = "";
 char    g_saved         [LEN_RECD] = "";
-char    cmd[10] = "";
+char    g_cmd           [10]       = "";
 char    message [LEN_RECD] = "";
 char    special = 0;
 

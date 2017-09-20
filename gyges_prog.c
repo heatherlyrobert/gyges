@@ -300,14 +300,14 @@ PROG_main_handle   (char a_key)
    default            : rc = MODE_map       (x_save , a_key);  break;
    }
    /*---(translate unprintable)----------*/
-   if      (a_key == 0       )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_NULL  );
-   else if (a_key == K_RETURN)  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_RETURN);
-   else if (a_key == K_ESCAPE)  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_ESCAPE);
-   else if (a_key == K_TAB   )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_TAB   );
-   else if (a_key == K_BS    )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_BS    );
-   else if (a_key == K_SPACE )  snprintf (cmd,   9, " %c %c " , x_save, G_CHAR_SPACE );
-   else if (a_key <= K_SPACE )  snprintf (cmd,   9, " %c %02x", x_save, a_key);
-   else                         snprintf (cmd,   9, " %c %c " , x_save, a_key);
+   if      (a_key == 0       )  snprintf (g_cmd,   9, " %c %c " , x_save, G_CHAR_NULL  );
+   else if (a_key == K_RETURN)  snprintf (g_cmd,   9, " %c %c " , x_save, G_CHAR_RETURN);
+   else if (a_key == K_ESCAPE)  snprintf (g_cmd,   9, " %c %c " , x_save, G_CHAR_ESCAPE);
+   else if (a_key == K_TAB   )  snprintf (g_cmd,   9, " %c %c " , x_save, G_CHAR_TAB   );
+   else if (a_key == K_BS    )  snprintf (g_cmd,   9, " %c %c " , x_save, G_CHAR_BS    );
+   else if (a_key == K_SPACE )  snprintf (g_cmd,   9, " %c %c " , x_save, G_CHAR_SPACE );
+   else if (a_key <= K_SPACE )  snprintf (g_cmd,   9, " %c %02x", x_save, a_key);
+   else                         snprintf (g_cmd,   9, " %c %c " , x_save, a_key);
    /*---(setup for next keystroke)-------*/
    if      (rc == 0)    x_save = ' ';
    else if (rc >  0)    x_save = rc;
@@ -324,8 +324,46 @@ PROG_main_handle   (char a_key)
    return 0;
 }
 
+char          /*-> process input string in main loop ---- [ ------ [ ------ ]-*/
+PROG_main_string     (char *a_keys)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;     /* return code for errors              */
+   char        rc          =    0;
+   char        i           =    0;
+   int         x_len       =    0;
+   char        x_ch        =  ' ';     /* current keystroke                   */
+   /*---(header)-------------------------*/
+   DEBUG_LOOP   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOOP   yLOG_point   ("a_keys"    , a_keys);
+   --rce;  if (a_keys == NULL) {
+      DEBUG_LOOP   yLOG_note    ("a_keys is null");
+      DEBUG_LOOP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOOP   yLOG_info    ("a_keys"    , a_keys);
+   x_len = strlen (a_keys);
+   DEBUG_LOOP   yLOG_value   ("x_len"     , x_len);
+   for (i = 0; i < x_len; ++i) {
+      DEBUG_LOOP   yLOG_info    ("LOOP"      , i);
+      x_ch = a_keys [i];
+      DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);
+      x_ch = PROG_main_input (RUN_TEST, x_ch);
+      DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);
+      if (x_ch == -1) continue;
+      /*---(handle keystroke)------------*/
+      rc = PROG_main_handle (x_ch);
+      DEBUG_LOOP   yLOG_value   ("rc"        , rc);
+      /*---(done)------------------------*/
+   }
+   DEBUG_LOOP   yLOG_note    ("main loop done");
+   /*---(complete)-----------------------*/
+   DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char                /* PURPOSE : shutdown program and free memory ------------*/
-PROG_end           (void)
+PROG_end             (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);

@@ -70,6 +70,7 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'v', "lock_col"    ,  0, "lc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    /*---(config)-------------------------*/
    { 'c', "macro"       ,  0, ""    ,  0, 'y', '-', .f.s   = MACRO_define         , "a"    ,  0, "direct definition of a keyboard macro"                       , "" },
+   { 'c', "mark"        ,  0, ""    ,  0, 'y', '-', .f.s   = MARK_define          , "a"    ,  0, "direct definition of a location mark"                        , "" },
    /*---(window)-------------------------*/
    { 'w', "width"       ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window width"                               , "" },
    { 'w', "height"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window height"                              , "" },
@@ -1552,8 +1553,8 @@ KEYS_unlock        (void)
    MOVE_vert ('r');
 }
 
-char        KEYS_quit            (void) { done = 0; return 0; }
-char        KEYS_writequit       (void) { FILE_write (); done = 0; return 0; }
+char        KEYS_quit            (void) { g_done = 0; return 0; }
+char        KEYS_writequit       (void) { FILE_write (); g_done = 0; return 0; }
 
 
 
@@ -1601,7 +1602,7 @@ CMDS_execute       (char *a_command)
    p     = strtok_r (x_work, q, &r);
    ++p;
    x_len = strlen (p);
-   DEBUG_USER   yLOG_info    ("cmd"       , p);
+   DEBUG_USER   yLOG_info    ("g_cmd"     , p);
    if (strlen (x_work) > x_len)  strlcpy (x_all, p + x_len + 1, LEN_RECD);
    DEBUG_USER   yLOG_info    ("x_all"     , x_all);
    /*---(system commands)----------------*/
@@ -1689,7 +1690,7 @@ CMDS_execute       (char *a_command)
    }
    if   (strncmp(p, ":q"        , LEN_RECD) == 0 ||
          strncmp(p, ":qa"       , LEN_RECD) == 0) {
-      done = 0;
+      g_done = 0;
       return 0;
    }
    if (strcmp (p, ":lock")  == 0 ||
@@ -1757,7 +1758,7 @@ CMDS_execute       (char *a_command)
     *>    if (p == NULL) return 0;                                                    <* 
     *>    INPT_main ();                                                              <* 
     *> } else if (strncmp(p, "q"        , LEN_RECD) == 0) {                            <* 
-    *>    done = 0;                                                                   <* 
+    *>    g_done = 0;                                                                   <* 
     *> }                                                                              <*/
    /*---(complete)-----------------------*/
    return 0;
@@ -1857,7 +1858,6 @@ CMDS_mode          (char a_major, char a_minor)
    if (a_minor == K_TAB   )    a_minor = G_CHAR_TAB;
    if (a_minor == K_BS    )    a_minor = G_CHAR_BS;
    if (a_minor == K_SPACE )    a_minor = G_CHAR_SPACE;
-   /*> if (a_minor == K_DQUOTE)    a_minor = G_CHAR_DQUOTE;                           <*/
    snprintf (x_temp, 10, "%c", a_minor);
    strcat   (s_command, x_temp);
    x_len = strlen (s_command);

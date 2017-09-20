@@ -12,7 +12,6 @@ main (int argc, char *argv[])
    /*---(locals)-----------+-----------+-*/
    int         updates     = 0;
    char        cch         = ' ';      /* current keystroke                   */
-   char        sch         = ' ';      /* saved keystroke                     */
    char        rc          = 0;
    /*---(initialize)---------------------*/
    if (rc >= 0)  rc = yURG_logger  (argc, argv);
@@ -28,7 +27,7 @@ main (int argc, char *argv[])
    /*---(main-loop)----------------------*/
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
-   while (done) {
+   while (g_done) {
       cch = PROG_main_input (RUN_USER, '-');
       if (cch == -1) continue;
       /*---(log)-------------------------*/

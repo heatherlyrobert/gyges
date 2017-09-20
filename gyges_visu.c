@@ -109,7 +109,7 @@ struct cMARK {
    tCELL      *ref;
 };
 tMARK       s_mark_info [MAX_MARK];
-static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ()";
+static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>";
 
 
 typedef     struct cSELC    tSELC;
@@ -870,8 +870,8 @@ MARK_return        (char a_mark)
    char        x_label     [10];
    /*---(look for sequences)-------------*/
    if (a_mark == '[')  a_mark = my.mark_head;
-   if (a_mark == '>')  a_mark = MARK_next ();
-   if (a_mark == '<')  a_mark = MARK_prev ();
+   if (a_mark == ')')  a_mark = MARK_next ();
+   if (a_mark == '(')  a_mark = MARK_prev ();
    if (a_mark == ']')  a_mark = my.mark_tail;
    /*---(check mark)---------------------*/
    x_mark = strchr (S_MARK_LIST, a_mark);
@@ -887,25 +887,17 @@ MARK_return        (char a_mark)
    --rce;  if (strcmp (s_mark_info [x_index].label, "") == 0) {
       return rce;
    }
-   /*---(handle current)-----------------*/
-   if (a_mark == '\'') {
-      x_tab = s_mark_info [x_index].tab;
-      x_col = s_mark_info [x_index].col;
-      x_row = s_mark_info [x_index].row;
-      strlcpy (x_label, s_mark_info [x_index].label, 10);
-      MARK_set ('\'');
-      CTAB = x_tab;
-      CCOL = x_col;
-      CROW = x_row;
-   }
-   /*---(use mark)-----------------------*/
-   else {
+   /*---(get mark values)----------------*/
+   strlcpy (x_label, s_mark_info [x_index].label, 10);
+   x_tab = s_mark_info [x_index].tab;
+   x_col = s_mark_info [x_index].col;
+   x_row = s_mark_info [x_index].row;
+   if (a_mark != '\'') {
       my.mark_save = a_mark;
-      MARK_set ('\'');
-      CTAB = s_mark_info [x_index].tab;
-      CCOL = s_mark_info [x_index].col;
-      CROW = s_mark_info [x_index].row;
    }
+   /*---(move)---------------------------*/
+   MARK_set ('\'');
+   LOC_jump (x_tab, x_col, x_row);
    /*---(update screen)------------------*/
    if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_gz_family ('z', 'm');
    if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_gz_family ('z', 'c');
@@ -1040,6 +1032,25 @@ MARK_read          (char a_mark, char *a_label)
    return 0;
 }
 
+char          /*-> enter a mark directly ---------------- [ whorl  [ ------ ]-*/
+MARK_define          (char *a_string)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_len       =    0;
+   /*---(defense)------------------------*/
+   --rce;  if (a_string == NULL)           return rce;
+   --rce;  if (strlen (a_string) <  3)     return rce;
+   --rce;  if (a_string [1]      != '=')   return rce;
+   /*---(save)---------------------------*/
+   rc = MARK_read (a_string [0], a_string + 2);
+   --rce;  if (rc < 0) {
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
 
 
 

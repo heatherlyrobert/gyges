@@ -497,8 +497,6 @@ SCRP          v21  (scrp  ) record and execute a macro through main           
      exec     v21  initialize                           MACRO_init                                                                                    i_equal     0                                                                                                    
      get      v21  check the globals                    MACRO_unit            "curr"         , '@'                                                    s_equal     macro curr   (-) : - 0  -1 00   0:                                                                   
      get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (1) M - - - - - - -                                                         
-     code     v21  number of rows                       - - - - - - - - - -   NROW              = 200;                                                                                                                                       
-     code     v21  number of cols                       - - - - - - - - - -   NCOL              =  40;                                                                                                                                       
 
    GROUP      v21  record a macro                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 

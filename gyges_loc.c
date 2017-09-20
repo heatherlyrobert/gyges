@@ -139,9 +139,9 @@ LOC_init             (void)
    /*---(clean tabs)---------------------*/
    LOC__purge    ();
    /*---(set defaults)-------------------*/
-   NTAB    = MAX_TABS;
-   CTAB    = 0;
-   p_tab   = &s_tabs [CTAB];
+   NTAB      = MAX_TABS;
+   /*---(update tab)---------------------*/
+   LOC_tab_switch (-1);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -539,8 +539,7 @@ LOC_jump           (
    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    if (rc < 0)    return rc;
    /*---(update globals)-----------------*/
-   CTAB          = a_tab;
-   p_tab         = &s_tabs[CTAB];
+   LOC_tab_switch (a_tab);
    CCOL          = a_col;
    CROW          = a_row;
    /*---(selection)----------------------*/
@@ -952,27 +951,41 @@ LOC_tab_size         (short a_tab, char *a_max)
 char
 LOC_tab_switch         (short a_tab)
 {
-   char        rc          = 0;
-   rc = LOC_tab_valid (a_tab);
-   if (rc < 0)  return -1;
-   /*---(save)---------------------------*/
-   s_tabs [CTAB].ncol      = NCOL;
-   s_tabs [CTAB].ccol      = CCOL;
-   s_tabs [CTAB].bcol      = BCOL;
-   s_tabs [CTAB].ecol      = ECOL;
-   s_tabs [CTAB].froz_col  = FR_COL;
-   s_tabs [CTAB].froz_bcol = FR_BCOL;
-   s_tabs [CTAB].froz_ecol = FR_ECOL;
-   s_tabs [CTAB].nrow      = NROW;
-   s_tabs [CTAB].crow      = CROW;
-   s_tabs [CTAB].brow      = BROW;
-   s_tabs [CTAB].erow      = EROW;
-   s_tabs [CTAB].froz_row  = FR_ROW;
-   s_tabs [CTAB].froz_brow = FR_BROW;
-   s_tabs [CTAB].froz_erow = FR_EROW;
-   /*---(switch)-------------------------*/
-   CTAB      = a_tab;
-   /*---(restore)------------------------*/
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(non-init run)-------------------*/
+   if (a_tab >=  0) {
+      /*---(defense)---------------------*/
+      rc = LOC_tab_valid (a_tab);
+      if (rc < 0)  return -1;
+      /*---(save values)-----------------*/
+      /*---(cols)---------*/
+      s_tabs [CTAB].ncol      = NCOL;
+      s_tabs [CTAB].ccol      = CCOL;
+      s_tabs [CTAB].bcol      = BCOL;
+      s_tabs [CTAB].ecol      = ECOL;
+      s_tabs [CTAB].froz_col  = FR_COL;
+      s_tabs [CTAB].froz_bcol = FR_BCOL;
+      s_tabs [CTAB].froz_ecol = FR_ECOL;
+      /*---(rows)---------*/
+      s_tabs [CTAB].nrow      = NROW;
+      s_tabs [CTAB].crow      = CROW;
+      s_tabs [CTAB].brow      = BROW;
+      s_tabs [CTAB].erow      = EROW;
+      s_tabs [CTAB].froz_row  = FR_ROW;
+      s_tabs [CTAB].froz_brow = FR_BROW;
+      s_tabs [CTAB].froz_erow = FR_EROW;
+      /*---(update tab)------------------*/
+      CTAB      = a_tab;
+   }
+   /*---(init run)-----------------------*/
+   else {
+      CTAB      = 0;
+   }
+   /*---(switch tab)---------------------*/
+   p_tab     = &s_tabs[CTAB];
+   /*---(restore values)-----------------*/
+   /*---(cols)---------*/
    NCOL      = s_tabs [CTAB].ncol;
    CCOL      = s_tabs [CTAB].ccol;
    BCOL      = s_tabs [CTAB].bcol;
@@ -980,6 +993,7 @@ LOC_tab_switch         (short a_tab)
    FR_COL    = s_tabs [CTAB].froz_col;
    FR_BCOL   = s_tabs [CTAB].froz_bcol;
    FR_ECOL   = s_tabs [CTAB].froz_ecol;
+   /*---(rows)---------*/
    NROW      = s_tabs [CTAB].nrow;
    CROW      = s_tabs [CTAB].crow;
    BROW      = s_tabs [CTAB].brow;
