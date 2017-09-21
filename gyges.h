@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5e"
-#define     VER_TXT   ":mark a=<addr> works and mark unit test working again"
+#define     VER_NUM   "2.5f"
+#define     VER_TXT   "basic mark functions pass unit test now"
 
 
 
@@ -901,6 +901,7 @@ int       SELC_to            (void);
 
 char      MARK_mode            (char  a_major, char a_minor);
 char      MARK_init            (void);
+char      MARK_valid           (char  a_mark);
 char      MARK_unset           (char  a_mark);
 char      MARK_prev            (void);
 char      MARK_next            (void);
@@ -912,6 +913,8 @@ char      MARK_listplus        (char *a_list);
 char      MARK_write           (FILE *a_file, int *a_seq);
 char      MARK_read            (char  a_mark, char *a_label);
 char      MARK_define          (char *a_string);
+char      MARK_which           (void);
+char      MARK_find            (char *a_label);
 
 
 /*===[ REG  ]=================================================================*/
