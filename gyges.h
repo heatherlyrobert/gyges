@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5h"
-#define     VER_TXT   "location mark mode working/unit tested"
+#define     VER_NUM   "2.5i"
+#define     VER_TXT   "fixed small oversight in VISU_init that caused unit test failures"
 
 
 
@@ -312,11 +312,6 @@ struct cACCESSOR {
    int         apos;           /* number of positions available for field       */
    /*---(marks)-----------*/
    char        mark_show;      /* show temporary marks (y/n)                    */
-   char        mark_head;      /* first sequential mark                         */
-   char        mark_save;      /* last mark requested or used                   */
-   char        mark_tail;      /* last sequential mark                          */
-   char        mark_list   [LEN_RECD];       /* current marks                  */
-   char        mark_plus   [LEN_RECD];       /* current marks with mark id     */
    /*---(registers)-------*/
    char        reg_curr;
    /*---(cursus)----------*/
@@ -919,7 +914,8 @@ char      MARK_range           (void);
 char      MARK_prev            (void);
 char      MARK_next            (void);
 /*---(info)-----------------*/
-char      MARK_label           (char  a_mark, char *a_label);
+char      MARK_status          (char *a_status);
+char      MARK_entry           (char  a_mark, char *a_entry);
 char      MARK_list            (char *a_list);
 char      MARK_listplus        (char *a_list);
 /*---(files)----------------*/

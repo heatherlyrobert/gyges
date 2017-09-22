@@ -142,6 +142,8 @@ LOC_init             (void)
    NTAB      = MAX_TABS;
    /*---(update tab)---------------------*/
    LOC_tab_switch (-1);
+   CCOL      = 0;
+   CROW      = 0;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;

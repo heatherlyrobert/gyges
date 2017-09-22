@@ -33,6 +33,13 @@ int     s_status_size;
 int     s_command_row;
 int     s_command_size;
 
+
+
+static char  s_mark_list   [LEN_RECD];       /* current marks                  */
+static char  s_mark_plus   [LEN_RECD];       /* current marks with mark id     */
+
+
+
 #define     MAX_MENU       500
 typedef struct cMENU  tMENU;
 struct  cMENU {  /* two level menu only, none of that complex shit            */
@@ -551,7 +558,7 @@ CURS_status        (tCELL *a_curr)
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    int         l           = 0;             /* string length                  */
    int         i           = 0;             /* iterator -- keys               */
-   char        msg[500]  = "";                   /* temporary display message   */
+   char        msg[500]  = "n/a";                /* temporary display message   */
    char        t  [500]  = "";                   /* temporary display message   */
    char        rpn[LEN_RECD] = "";
    if (s_status_size <= 0)  return 0;
@@ -584,7 +591,7 @@ CURS_status        (tCELL *a_curr)
       TREG_entry (REG_CURR, msg);
       break;
    case G_STATUS_MARK     :
-      snprintf (msg, 500, "marks (%c,%c,%c,%c) %s", my.mark_show, my.mark_head, my.mark_save, my.mark_tail, my.mark_plus);
+      MARK_status (msg);
       break;
    case G_STATUS_KEYLOG   :
       KEYS_status (msg);
@@ -974,6 +981,7 @@ char
 CURS_listmark      (void)
 {
    /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
    int         i           = 0;
    char        x_line      [LEN_RECD];
    char        x_label     [10];
@@ -987,10 +995,9 @@ CURS_listmark      (void)
    /*---(show marks)---------------------*/
    for (i = 'a'; i <= 'z'; ++i) {
       /*---(lower case)------------------*/
-      MARK_label (i, x_label);
-      sprintf    (x_line, "  %c : %-8.8s  ", i, x_label);
-      if (x_label [0] != '\0')  attron (S_COLOR_CURRENT);
-      else                      attron (S_COLOR_VISUAL);
+      rc = MARK_entry (i, x_line);
+      if (rc == 0)  attron (S_COLOR_CURRENT);
+      else          attron (S_COLOR_VISUAL);
       mvprintw   ( 4 + (i - 'a'), 10, x_line);
       attrset (0);
       /*---(separator)-------------------*/
@@ -998,10 +1005,9 @@ CURS_listmark      (void)
       mvprintw   ( 4 + (i - 'a'), 26, "    ");
       attrset (0);
       /*---(upper case)------------------*/
-      MARK_label (toupper (i), x_label);
-      sprintf    (x_line, "  %c : %-8.8s  ", toupper (i), x_label);
-      if (x_label [0] != '\0')  attron (S_COLOR_CURRENT);
-      else                      attron (S_COLOR_VISUAL);
+      rc = MARK_entry (toupper (i), x_line);
+      if (rc == 0)  attron (S_COLOR_CURRENT);
+      else          attron (S_COLOR_VISUAL);
       mvprintw   ( 4 + (i - 'a'), 30, x_line);
       attrset (0);
       /*---(done)------------------------*/
@@ -1202,13 +1208,13 @@ CURS_main          (void)
    strncpy (reqs , "+", LEN_RECD);
    strncpy (deps , "+", LEN_RECD);
    strncpy (like , "+", LEN_RECD);
-   strncpy (my.mark_list, "+", LEN_RECD);
-   strncpy (my.mark_plus, "+", LEN_RECD);
+   strncpy (s_mark_list, "+", LEN_RECD);
+   strncpy (s_mark_plus, "+", LEN_RECD);
    DEP_disp_reqs  (curr, reqs);
    DEP_disp_pros  (curr, deps);
    DEP_disp_like  (curr, like);
-   MARK_list      (my.mark_list);
-   MARK_listplus  (my.mark_plus);
+   MARK_list      (s_mark_list);
+   MARK_listplus  (s_mark_plus);
    /*---(update cells)-------------------*/
    CURS_formula   (curr);
    CURS_status    (curr);
@@ -1294,7 +1300,7 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    else if (VISU_root     (CTAB, a_col, a_row)) attron (S_COLOR_ROOT   );
    else if (VISU_selected (CTAB, a_col, a_row)) attron (S_COLOR_VISUAL );
    /*---(marks)----------------------------*/
-   else if (my.mark_show  == 'y' && strstr (my.mark_list, label) != NULL)  attron (S_COLOR_MARK     );
+   else if (my.mark_show  == 'y' && strstr (s_mark_list, label) != NULL)  attron (S_COLOR_MARK     );
    /*---(content-based)--------------------*/
    else if (x_curr != NULL) {
       /*---(trouble)--------------------------*/
