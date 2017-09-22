@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5g"
-#define     VER_TXT   "location mark read and write working/unit tested"
+#define     VER_NUM   "2.5h"
+#define     VER_TXT   "location mark mode working/unit tested"
 
 
 

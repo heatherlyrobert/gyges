@@ -822,6 +822,9 @@ MARK_unset           (char a_mark)
    s_mark_info [x_index].col  = -1;
    s_mark_info [x_index].row  = -1;
    s_mark_info [x_index].ref  = NULL;
+   /*---(update range)-------------------*/
+   DEBUG_MARK   yLOG_note    ("update the range");
+   MARK_range ();
    /*---(complete)-----------------------*/
    DEBUG_MARK   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -843,11 +846,18 @@ MARK_return        (char a_mark)
    DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
    /*---(look for sequences)-------------*/
    DEBUG_MARK   yLOG_note    ("check special shortcuts");
-   if (a_mark == '[')  a_mark = my.mark_head;
-   if (a_mark == ')')  a_mark = MARK_next ();
-   if (a_mark == '(')  a_mark = MARK_prev ();
-   if (a_mark == ']')  a_mark = my.mark_tail;
+   switch (a_mark) {
+   case '[' : a_mark = my.mark_head;   break;
+   case ')' : a_mark = MARK_next ();   break;
+   case '(' : a_mark = MARK_prev ();   break;
+   case ']' : a_mark = my.mark_tail;   break;
+   }
+   --rce;  if (a_mark < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(check mark)---------------------*/
+   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
    x_index = MARK_valid (a_mark);
    --rce;  if (x_index < 0) {
       DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
@@ -897,7 +907,7 @@ char
 MARK_which         (void)
 {
    int         i           = 0;
-   for (i = 0; i < MAX_MARK; ++i) {
+   for (i = 1; i < MAX_MARK; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       if (s_mark_info [i].tab != CTAB)             continue;
       if (s_mark_info [i].col != CCOL)             continue;
@@ -913,10 +923,6 @@ MARK_find          (char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   char        rc          =    0;
-   int         x_tab       = CTAB;
-   int         x_col       = CCOL;
-   int         x_row       = CROW;
    int         i           =    0;
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
@@ -928,13 +934,17 @@ MARK_find          (char *a_label)
    }
    DEBUG_MARK   yLOG_info    ("a_label"   , a_label);
    /*---(search)-------------------------*/
+   DEBUG_MARK   yLOG_note    ("searching");
    for (i = 1; i < MAX_MARK; ++i) {
       if (strcmp (s_mark_info [i].label, "")      == 0) continue;
       if (strcmp (s_mark_info [i].label, a_label) != 0) continue;
+      DEBUG_MARK   yLOG_value   ("i"         , i);
+      DEBUG_MARK   yLOG_exit    (__FUNCTION__);
       return i;
    }
    /*---(complete)-----------------------*/
    --rce;
+   DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
    return rce;
 }
 
@@ -977,26 +987,33 @@ MARK_prev          (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   char       *x_mark      = NULL;
+   char        x_mark      =  '-';
    int         x_index     =    0;
    int         i           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(check mark)---------------------*/
-   x_mark = strchr (S_MARK_LIST, my.mark_save);
-   --rce;  if (x_mark == NULL) {
-      return my.mark_tail;
+   x_index = MARK_valid (my.mark_save);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   /*---(get mark index)-----------------*/
-   x_index = (int) (x_mark - S_MARK_LIST);
-   --rce;  if (x_index >= MAX_MARK) {
-      return my.mark_tail;
-   }
-   /*---(find next)----------------------*/
+   DEBUG_MARK   yLOG_value   ("x_index"   , x_index);
+   /*---(find previous)------------------*/
+   DEBUG_MARK   yLOG_note    ("search for previous mark");
    for (i = x_index - 1; i > 0; --i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
-      return S_MARK_LIST [i];
+      DEBUG_MARK   yLOG_value   ("found"     , i);
+      x_mark = S_MARK_LIST [i];
+      DEBUG_MARK   yLOG_char    ("x_mark"    , x_mark);
+      DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+      return x_mark;
    }
+   DEBUG_MARK   yLOG_note    ("not found");
+   --rce;
    /*---(complete)-----------------------*/
-   return my.mark_tail;
+   DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+   return rce;
 }
 
 char
@@ -1004,26 +1021,33 @@ MARK_next          (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   char       *x_mark      = NULL;
+   char        x_mark      =  '-';
    int         x_index     =    0;
    int         i           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(check mark)---------------------*/
-   x_mark = strchr (S_MARK_LIST, my.mark_save);
-   --rce;  if (x_mark == NULL) {
-      return my.mark_head;
+   x_index = MARK_valid (my.mark_save);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   /*---(get mark index)-----------------*/
-   x_index = (int) (x_mark - S_MARK_LIST);
-   --rce;  if (x_index >= MAX_MARK) {
-      return my.mark_head;
-   }
+   DEBUG_MARK   yLOG_value   ("x_index"   , x_index);
    /*---(find next)----------------------*/
+   DEBUG_MARK   yLOG_note    ("search for next mark");
    for (i = x_index + 1; i < MAX_MARK; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
-      return S_MARK_LIST [i];
+      DEBUG_MARK   yLOG_value   ("found"     , i);
+      x_mark = S_MARK_LIST [i];
+      DEBUG_MARK   yLOG_char    ("x_mark"    , x_mark);
+      DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+      return x_mark;
    }
+   DEBUG_MARK   yLOG_note    ("not found");
+   --rce;
    /*---(complete)-----------------------*/
-   return my.mark_head;
+   DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+   return rce;
 }
 
 
@@ -1242,6 +1266,9 @@ MARK_read          (char a_mark, char *a_label)
    s_mark_info [x_index].col = x_col;
    s_mark_info [x_index].row = x_row;
    strlcpy (s_mark_info [x_index].label, a_label, 10);
+   /*---(update range)-------------------*/
+   DEBUG_MARK   yLOG_note    ("update the range");
+   MARK_range ();
    /*---(complete)-----------------------*/
    DEBUG_MARK  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1270,9 +1297,16 @@ MARK_define          (char *a_string)
       return rce;
    }
    DEBUG_MARK   yLOG_info    ("a_string"  , a_string);
+   /*---(check for purge)----------------*/
+   if (strcmp ("purge", a_string) == 0) {
+      MARK_purge ();
+      DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(defense)------------------------*/
    x_len = strlen (a_string);
    DEBUG_MARK   yLOG_value   ("x_len"     , x_len);
-   --rce;  if (x_len <  3) {
+   --rce;  if (x_len <  2) {
       DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -1280,6 +1314,17 @@ MARK_define          (char *a_string)
    --rce;  if (a_string [1] != '=') {
       DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
+   }
+   /*---(check for unset)----------------*/
+   --rce;  if (x_len == 2) {
+      rc = MARK_unset (a_string [0]);
+      DEBUG_MARK   yLOG_value   ("rc"        , rc);
+      if (rc < 0) {
+         DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+      return 0;
    }
    /*---(save)---------------------------*/
    rc = MARK_read (a_string [0], a_string + 2);
@@ -1511,53 +1556,79 @@ MARK_mode          (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
    --rce;  if (yVIKEYS_mode_not (SMOD_MARK   )) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    if (a_minor == K_ESCAPE)  {
       yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_note    ("escape means leave");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    /*---(check for setting)--------------*/
    --rce;  if (a_major == 'm') {
+      DEBUG_USER   yLOG_note    ("handling mark (m)");
       switch (a_minor) {
-      case '*' : MARK_init ();
-                 break;
-      case '#' : rc = MARK_which ();
-                 if (rc < 0) {
-                    yVIKEYS_mode_exit ();
-                    return rce;
-                 }
-                 MARK_unset (rc);
-                 MARK_range ();
-                 break;
-      case '@' : my.mark_show = 'y';
-                 break;
-      case '_' : my.mark_show = '-';
-                 break;
-      case '!' : my.layout_status = G_STATUS_MARK;
-                 break;
-      case '?' : my.info_win = G_INFO_MARK;
-                 break;
-      default  : rc = MARK_set (a_minor);
-                 if (rc < 0) {
-                    yVIKEYS_mode_exit ();
-                    return rce;
-                 }
-                 break;
+      case '*' :
+         MARK_purge ();
+         break;
+      case '#' :
+         DEBUG_USER   yLOG_note    ("unset mark under cursor");
+         rc = MARK_which ();
+         if (rc < 0) {
+            yVIKEYS_mode_exit ();
+            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         MARK_unset (rc);
+         MARK_range ();
+         break;
+      case '@' :
+         my.mark_show = 'y';
+         break;
+      case '_' :
+         my.mark_show = '-';
+         break;
+      case '!' :
+         my.layout_status = G_STATUS_MARK;
+         break;
+      case '?' :
+         my.info_win = G_INFO_MARK;
+         break;
+      default  :
+         DEBUG_USER   yLOG_note    ("mark current location");
+         rc = MARK_set (a_minor);
+         DEBUG_USER   yLOG_value   ("rc"        , rc);
+         if (rc < 0) {
+            yVIKEYS_mode_exit ();
+            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         break;
       }
    }
    /*---(check for returning)------------*/
    --rce;  if (a_major == '\'') {
+      DEBUG_USER   yLOG_note    ("handling return (')");
       rc = MARK_return (a_minor);
+      DEBUG_USER   yLOG_value   ("rc"        , rc);
       if (rc < 0)  {
          yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    }
    /*---(failure)------------------------*/
    yVIKEYS_mode_exit ();
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1590,6 +1661,10 @@ MARK__unit         (char *a_question, char a_mark)
       MARK_listplus (my.mark_plus);
       snprintf (unit_answer, LEN_UNIT, "mark info        : %c %-8.8s %4d %4d %4d", a_mark, s_mark_info [x_index].label, s_mark_info [x_index].tab, s_mark_info [x_index].col, s_mark_info [x_index].row);
    }
+   else if (strcmp (a_question, "range"    )      == 0) {
+      MARK_listplus (my.mark_plus);
+      snprintf (unit_answer, LEN_UNIT, "mark range       : %c to %c", my.mark_head, my.mark_tail);
+   }
    /*---(complete)-----------------------*/
    return unit_answer;
 }
@@ -1614,11 +1689,6 @@ VISU__unit         (char *a_question, char a_reg)
       } else {
          snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
       }
-   }
-   /*---(marks)--------------------------*/
-   else if (strcmp (a_question, "mark_list")      == 0) {
-      MARK_listplus (my.mark_plus);
-      snprintf (unit_answer, LEN_UNIT, "s_sel marks      : %-.40s", my.mark_plus);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

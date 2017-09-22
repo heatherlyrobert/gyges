@@ -212,21 +212,21 @@ PROG_main_input    (char a_mode, char a_key)
    char        x_ch        = ' ';
    char        x_play      = ' ';
    /*---(header)-------------------------*/
-   DEBUG_LOOP_M yLOG_enter   (__FUNCTION__);
-   DEBUG_LOOP_M yLOG_char    ("a_mode"    , a_mode);
-   DEBUG_LOOP_M yLOG_value   ("a_key"     , a_key);
-   DEBUG_LOOP_M yLOG_char    ("m mode"    , my.macro_mode);
-   DEBUG_LOOP_M yLOG_char    ("m delay"   , my.macro_delay);
-   DEBUG_LOOP_M yLOG_value   ("m pos"     , my.macro_pos);
+   DEBUG_LOOP   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOOP   yLOG_char    ("a_mode"    , a_mode);
+   DEBUG_LOOP   yLOG_value   ("a_key"     , a_key);
+   DEBUG_LOOP   yLOG_char    ("m mode"    , my.macro_mode);
+   DEBUG_LOOP   yLOG_char    ("m delay"   , my.macro_delay);
+   DEBUG_LOOP   yLOG_value   ("m pos"     , my.macro_pos);
    /*---(normal)-------------------------*/
    IF_MACRO_OFF {
-      DEBUG_LOOP_M yLOG_note    ("normal/macro off");
+      DEBUG_LOOP   yLOG_note    ("normal/macro off");
       if (a_mode == RUN_USER)  x_ch   = CURS_main  ();
       else                     x_ch   = a_key;
    }
    /*---(recording)----------------------*/
    else IF_MACRO_RECORDING {
-      DEBUG_LOOP_M yLOG_note    ("macro recording");
+      DEBUG_LOOP   yLOG_note    ("macro recording");
       if (a_mode == RUN_USER) {
          IF_MACRO_NOT_RUN      x_ch   = CURS_main  ();
       }
@@ -234,29 +234,29 @@ PROG_main_input    (char a_mode, char a_key)
    }
    /*---(run, delay, or playback)--------*/
    else IF_MACRO_PLAYING {
-      DEBUG_LOOP_M yLOG_note    ("macro running, delay, or playback");
+      DEBUG_LOOP   yLOG_note    ("macro running, delay, or playback");
       x_ch = MACRO_exec_key  ();
       IF_MACRO_OFF {
-         DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+         DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
          return -1;
       }
-      DEBUG_LOOP_M yLOG_note    ("show screen");
+      DEBUG_LOOP   yLOG_note    ("show screen");
       if (a_mode == RUN_USER)  CURS_main  ();
       MACRO_exec_wait     ();
-      DEBUG_LOOP_M yLOG_note    ("read playback keystroke");
+      DEBUG_LOOP   yLOG_note    ("read playback keystroke");
       if (a_mode == RUN_USER)  x_play = CURS_playback ();
       else                     x_play = a_key;
-      DEBUG_LOOP_M yLOG_value   ("x_play"    , x_play);
+      DEBUG_LOOP   yLOG_value   ("x_play"    , x_play);
       if (MACRO_exec_playback (x_play) < 0) {
-         DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+         DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
          return -2;
       }
    }
    /*---(record)-------------------------*/
-   DEBUG_LOOP_M yLOG_note    ("handle keystroke normally");
+   DEBUG_LOOP   yLOG_note    ("handle keystroke normally");
    KEYS_record (x_ch);
    /*---(complete)-----------------------*/
-   DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+   DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
    return x_ch;
 }
 
@@ -268,11 +268,11 @@ PROG_main_handle   (char a_key)
    static char x_savemode  = '-';
    char        rc          = 0;
    /*---(header)-------------------------*/
-   DEBUG_LOOP_M yLOG_enter   (__FUNCTION__);
-   DEBUG_LOOP_M yLOG_value   ("a_key"     , a_key);
+   DEBUG_LOOP   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOOP   yLOG_value   ("a_key"     , a_key);
    /*---(defense)------------------------*/
    if (a_key == K_DONE) {
-      DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+      DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
       return a_key;
    }
    /*---(handle keystroke)---------------*/
@@ -320,7 +320,7 @@ PROG_main_handle   (char a_key)
    /*---(advance macros)-----------------*/
    IF_MACRO_ON  MACRO_exec_adv ();
    /*---(complete)-----------------------*/
-   DEBUG_LOOP_M yLOG_exit    (__FUNCTION__);
+   DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -330,7 +330,7 @@ PROG_main_string     (char *a_keys)
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;     /* return code for errors              */
    char        rc          =    0;
-   char        i           =    0;
+   int         i           =    0;
    int         x_len       =    0;
    char        x_ch        =  ' ';     /* current keystroke                   */
    /*---(header)-------------------------*/
@@ -345,9 +345,26 @@ PROG_main_string     (char *a_keys)
    x_len = strlen (a_keys);
    DEBUG_LOOP   yLOG_value   ("x_len"     , x_len);
    for (i = 0; i < x_len; ++i) {
-      DEBUG_LOOP   yLOG_info    ("LOOP"      , i);
+      DEBUG_LOOP   yLOG_value   ("LOOP"      , i);
+      /*---(get next char)---------------*/
       x_ch = a_keys [i];
       DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);
+      if (x_ch <  0) {
+         DEBUG_SCRP   yLOG_note    ("special character");
+         DEBUG_SCRP   yLOG_value   ("256 + x_ch", 256 + x_ch);
+         /*---(translate special)--------*/
+         switch (256 + x_ch) {
+         case G_CHAR_RETURN  :  x_ch = K_RETURN;  break;
+         case G_CHAR_ESCAPE  :  x_ch = K_ESCAPE;  break;
+         case G_CHAR_BS      :  x_ch = K_BS;      break;
+         case G_CHAR_TAB     :  x_ch = K_TAB;     break;
+         case G_CHAR_SPACE   :  x_ch = K_SPACE;   break;
+         case G_CHAR_GROUP   :  x_ch = K_GROUP;   break;
+         case G_CHAR_FIELD   :  x_ch = K_FIELD;   break;
+         }
+         DEBUG_SCRP   yLOG_value   ("x_ch (new)", x_ch);
+      }
+      /*---(handle input)----------------*/
       x_ch = PROG_main_input (RUN_TEST, x_ch);
       DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);
       if (x_ch == -1) continue;
