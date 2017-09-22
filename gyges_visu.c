@@ -653,57 +653,62 @@ SELC_to            (void)
 /*====================------------------------------------====================*/
 /*===----                      location marks                          ----===*/
 /*====================------------------------------------====================*/
-static void  o___MARKS___________o () { return; }
+static void  o___MARK_PROG_______o () { return; }
 
-char          /*-> initialize all marks ----------------- [ leaf   [ ------ ]-*/
-MARK_init          (void)
+char          /*-> initialize all marks ----------------- [ leafy  [ ------ ]-*/
+MARK_init            (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   /*---(clear)--------------------------*/
+   MARK_purge  ();
+   /*---(globals)------------------------*/
+   my.mark_show = '-';
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char          /*-> remove all marks --------------------- [ leafy  [ ------ ]-*/
+MARK_purge           (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   /*---(clear)--------------------------*/
    DEBUG_MARK   yLOG_value   ("max_mark"  , MAX_MARK);
-   DEBUG_MARK   yLOG_note    ("unset each");
    for (i = 0; i < MAX_MARK; ++i) {
       MARK_unset (S_MARK_LIST [i]);
    }
+   /*---(globals)------------------------*/
    DEBUG_MARK   yLOG_note    ("initialize globals");
-   my.mark_show = '-';
    my.mark_save = '-';
    my.mark_head = '-';
    my.mark_tail = '-';
-   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char          /*-> clear a mark ------------------------- [ leafy  [ ------ ]-*/
-MARK_unset         (char a_mark)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
-   char        rce         = -10;
-   int         x_index     =   0;
-   char        x_label     [10];
-   /*---(header)-------------------------*/
-   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
-   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
-   /*---(check mark)---------------------*/
-   x_index = MARK_valid (a_mark);
-   --rce;  if (x_index < 0) {
-      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(clear mark)---------------------*/
-   DEBUG_MARK   yLOG_note    ("clear values");
-   strlcpy (s_mark_info [x_index].label, "", 10);
-   s_mark_info [x_index].tab  = -1;
-   s_mark_info [x_index].col  = -1;
-   s_mark_info [x_index].row  = -1;
-   s_mark_info [x_index].ref  = NULL;
    /*---(complete)-----------------------*/
    DEBUG_MARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char          /*-> shutdown marks ----------------------- [ leafy  [ ------ ]-*/
+MARK_wrap            (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   /*---(clear)--------------------------*/
+   MARK_purge  ();
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      location marks                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___MARK_BASICS_____o () { return; }
 
 char          /*-> check mark validity ------------------ [ leaf   [ ------ ]-*/
 MARK_valid           (char a_mark)
@@ -742,6 +747,151 @@ MARK_valid           (char a_mark)
    DEBUG_MARK   yLOG_sexit   (__FUNCTION__);
    return x_index;
 }
+
+char
+MARK_set             (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   char        rce         = -10;
+   int         x_index     =   0;
+   char        x_label     [10];
+   char        x_prev      =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
+   /*---(check mark)---------------------*/
+   x_index = MARK_valid (a_mark);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(set mark)-----------------------*/
+   DEBUG_MARK   yLOG_note    ("check previous");
+   x_prev = MARK_find (s_mark_info [0].label);
+   if (a_mark != '\'') {
+      if (s_mark_info [0].tab == -1)   MARK_set ('\'');
+      my.mark_save = a_mark;
+   } else if (x_prev >= 0) {
+      s_mark_info [0].tab = s_mark_info [x_prev].tab;
+      s_mark_info [0].col = s_mark_info [x_prev].col;
+      s_mark_info [0].row = s_mark_info [x_prev].row;
+      my.mark_save = x_prev;
+   }
+   /*---(mark label)---------------------*/
+   DEBUG_MARK   yLOG_note    ("make and save address");
+   rc = LOC_ref  (CTAB, CCOL, CROW, 0, x_label);
+   --rce;  if (rc < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_MARK   yLOG_note    ("save current position");
+   s_mark_info [x_index].tab = CTAB;
+   s_mark_info [x_index].col = CCOL;
+   s_mark_info [x_index].row = CROW;
+   strlcpy (s_mark_info [x_index].label, x_label, 10);
+   /*---(update range)-------------------*/
+   DEBUG_MARK   yLOG_note    ("update the range");
+   MARK_range ();
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char          /*-> clear a mark ------------------------- [ leafy  [ ------ ]-*/
+MARK_unset           (char a_mark)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   char        rce         = -10;
+   int         x_index     =   0;
+   char        x_label     [10];
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
+   /*---(check mark)---------------------*/
+   x_index = MARK_valid (a_mark);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(clear mark)---------------------*/
+   DEBUG_MARK   yLOG_note    ("clear values");
+   strlcpy (s_mark_info [x_index].label, "", 10);
+   s_mark_info [x_index].tab  = -1;
+   s_mark_info [x_index].col  = -1;
+   s_mark_info [x_index].row  = -1;
+   s_mark_info [x_index].ref  = NULL;
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+MARK_return        (char a_mark)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         x_index     =    0;
+   int         x_tab       = CTAB;
+   int         x_col       = CCOL;
+   int         x_row       = CROW;
+   char        x_label     [10];
+   char        x_prev      =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
+   /*---(look for sequences)-------------*/
+   DEBUG_MARK   yLOG_note    ("check special shortcuts");
+   if (a_mark == '[')  a_mark = my.mark_head;
+   if (a_mark == ')')  a_mark = MARK_next ();
+   if (a_mark == '(')  a_mark = MARK_prev ();
+   if (a_mark == ']')  a_mark = my.mark_tail;
+   /*---(check mark)---------------------*/
+   x_index = MARK_valid (a_mark);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check for existance)------------*/
+   strlcpy (x_label, s_mark_info [x_index].label, 10);
+   DEBUG_MARK   yLOG_info    ("x_label"   , x_label);
+   --rce;  if (strcmp (x_label, "") == 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get mark values)----------------*/
+   DEBUG_MARK   yLOG_note    ("get values");
+   x_tab = s_mark_info [x_index].tab;
+   x_col = s_mark_info [x_index].col;
+   x_row = s_mark_info [x_index].row;
+   /*---(set previous)-------------------*/
+   DEBUG_MARK   yLOG_note    ("set previous");
+   x_prev = MARK_find (s_mark_info [0].label);
+   if (a_mark != '\'') {
+      if (a_mark != my.mark_save)  MARK_set ('\'');
+      my.mark_save = a_mark;
+   } else if (x_prev >= 0) {
+      if (x_prev != my.mark_save)  MARK_set ('\'');
+      my.mark_save = x_prev;
+   }
+   /*---(move)---------------------------*/
+   DEBUG_MARK   yLOG_note    ("jump to mark");
+   LOC_jump (x_tab, x_col, x_row);
+   /*---(update screen)------------------*/
+   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_gz_family ('z', 'm');
+   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_gz_family ('z', 'c');
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      location marks                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___MARK_FIND_______o () { return; }
 
 char
 MARK_which         (void)
@@ -787,6 +937,13 @@ MARK_find          (char *a_label)
    --rce;
    return rce;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      location marks                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___MARK_SEQ________o () { return; }
 
 char
 MARK_range         (void)
@@ -869,55 +1026,12 @@ MARK_next          (void)
    return my.mark_head;
 }
 
-char
-MARK_set           (char a_mark)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
-   char        rce         = -10;
-   int         x_index     =   0;
-   char        x_label     [10];
-   char        x_prev      =   -1;
-   /*---(header)-------------------------*/
-   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
-   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
-   /*---(check mark)---------------------*/
-   x_index = MARK_valid (a_mark);
-   --rce;  if (x_index < 0) {
-      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(set mark)-----------------------*/
-   DEBUG_MARK   yLOG_note    ("check previous");
-   x_prev = MARK_find (s_mark_info [0].label);
-   if (a_mark != '\'') {
-      if (s_mark_info [0].tab == -1)   MARK_set ('\'');
-      my.mark_save = a_mark;
-   } else if (x_prev >= 0) {
-      s_mark_info [0].tab = s_mark_info [x_prev].tab;
-      s_mark_info [0].col = s_mark_info [x_prev].col;
-      s_mark_info [0].row = s_mark_info [x_prev].row;
-      my.mark_save = x_prev;
-   }
-   /*---(mark label)---------------------*/
-   DEBUG_MARK   yLOG_note    ("make and save address");
-   rc = LOC_ref  (CTAB, CCOL, CROW, 0, x_label);
-   --rce;  if (rc < 0) {
-      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_MARK   yLOG_note    ("save current position");
-   s_mark_info [x_index].tab = CTAB;
-   s_mark_info [x_index].col = CCOL;
-   s_mark_info [x_index].row = CROW;
-   strlcpy (s_mark_info [x_index].label, x_label, 10);
-   /*---(update range)-------------------*/
-   DEBUG_MARK   yLOG_note    ("update the range");
-   MARK_range ();
-   /*---(complete)-----------------------*/
-   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+
+
+/*====================------------------------------------====================*/
+/*===----                      location marks                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___MARK_INFO_______o () { return; }
 
 char
 MARK_label         (char a_mark, char *a_label)
@@ -942,65 +1056,6 @@ MARK_label         (char a_mark, char *a_label)
    }
    /*---(complete)-----------------------*/
    strlcpy (a_label, s_mark_info [x_index].label, 10);
-   return 0;
-}
-
-char
-MARK_return        (char a_mark)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   int         x_index     =    0;
-   int         x_tab       = CTAB;
-   int         x_col       = CCOL;
-   int         x_row       = CROW;
-   char        x_label     [10];
-   char        x_prev      =   -1;
-   /*---(header)-------------------------*/
-   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
-   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
-   /*---(look for sequences)-------------*/
-   DEBUG_MARK   yLOG_note    ("check special shortcuts");
-   if (a_mark == '[')  a_mark = my.mark_head;
-   if (a_mark == ')')  a_mark = MARK_next ();
-   if (a_mark == '(')  a_mark = MARK_prev ();
-   if (a_mark == ']')  a_mark = my.mark_tail;
-   /*---(check mark)---------------------*/
-   x_index = MARK_valid (a_mark);
-   --rce;  if (x_index < 0) {
-      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(check for existance)------------*/
-   strlcpy (x_label, s_mark_info [x_index].label, 10);
-   DEBUG_MARK   yLOG_info    ("x_label"   , x_label);
-   --rce;  if (strcmp (x_label, "") == 0) {
-      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(get mark values)----------------*/
-   DEBUG_MARK   yLOG_note    ("get values");
-   x_tab = s_mark_info [x_index].tab;
-   x_col = s_mark_info [x_index].col;
-   x_row = s_mark_info [x_index].row;
-   /*---(set previous)-------------------*/
-   DEBUG_MARK   yLOG_note    ("set previous");
-   x_prev = MARK_find (s_mark_info [0].label);
-   if (a_mark != '\'') {
-      if (a_mark != my.mark_save)  MARK_set ('\'');
-      my.mark_save = a_mark;
-   } else if (x_prev >= 0) {
-      if (x_prev != my.mark_save)  MARK_set ('\'');
-      my.mark_save = x_prev;
-   }
-   /*---(move)---------------------------*/
-   DEBUG_MARK   yLOG_note    ("jump to mark");
-   LOC_jump (x_tab, x_col, x_row);
-   /*---(update screen)------------------*/
-   if (CTAB != x_tab || CCOL <  BCOL || CCOL > ECOL)  KEYS_gz_family ('z', 'm');
-   if (CTAB != x_tab || CROW <  BROW || CROW > EROW)  KEYS_gz_family ('z', 'c');
-   /*---(complete)-----------------------*/
-   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1055,46 +1110,96 @@ MARK_listplus      (char *a_list)
 /*====================------------------------------------====================*/
 /*===----                     file input and output                    ----===*/
 /*====================------------------------------------====================*/
-static void  o___FILE____________o () { return; }
+static void  o___MACRO_FILE______o () { return; }
 
 char
-MARK_write         (FILE *a_file, int *a_seq)
+MARK_write           (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;           /* return code for errors         */
-   int         i           = 0;             /* iterator -- buffer entry       */
-   int         c           = 0;
-   char        x_mark      = ' ';
-   char       *x_point     = NULL;
-   int         x_index     = -1;
-   /*---(walk through marks)-------------*/
-   x_mark = my.mark_head;
-   while (x_mark != '-') {
-      my.mark_save = x_mark;
-      /*---(breaks)-----------------------*/
-      if (*a_seq % 5 == 0) {
-         fprintf (a_file, "#---------  ver  mark  ---loc-- \n");
-      }
-      /*---(check mark)---------------------*/
-      x_point = strchr (S_MARK_LIST, x_mark);
-      --rce;  if (x_point == NULL) {
-         return rce;
-      }
-      /*---(get mark index)-----------------*/
-      x_index = (int) (x_point - S_MARK_LIST);
-      --rce;  if (x_index >= MAX_MARK) {
-         return rce;
-      }
-      fprintf (a_file, "mark        -A-   %c    %-8.8s \n",
-            S_MARK_LIST [x_index] ,
-            s_mark_info [x_index].label);
-      ++(*a_seq);
-      x_mark = MARK_next ();
-      if (x_mark == my.mark_head)  break;
+   int         x_index     = 0;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_value   ("a_mark"    , a_mark);
+   /*---(prepare)------------------------*/
+   sprintf (my.f_recd, "");
+   /*---(check mark)---------------------*/
+   x_index = MARK_valid (a_mark);
+   DEBUG_MARK   yLOG_value   ("x_index"   , x_index);
+   --rce;  if (x_index <= 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
+   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
+   /*---(check if empty)-----------------*/
+   DEBUG_MARK   yLOG_value   ("tab"       , s_mark_info [x_index].tab);
+   --rce;  if (s_mark_info [x_index].tab < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(build record)-------------------*/
+   DEBUG_MARK   yLOG_note    ("write record");
+   sprintf (my.f_recd, "loc_mark    -A-  %c  %-8.8s ",
+         a_mark , s_mark_info [x_index].label);
    /*---(complete)-----------------------*/
-   fflush (a_file);
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
+char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+MARK_write_head      (FILE *a_file)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;           /* return code for errors         */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   /*---(header)-------------------------*/
+   fprintf (a_file, "#===[[ LOCATION MARKS ]]=============================================================================================#\n");
+   fprintf (a_file, "#---------  ver  -  address- \n");
+   fflush  (a_file);
+   /*---(complete)-----------------------*/
    return 0;
+}
+
+char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+MARK_write_foot      (FILE *a_file, int a_count)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;           /* return code for errors         */
+   /*---(defenses)-----------------------*/
+   --rce;  if (a_file == NULL)                   return rce;
+   /*---(header)-------------------------*/
+   if (a_count == 0)  fprintf (a_file, "# no location marks\n");
+   else               fprintf (a_file, "#---------  ver  -  address- \n");
+   fprintf (a_file, "\n\n\n");
+   fflush  (a_file);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+MARK_writeall        (FILE *a_file)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   int         c           = 0;
+   int         i           = 0;
+   int         x_len       = 0;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   /*---(search)-------------------------*/
+   rc = MARK_write_head (a_file);
+   x_len = strlen (S_MARK_LIST);
+   for (i = 1; i < x_len; ++i) {
+      rc = MARK_write (S_MARK_LIST [i]);
+      if (rc <= 0)   continue;
+      if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
+      ++c;
+   }
+   rc = MARK_write_foot (a_file, c);
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return c;
 }
 
 char
@@ -1106,30 +1211,48 @@ MARK_read          (char a_mark, char *a_label)
    int         x_tab       = 0;
    int         x_col       = 0;
    int         x_row       = 0;
-   char       *x_point     = NULL;
    int         x_index     = 0;
    /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_value   ("a_mark"    , a_mark);
    /*---(check mark)---------------------*/
-   x_point = strchr (S_MARK_LIST, a_mark);
-   --rce;  if (x_point == NULL) {
+   x_index = MARK_valid (a_mark);
+   DEBUG_MARK   yLOG_value   ("x_index"   , x_index);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(get mark index)-----------------*/
-   x_index = (int) (x_point - S_MARK_LIST);
-   --rce;  if (x_index >= MAX_MARK) {
+   DEBUG_MARK   yLOG_char    ("a_mark"    , a_mark);
+   /*---(check address)------------------*/
+   DEBUG_MARK   yLOG_point   ("a_label"   , a_label);
+   --rce;  if (a_label == NULL) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_MARK   yLOG_info    ("a_label"   , a_label);
+   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_MARK   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(save)---------------------------*/
+   DEBUG_MARK   yLOG_note    ("assign values to mark");
    s_mark_info [x_index].tab = x_tab;
    s_mark_info [x_index].col = x_col;
    s_mark_info [x_index].row = x_row;
    strlcpy (s_mark_info [x_index].label, a_label, 10);
    /*---(complete)-----------------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   DEBUG_MARK  yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                     macro command line                       ----===*/
+/*====================------------------------------------====================*/
+static void  o___MACRO_CMD_______o () { return; }
 
 char          /*-> enter a mark directly ---------------- [ whorl  [ ------ ]-*/
 MARK_define          (char *a_string)
@@ -1138,16 +1261,34 @@ MARK_define          (char *a_string)
    char        rce         =  -10;
    char        rc          =    0;
    int         x_len       =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_point   ("a_string"  , a_string);
    /*---(defense)------------------------*/
-   --rce;  if (a_string == NULL)           return rce;
-   --rce;  if (strlen (a_string) <  3)     return rce;
-   --rce;  if (a_string [1]      != '=')   return rce;
+   --rce;  if (a_string == NULL) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_MARK   yLOG_info    ("a_string"  , a_string);
+   x_len = strlen (a_string);
+   DEBUG_MARK   yLOG_value   ("x_len"     , x_len);
+   --rce;  if (x_len <  3) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_MARK   yLOG_char    ("2nd char"  , a_string [1]);
+   --rce;  if (a_string [1] != '=') {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(save)---------------------------*/
    rc = MARK_read (a_string [0], a_string + 2);
    --rce;  if (rc < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1443,7 +1584,7 @@ MARK__unit         (char *a_question, char a_mark)
    /*---(questions)----------------------*/
    if      (strcmp (a_question, "list"     )      == 0) {
       MARK_listplus (my.mark_plus);
-      snprintf (unit_answer, LEN_UNIT, "mark list        : %-.40s", my.mark_plus);
+      snprintf (unit_answer, LEN_UNIT, "mark list        : %-.80s", my.mark_plus);
    }
    else if (strcmp (a_question, "info"     )      == 0) {
       MARK_listplus (my.mark_plus);

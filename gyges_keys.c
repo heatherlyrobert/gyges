@@ -71,6 +71,7 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    /*---(config)-------------------------*/
    { 'c', "macro"       ,  0, ""    ,  0, 'y', '-', .f.s   = MACRO_define         , "a"    ,  0, "direct definition of a keyboard macro"                       , "" },
    { 'c', "mark"        ,  0, ""    ,  0, 'y', '-', .f.s   = MARK_define          , "a"    ,  0, "direct definition of a location mark"                        , "" },
+   { 'c', "mark_unset"  ,  0, ""    ,  0, 'y', '-', .f.c   = MARK_unset           , "c"    ,  0, "direct clearing of a location mark"                          , "" },
    /*---(window)-------------------------*/
    { 'w', "width"       ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window width"                               , "" },
    { 'w', "height"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window height"                              , "" },

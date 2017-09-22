@@ -1253,6 +1253,10 @@ INPT_main          (void)
          if  (my.f_vers == 'D')  rc = INPT_cell  (s_fields [4], s_fields [5], s_fields [6]);
          if (rc < 0)  ++x_cellbad;
          break;
+      case 'l' :
+         if  (my.f_vers == 'A')  rc = MARK_read  (s_fields [2][0], s_fields [3]);
+         if (rc < 0)  ++x_cellbad;
+         break;
       }
    }
    /*---(close file)---------------------*/
@@ -1348,6 +1352,8 @@ FILE_write         (void)
       rc = OUTP_cell_free (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);
    }
    fprintf (f, "# independent cells complete\n\n\n\n");
+   /*---(mark data)----------------------*/
+   MARK_writeall (f);
    /*---(footer data)----------------------*/
    fprintf (f, "# done, finito, complete\n");
    /*---(close file)-----------------------*/

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5f"
-#define     VER_TXT   "basic mark functions pass unit test now"
+#define     VER_NUM   "2.5g"
+#define     VER_TXT   "location mark read and write working/unit tested"
 
 
 
@@ -899,22 +899,39 @@ char      SELC_islive        (void);
 int       SELC_from          (void);
 int       SELC_to            (void);
 
-char      MARK_mode            (char  a_major, char a_minor);
+
+
+/*===[ MARK   ]===============================================================*/
+/*---(program)--------------*/
 char      MARK_init            (void);
+char      MARK_purge           (void);
+char      MARK_wrap            (void);
+/*---(basics)---------------*/
 char      MARK_valid           (char  a_mark);
-char      MARK_unset           (char  a_mark);
-char      MARK_prev            (void);
-char      MARK_next            (void);
 char      MARK_set             (char  a_mark);
-char      MARK_label           (char  a_mark, char *a_label);
+char      MARK_unset           (char  a_mark);
 char      MARK_return          (char  a_mark);
-char      MARK_list            (char *a_list);
-char      MARK_listplus        (char *a_list);
-char      MARK_write           (FILE *a_file, int *a_seq);
-char      MARK_read            (char  a_mark, char *a_label);
-char      MARK_define          (char *a_string);
+/*---(find)-----------------*/
 char      MARK_which           (void);
 char      MARK_find            (char *a_label);
+/*---(seq)------------------*/
+char      MARK_range           (void);
+char      MARK_prev            (void);
+char      MARK_next            (void);
+/*---(info)-----------------*/
+char      MARK_label           (char  a_mark, char *a_label);
+char      MARK_list            (char *a_list);
+char      MARK_listplus        (char *a_list);
+/*---(files)----------------*/
+char      MARK_write           (char  a_index);
+char      MARK_write_head      (FILE *a_file);
+char      MARK_write_foot      (FILE *a_file, int a_count);
+char      MARK_writeall        (FILE *a_file);
+char      MARK_read            (char  a_mark, char *a_label);
+/*---(command)--------------*/
+char      MARK_define          (char *a_string);
+/*---(mode)-----------------*/
+char      MARK_mode            (char  a_major, char a_minor);
 
 
 /*===[ REG  ]=================================================================*/
