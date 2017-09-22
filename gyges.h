@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5i"
-#define     VER_TXT   "fixed small oversight in VISU_init that caused unit test failures"
+#define     VER_NUM   "2.5j"
+#define     VER_TXT   "more localization of MARK and CURS MARK variables"
 
 
 

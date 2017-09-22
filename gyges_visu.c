@@ -102,7 +102,7 @@ static tVISU  s_save;
 
 
 
-#define     MAX_MARK       100
+#define     S_MAX_MARK       150
 typedef  struct cMARK  tMARK;
 struct cMARK {
    char        label       [10];
@@ -111,8 +111,8 @@ struct cMARK {
    short       row;
    tCELL      *ref;
 };
-tMARK       s_mark_info [MAX_MARK];
-static char S_MARK_LIST [MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>";
+tMARK       s_mark_info [S_MAX_MARK];
+static char S_MARK_LIST [S_MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>";
 
 
 typedef     struct cSELC    tSELC;
@@ -682,7 +682,7 @@ MARK_purge           (void)
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
-   DEBUG_MARK   yLOG_value   ("max_mark"  , MAX_MARK);
+   DEBUG_MARK   yLOG_value   ("max_mark"  , S_MAX_MARK);
    x_len = strlen (S_MARK_LIST);
    DEBUG_MARK   yLOG_value   ("x_len"     , x_len);
    for (i = 0; i < x_len; ++i) {
@@ -724,6 +724,7 @@ MARK_valid           (char a_mark)
    char        rce         = -10;
    char       *x_mark      = NULL;
    int         x_index     =   0;
+   int         x_len       = 0;
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_senter  (__FUNCTION__);
    DEBUG_MARK   yLOG_sint    (a_mark);
@@ -745,7 +746,8 @@ MARK_valid           (char a_mark)
    x_index = (int) (x_mark - S_MARK_LIST);
    DEBUG_MARK   yLOG_sint    (x_index);
    /*---(check limits)-------------------*/
-   --rce;  if (x_index >= MAX_MARK) {
+   x_len = strlen (S_MARK_LIST);
+   --rce;  if (x_index >= x_len) {
       DEBUG_MARK   yLOG_snote   ("over max");
       DEBUG_MARK   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
@@ -914,7 +916,9 @@ char
 MARK_which         (void)
 {
    int         i           = 0;
-   for (i = 1; i < MAX_MARK; ++i) {
+   int         x_len       = 0;
+   x_len = strlen (S_MARK_LIST);
+   for (i = 1; i < x_len; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       if (s_mark_info [i].tab != CTAB)             continue;
       if (s_mark_info [i].col != CCOL)             continue;
@@ -931,6 +935,7 @@ MARK_find          (char *a_label)
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    int         i           =    0;
+   int         x_len       = 0;
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    DEBUG_MARK   yLOG_point   ("a_label"   , a_label);
@@ -942,7 +947,8 @@ MARK_find          (char *a_label)
    DEBUG_MARK   yLOG_info    ("a_label"   , a_label);
    /*---(search)-------------------------*/
    DEBUG_MARK   yLOG_note    ("searching");
-   for (i = 1; i < MAX_MARK; ++i) {
+   x_len = strlen (S_MARK_LIST);
+   for (i = 1; i < x_len; ++i) {
       if (strcmp (s_mark_info [i].label, "")      == 0) continue;
       if (strcmp (s_mark_info [i].label, a_label) != 0) continue;
       DEBUG_MARK   yLOG_value   ("i"         , i);
@@ -971,16 +977,19 @@ MARK_range         (void)
     */
    /*---(locals)-----------+-----------+-*/
    int         i           =    0;
+   int         x_len       = 0;
+   /*---(prepare)------------------------*/
+   x_len = strlen (S_MARK_LIST);
    /*---(find next)----------------------*/
    s_mark_head = '-';
-   for (i = 1; i < MAX_MARK; ++i) {
+   for (i = 1; i < x_len; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       s_mark_head = S_MARK_LIST [i];
       break;
    }
    /*---(find last)----------------------*/
    s_mark_tail = '-';
-   for (i = MAX_MARK - 1; i >  0; --i) {
+   for (i = x_len - 1; i >  0; --i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       s_mark_tail = S_MARK_LIST [i];
       break;
@@ -1031,6 +1040,7 @@ MARK_next          (void)
    char        x_mark      =  '-';
    int         x_index     =    0;
    int         i           =    0;
+   int         x_len       = 0;
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(check mark)---------------------*/
@@ -1042,7 +1052,8 @@ MARK_next          (void)
    DEBUG_MARK   yLOG_value   ("x_index"   , x_index);
    /*---(find next)----------------------*/
    DEBUG_MARK   yLOG_note    ("search for next mark");
-   for (i = x_index + 1; i < MAX_MARK; ++i) {
+   x_len = strlen (S_MARK_LIST);
+   for (i = x_index + 1; i < x_len; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       DEBUG_MARK   yLOG_value   ("found"     , i);
       x_mark = S_MARK_LIST [i];
@@ -1124,12 +1135,14 @@ MARK_list          (char *a_list)
    int         i           = 0;
    char        rce         = -10;
    char        x_entry     [20];
+   int         x_len       = 0;
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
    strncpy (a_list, "-", LEN_RECD);   /* special for a null list */
    /*---(walk the list)------------------*/
+   x_len = strlen (S_MARK_LIST);
    strncpy (a_list, ",", LEN_RECD);
-   for (i = 0; i < MAX_MARK; ++i) {
+   for (i = 0; i < x_len; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       sprintf    (x_entry, "%s,", s_mark_info [i].label);
       strncat    (a_list, x_entry, LEN_RECD);
@@ -1147,12 +1160,14 @@ MARK_listplus      (char *a_list)
    int         i           = 0;
    char        rce         = -10;
    char        x_entry     [20];
+   int         x_len       = 0;
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
    strncpy (a_list, "-", LEN_RECD);   /* special for a null list */
    /*---(walk the list)------------------*/
+   x_len = strlen (S_MARK_LIST);
    strncpy (a_list, ",", LEN_RECD);
-   for (i = 1; i < MAX_MARK; ++i) {
+   for (i = 1; i < x_len; ++i) {
       if (strcmp (s_mark_info [i].label, "") == 0) continue;
       sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
       strncat    (a_list, x_entry, LEN_RECD);
