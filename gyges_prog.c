@@ -293,7 +293,7 @@ PROG_main_handle   (char a_key)
    case SMOD_BUFFER   : rc = SMOD_buffer    (K_SPACE, a_key);  break;
    case SMOD_WANDER   : rc = SMOD_wander    (K_SPACE, a_key);  break;
    case SMOD_REGISTER : rc = REG_mode       (x_save , a_key);  break;
-   case SMOD_MARK     : rc = MARK_mode      (x_save , a_key);  break;
+   case SMOD_MARK     : rc = MARK_submode   (x_save , a_key);  break;
    case SMOD_MENUS    : rc = SMOD_menus     (x_save , a_key);  break;
    case SMOD_MACRO    : rc = MACRO_submode  (x_save , a_key);  break;
 
@@ -344,6 +344,7 @@ PROG_main_string     (char *a_keys)
    DEBUG_LOOP   yLOG_info    ("a_keys"    , a_keys);
    x_len = strlen (a_keys);
    DEBUG_LOOP   yLOG_value   ("x_len"     , x_len);
+   --rce;
    for (i = 0; i < x_len; ++i) {
       DEBUG_LOOP   yLOG_value   ("LOOP"      , i);
       /*---(get next char)---------------*/

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5k"
-#define     VER_TXT   "mark and return allow info window to help (sweet)"
+#define     VER_NUM   "2.5l"
+#define     VER_TXT   "mark clear and purge are now right and unit tested"
 
 
 
@@ -899,7 +899,7 @@ int       SELC_to            (void);
 /*===[ MARK   ]===============================================================*/
 /*---(program)--------------*/
 char      MARK_init            (void);
-char      MARK_purge           (void);
+char      MARK_purge           (char  a_scope);
 char      MARK_wrap            (void);
 /*---(basics)---------------*/
 char      MARK_valid           (char  a_mark);
@@ -927,7 +927,7 @@ char      MARK_read            (char  a_mark, char *a_label);
 /*---(command)--------------*/
 char      MARK_define          (char *a_string);
 /*---(mode)-----------------*/
-char      MARK_mode            (char  a_major, char a_minor);
+char      MARK_submode         (char  a_major, char a_minor);
 
 
 /*===[ REG  ]=================================================================*/

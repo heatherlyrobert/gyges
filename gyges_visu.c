@@ -665,7 +665,7 @@ MARK_init            (void)
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
-   MARK_purge  ();
+   MARK_purge  ('A');
    /*---(globals)------------------------*/
    my.mark_show = '-';
    /*---(complete)-----------------------*/
@@ -674,11 +674,13 @@ MARK_init            (void)
 }
 
 char          /*-> remove all marks --------------------- [ leafy  [ ------ ]-*/
-MARK_purge           (void)
+MARK_purge           (char a_scope)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
    int         x_len       = 0;
+   char        x_mark      = 0;
+   char       *x_list      = "abcdefghijklmnopqrstuvwxyz";
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
@@ -686,13 +688,16 @@ MARK_purge           (void)
    x_len = strlen (S_MARK_LIST);
    DEBUG_MARK   yLOG_value   ("x_len"     , x_len);
    for (i = 0; i < x_len; ++i) {
-      MARK_unset (S_MARK_LIST [i]);
+      x_mark = S_MARK_LIST [i];
+      if (a_scope == 'a' && strchr (x_list, x_mark) == NULL)  continue;
+      MARK_unset (x_mark);
    }
    /*---(globals)------------------------*/
    DEBUG_MARK   yLOG_note    ("initialize globals");
    s_mark_save = '-';
    s_mark_head = '-';
    s_mark_tail = '-';
+   MARK_range ();
    /*---(complete)-----------------------*/
    DEBUG_MARK   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -704,7 +709,7 @@ MARK_wrap            (void)
    /*---(header)-------------------------*/
    DEBUG_MARK   yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
-   MARK_purge  ();
+   MARK_purge  ('A');
    /*---(complete)-----------------------*/
    DEBUG_MARK   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1347,8 +1352,13 @@ MARK_define          (char *a_string)
    }
    DEBUG_MARK   yLOG_info    ("a_string"  , a_string);
    /*---(check for purge)----------------*/
+   if (strcmp ("clear", a_string) == 0) {
+      MARK_purge ('a');
+      DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    if (strcmp ("purge", a_string) == 0) {
-      MARK_purge ();
+      MARK_purge ('A');
       DEBUG_MARK   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -1600,7 +1610,7 @@ char      SELC_mode          (char  a_major, char  a_minor)
 }
 
 char          /* PURPOSE : process keys for marks ----------------------------*/
-MARK_mode          (char a_major, char a_minor)
+MARK_submode       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1626,9 +1636,6 @@ MARK_mode          (char a_major, char a_minor)
    --rce;  if (a_major == 'm') {
       DEBUG_USER   yLOG_note    ("handling mark (m)");
       switch (a_minor) {
-      case '*' :
-         MARK_purge ();
-         break;
       case '#' :
          DEBUG_USER   yLOG_note    ("unset mark under cursor");
          rc = MARK_which ();
