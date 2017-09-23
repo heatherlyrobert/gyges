@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5j"
-#define     VER_TXT   "more localization of MARK and CURS MARK variables"
+#define     VER_NUM   "2.5k"
+#define     VER_TXT   "mark and return allow info window to help (sweet)"
 
 
 
@@ -1055,7 +1055,7 @@ char      CURS_cell            (int a_col, int a_row, short a_ypos, short a_xpos
 char      CURS_size            (void);
 char      CURS_info_cell       (void);
 char      CURS_info_layout     (void);
-char      CURS_listmark        (void);
+char      CURS_list_mark         (void);
 char      CURS_listreg         (void);
 char      CURS_listtreg        (void);
 

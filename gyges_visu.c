@@ -1648,6 +1648,7 @@ MARK_mode          (char a_major, char a_minor)
          break;
       case '?' :
          my.info_win      = G_INFO_MARK;
+         return a_major;
          break;
       default  :
          DEBUG_USER   yLOG_note    ("mark current location");
@@ -1663,13 +1664,27 @@ MARK_mode          (char a_major, char a_minor)
    }
    /*---(check for returning)------------*/
    --rce;  if (a_major == '\'') {
-      DEBUG_USER   yLOG_note    ("handling return (')");
-      rc = MARK_return (a_minor);
-      DEBUG_USER   yLOG_value   ("rc"        , rc);
-      if (rc < 0)  {
-         yVIKEYS_mode_exit ();
-         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
+      switch (a_minor) {
+      case '_' :
+         if (my.mark_show == 'y')   my.mark_show = '-';
+         else                       my.mark_show = 'y';
+         break;
+      case '!' :
+         my.layout_status = G_STATUS_MARK;
+         break;
+      case '?' :
+         my.info_win      = G_INFO_MARK;
+         return a_major;
+         break;
+      default  :
+         DEBUG_USER   yLOG_note    ("handling return (')");
+         rc = MARK_return (a_minor);
+         DEBUG_USER   yLOG_value   ("rc"        , rc);
+         if (rc < 0)  {
+            yVIKEYS_mode_exit ();
+            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
       }
    }
    /*---(failure)------------------------*/

@@ -978,43 +978,66 @@ CURS_listbufs      (void)
 }
 
 char
-CURS_listmark      (void)
+CURS_list_mark       (void)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
-   int         i           = 0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   int         i           =    0;
+   char        x_marks     [LEN_RECD] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>";
+   char        x_mark      =  '-';
+   int         x_len       =    0;
+   int         x_wide      =    0;
+   int         x_row       =    0;
+   int         x_col       =   -1;
+   cint        x_top       =    5;
+   cint        x_left      =   10;
+   cint        x_rows      =   26;
+   cint        x_buf       =    3;
    char        x_line      [LEN_RECD];
    char        x_label     [10];
-   char        x_mark      = ' ';
-   char        x_marklist  [LEN_RECD] = "'abcdefghijklmnopqrstuvwxyz";
-   char       *x_title     = " -m- --fixed---      -m- --moving-- ";
-   /*---(header)-------------------------*/
-   attron (S_COLOR_TITLE);
-   mvprintw   ( 3, 10, x_title);
-   attrset (0);
+   char       *x_title     = " -m- -address-- ";
+   char       *x_footer    = "press ANY KEY to escape this window";
+   /*---(prepare)------------------------*/
+   x_len  = strlen (x_marks);
+   x_wide = strlen (x_title) + x_buf;
    /*---(show marks)---------------------*/
-   for (i = 'a'; i <= 'z'; ++i) {
-      /*---(lower case)------------------*/
-      rc = MARK_entry (i, x_line);
-      if (rc == 0)  attron (S_COLOR_CURRENT);
-      else          attron (S_COLOR_VISUAL);
-      mvprintw   ( 4 + (i - 'a'), 10, x_line);
-      attrset (0);
+   for (i = 0; i < x_len; ++i) {
+      /*---(position)--------------------*/
+      x_col = trunc (i / x_rows);
+      x_row = i % x_rows;
+      /*---(title)-----------------------*/
+      if (x_row == 0)  {
+         attron (S_COLOR_TITLE);
+         mvprintw   ( x_top  - 1    , x_left + x_col * x_wide, x_title);
+         mvprintw   ( x_top + x_rows, x_left + x_col * x_wide, x_title);
+         attrset (0);
+         if (x_col > 0) {
+            attron (S_COLOR_TITLE);
+            mvprintw   (x_top - 1     , x_left + x_col * x_wide - x_buf, "   ");
+            mvprintw   (x_top + x_rows, x_left + x_col * x_wide - x_buf, "   ");
+            attrset (0);
+         }
+      }
       /*---(separator)-------------------*/
-      attron (S_COLOR_TITLE);
-      mvprintw   ( 4 + (i - 'a'), 26, "    ");
-      attrset (0);
-      /*---(upper case)------------------*/
-      rc = MARK_entry (toupper (i), x_line);
+      if (x_col > 0) {
+         attron (S_COLOR_TITLE);
+         mvprintw   (x_top + x_row, x_left + x_col * x_wide - x_buf, "   ");
+         attrset (0);
+      }
+      /*---(lower case)------------------*/
+      x_mark = x_marks [i];
+      rc = MARK_entry (x_mark, x_line);
       if (rc == 0)  attron (S_COLOR_CURRENT);
       else          attron (S_COLOR_VISUAL);
-      mvprintw   ( 4 + (i - 'a'), 30, x_line);
+      mvprintw   (x_top + x_row, x_left + x_col * x_wide, x_line);
       attrset (0);
       /*---(done)------------------------*/
    }
    /*---(footer)-------------------------*/
+   x_len = (strlen (x_title) * ++x_col) + (--x_col * x_buf) - strlen (x_footer);
+   sprintf (x_line, "%.*s%s%*.s", x_len / 2, g_empty, x_footer, x_len - x_len / 2, g_empty);
    attron (S_COLOR_TITLE);
-   mvprintw   ( 3 + 27, 10, x_title);
+   mvprintw   (x_top + x_rows + 1, x_left, x_line);
    attrset (0);
    /*---(complete)-----------------------*/
    return 0;
@@ -1225,7 +1248,7 @@ CURS_main          (void)
    switch (my.info_win) {
    case G_INFO_BUFS   : CURS_listbufs    ();
                         break;
-   case G_INFO_MARK   : CURS_listmark    ();
+   case G_INFO_MARK   : CURS_list_mark   ();
                         break;
    case G_INFO_REGS   : CURS_listreg     ();
                         break;
