@@ -691,6 +691,11 @@ MODE_map           (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
+      case 'Q'      :
+         MACRO_reset ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
       case 'F'      :
          yVIKEYS_mode_enter  (SMOD_FORMAT  );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);

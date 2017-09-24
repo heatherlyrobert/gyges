@@ -344,6 +344,64 @@ VISU_set           (
    return 0;
 }
 
+char         /*--> apply a specific selection ------------[ ------ [ ------ ]-*/
+VISU_mark            (void)
+{
+   char        rce         =  -10;
+   char        rc          =    0;
+   short       x_btab      =   -1;
+   short       x_bcol      =   -1;
+   short       x_brow      =   -1;
+   short       x_etab      =   -1;
+   short       x_ecol      =   -1;
+   short       x_erow      =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   DEBUG_VISU   yLOG_note    ("clear selection");
+   s_visu.live  = VISU_NOT;
+   VISU_clear ();
+   /*---(get marks)----------------------*/
+   rc = MARK_address ('<', &x_btab, &x_bcol, &x_brow);
+   DEBUG_VISU   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = MARK_address ('>', &x_etab, &x_ecol, &x_erow);
+   DEBUG_VISU   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check range)--------------------*/
+   --rce;  if (x_btab != x_etab) {
+      DEBUG_VISU   yLOG_note    ("btab does not match etab");
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (x_bcol >  x_ecol) {
+      DEBUG_VISU   yLOG_note    ("bcol is greater than ecol");
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (x_brow >  x_erow) {
+      DEBUG_VISU   yLOG_note    ("brow is greater than erow");
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(set selection)------------------*/
+   rc = VISU_set (x_btab, x_bcol, x_brow, x_ecol, x_erow);
+   DEBUG_VISU   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*--> swap the corners ----------------------[ ------ [ ------ ]-*/
 VISU_reverse       (void)
 {
@@ -1081,7 +1139,43 @@ MARK_next          (void)
 static void  o___MARK_INFO_______o () { return; }
 
 char
-MARK_entry         (char a_mark, char *a_entry)
+MARK_address         (char a_mark, short *a_tab, short *a_col, short *a_row)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          =   0;
+   int         x_index     =   0;
+   /*---(header)-------------------------*/
+   DEBUG_MARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_MARK   yLOG_value   ("a_mark"    , a_mark);
+   /*---(check mark)---------------------*/
+   x_index = MARK_valid (a_mark);
+   --rce;  if (x_index < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_MARK   yLOG_value   ("a_mark"    , a_mark);
+   DEBUG_MARK   yLOG_value   ("x_index"   , x_index);
+   /*---(check address)------------------*/
+   --rce;  if (s_mark_info [x_index].tab < 0) {
+      DEBUG_MARK   yLOG_note    ("address not set");
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(parse)--------------------------*/
+   rc = LOC_parse  (s_mark_info [x_index].label, a_tab, a_col, a_row, NULL);
+   DEBUG_MARK   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+MARK_entry           (char a_mark, char *a_entry)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1438,31 +1532,66 @@ VISU_mode          (char a_major, char a_minor)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          =   0;
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_enter   (__FUNCTION__);
+   DEBUG_VISU   yLOG_value   ("a_major"   , a_major);
+   DEBUG_VISU   yLOG_value   ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
+   DEBUG_VISU   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
    --rce;  if (yVIKEYS_mode_not (MODE_VISUAL )) {
       return rce;
    }
    if (a_minor == K_ESCAPE)  {
       VISU_clear  ();
       yVIKEYS_mode_exit ();
+      DEBUG_VISU   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    /*---(check for simple keys-----------*/
    --rce;  if (a_major == ' ') {
       /*---(multikey prefixes)-----------*/
-      if (strchr ("gze"   , a_minor) != 0)       return a_minor;
+      if (strchr ("gze"   , a_minor) != 0) {
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+      }
+      /*---(modes)-----------------------*/
+      switch (a_minor) {
+      case ':'      : /*--- enter command mode ------*/
+         DEBUG_VISU   yLOG_note    ("chose command mode");
+         yVIKEYS_mode_enter  (MODE_COMMAND);
+         CMDS_start ();
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case '/'      : /*--- enter search mode -------*/
+         DEBUG_VISU   yLOG_note    ("chose search mode");
+         yVIKEYS_mode_enter  (MODE_SEARCH);
+         /*> SEARCH_start ();                                                         <*/
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      }
       /*---(submodes)--------------------*/
       switch (a_minor) {
-      case '"'      : yVIKEYS_mode_enter  (SMOD_REGISTER);
-                      return a_minor;  /* make sure double quote goes in prev char */
-                      break;
-      case 'F'      : yVIKEYS_mode_enter  (SMOD_FORMAT);
-                      return 0;
-                      break;
-      case ':'      : yVIKEYS_mode_enter  (MODE_COMMAND);
-                      CMDS_start ();
-                      return 0;
-                      break;
+      case '"'      :
+         DEBUG_VISU   yLOG_note    ("chose register sub-mode");
+         yVIKEYS_mode_enter  (SMOD_REGISTER);
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return a_minor;  /* make sure double quote goes in prev char */
+         break;
+      case 'F'      :
+         DEBUG_VISU   yLOG_note    ("chose format sub-mode");
+         yVIKEYS_mode_enter  (SMOD_FORMAT);
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case ':'      :
+         DEBUG_VISU   yLOG_note    ("chose command mode");
+         yVIKEYS_mode_enter  (MODE_COMMAND);
+         CMDS_start ();
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
       }
       /*---(actions)---------------------*/
       switch (a_minor) {
@@ -1472,11 +1601,13 @@ VISU_mode          (char a_major, char a_minor)
       case 'y'      :
          REG_copy          ();
          yVIKEYS_mode_exit ();
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
          return  0;
          break;
       case 'x'      :
          REG_cut           ();
          yVIKEYS_mode_exit ();
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
          return  0;
          break;
       }
@@ -1487,24 +1618,31 @@ VISU_mode          (char a_major, char a_minor)
        *> }                                                                           <*/
       /*---(normal)----------------------*/
       rc = KEYS_basics (a_major, a_minor);
-      if (rc == 0) return 0;
+      if (rc == 0) {
+         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
    }
    /*---(goto family)--------------------*/
    if (a_major == 'g') {
       rc = KEYS_gz_family  (a_major, a_minor);
+      DEBUG_VISU   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(scroll family)------------------*/
    if (a_major == 'z') {
       rc = KEYS_gz_family  (a_major, a_minor);
+      DEBUG_VISU   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(end family)---------------------*/
    if (a_major == 'e') {
       rc = KEYS_e_family   (a_major, a_minor);
+      DEBUG_VISU   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1626,72 +1764,81 @@ MARK_submode       (char a_major, char a_minor)
       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   if (a_minor == K_ESCAPE)  {
-      yVIKEYS_mode_exit ();
+   /*---(common keys)--------------------*/
+   --rce;  switch (a_minor) {
+   case K_ESCAPE :
       DEBUG_USER   yLOG_note    ("escape means leave");
+      yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
+   case '*' :
+      DEBUG_USER   yLOG_note    ("enter visual mode from < to >");
+      yVIKEYS_mode_exit ();
+      yVIKEYS_mode_enter  (MODE_VISUAL);
+      rc = VISU_mark    ();
+      if (rc < 0) {
+         yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      MARK_return  ('>');
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+      break;
+   case '#' :
+      DEBUG_USER   yLOG_note    ("unset mark under cursor");
+      rc = MARK_which ();
+      if (rc < 0) {
+         yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      MARK_unset (rc);
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return  0;
+      break;
+   case '_' :
+      DEBUG_USER   yLOG_note    ("toggle mark show and hide");
+      if (my.mark_show == 'y')   my.mark_show = '-';
+      else                       my.mark_show = 'y';
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return  0;
+      break;
+   case '!' :
+      DEBUG_USER   yLOG_note    ("use mark status bar");
+      my.layout_status = G_STATUS_MARK;
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return  0;
+      break;
+   case '?' :
+      DEBUG_USER   yLOG_note    ("show mark info window");
+      my.info_win      = G_INFO_MARK;
+      return a_major;
+      break;
    }
    /*---(check for setting)--------------*/
    --rce;  if (a_major == 'm') {
       DEBUG_USER   yLOG_note    ("handling mark (m)");
-      switch (a_minor) {
-      case '#' :
-         DEBUG_USER   yLOG_note    ("unset mark under cursor");
-         rc = MARK_which ();
-         if (rc < 0) {
-            yVIKEYS_mode_exit ();
-            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-            return rce;
-         }
-         MARK_unset (rc);
-         break;
-      case '_' :
-         if (my.mark_show == 'y')   my.mark_show = '-';
-         else                       my.mark_show = 'y';
-         break;
-      case '!' :
-         my.layout_status = G_STATUS_MARK;
-         break;
-      case '?' :
-         my.info_win      = G_INFO_MARK;
-         return a_major;
-         break;
-      default  :
-         DEBUG_USER   yLOG_note    ("mark current location");
-         rc = MARK_set (a_minor);
-         DEBUG_USER   yLOG_value   ("rc"        , rc);
-         if (rc < 0) {
-            yVIKEYS_mode_exit ();
-            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-            return rce;
-         }
-         break;
+      rc = MARK_set (a_minor);
+      DEBUG_USER   yLOG_value   ("rc"        , rc);
+      if (rc < 0) {
+         yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
       }
    }
    /*---(check for returning)------------*/
    --rce;  if (a_major == '\'') {
-      switch (a_minor) {
-      case '_' :
-         if (my.mark_show == 'y')   my.mark_show = '-';
-         else                       my.mark_show = 'y';
-         break;
-      case '!' :
-         my.layout_status = G_STATUS_MARK;
-         break;
-      case '?' :
-         my.info_win      = G_INFO_MARK;
-         return a_major;
-         break;
-      default  :
-         DEBUG_USER   yLOG_note    ("handling return (')");
-         rc = MARK_return (a_minor);
-         DEBUG_USER   yLOG_value   ("rc"        , rc);
-         if (rc < 0)  {
-            yVIKEYS_mode_exit ();
-            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-            return rce;
-         }
+      DEBUG_USER   yLOG_note    ("handling return (')");
+      rc = MARK_return (a_minor);
+      DEBUG_USER   yLOG_value   ("rc"        , rc);
+      if (rc < 0)  {
+         yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
       }
    }
    /*---(failure)------------------------*/
@@ -1726,21 +1873,21 @@ MARK__unit         (char *a_question, char a_mark)
       }
    }
    /*---(questions)----------------------*/
-   if      (strcmp (a_question, "list"     )      == 0) {
+   if      (strcmp (a_question, "mark_list"   )   == 0) {
       MARK_listplus (x_list);
       snprintf (unit_answer, LEN_UNIT, "mark list        : %-.80s", x_list);
    }
-   else if (strcmp (a_question, "info"     )      == 0) {
+   else if (strcmp (a_question, "mark_info"   )   == 0) {
       snprintf (unit_answer, LEN_UNIT, "mark info        : %c %-8.8s %4d %4d %4d", a_mark, s_mark_info [x_index].label, s_mark_info [x_index].tab, s_mark_info [x_index].col, s_mark_info [x_index].row);
    }
-   else if (strcmp (a_question, "range"    )      == 0) {
+   else if (strcmp (a_question, "mark_range"  )   == 0) {
       snprintf (unit_answer, LEN_UNIT, "mark range       : %c to %c", s_mark_head, s_mark_tail);
    }
-   else if (strcmp (a_question, "entry"    )      == 0) {
+   else if (strcmp (a_question, "mark_entry"  )   == 0) {
       MARK_entry (a_mark, x_list);
       snprintf (unit_answer, LEN_UNIT, "mark entry       :%s:", x_list);
    }
-   else if (strcmp (a_question, "status"   )      == 0) {
+   else if (strcmp (a_question, "mark_status" )   == 0) {
       MARK_status (x_list);
       snprintf (unit_answer, LEN_UNIT, "mark status      :%s:", x_list);
    }
@@ -1751,22 +1898,20 @@ MARK__unit         (char *a_question, char a_mark)
 char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
 VISU__unit         (char *a_question, char a_reg)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        x_list      [LEN_RECD];
    /*---(preprare)-----------------------*/
-   strcpy  (unit_answer, "s_sel            : question not understood");
+   strcpy  (unit_answer, "visu             : question not understood");
    /*---(selection)----------------------*/
-   if      (strcmp (a_question, "sel_range"    )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_sel range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
+   if      (strcmp (a_question, "visu_range"   )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "visu range       : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
    }
-   else if (strcmp (a_question, "sel_curr")       == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_sel current    : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
+   else if (strcmp (a_question, "visu_curr"    )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "visu current     : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
    }
-   else if (strcmp (a_question, "sel_full")       == 0) {
+   else if (strcmp (a_question, "visu_full"    )  == 0) {
       if (s_visu.curr != DONE_DONE) {
-         snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow));
+         snprintf (unit_answer, LEN_UNIT, "visu full        : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow));
       } else {
-         snprintf (unit_answer, LEN_UNIT, "s_sel full       : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
+         snprintf (unit_answer, LEN_UNIT, "visu full        : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
       }
    }
    /*---(complete)-----------------------*/
