@@ -618,12 +618,12 @@ MODE_map           (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
-      /*> case 'V'      :                                                             <* 
-       *>    yVIKEYS_mode_enter  (MODE_VISUAL);                                       <* 
-       *>    VISU_restore ();                                                         <* 
-       *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                <* 
-       *>    return 0;                                                                <* 
-       *>    break;                                                                   <*/
+      case 'V'      :
+         yVIKEYS_mode_enter  (MODE_VISUAL);
+         VISU_restore ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
       case ':'      :
          yVIKEYS_mode_enter  (MODE_COMMAND);
          CMDS_start ();

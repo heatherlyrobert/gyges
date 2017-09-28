@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5n"
-#define     VER_TXT   "all VISU unit tests pass"
+#define     VER_NUM   "2.5o"
+#define     VER_TXT   "VISU mode V reselected previous selection"
 
 
 
