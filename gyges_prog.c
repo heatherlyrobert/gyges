@@ -280,16 +280,16 @@ PROG_main_handle   (char a_key)
 
    case MODE_GOD      : rc = MODE_god       (x_save , a_key);  break;
    case MODE_MAP      : rc = MODE_map       (x_save , a_key);  break;
-   case MODE_VISUAL   : rc = VISU_mode      (x_save , a_key);  break;
    case MODE_SOURCE   : rc = MODE_source    (x_save , a_key);  break;
    case MODE_INPUT    : rc = MODE_input     (x_save , a_key);  break;
    case MODE_COMMAND  : rc = CMDS_mode      (x_save , a_key);  break;
 
+   case MODE_VISUAL   : rc = VISU_submode   (x_save , a_key);  break;
    case SMOD_ERROR    : rc = SMOD_error     (x_save , a_key);  break;
    case SMOD_SELECT   : rc = SELC_mode      (x_save , a_key);  break;
    case SMOD_TEXTREG  : rc = TREG_mode      (x_save , a_key);  break;
    case SMOD_REPLACE  : rc = SMOD_replace   (x_save , a_key);  break;
-   case SMOD_FORMAT   : rc = SMOD_format    (K_SPACE, a_key);  break;
+   case SMOD_FORMAT   : rc = SMOD_format    (x_save , a_key);  break;
    case SMOD_BUFFER   : rc = SMOD_buffer    (K_SPACE, a_key);  break;
    case SMOD_WANDER   : rc = SMOD_wander    (K_SPACE, a_key);  break;
    case SMOD_REGISTER : rc = REG_mode       (x_save , a_key);  break;

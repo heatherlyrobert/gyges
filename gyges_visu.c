@@ -330,7 +330,8 @@ VISU_set           (
    --rce;  if (a_brow > a_erow)     return rce;
    /*---(set range)----------------------*/
    s_visu.live  = VISU_YES;
-   s_visu.mode  = VISU_CUM;
+   /*> s_visu.mode  = VISU_CUM;                                                       <*/
+   s_visu.mode  = VISU_FROM;
    /*---(locations)----------------------*/
    s_visu.otab                          = a_tab;
    s_visu.ocol  = s_visu.bcol  = s_visu.ccol  = a_bcol;
@@ -433,9 +434,9 @@ char             /* indicate whether cell is the root ----[ leaf   [ 170n0x ]-*/
 VISU_root          (int a_tab, int a_col, int a_row)
 {
    if (s_visu.live == VISU_NOT)    return 0;
-   if (a_tab != s_visu.otab)      return 0;
-   if (a_col != s_visu.ocol)      return 0;
-   if (a_row != s_visu.orow)      return 0;
+   if (a_tab != s_visu.otab)       return 0;
+   if (a_col != s_visu.ocol)       return 0;
+   if (a_row != s_visu.orow)       return 0;
    return 1;
 }
 
@@ -1527,7 +1528,7 @@ VISU_status        (char *a_msg)
 }
 
 char          /* PURPOSE : process keys for marks ----------------------------*/
-VISU_mode          (char a_major, char a_minor)
+VISU_submode       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1579,18 +1580,11 @@ VISU_mode          (char a_major, char a_minor)
          DEBUG_VISU   yLOG_exit    (__FUNCTION__);
          return a_minor;  /* make sure double quote goes in prev char */
          break;
-      case 'F'      :
+      case 'F'      : case 'f'      :
          DEBUG_VISU   yLOG_note    ("chose format sub-mode");
          yVIKEYS_mode_enter  (SMOD_FORMAT);
          DEBUG_VISU   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case ':'      :
-         DEBUG_VISU   yLOG_note    ("chose command mode");
-         yVIKEYS_mode_enter  (MODE_COMMAND);
-         CMDS_start ();
-         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
-         return 0;
+         return a_minor;
          break;
       }
       /*---(actions)---------------------*/
@@ -1612,10 +1606,10 @@ VISU_mode          (char a_major, char a_minor)
          break;
       }
       /*---(actions)---------------------*/
-      /*> switch (a_minor) {                                                          <* 
-       *> case 'c'      : VISU_col ();               break;                           <* 
-       *> case 'r'      : VISU_row ();               break;                           <* 
-       *> }                                                                           <*/
+      switch (a_minor) {
+      case 'c'      : VISU_col ();               break;
+      case 'r'      : VISU_row ();               break;
+      }
       /*---(normal)----------------------*/
       rc = KEYS_basics (a_major, a_minor);
       if (rc == 0) {
@@ -1750,13 +1744,16 @@ char      SELC_mode          (char  a_major, char  a_minor)
 char          /* PURPOSE : process keys for marks ----------------------------*/
 MARK_submode       (char a_major, char a_minor)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          =   0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char       *x_majors    = "m'@";
+   static char x_prev      =  '-';
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   DEBUG_USER   yLOG_char    ("x_prev"    , x_prev);
    /*---(defenses)-----------------------*/
    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
    --rce;  if (yVIKEYS_mode_not (SMOD_MARK   )) {
@@ -1764,14 +1761,22 @@ MARK_submode       (char a_major, char a_minor)
       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(common keys)--------------------*/
-   --rce;  switch (a_minor) {
-   case K_ESCAPE :
+   /*---(exit mode)----------------------*/
+   if (a_minor == K_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape means leave");
       yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
-   case '*' :
+   }
+   /*---(major check)--------------------*/
+   DEBUG_USER   yLOG_char    ("x_majors"  , x_majors);
+   --rce;  if (strchr (x_majors, a_major) == NULL) {
+      DEBUG_USER   yLOG_note    ("major not valid");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(mode change)--------------------*/
+   if (a_minor == '*') {
       DEBUG_USER   yLOG_note    ("enter visual mode from < to >");
       yVIKEYS_mode_exit ();
       yVIKEYS_mode_enter  (MODE_VISUAL);
@@ -1784,40 +1789,54 @@ MARK_submode       (char a_major, char a_minor)
       MARK_return  ('>');
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;
-      break;
-   case '#' :
-      DEBUG_USER   yLOG_note    ("unset mark under cursor");
-      rc = MARK_which ();
-      if (rc < 0) {
-         yVIKEYS_mode_exit ();
-         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
+   }
+   /*---(common quick)-------------------*/
+   --rce;  if (strchr("#_!", a_minor) != NULL) {
+      switch (a_minor) {
+      case '#' :
+         DEBUG_USER   yLOG_note    ("unset mark under cursor");
+         rc = MARK_which ();
+         if (rc < 0) {
+            yVIKEYS_mode_exit ();
+            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         MARK_unset (rc);
+         break;
+      case '_' :
+         DEBUG_USER   yLOG_note    ("toggle mark show and hide");
+         if (my.mark_show == 'y')   my.mark_show = '-';
+         else                       my.mark_show = 'y';
+         break;
+      case '!' :
+         DEBUG_USER   yLOG_note    ("use mark status bar");
+         my.layout_status = G_STATUS_MARK;
+         break;
       }
-      MARK_unset (rc);
       yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
-      break;
-   case '_' :
-      DEBUG_USER   yLOG_note    ("toggle mark show and hide");
-      if (my.mark_show == 'y')   my.mark_show = '-';
-      else                       my.mark_show = 'y';
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-      break;
-   case '!' :
-      DEBUG_USER   yLOG_note    ("use mark status bar");
-      my.layout_status = G_STATUS_MARK;
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-      break;
-   case '?' :
-      DEBUG_USER   yLOG_note    ("show mark info window");
-      my.info_win      = G_INFO_MARK;
-      return a_major;
-      break;
+   }
+   /*---(common complex)-----------------*/
+   --rce;  if (strchr("?@", a_minor) != NULL) {
+      switch (a_minor) {
+      case '?' :
+         DEBUG_USER   yLOG_note    ("show mark info window");
+         my.info_win      = G_INFO_MARK;
+         return a_major;
+         break;
+      case '@' :
+         DEBUG_USER   yLOG_note    ("enter edit/wander feature");
+         rc = MARK_which ();
+         if (rc < 0) {
+            yVIKEYS_mode_exit ();
+            DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         x_prev = rc;
+         return a_minor;
+         break;
+      }
    }
    /*---(check for setting)--------------*/
    --rce;  if (a_major == 'm') {
@@ -1829,6 +1848,10 @@ MARK_submode       (char a_major, char a_minor)
          DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
+      x_prev = a_minor;
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
    }
    /*---(check for returning)------------*/
    --rce;  if (a_major == '\'') {
@@ -1840,11 +1863,29 @@ MARK_submode       (char a_major, char a_minor)
          DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
+      x_prev = a_minor;
+      yVIKEYS_mode_exit ();
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check for wander)---------------*/
+   --rce;  if (a_major == '@') {
+      DEBUG_USER   yLOG_note    ("handling wander (@)");
+      if (a_minor == K_RETURN) {
+         MARK_set (x_prev);
+         yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      KEYS_basics (' ', a_minor);
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_major;
    }
    /*---(failure)------------------------*/
+   --rce;
    yVIKEYS_mode_exit ();
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
+   DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+   return rce;
 }
 
 

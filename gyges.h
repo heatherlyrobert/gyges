@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5m"
-#define     VER_TXT   "mark '* to set visual range from < to > done"
+#define     VER_NUM   "2.5n"
+#define     VER_TXT   "all VISU unit tests pass"
 
 
 
@@ -883,6 +883,8 @@ char      VISU_range           (int*, int*, int*, int*, int*);
 tCELL*    VISU_first           (int*, int*, int*);
 tCELL*    VISU_next            (int*, int*, int*);
 char      VISU_status          (char *a_msg);
+/*---(submode)--------------*/
+char      VISU_submode         (char a_major, char a_minor);
 
 char      SELC_clear           (void);
 char      SELC_save            (void);

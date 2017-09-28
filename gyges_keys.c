@@ -618,12 +618,12 @@ MODE_map           (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
-      case 'V'      :
-         yVIKEYS_mode_enter  (MODE_VISUAL);
-         VISU_restore ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
+      /*> case 'V'      :                                                             <* 
+       *>    yVIKEYS_mode_enter  (MODE_VISUAL);                                       <* 
+       *>    VISU_restore ();                                                         <* 
+       *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                <* 
+       *>    return 0;                                                                <* 
+       *>    break;                                                                   <*/
       case ':'      :
          yVIKEYS_mode_enter  (MODE_COMMAND);
          CMDS_start ();
@@ -1543,6 +1543,7 @@ SMOD_format        (char a_major, char a_minor)
    case  '!' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
    }
    /*---(complete)-----------------------*/
+   if (a_major == 'f')  yVIKEYS_mode_exit ();
    return 0;
 }
 
