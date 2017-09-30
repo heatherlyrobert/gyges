@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5o"
-#define     VER_TXT   "VISU mode V reselected previous selection"
+#define     VER_NUM   "2.5p"
+#define     VER_TXT   "regbasic supports visu x,y,p and single cell version"
 
 
 

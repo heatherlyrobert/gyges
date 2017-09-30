@@ -1588,27 +1588,15 @@ VISU_submode       (char a_major, char a_minor)
          break;
       }
       /*---(actions)---------------------*/
-      switch (a_minor) {
-      case 'v'      :
+      rc = KEYS_regbasic (a_major, a_minor);
+      if (rc == 0) {
+         yVIKEYS_mode_exit ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      if (a_minor == 'a') {
          VISU_reverse      ();
          break;
-      case 'y'      :
-         REG_copy          ();
-         yVIKEYS_mode_exit ();
-         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
-         return  0;
-         break;
-      case 'x'      :
-         REG_cut           ();
-         yVIKEYS_mode_exit ();
-         DEBUG_VISU   yLOG_exit    (__FUNCTION__);
-         return  0;
-         break;
-      }
-      /*---(actions)---------------------*/
-      switch (a_minor) {
-      case 'c'      : VISU_col ();               break;
-      case 'r'      : VISU_row ();               break;
       }
       /*---(normal)----------------------*/
       rc = KEYS_basics (a_major, a_minor);
