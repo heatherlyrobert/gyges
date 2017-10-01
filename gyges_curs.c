@@ -983,7 +983,7 @@ CURS_list_mark       (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    int         i           =    0;
-   char        x_marks     [LEN_RECD] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>";
+   char        x_marks     [LEN_RECD] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()";
    char        x_mark      =  '-';
    int         x_len       =    0;
    int         x_wide      =    0;
@@ -995,8 +995,9 @@ CURS_list_mark       (void)
    cint        x_buf       =    3;
    char        x_line      [LEN_RECD];
    char        x_label     [10];
+   char       *x_equals    = "=============================================";
    char       *x_title     = " -m- -address-- ";
-   char       *x_footer    = "press ANY KEY to escape this window";
+   char       *x_footer    = " press ANY KEY to escape this window ";
    /*---(prepare)------------------------*/
    x_len  = strlen (x_marks);
    x_wide = strlen (x_title) + x_buf;
@@ -1035,8 +1036,11 @@ CURS_list_mark       (void)
    }
    /*---(footer)-------------------------*/
    x_len = (strlen (x_title) * ++x_col) + (--x_col * x_buf) - strlen (x_footer);
-   sprintf (x_line, "%.*s%s%*.s", x_len / 2, g_empty, x_footer, x_len - x_len / 2, g_empty);
-   attron (S_COLOR_TITLE);
+   sprintf (x_line, "%.*s%s%.*s",
+         x_len / 2, x_equals,
+         x_footer,
+         x_len - x_len / 2, x_equals);
+   attron (S_COLOR_SOURCE);
    mvprintw   (x_top + x_rows + 1, x_left, x_line);
    attrset (0);
    /*---(complete)-----------------------*/

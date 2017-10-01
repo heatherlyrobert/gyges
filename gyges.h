@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5p"
-#define     VER_TXT   "regbasic supports visu x,y,p and single cell version"
+#define     VER_NUM   "2.5q"
+#define     VER_TXT   "cleaned up mark info window and visu range marks"
 
 
 

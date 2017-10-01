@@ -308,12 +308,12 @@ MACRO_delay_set      (char a_delay)
       DEBUG_SCRP   yLOG_note    ("set abs");
       my.macro_delay = a_delay;
    }
-   if (a_delay >= '>') {
-      DEBUG_SCRP   yLOG_note    ("increase");
+   if (a_delay == '-') {
+      DEBUG_SCRP   yLOG_note    ("decrease (-)");
       if (my.macro_delay > '0')  --my.macro_delay;
    }
-   if (a_delay >= '>') {
-      DEBUG_SCRP   yLOG_note    ("decrease");
+   if (a_delay == '+') {
+      DEBUG_SCRP   yLOG_note    ("increase (+)");
       if (my.macro_delay < '9')  ++my.macro_delay;
    }
    /*---(new value)-------------------*/
@@ -482,17 +482,8 @@ MACRO_exec_playback  (char a_key)
       DEBUG_SCRP   yLOG_exit    (__FUNCTION__);
       return -1;
       break;
-   case '<'      :
-      DEBUG_SCRP   yLOG_note    ("less (<)");
-      if (my.macro_delay > '0')  --my.macro_delay;
-      DEBUG_SCRP   yLOG_value   ("delay"     , my.macro_delay);
-      DEBUG_SCRP   yLOG_exit    (__FUNCTION__);
-      return -1;
-      break;
-   case '>'      :
-      DEBUG_SCRP   yLOG_note    ("more (>)");
-      if (my.macro_delay < '9')  ++my.macro_delay;
-      DEBUG_SCRP   yLOG_value   ("delay"     , my.macro_delay);
+   case '-'      : case '+'      :
+      MACRO_delay_set (a_key);
       DEBUG_SCRP   yLOG_exit    (__FUNCTION__);
       return -1;
       break;

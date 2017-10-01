@@ -112,7 +112,7 @@ struct cMARK {
    tCELL      *ref;
 };
 tMARK       s_mark_info [S_MAX_MARK];
-static char S_MARK_LIST [S_MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>";
+static char S_MARK_LIST [S_MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()";
 
 
 typedef     struct cSELC    tSELC;
@@ -363,13 +363,13 @@ VISU_mark            (void)
    s_visu.live  = VISU_NOT;
    VISU_clear ();
    /*---(get marks)----------------------*/
-   rc = MARK_address ('<', &x_btab, &x_bcol, &x_brow);
+   rc = MARK_address ('(', &x_btab, &x_bcol, &x_brow);
    DEBUG_VISU   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
       DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = MARK_address ('>', &x_etab, &x_ecol, &x_erow);
+   rc = MARK_address (')', &x_etab, &x_ecol, &x_erow);
    DEBUG_VISU   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
       DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
@@ -922,8 +922,8 @@ MARK_return        (char a_mark)
    switch (a_mark) {
    case '[' : a_mark = s_mark_head;   break;
    case ')' : a_mark = MARK_next ();   break;
-   case '(' : a_mark = MARK_prev ();   break;
-   case ']' : a_mark = s_mark_tail;   break;
+   case '<' : a_mark = MARK_prev ();   break;
+   case '>' : a_mark = s_mark_tail;   break;
    }
    --rce;  if (a_mark < 0) {
       DEBUG_MARK   yLOG_exitr   (__FUNCTION__, rce);
@@ -1594,9 +1594,8 @@ VISU_submode       (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
       }
-      if (a_minor == 'a') {
+      if (a_minor == 'o') {
          VISU_reverse      ();
-         break;
       }
       /*---(normal)----------------------*/
       rc = KEYS_basics (a_major, a_minor);
