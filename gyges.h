@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5r"
-#define     VER_TXT   "updated characters for changes to terminal font"
+#define     VER_NUM   "2.5s"
+#define     VER_TXT   "allow entry of greek characters in input mode"
 
 
 
@@ -791,8 +791,8 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_GROUP      185   /* ¦  double bar       ( 29)   */
 #define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
 /*---(control)---------*/
-#define   G_CHAR_ALT        173   /* ­  ae mark          (  -)   */
-#define   G_CHAR_CONTROL    163   /* £  equiv            (  -)   */
+#define   G_CHAR_ALT        194   /* Â  up               (  -)   */
+#define   G_CHAR_CONTROL    195   /* Ã  down             (  -)   */
 #define   G_CHAR_WAIT       186   /* º  funky mark       (  -)   */
 #define   G_CHAR_BREAK      191   /* ¿  lead question    (  -)   */
 #define   G_CHAR_HALT       177   /* ±  plus-minus       (  -)   */
@@ -802,6 +802,18 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
 #define   G_CHAR_MARK       174   /* ®  mark             (  -)   */
 #define   G_CHAR_DEGREE     176   /* °  degree mark      (  -)   */
+/*---(greek)-----------*/
+#define   G_CHAR_ALPHA      232   /* è  alpha      A     (  -)   */
+#define   G_CHAR_BETA       233   /* é  beta       B     (  -)   */
+#define   G_CHAR_GAMMA      234   /* ê  gamma      G     (  -)   */
+#define   G_CHAR_DELTA      235   /* ë  delta      D     (  -)   */
+#define   G_CHAR_THETA      239   /* ï  theta      T     (  -)   */
+#define   G_CHAR_LAMBDA     242   /* ò  lambda     L     (  -)   */
+#define   G_CHAR_PI         247   /* ÷  pi         P     (  -)   */
+#define   G_CHAR_SIGMA      249   /* ù  sigma      S     (  -)   */
+#define   G_CHAR_PHI        252   /* ü  phi        H     (  -)   */
+#define   G_CHAR_PSI        254   /* þ  psi        I     (  -)   */
+#define   G_CHAR_OMEGA      255   /* ÿ  omega      O     (  -)   */
 
 
 /*===[[ PROTOTYPES ]]=====================================*/

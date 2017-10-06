@@ -1378,6 +1378,17 @@ MODE_input         (char  a_major, char  a_minor)
       case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
       case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
       case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
+      case 'A'  :  a_minor = G_CHAR_ALPHA;   break;
+      case 'B'  :  a_minor = G_CHAR_BETA;    break;
+      case 'G'  :  a_minor = G_CHAR_GAMMA;   break;
+      case 'D'  :  a_minor = G_CHAR_DELTA;   break;
+      case 'T'  :  a_minor = G_CHAR_THETA;   break;
+      case 'L'  :  a_minor = G_CHAR_LAMBDA;  break;
+      case 'P'  :  a_minor = G_CHAR_PI;      break;
+      case 'S'  :  a_minor = G_CHAR_SIGMA;   break;
+      case 'H'  :  a_minor = G_CHAR_PHI;     break;
+      case 'I'  :  a_minor = G_CHAR_PSI;     break;
+      case 'O'  :  a_minor = G_CHAR_OMEGA;   break;
       case '"'  :  a_minor = '"';            break;
       case '\'' :  a_minor = '\'';           break;
       case '\\' :  a_minor = '\\';           break;
