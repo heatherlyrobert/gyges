@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5q"
-#define     VER_TXT   "cleaned up mark info window and visu range marks"
+#define     VER_NUM   "2.5r"
+#define     VER_TXT   "updated characters for changes to terminal font"
 
 
 
@@ -788,19 +788,19 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_BS         171   /* «  backspace        (127)   */
 #define   G_CHAR_SPACE      183   /* ·  dot              (  -)   */
 /*---(special)---------*/
-#define   G_CHAR_GROUP      166   /* ¦  double bar       ( 29)   */
+#define   G_CHAR_GROUP      185   /* ¦  double bar       ( 29)   */
 #define   G_CHAR_FIELD      167   /* §  field separator  ( 31)   */
 /*---(control)---------*/
-#define   G_CHAR_ALT        198   /* Æ  ae mark          (  -)   */
-#define   G_CHAR_CONTROL    162   /* ¢  cents            (  -)   */
+#define   G_CHAR_ALT        173   /* ­  ae mark          (  -)   */
+#define   G_CHAR_CONTROL    163   /* £  equiv            (  -)   */
 #define   G_CHAR_WAIT       186   /* º  funky mark       (  -)   */
 #define   G_CHAR_BREAK      191   /* ¿  lead question    (  -)   */
-#define   G_CHAR_HALT       177   /* ±  sign-post        (  -)   */
-#define   G_CHAR_DISPLAY    208   /* Ð  weird d          (  -)   */
+#define   G_CHAR_HALT       177   /* ±  plus-minus       (  -)   */
+#define   G_CHAR_DISPLAY    162   /* ¢  weird d          (  -)   */
 /*---(other)-----------*/
-#define   G_CHAR_NULL       216   /* Ø  null             (  0)   */
+#define   G_CHAR_NULL       188   /* ¼  null             (  0)   */
 #define   G_CHAR_PLACE      164   /* ¤  placeholder      (  -)   */
-#define   G_CHAR_MARK       215   /* ×  mark             (  -)   */
+#define   G_CHAR_MARK       174   /* ®  mark             (  -)   */
 #define   G_CHAR_DEGREE     176   /* °  degree mark      (  -)   */
 
 
