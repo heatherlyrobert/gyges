@@ -577,6 +577,10 @@ MACRO_submode        (char a_major, char a_minor)
       }
       /*---(execute)---------------------*/
       yVIKEYS_mode_exit ();
+      my.repeat_macro = my.repeat;
+      my.repeat       = 0;
+      DEBUG_USER   yLOG_value   ("repeat"    , my.repeat);
+      DEBUG_USER   yLOG_value   ("repeat_m"  , my.repeat_macro);
       MACRO_exec_beg    (a_minor);
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;

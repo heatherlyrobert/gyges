@@ -566,6 +566,52 @@ KEYS_regbasic       (char a_major, char a_minor)
    return 0;
 }
 
+char         /*--> accumulate multiplier -----------------[--------[--------]-*/
+REPEAT_submode     (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(defenses)-----------------------*/
+   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
+   --rce;  if (yVIKEYS_mode_not (SMOD_REPEAT )) {
+      DEBUG_USER   yLOG_note    ("not the correct mode");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(major mode changes)-------------*/
+   if (a_minor == K_RETURN || a_minor == K_ESCAPE) {
+      yVIKEYS_mode_exit ();
+      my.repeat = 0;
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return  0;
+   }
+   /*---(check for major)-----------------------*/
+   if (my.repeat ==  0 && strchr ("123456789", a_major) != NULL) {
+      DEBUG_USER   yLOG_note    ("assign starting repeat");
+      my.repeat  = a_major - '0';
+   }
+   /*---(check for minor)-----------------------*/
+   if (strchr ("0123456789",  a_minor) != NULL) {
+      DEBUG_USER   yLOG_note    ("increment repeat");
+      my.repeat *= 10;
+      my.repeat += a_minor - '0';
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(adjust)-------------------------*/
+   --my.repeat;
+   if (my.repeat <  0) my.repeat =  0;
+   if (my.repeat > 99) my.repeat = 99;
+   /*---(complete)-----------------------*/
+   yVIKEYS_mode_exit ();
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return a_minor;
+}
+
 char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
 MODE_map           (char a_major, char a_minor)
 {
@@ -605,6 +651,12 @@ MODE_map           (char a_major, char a_minor)
    /*---(single key)---------------------*/
    --rce;
    if (a_major == ' ') {
+      /*---(multiplier)------------------*/
+      if (strchr ("123456789"  , a_minor) != 0) {
+         yVIKEYS_mode_enter  (SMOD_REPEAT);
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+      }
       /*---(multikey prefixes)-----------*/
       if (strchr ("gzced"  , a_minor) != 0) {
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -676,10 +728,15 @@ MODE_map           (char a_major, char a_minor)
          return 0;
          break;
       case '@'      :
+         IF_MACRO_OFF {
+            MACRO_reset  ();
+            yVIKEYS_mode_enter  (SMOD_MACRO   );
+            DEBUG_USER   yLOG_exit    (__FUNCTION__);
+            return a_minor;
+         }
          MACRO_reset  ();
-         yVIKEYS_mode_enter  (SMOD_MACRO   );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
          break;
       case 'q'      :
          IF_MACRO_OFF {

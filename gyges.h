@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5s"
-#define     VER_TXT   "allow entry of greek characters in input mode"
+#define     VER_NUM   "2.5t"
+#define     VER_TXT   "key repeat and macro repeat working"
 
 
 
@@ -314,6 +314,9 @@ struct cACCESSOR {
    char        mark_show;      /* show temporary marks (y/n)                    */
    /*---(registers)-------*/
    char        reg_curr;
+   /*---(count)-----------*/
+   char        repeat;         /* multiplier for normal keys                  */
+   char        repeat_macro;   /* multiplier for macro execution              */
    /*---(cursus)----------*/
    char        info_win;
    char        menu;
