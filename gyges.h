@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.5t"
-#define     VER_TXT   "key repeat and macro repeat working"
+#define     VER_NUM   "2.6a"
+#define     VER_TXT   "completed 1-3 of complex cut/copy/paste unit testing"
 
 
 
@@ -810,13 +810,26 @@ extern      char          unit_answer [LEN_UNIT];
 #define   G_CHAR_BETA       233   /* é  beta       B     (  -)   */
 #define   G_CHAR_GAMMA      234   /* ê  gamma      G     (  -)   */
 #define   G_CHAR_DELTA      235   /* ë  delta      D     (  -)   */
-#define   G_CHAR_THETA      239   /* ï  theta      T     (  -)   */
+#define   G_CHAR_EPSILON    236   /* ì  epsilon    E     (  -)   */
+#define   G_CHAR_ZETA       237   /* í  zeta       Z     (  -)   */
+#define   G_CHAR_ETA        238   /* î  eta        H     (  -)   */
+#define   G_CHAR_THETA      239   /* ï  theta      Y     (  -)   */
+#define   G_CHAR_IOTA       240   /* ð  iota       I     (  -)   */
+#define   G_CHAR_KAPPA      241   /* ñ  kappa      K     (  -)   */
 #define   G_CHAR_LAMBDA     242   /* ò  lambda     L     (  -)   */
+#define   G_CHAR_MU         243   /* ó  mu         M     (  -)   */
+#define   G_CHAR_NU         244   /* ô  nu         N     (  -)   */
+#define   G_CHAR_XI         245   /* õ  xi         X     (  -)   */
+#define   G_CHAR_OMICRON    246   /* ö  omicron    O     (  -)   */
 #define   G_CHAR_PI         247   /* ÷  pi         P     (  -)   */
+#define   G_CHAR_RHO        248   /* ø  rho        R     (  -)   */
 #define   G_CHAR_SIGMA      249   /* ù  sigma      S     (  -)   */
+#define   G_CHAR_TAU        250   /* ú  tau        T     (  -)   */
+#define   G_CHAR_UPSILON    251   /* û  upsilon    U     (  -)   */
 #define   G_CHAR_PHI        252   /* ü  phi        H     (  -)   */
-#define   G_CHAR_PSI        254   /* þ  psi        I     (  -)   */
-#define   G_CHAR_OMEGA      255   /* ÿ  omega      O     (  -)   */
+#define   G_CHAR_CHI        253   /* ý  chi        C     (  -)   */
+#define   G_CHAR_PSI        254   /* þ  psi        Q     (  -)   */
+#define   G_CHAR_OMEGA      255   /* ÿ  omega      W     (  -)   */
 
 
 /*===[[ PROTOTYPES ]]=====================================*/
@@ -825,15 +838,15 @@ int       main               (int argc, char *argv[]);
 
 /*---(from s.c)----------------------------*/
 char      PROG_init            (int   argc, char *argv[]);
-char      PROG_urgsmass        (char  a_set, char a_extra);
-char      PROG_urgs            (int   argc, char *argv[]);
 char      PROG_args            (int   argc, char *argv[]);
 char      PROG_begin           (void);
 char      PROG_final           (void);
+char      PROG_end             (void);
+
 char      PROG_main_input      (char  a_mode, char a_key);
 char      PROG_main_handle     (char  a_key);
 char      PROG_main_string     (char *a_keys);
-char      PROG_end             (void);
+
 char      PROG_layout_init     (void);
 char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
 char      PROG_layout_list     (char *a_who);
