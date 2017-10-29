@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6b"
-#define     VER_TXT   "completed complex cut/copy/paste unit testing (without inner)"
+#define     VER_NUM   "2.6c"
+#define     VER_TXT   "completed inner testing on complex cut/copy/paste units 1 and 2"
 
 
 
