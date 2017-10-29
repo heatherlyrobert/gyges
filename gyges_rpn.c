@@ -68,15 +68,63 @@ char        s_final     [LEN_RECD];
 /*====================------------------------------------====================*/
 PRIV void  o___MODIFY__________o () { return; }
 
-char         /*--> adjust addresses based on cell moves --[ ------ [ ------ ]-*/
-RPN_extract        (
+char           /*-> shared argument validiation --------[ ------ [----------]-*/
+RPN_check_args     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
-      int         a_toff,     /* tab offset from original                     */
-      int         a_coff,     /* col offset from original                     */
-      int         a_roff,     /* row offset from original                     */
+      char       *a_label,    /* cell reference to modify                     */
       char       *a_final)    /* updated source formula (uncompressed)        */
-{  /*---(design notes)--------------------------------------------------------*/
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;                /* return code for errors    */
+   char        rc          = 0;                  /* generic return code       */
+   /*---(begin)--------------------------*/
+   DEBUG_RPN    yLOG_enter   (__FUNCTION__);
+   DEBUG_RPN    yLOG_point   ("a_cell"    , a_cell);
+   DEBUG_RPN    yLOG_point   ("a_label"   , a_label);
+   DEBUG_RPN    yLOG_point   ("a_final"   , a_final);
+   /*---(prepare)------------------------*/
+   strcpy (s_final, "n/a");
+   --rce;  if (a_final   == NULL)  {
+      DEBUG_RPN    yLOG_note    ("aborted, a_final is NULL, no point");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   strcpy (a_final, "n/a");
+   --rce;  if (a_label   == NULL)  {
+      DEBUG_RPN    yLOG_note    ("aborted, a_label is NULL, no point");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_cell    == NULL)  {
+      DEBUG_RPN    yLOG_note    ("aborted, a_cell is NULL");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_RPN    yLOG_point   ("a_cell->s" , a_cell->s);
+   --rce;  if (a_cell->s == NULL)  {
+      DEBUG_RPN    yLOG_note    ("aborted, a_cell source is NULL");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_RPN    yLOG_info    ("source"    , a_cell->s);
+   DEBUG_RPN    yLOG_value   ("a_cell->l" , a_cell->l);
+   --rce;  if (a_cell->l <  2   )  {
+      DEBUG_RPN    yLOG_note    ("aborted, a_cell source is too short");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   strcpy (a_final, a_cell->s);
+   strcpy (s_final, a_cell->s);
+   DEBUG_RPN    yLOG_char    ("a_cell->t" , a_cell->t);
+   --rce;  if (strchr (G_CELL_RPN , a_cell->t) == 0)   {
+      DEBUG_RPN    yLOG_note    ("aborted, a_cell type is not formula");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_RPN    yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 char         /*--> adjust addresses based on cell moves --[ ------ [ ------ ]-*/
@@ -115,37 +163,9 @@ RPN_adjust         (
    DEBUG_RPN    yLOG_value   ("a_roff"    , a_roff);
    DEBUG_RPN    yLOG_value   ("a_final"   , a_final);
    /*---(defense)------------------------*/
-   strcpy (s_final, "n/a");
-   --rce;  if (a_final   == NULL)  {
-      DEBUG_RPN    yLOG_note    ("aborted, a_final is NULL, no point");
-      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strcpy (a_final, "n/a");
-   --rce;  if (a_cell    == NULL)  {
-      DEBUG_RPN    yLOG_note    ("aborted, a_cell is NULL");
-      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_RPN    yLOG_point   ("a_cell->s" , a_cell->s);
-   --rce;  if (a_cell->s == NULL)  {
-      DEBUG_RPN    yLOG_note    ("aborted, a_cell source is NULL");
-      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_RPN    yLOG_info    ("source"    , a_cell->s);
-   DEBUG_RPN    yLOG_point   ("a_cell->l" , a_cell->l);
-   --rce;  if (a_cell->l <  2   )  {
-      DEBUG_RPN    yLOG_note    ("aborted, a_cell source is too short");
-      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   strcpy (a_final, a_cell->s);
-   strcpy (s_final, a_cell->s);
-   DEBUG_RPN    yLOG_char    ("a_cell->t" , a_cell->t);
-   --rce;  if (strchr (G_CELL_RPN , a_cell->t) == 0)   {
-      DEBUG_RPN    yLOG_note    ("aborted, a_cell type is not formula");
-      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
+   rc = RPN_check_args (a_cell, "", a_final);
+   --rce;  if (rc < 0)  {
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare)------------------------*/
@@ -231,6 +251,132 @@ RPN_makelike       (tCELL *a_curr, char *a_label)
       rpn__offrow = a_curr->row - xrow;
       strncpy(rpn__working, x_curr->s, LEN_RECD);
    }
+   return 0;
+}
+
+char           /*-> change a specific reference --------[ ------ [----------]-*/
+RPN_change_ref     (
+      /*----------+-----------+-----------------------------------------------*/
+      tCELL      *a_cell,     /* source cell                                  */
+      char       *a_label,    /* cell ref to be changed                       */
+      char        a_scope,    /* what kind of changes                         */
+      int         a_toff,     /* tab offset from original                     */
+      int         a_coff,     /* col offset from original                     */
+      int         a_roff,     /* row offset from original                     */
+      char       *a_final)    /* updated source formula (uncompressed)        */
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;               /* return code for errors    */
+   char        rc          =    0;               /* generic return code       */
+   char       *x_tokens    = NULL;               /* source made into tokens   */
+   char        x_final     [LEN_RECD]   = "";    /* new version of formula    */
+   char       *p           = NULL;               /* strtok field pointer      */
+   char       *q           =  " ";               /* strtok delimiters         */
+   char       *r           = NULL;               /* strtok context            */
+   int         x_otab      =    0;               /* tab of orig address       */
+   int         x_ocol      =    0;               /* col of orig address       */
+   int         x_orow      =    0;               /* row of orig address       */
+   int         x_ntab      =    0;               /* tab of new address        */
+   int         x_ncol      =    0;               /* col of new address        */
+   int         x_nrow      =    0;               /* row of new address        */
+   char        x_nabs      =    0;               /* abs of new address        */
+   char        x_addr      [20]        = "";     /* new address               */
+   /*---(begin)--------------------------*/
+   DEBUG_RPN    yLOG_enter   (__FUNCTION__);
+   DEBUG_RPN    yLOG_point   ("a_cell"    , a_cell);
+   DEBUG_RPN    yLOG_point   ("a_label"   , a_label);
+   DEBUG_RPN    yLOG_char    ("a_scope"   , a_scope);
+   DEBUG_RPN    yLOG_value   ("a_toff"    , a_toff);
+   DEBUG_RPN    yLOG_value   ("a_coff"    , a_coff);
+   DEBUG_RPN    yLOG_value   ("a_roff"    , a_roff);
+   DEBUG_RPN    yLOG_point   ("a_final"   , a_final);
+   /*---(defense)------------------------*/
+   rc = RPN_check_args (a_cell, a_label, a_final);
+   DEBUG_RPN    yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(original cell)------------------*/
+   rc = LOC_parse (a_label, &x_otab, &x_ocol, &x_orow, NULL);
+   DEBUG_RPN    yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(prepare tokens)-----------------*/
+   x_tokens = yRPN_stokens (a_cell->s);
+   DEBUG_RPN    yLOG_info    ("x_tokens"  , x_tokens);
+   /*---(parse first token)--------------*/
+   p = strtok_r (x_tokens, q, &r);
+   DEBUG_RPN    yLOG_point   ("p"         , p);
+   if (p == NULL) {
+      DEBUG_RPN    yLOG_note    ("aborted, very first parse returned NULL");
+      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(loop through tokens)------------*/
+   while (p != NULL) {
+      /*---(display token)---------------*/
+      DEBUG_RPN    yLOG_info    ("p"         , p);
+      /*---(parse for address)-----------*/
+      rc = LOC_parse (p, &x_ntab, &x_ncol, &x_nrow, &x_nabs);
+      DEBUG_RPN    yLOG_value   ("parse rc"  , rc);
+      if (rc     <  0     ) {
+         DEBUG_RPN    yLOG_note    ("not an address, just append");
+         strcat (x_final, p);
+      }
+      /*---(filter)----------------------*/
+      else if (x_otab != x_ntab || x_ocol != x_ncol || x_orow != x_nrow) {
+         DEBUG_RPN    yLOG_note    ("tab, col, or row does not match, just append");
+         strcat (x_final, p);
+      } else if (a_scope != 'a' && x_nabs > 0) {
+         DEBUG_RPN    yLOG_note    ("abs is > 0 and a_scope is not absolute, just append");
+         strcat (x_final, p);
+      } else {
+         /*---(handle addresses)------------*/
+         DEBUG_RPN    yLOG_value   ("x_nabs"     , x_nabs);
+         if (a_scope == 'a') {
+            x_ntab += a_toff;
+            x_ncol += a_coff;
+            x_nrow += a_roff;
+         } else {
+            switch (x_nabs) {
+            case 0 : x_ntab += a_toff; x_ncol += a_coff; x_nrow += a_roff;  break;
+            case 1 : x_ntab += a_toff;                   x_nrow += a_roff;  break;
+            case 2 : x_ntab += a_toff; x_ncol += a_coff;                    break;
+            case 3 : x_ntab += a_toff;                                      break;
+            case 4 :                   x_ncol += a_coff; x_nrow += a_roff;  break;
+            case 5 :                                     x_nrow += a_roff;  break;
+            case 6 :                   x_ncol += a_coff;                    break;
+            default:                                                        break;
+            }
+         }
+         /*---(form new address)---------*/
+         rc = LOC_ref   (x_ntab, x_ncol, x_nrow, x_nabs, x_addr);
+         DEBUG_RPN    yLOG_value   ("loc rc"    , rc);
+         if (rc == 0) {
+            DEBUG_RPN    yLOG_info    ("new label" , x_addr);
+            strcat (x_final, x_addr);
+         } else if (rc >  0) {
+            DEBUG_RPN    yLOG_note    ("trouble, address cant adjust that far");
+            strcat (x_final, "#REF");
+         } else {
+            DEBUG_RPN    yLOG_note    ("trouble, address cant adjust that far");
+            strcat (x_final, "#REF");
+         }
+      }
+      DEBUG_RPN    yLOG_info    ("x_final"   , x_final);
+      p = strtok_r (NULL    , q, &r);
+   }
+   /*---(strip final space)--------------*/
+   /*> x_final [strlen (x_final) - 1] = '\0';                                         <*/
+   /*---(wrap-up)------------------------*/
+   DEBUG_RPN    yLOG_info    ("final"     , x_final);
+   strcpy (s_final, x_final);
+   if (x_final != NULL)  strcpy (a_final, x_final);
+   /*---(complete)-----------------------*/
+   DEBUG_RPN    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

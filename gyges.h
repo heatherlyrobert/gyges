@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6a"
-#define     VER_TXT   "completed 1-3 of complex cut/copy/paste unit testing"
+#define     VER_NUM   "2.6b"
+#define     VER_TXT   "completed complex cut/copy/paste unit testing (without inner)"
 
 
 
@@ -989,11 +989,15 @@ char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
 char      REG_deps           (tCELL *a_curr, long a_stamp);
-char      REG_save           (char a_type);
-char      REG_copy           (void);
-char      REG_cut            (void);
-char      REG_append         (void);
-char      REG_paste          (char a_adapt);
+
+char      REG_save             (void);
+char      REG_delorig          (void);
+char      REG_moveref          (char a_scope);
+char      REG_copy             (void);
+char      REG_cut              (void);
+char      REG_pastemove        (void);
+char      REG_pasteforce       (void);
+char      REG_paste            (char a_adapt);
 
 /*---(data import)----------*/
 char      REG__inpt_prep       (char a_style);
@@ -1113,6 +1117,7 @@ char      ERROR_cleanse        (tCELL  *a_owner);
 
 
 char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
+char      RPN_change_ref       (tCELL *a_cell, char *a_label, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source);
 char      RPN_convert          (tCELL *a_curr);
 
 

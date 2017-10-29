@@ -663,7 +663,7 @@ REG_list           (char a_buf, char *a_list)
 }
 
 char         /*--> add cells to a register ---------------[ ------ [ ------ ]-*/
-REG_save           (char a_type)
+REG_save             (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
@@ -685,7 +685,6 @@ REG_save           (char a_type)
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_reg"     , my.reg_curr);
-   DEBUG_REGS   yLOG_char    ("a_type"    , a_type);
    /*---(buffer number)------------------*/
    x_reg  = REG__reg2index  (my.reg_curr);
    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
@@ -695,13 +694,11 @@ REG_save           (char a_type)
       return rce;
    }
    /*---(clear existing buffer)----------*/
-   if (a_type != 'a') {
-      DEBUG_REGS   yLOG_note    ("clear and initialize register");
-      REG_clear (my.reg_curr, '-');
-      VISU_range (&s_reg[x_reg].otab,
-            &s_reg[x_reg].begc, &s_reg[x_reg].begr,
-            &s_reg[x_reg].endc, &s_reg[x_reg].endr);
-   }
+   DEBUG_REGS   yLOG_note    ("clear and initialize register");
+   REG_clear (my.reg_curr, '-');
+   VISU_range (&s_reg[x_reg].otab,
+         &s_reg[x_reg].begc, &s_reg[x_reg].begr,
+         &s_reg[x_reg].endc, &s_reg[x_reg].endr);
    /*---(copy dependent cells)-----------*/
    x_stamp = rand ();
    x_seq   = 0;
@@ -747,36 +744,166 @@ REG_save           (char a_type)
    DEBUG_REGS   yLOG_value   ("x_skipped" , x_skipped);
    DEBUG_REGS   yLOG_value   ("x_process" , x_processed);
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char           /*-> delete the original cells ----------[ ------ [----------]-*/
+REG_delorig          (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         i           =    0;
+   int         x_reg       =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   tCELL      *x_curr      = NULL;
+   int         x_processed =    0;
+   int         x_count     =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_reg"     , my.reg_curr);
+   /*---(buffer number)------------------*/
+   x_reg  = REG__reg2index  (my.reg_curr);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0)  {
+      DEBUG_REGS   yLOG_note    ("bad register requested");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(erase originals if needed)------*/
    --rce;
-   if (a_type == 'x') {
-      x_processed = 0;
-      DEBUG_REGS   yLOG_note    ("ERASE CELLS");
-      DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
-      for (i = s_reg[x_reg].nbuf - 1; i >= 0; --i) {
-         rc = LOC_parse (s_reg[x_reg].buf[i]->label, &x_tab, &x_col, &x_row, NULL);
-         if (rc < 0) {
-            DEBUG_REGS   yLOG_value   ("LOC_parse" , rc);
-            DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-         x_curr = LOC_cell_at_loc (x_tab, x_col, x_row);
-         DEBUG_REGS   yLOG_complex ("erasing"   , "idx=%4d, ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", i, x_curr, x_tab, x_col, x_row, x_curr->t, x_curr->u);
-         if (x_count == 0)  rc = CELL_delete (CHG_INPUT   , x_tab, x_col, x_row);
-         else               rc = CELL_delete (CHG_INPUTAND, x_tab, x_col, x_row);
-         if (rc < 0) {
-            DEBUG_REGS   yLOG_value   ("CELL_delet", rc);
-            DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-            return rce - 1;
-         }
-         ++x_processed;
-         ++x_count;
+   x_processed = 0;
+   DEBUG_REGS   yLOG_note    ("ERASE CELLS");
+   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
+   for (i = s_reg[x_reg].nbuf - 1; i >= 0; --i) {
+      rc = LOC_parse (s_reg[x_reg].buf[i]->label, &x_tab, &x_col, &x_row, NULL);
+      if (rc < 0) {
+         DEBUG_REGS   yLOG_value   ("LOC_parse" , rc);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return rce;
       }
-      DEBUG_REGS   yLOG_value   ("x_process" , x_processed);
+      x_curr = LOC_cell_at_loc (x_tab, x_col, x_row);
+      DEBUG_REGS   yLOG_complex ("erasing"   , "idx=%4d, ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", i, x_curr, x_tab, x_col, x_row, x_curr->t, x_curr->u);
+      if (x_count == 0)  rc = CELL_delete (CHG_INPUT   , x_tab, x_col, x_row);
+      else               rc = CELL_delete (CHG_INPUTAND, x_tab, x_col, x_row);
+      if (rc < 0) {
+         DEBUG_REGS   yLOG_value   ("CELL_delet", rc);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return rce - 1;
+      }
+      ++x_processed;
+      ++x_count;
    }
-   rce -= 1; /* extra code inside loop */
-   /*---(clear selection)----------------*/
-   VISU_clear ();
+   DEBUG_REGS   yLOG_value   ("x_process" , x_processed);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char           /*-> move cell references ---------------[ ------ [----------]-*/
+REG_moveref          (char a_scope)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;               /* return code for errors    */
+   char        rc          =    0;               /* generic return code       */
+   int         x_reg       =    0;               /* focus register            */
+   int         x_atab      =    0;               /* tab adjustment            */
+   int         x_acol      =    0;               /* col adjustment            */
+   int         x_arow      =    0;               /* row adjustment            */
+   int         i           =    0;               /* iterator -> register pos  */
+   char        x_label     [LEN_LABEL] = "";     /* label of register cell    */
+   int         x_otab      =    0;               /* pre-reg original tab      */
+   int         x_ocol      =    0;               /* pre-reg original col      */
+   int         x_orow      =    0;               /* pre-reg original row      */
+   char        x_list      [LEN_RECD ] = "";     /* list of all providers     */
+   char       *p           = NULL;               /* pointer for providers     */
+   char       *q           = ",";                /* delimiter for providers   */
+   char       *s           = NULL;               /* context for providers     */
+   tCELL      *x_provider  = NULL;               /* provider cell to adjust   */
+   char        x_source    [LEN_RECD ] = "";     /* updated provider source   */
+   char        x_bformat   [LEN_RECD ] = "";     /* updated provider format   */
+   int         x_processed =    0;
+   int         x_count     =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_scope"   , a_scope);
+   DEBUG_REGS   yLOG_char    ("a_reg"     , my.reg_curr);
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_buf"     , my.reg_curr);
+   /*---(buffer number)------------------*/
+   x_reg  = REG__reg2index  (my.reg_curr);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0)  {
+      DEBUG_REGS   yLOG_note    ("bad register requested");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(figure offsets)-----------------*/
+   x_atab = CTAB - s_reg[x_reg].otab;
+   x_acol = CCOL - s_reg[x_reg].begc;
+   x_arow = CROW - s_reg[x_reg].begr;
+   DEBUG_REGS   yLOG_value   ("x_atab"    , x_atab);
+   DEBUG_REGS   yLOG_value   ("x_acol"    , x_acol);
+   DEBUG_REGS   yLOG_value   ("x_arow"    , x_arow);
+   /*---(buffer number)------------------*/
+   x_reg  = REG__reg2index  (my.reg_curr);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0)  {
+      DEBUG_REGS   yLOG_note    ("bad register requested");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(erase originals if needed)------*/
+   --rce;
+   x_processed = 0;
+   DEBUG_REGS   yLOG_note    ("walk through buffer");
+   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
+   for (i = s_reg[x_reg].nbuf - 1; i >= 0; --i) {
+      DEBUG_REGS   yLOG_value   ("i"         , i);
+      DEBUG_REGS   yLOG_point   ("label"     , s_reg[x_reg].buf[i]->label);
+      if (s_reg[x_reg].buf[i]->label == NULL)  continue;
+      strcpy (x_label, s_reg[x_reg].buf[i]->label);
+      DEBUG_REGS   yLOG_info    ("label"     , x_label);
+      rc = LOC_parse (x_label, &x_otab, &x_ocol, &x_orow, NULL);
+      DEBUG_REGS   yLOG_value   ("rc"        , rc);
+      DEBUG_REGS   yLOG_value   ("x_otab"    , x_otab);
+      DEBUG_REGS   yLOG_value   ("x_ocol"    , x_ocol);
+      DEBUG_REGS   yLOG_value   ("x_orow"    , x_orow);
+      if (rc < 0) {
+         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      DEP_disp_pros (LOC_cell_at_loc (x_otab, x_ocol, x_orow), x_list);
+      DEBUG_REGS   yLOG_info    ("x_list"    , x_list);
+      if (x_list [0] == '-')  continue;
+      if (x_list [0] == '.')  continue;
+      p  = strtok_r (x_list, q, &s);
+      DEBUG_REGS   yLOG_point   ("p"         , p);
+      while (p != NULL) {
+         DEBUG_REGS   yLOG_info    ("p"         , p);
+         x_provider = LOC_cell_labeled (p);
+         DEBUG_REGS   yLOG_point   ("x_provider", x_provider);
+         if (x_provider == NULL) {
+            p  = strtok_r (NULL  , q, &s);
+            continue;
+         }
+         rc = RPN_change_ref (x_provider, x_label, a_scope, x_atab, x_acol, x_arow, x_source);
+         DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
+         sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);
+         DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
+         if (x_count == 0)  CELL_overwrite (CHG_OVER   , x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
+         else               CELL_overwrite (CHG_OVERAND, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
+         p  = strtok_r (NULL  , q, &s);
+      }
+      ++x_processed;
+      ++x_count;
+   }
+   DEBUG_REGS   yLOG_value   ("x_process" , x_processed);
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -787,7 +914,8 @@ REG_copy           (void)
 {
    char        rc          = 0;
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   rc = REG_save ('-');
+   rc = REG_save    ();
+   rc = VISU_clear ();
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -798,18 +926,37 @@ REG_cut            (void)
 {
    char        rc          = 0;
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   rc = REG_save ('x');
+   rc = REG_save    ();
+   rc = REG_delorig ();
+   rc = VISU_clear ();
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
-char         /*> add range into the current buffer -------[ ------ [ ------ ]-*/
-REG_append         (void)
+char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
+REG_pastemove      (void)
 {
    char        rc          = 0;
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   rc = REG_save ('a');
+   rc = REG_moveref ('r');
+   rc = REG_paste   ('y');
+   rc = REG_delorig ();
+   rc = VISU_clear  ();
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
+REG_pasteforce     (void)
+{
+   char        rc          = 0;
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   rc = REG_moveref ('a');
+   rc = REG_paste   ('y');
+   rc = REG_delorig ();
+   rc = VISU_clear  ();
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -846,11 +993,17 @@ REG_paste          (char a_adapt)
    DEBUG_REGS   yLOG_char    ("a_buf"     , my.reg_curr);
    /*---(buffer number)------------------*/
    x_reg  = REG__reg2index  (my.reg_curr);
-   --rce;  if (x_reg < 0)      return rce;
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0)  {
+      DEBUG_REGS   yLOG_note    ("bad register requested");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(figure offsets)-----------------*/
    x_toff = CTAB - s_reg[x_reg].otab;
    x_xoff = CCOL - s_reg[x_reg].begc;
    x_yoff = CROW - s_reg[x_reg].begr;
+   DEBUG_REGS   yLOG_value   ("x_toff"    , x_toff);
    DEBUG_REGS   yLOG_value   ("x_xoff"    , x_xoff);
    DEBUG_REGS   yLOG_value   ("x_yoff"    , x_yoff);
    /*---(move cells in)------------------*/
@@ -865,7 +1018,7 @@ REG_paste          (char a_adapt)
       DEBUG_REGS   yLOG_info    ("source"    , x_curr->s);
       DEBUG_REGS   yLOG_char    ("type"      , x_curr->t);
       strcpy (x_source, "");
-      if (strchr (G_CELL_RPN, x_curr->t) != 0) {
+      if (strchr (G_CELL_RPN, x_curr->t) != 0 && a_adapt == 'y') {
          DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
          rc = RPN_adjust (x_curr, x_toff, x_xoff, x_yoff, x_source);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);

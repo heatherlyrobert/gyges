@@ -786,10 +786,9 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
     *   it wipes it clean, if not, it creates a new one.
     */
    /*---(locals)-----------+-----------+-*/
-   tCELL      *curr        = NULL;
-   int         len         =    0;
    char        rce         =  -10;
    char        rc          =    0;
+   tCELL      *x_curr      = NULL;
    tCELL      *x_other     = NULL;
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
@@ -808,66 +807,66 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       return rce;
    }
    /*---(cell present)-------------------*/
-   curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
-   DEBUG_CELL   yLOG_point   ("curr cell" , curr);
+   x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);
+   DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    /*---(check merge)--------------------*/
-   if (curr != NULL) {
-      if (curr->t == CTYPE_MERGE) {
-         x_other = DEP_delmerge (curr);
-         curr->a = '<';
-         curr->f = '?';
+   if (x_curr != NULL) {
+      if (x_curr->t == CTYPE_MERGE) {
+         x_other = DEP_delmerge (x_curr);
+         x_curr->a = '<';
+         x_curr->f = '?';
       } else if (a_source == NULL || strlen (a_source) == 0) {
-         DEP_delmergeroot (curr);
+         DEP_delmergeroot (x_curr);
       }
    }
    /*---(wipe or create)-----------------*/
    strcpy (s_bsource, "[<{(null)}>]");
    strcpy (s_bformat, "???");
-   if (curr != NULL) {
+   if (x_curr != NULL) {
       DEBUG_CELL   yLOG_note    ("save existing data");
-      if (curr->s != NULL)  strcpy (s_bsource, curr->s);
-      sprintf (s_bformat, "%c%c%c", curr->f, curr->a, curr->d);
+      if (x_curr->s != NULL)  strcpy (s_bsource, x_curr->s);
+      sprintf (s_bformat, "%c%c%c", x_curr->f, x_curr->a, x_curr->d);
       DEBUG_CELL   yLOG_note    ("wipe existing cell");
-      rc   = CELL__wipe (curr);
+      rc   = CELL__wipe (x_curr);
       DEBUG_CELL   yLOG_value   ("rc"        , rc);
-      curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
-      DEBUG_CELL   yLOG_point   ("curr now"  , curr);
+      x_curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
+      DEBUG_CELL   yLOG_point   ("x_curr now"  , x_curr);
    }
-   --rce;  if (curr == NULL) {
-      rc = CELL__create (&curr, a_tab, a_col, a_row);
-      DEBUG_CELL   yLOG_point   ("new cell"  , curr);
-      if (curr == NULL) {
+   --rce;  if (x_curr == NULL) {
+      rc = CELL__create (&x_curr, a_tab, a_col, a_row);
+      DEBUG_CELL   yLOG_point   ("new cell"  , x_curr);
+      if (x_curr == NULL) {
          DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    }
-   DEBUG_CELL   yLOG_info    ("cell label", curr->label);
+   DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
    /*---(history)------------------------*/
    if (a_mode == CHG_INPUT   )  HIST_change ("change", a_tab, a_col, a_row, s_bsource, a_source);
    if (a_mode == CHG_INPUTAND)  HIST_change ("CHANGE", a_tab, a_col, a_row, s_bsource, a_source);
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("change source and length values");
-   curr->s = strndup (a_source, LEN_RECD);
-   curr->l = strlen  (curr->s);
+   x_curr->s = strndup (a_source, LEN_RECD);
+   x_curr->l = strlen  (x_curr->s);
    /*---(interpret)----------------------*/
    DEBUG_CELL   yLOG_note    ("interpret new contents");
-   rc = CELL__interpret (curr);
+   rc = CELL__interpret (x_curr);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
-      rc = CELL_printable (curr);      /* show as error */
+      rc = CELL_printable (x_curr);      /* show as error */
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    --rce;  if (a_mode != CHG_OVER && a_mode != CHG_OVERAND) {
       DEBUG_CELL   yLOG_note    ("create printable version");
-      rc = CELL_printable (curr);
+      rc = CELL_printable (x_curr);
       DEBUG_CELL   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
       DEBUG_CELL   yLOG_note    ("review dependency tree calculation");
-      rc = SEQ_calc_up    (curr);
+      rc = SEQ_calc_up    (x_curr);
       DEBUG_CELL   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -875,11 +874,11 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       }
    }
    /*---(process likes)------------------*/
-   DEP_updatelikes (curr);
+   DEP_updatelikes (x_curr);
    /*---(update former merges)-----------*/
    if (x_other != NULL)  CELL_printable (x_other);
    /*---(return)-------------------------*/
-   if (a_cell != NULL)  *a_cell = curr;
+   if (a_cell != NULL)  *a_cell = x_curr;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -2083,7 +2082,7 @@ CELL_printable     (tCELL *a_curr) {
    char x_format = a_curr->f;
    char x_align  = a_curr->a;
    char x_decs   = a_curr->d - '0';
-   DEBUG_CELL  yLOG_info  ("label"     , a_curr->l);
+   DEBUG_CELL  yLOG_info  ("label"     , a_curr->label);
    DEBUG_CELL  yLOG_char  ("type"      , x_type);
    DEBUG_CELL  yLOG_char  ("format"    , x_format);
    DEBUG_CELL  yLOG_char  ("align"     , x_align);
