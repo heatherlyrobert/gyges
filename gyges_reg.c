@@ -451,7 +451,7 @@ REG_mode           (int a_major, int a_minor)
                   break;
       case  'y' : REG_copy  ();
                   break;
-      case  'p' : REG_paste ('y');
+      case  'p' : REG_paste_norm ();
                   break;
       case  'd' :
       case  'D' :
@@ -804,8 +804,8 @@ REG_delorig          (void)
    return 0;
 }
 
-char           /*-> move cell references ---------------[ ------ [----------]-*/
-REG_moveref          (char a_scope)
+char           /*-> charge provider references ---------[ ------ [----------]-*/
+REG__paste_pros      (char a_pros)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;               /* return code for errors    */
@@ -830,11 +830,13 @@ REG_moveref          (char a_scope)
    int         x_count     =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_scope"   , a_scope);
-   DEBUG_REGS   yLOG_char    ("a_reg"     , my.reg_curr);
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_buf"     , my.reg_curr);
+   /*---(defense)------------------------*/
+   if (a_pros  != 'y') {
+      DEBUG_REGS   yLOG_note    ("not altering providing refs");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(buffer number)------------------*/
    x_reg  = REG__reg2index  (my.reg_curr);
    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
@@ -892,7 +894,7 @@ REG_moveref          (char a_scope)
             p  = strtok_r (NULL  , q, &s);
             continue;
          }
-         rc = RPN_change_ref (x_provider, x_label, a_scope, x_atab, x_acol, x_arow, x_source);
+         rc = RPN_change_ref (x_provider, x_label, a_pros, x_atab, x_acol, x_arow, x_source);
          DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
          sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);
          DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
@@ -934,93 +936,114 @@ REG_cut            (void)
    return rc;
 }
 
-char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
-REG_pastemove      (void)
+short       s_index        =    0;
+short       s_atab         =    0;
+short       s_acol         =    0;
+short       s_arow         =    0;
+
+char           /*-> prepare for a paste ----------------[ ------ [----------]-*/
+REG__paste_check     (void)
 {
-   char        rc          = 0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         x_reg       =    0;
+   /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   rc = REG_moveref ('r');
-   rc = REG_paste   ('y');
-   rc = REG_delorig ();
-   rc = VISU_clear  ();
-   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   /*---(initialize)---------------------*/
+   s_index   =   -1;
+   s_atab    =    0;
+   s_acol    =    0;
+   s_arow    =    0;
+   /*---(buffer number)------------------*/
+   DEBUG_REGS   yLOG_char    ("reg_curr"  , my.reg_curr);
+   x_reg  = REG__reg2index  (my.reg_curr);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0) {
+      DEBUG_REGS   yLOG_note    ("bad register requested");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg [x_reg].nbuf);
+   --rce;  if (s_reg [x_reg].nbuf <= 0) {
+      DEBUG_REGS   yLOG_note    ("register is empty");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(set the offsets)----------------*/
+   s_index = x_reg;
+   s_atab  = CTAB - s_reg [s_index].otab;
+   s_acol  = CCOL - s_reg [s_index].begc;
+   s_arow  = CROW - s_reg [s_index].begr;
+   /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return rc;
+   return 0;
 }
 
-char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
-REG_pasteforce     (void)
+char           /*-> clear the destination area ---------[ ------ [----------]-*/
+REG__paste_clear     (char a_clear)
 {
-   char        rc          = 0;
+   /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   rc = REG_moveref ('a');
-   rc = REG_paste   ('y');
-   rc = REG_delorig ();
-   rc = VISU_clear  ();
-   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   /*---(defense)------------------------*/
+   if (a_clear != 'y') {
+      DEBUG_REGS   yLOG_note    ("not clearing the destination area");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(select)-------------------------*/
+   DEBUG_REGS   yLOG_note    ("visually select the desination area");
+   VISU_set   (
+         s_reg [s_index].otab + s_atab,
+         s_reg [s_index].begc + s_acol, s_reg [s_index].begr + s_arow,
+         s_reg [s_index].endc + s_acol, s_reg [s_index].endr + s_arow);
+   /*---(clear)--------------------------*/
+   DEBUG_REGS   yLOG_note    ("erase the selection");
+   CELL_erase ();
+   DEBUG_REGS   yLOG_note    ("clear the visual selection");
+   VISU_clear ();
+   /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return rc;
+   return 0;
 }
 
 char               /* PURPOSE : use save range to move cells -----------------*/
-REG_paste          (char a_adapt)
+REG__paste_cells     (char a_reqs)
 {
    /*---(locals)-----------+-----------+-*/
-   int         i           = 0;             /* iterator -- sequence           */
-   int         x_toff      = 0;
-   int         x_xoff      = 0;
-   int         x_yoff      = 0;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
+   char        rce         = -10;
    char        rc          = 0;
+   int         i           = 0;             /* iterator -- sequence           */
+   int         x_stab      = 0;             /* source tab                     */
+   int         x_scol      = 0;             /* source col                     */
+   int         x_srow      = 0;             /* source row                     */
+   int         x_dtab      = 0;             /* destination tab                */
+   int         x_dcol      = 0;             /* destination col                */
+   int         x_drow      = 0;             /* destination row                */
    tCELL      *x_curr      = NULL;
    tCELL      *x_copy      = NULL;
-   char       *x_tokens    = NULL;
-   char       *p           = NULL;
-   int         x_ptab      = 0;
-   int         x_pcol      = 0;
-   int         x_prow      = 0;
-   char        x_abs       = 0;
-   char        x_addr      [20]        = "";
    char        x_source    [LEN_RECD]   = "";
    char        x_bformat   [LEN_RECD]   = "";
-   int         x_reg       = 0;
-   char        rce         = -10;
    int         x_count     = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_buf"     , my.reg_curr);
-   /*---(buffer number)------------------*/
-   x_reg  = REG__reg2index  (my.reg_curr);
-   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
-   --rce;  if (x_reg < 0)  {
-      DEBUG_REGS   yLOG_note    ("bad register requested");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(figure offsets)-----------------*/
-   x_toff = CTAB - s_reg[x_reg].otab;
-   x_xoff = CCOL - s_reg[x_reg].begc;
-   x_yoff = CROW - s_reg[x_reg].begr;
-   DEBUG_REGS   yLOG_value   ("x_toff"    , x_toff);
-   DEBUG_REGS   yLOG_value   ("x_xoff"    , x_xoff);
-   DEBUG_REGS   yLOG_value   ("x_yoff"    , x_yoff);
    /*---(move cells in)------------------*/
-   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
-   for (i = 0; i < s_reg[x_reg].nbuf; ++i) {
-      x_curr = s_reg[x_reg].buf[i];
+   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg [s_index].nbuf);
+   for (i = 0; i < s_reg [s_index].nbuf; ++i) {
+      x_curr = s_reg [s_index].buf[i];
       if (x_curr == NULL)  continue;
       DEBUG_REGS   yLOG_complex ("entry"     , "i=%3d, %p, %s", i, x_curr, x_curr->label);
-      rc = LOC_parse (x_curr->label, &x_tab, &x_col, &x_row, NULL);
-      DEBUG_REGS   yLOG_complex ("parsed"    , "tab=%4d, col=%4d, row=%4d", x_tab, x_col, x_row);
-      DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", CTAB, x_col + x_xoff, x_row + x_yoff);
+      rc = LOC_parse (x_curr->label, &x_stab, &x_scol, &x_srow, NULL);
+      DEBUG_REGS   yLOG_complex ("parsed"    , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
+      x_dtab  = x_stab + s_atab;
+      x_dcol  = x_scol + s_acol;
+      x_drow  = x_srow + s_arow;
+      DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
       DEBUG_REGS   yLOG_info    ("source"    , x_curr->s);
       DEBUG_REGS   yLOG_char    ("type"      , x_curr->t);
       strcpy (x_source, "");
-      if (strchr (G_CELL_RPN, x_curr->t) != 0 && a_adapt == 'y') {
+      if (strchr (G_CELL_RPN, x_curr->t) != 0 && a_reqs == 'y') {
          DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-         rc = RPN_adjust (x_curr, x_toff, x_xoff, x_yoff, x_source);
+         rc = RPN_adjust (x_curr, s_atab, s_acol, s_arow, x_source);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc < 0) {
             DEBUG_REGS   yLOG_note    ("formual could not be parsed");
@@ -1035,21 +1058,123 @@ REG_paste          (char a_adapt)
       DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
       DEBUG_REGS   yLOG_value   ("len"       , strlen (x_bformat));
       DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
-      if (x_count == 0)  x_copy = CELL_overwrite (CHG_OVER   , CTAB, x_col + x_xoff, x_row + x_yoff, x_source, x_bformat);
-      else               x_copy = CELL_overwrite (CHG_OVERAND, CTAB, x_col + x_xoff, x_row + x_yoff, x_source, x_bformat);
+      if (x_count == 0)  x_copy = CELL_overwrite (CHG_OVER   , x_dtab, x_dcol, x_drow, x_source, x_bformat);
+      else               x_copy = CELL_overwrite (CHG_OVERAND, x_dtab, x_dcol, x_drow, x_source, x_bformat);
       if (x_copy == NULL)    continue;
       ++x_count;
    }
-   /*---(highlight new range)------------*/
-   /*> BCOL  = my.col1_save + col_off;                                                <* 
-    *> ECOL  = my.ecol_save + col_off;                                                <* 
-    *> BROW  = my.brow_save + row_off;                                                <* 
-    *> EROW  = my.erow_save + row_off;                                                <* 
-    *> s_reg[x_buf].live = 1;                                                                  <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char           /*-> merge cells into providers ---------[ ------ [----------]-*/
+REG__paste_integ     (char a_integ)
+{
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   if (a_integ != 'y') {
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char           /*-> main paste driver ------------------[ ------ [----------]-*/
+REG__paste_main      (char a_clear, char a_reqs, char a_pros, char a_integ)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_clear"   , a_clear);
+   DEBUG_REGS   yLOG_char    ("a_reqs"    , a_reqs );
+   DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros );
+   DEBUG_REGS   yLOG_char    ("a_integ"   , a_integ);
+   /*---(run)----------------------------*/
+   rc = REG__paste_check  ();
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = REG__paste_clear  (a_clear);
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = REG__paste_cells  (a_reqs);
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = REG__paste_pros   (a_pros);
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = REG__paste_integ  (a_integ);
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char           /*-> most common paste call -------------[ ------ [----------]-*/
+REG_paste            (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_type"    , a_type);
+   /*---(check type)---------------------*/
+   switch (a_type) {
+   case G_PASTE_NORM   :
+      rc = REG__paste_main ('-', 'y', '-', '-');
+      break;
+   case G_PASTE_REPL   :
+      rc = REG__paste_main ('y', 'y', '-', '-');
+      break;
+   case G_PASTE_DUPL   :
+      rc = REG__paste_main ('-', '-', '-', '-');
+      break;
+   case G_PASTE_MOVE   :
+      rc = REG__paste_main ('-', 'y', 'r', '-');
+      break;
+   case G_PASTE_FORCE  :
+      rc = REG__paste_main ('-', 'y', 'a', '-');
+      break;
+   default             :
+      rc = -50;
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char           /*-> most common paste call -------------[ ------ [----------]-*/
+REG_paste_norm     (void) { return REG__paste_main ('-', 'y', '-', '-'); }
+
+char           /*-> most common paste call -------------[ ------ [----------]-*/
+REG_paste_relace   (void) { return REG__paste_main ('y', 'y', '-', '-'); }
+
+char           /*-> paste and move rel providers -------[ ------ [----------]-*/
+REG_paste_dup      (void) { return REG__paste_main ('-', '-', '-', '-'); }
+
+char           /*-> paste and move rel providers -------[ ------ [----------]-*/
+REG_paste_move     (void) { return REG__paste_main ('-', 'y', 'r', '-'); }
+
+char           /*-> paste and move rel providers -------[ ------ [----------]-*/
+REG_paste_force    (void) { return REG__paste_main ('-', 'y', 'a', '-'); }
 
 
 

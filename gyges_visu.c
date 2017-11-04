@@ -133,21 +133,27 @@ static void  o___INIT____________o () { return; }
 char             /* clear all selections -----------------[ ------ [ ------ ]-*/
 VISU_init          (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_enter   (__FUNCTION__);
    /*---(selection)----------------------*/
    s_visu.live = VISU_NOT;
    VISU_clear   ();
    VISU_save    ();
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*--> clear the selection -------------------[ leaf   [ ------ ]-*/
 VISU_clear          (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_enter   (__FUNCTION__);
    /*---(backup)-------------------------*/
    VISU_save   ();
    /*---(back to original cell)----------*/
    if (s_visu.live == VISU_YES) {
+      DEBUG_VISU   yLOG_note    ("return to original cell");
       MOVE_prep   ();
       CTAB = s_visu.otab;
       CCOL = s_visu.ocol;
@@ -155,17 +161,21 @@ VISU_clear          (void)
       MOVE_done   ();
    }
    /*---(status)-------------------------*/
+   DEBUG_VISU   yLOG_note    ("turn range off");
    s_visu.live  = VISU_NOT;
    s_visu.mode  = VISU_NONE;
    /*---(clear saved locations)----------*/
+   DEBUG_VISU   yLOG_note    ("initialize range coordinates");
    s_visu.otab  = s_visu.ocol  = s_visu.orow  = 0;
    s_visu.bcol  = s_visu.brow  = 0;
    s_visu.ecol  = s_visu.erow  = 0;
    s_visu.ccol  = s_visu.crow  = 0;
    s_visu.scol  = s_visu.srow  = 0;
    /*---(locations)----------------------*/
+   DEBUG_VISU   yLOG_note    ("initialize cell pointers");
    s_visu.home  = s_visu.curr  = NULL;
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -179,10 +189,14 @@ static void  o___HISTORY_________o () { return; }
 char         /*--> save the selection --------------------[ leaf   [ ------ ]-*/
 VISU_save          (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_senter  (__FUNCTION__);
    /*---(status)-------------------------*/
+   DEBUG_VISU   yLOG_snote   ("status");
    s_save.live  = VISU_NOT;
    s_save.mode  = s_visu.mode;
    /*---(clear saved locations)----------*/
+   DEBUG_VISU   yLOG_snote   ("coords");
    s_save.otab  = s_visu.otab;
    s_save.ocol  = s_visu.ocol;
    s_save.orow  = s_visu.orow;
@@ -195,19 +209,25 @@ VISU_save          (void)
    s_save.scol  = s_visu.scol;
    s_save.srow  = s_visu.srow;
    /*---(locations)----------------------*/
+   DEBUG_VISU   yLOG_snote   ("pointers");
    s_save.home  = NULL;
    s_save.curr  = NULL;
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
 char         /*--> restore the selection -----------------[ leaf   [ ------ ]-*/
 VISU_restore       (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_senter  (__FUNCTION__);
    /*---(status)-------------------------*/
+   DEBUG_VISU   yLOG_snote   ("status");
    s_visu.live  = VISU_YES;
    s_visu.mode  = s_save.mode;
    /*---(clear saved locations)----------*/
+   DEBUG_VISU   yLOG_snote   ("coords");
    s_visu.otab  = s_save.otab;
    s_visu.ocol  = s_save.ocol;
    s_visu.orow  = s_save.orow;
@@ -220,15 +240,18 @@ VISU_restore       (void)
    s_visu.scol  = s_save.scol;
    s_visu.srow  = s_save.srow;
    /*---(locations)----------------------*/
+   DEBUG_VISU   yLOG_snote   ("pointers");
    s_visu.home  = s_save.home;
    s_visu.curr  = s_save.curr;
    /*---(go to the right place)----------*/
+   DEBUG_VISU   yLOG_snote   ("pointers");
    MOVE_prep    ();
    CTAB = s_visu.otab;
    CCOL = s_visu.ecol;
    CROW = s_visu.erow;
    MOVE_done    ();
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -314,34 +337,58 @@ VISU_set           (
    /*---(locals)-----------+-----------+-*//*---------------------------------*/
    char        rc          = 0;
    char        rce         = -10;
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_enter   (__FUNCTION__);
+   DEBUG_VISU   yLOG_value   ("a_tab"     , a_tab );
+   DEBUG_VISU   yLOG_value   ("a_bcol"    , a_bcol);
+   DEBUG_VISU   yLOG_value   ("a_brow"    , a_brow);
+   DEBUG_VISU   yLOG_value   ("a_ecol"    , a_ecol);
+   DEBUG_VISU   yLOG_value   ("a_erow"    , a_erow);
    /*---(prepare)------------------------*/
+   DEBUG_VISU   yLOG_note    ("clear existing ranges");
    s_visu.live  = VISU_NOT;
    VISU_clear ();
    /*---(defense: beginning legal)-------*/
-   --rce;
-   rc          = LOC_legal (a_tab, a_bcol, a_brow, CELL_FIXED);
-   if (rc < 0)  return rce;
+   rc  = LOC_legal (a_tab, a_bcol, a_brow, CELL_FIXED);
+   DEBUG_VISU   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: ending legal)----------*/
-   --rce;
-   rc          = LOC_legal (a_tab, a_ecol, a_erow, CELL_FIXED);
-   if (rc < 0)  return rce;
+   rc  = LOC_legal (a_tab, a_ecol, a_erow, CELL_FIXED);
+   DEBUG_VISU   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: ordering)--------------*/
-   --rce;  if (a_bcol > a_ecol)     return rce;
-   --rce;  if (a_brow > a_erow)     return rce;
+   DEBUG_VISU   yLOG_note    ("check range limits");
+   --rce;  if (a_bcol > a_ecol) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_brow > a_erow) {
+      DEBUG_VISU   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(set range)----------------------*/
+   DEBUG_VISU   yLOG_note    ("set range live");
    s_visu.live  = VISU_YES;
-   /*> s_visu.mode  = VISU_CUM;                                                       <*/
    s_visu.mode  = VISU_FROM;
    /*---(locations)----------------------*/
-   s_visu.otab                          = a_tab;
+   DEBUG_VISU   yLOG_note    ("set range coordinates");
+   s_visu.otab  = a_tab;
    s_visu.ocol  = s_visu.bcol  = s_visu.ccol  = a_bcol;
-   s_visu.ecol                          = a_ecol;
+   s_visu.ecol  = a_ecol;
    s_visu.orow  = s_visu.brow  = s_visu.crow  = a_brow;
-   s_visu.erow                          = a_erow;
+   s_visu.erow  = a_erow;
    /*---(locations)----------------------*/
+   DEBUG_VISU   yLOG_note    ("set range cell pointers");
    s_visu.home  = s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.bcol, s_visu.brow);
    s_visu.curr  = s_visu.home;
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1930,6 +1977,10 @@ VISU__unit         (char *a_question, char a_reg)
    int         x_col       =    0;
    int         x_row       =    0;
    int         x_count     =    0;
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_enter   (__FUNCTION__);
+   DEBUG_VISU   yLOG_info    ("a_question", a_question);
+   DEBUG_VISU   yLOG_char    ("a_reg"     , a_reg);
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "visu             : question not understood");
    /*---(selection)----------------------*/
@@ -1955,6 +2006,7 @@ VISU__unit         (char *a_question, char a_reg)
       }
    }
    /*---(complete)-----------------------*/
+   DEBUG_VISU   yLOG_exit    (__FUNCTION__);
    return unit_answer;
 }
 

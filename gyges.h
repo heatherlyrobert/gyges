@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6e"
-#define     VER_TXT   "complex cut/copy/paste unit 1 now successful using shared code"
+#define     VER_NUM   "2.6f"
+#define     VER_TXT   "huge amount of debugging code added for cut/copy/paste testing"
 
 
 
@@ -992,12 +992,27 @@ char      REG_deps           (tCELL *a_curr, long a_stamp);
 
 char      REG_save             (void);
 char      REG_delorig          (void);
-char      REG_moveref          (char a_scope);
 char      REG_copy             (void);
 char      REG_cut              (void);
-char      REG_pastemove        (void);
-char      REG_pasteforce       (void);
-char      REG_paste            (char a_adapt);
+
+#define   G_PASTE_NORM         'n'
+#define   G_PASTE_REPL         'r'
+#define   G_PASTE_DUPL         'd'
+#define   G_PASTE_MOVE         'm'
+#define   G_PASTE_FORCE        'f'
+
+char      REG__paste_check     (void);
+char      REG__paste_clear     (char a_clear);
+char      REG__paste_cells     (char a_reqs);
+char      REG__paste_pros      (char a_pros);
+char      REG__paste_integ     (char a_integ);
+char      REG__paste_main      (char a_clear, char a_reqs, char a_pros, char a_integ);
+char      REG_paste            (char a_type);
+char      REG_paste_norm       (void);
+char      REG_paste_replace    (void);
+char      REG_paste_dup        (void);
+char      REG_paste_move       (void);
+char      REG_paste_force      (void);
 
 /*---(data import)----------*/
 char      REG__inpt_prep       (char a_style);

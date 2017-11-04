@@ -408,8 +408,11 @@ PROG_end             (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_note    ("CELL_wrap");
    CELL_wrap    ();
+   DEBUG_PROG   yLOG_note    ("DEP_wrap");
    DEP_wrap     ();   /* disconnect all cells */
+   DEBUG_PROG   yLOG_note    ("LOC_wrap");
    LOC_wrap     ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_TOPS   yLOG_end     ();

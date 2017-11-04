@@ -266,13 +266,13 @@ CELL_init          (void)
 char
 CELL__purge        (void)
 {
-   /*---(beginning)----------------------*/
-   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
    tCELL      *curr        = NULL;
    tCELL      *next        = NULL;
    char        rc          = 0;
    long        x_stamp     = 0;
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(disconnect dependent cells)-----*/
    x_stamp = rand ();
    rc = SEQ_wipe_deps ();
@@ -296,21 +296,23 @@ CELL__purge        (void)
       hcell = NULL;
       tcell = NULL;
    }
-   /*---(ending)-------------------------*/
-   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
 CELL_wrap          (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(cells)--------------------------*/
    CELL__purge ();
    hcell  = NULL;
    tcell  = NULL;
    NCEL   = 0;
    /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -639,15 +641,30 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(defenses)-----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
    rc = LOC_legal (a_tab, a_col, a_row, CELL_GROW);
-   --rce;  if (rc <  0)  return rce;
+   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(create cell)-----------------*/
    rc = CELL__new (a_cell, LINKED);
-   --rce;  if (rc <  0)  return rce;
+   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(clear it out)----------------*/
    rc = LOC_hook  (*a_cell, a_tab, a_col, a_row);
-   --rce;  if (rc <  0)  return rce;
+   DEBUG_CELL   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(complete)--------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -668,10 +685,16 @@ CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
    rc          = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    DEBUG_CELL   yLOG_value   ("LOC_legal" , rc);
-   --rce;  if (rc < 0)             return rce;
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("curr"      , curr);
-   --rce;  if (curr == NULL)       return rce;
+   --rce;  if (curr == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(save before)-----------------*/
    if (curr->s != NULL)  strcpy (x_before, curr->s);
    /*---(history)------------------------*/
@@ -691,7 +714,10 @@ CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_complex ("details"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", curr, curr->tab, curr->col, curr->row, curr->t, curr->u);
    rc = CELL__wipe   (curr);
    DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
-   --rce;  if (rc < 0)             return rce;
+   --rce;  if (rc < 0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(see if its still there)------*/
    curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
    if (curr == NULL) {
@@ -705,14 +731,23 @@ CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
    if (curr->provides == NULL) {
       rc = LOC_unhook  (curr);
       DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
-      if (rc < 0)          return rce;
+      if (rc < 0) {
+         DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
       rc = CELL__free   (&curr, LINKED);
       DEBUG_CELL   yLOG_value   ("free rc"   , rc);
-      if (rc < 0)          return rce - 1;
+      if (rc < 0) {
+         DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce - 1);
+         return rce - 1;
+      }
    } else {
       CELL_change  (&curr, CHG_INPUT, a_tab, a_col, a_row, "");
       DEBUG_CELL   yLOG_value   ("change rc" , rc);
-      if (curr == NULL)    return rce - 2;
+      if (curr == NULL) {
+         DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce - 2);
+         return rce - 2;
+      }
    }
    /*---(update former merges)-----------*/
    if (x_other != NULL)  CELL_printable (x_other);
@@ -1714,8 +1749,8 @@ char         /*--> erase cells in current selection ------[ ------ [ ------ ]-*/
 CELL_erase         (void)
 {
    /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;             /* generic return code            */
    char        rce         = -10;           /* return code for errors         */
+   char        rc          = 0;             /* generic return code            */
    long        x_stamp     = 0;             /* timestamp for cell marking     */
    int         x_seq       = 0;             /* sequential number for action   */
    tCELL      *x_next      = NULL;

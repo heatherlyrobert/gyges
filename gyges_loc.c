@@ -235,7 +235,9 @@ LOC__purge           (void)
 char         /*--> wrap up location function -------------[ shoot  [ ------ ]-*/
 LOC_wrap             (void)
 {
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    LOC__purge  ();
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
 }
 
 
@@ -255,20 +257,47 @@ LOC_hook           (
 {  /*---(design notes)--------------------------------------------------------*/
    /* add the cell reference to an appropriate empty location.  nothing else  */
    /* on the tab or cell should be modified.                                  */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_point   ("*a_cell"   , a_cell);
+   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_LOCS   yLOG_value   ("a_col"     , a_col);
+   DEBUG_LOCS   yLOG_value   ("a_row"     , a_row);
    /*---(defense: valid cell)------------*/
-   --rce;  if (a_cell == NULL)                             return rce;
+   --rce;  if (a_cell == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: already hooked)--------*/
-   --rce;  if (a_cell->tab != UNHOOKED)                    return rce;
-   --rce;  if (a_cell->col != UNHOOKED)                    return rce;
-   --rce;  if (a_cell->row != UNHOOKED)                    return rce;
+   --rce;  if (a_cell->tab != UNHOOKED) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_cell->col != UNHOOKED) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_cell->row != UNHOOKED) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: valid destination)-----*/
-   --rce;
-   if (LOC_legal (a_tab, a_col, a_row, CELL_FIXED) < 0)    return rce;
+   rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
+   --rce;  if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: already occupied)------*/
-   --rce;
-   if (s_tabs[a_tab].sheet[a_col][a_row] != NULL)            return rce;
+   x_curr = s_tabs[a_tab].sheet[a_col][a_row] != NULL;
+   DEBUG_LOCS   yLOG_point   ("*a_curr"   , x_curr);
+   --rce;  if (x_curr != NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(point cell at location)---------*/
    a_cell->tab = a_tab;
    a_cell->col = a_col;
@@ -283,6 +312,7 @@ LOC_hook           (
    ++s_tabs[a_tab].rows[a_row].c;
    ++s_tabs[a_tab].c;
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -293,38 +323,70 @@ LOC_unhook         (
 {  /*---(design notes)--------------------------------------------------------*/
    /* remove the cell reference from the location and mark it as              */
    /* locationless.  nothing else on the tab or cell will be modified.        */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
    short       x_tab       = UNHOOKED;
    short       x_col       = UNHOOKED;
    short       x_row       = UNHOOKED;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_point   ("*a_cell"   , a_cell);
    /*---(defense: valid cell)------------*/
-   --rce;  if (a_cell == NULL)                             return rce;
+   --rce;  if (a_cell == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: already unhooked)------*/
-   --rce;  if (a_cell->tab == UNHOOKED)                    return rce;
-   --rce;  if (a_cell->col == UNHOOKED)                    return rce;
-   --rce;  if (a_cell->row == UNHOOKED)                    return rce;
+   DEBUG_LOCS   yLOG_value   ("->tab"     , a_cell->tab);
+   --rce;  if (a_cell->tab == UNHOOKED) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_value   ("->col"     , a_cell->col);
+   --rce;  if (a_cell->col == UNHOOKED) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_value   ("->row"     , a_cell->row);
+   --rce;  if (a_cell->row == UNHOOKED) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(prepare)------------------------*/
    x_tab       = a_cell->tab;
    x_col       = a_cell->col;
    x_row       = a_cell->row;
    /*---(defense: valid position)--------*/
-   --rce;
-   if (LOC_legal (x_tab, x_col, x_row, CELL_FIXED) < 0)   return rce;
+   rc = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(defense: wrong cell)------------*/
-   --rce;
-   if (s_tabs [x_tab].sheet[x_col][x_row] != a_cell)         return rce;
+   x_curr = s_tabs[x_tab].sheet[x_col][x_row];
+   DEBUG_LOCS   yLOG_point   ("*a_curr"   , x_curr);
+   --rce;  if (x_curr != a_cell) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(update totals)------------------*/
+   DEBUG_LOCS   yLOG_note    ("update totals");
    --s_tabs[x_tab].cols[x_col].c;
    --s_tabs[x_tab].rows[x_row].c;
    --s_tabs[x_tab].c;
    /*---(detach)-------------------------*/
+   DEBUG_LOCS   yLOG_note    ("mark cell unhooked");
    a_cell->tab = UNHOOKED;
    a_cell->col = UNHOOKED;
    a_cell->row = UNHOOKED;
    strcpy (a_cell->label, "tbd");
+   DEBUG_LOCS   yLOG_note    ("mark location unused");
    s_tabs [x_tab].sheet[x_col][x_row] = NULL;
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -389,41 +451,63 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    char        rce         = -10;           /* return code for errors         */
    short       x_max       = 0;             /* maximum used col/row in tab    */
    int         i           = 0;
+   static short  x_xtab    = -666;
+   static short  x_xcol    = -666;
+   static short  x_xrow    = -666;
+   static char   x_xrc     =  -66;
+   static int    x_xtotal  =    0;
+   static int    x_xshort  =    0;
+   /*---(shortcut)-----------------------*/
+   ++x_xtotal;
+   if (x_xtab == a_tab && x_xcol == a_col && x_xrow == a_row) {
+      ++x_xshort;
+      DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+      DEBUG_LOCS   yLOG_snote   ("same as last search");
+      DEBUG_LOCS   yLOG_sint    (x_xrc);
+      DEBUG_LOCS   yLOG_sint    (x_xtotal);
+      DEBUG_LOCS   yLOG_sint    (x_xshort);
+      DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+      return x_xrc;
+   }
    /*---(begin)--------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(save values)--------------------*/
+   x_xtab = a_tab;
+   x_xcol = a_col;
+   x_xrow = a_row;
    /*---(check absolute boudaries)-------*/
    DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
    --rce;  if (a_tab <  0       ) {
       DEBUG_LOCS   yLOG_note    ("tab less than zero");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      return x_xrc = rce;
    }
    --rce;  if (a_tab >= MAX_TABS) {
       DEBUG_LOCS   yLOG_note    ("tab greater than max");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      return x_xrc = rce;
    }
    DEBUG_LOCS   yLOG_value   ("a_col"     , a_col);
    --rce;  if (a_col <  0       ) {
       DEBUG_LOCS   yLOG_note    ("col less than zero");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      return x_xrc = rce;
    }
    --rce;  if (a_col >= MAX_COLS) {
       DEBUG_LOCS   yLOG_note    ("col greater than max");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      return x_xrc = rce;
    }
    DEBUG_LOCS   yLOG_value   ("a_row"     , a_row);
    --rce;  if (a_row <  0       ) {
       DEBUG_LOCS   yLOG_note    ("row less than zero");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      return x_xrc = rce;
    }
    --rce;  if (a_row >= MAX_ROWS) {
       DEBUG_LOCS   yLOG_note    ("row greater than max");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      return x_xrc = rce;
    }
    /*---(if fixed)-----------------------*/
    if (a_adapt == CELL_FIXED) {
@@ -432,13 +516,13 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
       --rce;  if (a_col >= s_tabs[a_tab].ncol) {
          DEBUG_LOCS   yLOG_note    ("col greater than current size");
          DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
+         return x_xrc = rce;
       }
       DEBUG_LOCS   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
       --rce;  if (a_row >= s_tabs[a_tab].nrow) {
          DEBUG_LOCS   yLOG_note    ("row greater than current size");
          DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
+         return x_xrc = rce;
       }
    }
    /*---(if adapting)--------------------*/
@@ -483,31 +567,51 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return x_xrc = 0;
 }
 
 tCELL*       /*--> return the cell at current loc --------[ leaf   [ ------ ]-*/
 LOC_cell_at_curr     (void)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
    rc = LOC_legal (CTAB, CCOL, CROW, CELL_FIXED);
-   if (rc < 0)    return NULL;
+   if (rc < 0)  {
+      DEBUG_LOCS   yLOG_note    ("nothing found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
+   x_curr = s_tabs [CTAB].sheet[CCOL][CROW];
+   DEBUG_LOCS   yLOG_point   ("found"     , x_curr);
    /*---(complete)-----------------------*/
-   return s_tabs [CTAB].sheet[CCOL][CROW];
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return x_curr;
 }
 
 tCELL*       /*--> return the cell at a location ---------[ leaf   [ ------ ]-*/
 LOC_cell_at_loc      (short a_tab, short a_col, short a_row)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
-   if (rc < 0)    return NULL;
+   if (rc < 0)  {
+      DEBUG_LOCS   yLOG_note    ("nothing found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
+   x_curr = s_tabs[a_tab].sheet[a_col][a_row];
+   DEBUG_LOCS   yLOG_point   ("found"     , x_curr);
    /*---(complete)-----------------------*/
-   return s_tabs[a_tab].sheet[a_col][a_row];
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return x_curr;
 }
 
 tCELL*       /*--> return the cell at a location ---------[ ------ [ ------ ]-*/
@@ -519,12 +623,24 @@ LOC_cell_labeled   (char *a_label)
    short       x_col       =   0;           /* working col value              */
    short       x_row       =   0;           /* working row value              */
    tCELL      *x_curr      = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   if (rc < 0)  return NULL;
+   if (rc < 0)  {
+      DEBUG_LOCS   yLOG_note    ("nothing found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
    x_curr = LOC_cell_at_loc  (x_tab, x_col, x_row);
-   if (x_curr == NULL)    return NULL;
+   DEBUG_LOCS   yLOG_point   ("cell"      , x_curr);
+   if (x_curr == NULL) {
+      DEBUG_LOCS   yLOG_note    ("nothing found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_curr;
 }
 
@@ -631,17 +747,31 @@ LOC_label         (
    char        label       [100]       = "";
    char        rce         = -10;           /* return code for errors         */
    char        rc          =   0;           /* return code                    */
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_point   ("*a_cell"   , a_cell);
+   DEBUG_LOCS   yLOG_point   ("*a_final"  , a_final);
    /*---(defense: valid output)----------*/
-   --rce;  if (a_final == NULL)             return rce;
+   --rce;  if (a_final == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    strlcpy (a_final, "((null))", LEN_LABEL);
    /*---(defense: valid cell)------------*/
-   --rce;  if (a_cell  == NULL)             return rce;
+   --rce;  if (a_cell  == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(fiugure out reference)----------*/
    rc = LOC_ref (a_cell->tab, a_cell->col, a_cell->row, 0, a_final);
-   --rce;  if (rc <  0)                     return rce;
-   --rce;  if (rc >  0)                     return rc;
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(complete)-----------------------*/
-   return  0;
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return  rc;
 }
 
 char         /*--> convert a cell into a coordinates -----[ ------ [ ------ ]-*/
@@ -689,10 +819,10 @@ LOC_parse         (
    /*---(begin)--------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
-   DEBUG_LOCS   yLOG_point   ("a_tab"     , a_tab);
-   DEBUG_LOCS   yLOG_point   ("a_col"     , a_col);
-   DEBUG_LOCS   yLOG_point   ("a_row"     , a_row);
-   DEBUG_LOCS   yLOG_point   ("a_abs"     , a_abs);
+   DEBUG_LOCS   yLOG_point   ("*a_tab"    , a_tab);
+   DEBUG_LOCS   yLOG_point   ("*a_col"    , a_col);
+   DEBUG_LOCS   yLOG_point   ("*a_row"    , a_row);
+   DEBUG_LOCS   yLOG_point   ("*a_abs"    , a_abs);
    /*---(prepare values)-----------------*/
    if (a_tab != NULL)  *a_tab = -1;
    if (a_col != NULL)  *a_col = -1;

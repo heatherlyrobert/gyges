@@ -297,11 +297,16 @@ DEP__purge         (void)
    /*> printf ("DEP__purge\n");                                                        <*/
    /*> DEBUG_CELL  printf("DEP__purge      :: begin\n");                               <*/
    /*---(locals)-------*-----------------*/
+   char        rce         =  -10;
    tDEP     *curr      = NULL;
    tDEP     *next      = NULL;
+   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
    /*---(walk through list)--------------*/
    /*> printf ("DEP__purge : defenses\n");                                             <*/
-   if (s_hdep == NULL) return -1;
+   --rce;  if (s_hdep == NULL) {
+      DEBUG_DEPS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    next = s_hdep;
    /*> printf ("DEP__purge : entering loop\n");                                        <*/
    while (next != NULL) {
@@ -317,6 +322,7 @@ DEP__purge         (void)
    /*---(ending)-------------------------*/
    /*> DEBUG_CELL  printf("DEP__purge      :: end\n");                                 <*/
    /*---(complete)-----------------------*/
+   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

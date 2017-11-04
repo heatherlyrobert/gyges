@@ -291,6 +291,10 @@ RPN_change_ref     (
    DEBUG_RPN    yLOG_value   ("a_roff"    , a_roff);
    DEBUG_RPN    yLOG_point   ("a_final"   , a_final);
    /*---(defense)------------------------*/
+   --rce;  if (strchr ("ar", a_scope) == NULL)  {
+      DEBUG_RPN    yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    rc = RPN_check_args (a_cell, a_label, a_final);
    DEBUG_RPN    yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0)  {
