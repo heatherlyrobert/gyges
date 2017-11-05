@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6f"
-#define     VER_TXT   "huge amount of debugging code added for cut/copy/paste testing"
+#define     VER_NUM   "2.6g"
+#define     VER_TXT   "copy/paste replace matches excel perfectly ;)"
 
 
 
