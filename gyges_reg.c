@@ -451,7 +451,7 @@ REG_mode           (int a_major, int a_minor)
                   break;
       case  'y' : REG_copy  ();
                   break;
-      case  'p' : REG_paste_norm ();
+      case  'p' : REG_paste (G_PASTE_NORM);
                   break;
       case  'd' :
       case  'D' :
@@ -894,7 +894,7 @@ REG__paste_pros      (char a_pros)
             p  = strtok_r (NULL  , q, &s);
             continue;
          }
-         rc = RPN_change_ref (x_provider, x_label, a_pros, x_atab, x_acol, x_arow, x_source);
+         rc = RPN_adjust_ref (x_provider, a_pros, x_atab, x_acol, x_arow, x_source, x_label);
          DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
          sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);
          DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
@@ -1043,7 +1043,7 @@ REG__paste_cells     (char a_reqs)
       strcpy (x_source, "");
       if (strchr (G_CELL_RPN, x_curr->t) != 0 && a_reqs == 'y') {
          DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-         rc = RPN_adjust (x_curr, s_atab, s_acol, s_arow, x_source);
+         rc = RPN_adjust (x_curr, G_RPN_NORM, s_atab, s_acol, s_arow, x_source);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc < 0) {
             DEBUG_REGS   yLOG_note    ("formual could not be parsed");
@@ -1146,10 +1146,10 @@ REG_paste            (char a_type)
       rc = REG__paste_main ('-', '-', '-', '-');
       break;
    case G_PASTE_MOVE   :
-      rc = REG__paste_main ('-', 'y', 'r', '-');
+      rc = REG__paste_main ('-', '-', 'r', '-');
       break;
    case G_PASTE_FORCE  :
-      rc = REG__paste_main ('-', 'y', 'a', '-');
+      rc = REG__paste_main ('-', '-', 'a', '-');
       break;
    default             :
       rc = -50;
@@ -1160,21 +1160,6 @@ REG_paste            (char a_type)
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
-
-char           /*-> most common paste call -------------[ ------ [----------]-*/
-REG_paste_norm     (void) { return REG__paste_main ('-', 'y', '-', '-'); }
-
-char           /*-> most common paste call -------------[ ------ [----------]-*/
-REG_paste_relace   (void) { return REG__paste_main ('y', 'y', '-', '-'); }
-
-char           /*-> paste and move rel providers -------[ ------ [----------]-*/
-REG_paste_dup      (void) { return REG__paste_main ('-', '-', '-', '-'); }
-
-char           /*-> paste and move rel providers -------[ ------ [----------]-*/
-REG_paste_move     (void) { return REG__paste_main ('-', 'y', 'r', '-'); }
-
-char           /*-> paste and move rel providers -------[ ------ [----------]-*/
-REG_paste_force    (void) { return REG__paste_main ('-', 'y', 'a', '-'); }
 
 
 

@@ -553,7 +553,7 @@ KEYS_regbasic       (char a_major, char a_minor)
       break;
    case  'p' :
       DEBUG_USER   yLOG_note    ("call REG_paste");
-      REG_paste_norm ();
+      REG_paste (G_PASTE_NORM);
       break;
    case  'd' :
    case  'x' :
@@ -803,7 +803,7 @@ MODE_map           (char a_major, char a_minor)
                       /*> case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;          <*/
                       /*> case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;          <*/
                       /*> case 'y'      : REG_copy  ();                   break;                      <*/
-                      /*> case 'p'      : REG_paste_norm ();              break;                      <*/
+                      /*> case 'p'      : REG_paste (G_PASTE_NORM);       break;                      <*/
                       /*---(modes and multikey)-------*/
       case '@'      : SEQ_calc_full ();               break;
                       /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/

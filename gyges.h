@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6g"
-#define     VER_TXT   "copy/paste replace matches excel perfectly ;)"
+#define     VER_NUM   "2.6h"
+#define     VER_TXT   "RPN_adjust and RPN_adust_ref basic unit testing done"
 
 
 
@@ -1008,11 +1008,6 @@ char      REG__paste_pros      (char a_pros);
 char      REG__paste_integ     (char a_integ);
 char      REG__paste_main      (char a_clear, char a_reqs, char a_pros, char a_integ);
 char      REG_paste            (char a_type);
-char      REG_paste_norm       (void);
-char      REG_paste_replace    (void);
-char      REG_paste_dup        (void);
-char      REG_paste_move       (void);
-char      REG_paste_force      (void);
 
 /*---(data import)----------*/
 char      REG__inpt_prep       (char a_style);
@@ -1131,8 +1126,13 @@ char      ERROR_list           (void);
 char      ERROR_cleanse        (tCELL  *a_owner);
 
 
-char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
-char      RPN_change_ref       (tCELL *a_cell, char *a_label, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source);
+#define     G_RPN_NONE           '-'
+#define     G_RPN_NORM           'n'
+#define     G_RPN_VISU           'v'
+#define     G_RPN_REL            'r'
+#define     G_RPN_ALL            'a'
+char      RPN_adjust           (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source);
+char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);
 char      RPN_convert          (tCELL *a_curr);
 
 
