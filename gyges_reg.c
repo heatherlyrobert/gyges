@@ -941,6 +941,25 @@ short       s_atab         =    0;
 short       s_acol         =    0;
 short       s_arow         =    0;
 
+char             /* indicate whether cell is in a reg --[ leaf   [----------]-*/
+REG_inside           (int a_index, short a_tab, short a_col, short a_row)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   /*---(defense)------------------------*/
+   --rce;  if (a_index <  0                  )      return rce;
+   --rce;  if (a_index >=  strlen (s_regnames))     return rce;
+   /*---(misses)-------------------------*/
+   if (s_reg [a_index].nbuf <= 0     )              return 0;
+   if (a_tab != s_reg [a_index].otab )              return 0;
+   if (a_col <  s_reg [a_index].begc )              return 0;
+   if (a_col >  s_reg [a_index].endc )              return 0;
+   if (a_row <  s_reg [a_index].begr )              return 0;
+   if (a_row >  s_reg [a_index].endr )              return 0;
+   /*---(complete------------------------*/
+   return 1;
+}
+
 char           /*-> prepare for a paste ----------------[ ------ [----------]-*/
 REG__paste_check     (void)
 {
@@ -1043,7 +1062,7 @@ REG__paste_cells     (char a_reqs)
       strcpy (x_source, "");
       if (strchr (G_CELL_RPN, x_curr->t) != 0 && a_reqs == 'y') {
          DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-         rc = RPN_adjust (x_curr, G_RPN_NORM, s_atab, s_acol, s_arow, x_source);
+         rc = RPN_adjust (x_curr, s_atab, s_acol, s_arow, x_source);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc < 0) {
             DEBUG_REGS   yLOG_note    ("formual could not be parsed");
