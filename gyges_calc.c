@@ -915,8 +915,10 @@ CALC__concatplus   (void)
    if (s == NULL)  s = strndup (nada, LEN_RECD);
    /*---(process)------------------------*/
    strncpy (t, s,   LEN_RECD);
-   strncat (t, " ", LEN_RECD);
-   strncat (t, r,   LEN_RECD);
+   if (r [0] != '\0') {
+      strncat (t, " ", LEN_RECD);
+      strncat (t, r,   LEN_RECD);
+   }
    /*---(return result)------------------*/
    CALC_pushstr (__FUNCTION__, t);
    /*---(clean up)-----------------------*/

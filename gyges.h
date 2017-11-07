@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6h"
-#define     VER_TXT   "RPN_adjust and RPN_adust_ref basic unit testing done"
+#define     VER_NUM   "2.6i"
+#define     VER_TXT   "fixed (##) contatplus to not add space after empty/null string"
 
 
 
