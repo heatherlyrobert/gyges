@@ -1991,6 +1991,7 @@ VISU__unit         (char *a_question, char a_reg)
       snprintf (unit_answer, LEN_UNIT, "visu current     : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
    }
    else if (strcmp (a_question, "count"        )  == 0) {
+      x_count = 0;
       for (x_col = s_visu.bcol; x_col <= s_visu.ecol; ++x_col) {
          for (x_row = s_visu.brow; x_row <= s_visu.erow; ++x_row) {
             if (LOC_cell_at_loc (s_visu.otab, x_col, x_row) != NULL) ++x_count;

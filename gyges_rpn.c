@@ -53,14 +53,13 @@ char     *g_rcops     = "|&=!<>*/%+-():;";
 
 
 /*---[[ private variables ]]------------------------------*/
-/*---(copy of source)-------*/
-PRIV   char      rpn__working[LEN_RECD];
-/*---(rpn output)-----------*/
-PRIV   int       rpn__offtab   = 0;
-PRIV   int       rpn__offcol   = 0;
-PRIV   int       rpn__offrow   = 0;
-
-char        s_final     [LEN_RECD];
+static char   s_final  [LEN_RECD];
+static short  s_ttab   = 0;    /* target tab                                  */
+static short  s_tcol   = 0;    /* target col                                  */
+static short  s_trow   = 0;    /* target row                                  */
+static short  s_atab   = 0;    /* adjust tab                                  */
+static short  s_acol   = 0;    /* adjust col                                  */
+static short  s_arow   = 0;    /* adjust row                                  */
 
 
 
@@ -70,18 +69,18 @@ char        s_final     [LEN_RECD];
 PRIV void  o___MODIFY__________o () { return; }
 
 char           /*-> shared argument validiation --------[ ------ [----------]-*/
-RPN_check_args     (
-      /*----------+-----------+-----------------------------------------------*/
-      tCELL      *a_cell,     /* source cell                                  */
-      char       *a_target,   /* cell reference to modify                     */
-      char       *a_final)    /* updated source formula (uncompressed)        */
+RPN__check_args      (tCELL *a_cell, char a_scope, char *a_target, char *a_final, int a_index)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   char        rc          = 0;                  /* generic return code       */
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;                /* return code for errors    */
+   char        rc          =    0;                  /* generic return code       */
+   short       x_tab       =    0;
+   short       x_col       =    0;
+   short       x_row       =    0;
    /*---(begin)--------------------------*/
    DEBUG_RPN    yLOG_enter   (__FUNCTION__);
    DEBUG_RPN    yLOG_point   ("a_cell"    , a_cell);
+   DEBUG_RPN    yLOG_char    ("a_scope"   , a_scope);
    DEBUG_RPN    yLOG_point   ("a_target"  , a_target);
    DEBUG_RPN    yLOG_point   ("a_final"   , a_final);
    /*---(prepare)------------------------*/
@@ -121,44 +120,33 @@ RPN_check_args     (
       DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_RPN    yLOG_char    ("a_scope"   , a_scope);
+   --rce;  if (strchr ("-nibra", a_scope) == 0)   {
+      DEBUG_RPN    yLOG_note    ("aborted, a_scope not legal");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = LOC_parse (a_cell->label, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_RPN    yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_RPN    yLOG_note    ("can not parse original cell label");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = REG_inside (a_index, x_tab, x_col, x_row);
+   --rce;  if (strchr ("ib", a_scope) != NULL && rc <= 0) {
+      DEBUG_RPN    yLOG_note    ("cell not inside valid register bounds");
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(complete)-----------------------*/
    DEBUG_RPN    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
-/*> char               /+ PURPOSE : convert normal infix notation to postfix/rpn -+/   <* 
- *> RPN_makelike       (tCELL *a_curr, char *a_label)                                  <* 
- *> {                                                                                  <* 
- *>    int         x_tab       =    0;                                                 <* 
- *>    int         x_col       =    0;                                                 <* 
- *>    int         x_row       =    0;                                                 <* 
- *>    tCELL      *x_curr      = NULL;                                                 <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                        <* 
- *>    LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);                              <* 
- *>    x_curr = LOC_cell_at_loc  (CTAB, x_col, x_row);                                 <* 
- *>    if (x_curr == NULL || x_curr->s == NULL) {                                      <* 
- *>       rpn__offtab = 0;                                                             <* 
- *>       rpn__offcol = 0;                                                             <* 
- *>       rpn__offrow = 0;                                                             <* 
- *>       strncpy (rpn__working, "", LEN_RECD);                                        <* 
- *>    } else {                                                                        <* 
- *>       rpn__offtab = a_curr->tab - x_tab;                                           <* 
- *>       rpn__offcol = a_curr->col - x_col;                                           <* 
- *>       rpn__offrow = a_curr->row - x_row;                                           <* 
- *>       strncpy (rpn__working, x_curr->s, LEN_RECD);                                 <* 
- *>    }                                                                               <* 
- *>    return 0;                                                                       <* 
- *> }                                                                                  <*/
-
-static short  s_ttab   = 0;    /* target tab                                  */
-static short  s_tcol   = 0;    /* target col                                  */
-static short  s_trow   = 0;    /* target row                                  */
-static short  s_atab   = 0;    /* adjust tab                                  */
-static short  s_acol   = 0;    /* adjust col                                  */
-static short  s_arow   = 0;    /* adjust row                                  */
 
 char           /*-> change a specific reference --------[ ------ [----------]-*/
-RPN_adjust_one     (char *a_old, char a_scope, int a_index, char *a_new)
+RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;               /* return code for errors    */
@@ -240,7 +228,7 @@ RPN_adjust_one     (char *a_old, char a_scope, int a_index, char *a_new)
 }
 
 char           /*-> change a specific reference --------[ ------ [----------]-*/
-RPN_adjust_main    (
+RPN__adjust_main     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
       char        a_scope,    /* what kind of changes                         */
@@ -272,12 +260,13 @@ RPN_adjust_main    (
    DEBUG_RPN    yLOG_value   ("a_index"   , a_index);
    DEBUG_RPN    yLOG_point   ("a_target"  , a_target);
    /*---(defense)------------------------*/
-   rc = RPN_check_args (a_cell, a_target, a_final);
+   rc = RPN__check_args (a_cell, a_scope, a_target, a_final, a_index);
    DEBUG_RPN    yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   if (rc < 0)  {
+      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rc);
+      return rc;
    }
+   rce -= 10;
    /*---(target cell)--------------------*/
    s_ttab = s_tcol = s_trow = -1;
    if (a_target [0] != '\0') {
@@ -307,7 +296,7 @@ RPN_adjust_main    (
    }
    /*---(loop through tokens)------------*/
    while (p != NULL) {
-      RPN_adjust_one (p, a_scope, a_index, x_new);
+      rc = RPN__adjust_one (p, a_scope, a_index, x_new);
       strcat (x_final, x_new);
       strcat (x_final, " ");
       DEBUG_RPN    yLOG_info    ("x_final"   , x_final);
@@ -340,7 +329,7 @@ RPN_adjust         (
       int         a_arow,     /* row adjust from original                     */
       char       *a_final)    /* updated source formula (uncompressed)        */
 {  /*---(design notes)--------------------------------------------------------*/
-   return RPN_adjust_main (a_cell, G_RPN_NORM, a_atab, a_acol, a_arow, a_final, -1, "");
+   return RPN__adjust_main (a_cell, G_RPN_NORM, a_atab, a_acol, a_arow, a_final, -1, "");
 }
 
 char           /*-> change a specific reference --------[ ------ [----------]-*/
@@ -354,8 +343,9 @@ RPN_adjust_ref     (
       char       *a_final,    /* updated source formula (uncompressed)        */
       char       *a_target)   /* cell ref to be changed                       */
 {
+   strcpy (s_final, "n/a");
    if (strchr ("ra", a_scope) == NULL)  return -1;
-   return RPN_adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);
+   return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);
 }
 
 char           /*-> change a specific reference --------[ ------ [----------]-*/
@@ -369,8 +359,9 @@ RPN_adjust_reg     (
       char       *a_final,    /* updated source formula (uncompressed)        */
       int         a_index)    /* register index                               */
 {
-   if (strchr ("nib", a_scope) == NULL)  return -1;
-   return RPN_adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, a_index, "");
+   strcpy (s_final, "n/a");
+   if (strchr ("-nib", a_scope) == NULL)  return -1;
+   return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, a_index, "");
 }
 
 

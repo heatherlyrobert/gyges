@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6j"
-#define     VER_TXT   "built and tested improved RPN cell formula adjustment functions"
+#define     VER_NUM   "2.6k"
+#define     VER_TXT   "built and tested RPN register cell adjustment function"
 
 
 
@@ -1131,10 +1131,10 @@ char      ERROR_cleanse        (tCELL  *a_owner);
 #define     G_RPN_NORM           'n'    /* adjust all relative references     */
 #define     G_RPN_INNER          'i'    /* adjust all (rel/abs) inner refs    */
 #define     G_RPN_BOTH           'b'    /* adjust both inner and relative     */
-char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
-char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);
 #define     G_RPN_PREL           'r'    /* adjust rel provider refs in source */
 #define     G_RPN_PALL           'a'    /* adjust all provider refs in source */
+char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
+char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);
 char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);
 char      RPN_convert          (tCELL *a_curr);
 

@@ -949,8 +949,8 @@ REG_inside           (int a_index, short a_tab, short a_col, short a_row)
    /*---(defense)------------------------*/
    --rce;  if (a_index <  0                  )      return rce;
    --rce;  if (a_index >=  strlen (s_regnames))     return rce;
+   --rce;  if (s_reg [a_index].nbuf <= 0     )      return rce;
    /*---(misses)-------------------------*/
-   if (s_reg [a_index].nbuf <= 0     )              return 0;
    if (a_tab != s_reg [a_index].otab )              return 0;
    if (a_col <  s_reg [a_index].begc )              return 0;
    if (a_col >  s_reg [a_index].endc )              return 0;
