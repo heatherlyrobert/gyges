@@ -653,9 +653,18 @@ LOC_jump           (
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_LOCS   yLOG_value   ("a_col"     , a_col);
+   DEBUG_LOCS   yLOG_value   ("a_row"     , a_row);
    /*---(defenses)-----------------------*/
    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
-   if (rc < 0)    return rc;
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   if (rc < 0)  {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
+      return rc;
+   }
    /*---(update globals)-----------------*/
    LOC_tab_switch (a_tab);
    CCOL          = a_col;
@@ -663,6 +672,7 @@ LOC_jump           (
    /*---(selection)----------------------*/
    VISU_update (a_tab, a_col, a_row);
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1085,12 +1095,20 @@ LOC_tab_switch         (short a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
    /*---(non-init run)-------------------*/
    if (a_tab >=  0) {
       /*---(defense)---------------------*/
       rc = LOC_tab_valid (a_tab);
-      if (rc < 0)  return -1;
+      DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+      if (rc < 0) {
+         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
+         return rc;
+      }
       /*---(save values)-----------------*/
+      DEBUG_LOCS   yLOG_note    ("save existing tab values");
       /*---(cols)---------*/
       s_tabs [CTAB].ncol      = NCOL;
       s_tabs [CTAB].ccol      = CCOL;
@@ -1114,9 +1132,11 @@ LOC_tab_switch         (short a_tab)
    else {
       CTAB      = 0;
    }
+   DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
    /*---(switch tab)---------------------*/
    p_tab     = &s_tabs[CTAB];
    /*---(restore values)-----------------*/
+   DEBUG_LOCS   yLOG_note    ("restore new tab values");
    /*---(cols)---------*/
    NCOL      = s_tabs [CTAB].ncol;
    CCOL      = s_tabs [CTAB].ccol;
@@ -1134,6 +1154,7 @@ LOC_tab_switch         (short a_tab)
    FR_BROW   = s_tabs [CTAB].froz_brow;
    FR_EROW   = s_tabs [CTAB].froz_erow;
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

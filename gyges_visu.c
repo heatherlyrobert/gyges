@@ -319,8 +319,19 @@ VISU_increase      (int a_tab, int a_col, int a_row)
 char             /* cursor update to visual selection ----[ twig   [ 121n0x ]-*/
 VISU_update        (int a_tab, int a_col, int a_row)
 {
-   if (s_visu.live == VISU_NOT)                               return -1;
-   return  VISU_increase (CTAB, CCOL, CROW);
+   /*---(locals)-----------+------+----+-*/
+   char        rc          =     0;
+   /*---(header)-------------------------*/
+   DEBUG_VISU   yLOG_senter  (__FUNCTION__);
+   DEBUG_VISU   yLOG_char    ("s_visu.live", s_visu.live);
+   if (s_visu.live == VISU_NOT) {
+      DEBUG_VISU   yLOG_sexitr  (__FUNCTION__, -1);
+      return -1;
+   }
+   rc = VISU_increase (CTAB, CCOL, CROW);
+   DEBUG_VISU   yLOG_sint    (rc);
+   DEBUG_VISU   yLOG_sexit   (__FUNCTION__);
+   return rc;
 }
 
 char         /*--> apply a specific selection ------------[ ------ [ ------ ]-*/

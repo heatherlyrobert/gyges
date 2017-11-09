@@ -830,14 +830,15 @@ REG__paste_pros      (char a_pros)
    int         x_count     =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_buf"     , my.reg_curr);
+   DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
    /*---(defense)------------------------*/
-   if (a_pros  != 'y') {
+   if (strchr ("ra", a_pros) == NULL) {
       DEBUG_REGS   yLOG_note    ("not altering providing refs");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(buffer number)------------------*/
+   DEBUG_REGS   yLOG_char    ("reg_curr"  , my.reg_curr);
    x_reg  = REG__reg2index  (my.reg_curr);
    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
    --rce;  if (x_reg < 0)  {
