@@ -1060,9 +1060,9 @@ REG__paste_cells     (char a_reqs)
       DEBUG_REGS   yLOG_info    ("source"    , x_curr->s);
       DEBUG_REGS   yLOG_char    ("type"      , x_curr->t);
       strcpy (x_source, "");
-      if (strchr (G_CELL_RPN, x_curr->t) != 0 && a_reqs == 'y') {
+      if (strchr (G_CELL_RPN, x_curr->t) != 0) {
          DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-         rc = RPN_adjust (x_curr, s_atab, s_acol, s_arow, x_source);
+         rc = RPN_adjust_reg (x_curr, a_reqs, s_atab, s_acol, s_arow, x_source, s_index);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc < 0) {
             DEBUG_REGS   yLOG_note    ("formual could not be parsed");
@@ -1156,19 +1156,19 @@ REG_paste            (char a_type)
    /*---(check type)---------------------*/
    switch (a_type) {
    case G_PASTE_NORM   :
-      rc = REG__paste_main ('-', 'y', '-', '-');
+      rc = REG__paste_main (G_PASTE_MERGE, G_RPN_NORM , G_RPN_NONE, G_RPN_NONE);
       break;
    case G_PASTE_REPL   :
-      rc = REG__paste_main ('y', 'y', '-', '-');
+      rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_NORM , G_RPN_NONE, G_RPN_NONE);
       break;
    case G_PASTE_DUPL   :
-      rc = REG__paste_main ('-', '-', '-', '-');
+      rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_INNER, G_RPN_NONE, G_RPN_NONE);
       break;
    case G_PASTE_MOVE   :
-      rc = REG__paste_main ('-', '-', 'r', '-');
+      rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_BOTH , G_RPN_PREL, G_RPN_NONE);
       break;
    case G_PASTE_FORCE  :
-      rc = REG__paste_main ('-', '-', 'a', '-');
+      rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_BOTH , G_RPN_PALL, G_RPN_NONE);
       break;
    default             :
       rc = -50;

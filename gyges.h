@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6k"
-#define     VER_TXT   "built and tested RPN register cell adjustment function"
+#define     VER_NUM   "2.6l"
+#define     VER_TXT   "updated paste duplicate to use new inner logic, successful unit test"
 
 
 
@@ -995,6 +995,9 @@ char      REG_delorig          (void);
 char      REG_copy             (void);
 char      REG_cut              (void);
 
+#define   G_PASTE_MERGE        '-'
+#define   G_PASTE_CLEAR        'y'
+
 #define   G_PASTE_NORM         'n'
 #define   G_PASTE_REPL         'r'
 #define   G_PASTE_DUPL         'd'
@@ -1127,15 +1130,20 @@ char      ERROR_list           (void);
 char      ERROR_cleanse        (tCELL  *a_owner);
 
 
+/*---(requires)-----------------------*/
 #define     G_RPN_NONE           '-'    /* no cell adjustments                */
 #define     G_RPN_NORM           'n'    /* adjust all relative references     */
 #define     G_RPN_INNER          'i'    /* adjust all (rel/abs) inner refs    */
 #define     G_RPN_BOTH           'b'    /* adjust both inner and relative     */
+/*---(provides)-----------------------*/
 #define     G_RPN_PREL           'r'    /* adjust rel provider refs in source */
 #define     G_RPN_PALL           'a'    /* adjust all provider refs in source */
+/*---(adjustments)--------------------*/
+#define     G_RPN_PREL           'r'    /* adjust rel provider refs in source */
 char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
 char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);
 char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);
+/*---(conversion)---------------------*/
 char      RPN_convert          (tCELL *a_curr);
 
 

@@ -1985,12 +1985,12 @@ VISU__unit         (char *a_question, char a_reg)
    strcpy  (unit_answer, "visu             : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "visu_range"   )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "visu range       : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
+      snprintf (unit_answer, LEN_UNIT, "VISU range       : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", s_visu.mode, s_visu.otab, s_visu.bcol, s_visu.brow, s_visu.ecol, s_visu.erow);
    }
    else if (strcmp (a_question, "visu_curr"    )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "visu current     : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
+      snprintf (unit_answer, LEN_UNIT, "VISU current     : tab=%4d, col=%4d, row=%4d", s_visu.otab, s_visu.ccol, s_visu.crow);
    }
-   else if (strcmp (a_question, "count"        )  == 0) {
+   else if (strcmp (a_question, "visu_count"   )  == 0) {
       x_count = 0;
       for (x_col = s_visu.bcol; x_col <= s_visu.ecol; ++x_col) {
          for (x_row = s_visu.brow; x_row <= s_visu.erow; ++x_row) {
@@ -2001,9 +2001,9 @@ VISU__unit         (char *a_question, char a_reg)
    }
    else if (strcmp (a_question, "visu_full"    )  == 0) {
       if (s_visu.curr != DONE_DONE) {
-         snprintf (unit_answer, LEN_UNIT, "visu full        : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow));
+         snprintf (unit_answer, LEN_UNIT, "VISU full        : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow));
       } else {
-         snprintf (unit_answer, LEN_UNIT, "visu full        : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
+         snprintf (unit_answer, LEN_UNIT, "VISU full        : tab=%4d, col=%4d, row=%4d, ptr=%9p", s_visu.otab, s_visu.ccol, s_visu.crow, DONE_DONE);
       }
    }
    /*---(complete)-----------------------*/
