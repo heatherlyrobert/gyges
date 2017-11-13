@@ -1276,7 +1276,7 @@ LOC_tab_status     (char a_tab, char *a_list)
 }
 
 char        LOC_tab_first        (void)  { return LOC_tab_switch (0); }
-char        LOC_tab_previous     (void)  { return LOC_tab_switch (CTAB - 1); }
+char        LOC_tab_prev         (void)  { return LOC_tab_switch (CTAB - 1); }
 char        LOC_tab_next         (void)  { return LOC_tab_switch (CTAB + 1); }
 char        LOC_tab_last         (void)  { return LOC_tab_switch (MAX_TABS - 1); }
 

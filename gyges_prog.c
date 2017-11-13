@@ -287,7 +287,7 @@ PROG_main_handle   (char a_key)
    }
    /*---(handle count)-------------------*/
    if (yVIKEYS_mode_curr () == SMOD_REPEAT) {
-      rc = REPEAT_submode (x_major, a_key);
+      rc = SMOD_repeat (x_major, a_key);
       if (rc >  0)  x_major = ' ';
    }
    /*---(handle keystroke)---------------*/
@@ -306,8 +306,8 @@ PROG_main_handle   (char a_key)
       case SMOD_TEXTREG  : rc = TREG_mode      (x_major , a_key);  break;
       case SMOD_REPLACE  : rc = SMOD_replace   (x_major , a_key);  break;
       case SMOD_FORMAT   : rc = SMOD_format    (x_major , a_key);  break;
-      case SMOD_BUFFER   : rc = SMOD_buffer    (K_SPACE, a_key);  break;
-      case SMOD_WANDER   : rc = SMOD_wander    (K_SPACE, a_key);  break;
+      case SMOD_BUFFER   : rc = SMOD_buffer    (x_major , a_key);  break;
+      case SMOD_WANDER   : rc = SMOD_wander    (K_SPACE , a_key);  break;
       case SMOD_REGISTER : rc = REG_mode       (x_major , a_key);  break;
       case SMOD_MARK     : rc = MARK_submode   (x_major , a_key);  break;
       case SMOD_MENUS    : rc = SMOD_menus     (x_major , a_key);  break;

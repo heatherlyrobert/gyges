@@ -56,7 +56,7 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.s   = LOC_tab_rename_curr  , "s"    ,  0, "change the name of the current tab"                          , "" },
    { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize_curr  , "s"    ,  0, "change the size of the current tab"                          , "" },
    { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_first        , ""     ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "prev"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_previous     , ""     ,  0, "change the size of a specific tab"                           , "" },
+   { 't', "prev"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_prev         , ""     ,  0, "change the size of a specific tab"                           , "" },
    { 't', "next"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_next         , ""     ,  0, "change the size of a specific tab"                           , "" },
    { 't', "last"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_last         , ""     ,  0, "change the size of a specific tab"                           , "" },
    { 't', "switch"      ,  0, ""    ,  0, 'y', 'y', .f.c   = LOC_tab_switch_char  , "c"    ,  0, "change the size of a specific tab"                           , "" },
@@ -540,7 +540,7 @@ KEYS_regbasic       (char a_major, char a_minor)
       return rce;
    }
    DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
-   --rce;  if (strchr (x_minors, a_minor) == 0) {
+   --rce;  if (strchr (x_minors, a_minor) == NULL) {
       DEBUG_USER   yLOG_note    ("a_minor is not valid");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -555,8 +555,8 @@ KEYS_regbasic       (char a_major, char a_minor)
       DEBUG_USER   yLOG_note    ("call REG_paste");
       REG_paste (G_PASTE_NORM);
       break;
-   case  'd' :
    case  'x' :
+   case  'd' :
       DEBUG_USER   yLOG_note    ("call REG_cut");
       REG_cut   ();
       break;
@@ -567,7 +567,7 @@ KEYS_regbasic       (char a_major, char a_minor)
 }
 
 char         /*--> accumulate multiplier -----------------[--------[--------]-*/
-REPEAT_submode     (char a_major, char a_minor)
+SMOD_repeat        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -612,13 +612,16 @@ REPEAT_submode     (char a_major, char a_minor)
    return a_minor;
 }
 
+char         /*--> check for repeat active -------------[ ------ [----------]-*/
+SMOD_repeat_done     (void)  { if (my.repeat < 1) return 0; else return 1; }
+
+
 char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
 MODE_map           (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          = 0;
-   char        x_minors    [LEN_RECD]  = "ypdx";
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
@@ -761,7 +764,7 @@ MODE_map           (char a_major, char a_minor)
       case ','      :
          yVIKEYS_mode_enter  (SMOD_BUFFER  );
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
+         return a_minor;
          break;
       case '"'      :
          yVIKEYS_mode_enter  (SMOD_REGISTER);
@@ -923,8 +926,33 @@ SMOD_buffer   (char a_major, char a_minor)
     */
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
+   /*---(header)-------------------------*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
+   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
+   /*---(request buffer mode)------------*/
+   DEBUG_USER   yLOG_value   ("SMOD_BUF"  , yVIKEYS_mode_not (SMOD_BUFFER));
+   if (a_major != ' ' && a_minor == ',') {
+      DEBUG_USER   yLOG_note    ("enter buffer mode");
+      if (yVIKEYS_mode_not (SMOD_BUFFER))  yVIKEYS_mode_enter  (SMOD_BUFFER  );
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return a_minor;
+   }
    /*---(defenses)-----------------------*/
-   --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER))             return rce;
+   if (a_major == ',' && yVIKEYS_mode_not (SMOD_BUFFER)) {
+      DEBUG_USER   yLOG_note    ("force enter buffer mode");
+      yVIKEYS_mode_enter  (SMOD_BUFFER  );
+   }
+   --rce;  if (a_major != ',') {
+      DEBUG_USER   yLOG_note    ("a_major is wrong)");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER)) {
+      DEBUG_USER   yLOG_note    ("not in buffer mode");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(mode changes)-------------------*/
    if (a_minor == K_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape, choose nothing");
@@ -934,22 +962,33 @@ SMOD_buffer   (char a_major, char a_minor)
       return 0;
    }
    /*---(check for control keys)---------*/
-   if      (a_minor >= '0' && a_minor <= '9') {
+   --rce;
+   if (strchr ("[<>]", a_minor) != NULL) {
+      DEBUG_USER   yLOG_note    ("relative mode");
+      switch (a_minor) {
+      case '[' :  LOC_tab_first ();  break;
+      case '<' :  LOC_tab_prev  ();  break;
+      case '>' :  LOC_tab_next  ();  break;
+      case ']' :  LOC_tab_last  ();  break;
+      }
+   } else if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", a_minor) != NULL) {
+      DEBUG_USER   yLOG_note    ("relative mode");
       LOC_tab_switch_char (a_minor);
-      CURS_screen_reset ();
-      yVIKEYS_mode_exit  ();
-   } else if (a_minor >= 'A' && a_minor <= 'Z') {
-      LOC_tab_switch_char (a_minor);
-      CURS_screen_reset ();
-      yVIKEYS_mode_exit  ();
    } else if (a_minor == ',') {
       my.info_win = G_INFO_BUFS;
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return a_major;
    } else {
       yVIKEYS_mode_exit  ();
-      return -1;
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
+   /*---(exit mode)----------------------*/
+   CURS_screen_reset  ();
+   DEBUG_USER   yLOG_value   ("done"      , SMOD_repeat_done ());
+   if (SMOD_repeat_done () == 0)  yVIKEYS_mode_exit  ();
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

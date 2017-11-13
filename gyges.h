@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6m"
-#define     VER_TXT   "updated and fixed all existing cut/paste tests successfully"
+#define     VER_NUM   "2.6n"
+#define     VER_TXT   "added relative tab moves to buffer mode, fixed repeat with sub-modes"
 
 
 
@@ -1041,17 +1041,19 @@ char*     REG__getter        (char *a_question, char a_reg);
 
 
 /*---(major modes)----------*/
-char      MODE_god           (char  a_major, char  a_minor);
-char      MODE_map           (char  a_major, char  a_minor);
-char      MODE_source        (char  a_major, char  a_minor);
-char      MODE_input         (char  a_major, char  a_minor);
+char      MODE_god             (char  a_major, char  a_minor);
+char      MODE_map             (char  a_major, char  a_minor);
+char      MODE_source          (char  a_major, char  a_minor);
+char      MODE_input           (char  a_major, char  a_minor);
 /*---(sub-modes)------------*/
-char      SMOD_buffer        (char  a_major, char  a_minor);
-char      SMOD_replace       (char  a_major, char  a_minor);
-char      SMOD_format        (char  a_major, char  a_minor);
-char      SMOD_wander        (char  a_major, char  a_minor);
-char      SMOD_error         (char  a_major, char  a_minor);
-char      SMOD_menus         (char  a_major, char  a_minor);
+char      SMOD_repeat          (char  a_major, char  a_minor);
+char      SMOD_repeat_done     (void);
+char      SMOD_buffer          (char  a_major, char  a_minor);
+char      SMOD_replace         (char  a_major, char  a_minor);
+char      SMOD_format          (char  a_major, char  a_minor);
+char      SMOD_wander          (char  a_major, char  a_minor);
+char      SMOD_error           (char  a_major, char  a_minor);
+char      SMOD_menus           (char  a_major, char  a_minor);
 
 char      KEYS_init          (void);
 char      KEYS_record        (char  a_curr);
@@ -1289,7 +1291,7 @@ char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max)
 char        LOC_tab_resize       /* stigma 1----- */  (char *a_max);
 char        LOC_tab_resize_curr  /* stigma 1----- */  (char *a_max);
 char        LOC_tab_first        (void);
-char        LOC_tab_previous     (void);
+char        LOC_tab_prev         (void);
 char        LOC_tab_next         (void);
 char        LOC_tab_last         (void);
 char        LOC_tab_switch       (short a_tab);
