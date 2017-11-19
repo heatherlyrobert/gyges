@@ -137,7 +137,7 @@ char      nada[5] = "";
 /*====================------------------------------------====================*/
 PRIV void  o___ERROR___________o () { return; }
 
-tERROR*      /*--> create a single error entry -----------[ leaf   [ ------ ]-*/
+tERROR*      /*-> create a single error entry --------[ leaf   [gp.A60.133.80]*/ /*-[11.0000.01.--]-*/ /*-[--.---.---.--]-*/
 ERROR_create       (tCELL *a_owner)
 {
    /*---(locals)-----------+-----------+-*/
@@ -183,7 +183,7 @@ ERROR_create       (tCELL *a_owner)
    return x_error;
 }
 
-char         /*--> destroy a single error entry ----------[ leaf   [ ------ ]-*/
+char         /*-> destroy a single error entry -------[ leaf   [gc.530.102.80]*/ /*-[10.0000.01.--]-*/ /*-[--.---.---.--]-*/
 ERROR_delete       (tERROR *a_error)
 {
    /*---(defense: null cell)-------------*/
@@ -205,7 +205,7 @@ ERROR_delete       (tERROR *a_error)
    return  NULL;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.530.611.11]*/ /*-[00.0000.0J.--]-*/ /*-[--.---.---.--]-*/
 ERROR_add          (tCELL *a_owner, char a_phase, int a_step, char *a_func, char a_type, char *a_desc)
 {
    /*---(locals)-----------+-----------+-*/
@@ -227,7 +227,7 @@ ERROR_add          (tCELL *a_owner, char a_phase, int a_step, char *a_func, char
    return;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.530.142.21]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 ERROR_cleanse      (tCELL *a_owner)
 {
    /*---(locals)-----------+-----------+-*/
@@ -250,7 +250,7 @@ ERROR_cleanse      (tCELL *a_owner)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.A61.365.60]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -297,7 +297,7 @@ ERROR_entry        (tCELL *a_cell, char a_seq, char *a_list)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.980.041.70]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 ERROR_list         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -423,8 +423,7 @@ int         calc__nstack  = 0;
  *
  */
 
-
-char         /*--> add a vstring to the stack ------------[ ------ [ ------ ]-*/
+char         /*-> add a vstring to the stack ---------[ ------ [gc.420.202.11]*/ /*-[01.0000.0#.--]-*/ /*-[--.---.---.--]-*/
 CALC_pushstr       (char *a_func, char *a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* very simply adds a stack entry with a string literal as its value       */
@@ -444,7 +443,7 @@ CALC_pushstr       (char *a_func, char *a_new)
    return 0;
 }
 
-char         /*--> add a value to the stack --------------[ ------ [ ------ ]-*/
+char         /*-> add a value to the stack -----------[ ------ [gc.420.202.11]*/ /*-[01.0000.0#.--]-*/ /*-[--.---.---.--]-*/
 CALC_pushval       (char *a_func, double a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* very simply adds a stack entry with a numeric literal as its value      */
@@ -464,7 +463,7 @@ CALC_pushval       (char *a_func, double a_new)
    return 0;
 }
 
-char         /*--> add a reference to the stack ----------[ ------ [ ------ ]-*/
+char         /*-> add a reference to the stack -------[ ------ [gc.520.203.21]*/ /*-[01.0000.07.--]-*/ /*-[--.---.---.--]-*/
 CALC_pushref       (char *a_func, tCELL *a_new)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* adds a cell reference for later intepretation in the calculation        */
@@ -485,7 +484,7 @@ CALC_pushref       (char *a_func, tCELL *a_new)
    return 0;
 }
 
-double       /*--> get an numeric off the stack ----------[ ------ [ ------ ]-*/
+double       /*-> get an numeric off the stack -------[ ------ [fn.730.205.21]*/ /*-[01.0000.0#.--]-*/ /*-[--.---.---.--]-*/
 CALC__popval          (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* always returns a value for the stack entry.                             */
@@ -516,7 +515,7 @@ CALC__popval          (char *a_func, char a_seq)
    return 0.0;
 }
 
-char*        /*--> get an string off the stack -----------[ ------ [ ------ ]-*/
+char*        /*-> get an string off the stack --------[ ------ [fs.A40.20#.31]*/ /*-[02.0000.0#.--]-*/ /*-[--.---.---.--]-*/
 CALC__popstr       (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /* always returns a string for the stack entry.                            */
@@ -564,7 +563,7 @@ CALC__popstr       (char *a_func, char a_seq)
    return strndup (nada, LEN_RECD);
 }
 
-tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+tCELL*       /*-> get a reference off the stack ------[ ------ [fp.420.203.21]*/ /*-[01.0000.0F.--]-*/ /*-[--.---.---.--]-*/
 CALC__popref          (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
@@ -584,7 +583,7 @@ CALC__popref          (char *a_func, char a_seq)
    return NULL;
 }
 
-tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+tCELL*       /*-> get a reference off the stack ------[ ------ [fp.420.203.21]*/ /*-[01.0000.04.--]-*/ /*-[--.---.---.--]-*/
 CALC__popprint        (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
@@ -604,7 +603,7 @@ CALC__popprint        (char *a_func, char a_seq)
    return NULL;
 }
 
-tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+tCELL*       /*-> get a reference off the stack ------[ ------ [fp.520.204.41]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__popform         (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
@@ -628,7 +627,7 @@ CALC__popform         (char *a_func, char a_seq)
    return NULL;
 }
 
-tCELL*       /*--> get a reference off the stack ---------[ ------ [ ------ ]-*/
+tCELL*       /*-> get a reference off the stack ------[ ------ [fp.520.204.41]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__poprpn          (char *a_func, char a_seq)
 {  /*---(design notes)-------------------*//*---------------------------------*/
    /*---(prepare)------------------------*/
@@ -659,7 +658,7 @@ CALC__poprpn          (char *a_func, char a_seq)
 /*====================------------------------------------====================*/
 PRIV void  o___SPECIAL_________o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ leaf   [fv.210.000.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__noop        (void)
 {
    return;
@@ -672,7 +671,7 @@ CALC__noop        (void)
 /*====================------------------------------------====================*/
 PRIV void  o___ARITHMETIC______o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__add         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -681,7 +680,7 @@ CALC__add         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__subtract     (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -690,7 +689,7 @@ CALC__subtract     (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__multiply     (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -699,7 +698,7 @@ CALC__multiply     (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.22]*/ /*-[00.0000.03.--]-*/ /*-[--.---.---.--]-*/
 CALC__divide       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -709,7 +708,7 @@ CALC__divide       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__modulus      (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -718,7 +717,7 @@ CALC__modulus      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__increment    (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -726,7 +725,7 @@ CALC__increment    (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__decrement    (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -734,7 +733,7 @@ CALC__decrement    (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__unaryminus   (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -749,7 +748,7 @@ CALC__unaryminus   (void)
 /*====================------------------------------------====================*/
 PRIV void  o___RELATIONAL______o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__equal        (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -758,7 +757,7 @@ CALC__equal        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__notequal      (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -767,7 +766,7 @@ CALC__notequal      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__greater      (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -776,7 +775,7 @@ CALC__greater      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__lesser       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -785,7 +784,7 @@ CALC__lesser       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__gequal       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -794,7 +793,7 @@ CALC__gequal       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__lequal       (void)
 {
    a = CALC__popval( __FUNCTION__, ++s_narg);
@@ -803,7 +802,7 @@ CALC__lequal       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sequal       (void)
 {
    r = CALC__popstr (__FUNCTION__, ++s_narg);
@@ -813,7 +812,7 @@ CALC__sequal       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__snotequal    (void)
 {
    r = CALC__popstr (__FUNCTION__, ++s_narg);
@@ -823,7 +822,7 @@ CALC__snotequal    (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__slesser      (void)
 {
    r = CALC__popstr (__FUNCTION__, ++s_narg);
@@ -833,7 +832,7 @@ CALC__slesser      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sgreater     (void)
 {
    r = CALC__popstr (__FUNCTION__, ++s_narg);
@@ -850,7 +849,7 @@ CALC__sgreater     (void)
 /*====================------------------------------------====================*/
 PRIV void  o___LOGICAL_________o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__not          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -858,7 +857,7 @@ CALC__not          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__and          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -867,7 +866,7 @@ CALC__and          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__or           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -883,7 +882,7 @@ CALC__or           (void)
 /*====================------------------------------------====================*/
 PRIV void  o___STRING__________o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.000.22]*/ /*-[20.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__concat       (void)
 {
    /*---(get arguments)------------------*/
@@ -904,7 +903,7 @@ CALC__concat       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.000.32]*/ /*-[21.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__concatplus   (void)
 {
    /*---(get arguments)------------------*/
@@ -928,7 +927,7 @@ CALC__concatplus   (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.010.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__lower        (void)
 {
    /*---(get arguments)------------------*/
@@ -948,7 +947,7 @@ CALC__lower        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.010.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__upper        (void)
 {
    /*---(get arguments)------------------*/
@@ -968,7 +967,7 @@ CALC__upper        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__char         (void)
 {
    /*---(get arguments)------------------*/
@@ -984,7 +983,7 @@ CALC__char         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.310.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__code         (void)
 {
    /*---(get arguments)------------------*/
@@ -997,7 +996,7 @@ CALC__code         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__len          (void)
 {
    /*---(get arguments)------------------*/
@@ -1014,7 +1013,7 @@ CALC__len          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.000.33]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__left         (void)
 {
    /*---(get arguments)------------------*/
@@ -1036,7 +1035,7 @@ CALC__left         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.540.010.33]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__right        (void)
 {
    /*---(get arguments)------------------*/
@@ -1060,7 +1059,7 @@ CALC__right        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.750.010.73]*/ /*-[12.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__mid          (void)
 {
    /*---(get arguments)------------------*/
@@ -1100,7 +1099,7 @@ CALC__mid          (void)
  *> #define    ySTR_EVERY     'e'                                                     <* 
  *> #define    ySTR_COMPRESS  'c'                                                     <*/
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__trim         (void)
 {
    /*---(get arguments)------------------*/
@@ -1117,7 +1116,7 @@ CALC__trim         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__ltrim        (void)
 {
    /*---(get arguments)------------------*/
@@ -1134,7 +1133,7 @@ CALC__ltrim        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rtrim        (void)
 {
    /*---(get arguments)------------------*/
@@ -1151,7 +1150,7 @@ CALC__rtrim        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__strim        (void)
 {
    /*---(get arguments)------------------*/
@@ -1168,7 +1167,7 @@ CALC__strim        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__etrim        (void)
 {
    /*---(get arguments)------------------*/
@@ -1185,7 +1184,7 @@ CALC__etrim        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__mtrim        (void)
 {
    /*---(get arguments)------------------*/
@@ -1202,7 +1201,7 @@ CALC__mtrim        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__printstr     (void)
 {
    /*---(get arguments)------------------*/
@@ -1218,7 +1217,7 @@ CALC__printstr     (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.010.22]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__printnum     (void)
 {
    int         x_len       = 0;
@@ -1237,7 +1236,7 @@ CALC__printnum     (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__formula      (void)
 {
    /*---(get arguments)------------------*/
@@ -1253,7 +1252,7 @@ CALC__formula      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rpn          (void)
 {
    /*---(get arguments)------------------*/
@@ -1269,7 +1268,7 @@ CALC__rpn          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.000.43]*/ /*-[11.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__lpad         (void)
 {
    /*---(get arguments)------------------*/
@@ -1294,7 +1293,7 @@ CALC__lpad         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.000.43]*/ /*-[11.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rpad         (void)
 {
    /*---(get arguments)------------------*/
@@ -1319,7 +1318,7 @@ CALC__rpad         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.630.000.43]*/ /*-[11.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__lppad        (void)
 {
    /*---(get arguments)------------------*/
@@ -1345,7 +1344,7 @@ CALC__lppad        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.630.000.43]*/ /*-[11.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rppad        (void)
 {
    /*---(get arguments)------------------*/
@@ -1371,7 +1370,7 @@ CALC__rppad        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__value        (void)
 {
    /*---(get arguments)------------------*/
@@ -1388,7 +1387,7 @@ CALC__value        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__salpha       (void)
 {
    /*---(get arguments)------------------*/
@@ -1405,7 +1404,7 @@ CALC__salpha       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__salphac      (void)
 {
    /*---(get arguments)------------------*/
@@ -1422,7 +1421,7 @@ CALC__salphac      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__salnum       (void)
 {
    /*---(get arguments)------------------*/
@@ -1439,7 +1438,7 @@ CALC__salnum       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__salnumc      (void)
 {
    /*---(get arguments)------------------*/
@@ -1456,7 +1455,7 @@ CALC__salnumc      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sbasic       (void)
 {
    /*---(get arguments)------------------*/
@@ -1473,7 +1472,7 @@ CALC__sbasic       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sbasicc      (void)
 {
    /*---(get arguments)------------------*/
@@ -1490,7 +1489,7 @@ CALC__sbasicc      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__swrite       (void)
 {
    /*---(get arguments)------------------*/
@@ -1507,7 +1506,7 @@ CALC__swrite       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__swritec      (void)
 {
    /*---(get arguments)------------------*/
@@ -1524,7 +1523,7 @@ CALC__swritec      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sexten       (void)
 {
    /*---(get arguments)------------------*/
@@ -1541,7 +1540,7 @@ CALC__sexten       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sextenc      (void)
 {
    /*---(get arguments)------------------*/
@@ -1558,7 +1557,7 @@ CALC__sextenc      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sprint       (void)
 {
    /*---(get arguments)------------------*/
@@ -1575,7 +1574,7 @@ CALC__sprint       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sprintc      (void)
 {
    /*---(get arguments)------------------*/
@@ -1592,7 +1591,7 @@ CALC__sprintc      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sseven       (void)
 {
    /*---(get arguments)------------------*/
@@ -1609,7 +1608,7 @@ CALC__sseven       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.000.12]*/ /*-[10.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__ssevenc      (void)
 {
    /*---(get arguments)------------------*/
@@ -1626,7 +1625,7 @@ CALC__ssevenc      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.010.42]*/ /*-[20.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__find         (void)
 {
    char       *rcp         = NULL;
@@ -1648,7 +1647,7 @@ CALC__find         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.530.000.43]*/ /*-[30.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__replace      (void)
 {
    /*---(get arguments)------------------*/
@@ -1673,7 +1672,7 @@ CALC__replace      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ leaf   [fv.210.000.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__prev         (void)
 {
    /*---(complete)-----------------------*/
@@ -1698,7 +1697,7 @@ CALC__prev         (void)
 
 PRIV void  o___MATH____________o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.010.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__power        (void)
 {
    int   i = 0;
@@ -1710,7 +1709,7 @@ CALC__power        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__abs           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1718,7 +1717,7 @@ CALC__abs           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.330.010.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rtrunc        (void)
 {
    int i = 0;
@@ -1731,7 +1730,7 @@ CALC__rtrunc        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__trunc         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1739,7 +1738,7 @@ CALC__trunc         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.330.010.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rround        (void)
 {
    int i = 0;
@@ -1752,7 +1751,7 @@ CALC__rround        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__round         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1760,7 +1759,7 @@ CALC__round         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__ceiling       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1768,7 +1767,7 @@ CALC__ceiling       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__floor         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1776,14 +1775,14 @@ CALC__floor         (void)
    return;
 }
 
-PRIV void       /* PURPOSE : rand between n-m, not just 0-1 ---------------*/
+PRIV void    /*-> rand between 0-1 -------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rand          (void)
 {
    CALC_pushval (__FUNCTION__, (double) rand());
    return;
 }
 
-PRIV void       /* PURPOSE : rand between n-m, not just 0-1 ---------------*/
+PRIV void    /*-> rand between n-m -------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__randr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1792,7 +1791,7 @@ CALC__randr         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sqrt          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1800,7 +1799,7 @@ CALC__sqrt          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__cbrt          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1808,7 +1807,7 @@ CALC__cbrt          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sqr           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1816,7 +1815,7 @@ CALC__sqr           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__cube          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1832,7 +1831,7 @@ CALC__cube          (void)
 
 PRIV void  o___TRIG____________o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.07.--]-*/ /*-[--.---.---.--]-*/
 CALC__degrees       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1840,7 +1839,7 @@ CALC__degrees       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__radians       (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1848,14 +1847,14 @@ CALC__radians       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__pi            (void)
 {
    CALC_pushval (__FUNCTION__, 3.1415927);
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__hypot         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1864,7 +1863,7 @@ CALC__hypot         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__side          (void)
 {
    b = CALC__popval (__FUNCTION__, ++s_narg);
@@ -1873,7 +1872,7 @@ CALC__side          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.010.12]*/ /*-[00.0000.03.--]-*/ /*-[--.---.---.--]-*/
 CALC__sin           (void)
 {
    int i;
@@ -1885,7 +1884,7 @@ CALC__sin           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sinr          (void)
 {
    CALC__degrees ();
@@ -1893,7 +1892,7 @@ CALC__sinr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.04]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__csc           (void)
 {
    CALC__sin     ();
@@ -1904,7 +1903,7 @@ CALC__csc           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__cscr          (void)
 {
    CALC__degrees ();
@@ -1912,7 +1911,7 @@ CALC__cscr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.010.12]*/ /*-[00.0000.02.--]-*/ /*-[--.---.---.--]-*/
 CALC__cos           (void)
 {
    int i;
@@ -1924,7 +1923,7 @@ CALC__cos           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__cosr          (void)
 {
    CALC__degrees ();
@@ -1932,7 +1931,7 @@ CALC__cosr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.04]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__sec           (void)
 {
    CALC__cos     ();
@@ -1943,7 +1942,7 @@ CALC__sec           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__secr          (void)
 {
    CALC__degrees ();
@@ -1951,7 +1950,7 @@ CALC__secr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.010.12]*/ /*-[00.0000.02.--]-*/ /*-[--.---.---.--]-*/
 CALC__tan           (void)
 {
    int i;
@@ -1963,7 +1962,7 @@ CALC__tan           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__tanr          (void)
 {
    CALC__degrees ();
@@ -1971,7 +1970,7 @@ CALC__tanr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.04]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__cot           (void)
 {
    CALC__tan     ();
@@ -1982,7 +1981,7 @@ CALC__cot           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__cotr          (void)
 {
    CALC__degrees ();
@@ -1990,7 +1989,7 @@ CALC__cotr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.03]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__crd           (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2001,7 +2000,7 @@ CALC__crd           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__crdr          (void)
 {
    CALC__degrees ();
@@ -2009,7 +2008,7 @@ CALC__crdr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__asin          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2017,7 +2016,7 @@ CALC__asin          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__asinr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2025,7 +2024,7 @@ CALC__asinr         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__acos          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2033,7 +2032,7 @@ CALC__acos          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__acosr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2041,7 +2040,7 @@ CALC__acosr         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__atan          (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2049,7 +2048,7 @@ CALC__atan          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__atanr         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2057,7 +2056,7 @@ CALC__atanr         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__atan2         (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2066,7 +2065,7 @@ CALC__atan2         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__atanr2        (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2082,7 +2081,7 @@ CALC__atanr2        (void)
 /*====================------------------------------------====================*/
 PRIV void  o___ADDRESS_________o () { return; }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.850.470.77]*/ /*-[01.0000.05.--]-*/ /*-[--.---.---.--]-*/
 CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2121,7 +2120,7 @@ CALC__offset        (char *a_func, int a_tab, int a_col, int a_row)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__offs          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2131,7 +2130,7 @@ CALC__offs          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__index         (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2140,7 +2139,7 @@ CALC__index         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__offt          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2148,7 +2147,7 @@ CALC__offt          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__offc          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2156,7 +2155,7 @@ CALC__offc          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__offr          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2164,7 +2163,7 @@ CALC__offr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.320.16]*/ /*-[01.0000.0A.--]-*/ /*-[--.---.---.--]-*/
 CALC__loc_driver    (short a_tab, short a_col, short a_row)
 {
    char   rc;
@@ -2181,7 +2180,7 @@ CALC__loc_driver    (short a_tab, short a_col, short a_row)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__loc           (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2191,7 +2190,7 @@ CALC__loc           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__loci          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2200,7 +2199,7 @@ CALC__loci          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__loct          (void)
 {
    o = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2208,7 +2207,7 @@ CALC__loct          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__locc          (void)
 {
    m = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2216,7 +2215,7 @@ CALC__locc          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__locr          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2224,7 +2223,7 @@ CALC__locr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__loco          (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2234,7 +2233,7 @@ CALC__loco          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__locoi         (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2243,7 +2242,7 @@ CALC__locoi         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__locot         (void)
 {
    o = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2251,7 +2250,7 @@ CALC__locot         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__lococ         (void)
 {
    m = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2259,7 +2258,7 @@ CALC__lococ         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__locor         (void)
 {
    n = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2267,7 +2266,7 @@ CALC__locor         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.740.250.34]*/ /*-[01.0000.04.--]-*/ /*-[--.---.---.--]-*/
 SHARED__address    (char *a_func, char a_type)
 {
    char   rc;
@@ -2300,7 +2299,7 @@ SHARED__address    (char *a_func, char a_type)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.010.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__addr          (void)
 {
    tCELL *x_base;
@@ -2310,7 +2309,7 @@ CALC__addr          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.120.32]*/ /*-[01.0000.0B.--]-*/ /*-[--.---.---.--]-*/
 CALC__cell          (char a_type)
 {
    tCELL *x_base;
@@ -2325,14 +2324,14 @@ CALC__cell          (char a_type)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__isnum         (void)
 {
    CALC__cell ('n');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.010.15]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__isfor         (void)
 {
    tCELL *x_base;
@@ -2352,7 +2351,7 @@ CALC__isfor         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.640.010.25]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__isval         (void)
 {
    tCELL *x_base;
@@ -2380,7 +2379,7 @@ CALC__isval         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.640.010.25]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__iscalc        (void)
 {
    tCELL *x_base;
@@ -2408,21 +2407,21 @@ CALC__iscalc        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__isstr         (void)
 {
    CALC__cell ('s');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__ismod         (void)
 {
    CALC__cell ('m');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.010.15]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__istext        (void)
 {
    tCELL *x_base;
@@ -2442,28 +2441,28 @@ CALC__istext        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__iserror       (void)
 {
    CALC__cell ('E');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__islike        (void)
 {
    CALC__cell ('l');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__isblank       (void)
 {
    CALC__cell ('-');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.010.15]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__ispoint       (void)
 {
    tCELL *x_base;
@@ -2483,28 +2482,28 @@ CALC__ispoint       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__me            (void)
 {
    CALC_pushstr (__FUNCTION__, s_me->label);
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__filename      (void)
 {
    CALC_pushstr (__FUNCTION__, my.f_title);
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__filebase      (void)
 {
    CALC_pushstr (__FUNCTION__, my.f_name);
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.000.04]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__tabname       (void)
 {
    SHARED__address (__FUNCTION__, 't');
@@ -2514,25 +2513,25 @@ CALC__tabname       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__tab           (void)
 {  SHARED__address (__FUNCTION__, 't');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__col           (void)
 {  SHARED__address (__FUNCTION__, 'c');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__row           (void)
 {  SHARED__address (__FUNCTION__, 'r');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.010.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__nreq          (void)
 {
    tCELL *x_base;
@@ -2542,7 +2541,7 @@ CALC__nreq          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.010.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__npro          (void)
 {
    tCELL *x_base;
@@ -2552,7 +2551,7 @@ CALC__npro          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.220.010.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__nrpn          (void)
 {
    tCELL *x_base;
@@ -2562,7 +2561,7 @@ CALC__nrpn          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.33]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__reqs          (void)
 {
    tCELL *x_base;
@@ -2577,7 +2576,7 @@ CALC__reqs          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.33]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__pros          (void)
 {
    tCELL *x_base;
@@ -2599,7 +2598,7 @@ static short   s_etab     = 0;
 static short   s_ecol     = 0;
 static short   s_erow     = 0;
 
-static char
+static char  /*-> tbd --------------------------------[ leaf   [fe.843.145.40]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 SHARED__rangeparse (char *a_func)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2638,7 +2637,7 @@ SHARED__rangeparse (char *a_func)
    return 0;
 }
 
-PRIV void        /* PURPOSE : total the numeric cells in a range ----------*/
+PRIV void    /*-> total the numeric cells in range ---[ ------ [fv.850.290.22]*/ /*-[01.0000.04.--]-*/ /*-[--.---.---.--]-*/
 SHARED__rangestat  (char *a_func, char a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2674,25 +2673,25 @@ SHARED__rangestat  (char *a_func, char a_type)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__dist          (void)
 {  SHARED__rangestat (__FUNCTION__, 'd');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__tabs          (void)
 {  SHARED__rangestat (__FUNCTION__, 't');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__cols          (void)
 {  SHARED__rangestat (__FUNCTION__, 'c');
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rows          (void)
 {  SHARED__rangestat (__FUNCTION__, 'r');
    return;
@@ -2719,7 +2718,7 @@ PRIV void  o___LOGIC___________o () { return; }
  *
  */
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__if            (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2730,7 +2729,7 @@ CALC__if            (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.23]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__ifs           (void)
 {
    r = CALC__popstr (__FUNCTION__, ++s_narg);
@@ -2741,7 +2740,7 @@ CALC__ifs           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__within        (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2752,7 +2751,7 @@ CALC__within        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.000.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__approx        (void)
 {
    a = CALC__popval (__FUNCTION__, ++s_narg);
@@ -2776,14 +2775,14 @@ PRIV void  o___TIME____________o () { return; }
  *                        DAYS360
  */
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.210.000.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__now           (void)
 {
    CALC_pushval (__FUNCTION__, time(NULL));
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__year          (void)
 {
    char temp[100];
@@ -2794,7 +2793,7 @@ CALC__year          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__month         (void)
 {
    char temp[100];
@@ -2805,7 +2804,7 @@ CALC__month         (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__day           (void)
 {
    char temp[100];
@@ -2816,7 +2815,7 @@ CALC__day           (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__hour          (void)
 {
    char temp[100];
@@ -2827,7 +2826,7 @@ CALC__hour          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__minute        (void)
 {
    char temp[100];
@@ -2838,7 +2837,7 @@ CALC__minute        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__second        (void)
 {
    char temp[100];
@@ -2849,7 +2848,7 @@ CALC__second        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__weekday       (void)
 {
    char temp[100];
@@ -2860,7 +2859,7 @@ CALC__weekday       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__weeknum       (void)
 {
    char temp[100];
@@ -2871,7 +2870,7 @@ CALC__weeknum       (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.320.020.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__daynum        (void)
 {
    char temp[100];
@@ -2882,7 +2881,7 @@ CALC__daynum        (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.D80.0A0.A3]*/ /*-[05.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__timevalue     (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2946,7 +2945,7 @@ CALC__timevalue     (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.750.050.53]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__date          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2978,7 +2977,7 @@ CALC__date          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.040.02]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__time          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2998,7 +2997,7 @@ CALC__time          (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.430.030.02]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__datepart      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3018,7 +3017,7 @@ CALC__datepart      (void)
    return;
 }
 
-PRIV void
+PRIV void    /*-> tbd --------------------------------[ ------ [fv.420.020.03]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__timepart      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3054,7 +3053,7 @@ PRIV void  o___RANGE___________o () { return; }
  *
  */
 
-PRIV void        /* PURPOSE : total the numeric cells in a range ----------*/
+PRIV void    /*-> total the numeric cells in range ---[ ------ [fv.B73.140.92]*/ /*-[03.0000.0D.--]-*/ /*-[--.---.---.--]-*/
 SHARED__gather     (char *a_func)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3107,7 +3106,7 @@ SHARED__gather     (char *a_func)
    return;
 }
 
-PRIV void    /*--> find max of all numeric cells in range [ ------ [ ------ ]-*/
+PRIV void    /*-> find max of all numeric cells in ra [ leaf   [fv.A52.040.70]*/ /*-[03.0000.02.--]-*/ /*-[--.---.---.--]-*/
 CALC__rangesort    (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3155,8 +3154,7 @@ CALC__rangesort    (void)
    return;
 }
 
-
-PRIV void    /*--> total all numeric cells in a range ----[ ------ [ ------ ]-*/
+PRIV void    /*-> total all numeric cells in a range  [ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__sum          (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3166,7 +3164,7 @@ CALC__sum          (void)
    return;
 }
 
-PRIV void    /*--> count all numeric cells in a range ----[ ------ [ ------ ]-*/
+PRIV void    /*-> count all numeric cells in a range  [ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__count        (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3176,7 +3174,7 @@ CALC__count        (void)
    return;
 }
 
-PRIV void    /*--> count all filled cells in a range -----[ ------ [ ------ ]-*/
+PRIV void    /*-> count all filled cells in a range --[ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__counts       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3186,7 +3184,7 @@ CALC__counts       (void)
    return;
 }
 
-PRIV void    /*--> count all filled cells in a range -----[ ------ [ ------ ]-*/
+PRIV void    /*-> count all filled cells in a range --[ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__counta       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3196,7 +3194,7 @@ CALC__counta       (void)
    return;
 }
 
-PRIV void    /*--> count non-filled cells in a range -----[ ------ [ ------ ]-*/
+PRIV void    /*-> count non-filled cells in a range --[ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__countb       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3206,7 +3204,7 @@ CALC__countb       (void)
    return;
 }
 
-PRIV void    /*--> count non-filled cells in a range -----[ ------ [ ------ ]-*/
+PRIV void    /*-> count non-filled cells in a range --[ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__counte       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3216,7 +3214,7 @@ CALC__counte       (void)
    return;
 }
 
-PRIV void    /*--> average all numeric cells in a range --[ ------ [ ------ ]-*/
+PRIV void    /*-> average all numeric cells in a rang [ ------ [fv.311.000.32]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__average      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3229,7 +3227,7 @@ CALC__average      (void)
    return;
 }
 
-PRIV void    /*--> find min of all numeric cells in range [ ------ [ ------ ]-*/
+PRIV void    /*-> find min of all numeric cells in ra [ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__minimum      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3239,7 +3237,7 @@ CALC__minimum      (void)
    return;
 }
 
-PRIV void    /*--> find max of all numeric cells in range [ ------ [ ------ ]-*/
+PRIV void    /*-> find max of all numeric cells in ra [ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__maximum      (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3249,7 +3247,7 @@ CALC__maximum      (void)
    return;
 }
 
-PRIV void    /*--> find max of all numeric cells in range [ ------ [ ------ ]-*/
+PRIV void    /*-> find max of all numeric cells in ra [ ------ [fv.211.000.12]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__range        (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3261,7 +3259,7 @@ CALC__range        (void)
 
 double    q1, q2, q3, qr;
 
-PRIV void    /*--> find the quartile values --------------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the quartile values -----------[ ------ [fv.JC3.090.43]*/ /*-[01.0000.04.--]-*/ /*-[--.---.---.--]-*/
 CALC__quarters     (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3356,7 +3354,7 @@ CALC__quarters     (void)
    return;
 }
 
-PRIV void    /*--> find the interquartile range ----------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the interquartile range -------[ ------ [fv.321.000.12]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__quarter1     (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3371,7 +3369,7 @@ CALC__quarter1     (void)
    return;
 }
 
-PRIV void    /*--> find the interquartile range ----------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the interquartile range -------[ ------ [fv.311.000.12]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__median       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3385,7 +3383,7 @@ CALC__median       (void)
    return;
 }
 
-PRIV void    /*--> find the interquartile range ----------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the interquartile range -------[ ------ [fv.311.000.12]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__quarter3     (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3399,7 +3397,7 @@ CALC__quarter3     (void)
    return;
 }
 
-PRIV void    /*--> find the interquartile range ----------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the interquartile range -------[ ------ [fv.311.000.12]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__rangeq       (void)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -3413,7 +3411,7 @@ CALC__rangeq       (void)
    return;
 }
 
-PRIV void    /*--> find the most common value ------------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the most common value ---------[ ------ [fv.952.070.43]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__mode         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3458,7 +3456,7 @@ CALC__mode         (void)
    return;
 }
 
-PRIV void    /*--> find the measure of variance ----------[ ------ [ ------ ]-*/
+PRIV void    /*-> find the measure of variance -------[ ------ [fv.A52.070.22]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__stddev       (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3513,7 +3511,7 @@ CALC__stddev       (void)
 /*====================------------------------------------====================*/
 PR void  o___SPREADSHEET_____o () { return; }
 
-PRIV void        /* PURPOSE : search left column in range for string ------*/
+PRIV void    /*-> search left column in range --------[ ------ [fv.A71.030.E7]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__vlookup      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3561,7 +3559,7 @@ CALC__vlookup      (void)
    return;
 }
 
-PRIV void        /* PURPOSE : search left column in range for string ------*/
+PRIV void    /*-> search left column in range --------[ ------ [fv.A71.030.D7]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__hlookup      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3609,7 +3607,7 @@ CALC__hlookup      (void)
    return;
 }
 
-PRIV void        /* PURPOSE : search left column in range for string ------*/
+PRIV void    /*-> search left column in range --------[ ------ [fv.741.030.64]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC__entry        (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3911,7 +3909,7 @@ struct  cFUNCS {
    { "END"        ,  0, NULL                    , '-', ""       , '-', ""                                                  , "" , ""            , ""            , ""            },
 };
 
-char         /*--> initialize calculation capability -----[ shoot- [--------]-*/
+char         /*-> initialize calculation capability --[ shoot  [gz.CA0.071.B3]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 CALC_init            (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -3970,7 +3968,7 @@ CALC_init            (void)
    return 0;
 }
 
-tCALC*       /*--> create a new calculation entry --------[ leaf-- [ ------ ]-*/
+tCALC*       /*-> create a new calculation entry -----[ leaf   [gp.740.222.40]*/ /*-[11.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC_new           (tCELL *a_curr, tCALC  *a_tail)
 {
    /*---(locals)-----------+-----------+-*/
@@ -4002,7 +4000,7 @@ CALC_new           (tCELL *a_curr, tCALC  *a_tail)
    return new;
 }
 
-char         /*--> free an existing calculation ----------[ seed-- [ ------ ]-*/
+char         /*-> free an existing calculation -------[ leaf   [gc.420.122.30]*/ /*-[21.0000.41.--]-*/ /*-[--.---.---.--]-*/
 CALC_free          (tCELL *a_cell)
 {
    tCALC   *curr = a_cell->calc;
@@ -4018,7 +4016,7 @@ CALC_free          (tCELL *a_cell)
    return 0;
 }
 
-char         /*--> evaluate a calculation ----------------[ branch [ ------ ]-*/
+char         /*-> evaluate a calculation -------------[ ------ [ge.J95.146.A6]*/ /*-[02.0000.20.--]-*/ /*-[--.---.---.--]-*/
 CALC_eval          (tCELL *a_curr)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -4109,7 +4107,7 @@ CALC_eval          (tCELL *a_curr)
    return 0;
 }
 
-char         /*--> handle ranges in rpn ------------------[ leaf-- [ ------ ]-*/
+char         /*-> handle ranges in rpn ---------------[ ------ [ge.D94.1C#.B2]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC_range         (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell owning the calculation                  */
@@ -4171,7 +4169,7 @@ CALC_range         (
    return 0;
 }
 
-char         /*--> verify a well formed pointer ----------[ seed-- [ ------ ]-*/
+char         /*-> verify a well formed pointer -------[ leaf   [ge.G76.12#.B0]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CALC_checkpointer  (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell)     /* cell to interpret                            */
@@ -4251,7 +4249,7 @@ CALC_checkpointer  (
    return  --rce;
 }
 
-char         /*--> interpret a pointer -------------------[ leaf-- [ ------ ]-*/
+char         /*-> interpret a pointer ----------------[ leaf   [ge.I97.17#.C0]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC_pointer       (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell owning the calculation                  */
@@ -4337,7 +4335,7 @@ CALC_pointer       (
    return --rce;
 }
 
-char         /*--> clear an existing calculation ---------[ leaf-- [ ------ ]-*/
+char         /*-> clear an existing calculation ------[ ------ [gz.320.101.22]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC_cleanse       (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell)     /* cell owning the calculation                  */
@@ -4352,7 +4350,7 @@ CALC_cleanse       (
    return 0;
 }
 
-char*        /*--> parse a calculation string ------------[ leaf-- [ ------ ]-*/
+char*        /*-> parse a calculation string ---------[ leaf   [gs.D80.166.A0]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC_strtok        (char *a_str)
 {
    /*---(locals)-----------+-----------+-*/
@@ -4414,7 +4412,7 @@ CALC_strtok        (char *a_str)
    return x_str + x_pos;
 }
 
-char         /*--> build a new calculation ---------------[ branch [ ------ ]-*/
+char         /*-> build a new calculation ------------[ leaf   [ge.#QA.1Q#.XA]*/ /*-[04.0000.10.--]-*/ /*-[--.---.---.--]-*/
 CALC_build         (tCELL *a_cell)
 {
    DEBUG_CALC   yLOG_enter   (__FUNCTION__);
@@ -4655,7 +4653,7 @@ CALC_build         (tCELL *a_cell)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [fc.320.112.20]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 CALC__find_fcat      (char a_fcat)
 {
    int         i           =    0;
@@ -4666,7 +4664,7 @@ CALC__find_fcat      (char a_fcat)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [fe.D90.326.#0]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__func_func      (char *a_func, char *a_terms, char *a_show)
 {
    /*---(locals)-----------+-----------+-*/
@@ -4729,7 +4727,7 @@ CALC__func_func      (char *a_func, char *a_terms, char *a_show)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [fe.C60.32#.F0]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CALC__func_oper      (char *a_oper, char *a_terms, char *a_show)
 {
    /*---(locals)-----------+-----------+-*/
@@ -4785,7 +4783,7 @@ CALC__func_oper      (char *a_oper, char *a_terms, char *a_show)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.750.030.51]*/ /*-[03.0000.10.--]-*/ /*-[--.---.---.--]-*/
 CALC_func_list       (void)
 {
    /*---(locals)-----------+-----------+-*/

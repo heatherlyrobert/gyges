@@ -18,7 +18,7 @@ PREP          v21  include the prototype headers                              
 SCRP          v21  (FILE  ) verify version control                              FILE_controlled, FILE_control, FILE_nocontrol                           ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    GROUP      v21  check main function                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -96,7 +96,7 @@ SCRP          v21  (FILE  ) verify version control                            
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -105,7 +105,7 @@ SCRP          v21  (FILE  ) verify version control                            
 SCRP          v21  (FILE  ) verify version number setting                       FILE_version                                                            ((02.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    GROUP      v21  check before controlled                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -302,7 +302,7 @@ SCRP          v21  (FILE  ) verify version number setting                     
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -311,7 +311,7 @@ SCRP          v21  (FILE  ) verify version number setting                     
 SCRP          v21  (FILE  ) verify version bumping                              FILE_bump, FILE_bump_major, FILE_bump_minor, FILE_bump_inc              ((03.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    GROUP      v21  bump increment                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -462,7 +462,7 @@ SCRP          v21  (FILE  ) verify version bumping                            
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -471,7 +471,7 @@ SCRP          v21  (FILE  ) verify version bumping                            
 SCRP          v21  (FILE  ) verify version control descriptions                 FILE_vertxt                                                             ((04.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    GROUP      v21  check main function                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -560,7 +560,7 @@ SCRP          v21  (FILE  ) verify version control descriptions               
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -569,7 +569,7 @@ SCRP          v21  (FILE  ) verify version control descriptions               
 SCRP          v21  (FILE  ) verify tab reading from files                       INPT_tab                                                                ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  review tab information (defaults)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  get tab info                         LOC__unit             "tab_info"     , "0a1"                                                  s_equal     LOC tab info (0) : tab_00       0a1     0a1     0a1     0z100   0                                    
@@ -677,7 +677,7 @@ SCRP          v21  (FILE  ) verify tab reading from files                     
      get      v21  get tab info                         LOC__unit             "tab_info"     , "4a1"                                                  s_equal     LOC tab info (4) : else         4a1     4a1     4a1     4t20    0                                    
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -686,7 +686,7 @@ SCRP          v21  (FILE  ) verify tab reading from files                     
 SCRP          v21  (FILE  ) verify tab writing to files                         OUTP_tab                                                                ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  review tab information (defaults)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  get tab info                         LOC__unit             "tab_info"     , "0a1"                                                  s_equal     LOC tab info (0) : tab_00       0a1     0a1     0a1     0z100   0                                    
@@ -897,7 +897,7 @@ SCRP          v21  (FILE  ) verify tab writing to files                       
      echo     v21  get output record                    - - - - - - - - - -   ""                                                                      s_equal     [[ my.f_recd ]]                                                                                   0   
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -906,7 +906,7 @@ SCRP          v21  (FILE  ) verify tab writing to files                       
 SCRP          v21  (FILE  ) verify column reading from files                    INPT_col                                                                ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  start simple                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  call the tab handler                 INPT_col              "0a1"          , 5                                                      i_equal     0                                                                                                    
@@ -941,7 +941,7 @@ SCRP          v21  (FILE  ) verify column reading from files                  
      get      v21  get tab info                         LOC__unit             "loc_col"      , "0d4"                                                  s_equal     LOC col stats    : tab=   0, col=   3, width = 100, used=   0                                        
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -950,7 +950,7 @@ SCRP          v21  (FILE  ) verify column reading from files                  
 SCRP          v21  (FILE  ) verify column writing to files                      OUTP_col                                                                ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      exec     v21  resize the third tab                 LOC_tab_resize        "2az100"                                                                i_equal     0                                                                                                    
      exec     v21  resize the fourth tab                LOC_tab_resize        "3az100"                                                                i_equal     0                                                                                                    
 
@@ -1134,7 +1134,7 @@ SCRP          v21  (FILE  ) verify column writing to files                    
      exec     v21  write all columns                    OUTP_cols             NULL                                                                    i_equal     3                                                                                                    
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
 
 

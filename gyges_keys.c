@@ -98,7 +98,7 @@ static char   wref  [20];
 static char   wref2 [20];
 static char   wsave [LEN_RECD];
 
-char
+char         /*-> tbd --------------------------------[ shoot  [gz.633.011.20]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 KEYS_init          (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -128,7 +128,7 @@ KEYS_init          (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gz.420.121.11]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 KEYS_record        (char a_curr)
 {
    /*---(locals)-----------+-----------+-*/
@@ -148,7 +148,7 @@ KEYS_record        (char a_curr)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.430.151.10]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 KEYS_status        (char *a_msg)
 {
    /*---(locals)-----------+-----------+-*/
@@ -164,13 +164,7 @@ KEYS_status        (char *a_msg)
    return 0;
 }
 
-char
-KEYS_modes         (
-      )
-{
-}
-
-char         /*--> process basic movements ---------------[--------[--------]-*/
+char         /*-> process basic movements ------------[ ------ [ge.B72.223.54]*/ /*-[01.0000.41.--]-*/ /*-[--.---.---.--]-*/
 KEYS_basics        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -223,7 +217,7 @@ KEYS_basics        (char a_major, char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.KB2.235.84]*/ /*-[03.0000.21.--]-*/ /*-[--.---.---.--]-*/
 KEYS_gz_family     (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -322,7 +316,7 @@ KEYS_gz_family     (char a_major, char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.KE2.243.86]*/ /*-[03.0000.11.--]-*/ /*-[--.---.---.--]-*/
 KEYS_e_family      (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -418,7 +412,7 @@ KEYS_e_family      (char a_major, char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.LC2.233.64]*/ /*-[05.0000.01.--]-*/ /*-[--.---.---.--]-*/
 KEYS_c_family      (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -522,7 +516,7 @@ KEYS_c_family      (char a_major, char a_minor)
    return 0;
 }
 
-char         /*--> process keystrokes in map mode --------[--------[--------]-*/
+char         /*-> process keystrokes in map mode -----[ ------ [ge.933.233.33]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 KEYS_regbasic       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -566,8 +560,8 @@ KEYS_regbasic       (char a_major, char a_minor)
    return 0;
 }
 
-char         /*--> accumulate multiplier -----------------[--------[--------]-*/
-SMOD_repeat        (char a_major, char a_minor)
+char         /*-> accumulate multiplier --------------[ ------ [ge.A43.214.63]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+UMOD_repeat        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -612,11 +606,9 @@ SMOD_repeat        (char a_major, char a_minor)
    return a_minor;
 }
 
-char         /*--> check for repeat active -------------[ ------ [----------]-*/
-SMOD_repeat_done     (void)  { if (my.repeat < 1) return 0; else return 1; }
+char UMOD_repeat_done     (void)  { if (my.repeat < 1) return 0; else return 1; }
 
-
-char         /*--> process keystrokes in normal mode -----[--------[--------]-*/
+char         /*-> process keystrokes in normal mode --[ leaf   [ge.#X9.22#.NP]*/ /*-[05.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MODE_map           (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -880,14 +872,14 @@ MODE_map           (char a_major, char a_minor)
    return 0;
 }
 
-char         /*--> process keystrokes in visual mode -----[--------[--------]-*/
+char         /*-> process keystrokes in visual mode --[ leaf   [gz.210.201.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 KEYS_visual   (int a_prev, int a_curr)
 {
    /*---(complete)------------------------------*/
    return 0;
 }
 
-PRIV char       /* PURPOSE : remove the current character -----------------*/
+PRIV char    /*-> remove the current character -------[ ------ [fc.630.114.62]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 KEYS__del          (char a_key)
 {
    int       i    = 0;                       /* loop iterator                 */
@@ -917,7 +909,7 @@ KEYS__del          (char a_key)
    return 0;
 }
 
-char          /* PURPOSE : process keys for buffer movement ------------------*/
+char         /*-> process keys for buffer movement ---[ leaf   [ge.F64.217.CA]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 SMOD_buffer   (char a_major, char a_minor)
 {
    /*---(design notes)-------------------*/
@@ -985,14 +977,14 @@ SMOD_buffer   (char a_major, char a_minor)
    }
    /*---(exit mode)----------------------*/
    CURS_screen_reset  ();
-   DEBUG_USER   yLOG_value   ("done"      , SMOD_repeat_done ());
-   if (SMOD_repeat_done () == 0)  yVIKEYS_mode_exit  ();
+   DEBUG_USER   yLOG_value   ("done"      , UMOD_repeat_done ());
+   if (UMOD_repeat_done () == 0)  yVIKEYS_mode_exit  ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
-char          /*-> menu sub-mode -------------------------[--------[--------]-*/
+char         /*-> menu sub-mode ----------------------[ ------ [ge.943.234.55]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 SMOD_menus         (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1044,7 +1036,7 @@ SMOD_menus         (char a_major, char a_minor)
 /*====================------------------------------------====================*/
 PRIV void  o___CONTENT_________o () { return; }
 
-char          /* PURPOSE : process keys for cell edit mode -------------------*/
+char         /*-> process keys for cell edit mode ----[ leaf   [ge.#R6.23#.HG]*/ /*-[05.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MODE_source   (char a_major, char a_minor)
 {
    /*---(design notes)-------------------*/
@@ -1230,7 +1222,7 @@ MODE_source   (char a_major, char a_minor)
    return 0;
 }
 
-char         /*--> replace sub-mode ----------------------[--------[--------]-*/
+char         /*-> replace sub-mode -------------------[ ------ [ge.RG6.25#.E5]*/ /*-[02.0000.11.--]-*/ /*-[--.---.---.--]-*/
 SMOD_replace  (char a_major, char a_minor)
 {  /*---(design notes)-------------------*/
    /*
@@ -1365,7 +1357,7 @@ SMOD_replace  (char a_major, char a_minor)
    return a_major;
 }
 
-char         /*--> review cell errors --------------------[--------[--------]-*/
+char         /*-> review cell errors -----------------[ ------ [ge.933.236.32]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 SMOD_error         (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1406,7 +1398,7 @@ SMOD_error         (char a_major, char a_minor)
    return a_major;
 }
 
-char               /* PURPOSE : process keys for input mode ------------------*/
+char         /*-> process keys for input mode --------[ ------ [ge.TQ5.25#.F9]*/ /*-[03.0000.12.--]-*/ /*-[--.---.---.--]-*/
 MODE_input         (char  a_major, char  a_minor)
 {
    /*---(design notes)-------------------*/
@@ -1551,13 +1543,13 @@ MODE_input         (char  a_major, char  a_minor)
    return a_major;
 }
 
-char       /*----: process keys for god mode ---------------------------------*/
+char         /*-> process keys for god mode ----------[ leaf   [gz.210.201.00]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MODE_god           (char a_prev, char a_curr)
 {
    return 0;
 }
 
-char       /*----: process keys for formatting sub-mode ----------------------*/
+char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 SMOD_format        (char a_major, char a_minor)
 {
    /*---(check for control keys)---------*/
@@ -1667,7 +1659,7 @@ SMOD_format        (char a_major, char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.320.000.02]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 KEYS_unlock        (void)
 {
    FR_COL  = '-';
@@ -1694,7 +1686,7 @@ char        CMDS_start           (void) { strncpy     (s_command , ":", LEN_RECD
 char        CMDS_clear           (void) { strncpy     (s_command , "" , LEN_RECD); return 0; }
 char*       CMDS_current         (void) { return s_command; }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 CMDS_execute       (char *a_command)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1891,7 +1883,7 @@ CMDS_execute       (char *a_command)
    return 0;
 }
 
-char       /*----: process keys for input/append mode ------------------------*/
+char         /*-> process keys for input/append mode  [ ------ [gc.LE5.266.I3]*/ /*-[05.0000.10.--]-*/ /*-[--.---.---.--]-*/
 CMDS_mode          (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1995,8 +1987,7 @@ CMDS_mode          (char a_major, char a_minor)
    return 0;
 }
 
-
-char       /*----: process keys for wander mode ------------------------------*/
+char         /*-> process keys for wander mode -------[ ------ [ge.FE0.223.65]*/ /*-[05.0000.10.--]-*/ /*-[--.---.---.--]-*/
 SMOD_wander        (char a_prev, char a_curr)
 {
    /*---(design notes)-------------------*/
@@ -2074,7 +2065,7 @@ SMOD_wander        (char a_prev, char a_curr)
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
 
-char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.310.111.10]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 CMDS__unit         (char *a_question)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2089,7 +2080,7 @@ CMDS__unit         (char *a_question)
    return unit_answer;
 }
 
-char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.420.111.11]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 KEYS__unit         (char *a_question)
 {
    /*---(locals)-----------+-----------+-*/

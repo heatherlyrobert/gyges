@@ -24,7 +24,7 @@ SECT          v21  keyboard macros                                            
 SCRP          v21  (scrp  ) verify macro basics                                 MACRO_reset, MACRO_name_valid, MACRO_fetch, MACRO_save                  ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize the testing environment                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  start testing                        PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  start testing                        PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  check default settings                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  initialize                           MACRO_init                                                                                    i_equal     0                                                                                                    
@@ -224,7 +224,7 @@ SCRP          v21  (scrp  ) verify macro basics                               
      get      v21  check the globals                    MACRO_unit            "curr"         , '@'                                                    s_equal     macro curr   (e) : - 0  -1 00   0:                                                                   
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  stop testing                         PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  stop testing                         PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -233,7 +233,7 @@ SCRP          v21  (scrp  ) verify macro basics                               
 SCRP          v21  (scrp  ) verify individual recording functions               MACRO_record_beg, _add, _end                                            ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize the testing environment                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  start testing                        PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  start testing                        PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  check default settings                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  initialize                           MACRO_init                                                                                    i_equal     0                                                                                                    
@@ -390,7 +390,7 @@ SCRP          v21  (scrp  ) verify individual recording functions             
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  stop testing                         PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  stop testing                         PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -399,7 +399,7 @@ SCRP          v21  (scrp  ) verify individual recording functions             
 SCRP          v21  (scrp  ) verify individual execution functions               MACRO_exec_beg, _key, _adv, _end                                        ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize the testing environment                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  start testing                        PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  start testing                        PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  check default settings                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  initialize                           MACRO_init                                                                                    i_equal     0                                                                                                    
@@ -481,7 +481,7 @@ SCRP          v21  (scrp  ) verify individual execution functions             
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  stop testing                         PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  stop testing                         PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -490,7 +490,7 @@ SCRP          v21  (scrp  ) verify individual execution functions             
 SCRP          v21  (scrp  ) record and execute a macro through main             PROG_main_input, PROG_main_handle                                       ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize the testing environment                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  start testing                        PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  start testing                        PROG__unitquiet                                                                               i_equal     0                                                                                                    
      code     v21  create a input variable              - - - - - - - - - -   char   x_char = '-';                                                                                                                                                                         
 
    COND       v21  check default settings                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -812,7 +812,7 @@ SCRP          v21  (scrp  ) record and execute a macro through main           
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  stop testing                         PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  stop testing                         PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 

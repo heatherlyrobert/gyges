@@ -85,7 +85,7 @@ SCRP          v21  (dep   ) one-way dependency creation and destruction       
      code     v21  create a pointer to the last dep     - - - - - - - - - -   void *x_tail = NULL;                                                                                                                                                                         
 
    COND       v21  (DLL00) verify program setup initializes                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -202,7 +202,7 @@ SCRP          v21  (dep   ) one-way dependency creation and destruction       
      get      v21  review the deps linked list links    DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   1, fore=   1, back=   1                                                    
 
    COND       v21  (DLL18) verify program teardown purges                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the linked list               DEP_unit              "dep_pointers"   ,  "root"                                              s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -213,7 +213,7 @@ SCRP          v21  (dep   ) one-way dependency creation and destruction       
 SCRP          v21  (dep   ) two-way dependency creation and destruction         DEP_create, DEP_delete, DEP_disp_reqs, DEP_disp_pros, DEP_check         ((03.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
@@ -491,7 +491,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 1) ,root,                                                                 
 
    COND       v21  verify program teardown purges                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
@@ -503,7 +503,7 @@ SCRP          v21  (dep   ) two-way dependency creation and destruction       
 SCRP          v21  (dep   ) managing merge dependencies (non-visual)            CELL_merge, CELL__merge_left, CELL__merge_right, DEP_unmerge, ...       ((04.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -600,7 +600,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  check a simple two cell merge                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  change second cell to a merge symbol                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_2nd, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_2nd, "<"                                                              i_equal     0                                                                                                    
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -685,7 +685,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
      exec     v21  add a cell                           CELL_change           &x_4th, CHG_INPUT, 0,  8,  5, "4th"                                     i_pass      0                                                                                                    
 
    COND       v21  change 4th cell to a merge symbol                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_4th, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_4th, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_lesser    0                                                                                                    
@@ -737,7 +737,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
      exec     v21  add a cell                           CELL_change           &x_5th, CHG_INPUT, 0,  9,  5, "5th"                                     i_pass      0                                                                                                    
 
    COND       v21  change 5th cell to a merge symbol                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_5th, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_5th, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_lesser    0                                                                                                    
@@ -781,7 +781,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  merge them all                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  update 3rd to a merge symbol                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_3rd, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_3rd, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_lesser    0                                                                                                    
@@ -825,7 +825,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  break an existing merge with content change                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  update 2nd to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_2nd, "2nd"                                                            i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_2nd, "2nd"                                                            i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_lesser    0                                                                                                    
@@ -869,7 +869,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  clip the cell from the end                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  update 5th to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.057))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_5th, "5th"                                                            i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_5th, "5th"                                                            i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.058))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_lesser    0                                                                                                    
@@ -913,7 +913,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  create severe broken merge situations                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  update 1st to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.064))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_1st, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_1st, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.065))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_equal     0                                                                                                    
@@ -949,7 +949,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
      get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
 
    COND       v21  update 2nd to a merge marker (headless merge)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.070))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_2nd, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_2nd, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge validities                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.071))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  check merge validity  (1st)          CELL__merge_valid     x_1st                                                                   i_equal     0                                                                                                    
@@ -993,7 +993,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  jump into the merge and fix it                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  update 3rd to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.077))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_3rd, "3rd"                                                            i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_3rd, "3rd"                                                            i_equal     0                                                                                                    
 
    COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.078))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  merge function                       CELL_unmerge          x_3rd                                                                   i_equal     0                                                                                                    
@@ -1014,7 +1014,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
      get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
 
    COND       v21  update 5th to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.081))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_5th, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_5th, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge at current cell                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.082))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  merge function                       CELL_merge            x_5th                                                                   i_equal     0                                                                                                    
@@ -1035,7 +1035,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
      get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                                                 
 
    COND       v21  update 1st to real contents                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.085))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_1st, "1st"                                                            i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_1st, "1st"                                                            i_equal     0                                                                                                    
 
    COND       v21  check unmerge at current cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.086))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  merge function                       CELL_unmerge          x_1st                                                                   i_equal     0                                                                                                    
@@ -1058,7 +1058,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
    GROUP      v21  finish with a bang (all five merged)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  update 3rd to a merge marker                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.089))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  change the cell source only          CELL_unitchange       x_3rd, "<"                                                              i_equal     0                                                                                                    
+     exec     v21  change the cell source only          CELL__unitchange      x_3rd, "<"                                                              i_equal     0                                                                                                    
 
    COND       v21  check merge at current cell                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.090))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  merge function                       CELL_merge            x_3rd                                                                   i_equal     0                                                                                                    
@@ -1079,7 +1079,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
      get      v21  check the cell's info (5th)          CELL__unitnew         "cell_info"      , "0j6"                                                s_equal     s_celln info     : t=+ f=+ d=0 a=+ c=  0 r=  0 d=  1                                                 
 
    COND       v21  verify program teardown purges                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.093))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
@@ -1091,7 +1091,7 @@ SCRP          v21  (dep   ) managing merge dependencies (non-visual)          
 SCRP          v21  (dep   ) range dependency creation and destruction           DEP_range, DEP_cleanse                                                  ((05.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -1112,7 +1112,7 @@ SCRP          v21  (dep   ) range dependency creation and destruction         
      exec     v21  add a cell                           CELL_change           &x_6th, CHG_INPUT, 0,  7,  6, "6th"                                     i_pass      0                                                                                                    
      exec     v21  add a cell                           CELL_change           &x_7th, CHG_INPUT, 0,  8,  8, "7th"                                     i_pass      0                                                                                                    
      exec     v21  add a cell                           CELL_change           &x_8th, CHG_INPUT, 0,  9,  9, "8th"                                     i_pass      0                                                                                                    
-     get      v21  review the cell counts               unit_accessor         "cell_count"     ,  NULL                                                s_equal     Cell Links Count : n=   6, f=   6, b=   6                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count"     ,  NULL                                                s_equal     Cell Links Count : n=   6, f=   6, b=   6                                                            
 
    COND       v21  review all cell connections                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 0) .                                                                      
@@ -1493,7 +1493,7 @@ SCRP          v21  (dep   ) range dependency creation and destruction         
      get      v21  review the provides 8th              DEP_unit              "cell_provides"  ,  "0j10"                                              s_equal     s_dep provides   : 0j10  ( 0) .                                                                      
 
    COND       v21  verify program teardown purges                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -1504,7 +1504,7 @@ SCRP          v21  (dep   ) range dependency creation and destruction         
 SCRP          v21  (dep   ) two-way dependency creation using formulas          DEP_create, DEP_delete, DEP_disp_reqs, DEP_disp_pros, DEP_check         ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup initializes                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -1518,18 +1518,18 @@ SCRP          v21  (dep   ) two-way dependency creation using formulas        
 
    COND       v21  create the four cells                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  add a cell                           CELL_change           &x_1st, CHG_INPUT, 0,  5,  5, "one"                                     i_pass      0                                                                                                    
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_1st                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
+     get      v21  check the cell's information         PROG__unit         "cell_info",     x_1st                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
      exec     v21  add a cell                           CELL_change           &x_2nd, CHG_INPUT, 0,  5,  6, "two"                                     i_pass      0                                                                                                    
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_2nd                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
+     get      v21  check the cell's information         PROG__unit         "cell_info",     x_2nd                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
      exec     v21  add a cell                           CELL_change           &x_3rd, CHG_INPUT, 0,  6,  5, "three"                                   i_pass      0                                                                                                    
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_3rd                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
+     get      v21  check the cell's information         PROG__unit         "cell_info",     x_3rd                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
      exec     v21  add a cell                           CELL_change           &x_4th, CHG_INPUT, 0,  6,  6, "four"                                    i_pass      0                                                                                                    
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_4th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
+     get      v21  check the cell's information         PROG__unit         "cell_info",     x_4th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
      exec     v21  add a cell                           CELL_change           &x_5th, CHG_INPUT, 0,  7,  7, "five"                                    i_pass      0                                                                                                    
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_5th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
+     get      v21  check the cell's information         PROG__unit         "cell_info",     x_5th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
      exec     v21  add a cell                           CELL_change           &x_9th, CHG_INPUT, 0, 10, 10, "nine"                                    i_pass      0                                                                                                    
-     get      v21  check the cell's information         unit_accessor         "cell_info",     x_9th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
-     get      v21  review the cell counts               unit_accessor         "cell_count"     ,  NULL                                                s_equal     Cell Links Count : n=   6, f=   6, b=   6                                                            
+     get      v21  check the cell's information         PROG__unit         "cell_info",     x_9th                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                                                 
+     get      v21  review the cell counts               PROG__unit         "cell_count"     ,  NULL                                                s_equal     Cell Links Count : n=   6, f=   6, b=   6                                                            
 
    COND       v21  review all cell connections (NONE)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  review the requires root             DEP_unit              "cell_requires"  ,  "root"                                              s_equal     s_dep requires   : root  ( 0) .                                                                      
@@ -1768,7 +1768,7 @@ SCRP          v21  (dep   ) two-way dependency creation using formulas        
      get      v21  review the provides 9th              DEP_unit              "cell_provides"  ,  "0k11"                                              s_equal     s_dep provides   : 0k11  ( 1) ,root,                                                                 
 
    COND       v21  verify program teardown purges                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the linked list               DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)                                          
      get      v21  review the link counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=   0, fore=   0, back=   0                                                    
 
@@ -1779,7 +1779,7 @@ SCRP          v21  (dep   ) two-way dependency creation using formulas        
 SCRP          v21  (dep   ) verify calculation sequencing                       SEQ__clear, SEQ__add, SEQ__del, SEQ_calc_up, SEQ_calc_down              ((07.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    GROUP      v21  first, setup cells in a calculation tree                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -2054,7 +2054,7 @@ SCRP          v21  (dep   ) verify calculation sequencing                     
      get      v21  review total calc count              DEP_unit              "calc_counts"    ,  "root"                                              s_equal     s_dep calc count : 003 01   01 02                                                                    
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 

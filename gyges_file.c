@@ -85,7 +85,7 @@ char FILE_bump_major    (void)  { return FILE_bump ("M"); }
 char FILE_bump_minor    (void)  { return FILE_bump ("m"); }
 char FILE_bump_inc      (void)  { return FILE_bump ("i"); }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.C70.13#.E1]*/ /*-[02.0000.03.--]-*/ /*-[--.---.---.--]-*/
 FILE_bump          (char *a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -147,7 +147,7 @@ FILE_bump          (char *a_type)
 char FILE_control       (void)  { return FILE_controlled ("y"); }
 char FILE_nocontrol     (void)  { return FILE_controlled ("n"); }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.520.103.41]*/ /*-[02.0000.02.--]-*/ /*-[--.---.---.--]-*/
 FILE_controlled    (char *a_yes)
 {
    FILE_vertxt (NULL);
@@ -168,7 +168,7 @@ FILE_controlled    (char *a_yes)
    return -1;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.880.13#.G1]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 FILE_version       (char *a_ver)
 {
    /*---(locals)-----------+-----------+-*/
@@ -208,7 +208,7 @@ FILE_version       (char *a_ver)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.330.114.30]*/ /*-[00.0000.03.--]-*/ /*-[--.---.---.--]-*/
 FILE_vertxt        (char *a_txt)
 {
    char        rce         =  -10;
@@ -220,7 +220,7 @@ FILE_vertxt        (char *a_txt)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gc.C55.124.30]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 FILE_rename          (char *a_name)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -286,7 +286,7 @@ FILE_rename          (char *a_name)
 /*====================------------------------------------====================*/
 PRIV void  o___HISTORY_________o () { return; }
 
-char         /*--> clear out the history -----------------[--------[--------]-*/
+char         /*-> clear out the history --------------[ leaf   [gz.530.011.00]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 HIST_clear         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -307,7 +307,7 @@ HIST_clear         (void)
    return 0;
 }
 
-char         /*--> record a cell change ------------------[--------[--------]-*/
+char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
 HIST_change        (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_type,     /* type of formatting                           */
@@ -331,7 +331,7 @@ HIST_change        (
    return 0;
 }
 
-char         /*--> record a cell change ------------------[--------[--------]-*/
+char         /*-> record a cell change ---------------[ leaf   [gz.620.101.00]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 HIST_overwrite     (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_type,     /* type of formatting                           */
@@ -357,7 +357,7 @@ HIST_overwrite     (
    return 0;
 }
 
-char         /*--> record a cell change ------------------[--------[--------]-*/
+char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.30.--]-*/ /*-[--.---.---.--]-*/
 HIST_format        (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_type,     /* type of formatting                           */
@@ -381,7 +381,7 @@ HIST_format        (
    return 0;
 }
 
-char         /*--> record a cell change ------------------[--------[--------]-*/
+char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 HIST_size          (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_type,     /* type of sizing                               */
@@ -405,7 +405,7 @@ HIST_size          (
    return 0;
 }
 
-char         /*--> take a change away --------------------[--------[--------]-*/
+char         /*-> take a change away -----------------[ leaf   [gc.J76.043.IA]*/ /*-[03.0000.11.--]-*/ /*-[--.---.---.--]-*/
 HIST_undo          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -500,7 +500,7 @@ HIST_undo          (void)
    return 0;
 }
 
-char         /*--> put a change back ---------------------[--------[--------]-*/
+char         /*-> put a change back ------------------[ leaf   [gc.B61.042.EA]*/ /*-[02.0000.11.--]-*/ /*-[--.---.---.--]-*/
 HIST_redo          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -554,7 +554,7 @@ HIST_redo          (void)
    return 0;
 }
 
-char         /*--> list history --------------------------[--------[--------]-*/
+char         /*-> list history -----------------------[ leaf   [ge.740.042.20]*/ /*-[03.0000.10.--]-*/ /*-[--.---.---.--]-*/
 HIST_list          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -613,7 +613,7 @@ static void   o___TABS____________o (void) { return; }
  *
  */
 
-char         /*--> process a tab size record -------------[ leaf   [ ------ ]-*/
+char         /*-> process a tab size record ----------[ ------ [ge.943.354.35]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_tab           (char *a_label, char *a_name, char a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -656,7 +656,7 @@ INPT_tab           (char *a_label, char *a_name, char a_type)
    return 0;
 }
 
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+char         /*-> write file tab information ---------[ ------ [ge.960.195.59]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_tab             (short a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -697,7 +697,7 @@ OUTP_tab             (short a_tab)
    return 0;
 }
 
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+char         /*-> write file tab information ---------[ leaf   [ge.320.113.10]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_tab_head        (FILE *a_file)
 {
    /*---(locals)-----------+-----------+-*/
@@ -712,7 +712,7 @@ OUTP_tab_head        (FILE *a_file)
    return 0;
 }
 
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+char         /*-> write file tab information ---------[ leaf   [ge.420.213.30]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_tab_foot        (FILE *a_file, int a_count)
 {
    /*---(locals)-----------+-----------+-*/
@@ -728,7 +728,7 @@ OUTP_tab_foot        (FILE *a_file, int a_count)
    return 0;
 }
 
-int          /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+int          /*-> write file tab information ---------[ ------ [gn.430.131.23]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_tabs            (FILE *a_file)
 {
    int i = 0;
@@ -752,7 +752,7 @@ OUTP_tabs            (FILE *a_file)
 /*====================------------------------------------====================*/
 static void   o___COLUMNS_________o (void) { return; }
 
-char         /*--> process a column width record ---------[ leaf   [ ------ ]-*/
+char         /*-> process a column width record ------[ ------ [ge.733.253.22]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_col           (char *a_label, int a_size)
 {
    /*---(locals)-----------+-----------+-*/
@@ -787,7 +787,7 @@ INPT_col           (char *a_label, int a_size)
    return 0;
 }
 
-char         /*--> write file col information ------------[ leaf   [ ------ ]-*/
+char         /*-> write file col information ---------[ ------ [ge.640.266.34]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_col             (short a_tab, short a_col)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -815,7 +815,7 @@ OUTP_col             (short a_tab, short a_col)
    return 1;
 }
 
-char         /*--> write file col header -----------------[ leaf   [ ------ ]-*/
+char         /*-> write file col header --------------[ leaf   [ge.320.113.10]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_col_head        (FILE *a_file)
 {
    /*---(locals)-----------+-----------+-*/
@@ -830,7 +830,7 @@ OUTP_col_head        (FILE *a_file)
    return 0;
 }
 
-char         /*--> write file col footer -----------------[ leaf   [ ------ ]-*/
+char         /*-> write file col footer --------------[ leaf   [ge.420.213.20]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_col_foot        (FILE *a_file, int a_count)
 {
    /*---(locals)-----------+-----------+-*/
@@ -846,7 +846,7 @@ OUTP_col_foot        (FILE *a_file, int a_count)
    return 0;
 }
 
-int          /*--> write file col section ----------------[ leaf   [ ------ ]-*/
+int          /*-> write file col section -------------[ ------ [gn.440.141.23]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_cols            (FILE *a_file)
 {
    int i = 0;
@@ -883,7 +883,7 @@ PRIV void  o___CELLS___________o () { return; }
  *
  */
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.F75.3A6.86]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_cell          (char *a_label, char *a_format, char *a_source)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -956,7 +956,7 @@ INPT_cell          (char *a_label, char *a_format, char *a_source)
    return 0;
 }
 
-char         /*--> write a single cell to a file ---------[ leaf   [ ------ ]-*/
+char         /*-> write a single cell to a file ------[ leaf   [ge.630.514.50]*/ /*-[02.0000.12.--]-*/ /*-[--.---.---.--]-*/
 OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
@@ -982,7 +982,7 @@ OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL 
    return 0;
 }
 
-char         /*--> write file dependent cells ------------[ leaf   [ ------ ]-*/
+char         /*-> write file dependent cells ---------[ ------ [gz.420.411.51]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 OUTP_cell_dep      (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1001,7 +1001,7 @@ OUTP_cell_dep      (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)
    return 0;
 }
 
-char         /*--> write file independent cells ----------[ left   [ ------ ]-*/
+char         /*-> write file independent cells -------[ ------ [ge.9A0.86#.I4]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1050,7 +1050,7 @@ OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
 /*====================------------------------------------====================*/
 static void   o___READ____________o (void) { return; }
 
-char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
+char         /*-> open file for reading and prep -----[ leaf   [ge.723.023.20]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_open          ()
 {
    /*---(locals)-----------+-----------+-*/
@@ -1082,7 +1082,7 @@ INPT_open          ()
    return 0;
 }
 
-char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
+char         /*-> open file for reading and prep -----[ leaf   [gz.421.001.00]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_prep          (void)
 {
    /*---(header)-------------------------*/
@@ -1100,7 +1100,7 @@ INPT_prep          (void)
    return 0;
 }
 
-char         /*--> open file for reading and prep --------[ leaf   [ ------ ]-*/
+char         /*-> open file for reading and prep -----[ ------ [gz.421.001.06]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_done          (void)
 {
    /*---(header)-------------------------*/
@@ -1120,7 +1120,7 @@ INPT_done          (void)
    return 0;
 }
 
-char         /*--> close file for reading and wrap -------[ flower [ ------ ]-*/
+char         /*-> close file for reading and wrap ----[ leaf   [ge.411.011.20]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_close         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1139,7 +1139,7 @@ INPT_close         (void)
    return 0;
 }
 
-char         /* file reading driver ----------------------[--------[--------]-*/
+char         /*-> file reading driver ----------------[ leaf   [ge.632.025.30]*/ /*-[01.0001.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_read          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1169,7 +1169,7 @@ INPT_read          (void)
    return 0;
 }
 
-char         /* file reading driver ----------------------[--------[--------]-*/
+char         /*-> file reading driver ----------------[ leaf   [ge.851.163.30]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 INPT_parse         (cchar *a_recd)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1208,7 +1208,7 @@ INPT_parse         (cchar *a_recd)
    return 0;
 }
 
-char         /* file reading driver ----------------------[--------[--------]-*/
+char         /*-> file reading driver ----------------[ leaf   [ge.C71.072.GA]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 INPT_main          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1274,7 +1274,7 @@ INPT_main          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___WRITE___________o () { return; }
 
-char         /*--> write file header ---------------------[ leaf   [ ------ ]-*/
+char         /*-> write file header ------------------[ leaf   [ge.850.154.20]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 OUTP_header        (FILE *a_file)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1311,7 +1311,7 @@ OUTP_header        (FILE *a_file)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.C71.093.38]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 FILE_write         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1368,7 +1368,7 @@ FILE_write         (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.320.121.32]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 FILE_writeas         (char *a_name)
 {
    char        rc          =    0;
@@ -1387,7 +1387,7 @@ FILE_writeas         (char *a_name)
 /*====================------------------------------------====================*/
 PRIV void  o___UNIT_TEST_______o () { return; }
 
-char*        /*> unit test accessor ----------------------[ ------ [ ------ ]-*/
+char*        /*-> unit test accessor -----------------[ ------ [gs.950.221.M1]*/ /*-[03.0000.00.--]-*/ /*-[--.---.---.--]-*/
 FILE_unit          (char *a_question, int a_ref)
 {
    /*---(locals)-----------+-----------+-*/

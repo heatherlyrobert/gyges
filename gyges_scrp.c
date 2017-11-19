@@ -11,7 +11,7 @@
 /*====================------------------------------------====================*/
 PRIV void  o___PROGRAM_________o () { return; }
 
-char          /*-> initialize macro environment --------- [ whorl  [ ------ ]-*/
+char         /*-> initialize macro environment -------[ shoot  [gz.210.001.01]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_init           (void)
 {
    MACRO_reset ();
@@ -26,7 +26,7 @@ MACRO_init           (void)
 /*====================------------------------------------====================*/
 PRIV void  o___UTILITY_________o () { return; }
 
-char          /*-> check macro name for correctness ----- [ leaf   [ ------ ]-*/
+char         /*-> check macro name for correctness ---[ leaf   [ge.320.114.30]*/ /*-[00.0000.05.--]-*/ /*-[--.---.---.--]-*/
 MACRO_name_valid     (char a_name)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -39,7 +39,7 @@ MACRO_name_valid     (char a_name)
    return rce;
 }
 
-char          /*-> fully reset macro mode --------------- [ leaf   [ ------ ]-*/
+char         /*-> fully reset macro mode -------------[ leaf   [gz.532.011.00]*/ /*-[00.0000.18.--]-*/ /*-[--.---.---.--]-*/
 MACRO_reset          (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -70,7 +70,7 @@ MACRO_reset          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___SAVING__________o () { return; }
 
-char          /*-> save current recording --------------- [ whorl  [ ------ ]-*/
+char         /*-> save current recording -------------[ ------ [ge.631.052.22]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MACRO_save           (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -99,7 +99,7 @@ MACRO_save           (void)
    return 0;
 }
 
-char          /*-> fetch specific macro keystrokes ------ [ whorl  [ ------ ]-*/
+char         /*-> fetch specific macro keystrokes ----[ ------ [ge.A52.134.63]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 MACRO_fetch          (char a_name)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -153,7 +153,7 @@ MACRO_fetch          (char a_name)
 /*====================------------------------------------====================*/
 PRIV void  o___RECORD__________o () { return; }
 
-char          /*-> prepare a macro recording ------------ [ leaf   [ ------ ]-*/
+char         /*-> prepare a macro recording ----------[ ------ [ge.831.112.53]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 MACRO_record_beg     (char a_name)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -189,7 +189,7 @@ MACRO_record_beg     (char a_name)
    return 0;
 }
 
-char          /*-> add a key to a macro ----------------- [ leaf   [ ------ ]-*/
+char         /*-> add a key to a macro ---------------[ leaf   [gc.440.102.10]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_record_add     (char a_key)
 {
    IF_MACRO_RECORDING {
@@ -209,7 +209,7 @@ MACRO_record_add     (char a_key)
    return 0;
 }
 
-char          /*-> put keys in globals ------------------ [ whorl  [ ------ ]-*/
+char         /*-> put keys in globals ----------------[ leaf   [gz.530.101.60]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MACRO_record_addstr  (char *a_keys)
 {
    /*---(look for suffix)----------------*/
@@ -234,7 +234,7 @@ MACRO_record_addstr  (char *a_keys)
    return 0;
 }
 
-char          /*-> complete a macro recording ----------- [ leaf   [ ------ ]-*/
+char         /*-> complete a macro recording ---------[ ------ [gz.420.001.21]*/ /*-[02.0000.11.--]-*/ /*-[--.---.---.--]-*/
 MACRO_record_end     (void)
 {
    IF_MACRO_RECORDING {
@@ -253,7 +253,7 @@ MACRO_record_end     (void)
    return 0;
 }
 
-char          /*-> enter a macro directly --------------- [ whorl  [ ------ ]-*/
+char         /*-> enter a macro directly -------------[ ------ [ge.850.137.A4]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 MACRO_define         (char *a_string)
 {
    char        rce         =  -10;
@@ -297,7 +297,7 @@ MACRO_define         (char *a_string)
 /*====================------------------------------------====================*/
 PRIV void  o___EXECUTE_________o () { return; }
 
-char          /*-> set or adjust delay value ------------ [ whorl  [ ------ ]-*/
+char         /*-> set or adjust delay value ----------[ leaf   [gz.612.101.50]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 MACRO_delay_set      (char a_delay)
 {
    /*---(header)-------------------------*/
@@ -323,7 +323,7 @@ MACRO_delay_set      (char a_delay)
    return 0;
 }
 
-char          /*-> prepare a macro execution ------------ [ leaf   [ ------ ]-*/
+char         /*-> prepare a macro execution ----------[ ------ [ge.832.122.52]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 MACRO_exec_beg       (char a_name)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -360,7 +360,7 @@ MACRO_exec_beg       (char a_name)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gc.220.002.20]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_exec_adv       (void)
 {
    IF_MACRO_OFF   return 0;
@@ -370,7 +370,7 @@ MACRO_exec_adv       (void)
    return 0;
 }
 
-char          /*-> return current key in macro ---------- [ whorl  [ ------ ]-*/
+char         /*-> return current key in macro --------[ ------ [ge.A63.034.52]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_exec_key       (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -418,7 +418,7 @@ MACRO_exec_key       (void)
    return x_ch;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.340.102.21]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MACRO_exec_control   (char a_key)
 {
    if (a_key >= 0)  return 0;
@@ -433,7 +433,7 @@ MACRO_exec_control   (char a_key)
    return a_key;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gc.581.012.10]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_exec_wait      (void)
 {
    struct timespec x_delay;
@@ -458,7 +458,7 @@ MACRO_exec_wait      (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.A43.108.12]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_exec_playback  (char a_key)
 {
    IF_MACRO_OFF   return 0;
@@ -511,7 +511,7 @@ MACRO_exec_playback  (char a_key)
 /*====================------------------------------------====================*/
 PRIV void  o___MODE____________o () { return; }
 
-char          /*-> process macro sub-mode keys ---------- [ leaf   [ ------ ]-*/
+char         /*-> process macro sub-mode keys --------[ ------ [ge.H65.229.88]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MACRO_submode        (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -601,7 +601,7 @@ MACRO_submode        (char a_major, char a_minor)
 /*====================------------------------------------====================*/
 PRIV void  o___UNIT_TEST_______o () { return; }
 
-char*
+char*        /*-> tbd --------------------------------[ leaf   [gs.520.202.40]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 MACRO_unit           (char *a_question, char a_macro)
 {
    /*---(preprare)-----------------------*/

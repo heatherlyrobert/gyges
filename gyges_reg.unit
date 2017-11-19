@@ -24,7 +24,7 @@ SECT          v21  register handling                                          
 SCRP          v21  (REG   ) verify register naming                              REG__reg2index, REG__reg2tab, REG__tab2index                            ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize the testing environment                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  start testing                        PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  start testing                        PROG__unitquiet                                                                               i_equal     0                                                                                                    
      exec     v21  initialize registers                 REG_init                                                                                      i_equal     0                                                                                                    
 
    COND       v21  update reg name list for testing                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -87,7 +87,7 @@ SCRP          v21  (REG   ) verify register naming                            
      exec     v21  look up a register (too small)       REG__tab2index        MAX_TABS - 1                                                            i_lesser    0                                                                                                    
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     set      v21  stop testing                         PROG_testend                                                                                  i_equal     0                                                                                                    
+     set      v21  stop testing                         PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -96,7 +96,7 @@ SCRP          v21  (REG   ) verify register naming                            
 SCRP          v21  (REG   ) hooking and unhooking cells in registers            REG__hook, REG__unhook                                                  ((02.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      set      v21  change the register names            REG__setter           "reg_names"      , "ab"                                                 i_equal     0                                                                                                    
 
    COND       v21  setup testing variables                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -108,7 +108,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
    GROUP      v21  check defaults                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   0, f=   0, b=   0                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   0, f=   0, b=   0                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   0, head=%10p, tail=%10p", NULL , NULL );                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -142,7 +142,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  add a cell                           CELL__create          &x_1st, 0,  5,  5                                                       i_pass      0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   1, f=   1, b=   1                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   1, f=   1, b=   1                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   1, head=%10p, tail=%10p", x_1st, x_1st);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -176,7 +176,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  add a cell                           CELL__create          &x_2nd, 0,  7,  5                                                       i_pass      0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -210,7 +210,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  unhook a cell                        LOC_unhook            x_2nd                                                                   i_equal     0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -248,7 +248,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -282,7 +282,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  hook a cell to a buffer              REG__hook             x_2nd          , 'a', '-'                                               i_lesser    0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -316,7 +316,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  hook a cell to a buffer              REG__hook             x_1st          , 'a', '-'                                               i_lesser    0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -350,7 +350,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  unhook a cell                        LOC_unhook            x_1st                                                                   i_equal     0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -384,7 +384,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      exec     v21  hook a cell to a buffer              REG__hook             x_1st          , 'a', '-'                                               i_equal     0                                                                                                    
 
    COND       v21  check cell counts                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  review the cell counts               unit_accessor         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
+     get      v21  review the cell counts               PROG__unit         "cell_count",    NULL                                                   s_equal     Cell Links Count : n=   2, f=   2, b=   2                                                            
      code     v21  create a custom expect string        - - - - - - - - - -   sprintf (CUSTOM, "s_cell main list : num=   2, head=%10p, tail=%10p", x_1st, x_2nd);                                                                                                         
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   s_equal     [[ CUSTOM ]]                                                                                         
 
@@ -647,7 +647,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
    COND       v21  complete testing                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.081))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     set      v21  stop testing                         PROG_testend                                                                                  i_equal     0                                                                                                    
+     set      v21  stop testing                         PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -656,7 +656,7 @@ SCRP          v21  (REG   ) hooking and unhooking cells in registers          
 SCRP          v21  (REG   ) basic cut, copy, and paste using base register      REG_copy, REG_paste, VISU_set, CELL_change                              ((03.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -1981,7 +1981,7 @@ SCRP          v21  (REG   ) basic cut, copy, and paste using base register    
      get      v21  review the deps counts               DEP_unit              "dep_count"      , "root"                                               s_equal     s_dep count      : num=  16, fore=  16, back=  16                                                    
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.099))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -1992,7 +1992,7 @@ SCRP          v21  (REG   ) basic cut, copy, and paste using base register    
 SCRP          v21  (REG   ) verify data import column sizing                    REG__inpt_prep, REG__inpt_sizer, REG__inpt_width                        ((04.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  check specific columns                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the col                        LOC__unit             "loc_col"      , "0a1"                                                  s_equal     LOC col stats    : tab=   0, col=   0, width =   8, used=   0                                        
@@ -2227,7 +2227,7 @@ SCRP          v21  (REG   ) verify data import column sizing                  
      exec     v21  adjust a column                      REG__inpt_width       3              , 20                                                     i_lesser    0                                                                                                    
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -2236,7 +2236,7 @@ SCRP          v21  (REG   ) verify data import column sizing                  
 SCRP          v21  (REG   ) verify data import columnar values                  REG__inpt_values                                                        ((05.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  check specific columns                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the col                        LOC__unit             "loc_col"      , "0a1"                                                  s_equal     LOC col stats    : tab=   0, col=   0, width =   8, used=   0                                        
@@ -2308,7 +2308,7 @@ SCRP          v21  (REG   ) verify data import columnar values                
      get      v21  check the col                        LOC__unit             "loc_col"      , "0f1"                                                  s_equal     LOC col stats    : tab=   0, col=   5, width =   8, used=   0                                        
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -2317,7 +2317,7 @@ SCRP          v21  (REG   ) verify data import columnar values                
 SCRP          v21  (REG   ) verify data import delimited values                 REG__inpt_delims                                                        ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
 
    COND       v21  check specific columns                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      v21  check the col                        LOC__unit             "loc_col"      , "0a1"                                                  s_equal     LOC col stats    : tab=   0, col=   0, width =   8, used=   0                                        
@@ -2517,7 +2517,7 @@ SCRP          v21  (REG   ) verify data import delimited values               
      get      v21  check the col                        LOC__unit             "loc_col"      , "0f1"                                                  s_equal     LOC col stats    : tab=   0, col=   5, width =   8, used=   0                                        
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -2526,7 +2526,7 @@ SCRP          v21  (REG   ) verify data import delimited values               
 SCRP          v21  (REG   ) verify full import reads                            REG__inpt_driver                                                        ((07.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      code     v21  create a file object                 - - - - - - - - - -   FILE      *fCLIP     = NULL;                                                                                                                                                                 
 
    COND       v21  check specific columns                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -2543,7 +2543,7 @@ SCRP          v21  (REG   ) verify full import reads                          
      code     v21  close the file                       - - - - - - - - - -   fclose  (fCLIP);                                                                                                                                                                             
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
 
 
 
@@ -2695,7 +2695,7 @@ SHARED        v21  (A) common setup and verification for cut/copy testing     
 SCRP          v21  (REG   ) verify complex move [34] copy action (no paste)     REG_copy                                                                ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -2823,7 +2823,7 @@ SCRP          v21  (REG   ) verify complex move [34] copy action (no paste)   
    GROUP      v21  test complete                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -2834,7 +2834,7 @@ SCRP          v21  (REG   ) verify complex move [34] copy action (no paste)   
 SCRP          v21  (REG   ) verify complex move [00] cut action (no paste)      REG_cut                                                                 ((09.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -2962,7 +2962,7 @@ SCRP          v21  (REG   ) verify complex move [00] cut action (no paste)    
    GROUP      v21  test complete                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -2973,7 +2973,7 @@ SCRP          v21  (REG   ) verify complex move [00] cut action (no paste)    
 SCRP          v21  (REG   ) verify complex move [28] copy/paste merge actions   REG_copy, REG_paste                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3105,7 +3105,7 @@ SCRP          v21  (REG   ) verify complex move [28] copy/paste merge actions 
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3116,7 +3116,7 @@ SCRP          v21  (REG   ) verify complex move [28] copy/paste merge actions 
 SCRP          v21  (REG   ) verify complex move [20] copy/paste replace action  REG_copy, REG_paste                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3248,7 +3248,7 @@ SCRP          v21  (REG   ) verify complex move [20] copy/paste replace action
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3259,7 +3259,7 @@ SCRP          v21  (REG   ) verify complex move [20] copy/paste replace action
 SCRP          v21  (REG   ) verify complex move [12] cut/paste merge action     REG_cut, REG_paste                                                      ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3391,7 +3391,7 @@ SCRP          v21  (REG   ) verify complex move [12] cut/paste merge action   
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3402,7 +3402,7 @@ SCRP          v21  (REG   ) verify complex move [12] cut/paste merge action   
 SCRP          v21  (REG   ) verify complex move [04] cut/paste replace action   REG_cut, REG_paste                                                      ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3534,7 +3534,7 @@ SCRP          v21  (REG   ) verify complex move [04] cut/paste replace action 
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3545,7 +3545,7 @@ SCRP          v21  (REG   ) verify complex move [04] cut/paste replace action 
 SCRP          v21  (REG   ) verify complex move [32] copy/paste duplicate       REG_copy, REG_paste                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3677,7 +3677,7 @@ SCRP          v21  (REG   ) verify complex move [32] copy/paste duplicate     
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3688,7 +3688,7 @@ SCRP          v21  (REG   ) verify complex move [32] copy/paste duplicate     
 SCRP          v21  (REG   ) verify complex move [03] cut/move replace follow    REG_cut, REG_paste                                                      ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((15.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3820,7 +3820,7 @@ SCRP          v21  (REG   ) verify complex move [03] cut/move replace follow  
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3831,7 +3831,7 @@ SCRP          v21  (REG   ) verify complex move [03] cut/move replace follow  
 SCRP          v21  (REG   ) verify complex move [02] cut/move replace switch    REG_cut, REG_paste                                                      ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((16.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -3963,7 +3963,7 @@ SCRP          v21  (REG   ) verify complex move [02] cut/move replace switch  
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((16.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -3974,7 +3974,7 @@ SCRP          v21  (REG   ) verify complex move [02] cut/move replace switch  
 SCRP          v21  (REG   ) verify reference inside register test               REG_inside                                                              ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((15.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG_testquiet                                                                                i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -4087,7 +4087,7 @@ SCRP          v21  (REG   ) verify reference inside register test             
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((16.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG_testend                                                                                  i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 

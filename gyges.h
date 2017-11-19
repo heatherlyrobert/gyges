@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6n"
-#define     VER_TXT   "added relative tab moves to buffer mode, fixed repeat with sub-modes"
+#define     VER_NUM   "2.6o"
+#define     VER_TXT   "updated by HTAG v1.5o with amazing tags in headers"
 
 
 
@@ -856,11 +856,11 @@ char      PROG_layout_status   (char *a_opt);
 char      PROG_layout_command  (char *a_opt);
 char      PROG_layout_layout   (char *a_opt);
 
-char     *unit_accessor      (char *a_question, void *a_thing);
-char      PROG_testing       (void);
-char      PROG_testloud      (void);
-char      PROG_testquiet     (void);
-char      PROG_testend       (void);
+char     *PROG__unit          (char *a_question, void *a_thing);
+char      PROG__testing       (void);
+char      PROG__unitloud      (void);
+char      PROG__unitquiet     (void);
+char      PROG__unitend       (void);
 
 
 
@@ -1046,14 +1046,15 @@ char      MODE_map             (char  a_major, char  a_minor);
 char      MODE_source          (char  a_major, char  a_minor);
 char      MODE_input           (char  a_major, char  a_minor);
 /*---(sub-modes)------------*/
-char      SMOD_repeat          (char  a_major, char  a_minor);
-char      SMOD_repeat_done     (void);
 char      SMOD_buffer          (char  a_major, char  a_minor);
 char      SMOD_replace         (char  a_major, char  a_minor);
 char      SMOD_format          (char  a_major, char  a_minor);
 char      SMOD_wander          (char  a_major, char  a_minor);
 char      SMOD_error           (char  a_major, char  a_minor);
 char      SMOD_menus           (char  a_major, char  a_minor);
+/*---(micro-modes)----------*/
+char      UMOD_repeat          (char  a_major, char  a_minor);
+char      UMOD_repeat_done     (void);
 
 char      KEYS_init          (void);
 char      KEYS_record        (char  a_curr);
@@ -1244,7 +1245,7 @@ char        CELL_unmerge         (tCELL *a_curr);
 char        CELL_merge_visu      (void);
 char        CELL_unmerge_visu    (void);
 /*---(unit-testing)-------------------*/
-char        CELL_unitchange      (tCELL *a_cell, char *a_source);
+char        CELL__unitchange     (tCELL *a_cell, char *a_source);
 
 
 

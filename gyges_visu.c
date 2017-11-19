@@ -130,7 +130,7 @@ static tSELC  s_prev;
 /*====================------------------------------------====================*/
 static void  o___INIT____________o () { return; }
 
-char             /* clear all selections -----------------[ ------ [ ------ ]-*/
+char         /*-> clear all selections ---------------[ shoot  [gz.311.001.02]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 VISU_init          (void)
 {
    /*---(header)-------------------------*/
@@ -144,7 +144,7 @@ VISU_init          (void)
    return 0;
 }
 
-char         /*--> clear the selection -------------------[ leaf   [ ------ ]-*/
+char         /*-> clear the selection ----------------[ ------ [gz.742.001.13]*/ /*-[01.0000.74.--]-*/ /*-[--.---.---.--]-*/
 VISU_clear          (void)
 {
    /*---(header)-------------------------*/
@@ -186,7 +186,7 @@ VISU_clear          (void)
 /*====================------------------------------------====================*/
 static void  o___HISTORY_________o () { return; }
 
-char         /*--> save the selection --------------------[ leaf   [ ------ ]-*/
+char         /*-> save the selection -----------------[ leaf   [gz.742.001.00]*/ /*-[00.0000.02.--]-*/ /*-[--.---.---.--]-*/
 VISU_save          (void)
 {
    /*---(header)-------------------------*/
@@ -217,7 +217,7 @@ VISU_save          (void)
    return 0;
 }
 
-char         /*--> restore the selection -----------------[ leaf   [ ------ ]-*/
+char         /*-> restore the selection --------------[ ------ [gz.852.001.02]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 VISU_restore       (void)
 {
    /*---(header)-------------------------*/
@@ -262,7 +262,7 @@ VISU_restore       (void)
 /*====================------------------------------------====================*/
 static void  o___SETTING_________o () { return; }
 
-char             /* start the visual selection -----------[ twig   [ 121y9x ]-*/
+char         /*-> start the visual selection ---------[ ------ [ge.530.422.12]*/ /*-[00.0000.21.--]-*/ /*-[--.---.---.--]-*/
 VISU_start         (int a_tab, int a_col, int a_row, char a_mode)
 {
    /*---(locals)-----------+-----------+-*/
@@ -284,7 +284,7 @@ VISU_start         (int a_tab, int a_col, int a_row, char a_mode)
    return 0;
 }
 
-char             /* adjust the visual selection ----------[ twig   [ 231y9x ]-*/
+char         /*-> adjust the visual selection --------[ ------ [ge.760.324.D2]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 VISU_increase      (int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+-----------+-*/
@@ -316,7 +316,7 @@ VISU_increase      (int a_tab, int a_col, int a_row)
    return 0;
 }
 
-char             /* cursor update to visual selection ----[ twig   [ 121n0x ]-*/
+char         /*-> cursor update to visual selection --[ ------ [gc.412.312.11]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
 VISU_update        (int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+------+----+-*/
@@ -334,7 +334,7 @@ VISU_update        (int a_tab, int a_col, int a_row)
    return rc;
 }
 
-char         /*--> apply a specific selection ------------[ ------ [ ------ ]-*/
+char         /*-> apply a specific selection ---------[ ------ [ge.E54.125.43]*/ /*-[01.0000.21.--]-*/ /*-[--.---.---.--]-*/
 VISU_set           (
       /*----------+-----------+-----------------------------------------------*/
       int         a_tab,      /* tab of selection                             */
@@ -403,7 +403,7 @@ VISU_set           (
    return 0;
 }
 
-char         /*--> apply a specific selection ------------[ ------ [ ------ ]-*/
+char         /*-> apply a specific selection ---------[ ------ [ge.C64.087.63]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 VISU_mark            (void)
 {
    char        rce         =  -10;
@@ -461,7 +461,7 @@ VISU_mark            (void)
    return 0;
 }
 
-char         /*--> swap the corners ----------------------[ ------ [ ------ ]-*/
+char         /*-> swap the corners -------------------[ ------ [gz.530.001.22]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 VISU_reverse       (void)
 {
    /*---(change root)--------------------*/
@@ -488,7 +488,7 @@ VISU_reverse       (void)
 /*====================------------------------------------====================*/
 static void  o___DISPLAY_________o () { return; }
 
-char             /* indicate whether cell is the root ----[ leaf   [ 170n0x ]-*/
+char         /*-> indicate whether cell is the root --[ leaf   [gc.220.305.40]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 VISU_root          (int a_tab, int a_col, int a_row)
 {
    if (s_visu.live == VISU_NOT)    return 0;
@@ -498,7 +498,7 @@ VISU_root          (int a_tab, int a_col, int a_row)
    return 1;
 }
 
-char             /* indicate whether cell is selected ----[ leaf   [ 170n0x ]-*/
+char         /*-> indicate whether cell is selected --[ leaf   [gc.320.307.60]*/ /*-[00.0000.20.--]-*/ /*-[--.---.---.--]-*/
 VISU_selected      (int a_tab, int a_col, int a_row)
 {
    if (s_visu.live == VISU_NOT)    return 0;
@@ -517,16 +517,16 @@ VISU_selected      (int a_tab, int a_col, int a_row)
 /*====================------------------------------------====================*/
 static void  o___SIMPLIFIERS_____o () { return; }
 
-char       /*----: indicate whether a selection is active/live ---------------*/
+char         /*-> selection active or not ------------[ ------ [gc.B50.00#.D7]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 VISU_islive        (void) { if (s_visu.live == VISU_YES)  return 1; return 0; }
 
-char       /*----: simplifier for starting at current point ------------------*/
+char         /*-> start at current position ----------[ ------ [gc.B40.00#.C6]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 VISU_from          (void) { return VISU_start  (CTAB, CCOL, CROW, VISU_CUM); }
 
-char       /*----: convert to whole-column selection -------------------------*/
+char         /*-> convert to whole-column selection --[ ------ [gc.A40.009.C4]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 VISU_col           (void) { s_visu.brow = 0; s_visu.erow = LOC_row_max (s_visu.otab) - 1; return 0; }
 
-char       /*----: convert to whole-row selection ----------------------------*/
+char         /*-> convert to whole-row selection -----[ ------ [gc.A40.008.C2]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 VISU_row           (void) { s_visu.bcol = 0; s_visu.ecol = LOC_col_max (s_visu.otab) - 1; return 0; }
 
 
@@ -541,7 +541,7 @@ static void  o___RETRIEVAL_______o () { return; }
  *   and merging amoung others.  these are all interactive uses.
  */
 
-char         /*--> return selection range borders --------[ ------ [ ------ ]-*/
+char         /*-> return selection range borders -----[ leaf   [gc.730.107.C0]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
 VISU_range          (
       /*----------+-----------+-----------------------------------------------*/
       int        *a_tab,      /* return variable for tab                      */
@@ -572,7 +572,7 @@ VISU_range          (
    return 0;
 }
 
-tCELL*       /*--> return top-left cell in selection -----[-leaf---[--------]-*/
+tCELL*       /*-> return top-left cell in selection --[ ------ [gp.630.108.72]*/ /*-[01.0000.80.--]-*/ /*-[--.---.---.--]-*/
 VISU_first         (
       /*----------+-----------+-----------------------------------------------*/
       int        *a_tab,      /* return holder for tab of first cell          */
@@ -601,7 +601,7 @@ VISU_first         (
    return s_visu.curr;
 }
 
-tCELL*       /*--> return next cell in selection ---------[-leaf---[--------]-*/
+tCELL*       /*-> return next cell in selection ------[ ------ [gp.940.10#.C1]*/ /*-[01.0000.80.--]-*/ /*-[--.---.---.--]-*/
 VISU_next          (
       /*----------+-----------+-----------------------------------------------*/
       int        *a_tab,      /* return holder for tab of next cell           */
@@ -652,7 +652,7 @@ VISU_next          (
 /*====================------------------------------------====================*/
 static void  o___SELECT__________o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.220.001.00]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 SELC_clear         (void)
 {
    s_selc.live        = VISU_NOT;
@@ -662,7 +662,7 @@ SELC_clear         (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.220.001.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 SELC_save          (void)
 {
    s_prev.live        = VISU_NOT;
@@ -672,7 +672,7 @@ SELC_save          (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.220.001.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 SELC_restore       (void)
 {
    s_selc.live        = VISU_YES;
@@ -682,7 +682,7 @@ SELC_restore       (void)
    return 0;
 }
 
-char             /* start the visual selection -----------[ twig   [ 121y9x ]-*/
+char         /*-> start the visual selection ---------[ leaf   [ge.732.023.20]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 SELC_start         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -714,7 +714,7 @@ SELC_start         (void)
    return 0;
 }
 
-char             /* adjust the visual selection ----------[ twig   [ 231y9x ]-*/
+char         /*-> adjust the visual selection --------[ leaf   [ge.733.023.50]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 SELC_increase      (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -748,21 +748,21 @@ SELC_increase      (void)
    return 0;
 }
 
-char       /*----: indicate whether a selection is active/live ---------------*/
+char         /*-> selection active or not ------------[ leaf   [gc.210.002.20]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 SELC_islive        (void)
 {
    if (s_selc.live == VISU_YES)  return 1;
    else                          return 0;
 }
 
-int        /*----: simplifier for beginning ----------------------------------*/
+int          /*-> simplifier for beginning -----------[ leaf   [gn.210.002.20]*/ /*-[00.0000.40.--]-*/ /*-[--.---.---.--]-*/
 SELC_from          (void)
 {
    if (s_selc.live == VISU_YES)  return s_selc.bpos;
    else                          return my.cpos;
 }
 
-int        /*----: simplifier for ending -------------------------------------*/
+int          /*-> simplifier for ending --------------[ leaf   [gn.210.002.20]*/ /*-[00.0000.40.--]-*/ /*-[--.---.---.--]-*/
 SELC_to            (void)
 { 
    if (s_selc.live == VISU_YES)  return s_selc.epos;
@@ -776,7 +776,7 @@ SELC_to            (void)
 /*====================------------------------------------====================*/
 static void  o___MARK_PROG_______o () { return; }
 
-char          /*-> initialize all marks ----------------- [ leafy  [ ------ ]-*/
+char         /*-> initialize all marks ---------------[ shoot  [gz.311.001.01]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MARK_init            (void)
 {
    /*---(header)-------------------------*/
@@ -790,7 +790,7 @@ MARK_init            (void)
    return 0;
 }
 
-char          /*-> remove all marks --------------------- [ leafy  [ ------ ]-*/
+char         /*-> remove all marks -------------------[ ------ [gz.642.141.12]*/ /*-[01.0000.03.--]-*/ /*-[--.---.---.--]-*/
 MARK_purge           (char a_scope)
 {
    /*---(locals)-----------+-----------+-*/
@@ -820,7 +820,7 @@ MARK_purge           (char a_scope)
    return 0;
 }
 
-char          /*-> shutdown marks ----------------------- [ leafy  [ ------ ]-*/
+char         /*-> shutdown marks ---------------------[ shoot  [gz.311.001.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 MARK_wrap            (void)
 {
    /*---(header)-------------------------*/
@@ -839,7 +839,7 @@ MARK_wrap            (void)
 /*====================------------------------------------====================*/
 static void  o___MARK_BASICS_____o () { return; }
 
-char          /*-> check mark validity ------------------ [ leaf   [ ------ ]-*/
+char         /*-> check mark validity ----------------[ leaf   [ge.833.144.30]*/ /*-[01.0000.0A.--]-*/ /*-[--.---.---.--]-*/
 MARK_valid           (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
@@ -879,7 +879,7 @@ MARK_valid           (char a_mark)
    return x_index;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.A52.153.55]*/ /*-[01.0000.03.--]-*/ /*-[--.---.---.--]-*/
 MARK_set             (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
@@ -929,7 +929,7 @@ MARK_set             (char a_mark)
    return 0;
 }
 
-char          /*-> clear a mark ------------------------- [ leafy  [ ------ ]-*/
+char         /*-> clear a mark -----------------------[ ------ [ge.732.142.12]*/ /*-[01.0000.03.--]-*/ /*-[--.---.---.--]-*/
 MARK_unset           (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
@@ -961,7 +961,7 @@ MARK_unset           (char a_mark)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.E83.174.A7]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_return        (char a_mark)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1034,7 +1034,7 @@ MARK_return        (char a_mark)
 /*====================------------------------------------====================*/
 static void  o___MARK_FIND_______o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gc.430.022.40]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_which         (void)
 {
    int         i           = 0;
@@ -1051,7 +1051,7 @@ MARK_which         (void)
    return -1;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.732.133.30]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 MARK_find          (char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1090,7 +1090,7 @@ MARK_find          (char *a_label)
 /*====================------------------------------------====================*/
 static void  o___MARK_SEQ________o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.640.021.20]*/ /*-[01.0000.04.--]-*/ /*-[--.---.---.--]-*/
 MARK_range         (void)
 {
    /*---(design notes)-------------------*/
@@ -1120,7 +1120,7 @@ MARK_range         (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.732.043.21]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_prev          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1154,7 +1154,7 @@ MARK_prev          (void)
    return rce;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.842.053.21]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_next          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1197,7 +1197,7 @@ MARK_next          (void)
 /*====================------------------------------------====================*/
 static void  o___MARK_INFO_______o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.833.434.32]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_address         (char a_mark, short *a_tab, short *a_col, short *a_row)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1233,7 +1233,7 @@ MARK_address         (char a_mark, short *a_tab, short *a_col, short *a_row)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.833.224.31]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 MARK_entry           (char a_mark, char *a_entry)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1269,7 +1269,7 @@ MARK_entry           (char a_mark, char *a_entry)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.420.132.11]*/ /*-[00.0000.11.--]-*/ /*-[--.---.---.--]-*/
 MARK_status        (char *a_status)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1286,7 +1286,7 @@ MARK_status        (char *a_status)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.540.142.30]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MARK_list          (char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1311,7 +1311,7 @@ MARK_list          (char *a_list)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.540.142.30]*/ /*-[01.0000.12.--]-*/ /*-[--.---.---.--]-*/
 MARK_listplus      (char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1343,7 +1343,7 @@ MARK_listplus      (char *a_list)
 /*====================------------------------------------====================*/
 static void  o___MARK_FILE_______o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_write           (char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1377,7 +1377,7 @@ MARK_write           (char a_mark)
    return 1;
 }
 
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+char         /*-> write file tab information ---------[ leaf   [ge.320.113.10]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_write_head      (FILE *a_file)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1392,7 +1392,7 @@ MARK_write_head      (FILE *a_file)
    return 0;
 }
 
-char         /*--> write file tab information ------------[ leaf   [ ------ ]-*/
+char         /*-> write file tab information ---------[ leaf   [ge.420.213.30]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 MARK_write_foot      (FILE *a_file, int a_count)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1408,7 +1408,7 @@ MARK_write_foot      (FILE *a_file, int a_count)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gc.531.141.23]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MARK_writeall        (FILE *a_file)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1433,7 +1433,7 @@ MARK_writeall        (FILE *a_file)
    return c;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.A53.264.33]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 MARK_read          (char a_mark, char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1488,7 +1488,7 @@ MARK_read          (char a_mark, char *a_label)
 /*====================------------------------------------====================*/
 static void  o___MARK_COMMAND____o () { return; }
 
-char          /*-> enter a mark directly ---------------- [ whorl  [ ------ ]-*/
+char         /*-> enter a mark directly --------------[ ------ [ge.D54.139.83]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 MARK_define          (char *a_string)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1556,7 +1556,7 @@ MARK_define          (char *a_string)
 /*====================------------------------------------====================*/
 static void  o___KEYS____________o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gz.640.181.01]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 VISU_status        (char *a_msg)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1585,7 +1585,7 @@ VISU_status        (char *a_msg)
    return 0;
 }
 
-char          /* PURPOSE : process keys for marks ----------------------------*/
+char         /*-> process keys for marks -------------[ leaf   [ge.K85.22#.CB]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 VISU_submode       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1685,7 +1685,8 @@ VISU_submode       (char a_major, char a_minor)
    return 0;
 }
 
-char      SELC_mode          (char  a_major, char  a_minor)
+char         /*-> tbd --------------------------------[ leaf   [ge.LD4.225.8C]*/ /*-[02.0000.30.--]-*/ /*-[--.---.---.--]-*/
+SELC_mode          (char  a_major, char  a_minor)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1786,7 +1787,7 @@ char      SELC_mode          (char  a_major, char  a_minor)
    return 0;
 }
 
-char          /* PURPOSE : process keys for marks ----------------------------*/
+char         /*-> process keys for marks -------------[ leaf   [ge.UD8.24#.JA]*/ /*-[03.0000.10.--]-*/ /*-[--.---.---.--]-*/
 MARK_submode       (char a_major, char a_minor)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1940,7 +1941,7 @@ MARK_submode       (char a_major, char a_minor)
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
 
-char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.940.221.74]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 MARK__unit         (char *a_question, char a_mark)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1981,7 +1982,7 @@ MARK__unit         (char *a_question, char a_mark)
    return unit_answer;
 }
 
-char*            /* unit test accessor -------------------[ leaf   [ 210y1x ]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.941.231.71]*/ /*-[03.0000.00.--]-*/ /*-[--.---.---.--]-*/
 VISU__unit         (char *a_question, char a_reg)
 {
    /*---(locals)-----------+-----+-----+-*/

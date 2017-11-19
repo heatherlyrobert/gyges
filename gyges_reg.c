@@ -108,7 +108,7 @@ static      char        s_regnames     [MAX_REG] = REG_NAMES;
 /*====================------------------------------------====================*/
 static void  o___INTIIALIZE______o () { return; }
 
-char             /* clear all selections -----------------[ ------ [ ------ ]-*/
+char         /*-> clear all selections ---------------[ shoot  [gz.311.001.02]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
 REG_init           (void)
 {
    /*---(header)-------------------------*/
@@ -122,7 +122,7 @@ REG_init           (void)
    return 0;
 }
 
-char         /*--> clear out all buffers -----------------[ ------ [ ------ ]-*/
+char         /*-> clear out all buffers --------------[ ------ [gz.421.121.01]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG_purge          (char a_init)
 {
    /*---(locals)-----------+-----------+-*/
@@ -141,7 +141,7 @@ REG_purge          (char a_init)
    return 0;
 }
 
-char         /*--> clear out a register ------------------[ ------ [ ------ ]-*/
+char         /*-> clear out a register ---------------[ ------ [ge.B63.253.32]*/ /*-[03.0000.04.--]-*/ /*-[--.---.---.--]-*/
 REG_clear          (char a_reg, char a_init)
 {
    /*---(locals)-----------+-----------+-*/
@@ -200,7 +200,7 @@ REG_clear          (char a_reg, char a_init)
 /*====================------------------------------------====================*/
 static void  o___CONVERSION______o () { return; }
 
-int          /*--> convert bufname to bufnum -------------[ leaf   [--------]-*/
+int          /*-> convert bufname to bufnum ----------[ leaf   [fn.540.134.80]*/ /*-[00.0000.0L.--]-*/ /*-[--.---.---.--]-*/
 REG__reg2index     (char a_reg)
 {
    /*---(locals)-----------+-----------+-*/
@@ -224,7 +224,7 @@ REG__reg2index     (char a_reg)
    return x_index;
 }
 
-int          /*--> convert a register to a tabnum --------[ ------ [ ------ ]-*/
+int          /*-> convert a register to a tabnum -----[ ------ [fn.420.132.11]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__reg2tab       (char a_buf)
 {
    /*---(locals)-----------+-----------+-*/
@@ -240,7 +240,7 @@ REG__reg2tab       (char a_buf)
    return x_tab;
 }
 
-int          /*--> convert a tab number to a register ----[ ------ [ ------ ]-*/
+int          /*-> convert a tab number to a register  [ leaf   [fn.320.123.20]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__tab2index     (int a_tab)
 {
    /*---(locals)-----------+-----------+-*/
@@ -262,7 +262,7 @@ REG__tab2index     (int a_tab)
 /*====================------------------------------------====================*/
 static void  o___ATTACHING_______o () { return; }
 
-char         /*> attach a cell to a buffer ---------------[ -----  [ ------ ]-*/
+char         /*-> attach a cell to a buffer ----------[ ------ [fe.870.378.72]*/ /*-[00.0000.02.--]-*/ /*-[--.---.---.--]-*/
 REG__hook          (tCELL *a_curr, char a_reg, char a_note)
 {
    /*---(locals)-----------+-----------+-*/
@@ -300,7 +300,7 @@ REG__hook          (tCELL *a_curr, char a_reg, char a_note)
    return 0;
 }
 
-char         /*>-detach-a-cell-from-a-buffer--------------[--------[--------]-*/
+char         /*-> detach-a-cell-from-a-buffe ---------[ ------ [fe.760.13#.81]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 REG__unhook        (tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
@@ -332,7 +332,7 @@ REG__unhook        (tCELL *a_curr)
    return 0;
 }
 
-char         /*--> changes the default register ----------[ leaf   [ ------ ]-*/
+char         /*-> changes the default register -------[ ------ [gc.530.106.51]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG_set            (char a_reg)
 {
    if (strchr (s_regnames, a_reg) != 0) {
@@ -362,7 +362,7 @@ REG_set            (char a_reg)
 /*====================------------------------------------====================*/
 static void  o___KEYS____________o () { return; }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register actions --[ leaf   [ge.RK0.23#.FC]*/ /*-[05.0000.10.--]-*/ /*-[--.---.---.--]-*/
 REG_mode           (int a_major, int a_minor)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -500,7 +500,7 @@ REG_mode           (int a_major, int a_minor)
 /*====================------------------------------------====================*/
 static void  o___MOVING__________o () { return; }
 
-char         /*--> tail recursion function for copy ------[ ------ [ ------ ]-*/
+char         /*-> tail recursion function for copy ---[ ------ [ge.D55.237.63]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
 REG_deps           (tCELL *a_curr, long a_stamp)
 {
    /*---(locals)-----------+-----------+-*/
@@ -561,7 +561,7 @@ REG_deps           (tCELL *a_curr, long a_stamp)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.E73.2A4.32]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 REG_entry          (char a_reg, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -627,7 +627,7 @@ REG_entry          (char a_reg, char *a_list)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.742.243.31]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 REG_list           (char a_buf, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -662,7 +662,7 @@ REG_list           (char a_buf, char *a_list)
    return 0;
 }
 
-char         /*--> add cells to a register ---------------[ ------ [ ------ ]-*/
+char         /*-> add cells to a register ------------[ ------ [ge.I95.0G2.48]*/ /*-[02.0000.02.--]-*/ /*-[--.---.---.--]-*/
 REG_save             (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -749,7 +749,7 @@ REG_save             (void)
    return 0;
 }
 
-char           /*-> delete the original cells ----------[ ------ [----------]-*/
+char         /*-> delete the original cells ----------[ ------ [ge.B63.0A4.54]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG_delorig          (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -804,7 +804,7 @@ REG_delorig          (void)
    return 0;
 }
 
-char           /*-> charge provider references ---------[ ------ [----------]-*/
+char         /*-> charge provider references ---------[ ------ [fe.MB7.1K7.B7]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__paste_pros      (char a_pros)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -912,7 +912,7 @@ REG__paste_pros      (char a_pros)
    return 0;
 }
 
-char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
+char         /*-> cut range into the current buffer --[ ------ [gc.311.011.02]*/ /*-[00.0000.11.--]-*/ /*-[--.---.---.--]-*/
 REG_copy           (void)
 {
    char        rc          = 0;
@@ -924,7 +924,7 @@ REG_copy           (void)
    return rc;
 }
 
-char         /*> cut range into the current buffer -------[ ------ [ ------ ]-*/
+char         /*-> cut range into the current buffer --[ ------ [gc.321.011.03]*/ /*-[00.0000.11.--]-*/ /*-[--.---.---.--]-*/
 REG_cut            (void)
 {
    char        rc          = 0;
@@ -942,7 +942,7 @@ short       s_atab         =    0;
 short       s_acol         =    0;
 short       s_arow         =    0;
 
-char             /* indicate whether cell is in a reg --[ leaf   [----------]-*/
+char         /*-> indicate whether cell is in a reg --[ leaf   [ge.430.419.80]*/ /*-[00.0000.20.--]-*/ /*-[--.---.---.--]-*/
 REG_inside           (int a_index, short a_tab, short a_col, short a_row)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -961,7 +961,7 @@ REG_inside           (int a_index, short a_tab, short a_col, short a_row)
    return 1;
 }
 
-char           /*-> prepare for a paste ----------------[ ------ [----------]-*/
+char         /*-> prepare for a paste ----------------[ ------ [fe.842.023.21]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__paste_check     (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -999,7 +999,7 @@ REG__paste_check     (void)
    return 0;
 }
 
-char           /*-> clear the destination area ---------[ ------ [----------]-*/
+char         /*-> clear the destination area ---------[ ------ [fc.622.102.13]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__paste_clear     (char a_clear)
 {
    /*---(header)-------------------------*/
@@ -1026,7 +1026,7 @@ REG__paste_clear     (char a_clear)
    return 0;
 }
 
-char               /* PURPOSE : use save range to move cells -----------------*/
+char         /*-> use save range to move cells -------[ ------ [fe.D74.1E1.73]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__paste_cells     (char a_reqs)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1088,7 +1088,7 @@ REG__paste_cells     (char a_reqs)
    return 0;
 }
 
-char           /*-> merge cells into providers ---------[ ------ [----------]-*/
+char         /*-> merge cells into providers ---------[ leaf   [fc.311.102.10]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__paste_integ     (char a_integ)
 {
    /*---(header)-------------------------*/
@@ -1103,7 +1103,7 @@ REG__paste_integ     (char a_integ)
    return 0;
 }
 
-char           /*-> main paste driver ------------------[ ------ [----------]-*/
+char         /*-> main paste driver ------------------[ ------ [fe.943.426.55]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__paste_main      (char a_clear, char a_reqs, char a_pros, char a_integ)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1146,7 +1146,7 @@ REG__paste_main      (char a_clear, char a_reqs, char a_pros, char a_integ)
    return 0;
 }
 
-char           /*-> most common paste call -------------[ ------ [----------]-*/
+char         /*-> most common paste call -------------[ ------ [gc.731.111.11]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 REG_paste            (char a_type)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1205,7 +1205,7 @@ static short   s_mcol     =    0;
 static short   s_ccol     =    0;
 static short   s_crow     =    0;
 
-char         /*--> prepare for data import ---------------[ leaf-- [ ------ ]-*/
+char         /*-> prepare for data import ------------[ leaf   [fe.F83.123.30]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_prep       (char a_style)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1279,7 +1279,7 @@ REG__inpt_prep       (char a_style)
    return 0;
 }
 
-char         /*--> process a mapping request -------------[ leaf-- [ ------ ]-*/
+char         /*-> process a mapping request ----------[ ------ [fe.943.044.31]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_map        (void)
 {
    /*---(locals)-----+-----+-----+-----+-*/
@@ -1323,7 +1323,7 @@ REG__inpt_map        (void)
    return 0;
 }
 
-char         /*--> read an import record -----------------[ leaf-- [ ------ ]-*/
+char         /*-> read an import record --------------[ leaf   [fe.A34.026.50]*/ /*-[01.0001.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_read       (void)
 {
    /*---(locals)-----+-----+-----+-----+-*/
@@ -1371,7 +1371,7 @@ REG__inpt_read       (void)
    return 0;
 }
 
-char         /*--> adjust a column sizing ----------------[ leaf-- [ ------ ]-*/
+char         /*-> adjust a column sizing -------------[ ------ [fe.420.223.22]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_width      (short a_col, short a_wide)
 {
    /*---(locals)-----+-----+-----+-----+-*/
@@ -1387,7 +1387,7 @@ REG__inpt_width      (short a_col, short a_wide)
    return 0;
 }
 
-char         /*--> process a column sizing request -------[ leaf-- [ ------ ]-*/
+char         /*-> process a column sizing request ----[ ------ [fe.A53.053.51]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_sizer      (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1435,7 +1435,7 @@ REG__inpt_sizer      (void)
    return 0;
 }
 
-char         /*--> place import data into a cell ---------[ leaf-- [ ------ ]-*/
+char         /*-> place import data into a cell ------[ ------ [fz.310.301.21]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_place      (short a_col, short a_row, char *a_value)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1450,7 +1450,7 @@ REG__inpt_place      (short a_col, short a_row, char *a_value)
    return 0;
 }
 
-char         /*--> complete data import ------------------[ leaf-- [ ------ ]-*/
+char         /*-> complete data import ---------------[ ------ [fz.311.001.02]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_done       (void)
 {
    /*---(close file)---------------------*/
@@ -1465,7 +1465,7 @@ REG__inpt_done       (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [fz.732.141.12]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_values     (short a_row)
 { 
    /*---(locals)-----+-----+-----+-----+-*/
@@ -1499,7 +1499,7 @@ REG__inpt_values     (short a_row)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [fz.842.141.32]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG__inpt_delims     (short a_row)
 {
    /*---(locals)-----+-----+-----+-----+-*/
@@ -1537,7 +1537,7 @@ REG__inpt_delims     (short a_row)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.A42.132.77]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG_inpt_driver      (char a_style)
 {
    /*---(locals)-----+-----+-----+-----+-*/
@@ -1584,7 +1584,7 @@ REG_inpt_driver      (char a_style)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.RE5.1E2.D3]*/ /*-[05.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG_valuesout     (char a_style)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1723,7 +1723,7 @@ REG_valuesout     (char a_style)
 /*====================------------------------------------====================*/
 static void  o___FILES___________o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.A53.754.12]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min, char *a_max, char a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1773,7 +1773,7 @@ REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.860.394.23]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 REG_write          (FILE *a_file, int  *a_seq, char a_buf)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1811,9 +1811,7 @@ REG_write          (FILE *a_file, int  *a_seq, char a_buf)
    return 0;
 }
 
-
-
-char
+char         /*-> tbd --------------------------------[ ------ [ge.DA0.194.31]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 REG_bufwrite       (char a_buf)
 {
    /*---(locals)-------------------------*/
@@ -1902,7 +1900,7 @@ static      tTEXTREG    s_textreg   [MAX_REG];
 #define     TREG_FILE     'f'
 #define     TREG_IMPORT   'i'
 
-char             /* clear all selections -----------------[ ------ [ ------ ]-*/
+char         /*-> clear all selections ---------------[ shoot  [gz.530.011.00]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 TREG_init          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1924,7 +1922,7 @@ TREG_init          (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.C53.244.61]*/ /*-[02.0000.20.--]-*/ /*-[--.---.---.--]-*/
 TREG_entry         (char a_reg, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1981,7 +1979,7 @@ TREG_entry         (char a_reg, char *a_list)
    return 0;
 }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register actions --[ ------ [gz.320.011.02]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
 TREG_clear         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1994,7 +1992,7 @@ TREG_clear         (void)
    return 0;
 }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register action ---[ ------ [gz.430.031.02]*/ /*-[01.0000.21.--]-*/ /*-[--.---.---.--]-*/
 TREG_delete        (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2013,7 +2011,7 @@ TREG_delete        (void)
    return 0;
 }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register actions --[ ------ [ge.640.051.04]*/ /*-[00.0000.21.--]-*/ /*-[--.---.---.--]-*/
 TREG_copy          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2040,7 +2038,7 @@ TREG_copy          (void)
    return 0;
 }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register actions --[ ------ [gz.740.061.21]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 TREG_replace       (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2071,7 +2069,7 @@ TREG_replace       (void)
    return 0;
 }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register actions --[ ------ [gz.640.151.11]*/ /*-[01.0000.21.--]-*/ /*-[--.---.---.--]-*/
 TREG_paste         (char a_dir)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2101,7 +2099,7 @@ TREG_paste         (char a_dir)
    return 0;
 }
 
-char          /* PURPOSE : process keys for register actions -----------------*/
+char         /*-> process keys for register actions --[ leaf   [ge.QG5.287.FB]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
 TREG_mode          (int a_major, int a_minor)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2229,7 +2227,7 @@ TREG_mode          (int a_major, int a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.742.554.11]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2260,7 +2258,7 @@ TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_sou
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.640.354.22]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
 TREG_write         (FILE *a_file, int  *a_seq, char a_buf)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2295,7 +2293,7 @@ TREG_write         (FILE *a_file, int  *a_seq, char a_buf)
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
 
-char         /*--> unit test setter ----------------------[ leaf   [ ------ ]-*/
+char         /*-> unit test setter -------------------[ leaf   [fc.420.202.50]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 REG__setter        (char *a_request, char *a_data)
 {
    if        (strcmp (a_request, "reg_names"         ) == 0) {
@@ -2313,7 +2311,7 @@ REG__setter        (char *a_request, char *a_data)
    return 0;
 }
 
-char*        /*--> unit test accessor --------------------[ leaf   [ ------ ]-*/
+char*        /*-> unit test accessor -----------------[ ------ [fs.A40.221.A3]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 REG__getter        (char *a_question, char a_reg)
 {
    /*---(locals)-----------+-----------+-*/

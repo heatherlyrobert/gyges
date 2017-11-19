@@ -25,8 +25,7 @@ static  int   s_endr  = 0;
 /*===[[ local prototypes ]]=====================*/
 
 
-
-char          /* PURPOSE : clear out recent editing --------------------------*/
+char         /*-> clear out recent editing -----------[ leaf   [gz.210.001.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 clear_input   (void)
 {
    strncpy(g_saved   , g_contents, LEN_RECD);
@@ -34,7 +33,7 @@ clear_input   (void)
    return 0;
 }
 
-char          /* PURPOSE : place recent input into the right cell ------------*/
+char         /*-> place recent input into right cell  [ leaf   [gz.210.001.00]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
 save_saved    (void)
 {
    strncpy(g_contents, g_saved, LEN_RECD);
@@ -49,7 +48,7 @@ save_saved    (void)
 /*====================------------------------------------====================*/
 PRIV void  o___MOVE_WRAPPERS___o () { return; }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [gz.523.001.00]*/ /*-[00.0000.80.--]-*/ /*-[--.---.---.--]-*/
 MOVE_prep          (void)
 {
    /*---(header)-------------------------*/
@@ -73,7 +72,7 @@ MOVE_prep          (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [gz.H97.021.Q8]*/ /*-[01.0000.82.--]-*/ /*-[--.---.---.--]-*/
 MOVE_done          (void)
 {
    int         i           = 0;
@@ -164,7 +163,7 @@ MOVE_done          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___ENDS____________o () { return; }
 
-char         /*-->-move-to-the-very-edge-of-used-space----[-leaf---[--------]-*/
+char         /*-> move-to-the-very-edge-of-used-spac  [ ------ [ge.G92.153.I3]*/ /*-[02.0000.12.--]-*/ /*-[--.---.---.--]-*/
 MOVE_edges         (
       /*----------+-----------+-----------------------------------------------*/
       char        a_dir)      /* direction code (see design notes)            */
@@ -243,7 +242,7 @@ MOVE_edges         (
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.HA4.193.C1]*/ /*-[04.0000.12.--]-*/ /*-[--.---.---.--]-*/
 MOVE_ends          (char a_dir)
 {
    /*---(locals)-----------+-----------+-*/
@@ -333,7 +332,7 @@ MOVE_ends          (char a_dir)
 /*====================------------------------------------====================*/
 PRIV void  o___HORIZONTAL______o () { return; }
 
-char         /*--> move left or right by columns ---------[ leaf   [ ------ ]-*/
+char         /*-> move left or right by columns ------[ ------ [ge.JA4.264.92]*/ /*-[04.0000.21.--]-*/ /*-[--.---.---.--]-*/
 MOVE_gz_horz       (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -427,7 +426,7 @@ MOVE_gz_horz       (char a_major, char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.852.123.40]*/ /*-[03.0000.60.--]-*/ /*-[--.---.---.--]-*/
 MOVE_horz          (char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -464,7 +463,7 @@ MOVE_horz          (char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.OI5.238.I4]*/ /*-[04.0000.00.--]-*/ /*-[--.---.---.--]-*/
 KEYS_col           (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -584,7 +583,7 @@ KEYS_col           (char a_major, char a_minor)
    return 0;
 }
 
-int          /*--> firgure out size of locked columns --- [ ------ [ ------ ]-*/
+int          /*-> firgure out size of locked columns  [ ------ [gn.430.032.32]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 KEYS_lcol          (void)
 {
    /*---(locals)-------------------------*/
@@ -604,7 +603,7 @@ KEYS_lcol          (void)
    return cw;
 }
 
-char         /*--> layout screen starting from left ----- [ ------ [ ------ ]-*/
+char         /*-> layout screen starting from left ---[ ------ [gz.C73.161.73]*/ /*-[03.0000.31.--]-*/ /*-[--.---.---.--]-*/
 KEYS_bcol          (int a_beg)
 {
    /*---(locals)-------------------------*/
@@ -663,7 +662,7 @@ KEYS_bcol          (int a_beg)
    return 0;
 }
 
-char         /*--> layout screen starting from right -----[--------[--------]-*/
+char         /*-> layout screen starting from right --[ ------ [gz.F94.161.73]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 KEYS_ecol          (int a_end)
 {
    /*---(locals)-----------------------------*/
@@ -737,7 +736,7 @@ KEYS_ecol          (int a_end)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.860.052.24]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
 KEYS_pcol          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -780,7 +779,7 @@ KEYS_pcol          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___VERTICAL________o () { return; }
 
-char         /*--> move up or down by rows ---------------[--------[--------]-*/
+char         /*-> move up or down by rows ------------[ ------ [ge.F84.253.82]*/ /*-[04.0000.21.--]-*/ /*-[--.---.---.--]-*/
 MOVE_gz_vert       (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -852,7 +851,7 @@ MOVE_gz_vert       (char a_major, char a_minor)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ leaf   [ge.852.123.40]*/ /*-[03.0000.70.--]-*/ /*-[--.---.---.--]-*/
 MOVE_vert          (char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -889,7 +888,7 @@ MOVE_vert          (char a_minor)
    return 0;
 }
 
-char             /* [------] handle row movement input -----------------------*/
+char         /*-> handle row movement input ----------[ ------ [ge.QJ4.248.N4]*/ /*-[04.0000.00.--]-*/ /*-[--.---.---.--]-*/
 KEYS_row           (char a_major, char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -1015,7 +1014,7 @@ KEYS_row           (char a_major, char a_minor)
    return 0;
 }
 
-int          /*--> firgure out size of locked rows ------ [ ------ [ ------ ]-*/
+int          /*-> firgure out size of locked rows ----[ ------ [gn.430.032.32]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
 KEYS_lrow          (void)
 {
    /*---(locals)-------------------------*/
@@ -1035,7 +1034,7 @@ KEYS_lrow          (void)
    return ch;
 }
 
-char               /* PURPOSE : find the ending row given the beginning one   */
+char         /*-> find the ending row ----------------[ ------ [gz.E73.161.73]*/ /*-[03.0000.21.--]-*/ /*-[--.---.---.--]-*/
 KEYS_brow          (int a_beg)
 {
    /*---(locals)-----------+-------------*/
@@ -1104,7 +1103,7 @@ KEYS_brow          (int a_beg)
    return 0;
 }
 
-char               /* PURPOSE : find the beginning row given the ending one   */
+char         /*-> find the beginning row -------------[ ------ [gz.H94.161.73]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
 KEYS_erow          (int a_end)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1188,7 +1187,7 @@ KEYS_erow          (int a_end)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.750.042.23]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
 KEYS_prow          (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1229,7 +1228,7 @@ KEYS_prow          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___EDIT_WRAPPERS___o () { return; }
 
-char         /*--> prepare contents for new edit ---------[ leaf   [ ------ ]-*/
+char         /*-> prepare contents for new edit ------[ leaf   [gz.311.101.00]*/ /*-[00.0000.20.--]-*/ /*-[--.---.---.--]-*/
 EDIT_start         (char *a_prefix)
 {
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
@@ -1242,7 +1241,7 @@ EDIT_start         (char *a_prefix)
    return 0;
 }
 
-char         /*--> prepare for source mode move ----------[ leaf   [ ------ ]-*/
+char         /*-> prepare for source mode move -------[ leaf   [gz.412.001.00]*/ /*-[00.0000.31.--]-*/ /*-[--.---.---.--]-*/
 EDIT_prep          (void)
 {
    /*---(prepare)------------------------*/
@@ -1260,7 +1259,7 @@ EDIT_prep          (void)
    return 0;
 }
 
-char         /*--> complete a source mode move -----------[ leaf   [ ------ ]-*/
+char         /*-> complete a source mode move --------[ leaf   [gz.E45.001.A0]*/ /*-[02.0000.51.--]-*/ /*-[--.---.---.--]-*/
 EDIT_done          (void)
 {
    /*---(prepare)------------------------*/
@@ -1334,7 +1333,7 @@ EDIT_done          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___SOURCE__________o () { return; }
 
-char       /*----: move forward by a word ------------------------------------*/
+char         /*-> move forward by a word -------------[ leaf   [gz.530.011.40]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
 word_fore          (void)
 {
    /*---(locals)-------------------------*/
@@ -1357,7 +1356,7 @@ word_fore          (void)
    return 0;
 }
 
-char               /* PURPOSE : debugging row number assignments -------------*/
+char         /*-> debugging row number assignments ---[ leaf   [gz.320.011.00]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 row_print          (void)
 {
    /*---(locals)-----------------------------*/
@@ -1370,7 +1369,7 @@ row_print          (void)
    return 0;
 }
 
-char       /*----: move back by a word ---------------------------------------*/
+char         /*-> move back by a word ----------------[ leaf   [gz.640.021.30]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 word_back          (void)
 {
    /*---(locals)-------------------------*/
@@ -1399,7 +1398,7 @@ word_back          (void)
    return 0;
 }
 
-char       /*----: move forward to next end of a word ------------------------*/
+char         /*-> move forward to next end of a word  [ leaf   [gz.640.021.50]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
 word_end           (void)
 {
    /*---(locals)-------------------------*/
@@ -1427,7 +1426,7 @@ word_end           (void)
    return 0;
 }
 
-char
+char         /*-> tbd --------------------------------[ ------ [ge.DB2.162.62]*/ /*-[01.0000.40.--]-*/ /*-[--.---.---.--]-*/
 EDIT_pos           (char a_minor)
 {
    /*---(locals)-------------------------*/
@@ -1498,7 +1497,7 @@ EDIT_pos           (char a_minor)
 /*====================------------------------------------====================*/
 static void      o___UNITTEST________________o (void) {;}
 
-char*            /* [------] unit test accessor ------------------------------*/
+char*        /*-> unit test accessor -----------------[ leaf   [gs.930.201.A0]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
 MOVE_unit          (char *a_question, int a_num)
 {
    /*---(prepare)------------------------*/
