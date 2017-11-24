@@ -131,7 +131,7 @@ static char    s_label     [LEN_RECD]   = "";
 /*====================------------------------------------====================*/
 PRIV void  o___PROGRAM_________o () { return; }
 
-char         /*-> initialize location function -------[ shoot  [gz.421.001.02]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> initialize location function -------[ shoot  [gz.421.001.02]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
 LOC_init             (void)
 {
    /*---(header)-------------------------*/
@@ -149,7 +149,7 @@ LOC_init             (void)
    return 0;
 }
 
-char         /*-> clear all cell placements ----------[ leaf   [fe.833.133.20]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> clear all cell placements ----------[ leaf   [fe.833.133.20]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
 LOC__clear_locs      (short a_tab)
 {
    /*---(locals)-----------+-----------+-*/
@@ -186,7 +186,7 @@ LOC__clear_locs      (short a_tab)
    return 0;
 }
 
-char         /*-> clean all tab and sheet locations --[ ------ [fz.A52.021.03]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> clean all tab and sheet locations --[ ------ [fz.A52.021.03]*/ /*-[01.0000.023.!]-*/ /*-[--.---.---.--]-*/
 LOC__purge           (void)
 {  /*---(design notes)--------------------------------------------------------*/
    /* run CELL_wrap/purge before LOC_wrap/purge so all cells are unhooked     */
@@ -232,7 +232,7 @@ LOC__purge           (void)
    return 0;
 }
 
-char         /*-> wrap up location function ----------[ shoot  [gc.211.000.01]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> wrap up location function ----------[ shoot  [gc.211.000.01]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
 LOC_wrap             (void)
 {
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
@@ -247,7 +247,7 @@ LOC_wrap             (void)
 /*====================------------------------------------====================*/
 PRIV void  o___HOOKING_________o () { return; }
 
-char         /*-> attach a cell to a location --------[ ------ [ge.E63.137.82]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> attach a cell to a location --------[ ------ [ge.E63.137.82]*/ /*-[01.0000.115.J]-*/ /*-[--.---.---.--]-*/
 LOC_hook           (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell to be placed in a location              */
@@ -316,7 +316,7 @@ LOC_hook           (
    return 0;
 }
 
-char         /*-> detach a cell from location --------[ ------ [ge.F74.167.71]*/ /*-[01.0000.21.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> detach a cell from location --------[ ------ [ge.F74.167.71]*/ /*-[01.0000.214.7]-*/ /*-[--.---.---.--]-*/
 LOC_unhook         (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell)     /* cell to detach from current location         */
@@ -390,7 +390,7 @@ LOC_unhook         (
    return 0;
 }
 
-char         /*-> move a cell between locations ------[ ------ [ge.930.134.55]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> move a cell between locations ------[ ------ [ge.930.134.55]*/ /*-[01.0000.00#.J]-*/ /*-[--.---.---.--]-*/
 LOC_move           (
       /*----------+-----------+-----------------------------------------------*/
       short       a_stab,         /* tab of source cell                       */
@@ -440,7 +440,7 @@ LOC_move           (
 /*====================------------------------------------====================*/
 PRIV void  o___LOCATION________o () { return; }
 
-char         /*-> verify that a location is legal ----[ leaf   [ge.QA9.49#.M0]*/ /*-[02.0000.C9.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> verify that a location is legal ----[ leaf   [ge.QA9.49#.M0]*/ /*-[02.0000.C94.#]-*/ /*-[--.---.---.--]-*/
 LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
 {  /*---(design notes)--------------------------------------------------------*/
    /* tests the tab, col, and row against minimum and maximum limits as well  */
@@ -570,7 +570,7 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    return x_xrc = 0;
 }
 
-tCELL*       /*-> return the cell at current loc -----[ ------ [gp.522.023.11]*/ /*-[01.0000.60.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> return the cell at current loc -----[ ------ [gp.522.023.11]*/ /*-[01.0000.603.!]-*/ /*-[--.---.---.--]-*/
 LOC_cell_at_curr     (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -592,7 +592,7 @@ LOC_cell_at_curr     (void)
    return x_curr;
 }
 
-tCELL*       /*-> return the cell at a location ------[ ------ [gp.522.323.11]*/ /*-[01.0000.#1.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> return the cell at a location ------[ ------ [gp.522.323.11]*/ /*-[01.0000.#14.#]-*/ /*-[--.---.---.--]-*/
 LOC_cell_at_loc      (short a_tab, short a_col, short a_row)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -614,7 +614,7 @@ LOC_cell_at_loc      (short a_tab, short a_col, short a_row)
    return x_curr;
 }
 
-tCELL*       /*-> return the cell at a location ------[ ------ [gp.632.154.22]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> return the cell at a location ------[ ------ [gp.632.154.22]*/ /*-[01.0000.106.T]-*/ /*-[--.---.---.--]-*/
 LOC_cell_labeled   (char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
@@ -644,7 +644,7 @@ LOC_cell_labeled   (char *a_label)
    return x_curr;
 }
 
-char         /*-> go directly to a specific cell -----[ ------ [gc.722.112.13]*/ /*-[01.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> go directly to a specific cell -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
 LOC_jump           (
       /*----------+-----------+-----------------------------------------------*/
       short       a_tab,      /* tab number                                   */
@@ -683,7 +683,7 @@ LOC_jump           (
 /*====================------------------------------------====================*/
 PRIV void  o___REFERENCES______o () { return; }
 
-char         /*-> convert position into label --------[ ------ [ge.C90.177.91]*/ /*-[01.0000.C3.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> convert position into label --------[ ------ [ge.C90.177.91]*/ /*-[01.0000.C33.U]-*/ /*-[--.---.---.--]-*/
 LOC_ref           (
       /*----------+-----------+-----------------------------------------------*/
       short       a_tab,      /* tab of location                              */
@@ -743,7 +743,7 @@ LOC_ref           (
    return  0;
 }
 
-char         /*-> convert a cell into a label --------[ ------ [ge.932.136.31]*/ /*-[01.0000.11.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> convert a cell into a label --------[ ------ [ge.932.136.31]*/ /*-[01.0000.116.I]-*/ /*-[--.---.---.--]-*/
 LOC_label         (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell to be converted                         */
@@ -784,7 +784,7 @@ LOC_label         (
    return  rc;
 }
 
-char         /*-> convert a cell into a coordinates --[ leaf   [ge.520.127.40]*/ /*-[01.0000.40.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> convert a cell into a coordinates --[ leaf   [ge.520.127.40]*/ /*-[01.0000.409.I]-*/ /*-[--.---.---.--]-*/
 LOC_coords        (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell to be converted                         */
@@ -805,7 +805,7 @@ LOC_coords        (
    return  0;
 }
 
-char         /*-> convert label into tab, col, row ---[ leaf   [ge.#HB.1B#.Z0]*/ /*-[01.0000.K4.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> convert label into tab, col, row ---[ leaf   [ge.#HB.1B#.Z0]*/ /*-[01.0000.K44.W]-*/ /*-[--.---.---.--]-*/
 LOC_parse         (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_label,    /* cell label used for parsing                  */
@@ -997,7 +997,7 @@ LOC_parse         (
 /*====================------------------------------------====================*/
 PRIV void  o___TABS____________o () { return; }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.320.113.20]*/ /*-[00.0000.18.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.320.113.20]*/ /*-[00.0000.184.I]-*/ /*-[--.---.---.--]-*/
 LOC_tab_valid        (short a_tab)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1009,7 +1009,7 @@ LOC_tab_valid        (short a_tab)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.220.122.11]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.220.122.11]*/ /*-[00.0000.10#.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_type         (short a_tab)
 {
    char        rce         =  -20;
@@ -1019,7 +1019,7 @@ LOC_tab_type         (short a_tab)
    return s_tabs [a_tab].type;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_retype       (short a_tab, char a_type)
 {
    char        rce         =  -20;
@@ -1030,7 +1030,7 @@ LOC_tab_retype       (short a_tab, char a_type)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/ /*-[00.0000.10#.4]-*/ /*-[--.---.---.--]-*/
 LOC_tab_defname      (short a_tab, char *a_name)
 {
    char        rce         =  -20;
@@ -1042,7 +1042,7 @@ LOC_tab_defname      (short a_tab, char *a_name)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/ /*-[00.0000.40.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/ /*-[00.0000.404.A]-*/ /*-[--.---.---.--]-*/
 LOC_tab_name         (short a_tab, char *a_name)
 {
    char        rce         =  -20;
@@ -1053,7 +1053,7 @@ LOC_tab_name         (short a_tab, char *a_name)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.330.125.41]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.330.125.41]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_rename_curr  (char *a_name)
 {
    char        rce         =  -20;
@@ -1066,7 +1066,7 @@ LOC_tab_rename_curr  (char *a_name)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.330.225.41]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.330.225.41]*/ /*-[00.0000.104.C]-*/ /*-[--.---.---.--]-*/
 LOC_tab_rename       (short a_tab, char *a_name)
 {
    char        rce         =  -20;
@@ -1079,7 +1079,7 @@ LOC_tab_rename       (short a_tab, char *a_name)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.320.223.22]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.320.223.22]*/ /*-[00.0000.00#.D]-*/ /*-[--.---.---.--]-*/
 LOC_tab_size         (short a_tab, char *a_max)
 {
    char        rce         =  -20;
@@ -1090,7 +1090,7 @@ LOC_tab_size         (short a_tab, char *a_max)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gc.E82.112.31]*/ /*-[02.0000.07.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.E82.112.31]*/ /*-[02.0000.073.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_switch         (short a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1158,7 +1158,7 @@ LOC_tab_switch         (short a_tab)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gc.220.112.31]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.220.112.31]*/ /*-[00.0000.103.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_switch_char    (char a_tab)
 {
    short       x_tab       = 0;
@@ -1168,7 +1168,7 @@ LOC_tab_switch_char    (char a_tab)
    return LOC_tab_switch (x_tab);
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.532.143.22]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.532.143.22]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_resize_curr  (char *a_max)
 {
    char        rce         = -10;
@@ -1193,7 +1193,7 @@ LOC_tab_resize_curr  (char *a_max)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.632.153.22]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.632.153.22]*/ /*-[01.0000.104.U]-*/ /*-[--.---.---.--]-*/
 LOC_tab_resize       (char *a_max)
 {
    char        rce         = -10;
@@ -1219,7 +1219,7 @@ LOC_tab_resize       (char *a_max)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_line       (char a_tab, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1248,7 +1248,7 @@ LOC_tab_line       (char a_tab, char *a_list)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.632.233.40]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.632.233.40]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_status     (char a_tab, char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1287,7 +1287,7 @@ char        LOC_tab_last         (void)  { return LOC_tab_switch (MAX_TABS - 1);
 /*====================------------------------------------====================*/
 PRIV void  o___COLUMNS_________o () { return; }
 
-char         /*-> clear all column customizations ----[ leaf   [ge.A53.123.40]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> clear all column customizations ----[ leaf   [ge.A53.123.40]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_clear        (short a_tab)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1336,7 +1336,7 @@ LOC_col_clear        (short a_tab)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.330.215.40]*/ /*-[00.0000.19.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.330.215.40]*/ /*-[00.0000.194.I]-*/ /*-[--.---.---.--]-*/
 LOC_col_valid        (short a_tab, short a_col)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1350,13 +1350,13 @@ LOC_col_valid        (short a_tab, short a_col)
    return 0;
 }
 
-short        /*-> return default col size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return default col size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10#.6]-*/ /*-[--.---.---.--]-*/
 LOC_col_defmax       (void)
 {
    return DEF_COLS;
 }
 
-short        /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.70.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
 LOC_col_max          (short a_tab)
 {
    char rc = LOC_col_valid (a_tab, 0);
@@ -1364,7 +1364,7 @@ LOC_col_max          (short a_tab)
    return s_tabs [a_tab].ncol;
 }
 
-short        /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.30.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_used         (short a_tab, short a_col)
 {
    char rc = LOC_col_valid (a_tab, a_col);
@@ -1372,7 +1372,7 @@ LOC_col_used         (short a_tab, short a_col)
    return s_tabs [a_tab].cols [a_col].c;
 }
 
-short        /*-> return the col xpos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.50.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return the col xpos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.503.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_xpos         (short a_tab, short a_col)
 {
    char rc = LOC_col_valid (a_tab, a_col);
@@ -1380,7 +1380,7 @@ LOC_col_xpos         (short a_tab, short a_col)
    return s_tabs [a_tab].cols [a_col].x;
 }
 
-char         /*-> set a new col x-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> set a new col x-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_xset         (short a_tab, short a_col, short a_pos)
 {
    char rc = LOC_col_valid (a_tab, a_col);
@@ -1389,7 +1389,7 @@ LOC_col_xset         (short a_tab, short a_col, short a_pos)
    return 0;
 }
 
-char         /*-> return the col xpos ----------------[ ------ [gc.210.313.21]*/ /*-[00.0000.20.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> return the col xpos ----------------[ ------ [gc.210.313.21]*/ /*-[00.0000.204.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_label        (short a_tab, short a_col, char *a_label)
 {
    char rc = LOC_col_valid (a_tab, a_col);
@@ -1398,7 +1398,7 @@ LOC_col_label        (short a_tab, short a_col, char *a_label)
    return 0;
 }
 
-char         /*-> return the col width ---------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G0.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> return the col width ---------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_width        (short a_tab, short a_col)
 {
    char rc = LOC_col_valid (a_tab, a_col);
@@ -1406,7 +1406,7 @@ LOC_col_width        (short a_tab, short a_col)
    return s_tabs [a_tab].cols [a_col].w;
 }
 
-char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.40.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
 LOC_col_widen        (short a_tab, short a_col, short a_size)
 {
    char rc = LOC_col_valid (a_tab, a_col);
@@ -1417,7 +1417,7 @@ LOC_col_widen        (short a_tab, short a_col, short a_size)
    return 0;
 }
 
-char         /*-> change the frozen cols -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change the frozen cols -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_freeze       (short a_tab, short a_bcol, short a_ecol)
 {
    char rc = LOC_col_valid (a_tab, a_bcol);
@@ -1436,7 +1436,7 @@ LOC_col_freeze       (short a_tab, short a_bcol, short a_ecol)
    return 0;
 }
 
-char         /*-> clear the frozen cols --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> clear the frozen cols --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_unfreeze     (short a_tab)
 {
    char rc = LOC_col_valid (a_tab, 0);
@@ -1454,7 +1454,7 @@ LOC_col_unfreeze     (short a_tab)
 /*====================------------------------------------====================*/
 PRIV void  o___ROWS____________o () { return; }
 
-char         /*-> clear all row customizations -------[ leaf   [ge.843.123.20]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> clear all row customizations -------[ leaf   [ge.843.123.20]*/ /*-[01.0000.014.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_clear        (short a_tab)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1492,7 +1492,7 @@ LOC_row_clear        (short a_tab)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.330.215.40]*/ /*-[00.0000.08.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.330.215.40]*/ /*-[00.0000.084.H]-*/ /*-[--.---.---.--]-*/
 LOC_row_valid        (short a_tab, short a_row)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1506,13 +1506,13 @@ LOC_row_valid        (short a_tab, short a_row)
    return 0;
 }
 
-short        /*-> return default row size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return default row size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10#.6]-*/ /*-[--.---.---.--]-*/
 LOC_row_defmax       (void)
 {
    return DEF_ROWS;
 }
 
-short        /*-> return max row for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.60.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return max row for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.604.D]-*/ /*-[--.---.---.--]-*/
 LOC_row_max          (short a_tab)
 {
    char rc = LOC_row_valid (a_tab, 0);
@@ -1520,7 +1520,7 @@ LOC_row_max          (short a_tab)
    return s_tabs [a_tab].nrow;
 }
 
-short        /*-> return the row used ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.30.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return the row used ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_used         (short a_tab, short a_row)
 {
    char rc = LOC_row_valid (a_tab, 0);
@@ -1528,7 +1528,7 @@ LOC_row_used         (short a_tab, short a_row)
    return s_tabs [a_tab].rows [a_row].c;
 }
 
-short        /*-> return the row ypos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.60.--]-*/ /*-[--.---.---.--]-*/
+short        /*-> return the row ypos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.603.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_ypos         (short a_tab, short a_row)
 {
    char rc = LOC_row_valid (a_tab, 0);
@@ -1536,7 +1536,7 @@ LOC_row_ypos         (short a_tab, short a_row)
    return s_tabs [a_tab].rows [a_row].y;
 }
 
-char         /*-> set a new row y-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> set a new row y-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_yset         (short a_tab, short a_row, short a_pos)
 {
    char rc = LOC_row_valid (a_tab, a_row);
@@ -1545,7 +1545,7 @@ LOC_row_yset         (short a_tab, short a_row, short a_pos)
    return 0;
 }
 
-char         /*-> return height for a row ------------[ ------ [gc.210.213.11]*/ /*-[00.0000.60.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> return height for a row ------------[ ------ [gc.210.213.11]*/ /*-[00.0000.604.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_height       (short a_tab, short a_row)
 {
    char rc = LOC_row_valid (a_tab, a_row);
@@ -1553,7 +1553,7 @@ LOC_row_height       (short a_tab, short a_row)
    return s_tabs [a_tab].rows [a_row].h;
 }
 
-char         /*-> change the row height --------------[ ------ [gc.320.312.31]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change the row height --------------[ ------ [gc.320.312.31]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_heighten     (short a_tab, short a_row, short a_size)
 {
    char rc = LOC_row_valid (a_tab, a_row);
@@ -1564,7 +1564,7 @@ LOC_row_heighten     (short a_tab, short a_row, short a_size)
    return 0;
 }
 
-char         /*-> change the frozen rows -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change the frozen rows -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_freeze       (short a_tab, short a_brow, short a_erow)
 {
    char rc = LOC_row_valid (a_tab, a_brow);
@@ -1583,7 +1583,7 @@ LOC_row_freeze       (short a_tab, short a_brow, short a_erow)
    return 0;
 }
 
-char         /*-> clear the frozen rows --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> clear the frozen rows --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 LOC_row_unfreeze     (short a_tab)
 {
    char rc = LOC_row_valid (a_tab, 0);
@@ -1601,7 +1601,7 @@ LOC_row_unfreeze     (short a_tab)
 /*====================------------------------------------====================*/
 PRIV void  o___UNIT_TEST_______o () { return; }
 
-char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 LOC__unit          (char *a_question, char *a_label)
 {
    /*---(locals)-------------------------*/
@@ -1656,7 +1656,7 @@ LOC__unit          (char *a_question, char *a_label)
    return unit_answer;
 }
 
-char*        /*-> unit test accessor -----------------[ light  [us.D60.241.J0]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.D60.241.J0]*/ /*-[02.0000.00#.T]-*/ /*-[--.---.---.--]-*/
 LOC__unit_OLD      (char *a_question, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/

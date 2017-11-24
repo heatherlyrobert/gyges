@@ -36,7 +36,7 @@ int         g_nlayout;
 /*===----                        program wide                          ----===*/
 /*====================------------------------------------====================*/
 
-char         /*-> display command line help/usage ----[ leaf   [gc.760.000.00]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> display command line help/usage ----[ leaf   [gc.760.000.00]*/ /*-[00.0000.012.!]-*/ /*-[--.---.---.--]-*/
 PROG_usage         (void)
 {
    printf("\n");
@@ -70,7 +70,7 @@ PROG_usage         (void)
 
 char      verstring    [500];
 
-char*        /*-> return library version--------------[ leaf   [gs.420.012.00]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> return library versio --------------[ leaf   [gs.420.012.00]*/ /*-[00.0000.012.!]-*/ /*-[--.---.---.--]-*/
 PROG_version       (void)
 {
    char    t [20] = "";
@@ -87,7 +87,7 @@ PROG_version       (void)
    return verstring;
 }
 
-char         /*-> very first setup -------------------[ shoot  [gz.633.201.0A]*/ /*-[00.0000.12.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> very first setup -------------------[ shoot  [gz.633.201.0A]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG_init          (int a_argc, char *a_argv[])
 {
    /*---(log header)---------------------*/
@@ -117,7 +117,7 @@ PROG_init          (int a_argc, char *a_argv[])
    return 0;
 }
 
-char         /*-> process the command line args ------[ ------ [gz.952.251.B4]*/ /*-[01.0000.12.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> process the command line args ------[ ------ [gz.952.251.B4]*/ /*-[01.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG_args          (int argc, char *argv[])
 {
    DEBUG_TOPS  yLOG_enter   (__FUNCTION__);
@@ -160,7 +160,7 @@ PROG_args          (int argc, char *argv[])
    return 0;
 }
 
-char         /*-> initialize program and variables ---[ ------ [gz.741.041.07]*/ /*-[00.0000.12.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> initialize program and variables ---[ ------ [gz.741.041.07]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG_begin         (void)
 {
    DEBUG_PROG  yLOG_enter (__FUNCTION__);
@@ -191,7 +191,7 @@ PROG_begin         (void)
    return 0;
 }
 
-char         /*-> initialize program and variables ---[ ------ [gz.421.001.08]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> initialize program and variables ---[ ------ [gz.421.001.08]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
 PROG_final         (void)
 {
    CURS_begin ();
@@ -208,7 +208,7 @@ PROG_final         (void)
    return 0;
 }
 
-char         /*-> gather main loop keyboard input ----[ ------ [gc.D44.233.C7]*/ /*-[02.0000.11.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> gather main loop keyboard input ----[ ------ [gc.D44.233.C7]*/ /*-[02.0000.111.R]-*/ /*-[--.---.---.--]-*/
 PROG_main_input    (char a_mode, char a_key)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -270,7 +270,7 @@ PROG_main_input    (char a_mode, char a_key)
    return x_ch;
 }
 
-char         /*-> process main loop keyboard input ---[ leaf   [gc.GD1.132.IM]*/ /*-[05.0000.11.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> process main loop keyboard input ---[ leaf   [gc.GD1.132.IM]*/ /*-[05.0000.111.R]-*/ /*-[--.---.---.--]-*/
 PROG_main_handle   (char a_key)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -347,7 +347,7 @@ PROG_main_handle   (char a_key)
    return 0;
 }
 
-char         /*-> process input string in main loop --[ ------ [ge.C74.153.42]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> process input string in main loop --[ ------ [ge.C74.153.42]*/ /*-[02.0000.00#.D]-*/ /*-[--.---.---.--]-*/
 PROG_main_string     (char *a_keys)
 {
    /*---(locals)-----------+-----------+-*/
@@ -403,7 +403,7 @@ PROG_main_string     (char *a_keys)
    return 0;
 }
 
-char         /*-> shutdown program and free memory ---[ ------ [gz.422.001.03]*/ /*-[00.0000.11.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> shutdown program and free memory ---[ ------ [gz.422.001.03]*/ /*-[00.0000.111.!]-*/ /*-[--.---.---.--]-*/
 PROG_end             (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
@@ -426,7 +426,7 @@ PROG_end             (void)
 /*====================------------------------------------====================*/
 PRIV void  o___LAYOUT__________o () { return; }
 
-char         /*-> tbd --------------------------------[ shoot  [gz.430.011.10]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ shoot  [gz.430.011.10]*/ /*-[01.0000.012.!]-*/ /*-[--.---.---.--]-*/
 PROG_layout_init    (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -446,7 +446,7 @@ PROG_layout_init    (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gc.850.323.C5]*/ /*-[02.0000.15.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.850.323.C5]*/ /*-[02.0000.152.!]-*/ /*-[--.---.---.--]-*/
 PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
 {
    /*---(locals)-----------+-----------+-*/
@@ -490,7 +490,7 @@ char PROG_layout_status  (char *a_opt) { return PROG_layout_set ("cmd", "status"
 char PROG_layout_command (char *a_opt) { return PROG_layout_set ("cmd", "command", a_opt); }
 char PROG_layout_layout  (char *a_opt) { return PROG_layout_set ("cmd", "layout" , a_opt); }
 
-char         /*-> tbd --------------------------------[ ------ [gc.750.153.41]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.750.153.41]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
 PROG_layout_list    (char *a_who)
 {
    /*---(locals)-----------+-----------+-*/
@@ -524,7 +524,7 @@ PROG_layout_list    (char *a_who)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.430.224.30]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.430.224.30]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
 PROG_layout_entry   (int a_num, char *a_line)
 {
    /*---(locals)-----------+-----------+-*/
@@ -549,7 +549,7 @@ PROG_layout_entry   (int a_num, char *a_line)
 /*====================------------------------------------====================*/
 PRIV void  o___UNITTEST________o () { return; }
 
-char*        /*-> tbd --------------------------------[ light  [us.JC0.271.X1]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> tbd --------------------------------[ light  [us.JC0.271.X1]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unit           (char *a_question, void *a_thing)
 {
    /*---(locals)-----------+-----------+-*/
@@ -640,7 +640,7 @@ PROG__unit           (char *a_question, void *a_thing)
    return unit_answer;
 }
 
-char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 PROG__unitquiet     (void)
 {
    char       *x_args [1]  = { "gyges" };
@@ -652,7 +652,7 @@ PROG__unitquiet     (void)
    return 0;
 }
 
-char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unitloud      (void)
 {
    char       *x_args [2]  = { "gyges_unit", "@@kitchen"    };
@@ -664,7 +664,7 @@ PROG__unitloud      (void)
    return 0;
 }
 
-char         /*-> set up program urgents/debugging ---[ light  [uz.210.001.01]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> set up program urgents/debugging ---[ light  [uz.210.001.01]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unitend       (void)
 {
    PROG_end       ();

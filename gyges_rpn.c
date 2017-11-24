@@ -68,7 +68,7 @@ static short  s_arow   = 0;    /* adjust row                                  */
 /*====================------------------------------------====================*/
 PRIV void  o___MODIFY__________o () { return; }
 
-char         /*-> shared argument validiation --------[ ------ [fe.G67.55#.92]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> shared argument validiation --------[ ------ [fe.G67.55#.92]*/ /*-[01.0000.018.!]-*/ /*-[--.---.---.--]-*/
 RPN__check_args      (tCELL *a_cell, char a_scope, char *a_target, char *a_final, int a_index)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -144,7 +144,7 @@ RPN__check_args      (tCELL *a_cell, char a_scope, char *a_target, char *a_final
    return 0;
 }
 
-char         /*-> change a specific reference --------[ ------ [fe.HA4.498.A3]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change a specific reference --------[ ------ [fe.HA4.498.A3]*/ /*-[02.0000.018.!]-*/ /*-[--.---.---.--]-*/
 RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -226,7 +226,7 @@ RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
    return 0;
 }
 
-char         /*-> change a specific reference --------[ ------ [fe.J75.197.84]*/ /*-[02.0000.03.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change a specific reference --------[ ------ [fe.J75.197.84]*/ /*-[02.0000.037.!]-*/ /*-[--.---.---.--]-*/
 RPN__adjust_main     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
@@ -319,7 +319,7 @@ RPN__adjust_main     (
    return 0;
 }
 
-char         /*-> adjust addr based on cell move -----[ ------ [gc.310.101.01]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> adjust addr based on cell move -----[ ------ [gc.310.101.01]*/ /*-[01.0000.016.#]-*/ /*-[--.---.---.--]-*/
 RPN_adjust         (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
@@ -331,7 +331,7 @@ RPN_adjust         (
    return RPN__adjust_main (a_cell, G_RPN_NORM, a_atab, a_acol, a_arow, a_final, -1, "");
 }
 
-char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
 RPN_adjust_ref     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
@@ -347,7 +347,7 @@ RPN_adjust_ref     (
    return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);
 }
 
-char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
 RPN_adjust_reg     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
@@ -370,7 +370,7 @@ RPN_adjust_reg     (
 /*====================------------------------------------====================*/
 PRIV void  o___DRIVER__________o () { return; }
 
-char         /*-> convert infix notation to rpn ------[ ------ [ge.QC8.1F#.E4]*/ /*-[12.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> convert infix notation to rpn ------[ ------ [ge.QC8.1F#.E4]*/ /*-[12.0000.107.!]-*/ /*-[--.---.---.--]-*/
 RPN_convert        (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_curr)     /* cell whose formula is to be converted        */
@@ -504,7 +504,7 @@ RPN_convert        (
 /*====================------------------------------------====================*/
 PRIV void  o___UNIT_TEST_______o () { return; }
 
-char*        /*-> tbd --------------------------------[ leaf   [gs.310.201.10]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> tbd --------------------------------[ leaf   [gs.310.201.10]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 RPN_unit           (char *a_question, void *a_curr)
 {
    /*---(locals)-----------+-----------+-*/

@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6o"
-#define     VER_TXT   "updated by HTAG v1.5o with amazing tags in headers"
+#define     VER_NUM   "2.6p"
+#define     VER_TXT   "adjusted to handle HTAG output of gyges file"
 
 
 
@@ -181,7 +181,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 /*---(cell width)---------------------*/
 #define     MAX_WIDTH   100
 #define     DEF_WIDTH   8
-#define     MIN_WIDTH   4
+#define     MIN_WIDTH   2
 #define     MAX_MERGE   10
 /*---(cell height)--------------------*/
 #define     MAX_HEIGHT  4
@@ -1418,7 +1418,7 @@ char      OUTP_tab_head        (FILE  *a_file );
 char      OUTP_tab_foot        (FILE  *a_file , int   a_count);
 int       OUTP_tabs            (FILE  *a_file );
 /*---(columns)---------------*/
-char      INPT_col             (char  *a_label, int   a_size);
+char      INPT_col             (char  *a_label, int   a_size, int a_count);
 char      OUTP_col             (short  a_tab  , short a_col);
 char      OUTP_col_head        (FILE  *a_file );
 char      OUTP_col_foot        (FILE  *a_file , int   a_count);

@@ -184,7 +184,7 @@ char    G_CELL_FPRE   [20] = "";
 /*====================------------------------------------====================*/
 PRIV void  o___PROGRAM_________o () { return; }
 
-char         /*-> tbd --------------------------------[ shoot  [ge.G94.071.80]*/ /*-[04.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ shoot  [ge.G94.071.80]*/ /*-[04.0000.102.!]-*/ /*-[--.---.---.--]-*/
 CELL_init          (void)
 {
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
@@ -263,7 +263,7 @@ CELL_init          (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [fz.842.041.24]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [fz.842.041.24]*/ /*-[01.0000.013.T]-*/ /*-[--.---.---.--]-*/
 CELL__purge        (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -301,7 +301,7 @@ CELL__purge        (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ shoot  [gz.321.001.01]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ shoot  [gz.321.001.01]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
 CELL_wrap          (void)
 {
    /*---(header)-------------------------*/
@@ -323,7 +323,7 @@ CELL_wrap          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___BASICS__________o () { return; }
 
-char         /*-> create a single new empty cell -----[ leaf   [fe.KB4.224.80]*/ /*-[12.0000.12.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> create a single new empty cell -----[ leaf   [fe.KB4.224.80]*/ /*-[12.0000.123.A]-*/ /*-[--.---.---.--]-*/
 CELL__new          (tCELL **a_cell, char a_linked)
 {
    /*---(locals)-----------+-----------+-*/
@@ -419,7 +419,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    return 0;
 }
 
-char         /*-> wipe the contents of a cell --------[ ------ [fc.B52.112.94]*/ /*-[40.0000.14.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> wipe the contents of a cell --------[ ------ [fc.B52.112.94]*/ /*-[40.0000.144.M]-*/ /*-[--.---.---.--]-*/
 CELL__wipe         (tCELL *a_curr)
 {
    /*---(design notes)----------------*/
@@ -474,7 +474,7 @@ CELL__wipe         (tCELL *a_curr)
    return 0;
 }
 
-char         /*-> test a cell pointer for safety -----[ leaf   [fe.C34.237.50]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> test a cell pointer for safety -----[ leaf   [fe.C34.237.50]*/ /*-[02.0000.014.#]-*/ /*-[--.---.---.--]-*/
 CELL__valid        (tCELL *a_cell, char a_linked)
 {
    /*---(design notes)-------------------*/
@@ -534,7 +534,7 @@ CELL__valid        (tCELL *a_cell, char a_linked)
    return rce;
 }
 
-char         /*-> remove a cell completely -----------[ ------ [fe.943.224.81]*/ /*-[11.0000.13.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove a cell completely -----------[ ------ [fe.943.224.81]*/ /*-[11.0000.133.7]-*/ /*-[--.---.---.--]-*/
 CELL__free         (tCELL **a_cell, char a_linked)
 {
    /*---(locals)-----------+-----------+-*/
@@ -579,7 +579,7 @@ CELL__free         (tCELL **a_cell, char a_linked)
    return 0;
 }
 
-char         /*-> act on a dependent cell ------------[ ------ [fz.722.621.41]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> act on a dependent cell ------------[ ------ [fz.722.621.41]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 CELL__depwipe      (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp)
 {
    /*---(design notes)-------------------*/
@@ -620,7 +620,7 @@ CELL__depwipe      (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
 /*====================------------------------------------====================*/
 PRIV void  o___SETUP___________o () { return; }
 
-char         /*-> delete a register cell -------------[ ------ [gz.210.101.01]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> delete a register cell -------------[ ------ [gz.210.101.01]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
 CELL_regdel        (tCELL *a_curr)
 {
    CELL__free (&a_curr, LINKED);
@@ -634,7 +634,7 @@ CELL_regdel        (tCELL *a_curr)
 /*====================------------------------------------====================*/
 PRIV void  o___EXISTANCE_______o () { return; }
 
-char         /*-> tbd --------------------------------[ ------ [fe.732.424.33]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [fe.732.424.33]*/ /*-[01.0000.014.K]-*/ /*-[--.---.---.--]-*/
 CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
 {
    /*---(locals)----------------------*/
@@ -668,7 +668,7 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [ge.I75.468.FA]*/ /*-[02.0000.52.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [ge.I75.468.FA]*/ /*-[02.0000.524.C]-*/ /*-[--.---.---.--]-*/
 CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+-----------+-*/
@@ -756,7 +756,7 @@ CELL_delete        (char a_mode, int a_tab, int a_col, int a_row)
    return 0;
 }
 
-char         /*-> create a duplicate cell ------------[ ------ [ge.B44.225.61]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> create a duplicate cell ------------[ ------ [ge.B44.225.61]*/ /*-[01.0000.205.2]-*/ /*-[--.---.---.--]-*/
 CELL_dup           (tCELL **a_new, tCELL *a_old)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -811,7 +811,7 @@ char      xlabel    [200] = "";
 char      s_bsource [200] = "";
 char      s_bformat [200] = "";
 
-char         /*-> change te contents of a cell -------[ leaf   [ge.M96.647.HB]*/ /*-[02.0000.95.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change te contents of a cell -------[ leaf   [ge.M96.647.HB]*/ /*-[02.0000.953.#]-*/ /*-[--.---.---.--]-*/
 CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row, char *a_source)
 {
    /*---(design notes)-------------------*/
@@ -919,7 +919,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    return 0;
 }
 
-tCELL*       /*-> change the contents of a cell ------[ ------ [gp.B44.627.94]*/ /*-[01.0000.50.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> change the contents of a cell ------[ ------ [gp.B44.627.94]*/ /*-[01.0000.504.!]-*/ /*-[--.---.---.--]-*/
 CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format)
 {
    /*---(locals)-----------+-----------+-*/
@@ -978,7 +978,7 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
 /*====================------------------------------------====================*/
 PRIV void  o___NUMERICS________o () { return; }
 
-char         /*-> interpret any/all numbers ----------[ leaf   [fe.B43.132.60]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> interpret any/all numbers ----------[ leaf   [fe.B43.132.60]*/ /*-[02.0000.015.A]-*/ /*-[--.---.---.--]-*/
 CELL__numerics     (tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1038,7 +1038,7 @@ CELL__numerics     (tCELL *a_cell)
 /*====================------------------------------------====================*/
 PRIV void  o___FORMULAS________o () { return; }
 
-char         /*-> build any/all formulas -------------[ ------ [fe.843.132.14]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> build any/all formulas -------------[ ------ [fe.843.132.14]*/ /*-[01.0000.016.6]-*/ /*-[--.---.---.--]-*/
 CELL__rpn          (tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1076,7 +1076,7 @@ CELL__rpn          (tCELL *a_cell)
    return 0;
 }
 
-char         /*-> build any/all formulas -------------[ ------ [fe.632.122.13]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> build any/all formulas -------------[ ------ [fe.632.122.13]*/ /*-[01.0000.016.6]-*/ /*-[--.---.---.--]-*/
 CELL__build        (tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1102,7 +1102,7 @@ CELL__build        (tCELL *a_cell)
    return rc;
 }
 
-char         /*-> build any/all formulas -------------[ ------ [fe.943.165.43]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> build any/all formulas -------------[ ------ [fe.943.165.43]*/ /*-[01.0000.016.6]-*/ /*-[--.---.---.--]-*/
 CELL__like         (tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1146,13 +1146,13 @@ CELL__like         (tCELL *a_cell)
    return 0;
 }
 
-char         /*-> build any/all formulas -------------[ leaf   [fz.210.101.10]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> build any/all formulas -------------[ leaf   [fz.210.101.10]*/ /*-[00.0000.016.!]-*/ /*-[--.---.---.--]-*/
 CELL__point        (tCELL *a_cell)
 {
    if (a_cell->t != CTYPE_RANGE && a_cell->t != CTYPE_ADDR )  return 0;
 }
 
-char         /*-> build any/all formulas -------------[ ------ [fe.531.122.13]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> build any/all formulas -------------[ ------ [fe.531.122.13]*/ /*-[01.0000.016.6]-*/ /*-[--.---.---.--]-*/
 CELL__eval         (tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1177,7 +1177,7 @@ CELL__eval         (tCELL *a_cell)
    return rc;
 }
 
-char         /*-> interpret any/all formulas ---------[ ------ [fe.F64.137.85]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> interpret any/all formulas ---------[ ------ [fe.F64.137.85]*/ /*-[02.0000.015.8]-*/ /*-[--.---.---.--]-*/
 CELL__formulas     (tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -1257,7 +1257,7 @@ CELL__formulas     (tCELL *a_cell)
 /*====================------------------------------------====================*/
 PRIV void  o___DRIVER__________o () { return; }
 
-char         /*-> tbd --------------------------------[ leaf   [fc.320.112.20]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [fc.320.112.20]*/ /*-[01.0000.017.!]-*/ /*-[--.---.---.--]-*/
 CELL__ftype        (char a_prefix)
 {
    int         i           = 0;                  /* iterator -- character     */
@@ -1269,7 +1269,7 @@ CELL__ftype        (char a_prefix)
    return -1;
 }
 
-char         /*-> tbd --------------------------------[ ------ [fc.532.132.42]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [fc.532.132.42]*/ /*-[01.0000.015.!]-*/ /*-[--.---.---.--]-*/
 CELL__merges       (tCELL *a_cell)
 {
    int         x_col       =   0;
@@ -1294,7 +1294,7 @@ CELL__merges       (tCELL *a_cell)
    return 0;
 }
 
-char         /*-> identify cell type from contents ---[ ------ [fe.J84.1B7.85]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> identify cell type from contents ---[ ------ [fe.J84.1B7.85]*/ /*-[01.0000.014.C]-*/ /*-[--.---.---.--]-*/
 CELL__interpret    (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell)     /* cell to interpret                            */
@@ -1395,7 +1395,7 @@ CELL__interpret    (
 /*====================------------------------------------====================*/
 PRIV void  o___MERGES__________o () { return; }
 
-char         /*-> check for merge-type cell ----------[ leaf   [fe.430.116.50]*/ /*-[00.0000.05.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> check for merge-type cell ----------[ leaf   [fe.430.116.50]*/ /*-[00.0000.056.#]-*/ /*-[--.---.---.--]-*/
 CELL__merge_valid    (tCELL *a_curr)
 {  /*---(design notes)--------------------------------------------------------*/
    /* check if a cell is a merge/bleed type cell                              */
@@ -1411,7 +1411,7 @@ CELL__merge_valid    (tCELL *a_curr)
    return 0;
 }
 
-tCELL*       /*-> check to left for merge ------------[ ------ [fp.530.123.32]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> check to left for merge ------------[ ------ [fp.530.123.32]*/ /*-[01.0000.016.#]-*/ /*-[--.---.---.--]-*/
 CELL__merge_left     (tCELL *a_curr)
 {  /*---(design notes)--------------------------------------------------------*/
    /* if possible, merge with the cells to the left                           */
@@ -1433,7 +1433,7 @@ CELL__merge_left     (tCELL *a_curr)
    return x_left;
 }
 
-char         /*-> add merges to right ----------------[ ------ [fe.860.165.65]*/ /*-[02.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> add merges to right ----------------[ ------ [fe.860.165.65]*/ /*-[02.0000.026.P]-*/ /*-[--.---.---.--]-*/
 CELL__merge_right    (tCELL *a_left)
 {  /*---(design notes)--------------------------------------------------------*/
    /* add all applicable cells to the right into the merge                    */
@@ -1473,7 +1473,7 @@ CELL__merge_right    (tCELL *a_left)
    return c;
 }
 
-char         /*-> remove merges to right -------------[ ------ [fe.C53.154.45]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove merges to right -------------[ ------ [fe.C53.154.45]*/ /*-[02.0000.016.!]-*/ /*-[--.---.---.--]-*/
 CELL__unmerge_right  (tCELL *a_left)
 {  /*---(design notes)--------------------------------------------------------*/
    /* remove merge from all applicable cells to the right                     */
@@ -1530,7 +1530,7 @@ CELL__unmerge_right  (tCELL *a_left)
    return 0;
 }
 
-char         /*-> coordinate a merge -----------------[ ------ [ge.640.134.44]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> coordinate a merge -----------------[ ------ [ge.640.134.44]*/ /*-[02.0000.013.6]-*/ /*-[--.---.---.--]-*/
 CELL_merge           (tCELL *a_curr)
 {  /*---(design notes)--------------------------------------------------------*/
    /* when adding a cell with a merge indicator, try to add to existing merge */
@@ -1560,7 +1560,7 @@ CELL_merge           (tCELL *a_curr)
    return 0;
 }
 
-char         /*-> check and coordinate an unmerge ----[ ------ [ge.630.133.34]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> check and coordinate an unmerge ----[ ------ [ge.630.133.34]*/ /*-[01.0000.013.4]-*/ /*-[--.---.---.--]-*/
 CELL_unmerge         (tCELL *a_curr)
 {  /*---(design notes)--------------------------------------------------------*/
    /* checks whether a larger merge must be split by a cell change            */
@@ -1586,7 +1586,7 @@ CELL_unmerge         (tCELL *a_curr)
    return 0;
 }
 
-char         /*-> merge horizontal cells -------------[ ------ [gc.530.062.64]*/ /*-[03.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> merge horizontal cells -------------[ ------ [gc.530.062.64]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
 CELL_merge_visu    (void)
 {
    /*---(defenses)---------------------------*/
@@ -1611,7 +1611,7 @@ CELL_merge_visu    (void)
    return 0;
 }
 
-char         /*-> unmerge horizontal cells -----------[ ------ [gz.740.061.44]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> unmerge horizontal cells -----------[ ------ [gz.740.061.44]*/ /*-[02.0000.103.!]-*/ /*-[--.---.---.--]-*/
 CELL_unmerge_visu  (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1649,7 +1649,7 @@ CELL_unmerge_visu  (void)
 /*====================------------------------------------====================*/
 PRIV void  o___FORMATTING______o () { return; }
 
-char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.106.!]-*/ /*-[--.---.---.--]-*/
 CELL_erase         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1683,14 +1683,14 @@ CELL_erase         (void)
    return 0;
 }
 
-char         /*-> validate number formatting ---------[ leaf   [gc.210.102.10]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> validate number formatting ---------[ leaf   [gc.210.102.10]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
 CELL_format_valid    (char a_format)
 {
    if (strchr (sv_formats, a_format) == 0)   return '?';
    return a_format;
 }
 
-char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.303.#]-*/ /*-[--.---.---.--]-*/
 CELL_format        (char a_mode, char a_format)
 {
    /*---(design notes)-------------------*/
@@ -1731,14 +1731,14 @@ CELL_format        (char a_mode, char a_format)
    return 0;
 }
 
-char         /*-> validate horizontal alignment ------[ leaf   [gc.210.102.10]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> validate horizontal alignment ------[ leaf   [gc.210.102.10]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
 CELL_align_valid   (char a_align)
 {
    if (strchr (sv_align, a_align) == 0)   return '?';
    return a_align;
 }
 
-char         /*-> change cell horizontal alignment ---[ ------ [gc.940.262.94]*/ /*-[04.0000.40.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change cell horizontal alignment ---[ ------ [gc.940.262.94]*/ /*-[04.0000.403.Y]-*/ /*-[--.---.---.--]-*/
 CELL_align         (char a_mode, char a_align)
 {
    /*---(design notes)-------------------*/
@@ -1780,14 +1780,14 @@ CELL_align         (char a_mode, char a_align)
    return 0;
 }
 
-char         /*-> validate decimal places ------------[ leaf   [gc.210.102.10]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> validate decimal places ------------[ leaf   [gc.210.102.10]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
 CELL_decimals_valid  (char a_decs)
 {
    if (strchr ("0123456789\"", a_decs) == 0)   return '0';
    return a_decs;
 }
 
-char         /*-> change cell decimal places ---------[ ------ [gc.950.272.94]*/ /*-[03.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change cell decimal places ---------[ ------ [gc.950.272.94]*/ /*-[03.0000.303.S]-*/ /*-[--.---.---.--]-*/
 CELL_decimals      (char a_mode, char a_num)
 {
    /*---(design notes)-------------------*/
@@ -1828,7 +1828,7 @@ CELL_decimals      (char a_mode, char a_num)
    return 0;
 }
 
-char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
 CELL_width         (char a_mode, char a_num)
 {  /*---(design notes)-------------------*/
    /*  update all cells to new width, either a standard size, or a specific   */
@@ -1904,7 +1904,7 @@ PRIV void  o___DISPLAY_________o () { return; }
 
 char        s_print     [LEN_RECD] = "";
 
-char         /*-> tbd --------------------------------[ ------ [ge.540.136.51]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.540.136.51]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 CELL_macro_get       (char *a_macro)
 {
    char        rce         =  -10;
@@ -1927,7 +1927,7 @@ CELL_macro_get       (char *a_macro)
    return rce;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.540.153.42]*/ /*-[01.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.540.153.42]*/ /*-[01.0000.105.!]-*/ /*-[--.---.---.--]-*/
 CELL_macro_set       (char *a_macro)
 {
    char        rce         =  -10;
@@ -1950,7 +1950,7 @@ CELL_macro_set       (char *a_macro)
    return 0;
 }
 
-char         /*-> determine full print width ---------[ ------ [gz.530.321.23]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> determine full print width ---------[ ------ [gz.530.321.23]*/ /*-[01.0000.015.!]-*/ /*-[--.---.---.--]-*/
 CELL_print_width     (tCELL *a_curr, int *a_width, int *a_merge)
 {
    /*---(locals)-------------------------*/
@@ -1971,7 +1971,7 @@ CELL_print_width     (tCELL *a_curr, int *a_width, int *a_merge)
    return 0;
 }
 
-char         /*-> parse print into merged cells ------[ ------ [gz.641.351.22]*/ /*-[22.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> parse print into merged cells ------[ ------ [gz.641.351.22]*/ /*-[22.0000.015.!]-*/ /*-[--.---.---.--]-*/
 CELL_print_parse     (tCELL *a_curr, char *p, int a_merge)
 {
    /*---(locals)-------------------------*/
@@ -1999,7 +1999,7 @@ CELL_print_parse     (tCELL *a_curr, char *p, int a_merge)
    return 0;
 }
 
-char         /*-> create a curses printable image ----[ ------ [ge.L94.1D4.I2]*/ /*-[31.0000.3A.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> create a curses printable image ----[ ------ [ge.L94.1D4.I2]*/ /*-[31.0000.3A4.!]-*/ /*-[--.---.---.--]-*/
 CELL_printable     (tCELL *a_curr) {
    /*---(locals)-------------------------*/
    char        rce         =  -10;
@@ -2107,7 +2107,7 @@ CELL_printable     (tCELL *a_curr) {
 /*====================------------------------------------====================*/
 PRIV void  o___UNIT_TEST_______o () { return; }
 
-char*        /*-> unit test accessor -----------------[ light  [us.960.251.A0]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> unit test accessor -----------------[ light  [us.960.251.A0]*/ /*-[02.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 CELL__unit         (char *a_question, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2149,7 +2149,7 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    return unit_answer;
 }
 
-char*        /*-> unit testing accessor --------------[ light  [us.IA0.2A5.X3]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> unit testing accessor --------------[ light  [us.IA0.2A5.X3]*/ /*-[02.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 CELL__unitnew      (char *a_question, char *a_label)
 {  /*---(design notes)--------------------------------------------------------*/
    /*
@@ -2237,7 +2237,7 @@ CELL__unitnew      (char *a_question, char *a_label)
    return unit_answer;
 }
 
-char         /*-> force direct cell content change ---[ light  [ue.320.213.20]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> force direct cell content change ---[ light  [ue.320.213.20]*/ /*-[00.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 CELL__unitchange     (tCELL *a_cell, char *a_source)
 {
    /*---(locals)-----------+-----------+-*/

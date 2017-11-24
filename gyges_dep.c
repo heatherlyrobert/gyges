@@ -212,7 +212,7 @@ static char S_DEP_LIKE [10] = "";
 /*====================------------------------------------====================*/
 PRIV void  o___PROG____________o () { return; }
 
-char         /*-> prepare dependency capability ------[ shoot  [ge.G84.095.81]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> prepare dependency capability ------[ shoot  [ge.G84.095.81]*/ /*-[02.0000.102.1]-*/ /*-[--.---.---.--]-*/
 DEP_init           (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -290,7 +290,7 @@ DEP_init           (void)
    return 0;
 }
 
-char         /*-> destory all dependencies -----------[ ------ [fe.841.032.21]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> destory all dependencies -----------[ ------ [fe.841.032.21]*/ /*-[01.0000.013.5]-*/ /*-[--.---.---.--]-*/
 DEP__purge         (void)
 {
    /*---(beginning)----------------------*/
@@ -326,7 +326,7 @@ DEP__purge         (void)
    return 0;
 }
 
-char         /*-> shut down dependency usage ---------[ shoot  [gz.421.001.02]*/ /*-[00.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> shut down dependency usage ---------[ shoot  [gz.421.001.02]*/ /*-[00.0000.102.1]-*/ /*-[--.---.---.--]-*/
 DEP_wrap           (void)
 {
    DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
@@ -349,7 +349,7 @@ DEP_wrap           (void)
 /*====================------------------------------------====================*/
 PRIV void  o___MALLOC__________o () { return; }
 
-tDEP*        /*-> create a new, blank dependency -----[ leaf   [fp.C53.022.40]*/ /*-[11.0000.02.--]-*/ /*-[--.---.---.--]-*/
+tDEP*        /*-> create a new, blank dependency -----[ leaf   [fp.C53.022.40]*/ /*-[11.0000.028.F]-*/ /*-[--.---.---.--]-*/
 DEP__new           (void)
 {  /*---(design notes)--------------------------------------------------------*/
    /* creates a new dependency object which is completely blank except for    */
@@ -409,7 +409,7 @@ DEP__new           (void)
    return x_new;
 }
 
-tDEP*        /*-> destroy a single dependency --------[ leaf   [fp.B42.102.E0]*/ /*-[11.0000.03.--]-*/ /*-[--.---.---.--]-*/
+tDEP*        /*-> destroy a single dependency --------[ leaf   [fp.B42.102.E0]*/ /*-[11.0000.034.5]-*/ /*-[--.---.---.--]-*/
 DEP__free          (tDEP *a_dep)
 {  /*---(design notes)--------------------------------------------------------*/
    /* destroys a single dependency object and removes from the associated     */
@@ -467,7 +467,7 @@ DEP__free          (tDEP *a_dep)
 /*====================------------------------------------====================*/
 PRIV void  o___TABLE___________o () { return; }
 
-char         /*-> find the index of a dep type -------[ leaf   [fc.320.112.10]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> find the index of a dep type -------[ leaf   [fc.320.112.10]*/ /*-[01.0000.026.!]-*/ /*-[--.---.---.--]-*/
 DEP__table_index   (char a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -481,7 +481,7 @@ DEP__table_index   (char a_type)
    return -1;
 }
 
-char         /*-> find index of a dep match type -----[ leaf   [fc.320.112.10]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> find index of a dep match type -----[ leaf   [fc.320.112.10]*/ /*-[01.0000.026.!]-*/ /*-[--.---.---.--]-*/
 DEP__table_match   (char a_type)
 {
    /*---(locals)-----------+-----------+-*/
@@ -495,7 +495,7 @@ DEP__table_match   (char a_type)
    return -1;
 }
 
-char         /*-> find index of a dep match type -----[ leaf   [fc.310.112.10]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> find index of a dep match type -----[ leaf   [fc.310.112.10]*/ /*-[01.0000.018.!]-*/ /*-[--.---.---.--]-*/
 DEP__table_abbr    (char a_index)
 {
    /*---(locals)-----------+-----------+-*/
@@ -515,7 +515,7 @@ DEP__table_abbr    (char a_index)
 /*====================------------------------------------====================*/
 PRIV void  o___LIFESPAN________o () { return; }
 
-char         /*-> root and unroot cells --------------[ ------ [ge.P86.258.H2]*/ /*-[03.0000.12.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> root and unroot cells --------------[ ------ [ge.P86.258.H2]*/ /*-[03.0000.125.!]-*/ /*-[--.---.---.--]-*/
 DEP_rooting        (tCELL *a_cell, char a_type)
 {  /*---(design notes)-------------------*/
    /*
@@ -636,7 +636,7 @@ DEP_rooting        (tCELL *a_cell, char a_type)
    return 0;
 }
 
-tDEP*        /*-> create a requires dependency -------[ ------ [fp.C43.123.61]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+tDEP*        /*-> create a requires dependency -------[ ------ [fp.C43.123.61]*/ /*-[02.0000.017.!]-*/ /*-[--.---.---.--]-*/
 DEP__create_req    (
       /*----------+-----------+-----------------------------------------------*/
       char        a_type,     /* type of dependency (source, format, or calc) */
@@ -695,7 +695,7 @@ DEP__create_req    (
    return x_req;
 }
 
-tDEP*        /*-> create a provides dependency -------[ ------ [fp.C43.123.62]*/ /*-[02.0000.01.--]-*/ /*-[--.---.---.--]-*/
+tDEP*        /*-> create a provides dependency -------[ ------ [fp.C43.123.62]*/ /*-[02.0000.017.!]-*/ /*-[--.---.---.--]-*/
 DEP__create_pro    (
       /*----------+-----------+-----------------------------------------------*/
       char        a_type,     /* type of dependency (source, format, or calc) */
@@ -754,7 +754,7 @@ DEP__create_pro    (
    return x_pro;
 }
 
-char         /*-> create a two-way dependency --------[ ------ [ge.M88.15#.B6]*/ /*-[01.0000.52.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> create a two-way dependency --------[ ------ [ge.M88.15#.B6]*/ /*-[01.0000.526.H]-*/ /*-[--.---.---.--]-*/
 DEP_create         (
       /*----------+-----------+-----------------------------------------------*/
       char        a_type,     /* type of dependency (source, format, or calc) */
@@ -864,7 +864,7 @@ DEP_create         (
    return 0;
 }
 
-char         /*-> remove source of merge -------------[ ------ [ge.732.134.32]*/ /*-[01.0000.20.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove source of merge -------------[ ------ [ge.732.134.32]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
 DEP_delmergeroot   (tCELL *a_target)
 {
    /*---(header)-------------------------*//*---------------------------------*/
@@ -896,7 +896,7 @@ DEP_delmergeroot   (tCELL *a_target)
    return 0;
 }
 
-tCELL*       /*-> remove a merged cell dependency ----[ ------ [gp.C54.163.63]*/ /*-[02.0000.21.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> remove a merged cell dependency ----[ ------ [gp.C54.163.63]*/ /*-[02.0000.214.!]-*/ /*-[--.---.---.--]-*/
 DEP_delmerge       (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_source)   /* cell with the calculation                    */
@@ -956,7 +956,7 @@ DEP_delmerge       (
    return x_target;
 }
 
-char         /*-> remove a two-way dependency --------[ ------ [ge.833.132.31]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove a two-way dependency --------[ ------ [ge.833.132.31]*/ /*-[02.0000.10#.!]-*/ /*-[--.---.---.--]-*/
 DEP_delcalcref     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_source)   /* cell with the calculation                    */
@@ -994,7 +994,7 @@ DEP_delcalcref     (
    return 0;
 }
 
-char         /*-> remove a requires dependency -------[ ------ [fe.933.143.31]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove a requires dependency -------[ ------ [fe.933.143.31]*/ /*-[03.0000.016.!]-*/ /*-[--.---.---.--]-*/
 DEP__delete_req    (
       /*----------+-----------+-----------------------------------------------*/
       char        a_type,     /* type of dependency (source, format, or calc) */
@@ -1037,7 +1037,7 @@ DEP__delete_req    (
    return rce;
 }
 
-char         /*-> remove a provides dependency -------[ ------ [fe.933.143.31]*/ /*-[03.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove a provides dependency -------[ ------ [fe.933.143.31]*/ /*-[03.0000.016.!]-*/ /*-[--.---.---.--]-*/
 DEP__delete_pro    (
       /*----------+-----------+-----------------------------------------------*/
       char        a_type,     /* type of dependency (source, format, or calc) */
@@ -1080,7 +1080,7 @@ DEP__delete_pro    (
    return rce;
 }
 
-char         /*-> remove a two-way dependency --------[ ------ [ge.P79.15#.I6]*/ /*-[02.0000.34.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove a two-way dependency --------[ ------ [ge.P79.15#.I6]*/ /*-[02.0000.345.3]-*/ /*-[--.---.---.--]-*/
 DEP_delete        (
       /*----------+-----------+-----------------------------------------------*/
       char        a_type,     /* dependency type                              */
@@ -1208,7 +1208,7 @@ DEP_delete        (
 /*====================------------------------------------====================*/
 PRIV void  o___RANGE___________o () { return; }
 
-char         /*-> establish a range dependency -------[ ------ [ge.K94.17#.D5]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> establish a range dependency -------[ ------ [ge.K94.17#.D5]*/ /*-[02.0000.109.C]-*/ /*-[--.---.---.--]-*/
 DEP_range          (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* cell with range formula                      */
@@ -1304,7 +1304,7 @@ DEP_range          (
    return 0;
 }
 
-char         /*-> remove all requires deps from a cel [ ------ [ge.A34.142.41]*/ /*-[02.0000.51.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> remove all requires deps -----------[ ------ [ge.A34.142.41]*/ /*-[02.0000.515.5]-*/ /*-[--.---.---.--]-*/
 DEP_cleanse        (tCELL *a_cell)
 {  /*---(design notes)--------------------------------------------------------*/
    /*---(locals)-----------+-----------+-*/
@@ -1359,7 +1359,7 @@ DEP_cleanse        (tCELL *a_cell)
 /*====================------------------------------------====================*/
 PRIV void  o___INFO____________o () { return; }
 
-char         /*-> list dependencies ------------------[ leaf   [fe.740.424.60]*/ /*-[02.0000.03.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> list dependencies ------------------[ leaf   [fe.740.424.60]*/ /*-[02.0000.034.!]-*/ /*-[--.---.---.--]-*/
 DEP__disp_master   (tCELL  *a_me, char *a_list, char a_start, char *a_types)
 {  /*---(design notes)-------------------*/
    /* combined logic from the three accessors below as they were 90% the same */
@@ -1482,7 +1482,7 @@ char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_ma
 /*====================------------------------------------====================*/
 PRIV void  o___MERGES__________o () { return; }
 
-tCELL*       /*-> find the merge source --------------[ leaf   [gp.420.113.30]*/ /*-[01.0000.30.--]-*/ /*-[--.---.---.--]-*/
+tCELL*       /*-> find the merge source --------------[ leaf   [gp.420.113.30]*/ /*-[01.0000.306.#]-*/ /*-[--.---.---.--]-*/
 DEP_merge_source   (tCELL *a_curr)
 {  /*---(design notes)--------------------------------------------------------*/
    /* identify the source of the current cells merge                          */
@@ -1507,7 +1507,7 @@ DEP_merge_source   (tCELL *a_curr)
 /*====================------------------------------------====================*/
 PR void  o___CALCULATION_____o () { return; }
 
-char         /*-> list the provisions ----------------[ ------ [ge.B53.192.31]*/ /*-[12.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> list the provisions ----------------[ ------ [ge.B53.192.31]*/ /*-[12.0000.104.!]-*/ /*-[--.---.---.--]-*/
 DEP_updatelikes    (tCELL  *a_me)
 {
    DEBUG_DEPS    yLOG_enter   (__FUNCTION__);
@@ -1584,7 +1584,7 @@ static int         ccount  [MAX_EXEC];
 static tCELL      *cheads  [MAX_EXEC];
 static tCELL      *ctails  [MAX_EXEC];
 
-char         /*-> prepare for new calculation --------[ leaf   [fz.742.031.10]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> prepare for new calculation --------[ leaf   [fz.742.031.10]*/ /*-[01.0000.014.2]-*/ /*-[--.---.---.--]-*/
 SEQ__clear         (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1617,7 +1617,7 @@ SEQ__clear         (void)
    return 0;
 }
 
-char         /*-> add a cell to calculation level ----[ leaf   [fe.D54.215.70]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> add a cell to calculation level ----[ leaf   [fe.D54.215.70]*/ /*-[01.0000.015.6]-*/ /*-[--.---.---.--]-*/
 SEQ__add           (char a_level, tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1680,7 +1680,7 @@ SEQ__add           (char a_level, tCELL *a_cell)
    return 0;
 }
 
-char         /*-> delete a cell from calulation ------[ leaf   [fe.A43.123.60]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> delete a cell from calulation ------[ leaf   [fe.A43.123.60]*/ /*-[01.0000.015.3]-*/ /*-[--.---.---.--]-*/
 SEQ__del           (tCELL *a_cell)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1726,7 +1726,7 @@ SEQ__del           (tCELL *a_cell)
    return 0;
 }
 
-char         /*-> dependency-based calc sequencing ---[ ------ [fc.F55.135.E3]*/ /*-[02.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based calc sequencing ---[ ------ [fc.F55.135.E3]*/ /*-[02.0000.024.!]-*/ /*-[--.---.---.--]-*/
 SEQ__recursion     (
       /*---(params)-----------+--------+-*/
       int         a_level     ,        /* recursion level (0 thru N)          */ 
@@ -1801,7 +1801,7 @@ SEQ__recursion     (
    return 0;
 }
 
-char         /*-> dependency-based calc marking ------[ ------ [fe.I85.584.97]*/ /*-[03.0000.06.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based calc marking ------[ ------ [fe.I85.584.97]*/ /*-[03.0000.063.!]-*/ /*-[--.---.---.--]-*/
 SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE *a_file)
 {
    /*---(locals)-------------------------*/
@@ -1890,25 +1890,25 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
    return 0;
 }
 
-char         /*-> dependency-based calc upward -------[ leaf   [gc.950.028.3C]*/ /*-[02.0000.30.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based calc upward -------[ leaf   [gc.950.028.3C]*/ /*-[02.0000.304.5]-*/ /*-[--.---.---.--]-*/
 SEQ_calc_up        (tCELL *a_cell) { return SEQ__driver (a_cell, 'u', rand() , 'c', NULL); }
 
-char         /*-> dependency-based calc downward -----[ leaf   [gc.940.027.3A]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based calc downward -----[ leaf   [gc.940.027.3A]*/ /*-[02.0000.00#.1]-*/ /*-[--.---.---.--]-*/
 SEQ_calc_down      (tCELL *a_cell) { return SEQ__driver (a_cell, 'd', rand() , 'c', NULL); }
 
-char         /*-> dependency-based calculation all ---[ ------ [gc.840.026.38]*/ /*-[02.0000.40.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based calculation all ---[ ------ [gc.840.026.38]*/ /*-[02.0000.402.1]-*/ /*-[--.---.---.--]-*/
 SEQ_calc_full      (void)          { return SEQ__driver (s_root , 'd', rand() , 'c', NULL); }
 
-char         /*-> dependency-based wiping of cells ---[ ------ [gc.740.025.36]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based wiping of cells ---[ ------ [gc.740.025.36]*/ /*-[02.0000.104.!]-*/ /*-[--.---.---.--]-*/
 SEQ_wipe_deps      (void)          { return SEQ__driver (s_root , 'd', rand() , 'w', NULL); }
 
-char         /*-> dependency-based writing of file ---[ ------ [gc.740.624.34]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based writing of file ---[ ------ [gc.740.624.34]*/ /*-[02.0000.10#.!]-*/ /*-[--.---.---.--]-*/
 SEQ_file_deps      (long a_stamp, FILE *a_file)  { return SEQ__driver (s_root , 'd', a_stamp, 'f', a_file); }
 
-char         /*-> dependency-based writing of reg ----[ ------ [gc.640.523.32]*/ /*-[02.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> dependency-based writing of reg ----[ ------ [gc.640.523.32]*/ /*-[02.0000.105.!]-*/ /*-[--.---.---.--]-*/
 SEQ_reg_deps       (long a_stamp)                { return SEQ__driver (s_root , 'd', a_stamp, 'r', NULL  ); }
 
-char         /*-> tbd --------------------------------[ leaf   [gc.630.122.30]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [gc.630.122.30]*/ /*-[02.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 SEQ_calclist       (char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1941,7 +1941,7 @@ SEQ_calclist       (char *a_list)
 /*====================------------------------------------====================*/
 PR void  o___AUDIT___________o () { return; }
 
-char         /*-> tbd --------------------------------[ ------ [gc.430.222.21]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.430.222.21]*/ /*-[01.0000.02#.!]-*/ /*-[--.---.---.--]-*/
 DEP_trace          (int a_level, tCELL *a_curr)
 {
    /*---(defenses)-----------------------*/
@@ -1964,7 +1964,7 @@ DEP_trace          (int a_level, tCELL *a_curr)
 char        dep_loop [MAX_DEP][10];
 int         dep_count = 0;
 
-char         /*-> tbd --------------------------------[ ------ [gc.210.111.01]*/ /*-[00.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.210.111.01]*/ /*-[00.0000.01#.!]-*/ /*-[--.---.---.--]-*/
 DEP_checkall       (char a_print)
 {
    char        rcc         = 0;
@@ -1972,7 +1972,7 @@ DEP_checkall       (char a_print)
    return rcc;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.P97.467.L1]*/ /*-[03.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.P97.467.L1]*/ /*-[03.0000.02#.!]-*/ /*-[--.---.---.--]-*/
 DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2093,7 +2093,7 @@ DEP_check          (int a_level, tCELL *a_curr, char a_print, long a_stamp)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.E45.437.71]*/ /*-[02.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.E45.437.71]*/ /*-[02.0000.027.!]-*/ /*-[--.---.---.--]-*/
 DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp)
 {  /*---(design notes)-------------------*/
    /*
@@ -2161,7 +2161,7 @@ DEP_circle         (int a_level, tCELL *a_source, tCELL *a_target, long a_stamp)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gz.540.331.51]*/ /*-[01.0000.03.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gz.540.331.51]*/ /*-[01.0000.033.!]-*/ /*-[--.---.---.--]-*/
 DEP_write          (FILE *a_file, int a_level, tDEP *a_dep)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2186,7 +2186,7 @@ DEP_write          (FILE *a_file, int a_level, tDEP *a_dep)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gz.320.011.11]*/ /*-[01.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gz.320.011.11]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 DEP_writescreen    (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2200,7 +2200,7 @@ DEP_writescreen    (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.A70.072.41]*/ /*-[03.0000.10.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [ge.A70.072.41]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
 DEP_writeall       (void)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2247,7 +2247,7 @@ DEP_writeall       (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gc.530.222.21]*/ /*-[01.0000.02.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gc.530.222.21]*/ /*-[01.0000.02#.!]-*/ /*-[--.---.---.--]-*/
 DEP_show           (int a_level, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
@@ -2268,7 +2268,7 @@ DEP_show           (int a_level, tCELL *a_curr)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ leaf   [gz.970.081.80]*/ /*-[01.0000.01.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ leaf   [gz.970.081.80]*/ /*-[01.0000.01#.!]-*/ /*-[--.---.---.--]-*/
 DEP_full           (void)
 {
    int i = 0;
@@ -2313,7 +2313,7 @@ DEP_full           (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gz.540.011.07]*/ /*-[00.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> tbd --------------------------------[ ------ [gz.540.011.07]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 DEP_dump           (void)
 {
    char xlabel[LEN_RECD];
@@ -2343,7 +2343,7 @@ DEP_dump           (void)
 /*====================------------------------------------====================*/
 PRIV void  o___UNIT_TEST_______o () { return; }
 
-char*        /*-> unit testing accessor --------------[ ------ [gs.HA0.1B3.K5]*/ /*-[02.0000.00.--]-*/ /*-[--.---.---.--]-*/
+char*        /*-> unit testing accessor --------------[ ------ [gs.HA0.1B3.K5]*/ /*-[02.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 DEP_unit           (
       /*----------+--------------+--------------------------------------------*/
       char       *a_question,    /* text string identifying the question      */
@@ -2427,7 +2427,7 @@ DEP_unit           (
    return unit_answer;
 }
 
-char         /*-> sort cell label list ---------------[ ------ [ge.RE5.1H6.A2]*/ /*-[03.0000.11.--]-*/ /*-[--.---.---.--]-*/
+char         /*-> sort cell label list ---------------[ ------ [ge.RE5.1H6.A2]*/ /*-[03.0000.11#.!]-*/ /*-[--.---.---.--]-*/
 DEP_disp_sort      (char *a_list)
 {
    /*---(purpose)-------------------------------------------------------------* 
