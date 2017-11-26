@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6p"
-#define     VER_TXT   "adjusted to handle HTAG output of gyges file"
+#define     VER_NUM   "2.6q"
+#define     VER_TXT   "added standard vim C-f and C-b to map mode"
 
 
 

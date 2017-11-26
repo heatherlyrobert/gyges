@@ -776,6 +776,16 @@ MODE_map           (char a_major, char a_minor)
          break;
       }
       /*---(normal)----------------------*/
+      if (a_minor == 6) {
+         rc = KEYS_gz_family  ('g', 'B');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      if (a_minor == 2) {
+         rc = KEYS_gz_family  ('g', 'T');
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
       rc = KEYS_basics   (a_major, a_minor);
       if (rc == 0) {
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
