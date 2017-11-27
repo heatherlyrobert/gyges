@@ -5,6 +5,7 @@
 
 
 char    s_command    [LEN_RECD];
+char    s_search     [LEN_RECD];
 
 
 
@@ -674,6 +675,12 @@ MODE_map           (char a_major, char a_minor)
       case ':'      :
          yVIKEYS_mode_enter  (MODE_COMMAND);
          CMDS_start ();
+         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         return 0;
+         break;
+      case '/'      :
+         yVIKEYS_mode_enter  (MODE_SEARCH);
+         SRCH_start ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
@@ -1685,6 +1692,72 @@ KEYS_unlock        (void)
 char        KEYS_quit            (void) { g_done = 0; return 0; }
 char        KEYS_writequit       (void) { FILE_write (); g_done = 0; return 0; }
 
+
+char        SRCH_start           (void) { strncpy     (s_search , "/", LEN_RECD); return 0; }
+char        SRCH_clear           (void) { strncpy     (s_search , "" , LEN_RECD); return 0; }
+char*       SRCH_current         (void) { return s_search; }
+
+char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
+SRCH_execute       (char *a_search)
+{
+}
+
+char         /*-> process keys for searching ---------[ ------ [gc.LE5.266.I3]*/ /*-[05.0000.102.M]-*/ /*-[--.---.---.--]-*/
+SRCH_submode       (char a_major, char a_minor)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         x_len       = 0;
+   char        x_temp      [11]        = "";
+   char        rc          =    0;
+   char        x_majors    [LEN_LABEL] = ": ";
+   static char x_quoted    = '-';
+   static char x_escaped   = '-';
+   /*---(header)--------------------s----*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_value   ("a_major"   , a_major);
+   DEBUG_USER   yLOG_value   ("a_minor"   , a_minor);
+   /*---(get existing len)---------------*/
+   DEBUG_USER   yLOG_info    ("s_search"  , s_search);
+   x_len = strlen (s_search);
+   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
+   /*---(check for control keys)---------*/
+   switch (a_minor) {
+   case   K_RETURN :
+      yVIKEYS_mode_exit ();
+      rc = SRCH_execute (s_search);
+      DEBUG_USER   yLOG_note    ("return, execute search");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return rc;   /* return  */
+   case   K_ESCAPE :
+      yVIKEYS_mode_exit ();
+      SRCH_clear ();
+      DEBUG_USER   yLOG_note    ("escape, ignore search");
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check for backspace)------------*/
+   if (a_minor == K_DEL || a_minor == K_BS) {
+      DEBUG_USER   yLOG_note    ("bs/del, remove character");
+      --x_len;
+      if (x_len < 0)   x_len = 0;
+      s_search [x_len] = '\0';
+      DEBUG_USER   yLOG_info    ("s_search"  , s_search);
+      DEBUG_USER   yLOG_value   ("x_len"     , x_len);
+      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(normal characters)--------------*/
+   DEBUG_USER   yLOG_note    ("update search line");
+   if (a_minor == K_SPACE )    a_minor = G_CHAR_SPACE;
+   snprintf (x_temp, 10, "%c", a_minor);
+   strcat   (s_search, x_temp);
+   ++x_len;
+   DEBUG_USER   yLOG_info    ("s_search"  , s_search);
+   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
+   /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 
 /*====================------------------------------------====================*/

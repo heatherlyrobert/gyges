@@ -300,6 +300,7 @@ PROG_main_handle   (char a_key)
       case MODE_INPUT    : rc = MODE_input     (x_major , a_key);  break;
       case MODE_COMMAND  : rc = CMDS_mode      (x_major , a_key);  break;
 
+      case MODE_SEARCH   : rc = SRCH_submode   (x_major , a_key);  break;
       case MODE_VISUAL   : rc = VISU_submode   (x_major , a_key);  break;
       case SMOD_ERROR    : rc = SMOD_error     (x_major , a_key);  break;
       case SMOD_SELECT   : rc = SELC_mode      (x_major , a_key);  break;
@@ -336,7 +337,11 @@ PROG_main_handle   (char a_key)
    else if (rc >  0)    x_major = rc;
    else               { x_major = ' ';  sta_error = 'y';  my.repeat = 0; }
    /*---(setup status line)--------------*/
-   if   (x_savemode != yVIKEYS_mode_curr() || yVIKEYS_mode_curr() == MODE_COMMAND) {
+   if        (yVIKEYS_mode_curr() == MODE_COMMAND) {
+      yVIKEYS_mode_mesg (my.message, CMDS_current ());
+   } else if (yVIKEYS_mode_curr() == MODE_SEARCH ) {
+      yVIKEYS_mode_mesg (my.message, SRCH_current ());
+   } else if (x_savemode != yVIKEYS_mode_curr()) {
       yVIKEYS_mode_mesg (my.message, CMDS_current ());
    }
    x_savemode = yVIKEYS_mode_curr ();

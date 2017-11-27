@@ -136,8 +136,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.6q"
-#define     VER_TXT   "added standard vim C-f and C-b to map mode"
+#define     VER_NUM   "2.6r"
+#define     VER_TXT   "very simple search entry ability, no execution yet"
 
 
 
@@ -866,6 +866,13 @@ char      PROG__unitend       (void);
 
 char      save_saved         (void);
 char      clear_input        (void);
+
+char        SRCH_start           (void);
+char        SRCH_clear           (void);
+char*       SRCH_current         (void);
+char        SRCH_execute         (char*);
+char        SRCH_submode         (char  a_major, char  a_minor);
+char*       SRCH__unit           (char *a_question);
 
 char        CMDS_start           (void);
 char        CMDS_clear           (void);
