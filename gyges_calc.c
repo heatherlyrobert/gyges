@@ -973,8 +973,8 @@ CALC__char         (void)
    /*---(get arguments)------------------*/
    n = CALC__popval (__FUNCTION__, ++s_narg);
    /*---(defense)------------------------*/
-   if (n     <  K_SPACE)  n = '#';
-   if (n     >= K_BS   )  n = '#';
+   if (n     <  G_KEY_SPACE)  n = '#';
+   if (n     >= G_KEY_BS   )  n = '#';
    /*---(process)------------------------*/
    sprintf (t, "%c", n);
    /*---(return result)------------------*/

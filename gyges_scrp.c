@@ -56,7 +56,7 @@ MACRO_reset          (void)
    my.macro_delay = '0';
    /*---(macro keystrokes)---------------*/
    DEBUG_SCRP   yLOG_snote   ("null macro keys");
-   for (i = 0; i < LEN_RECD; ++i)  my.macro_keys [i] = K_NULL;
+   for (i = 0; i < LEN_RECD; ++i)  my.macro_keys [i] = G_KEY_NULL;
    my.macro_char  =   0;
    /*---(complete)-----------------------*/
    DEBUG_SCRP   yLOG_sexit   (__FUNCTION__);
@@ -84,7 +84,7 @@ MACRO_save           (void)
    /*---(trim)---------------------------*/
    strlcpy (x_macro, my.macro_keys, LEN_RECD);
    x_len = strlen (x_macro);
-   if (x_len > 0)  x_macro [--x_len] = K_NULL;
+   if (x_len > 0)  x_macro [--x_len] = G_KEY_NULL;
    /*---(save)---------------------------*/
    rc = CELL_macro_set (x_macro);
    DEBUG_SCRP   yLOG_value   ("rc"        , rc);
@@ -138,7 +138,7 @@ MACRO_fetch          (char a_name)
    }
    /*---(set globals)-----------------*/
    my.macro_keys [my.macro_len++] = G_CHAR_NULL;
-   my.macro_keys [my.macro_len  ] = K_NULL;
+   my.macro_keys [my.macro_len  ] = G_KEY_NULL;
    if (my.macro_pos < 0)  my.macro_char = 0;
    else                   my.macro_char = my.macro_keys [my.macro_pos];
    /*---(complete)--------------------*/
@@ -174,14 +174,14 @@ MACRO_record_beg     (char a_name)
    /*---(handle append)---------------*/
    if (tolower (a_name) != a_name) {
       MACRO_fetch (my.macro_name);
-      my.macro_keys [--my.macro_len] = K_NULL;
+      my.macro_keys [--my.macro_len] = G_KEY_NULL;
       my.macro_pos      = my.macro_len - 1;
       if (my.macro_pos < 0)  my.macro_char = 0;
       else                   my.macro_char = my.macro_keys [my.macro_pos];
    }
    /*---(add placeholder)-------------*/
    my.macro_keys [my.macro_len++] = G_CHAR_PLACE;
-   my.macro_keys [my.macro_len  ] = K_NULL;
+   my.macro_keys [my.macro_len  ] = G_KEY_NULL;
    /*---(turn on record)--------------*/
    SET_MACRO_RECORD;
    /*---(complete)--------------------*/
@@ -194,16 +194,16 @@ MACRO_record_add     (char a_key)
 {
    IF_MACRO_RECORDING {
       switch (a_key) {
-      case K_RETURN  :  a_key  = G_CHAR_RETURN;  break;  /* return char           */
-      case K_ESCAPE  :  a_key  = G_CHAR_ESCAPE;  break;  /* escape char           */
-      case K_TAB     :  a_key  = G_CHAR_TAB;     break;  /* tab char              */
-      case K_BS      :  a_key  = G_CHAR_BS;      break;  /* backspace char        */
-      case K_SPACE   :  a_key  = G_CHAR_SPACE;   break;  /* visual space          */
+      case G_KEY_RETURN  :  a_key  = G_CHAR_RETURN;  break;  /* return char           */
+      case G_KEY_ESCAPE  :  a_key  = G_CHAR_ESCAPE;  break;  /* escape char           */
+      case G_KEY_TAB     :  a_key  = G_CHAR_TAB;     break;  /* tab char              */
+      case G_KEY_BS      :  a_key  = G_CHAR_BS;      break;  /* backspace char        */
+      case G_KEY_SPACE   :  a_key  = G_CHAR_SPACE;   break;  /* visual space          */
       }
       my.macro_char                    = a_key;
       my.macro_keys [my.macro_len - 1] = a_key;
       my.macro_keys [my.macro_len++  ] = G_CHAR_PLACE;
-      my.macro_keys [my.macro_len    ] = K_NULL;
+      my.macro_keys [my.macro_len    ] = G_KEY_NULL;
       my.macro_pos                   = my.macro_len - 2;
    }
    return 0;
@@ -212,24 +212,29 @@ MACRO_record_add     (char a_key)
 char         /*-> put keys in globals ----------------[ leaf   [gz.530.101.60]*/ /*-[01.0000.01#.5]-*/ /*-[--.---.---.--]-*/
 MACRO_record_addstr  (char *a_keys)
 {
+   int         i           = 0;
+   char        x_ch        = '-';
    /*---(look for suffix)----------------*/
    if (my.macro_keys [my.macro_len - 1] == (schar) G_CHAR_PLACE) {
-      my.macro_keys [--my.macro_len  ] =  K_NULL;
+      my.macro_keys [--my.macro_len  ] =  G_KEY_NULL;
    }
    if (my.macro_keys [my.macro_len - 1] == (schar) G_CHAR_NULL ) {
-      my.macro_keys [--my.macro_len  ] =  K_NULL;
+      my.macro_keys [--my.macro_len  ] =  G_KEY_NULL;
    }
    /*---(add keys)-----------------------*/
    if (a_keys == NULL)  strlcat (my.macro_keys, ""    , LEN_RECD);
    else                 strlcat (my.macro_keys, a_keys, LEN_RECD);
-   /*---(add suffix)---------------------*/
    my.macro_len  = strlen (my.macro_keys);
+   /*---(fix keys)-----------------------*/
+   strlencode   (my.macro_keys, ySTR_MAX, LEN_RECD);
+   /*---(add suffix)---------------------*/
    my.macro_keys [my.macro_len  ] =  G_CHAR_PLACE;
-   my.macro_keys [++my.macro_len] =  K_NULL;
+   my.macro_keys [++my.macro_len] =  G_KEY_NULL;
    /*---(update pos/char)----------------*/
    my.macro_pos = my.macro_len - 2;
    if (my.macro_pos < 0)  my.macro_char = 0;
    else                   my.macro_char = my.macro_keys [my.macro_pos];
+   printf ("my.macro_keys <<%s>>\n", my.macro_keys);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -240,7 +245,7 @@ MACRO_record_end     (void)
    IF_MACRO_RECORDING {
       if (my.macro_len >= 2 && my.macro_keys [my.macro_len - 2] == 'q') {
          my.macro_keys [my.macro_len - 2] = G_CHAR_NULL;
-         my.macro_keys [my.macro_len - 1] = K_NULL;
+         my.macro_keys [my.macro_len - 1] = G_KEY_NULL;
          --my.macro_len;
       } else if (my.macro_len >= 1) {
          my.macro_keys [my.macro_len - 1] = G_CHAR_NULL;
@@ -267,14 +272,14 @@ MACRO_define         (char *a_string)
       MACRO_reset ();
       return rc;
    }
-   if (a_string [2] != K_DQUOTE) {
+   if (a_string [2] != G_KEY_DQUOTE) {
       rc = MACRO_record_addstr  (a_string + 2);
    } else {
       x_len = strlen (a_string);
-      if (a_string [x_len - 1] != K_DQUOTE) {
+      if (a_string [x_len - 1] != G_KEY_DQUOTE) {
          rc = MACRO_record_addstr  (a_string + 2);
       } else {
-         a_string [--x_len] = K_NULL;
+         a_string [--x_len] = G_KEY_NULL;
          rc = MACRO_record_addstr  (a_string + 3);
       }
    }
@@ -394,15 +399,15 @@ MACRO_exec_key       (void)
       DEBUG_SCRP   yLOG_value   ("256 + x_ch", 256 + x_ch);
       /*---(translate special)-----------*/
       switch (256 + x_ch) {
-      case G_CHAR_RETURN  :  x_ch = K_RETURN;  break;
-      case G_CHAR_ESCAPE  :  x_ch = K_ESCAPE;  break;
-      case G_CHAR_BS      :  x_ch = K_BS;      break;
-      case G_CHAR_TAB     :  x_ch = K_TAB;     break;
-      case G_CHAR_SPACE   :  x_ch = K_SPACE;   break;
-      case G_CHAR_GROUP   :  x_ch = K_GROUP;   break;
-      case G_CHAR_FIELD   :  x_ch = K_FIELD;   break;
-      case G_CHAR_ALT     :  x_ch = K_SPACE;   break;
-      case G_CHAR_CONTROL :  x_ch = K_SPACE;   break;
+      case G_CHAR_RETURN  :  x_ch = G_KEY_RETURN;  break;
+      case G_CHAR_ESCAPE  :  x_ch = G_KEY_ESCAPE;  break;
+      case G_CHAR_BS      :  x_ch = G_KEY_BS;      break;
+      case G_CHAR_TAB     :  x_ch = G_KEY_TAB;     break;
+      case G_CHAR_SPACE   :  x_ch = G_KEY_SPACE;   break;
+      case G_CHAR_GROUP   :  x_ch = G_KEY_GROUP;   break;
+      case G_CHAR_FIELD   :  x_ch = G_KEY_FIELD;   break;
+      case G_CHAR_ALT     :  x_ch = G_KEY_SPACE;   break;
+      case G_CHAR_CONTROL :  x_ch = G_KEY_SPACE;   break;
       }
       DEBUG_SCRP   yLOG_value   ("x_ch (new)", x_ch);
       /*---(handle controls)-------------*/
@@ -423,12 +428,12 @@ MACRO_exec_control   (char a_key)
 {
    if (a_key >= 0)  return 0;
    switch (256 + a_key) {
-   case G_CHAR_WAIT    : sleep (1);            a_key = K_SPACE;  break;
-   case G_CHAR_BREAK   : SET_MACRO_PLAYBACK;   a_key = K_SPACE;  break;
-   case G_CHAR_HALT    :                       a_key = K_NULL;   break;
-   case G_CHAR_DISPLAY : CURS_main ();         a_key = K_SPACE;  break;
-   case G_CHAR_NULL    :                       a_key = K_NULL;   break;
-   default             :                       a_key = K_NULL;   break;
+   case G_CHAR_WAIT    : sleep (1);            a_key = G_KEY_SPACE;  break;
+   case G_CHAR_BREAK   : SET_MACRO_PLAYBACK;   a_key = G_KEY_SPACE;  break;
+   case G_CHAR_HALT    :                       a_key = G_KEY_NULL;   break;
+   case G_CHAR_DISPLAY : CURS_main ();         a_key = G_KEY_SPACE;  break;
+   case G_CHAR_NULL    :                       a_key = G_KEY_NULL;   break;
+   default             :                       a_key = G_KEY_NULL;   break;
    }
    return a_key;
 }
@@ -487,13 +492,13 @@ MACRO_exec_playback  (char a_key)
       DEBUG_SCRP   yLOG_exit    (__FUNCTION__);
       return -1;
       break;
-   case K_ESCAPE :
+   case G_KEY_ESCAPE :
       DEBUG_SCRP   yLOG_note    ("escape");
       MACRO_reset ();
       DEBUG_SCRP   yLOG_exit    (__FUNCTION__);
       return -1;
       break;
-   case K_RETURN :
+   case G_KEY_RETURN :
       DEBUG_SCRP   yLOG_note    ("return");
       SET_MACRO_RUN;
       DEBUG_SCRP   yLOG_exit    (__FUNCTION__);
@@ -535,7 +540,7 @@ MACRO_submode        (char a_major, char a_minor)
       return rce;
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
+   if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {
       DEBUG_USER   yLOG_note    ("escape/return, nothing to do");
       yVIKEYS_mode_exit ();
       MACRO_reset       ();

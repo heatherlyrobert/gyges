@@ -1600,7 +1600,7 @@ VISU_submode       (char a_major, char a_minor)
    --rce;  if (yVIKEYS_mode_not (MODE_VISUAL )) {
       return rce;
    }
-   if (a_minor == K_ESCAPE)  {
+   if (a_minor == G_KEY_ESCAPE)  {
       VISU_clear  ();
       yVIKEYS_mode_exit ();
       DEBUG_VISU   yLOG_exit    (__FUNCTION__);
@@ -1703,7 +1703,7 @@ SELC_mode          (char  a_major, char  a_minor)
       return rce;
    }
    /*---(check for escape)---------------*/
-   if (a_minor == K_ESCAPE)  {
+   if (a_minor == G_KEY_ESCAPE)  {
       SELC_clear ();
       DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
       yVIKEYS_mode_exit ();
@@ -1808,7 +1808,7 @@ MARK_submode       (char a_major, char a_minor)
       return rce;
    }
    /*---(exit mode)----------------------*/
-   if (a_minor == K_ESCAPE) {
+   if (a_minor == G_KEY_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape means leave");
       yVIKEYS_mode_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -1917,7 +1917,7 @@ MARK_submode       (char a_major, char a_minor)
    /*---(check for wander)---------------*/
    --rce;  if (a_major == '@') {
       DEBUG_USER   yLOG_note    ("handling wander (@)");
-      if (a_minor == K_RETURN) {
+      if (a_minor == G_KEY_RETURN) {
          MARK_set (x_prev);
          yVIKEYS_mode_exit ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);

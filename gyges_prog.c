@@ -102,6 +102,8 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
+   SRCH_clear           ();
+   CMDS_clear           ();
    MACRO_init           ();
    hist_active       = '-';
    nhist             =  0;
@@ -308,7 +310,7 @@ PROG_main_handle   (char a_key)
       case SMOD_REPLACE  : rc = SMOD_replace   (x_major , a_key);  break;
       case SMOD_FORMAT   : rc = SMOD_format    (x_major , a_key);  break;
       case SMOD_BUFFER   : rc = SMOD_buffer    (x_major , a_key);  break;
-      case SMOD_WANDER   : rc = SMOD_wander    (K_SPACE , a_key);  break;
+      case SMOD_WANDER   : rc = SMOD_wander    (G_KEY_SPACE , a_key);  break;
       case SMOD_REGISTER : rc = REG_mode       (x_major , a_key);  break;
       case SMOD_MARK     : rc = MARK_submode   (x_major , a_key);  break;
       case SMOD_MENUS    : rc = SMOD_menus     (x_major , a_key);  break;
@@ -318,12 +320,12 @@ PROG_main_handle   (char a_key)
       }
       /*---(translate unprintable)----------*/
       if      (a_key == 0       )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_NULL  );
-      else if (a_key == K_RETURN)  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_RETURN);
-      else if (a_key == K_ESCAPE)  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_ESCAPE);
-      else if (a_key == K_TAB   )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_TAB   );
-      else if (a_key == K_BS    )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_BS    );
-      else if (a_key == K_SPACE )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_SPACE );
-      else if (a_key <= K_SPACE )  snprintf (g_cmd,   9, "%2d %c%02x", my.repeat, x_major, a_key);
+      else if (a_key == G_KEY_RETURN)  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_RETURN);
+      else if (a_key == G_KEY_ESCAPE)  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_ESCAPE);
+      else if (a_key == G_KEY_TAB   )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_TAB   );
+      else if (a_key == G_KEY_BS    )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_BS    );
+      else if (a_key == G_KEY_SPACE )  snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, G_CHAR_SPACE );
+      else if (a_key <= G_KEY_SPACE )  snprintf (g_cmd,   9, "%2d %c%02x", my.repeat, x_major, a_key);
       else                         snprintf (g_cmd,   9, "%2d %c%c" , my.repeat, x_major, a_key);
       /*---(multiplier)---------------------*/
       if (rc == 0 && my.repeat > 0 && yVIKEYS_mode_curr () != SMOD_REPEAT) {
@@ -383,13 +385,13 @@ PROG_main_string     (char *a_keys)
          DEBUG_SCRP   yLOG_value   ("256 + x_ch", 256 + x_ch);
          /*---(translate special)--------*/
          switch (256 + x_ch) {
-         case G_CHAR_RETURN  :  x_ch = K_RETURN;  break;
-         case G_CHAR_ESCAPE  :  x_ch = K_ESCAPE;  break;
-         case G_CHAR_BS      :  x_ch = K_BS;      break;
-         case G_CHAR_TAB     :  x_ch = K_TAB;     break;
-         case G_CHAR_SPACE   :  x_ch = K_SPACE;   break;
-         case G_CHAR_GROUP   :  x_ch = K_GROUP;   break;
-         case G_CHAR_FIELD   :  x_ch = K_FIELD;   break;
+         case G_CHAR_RETURN  :  x_ch = G_KEY_RETURN;  break;
+         case G_CHAR_ESCAPE  :  x_ch = G_KEY_ESCAPE;  break;
+         case G_CHAR_BS      :  x_ch = G_KEY_BS;      break;
+         case G_CHAR_TAB     :  x_ch = G_KEY_TAB;     break;
+         case G_CHAR_SPACE   :  x_ch = G_KEY_SPACE;   break;
+         case G_CHAR_GROUP   :  x_ch = G_KEY_GROUP;   break;
+         case G_CHAR_FIELD   :  x_ch = G_KEY_FIELD;   break;
          }
          DEBUG_SCRP   yLOG_value   ("x_ch (new)", x_ch);
       }

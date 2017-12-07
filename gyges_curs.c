@@ -180,6 +180,7 @@ static tCOLOR_INFO  s_color_info [MAX_COLOR_INFO] = {
    { "root"     , ' ', "root of visual selection"                           , 'y' , 'k' , 'y',   0 },
    { "visu"     , ' ', "selected, not root/curr"                            , 'y' , 'y' , 'y',   0 },
    { "mark"     , ' ', "location marks"                                     , 'w' , 'c' , 'y',   0 },
+   { "srch"     , ' ', "found by search"                                    , 'k' , 'r' , 'y',   0 },
    /*---(dep type)-------*/
    { "reqs"     , ' ', "value required from cell"                           , 'm' , 'm' , 'b',   0 },
    { "pros"     , ' ', "value provided to cell"                             , 'g' , 'g' , 'b',   0 },
@@ -227,6 +228,7 @@ static int  S_COLOR_CURRENT    = COLOR_PAIR(43) | A_BLINK;
 static int  S_COLOR_VISUAL     = COLOR_PAIR(23) | A_BOLD;
 static int  S_COLOR_ROOT       = COLOR_PAIR(33) | A_BOLD;
 static int  S_COLOR_MARK       = COLOR_PAIR(33) | A_BOLD;
+static int  S_COLOR_SEARCH     = COLOR_PAIR(33) | A_BOLD;
 
 static int  S_COLOR_REQS       = COLOR_PAIR(25) | A_BOLD;
 static int  S_COLOR_PROS       = COLOR_PAIR(22) | A_BOLD;
@@ -405,6 +407,7 @@ COLOR_init                (void)
    S_COLOR_ROOT       = COLOR_assign ("root"   );
    S_COLOR_VISUAL     = COLOR_assign ("visu"   );
    S_COLOR_MARK       = COLOR_assign ("mark"   );
+   S_COLOR_SEARCH     = COLOR_assign ("srch"   );
    /*---(deps)---------------------------*/
    S_COLOR_REQS       = COLOR_assign ("reqs"   );
    S_COLOR_PROS       = COLOR_assign ("pros"   );
@@ -1323,6 +1326,7 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    }
    /*---(current)--------------------------*/
    if      (a_col == CCOL && a_row == CROW)     attron (S_COLOR_CURRENT);
+   else if (x_curr != NULL && x_curr->n == 's') attron (S_COLOR_SEARCH );
    /*---(visual-range)---------------------*/
    else if (VISU_root     (CTAB, a_col, a_row)) attron (S_COLOR_ROOT   );
    else if (VISU_selected (CTAB, a_col, a_row)) attron (S_COLOR_VISUAL );

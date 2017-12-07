@@ -9,6 +9,17 @@ char    s_search     [LEN_RECD];
 
 
 
+#define   MAX_SRCH    2000
+typedef   struct   cSRCH   tSRCH;
+struct  cSRCH {
+   tCELL      *curr;
+};
+tSRCH     s_srch   [MAX_SRCH];
+int       s_nsrch     = 0;
+
+
+
+
 #define  MAX_CMDS      1000
 typedef  struct cCOMMAND  tCOMMAND;
 struct  cCOMMAND {
@@ -578,7 +589,7 @@ UMOD_repeat        (char a_major, char a_minor)
       return rce;
    }
    /*---(major mode changes)-------------*/
-   if (a_minor == K_RETURN || a_minor == K_ESCAPE) {
+   if (a_minor == G_KEY_RETURN || a_minor == G_KEY_ESCAPE) {
       yVIKEYS_mode_exit ();
       my.repeat = 0;
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -627,19 +638,19 @@ MODE_map           (char a_major, char a_minor)
       return rce;
    }
    /*---(space)--------------------------*/
-   if (a_minor == K_SPACE ) {
+   if (a_minor == G_KEY_SPACE ) {
       DEBUG_USER   yLOG_note    ("space, nothing to do");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    /*---(major mode changes)-------------*/
-   if (a_minor == K_RETURN) {
+   if (a_minor == G_KEY_RETURN) {
       yVIKEYS_mode_enter  (MODE_SOURCE);
       EDIT_pos    ('0');
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
    }
-   if (a_minor == K_ESCAPE) {
+   if (a_minor == G_KEY_ESCAPE) {
       VISU_clear ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return  0;
@@ -963,7 +974,7 @@ SMOD_buffer   (char a_major, char a_minor)
       return rce;
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == K_ESCAPE) {
+   if (a_minor == G_KEY_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape, choose nothing");
       my.menu = ' ';
       yVIKEYS_mode_exit ();
@@ -1020,7 +1031,7 @@ SMOD_menus         (char a_major, char a_minor)
       return rce;
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == K_ESCAPE) {
+   if (a_minor == G_KEY_ESCAPE) {
       DEBUG_USER   yLOG_note    ("escape, choose nothing");
       my.menu = ' ';
       yVIKEYS_mode_exit ();
@@ -1086,14 +1097,14 @@ MODE_source   (char a_major, char a_minor)
    /*---(single letter)------------------*/
    if (a_major == ' ') {
       /*---(space)--------------------------*/
-      if (a_minor == K_SPACE ) {
+      if (a_minor == G_KEY_SPACE ) {
          DEBUG_USER   yLOG_note    ("space, nothing to do");
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return  0;
       }
       /*---(mode changes)----------------*/
       switch (a_minor) {
-      case K_RETURN :
+      case G_KEY_RETURN :
          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
          CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
          EDIT_pos     ('r');
@@ -1101,7 +1112,7 @@ MODE_source   (char a_major, char a_minor)
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;   /* escape  */
          break;
-      case K_ESCAPE : case  'U' :
+      case G_KEY_ESCAPE : case  'U' :
          DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
          x_curr = LOC_cell_at_curr ();
          if (x_curr != NULL && x_curr->s != NULL) {
@@ -1301,7 +1312,7 @@ SMOD_replace  (char a_major, char a_minor)
       }
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
+   if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {
       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
       if (x_append == 'y') {
          g_contents [my.cpos] = '\0';
@@ -1319,7 +1330,7 @@ SMOD_replace  (char a_major, char a_minor)
    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
    DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
    /*---(check for backspace)------------*/
-   if (a_major == 'R' && (a_minor == K_DEL || a_minor == K_BS)) {
+   if (a_major == 'R' && (a_minor == G_KEY_DEL || a_minor == G_KEY_BS)) {
       DEBUG_USER   yLOG_note    ("handle a backspace/delete");
       if (my.cpos > 0) {
          g_contents [my.cpos] = x_saved;
@@ -1393,7 +1404,7 @@ SMOD_error         (char a_major, char a_minor)
     *>    return rce;                                                                 <* 
     *> }                                                                              <*/
    /*---(mode changes)-------------------*/
-   /*> if (a_minor == K_ESCAPE || a_minor == K_RETURN) {                                          <* 
+   /*> if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {                                          <* 
     *>    DEBUG_USER   yLOG_note    ("escape/return, return to previous mode");       <* 
     *>    yVIKEYS_mode_exit ();                                                             <* 
     *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
@@ -1514,15 +1525,15 @@ MODE_input         (char  a_major, char  a_minor)
       }
    }
    /*---(mode changes)-------------------*/
-   if (a_minor == K_ESCAPE || a_minor == K_RETURN) {
+   if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {
       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
       for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
       if (a_major == 'a')  --(my.cpos);
       EDIT_done   ();
-      if (a_minor == K_RETURN && yVIKEYS_mode_prev() == MODE_MAP) {
+      if (a_minor == G_KEY_RETURN && yVIKEYS_mode_prev() == MODE_MAP) {
          CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
       }
-      if (a_minor == K_ESCAPE && yVIKEYS_mode_prev() == MODE_MAP) {
+      if (a_minor == G_KEY_ESCAPE && yVIKEYS_mode_prev() == MODE_MAP) {
          x_curr = LOC_cell_at_curr ();
          if (x_curr != NULL && x_curr->s != NULL) {
             strlcpy (g_contents, x_curr->s, LEN_RECD); 
@@ -1536,7 +1547,7 @@ MODE_input         (char  a_major, char  a_minor)
       return 0;
    }
    /*---(check for backspace)------------*/
-   if (a_minor == K_DEL || a_minor == K_BS) {
+   if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {
       DEBUG_USER   yLOG_note    ("handle a backspace/delete");
       if (my.cpos > 0) {
          --(my.cpos);
@@ -1571,7 +1582,7 @@ SMOD_format        (char a_major, char a_minor)
 {
    /*---(check for control keys)---------*/
    switch (a_minor) {
-   case   K_RETURN : case   K_ESCAPE :
+   case   G_KEY_RETURN : case   G_KEY_ESCAPE :
       yVIKEYS_mode_exit ();
       return 0;   /* escape  */
    }
@@ -1693,13 +1704,101 @@ char        KEYS_quit            (void) { g_done = 0; return 0; }
 char        KEYS_writequit       (void) { FILE_write (); g_done = 0; return 0; }
 
 
-char        SRCH_start           (void) { strncpy     (s_search , "/", LEN_RECD); return 0; }
-char        SRCH_clear           (void) { strncpy     (s_search , "" , LEN_RECD); return 0; }
+/*====================------------------------------------====================*/
+/*===----                        searching                             ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___SEARCH__________o () { return; }
+
+char
+SRCH_init            (void)
+{
+   int         i           = 0;
+   s_nsrch = 0;
+   for (i = 0; i < MAX_SRCH; ++i)  s_srch [i].curr = NULL;
+   return 0;
+}
+
+char
+SRCH_start           (void)
+{
+   int         i           = 0;
+   for (i = 0; i < s_nsrch; ++i) {
+      (s_srch [i].curr)->n = '-';
+      s_srch [i].curr = NULL;
+   }
+   s_nsrch = 0;
+   strncpy     (s_search , "/", LEN_RECD);
+   if (VISU_islive () == 0)  VISU_set (    0,    0,    4,    1,    9);
+   return 0;
+}
+
+char
+SRCH_clear           (void)
+{
+   strncpy     (s_search , "" , LEN_RECD);
+   return 0;
+}
+
 char*       SRCH_current         (void) { return s_search; }
 
 char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
 SRCH_execute       (char *a_search)
 {
+   /*---(locals)-----------+------+----+-*/
+   char        rce         =   -10;
+   char        rc          =     0;
+   tCELL      *x_next      = NULL;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)--------------------s----*/
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_point   ("a_search"  , a_search);
+   /*---(defenses)---------------------------*/
+   --rce;  if (a_search == NULL) {
+      DEBUG_USER   yLOG_note    ("can not use null search");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+   }
+   DEBUG_USER   yLOG_info    ("a_search"  , a_search);
+   rc = yREGEX_comp (a_search + 1);
+   DEBUG_USER   yLOG_value   ("comp rc"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_USER   yLOG_note    ("could not compile search");
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(process range)----------------------*/
+   x_next  = VISU_first (&x_tab, &x_col, &x_row);
+   do {
+      DEBUG_USER   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
+      if (x_next != NULL && x_next->s != NULL) {
+         DEBUG_USER   yLOG_char    ("->type"    , x_next->t);
+         switch (x_next->t) {
+         case CTYPE_STR   :
+            DEBUG_USER   yLOG_info    ("->s"       , x_next->s);
+            rc = yREGEX_exec (x_next->s);
+            break;
+         case CTYPE_MOD   :
+         case CTYPE_MLIKE :
+            DEBUG_USER   yLOG_info    ("->v_str"   , x_next->v_str);
+            rc = yREGEX_exec (x_next->v_str);
+            break;
+         default          :
+            DEBUG_USER   yLOG_note    ("can not process cell type");
+            rc = -1;
+            break;
+         }
+         DEBUG_USER   yLOG_value   ("exec rc"   , rc);
+         if (rc > 0) {
+            s_srch [s_nsrch++].curr = x_next;
+            x_next->n = 's';
+         }
+      }
+      x_next  = VISU_next (&x_tab, &x_col, &x_row);
+   } while (x_next != DONE_DONE);
+   /*---(complete)---------------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 char         /*-> process keys for searching ---------[ ------ [gc.LE5.266.I3]*/ /*-[05.0000.102.M]-*/ /*-[--.---.---.--]-*/
@@ -1722,13 +1821,13 @@ SRCH_submode       (char a_major, char a_minor)
    DEBUG_USER   yLOG_value   ("x_len"     , x_len);
    /*---(check for control keys)---------*/
    switch (a_minor) {
-   case   K_RETURN :
+   case   G_KEY_RETURN :
       yVIKEYS_mode_exit ();
       rc = SRCH_execute (s_search);
       DEBUG_USER   yLOG_note    ("return, execute search");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return rc;   /* return  */
-   case   K_ESCAPE :
+   case   G_KEY_ESCAPE :
       yVIKEYS_mode_exit ();
       SRCH_clear ();
       DEBUG_USER   yLOG_note    ("escape, ignore search");
@@ -1736,7 +1835,7 @@ SRCH_submode       (char a_major, char a_minor)
       return 0;
    }
    /*---(check for backspace)------------*/
-   if (a_minor == K_DEL || a_minor == K_BS) {
+   if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {
       DEBUG_USER   yLOG_note    ("bs/del, remove character");
       --x_len;
       if (x_len < 0)   x_len = 0;
@@ -1748,7 +1847,7 @@ SRCH_submode       (char a_major, char a_minor)
    }
    /*---(normal characters)--------------*/
    DEBUG_USER   yLOG_note    ("update search line");
-   if (a_minor == K_SPACE )    a_minor = G_CHAR_SPACE;
+   if (a_minor == G_KEY_SPACE )    a_minor = G_CHAR_SPACE;
    snprintf (x_temp, 10, "%c", a_minor);
    strcat   (s_search, x_temp);
    ++x_len;
@@ -1756,7 +1855,7 @@ SRCH_submode       (char a_major, char a_minor)
    DEBUG_USER   yLOG_value   ("x_len"     , x_len);
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return a_major;
 }
 
 
@@ -1797,7 +1896,7 @@ CMDS_execute       (char *a_command)
    strlcpy (x_work, a_command, LEN_RECD);
    x_len = strlen (x_work);
    for (i = 0; i < x_len; ++i) {
-      if ((uchar) x_work [i] == G_CHAR_SPACE)   x_work [i] = K_SPACE;
+      if ((uchar) x_work [i] == G_CHAR_SPACE)   x_work [i] = G_KEY_SPACE;
    }
    DEBUG_USER   yLOG_info    ("x_work"    , x_work);
    /*---(parse command)------------------*/
@@ -1985,7 +2084,7 @@ CMDS_mode          (char a_major, char a_minor)
    x_len = strlen (s_command);
    DEBUG_USER   yLOG_value   ("x_len"     , x_len);
    /*---(check for quoting)--------------*/
-   if (x_escaped != 'y' && a_minor == K_DQUOTE) {
+   if (x_escaped != 'y' && a_minor == G_KEY_DQUOTE) {
       if (x_quoted != 'y') {
          DEBUG_USER   yLOG_note    ("entering quoted string");
          x_quoted = 'y';
@@ -1995,7 +2094,7 @@ CMDS_mode          (char a_major, char a_minor)
       }
    }
    /*---(check for special codes)--------*/
-   if (x_escaped != 'y' && a_minor == K_BSLASH) {
+   if (x_escaped != 'y' && a_minor == G_KEY_BSLASH) {
       x_escaped = 'y';
       DEBUG_USER   yLOG_note    ("begin escaped character");
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
@@ -2018,30 +2117,30 @@ CMDS_mode          (char a_major, char a_minor)
       case 'p'      :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
       case 'h'      :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
       case 'd'      :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
-      case K_DQUOTE :  a_minor = K_DQUOTE;       break;  /* quote without quoting */
+      case G_KEY_DQUOTE :  a_minor = G_KEY_DQUOTE;       break;  /* quote without quoting */
       default       :  a_minor = G_CHAR_SPACE;   break;
       }
    }
    /*---(check for control keys)---------*/
    if (x_quoted != 'y') {
       switch (a_minor) {
-      case   K_RETURN : yVIKEYS_mode_exit ();
-                        rc = CMDS_execute (s_command);
-                        DEBUG_USER   yLOG_note    ("return, execute command");
-                        DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                        return rc;   /* return  */
-      case   K_ESCAPE : yVIKEYS_mode_exit ();
-                        CMDS_clear ();
-                        DEBUG_USER   yLOG_note    ("escape, ignore command");
-                        DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                        return 0;
+      case   G_KEY_RETURN : yVIKEYS_mode_exit ();
+                            rc = CMDS_execute (s_command);
+                            DEBUG_USER   yLOG_note    ("return, execute command");
+                            DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                            return rc;   /* return  */
+      case   G_KEY_ESCAPE : yVIKEYS_mode_exit ();
+                            CMDS_clear ();
+                            DEBUG_USER   yLOG_note    ("escape, ignore command");
+                            DEBUG_USER   yLOG_exit    (__FUNCTION__);
+                            return 0;
       }
    }
    /*---(check for backspace)------------*/
-   if (a_minor == K_DEL || a_minor == K_BS) {
+   if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {
       DEBUG_USER   yLOG_note    ("bs/del, remove character");
       --x_len;
-      if (s_command [x_len] == K_DQUOTE) {
+      if (s_command [x_len] == G_KEY_DQUOTE) {
          if (x_quoted == 'y')  x_quoted = '-';
          else                  x_quoted = 'y';
       }
@@ -2055,11 +2154,11 @@ CMDS_mode          (char a_major, char a_minor)
    /*---(handle space)-------------------*/
    /*---(normal characters)--------------*/
    DEBUG_USER   yLOG_note    ("update command line");
-   if (a_minor == K_RETURN)    a_minor = G_CHAR_RETURN;
-   if (a_minor == K_ESCAPE)    a_minor = G_CHAR_ESCAPE;
-   if (a_minor == K_TAB   )    a_minor = G_CHAR_TAB;
-   if (a_minor == K_BS    )    a_minor = G_CHAR_BS;
-   if (a_minor == K_SPACE )    a_minor = G_CHAR_SPACE;
+   if (a_minor == G_KEY_RETURN)    a_minor = G_CHAR_RETURN;
+   if (a_minor == G_KEY_ESCAPE)    a_minor = G_CHAR_ESCAPE;
+   if (a_minor == G_KEY_TAB   )    a_minor = G_CHAR_TAB;
+   if (a_minor == G_KEY_BS    )    a_minor = G_CHAR_BS;
+   if (a_minor == G_KEY_SPACE )    a_minor = G_CHAR_SPACE;
    snprintf (x_temp, 10, "%c", a_minor);
    strcat   (s_command, x_temp);
    x_len = strlen (s_command);
@@ -2088,27 +2187,27 @@ SMOD_wander        (char a_prev, char a_curr)
    switch (a_curr) {
    case  ',' :
    case  ')' : post = a_curr;
-   case  K_RETURN  :
-   case  K_ESCAPE  : VISU_clear ();
-                     LOC_ref (CTAB, CCOL, CROW, 0, wref);
-                     CTAB = wtab;
-                     CCOL = wcol;
-                     CROW = wrow;
-                     my.cpos = wpos;
-                     strcpy (g_contents, wsave);
-                     if (strcmp (wref2, "") != 0) {
-                        strcat (g_contents, wref2);
-                        strcat (g_contents, ":");
-                     }
-                     strcat (g_contents, wref);
-                     my.npos = strlen(g_contents);
-                     if (post != ' ') {
-                        g_contents[my.npos]   = post;
-                        g_contents[++my.npos] = '\0';
-                     }
-                     my.cpos = my.npos;
-                     yVIKEYS_mode_exit ();
-                     return  0;   /* escape -- back to source mode */
+   case  G_KEY_RETURN  :
+   case  G_KEY_ESCAPE  : VISU_clear ();
+                         LOC_ref (CTAB, CCOL, CROW, 0, wref);
+                         CTAB = wtab;
+                         CCOL = wcol;
+                         CROW = wrow;
+                         my.cpos = wpos;
+                         strcpy (g_contents, wsave);
+                         if (strcmp (wref2, "") != 0) {
+                            strcat (g_contents, wref2);
+                            strcat (g_contents, ":");
+                         }
+                         strcat (g_contents, wref);
+                         my.npos = strlen(g_contents);
+                         if (post != ' ') {
+                            g_contents[my.npos]   = post;
+                            g_contents[++my.npos] = '\0';
+                         }
+                         my.cpos = my.npos;
+                         yVIKEYS_mode_exit ();
+                         return  0;   /* escape -- back to source mode */
    }
    /*---(basic movement)-----------*/
    /*> switch (a_curr) {                                                              <* 
