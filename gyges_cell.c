@@ -1905,14 +1905,14 @@ PRIV void  o___DISPLAY_________o () { return; }
 char        s_print     [LEN_RECD] = "";
 
 char         /*-> tbd --------------------------------[ ------ [ge.540.136.51]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
-CELL_macro_get       (char *a_macro)
+CELL_macro_get       (char a_name, char *a_macro)
 {
    char        rce         =  -10;
    short       x_row       =    0;
    tCELL      *x_curr      = NULL;
    --rce;  if (a_macro   == NULL     )                      return rce;
-   --rce;  if (my.macro_name < 'a' || my.macro_name > 'z')  return rce;
-   x_row = my.macro_name - 'a';
+   --rce;  if (a_name < 'a' || a_name > 'z')  return rce;
+   x_row = a_name - 'a';
    x_curr = LOC_cell_at_loc ( 35, 1, x_row);
    --rce;  if (x_curr    == NULL)                           return rce;
    if (x_curr->t == CTYPE_STR) {
@@ -1928,24 +1928,24 @@ CELL_macro_get       (char *a_macro)
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.540.153.42]*/ /*-[01.0000.105.!]-*/ /*-[--.---.---.--]-*/
-CELL_macro_set       (char *a_macro)
+CELL_macro_set       (char a_name, char *a_keys)
 {
    char        rce         =  -10;
    short       x_row       =    0;
    char        t           [LEN_LABEL]   = "";
    int         x_len       =    0;
    tCELL      *x_curr      = NULL;
-   --rce;  if (a_macro   == NULL     )                      return rce;
-   --rce;  if (my.macro_name < 'a' || my.macro_name > 'z')  return rce;
-   x_row = my.macro_name - 'a';
-   x_len = strlen (a_macro);
+   --rce;  if (a_keys   == NULL     )                      return rce;
+   --rce;  if (a_name < 'a' || a_name > 'z')  return rce;
+   x_row = a_name - 'a';
+   x_len = strlen (a_keys);
    if (x_len == 0) {
       CELL_delete (CHG_NOHIST  , 35, 0, x_row);
       CELL_delete (CHG_NOHIST  , 35, 1, x_row);
    } else {
-      sprintf (t, "%c", my.macro_name);
-      CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, t      );
-      CELL_change (NULL, CHG_NOHIST, 35, 1, x_row, a_macro);
+      sprintf (t, "%c", a_name);
+      CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, t     );
+      CELL_change (NULL, CHG_NOHIST, 35, 1, x_row, a_keys);
    }
    return 0;
 }

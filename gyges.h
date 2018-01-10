@@ -137,8 +137,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.7a"
-#define     VER_TXT   "search now looks for regex using my yREGEX"
+#define     VER_NUM   "2.7b"
+#define     VER_TXT   "moved all of repeat and macros into yVIKEYS ;)  wow !!!"
 
 
 
@@ -214,28 +214,28 @@ int         nkeylog;
 #define     RUN_USER           'i'      /* running in user mode (ncurses)     */
 #define     RUN_TEST           '-'      /* running as a test    (no ncurses)  */
 /*---(mode)------------*/
-#define     MACRO_OFF          '-'      /* normal keyboard input              */
-#define     MACRO_RUN          'M'      /* macro running with redisplay       */
-#define     MACRO_DELAY        'D'      /* macro delay playback controls      */
-#define     MACRO_PLAYBACK     'P'      /* macro under playback controls      */
-#define     MACRO_RECORD       'r'      /* macro recording                    */
+/*> #define     MACRO_OFF          '-'      /+ normal keyboard input              +/   <*/
+/*> #define     MACRO_RUN          'M'      /+ macro running with redisplay       +/   <*/
+/*> #define     MACRO_DELAY        'D'      /+ macro delay playback controls      +/   <*/
+/*> #define     MACRO_PLAYBACK     'P'      /+ macro under playback controls      +/   <*/
+/*> #define     MACRO_RECORD       'r'      /+ macro recording                    +/   <*/
 /*---(conditions)------*/
-#define     IF_MACRO_OFF         if (my.macro_mode == MACRO_OFF      ) 
-#define     IF_MACRO_RUN         if (my.macro_mode == MACRO_RUN      ) 
-#define     IF_MACRO_NOT_RUN     if (my.macro_mode != MACRO_RUN      ) 
-#define     IF_MACRO_DELAY       if (my.macro_mode == MACRO_DELAY    ) 
-#define     IF_MACRO_PLAYBACK    if (my.macro_mode == MACRO_PLAYBACK ) 
-#define     IF_MACRO_MOVING      if (my.macro_mode == MACRO_RUN      || my.macro_mode == MACRO_DELAY   ) 
-#define     IF_MACRO_NOT_PLAYING if (my.macro_mode == MACRO_OFF      || my.macro_mode == MACRO_RECORD  )
-#define     IF_MACRO_PLAYING     if (my.macro_mode != MACRO_OFF      && my.macro_mode != MACRO_RECORD  )
-#define     IF_MACRO_RECORDING   if (my.macro_mode == MACRO_RECORD   ) 
-#define     IF_MACRO_ON          if (my.macro_mode != MACRO_OFF      ) 
+/*> #define     IF_MACRO_OFF         if (my.macro_mode == MACRO_OFF      )            <*/
+/*> #define     IF_MACRO_RUN         if (my.macro_mode == MACRO_RUN      )            <*/
+/*> #define     IF_MACRO_NOT_RUN     if (my.macro_mode != MACRO_RUN      )            <*/
+/*> #define     IF_MACRO_DELAY       if (my.macro_mode == MACRO_DELAY    )            <*/
+/*> #define     IF_MACRO_PLAYBACK    if (my.macro_mode == MACRO_PLAYBACK )            <*/
+/*> #define     IF_MACRO_MOVING      if (my.macro_mode == MACRO_RUN      || my.macro_mode == MACRO_DELAY   )    <*/
+/*> #define     IF_MACRO_NOT_PLAYING if (my.macro_mode == MACRO_OFF      || my.macro_mode == MACRO_RECORD  )   <*/
+/*> #define     IF_MACRO_PLAYING     if (my.macro_mode != MACRO_OFF      && my.macro_mode != MACRO_RECORD  )   <*/
+/*> #define     IF_MACRO_RECORDING   if (my.macro_mode == MACRO_RECORD   )            <*/
+/*> #define     IF_MACRO_ON          if (my.macro_mode != MACRO_OFF      )            <*/
 /*---(setting)---------*/
-#define     SET_MACRO_OFF        my.macro_mode = MACRO_OFF
-#define     SET_MACRO_RUN        my.macro_mode = MACRO_RUN
-#define     SET_MACRO_PLAYBACK   my.macro_mode = MACRO_PLAYBACK
-#define     SET_MACRO_DELAY      my.macro_mode = MACRO_DELAY
-#define     SET_MACRO_RECORD     my.macro_mode = MACRO_RECORD
+/*> #define     SET_MACRO_OFF        my.macro_mode = MACRO_OFF                        <*/
+/*> #define     SET_MACRO_RUN        my.macro_mode = MACRO_RUN                        <*/
+/*> #define     SET_MACRO_PLAYBACK   my.macro_mode = MACRO_PLAYBACK                   <*/
+/*> #define     SET_MACRO_DELAY      my.macro_mode = MACRO_DELAY                      <*/
+/*> #define     SET_MACRO_RECORD     my.macro_mode = MACRO_RECORD                     <*/
 
 
 
@@ -316,8 +316,8 @@ struct cACCESSOR {
    /*---(registers)-------*/
    char        reg_curr;
    /*---(count)-----------*/
-   char        repeat;         /* multiplier for normal keys                  */
-   char        repeat_macro;   /* multiplier for macro execution              */
+   /*> char        repeat;         /+ multiplier for normal keys                  +/   <*/
+   /*> char        repeat_macro;   /+ multiplier for macro execution              +/   <*/
    /*---(cursus)----------*/
    char        info_win;
    char        menu;
@@ -919,6 +919,8 @@ char      VISU_row             (void);
 char      VISU_range           (int*, int*, int*, int*, int*);
 tCELL*    VISU_first           (int*, int*, int*);
 tCELL*    VISU_next            (int*, int*, int*);
+tCELL*    VISU_firstreal       (int*, int*, int*);
+tCELL*    VISU_nextreal        (int*, int*, int*);
 char      VISU_status          (char *a_msg);
 /*---(submode)--------------*/
 char      VISU_submode         (char a_major, char a_minor);
@@ -1062,8 +1064,8 @@ char      SMOD_wander          (char  a_major, char  a_minor);
 char      SMOD_error           (char  a_major, char  a_minor);
 char      SMOD_menus           (char  a_major, char  a_minor);
 /*---(micro-modes)----------*/
-char      UMOD_repeat          (char  a_major, char  a_minor);
-char      UMOD_repeat_done     (void);
+/*> char      UMOD_repeat          (char  a_major, char  a_minor);                    <*/
+/*> char      UMOD_repeat_done     (void);                                            <*/
 
 char      KEYS_init          (void);
 char      KEYS_record        (char  a_curr);
@@ -1399,8 +1401,8 @@ char      CELL_decimals        (char   a_mode, char a_decs);
 char      CELL_format_valid    (char   a_format);
 char      CELL_format          (char   a_mode, char a_format);
 char      CELL_width           (char   a_mode, char a_num);
-char      CELL_macro_get       (char  *a_macro);
-char      CELL_macro_set       (char  *a_macro);
+char      CELL_macro_get       (char   a_name, char  *a_keys);
+char      CELL_macro_set       (char   a_name, char  *a_keys);
 char      CELL_printable       (tCELL *a_cell);
 
 char     *CELL__unit           (char  *a_question, tCELL *a_cell);
@@ -1456,33 +1458,6 @@ char      XML3_read            (char *a_name);
 
 /*===[ SCRP   ]===============================================================*/
 /*345678901-12345678901234567890->--------------------------------------------*/
-/*---(program)-----------------*/
-char        MACRO_init           (void);
-/*---(utility)-----------------*/
-char        MACRO_name_valid     (char  a_name);
-char        MACRO_reset          (void);
-/*---(saving)------------------*/
-char        MACRO_save           (void);
-char        MACRO_fetch          (char  a_name);
-/*---(recording)---------------*/
-char        MACRO_record_beg     (char  a_name);
-char        MACRO_record_add     (char  a_key);
-char        MACRO_record_addstr  (char *a_keys);
-char        MACRO_record_end     (void);
-char        MACRO_define         (char *a_string);
-/*---(execution)---------------*/
-char        MACRO_delay_set      (char  a_delay);
-char        MACRO_delay          (void);
-char        MACRO_exec_beg       (char  a_name);
-char        MACRO_exec_adv       (void);
-char        MACRO_exec_key       (void);
-char        MACRO_exec_control   (char  a_key);
-char        MACRO_exec_playback  (char  a_key);
-char        MACRO_exec_wait      (void);
-/*---(mode)--------------------*/
-char        MACRO_submode        (char  a_major, char a_minor);
-/*---(unit_test)---------------*/
-char*       MACRO_unit           (char *a_question, char a_macro);
 
 
 #endif

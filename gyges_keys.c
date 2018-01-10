@@ -81,7 +81,7 @@ static tCOMMAND  s_cmds  [MAX_CMDS] = {
    { 'v', "lock_foot"   ,  0, "lf"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    { 'v', "lock_col"    ,  0, "lc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
    /*---(config)-------------------------*/
-   { 'c', "macro"       ,  0, ""    ,  0, 'y', '-', .f.s   = MACRO_define         , "a"    ,  0, "direct definition of a keyboard macro"                       , "" },
+   { 'c', "macro"       ,  0, ""    ,  0, 'y', '-', .f.s   = yVIKEYS_macro_define , "a"    ,  0, "direct definition of a keyboard macro"                       , "" },
    { 'c', "mark"        ,  0, ""    ,  0, 'y', '-', .f.s   = MARK_define          , "a"    ,  0, "direct definition of a location mark"                        , "" },
    { 'c', "mark_unset"  ,  0, ""    ,  0, 'y', '-', .f.c   = MARK_unset           , "c"    ,  0, "direct clearing of a location mark"                          , "" },
    /*---(window)-------------------------*/
@@ -154,7 +154,7 @@ KEYS_record        (char a_curr)
    ++nkeylog;
    /*---(macro)--------------------------*/
    IF_MACRO_RECORDING {
-      MACRO_record_add (a_curr);
+      yVIKEYS_macro_rec_key (a_curr);
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -572,54 +572,6 @@ KEYS_regbasic       (char a_major, char a_minor)
    return 0;
 }
 
-char         /*-> accumulate multiplier --------------[ ------ [ge.A43.214.63]*/ /*-[01.0000.102.!]-*/ /*-[--.---.---.--]-*/
-UMOD_repeat        (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
-   --rce;  if (yVIKEYS_mode_not (SMOD_REPEAT )) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(major mode changes)-------------*/
-   if (a_minor == G_KEY_RETURN || a_minor == G_KEY_ESCAPE) {
-      yVIKEYS_mode_exit ();
-      my.repeat = 0;
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-   }
-   /*---(check for major)-----------------------*/
-   if (my.repeat ==  0 && strchr ("123456789", a_major) != NULL) {
-      DEBUG_USER   yLOG_note    ("assign starting repeat");
-      my.repeat  = a_major - '0';
-   }
-   /*---(check for minor)-----------------------*/
-   if (strchr ("0123456789",  a_minor) != NULL) {
-      DEBUG_USER   yLOG_note    ("increment repeat");
-      my.repeat *= 10;
-      my.repeat += a_minor - '0';
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(adjust)-------------------------*/
-   --my.repeat;
-   if (my.repeat <  0) my.repeat =  0;
-   if (my.repeat > 99) my.repeat = 99;
-   /*---(complete)-----------------------*/
-   yVIKEYS_mode_exit ();
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return a_minor;
-}
-
-char UMOD_repeat_done     (void)  { if (my.repeat < 1) return 0; else return 1; }
-
 char         /*-> process keystrokes in normal mode --[ leaf   [ge.#X9.22#.NP]*/ /*-[05.0000.102.!]-*/ /*-[--.---.---.--]-*/
 MODE_map           (char a_major, char a_minor)
 {
@@ -742,12 +694,12 @@ MODE_map           (char a_major, char a_minor)
          break;
       case '@'      :
          IF_MACRO_OFF {
-            MACRO_reset  ();
+            yVIKEYS_macro_reset  ();
             yVIKEYS_mode_enter  (SMOD_MACRO   );
             DEBUG_USER   yLOG_exit    (__FUNCTION__);
             return a_minor;
          }
-         MACRO_reset  ();
+         yVIKEYS_macro_reset  ();
          DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
          break;
@@ -757,12 +709,12 @@ MODE_map           (char a_major, char a_minor)
             DEBUG_USER   yLOG_exit    (__FUNCTION__);
             return a_minor;
          }
-         MACRO_record_end ();
+         yVIKEYS_macro_rec_end ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case 'Q'      :
-         MACRO_reset ();
+         yVIKEYS_macro_reset ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
@@ -1005,8 +957,8 @@ SMOD_buffer   (char a_major, char a_minor)
    }
    /*---(exit mode)----------------------*/
    CURS_screen_reset  ();
-   DEBUG_USER   yLOG_value   ("done"      , UMOD_repeat_done ());
-   if (UMOD_repeat_done () == 0)  yVIKEYS_mode_exit  ();
+   DEBUG_USER   yLOG_value   ("done"      , yVIKEYS_repeat_norm ());
+   if (yVIKEYS_repeat_norm () == 0)  yVIKEYS_mode_exit  ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1728,7 +1680,7 @@ SRCH_start           (void)
    }
    s_nsrch = 0;
    strncpy     (s_search , "/", LEN_RECD);
-   if (VISU_islive () == 0)  VISU_set (    0,    0,    4,    1,    9);
+   if (VISU_islive () == 0)  VISU_set ( CTAB, 0, 0, NCOL - 1, NROW - 1);
    return 0;
 }
 

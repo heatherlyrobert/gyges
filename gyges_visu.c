@@ -645,6 +645,72 @@ VISU_next          (
    return s_visu.curr;
 }
 
+tCELL*       /*-> return first cell in selection -----[ ------ [gp.630.108.72]*/ /*-[01.0000.804.4]-*/ /*-[--.---.---.--]-*/
+VISU_firstreal       (int *a_tab, int *a_col, int *a_row)
+{
+   /*---(unselected)---------------------*/
+   if (s_visu.live == 0) {
+      s_visu.otab  = CTAB;
+      s_visu.bcol  = s_visu.ocol  = 0;
+      s_visu.ccol  = 0;
+      s_visu.ecol  = NCOL - 1;
+      s_visu.brow  = s_visu.orow  = 0;
+      s_visu.crow  = 0;
+      s_visu.erow  = NROW - 1;
+   }
+   /*---(or, selected)-------------------*/
+   else {
+      s_visu.ccol  = s_visu.bcol;
+      s_visu.crow  = s_visu.brow;
+   }
+   /*---(get very first)-----------------*/
+   s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow);
+   /*---(top-left good)------------------*/
+   if (s_visu.curr != NULL) {
+      if (a_tab != NULL)  *a_tab = s_visu.otab;
+      if (a_col != NULL)  *a_col = s_visu.ccol;
+      if (a_row != NULL)  *a_row = s_visu.crow;
+   }
+   /*---(top-left null)------------------*/
+   else s_visu.curr = VISU_nextreal (a_tab, a_col, a_row);
+   /*---(complete)-----------------------*/
+   return s_visu.curr;
+}
+
+tCELL*       /*-> return first cell in selection -----[ ------ [gp.630.108.72]*/ /*-[01.0000.804.4]-*/ /*-[--.---.---.--]-*/
+VISU_nextreal        (int *a_tab, int *a_col, int *a_row)
+{
+   /*---(defense)------------------------*/
+   if (s_visu.live == 0)  return NULL;
+   s_visu.curr = NULL;
+   while (s_visu.curr == NULL && s_visu.crow <= s_visu.erow) {
+      /*---(update position)-------------*/
+      ++s_visu.ccol;
+      if (s_visu.ccol > s_visu.ecol) {
+         s_visu.ccol = s_visu.bcol;
+         ++s_visu.crow;
+      }
+      /*---(get cell)--------------------*/
+      s_visu.curr  = LOC_cell_at_loc (s_visu.otab, s_visu.ccol, s_visu.crow);
+   }
+   /*---(check for end)------------------*/
+   if (s_visu.crow > s_visu.erow) {
+      s_visu.ccol     = -1;
+      s_visu.crow     = -1;
+      s_visu.curr     = DONE_DONE;
+      if (a_tab != NULL) *a_tab = -1;
+      if (a_col != NULL) *a_col = -1;
+      if (a_row != NULL) *a_row = -1;
+      return  DONE_DONE;
+   }
+   /*---(set the return)-----------------*/
+   if (a_tab != NULL)  *a_tab = s_visu.otab;
+   if (a_col != NULL)  *a_col = s_visu.ccol;
+   if (a_row != NULL)  *a_row = s_visu.crow;
+   /*---(complete)-----------------------*/
+   return s_visu.curr;
+}
+
 
 
 /*====================------------------------------------====================*/
