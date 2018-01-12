@@ -102,9 +102,11 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
-   SRCH_clear           ();
-   CMDS_clear           ();
+   yVIKEYS_srch_clear   ();
+   yVIKEYS_cmds_clear   ();
    yVIKEYS_macro_init   (CELL_macro_get, CELL_macro_set);
+   yVIKEYS_cmds_init    ();
+   yVIKEYS_srch_init    (SRCH_searcher , SRCH_clearer);
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
@@ -203,7 +205,7 @@ PROG_final         (void)
    /*---(process)------------------------*/
    MOVE_vert ('r');
    MOVE_horz ('r');
-   yVIKEYS_mode_mesg (my.message, CMDS_current ());
+   yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -288,31 +290,29 @@ PROG_main_handle   (char a_key)
    }
    /*---(handle count)-------------------*/
    if (yVIKEYS_mode_curr () == SMOD_REPEAT) {
-      /*> rc = UMOD_repeat (x_major, a_key);                                          <*/
       rc = yVIKEYS_repeat_umode (x_major, a_key);
       if (rc >  0)  x_major = ' ';
    }
    /*---(handle keystroke)---------------*/
    while (1) {
       switch (yVIKEYS_mode_curr ()) {
-      case MODE_GOD      : rc = MODE_god       (x_major , a_key);  break;
-      case MODE_MAP      : rc = MODE_map       (x_major , a_key);  break;
-      case MODE_SOURCE   : rc = MODE_source    (x_major , a_key);  break;
-      case MODE_INPUT    : rc = MODE_input     (x_major , a_key);  break;
-      case MODE_COMMAND  : rc = CMDS_mode      (x_major , a_key);  break;
-      case MODE_SEARCH   : rc = SRCH_submode   (x_major , a_key);  break;
-      case MODE_VISUAL   : rc = VISU_submode   (x_major , a_key);  break;
-      case SMOD_ERROR    : rc = SMOD_error     (x_major , a_key);  break;
-      case SMOD_SELECT   : rc = SELC_mode      (x_major , a_key);  break;
-      case SMOD_TEXTREG  : rc = TREG_mode      (x_major , a_key);  break;
-      case SMOD_REPLACE  : rc = SMOD_replace   (x_major , a_key);  break;
-      case SMOD_FORMAT   : rc = SMOD_format    (x_major , a_key);  break;
-      case SMOD_BUFFER   : rc = SMOD_buffer    (x_major , a_key);  break;
-      case SMOD_WANDER   : rc = SMOD_wander    (G_KEY_SPACE , a_key);  break;
-      case SMOD_REGISTER : rc = REG_mode       (x_major , a_key);  break;
-      case SMOD_MARK     : rc = MARK_submode   (x_major , a_key);  break;
-      case SMOD_MENUS    : rc = SMOD_menus     (x_major , a_key);  break;
-      /*> case SMOD_MACRO    : rc = MACRO_submode  (x_major , a_key);  break;         <*/
+      case MODE_GOD      : rc = MODE_god            (x_major , a_key);  break;
+      case MODE_MAP      : rc = MODE_map            (x_major , a_key);  break;
+      case MODE_SOURCE   : rc = MODE_source         (x_major , a_key);  break;
+      case MODE_INPUT    : rc = MODE_input          (x_major , a_key);  break;
+      case MODE_COMMAND  : rc = yVIKEYS_cmds_mode   (x_major , a_key);  break;
+      case MODE_SEARCH   : rc = yVIKEYS_srch_mode   (x_major , a_key);  break;
+      case MODE_VISUAL   : rc = VISU_submode        (x_major , a_key);  break;
+      case SMOD_ERROR    : rc = SMOD_error          (x_major , a_key);  break;
+      case SMOD_SELECT   : rc = SELC_mode           (x_major , a_key);  break;
+      case SMOD_TEXTREG  : rc = TREG_mode           (x_major , a_key);  break;
+      case SMOD_REPLACE  : rc = SMOD_replace        (x_major , a_key);  break;
+      case SMOD_FORMAT   : rc = SMOD_format         (x_major , a_key);  break;
+      case SMOD_BUFFER   : rc = SMOD_buffer         (x_major , a_key);  break;
+      case SMOD_WANDER   : rc = SMOD_wander         (G_KEY_SPACE , a_key);  break;
+      case SMOD_REGISTER : rc = REG_mode            (x_major , a_key);  break;
+      case SMOD_MARK     : rc = MARK_submode        (x_major , a_key);  break;
+      case SMOD_MENUS    : rc = SMOD_menus          (x_major , a_key);  break;
       case SMOD_MACRO    : rc = yVIKEYS_macro_smode (x_major , a_key);  break;
       }
       /*---(translate unprintable)----------*/
@@ -338,11 +338,11 @@ PROG_main_handle   (char a_key)
    else               { x_major = ' ';  sta_error = 'y';  yVIKEYS_repeat_init (); }
    /*---(setup status line)--------------*/
    if        (yVIKEYS_mode_curr() == MODE_COMMAND) {
-      yVIKEYS_mode_mesg (my.message, CMDS_current ());
+      yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());
    } else if (yVIKEYS_mode_curr() == MODE_SEARCH ) {
-      yVIKEYS_mode_mesg (my.message, SRCH_current ());
+      yVIKEYS_mode_mesg (my.message, yVIKEYS_srch_curr ());
    } else if (x_savemode != yVIKEYS_mode_curr()) {
-      yVIKEYS_mode_mesg (my.message, CMDS_current ());
+      yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());
    }
    x_savemode = yVIKEYS_mode_curr ();
    /*---(advance macros)-----------------*/

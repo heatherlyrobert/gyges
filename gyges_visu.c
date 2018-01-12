@@ -1684,7 +1684,7 @@ VISU_submode       (char a_major, char a_minor)
       case ':'      : /*--- enter command mode ------*/
          DEBUG_VISU   yLOG_note    ("chose command mode");
          yVIKEYS_mode_enter  (MODE_COMMAND);
-         CMDS_start ();
+         yVIKEYS_cmds_start ();
          DEBUG_VISU   yLOG_exit    (__FUNCTION__);
          return 0;
          break;

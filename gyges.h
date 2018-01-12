@@ -137,8 +137,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.7b"
-#define     VER_TXT   "moved all of repeat and macros into yVIKEYS ;)  wow !!!"
+#define     VER_NUM   "2.7c"
+#define     VER_TXT   "moved all of command and search into yVIKEYS ;)  wow !!!"
 
 
 
@@ -868,20 +868,9 @@ char      PROG__unitend       (void);
 char      save_saved         (void);
 char      clear_input        (void);
 
-char        SRCH_init            (void);
-char        SRCH_start           (void);
-char        SRCH_clear           (void);
-char*       SRCH_current         (void);
-char        SRCH_execute         (char*);
-char        SRCH_submode         (char  a_major, char  a_minor);
-char*       SRCH__unit           (char *a_question);
+char        SRCH_clearer         (tCELL *a_cell);
+char        SRCH_searcher        (char  *a_search);
 
-char        CMDS_start           (void);
-char        CMDS_clear           (void);
-char*       CMDS_current         (void);
-char        CMDS_execute         (char*);
-char        CMDS_mode            (char  a_major, char  a_minor);
-char*       CMDS__unit           (char *a_question);
 
 /*---(screen formatting)------------------------*/
 

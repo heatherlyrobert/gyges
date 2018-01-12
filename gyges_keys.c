@@ -4,96 +4,18 @@
 
 
 
-char    s_command    [LEN_RECD];
-char    s_search     [LEN_RECD];
+/*> char    s_search     [LEN_RECD];                                                  <*/
 
 
 
-#define   MAX_SRCH    2000
-typedef   struct   cSRCH   tSRCH;
-struct  cSRCH {
-   tCELL      *curr;
-};
-tSRCH     s_srch   [MAX_SRCH];
-int       s_nsrch     = 0;
+/*> #define   MAX_SRCH    2000                                                        <* 
+ *> typedef   struct   cSRCH   tSRCH;                                                 <* 
+ *> struct  cSRCH {                                                                   <* 
+ *>    tCELL      *curr;                                                              <* 
+ *> };                                                                                <* 
+ *> tSRCH     s_srch   [MAX_SRCH];                                                    <* 
+ *> int       s_nsrch     = 0;                                                        <*/
 
-
-
-
-#define  MAX_CMDS      1000
-typedef  struct cCOMMAND  tCOMMAND;
-struct  cCOMMAND {
-   char        ccat;                        /* category                       */
-   char        name        [LEN_LABEL];     /* full command name              */
-   char        len;                         /* length of name                 */
-   char        abbr        [LEN_LABEL];     /* abbreviation of name           */
-   char        alen;                        /* length of abbreviation         */
-   char        active;                      /* ready to use                   */
-   char        redraw;                      /* redraw afterwards              */
-   union {
-      char        (*v   ) (void);           /* function pointer               */
-      char        (*c   ) (char);           /* function pointer               */
-      char        (*s   ) (char*);          /* function pointer               */
-      char        (*is  ) (int  , char*);   /* function pointer               */
-      char        (*ss  ) (char*, char*);   /* function pointer               */
-   } f;
-   char        terms       [LEN_LABEL];     /* type of terms/args             */
-   char        nterm;                       /* number of terms/args           */
-   char        desc        [LEN_DESC];      /* descriptive label              */
-   char        disp        [LEN_DESC];      /* display version of command     */
-};
-static tCOMMAND  s_cmds  [MAX_CMDS] = {
-   /* 1    123456789-12   12   123    12   1    1   123456789-123456789-123456789-   12345   12   123456789-123456789-123456789-123456789-123456789-123456789-  1234 */
-   /*---(file)---------------------------*/
-   /*cat   ---name-----  len  abbrev len  act  drw  ---pointer--------------------   terms  cnt   ---desc-----------------------------------------------------  disp */
-   { 'f', "file"        ,  0, "f"   ,  0, 'y', '-', .f.s   = FILE_rename          , "s"    ,  0, "change the current spreadsheet file name"                    , "" },
-   { 'f', "read"        ,  0, "r"   ,  0, '-', '-', NULL                          , ""     ,  0, "read the current spreadsheet from file"                      , "" },
-   { 'f', "edit"        ,  0, "e"   ,  0, '-', '-', NULL                          , ""     ,  0, "re-read the current spreadsheet from file"                   , "" },
-   { 'f', "write"       ,  0, "w"   ,  0, 'y', '-', .f.v   = FILE_write           , ""     ,  0, "write the current spreadsheet to file"                       , "" },
-   { 'f', "writeall"    ,  0, "wa"  ,  0, 'y', '-', .f.v   = FILE_write           , ""     ,  0, "write the current spreadsheet to file"                       , "" },
-   { 'f', "writeas"     ,  0, "was" ,  0, 'y', '-', .f.s   = FILE_writeas         , "s"    ,  0, "write the current spreadsheet to a temp filename"            , "" },
-   { 'f', "quit"        ,  0, "q"   ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit current file (if no changes), exit if the only file"    , "" },
-   { 'f', "quitall"     ,  0, "qa"  ,  0, 'y', '-', .f.v   = KEYS_quit            , ""     ,  0, "quit all files (if no changes), and exit"                    , "" },
-   { 'f', "writequit"   ,  0, "wq"  ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
-   { 'f', "writequitall",  0, "wqa" ,  0, 'y', '-', .f.v   = KEYS_writequit       , ""     ,  0, ""                                                            , "" },
-   /*---(versioning)---------------------*/
-   { 'f', "control"     ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_control         , ""     ,  0, "turn version control ON for current file"                    , "" },
-   { 'f', "nocontrol"   ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_nocontrol       , ""     ,  0, "turn version control OFF for current file"                   , "" },
-   { 'f', "version"     ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_version         , "s"    ,  0, "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        , "" },
-   { 'f', "vertxt"      ,  0, ""    ,  0, 'y', '-', .f.s   = FILE_vertxt          , "a"    ,  0, "set a file version description"                              , "" },
-   { 'f', "major"       ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_major      , ""     ,  0, "increment the version number by a MAJOR version"             , "" },
-   { 'f', "minor"       ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_minor      , ""     ,  0, "increment the version number by a MINOR version"             , "" },
-   { 'f', "bump"        ,  0, ""    ,  0, 'y', '-', .f.v   = FILE_bump_inc        , ""     ,  0, "increment the version number by a INC version"               , "" },
-   /*---(tab)----------------------------*/
-   { 't', "rename"      ,  0, ""    ,  0, 'y', '-', .f.s   = LOC_tab_rename_curr  , "s"    ,  0, "change the name of the current tab"                          , "" },
-   { 't', "resize"      ,  0, ""    ,  0, 'y', 'y', .f.s   = LOC_tab_resize_curr  , "s"    ,  0, "change the size of the current tab"                          , "" },
-   { 't', "first"       ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_first        , ""     ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "prev"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_prev         , ""     ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "next"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_next         , ""     ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "last"        ,  0, ""    ,  0, 'y', 'y', .f.v   = LOC_tab_last         , ""     ,  0, "change the size of a specific tab"                           , "" },
-   { 't', "switch"      ,  0, ""    ,  0, 'y', 'y', .f.c   = LOC_tab_switch_char  , "c"    ,  0, "change the size of a specific tab"                           , "" },
-   /*---(view)---------------------------*/
-   { 'v', "formula"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_formula  , "s"    ,  0, ""                                                            , "" },
-   { 'v', "status"      ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_status   , "s"    ,  0, ""                                                            , "" },
-   { 'v', "command"     ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_command  , "s"    ,  0, ""                                                            , "" },
-   { 'v', "layout"      ,  0, ""    ,  0, 'y', 'y', .f.s   = PROG_layout_layout   , "s"    ,  0, ""                                                            , "" },
-   { 'v', "lock_head"   ,  0, "lh"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'v', "lock_foot"   ,  0, "lf"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   { 'v', "lock_col"    ,  0, "lc"  ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-   /*---(config)-------------------------*/
-   { 'c', "macro"       ,  0, ""    ,  0, 'y', '-', .f.s   = yVIKEYS_macro_define , "a"    ,  0, "direct definition of a keyboard macro"                       , "" },
-   { 'c', "mark"        ,  0, ""    ,  0, 'y', '-', .f.s   = MARK_define          , "a"    ,  0, "direct definition of a location mark"                        , "" },
-   { 'c', "mark_unset"  ,  0, ""    ,  0, 'y', '-', .f.c   = MARK_unset           , "c"    ,  0, "direct clearing of a location mark"                          , "" },
-   /*---(window)-------------------------*/
-   { 'w', "width"       ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window width"                               , "" },
-   { 'w', "height"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "change the panel/window height"                              , "" },
-   { 'w', "hide"        ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "hide the panel/window"                                       , "" },
-   { 'w', "hsplit"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "side-by-side panels/windows"                                 , "" },
-   { 'w', "vsplit"      ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, "above-and-below panels/windows"                              , "" },
-   /*---(done)---------------------------*/
-   { '-', "END-OF-LIST" ,  0, ""    ,  0, '-', '-', NULL                          , ""     ,  0, ""                                                            , "" },
-};
-static int s_ncmd = 0;
 
 
 
@@ -114,28 +36,52 @@ char         /*-> tbd --------------------------------[ shoot  [gz.633.011.20]*/
 KEYS_init          (void)
 {
    /*---(locals)-----------+-----+-----+-*/
-   int         i           = 0;
+   int         i           =    0;
+   char        rc          =    0;
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_note    ("basic init");
    nkeylog = 0;
    strcpy (keylog, "");
-   s_ncmd = 0;
-   for (i = 0; i < MAX_CMDS; ++i) {
-      DEBUG_USER   yLOG_value   ("i"         , i);
-      if (strcmp (s_cmds [i].name, "END-OF-LIST") == 0)   break;
-      ++s_ncmd;
-      DEBUG_USER   yLOG_info    ("name"      , s_cmds [i].name );
-      s_cmds [i].len   = strlen (s_cmds [i].name );
-      DEBUG_USER   yLOG_value   ("len"       , s_cmds [i].len  );
-      s_cmds [i].nterm = strlen (s_cmds [i].terms);
-      DEBUG_USER   yLOG_info    ("abbr"      , s_cmds [i].abbr );
-      s_cmds [i].alen  = strlen (s_cmds [i].abbr );
-      DEBUG_USER   yLOG_value   ("alen"      , s_cmds [i].alen );
-      s_cmds [i].nterm = strlen (s_cmds [i].terms);
-      DEBUG_USER   yLOG_value   ("nterm"     , s_cmds [i].nterm);
-      if (s_cmds [i].f.v == NULL)   s_cmds [i].active = '-';
-      DEBUG_USER   yLOG_char    ("active"    , s_cmds [i].active);
-   }
+
+   /*---(file)---------------------------*/
+   rc = yVIKEYS_cmds_add ('f', "file"        , "f"   , "s"    , FILE_rename          , "change the current spreadsheet file name"                    );
+   rc = yVIKEYS_cmds_add ('f', "read"        , "r"   , ""     , NULL                 , "read the current spreadsheet from file"                      );
+   rc = yVIKEYS_cmds_add ('f', "edit"        , "e"   , ""     , NULL                 , "re-read the current spreadsheet from file"                   );
+   rc = yVIKEYS_cmds_add ('f', "write"       , "w"   , ""     , FILE_write           , "write the current spreadsheet to file"                       );
+   rc = yVIKEYS_cmds_add ('f', "writeall"    , "wa"  , ""     , FILE_write           , "write the current spreadsheet to file"                       );
+   rc = yVIKEYS_cmds_add ('f', "writeas"     , "was" , "s"    , FILE_writeas         , "write the current spreadsheet to a temp filename"            );
+   rc = yVIKEYS_cmds_add ('f', "quit"        , "q"   , ""     , KEYS_quit            , "quit current file (if no changes), exit if the only file"    );
+   rc = yVIKEYS_cmds_add ('f', "quitall"     , "qa"  , ""     , KEYS_quit            , "quit all files (if no changes), and exit"                    );
+   rc = yVIKEYS_cmds_add ('f', "writequit"   , "wq"  , ""     , KEYS_writequit       , ""                                                            );
+   rc = yVIKEYS_cmds_add ('f', "writequitall", "wqa" , ""     , KEYS_writequit       , ""                                                            );
+   /*---(versioning)---------------------*/
+   rc = yVIKEYS_cmds_add ('f', "control"     , ""    , ""     , FILE_control         , "turn version control ON for current file"                    );
+   rc = yVIKEYS_cmds_add ('f', "nocontrol"   , ""    , ""     , FILE_nocontrol       , "turn version control OFF for current file"                   );
+   rc = yVIKEYS_cmds_add ('f', "version"     , ""    , "s"    , FILE_version         , "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        );
+   rc = yVIKEYS_cmds_add ('f', "vertxt"      , ""    , "a"    , FILE_vertxt          , "set a file version description"                              );
+   rc = yVIKEYS_cmds_add ('f', "major"       , ""    , ""     , FILE_bump_major      , "increment the version number by a MAJOR version"             );
+   rc = yVIKEYS_cmds_add ('f', "minor"       , ""    , ""     , FILE_bump_minor      , "increment the version number by a MINOR version"             );
+   rc = yVIKEYS_cmds_add ('f', "bump"        , ""    , ""     , FILE_bump_inc        , "increment the version number by a INC version"               );
+   /*---(tab)----------------------------*/
+   rc = yVIKEYS_cmds_add ('t', "rename"      , ""    , "s"    , LOC_tab_rename_curr  , "change the name of the current tab"                          );
+   rc = yVIKEYS_cmds_add ('t', "resize"      , ""    , "s"    , LOC_tab_resize_curr  , "change the size of the current tab"                          );
+   rc = yVIKEYS_cmds_add ('t', "first"       , ""    , ""     , LOC_tab_first        , "change the size of a specific tab"                           );
+   rc = yVIKEYS_cmds_add ('t', "prev"        , ""    , ""     , LOC_tab_prev         , "change the size of a specific tab"                           );
+   rc = yVIKEYS_cmds_add ('t', "next"        , ""    , ""     , LOC_tab_next         , "change the size of a specific tab"                           );
+   rc = yVIKEYS_cmds_add ('t', "last"        , ""    , ""     , LOC_tab_last         , "change the size of a specific tab"                           );
+   rc = yVIKEYS_cmds_add ('t', "switch"      , ""    , "c"    , LOC_tab_switch_char  , "change the size of a specific tab"                           );
+   /*---(view)---------------------------*/
+   rc = yVIKEYS_cmds_add ('v', "formula"     , ""    , "s"    , PROG_layout_formula  , ""                                                            );
+   rc = yVIKEYS_cmds_add ('v', "status"      , ""    , "s"    , PROG_layout_status   , ""                                                            );
+   rc = yVIKEYS_cmds_add ('v', "command"     , ""    , "s"    , PROG_layout_command  , ""                                                            );
+   rc = yVIKEYS_cmds_add ('v', "layout"      , ""    , "s"    , PROG_layout_layout   , ""                                                            );
+   rc = yVIKEYS_cmds_add ('v', "lock_head"   , "lh"  , ""     , NULL                 , ""                                                            );
+   rc = yVIKEYS_cmds_add ('v', "lock_foot"   , "lf"  , ""     , NULL                 , ""                                                            );
+   rc = yVIKEYS_cmds_add ('v', "lock_col"    , "lc"  , ""     , NULL                 , ""                                                            );
+   /*---(config)-------------------------*/
+   rc = yVIKEYS_cmds_add ('c', "macro"       , ""    , "a"    , yVIKEYS_macro_define , "direct definition of a keyboard macro"                       );
+   rc = yVIKEYS_cmds_add ('c', "mark"        , ""    , "a"    , MARK_define          , "direct definition of a location mark"                        );
+   rc = yVIKEYS_cmds_add ('c', "mark_unset"  , ""    , "c"    , MARK_unset           , "direct clearing of a location mark"                          );
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -637,15 +583,15 @@ MODE_map           (char a_major, char a_minor)
          break;
       case ':'      :
          yVIKEYS_mode_enter  (MODE_COMMAND);
-         CMDS_start ();
+         yVIKEYS_cmds_start ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
+         return a_minor;
          break;
       case '/'      :
          yVIKEYS_mode_enter  (MODE_SEARCH);
-         SRCH_start ();
+         yVIKEYS_srch_start ();
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
+         return a_minor;
          break;
       case 's'      :
          EDIT_start  ("");
@@ -1662,39 +1608,14 @@ char        KEYS_writequit       (void) { FILE_write (); g_done = 0; return 0; }
 PRIV void  o___SEARCH__________o () { return; }
 
 char
-SRCH_init            (void)
+SRCH_clearer         (tCELL* a_cell)
 {
-   int         i           = 0;
-   s_nsrch = 0;
-   for (i = 0; i < MAX_SRCH; ++i)  s_srch [i].curr = NULL;
+   if (a_cell != NULL) a_cell->n = '-';
    return 0;
 }
-
-char
-SRCH_start           (void)
-{
-   int         i           = 0;
-   for (i = 0; i < s_nsrch; ++i) {
-      (s_srch [i].curr)->n = '-';
-      s_srch [i].curr = NULL;
-   }
-   s_nsrch = 0;
-   strncpy     (s_search , "/", LEN_RECD);
-   if (VISU_islive () == 0)  VISU_set ( CTAB, 0, 0, NCOL - 1, NROW - 1);
-   return 0;
-}
-
-char
-SRCH_clear           (void)
-{
-   strncpy     (s_search , "" , LEN_RECD);
-   return 0;
-}
-
-char*       SRCH_current         (void) { return s_search; }
 
 char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
-SRCH_execute       (char *a_search)
+SRCH_searcher      (char *a_search)
 {
    /*---(locals)-----------+------+----+-*/
    char        rce         =   -10;
@@ -1742,7 +1663,7 @@ SRCH_execute       (char *a_search)
          }
          DEBUG_USER   yLOG_value   ("exec rc"   , rc);
          if (rc > 0) {
-            s_srch [s_nsrch++].curr = x_next;
+            yVIKEYS_srch_found (x_next);
             x_next->n = 's';
          }
       }
@@ -1753,373 +1674,6 @@ SRCH_execute       (char *a_search)
    return 0;
 }
 
-char         /*-> process keys for searching ---------[ ------ [gc.LE5.266.I3]*/ /*-[05.0000.102.M]-*/ /*-[--.---.---.--]-*/
-SRCH_submode       (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   int         x_len       = 0;
-   char        x_temp      [11]        = "";
-   char        rc          =    0;
-   char        x_majors    [LEN_LABEL] = ": ";
-   static char x_quoted    = '-';
-   static char x_escaped   = '-';
-   /*---(header)--------------------s----*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_value   ("a_major"   , a_major);
-   DEBUG_USER   yLOG_value   ("a_minor"   , a_minor);
-   /*---(get existing len)---------------*/
-   DEBUG_USER   yLOG_info    ("s_search"  , s_search);
-   x_len = strlen (s_search);
-   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-   /*---(check for control keys)---------*/
-   switch (a_minor) {
-   case   G_KEY_RETURN :
-      yVIKEYS_mode_exit ();
-      rc = SRCH_execute (s_search);
-      DEBUG_USER   yLOG_note    ("return, execute search");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rc;   /* return  */
-   case   G_KEY_ESCAPE :
-      yVIKEYS_mode_exit ();
-      SRCH_clear ();
-      DEBUG_USER   yLOG_note    ("escape, ignore search");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(check for backspace)------------*/
-   if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {
-      DEBUG_USER   yLOG_note    ("bs/del, remove character");
-      --x_len;
-      if (x_len < 0)   x_len = 0;
-      s_search [x_len] = '\0';
-      DEBUG_USER   yLOG_info    ("s_search"  , s_search);
-      DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(normal characters)--------------*/
-   DEBUG_USER   yLOG_note    ("update search line");
-   if (a_minor == G_KEY_SPACE )    a_minor = G_CHAR_SPACE;
-   snprintf (x_temp, 10, "%c", a_minor);
-   strcat   (s_search, x_temp);
-   ++x_len;
-   DEBUG_USER   yLOG_info    ("s_search"  , s_search);
-   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return a_major;
-}
-
-
-/*====================------------------------------------====================*/
-/*===----                        command line                          ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___COMMAND_________o () { return; }
-
-char        CMDS_start           (void) { strncpy     (s_command , ":", LEN_RECD); return 0; }
-char        CMDS_clear           (void) { strncpy     (s_command , "" , LEN_RECD); return 0; }
-char*       CMDS_current         (void) { return s_command; }
-
-char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
-CMDS_execute       (char *a_command)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char       *p           = NULL;
-   char       *q           = " ";
-   char       *r           = NULL;
-   char        x_work      [LEN_RECD]   = "";
-   int         x_len       = 0;
-   char        x_flag      = '-';
-   char        x_fields    [10][LEN_RECD];
-   char        x_all       [LEN_RECD]       = "";
-   int         x_nfield    =  0;
-   int         i           = 0;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_point   ("a_command" , a_command);
-   --rce;  if (a_command == NULL) {
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("a_command" , a_command);
-   /*---(prepare)------------------------*/
-   strlcpy (x_work, a_command, LEN_RECD);
-   x_len = strlen (x_work);
-   for (i = 0; i < x_len; ++i) {
-      if ((uchar) x_work [i] == G_CHAR_SPACE)   x_work [i] = G_KEY_SPACE;
-   }
-   DEBUG_USER   yLOG_info    ("x_work"    , x_work);
-   /*---(parse command)------------------*/
-   p     = strtok_r (x_work, q, &r);
-   ++p;
-   x_len = strlen (p);
-   DEBUG_USER   yLOG_info    ("g_cmd"     , p);
-   if (strlen (x_work) > x_len)  strlcpy (x_all, p + x_len + 1, LEN_RECD);
-   DEBUG_USER   yLOG_info    ("x_all"     , x_all);
-   /*---(system commands)----------------*/
-   if (p[0] == '!') {
-      rc = system (a_command + 2);
-      return rc;
-   }
-   /*---(parse)--------------------------*/
-   for (i = 0; i < 10; ++i)  strlcpy (x_fields [i], "", LEN_RECD);
-   for (i = 0; i < 10; ++i) {
-      DEBUG_USER   yLOG_value   ("i"         , i);
-      DEBUG_USER   yLOG_info    ("p"         , p);
-      strlcpy (x_fields [i], p, LEN_RECD);
-      x_nfield = i + 1;
-      p = strtok_r (NULL  , q, &r);
-      if (p == NULL)  break;
-   }
-   /*---(run)----------------------------*/
-   for (i = 0; i < s_ncmd; ++i) {
-      DEBUG_USER   yLOG_value   ("i"         , i);
-      DEBUG_USER   yLOG_info    ("name"      , s_cmds [i].name);
-      DEBUG_USER   yLOG_info    ("abbr"      , s_cmds [i].abbr);
-      /*---(filter)----------------------*/
-      if (x_len > 3) {
-         if (s_cmds [i].len != x_len)                         continue;
-         if (s_cmds [i].name [0] != x_fields [0][0])          continue;
-         if (strcmp (s_cmds [i].name, x_fields [0]) != 0)     continue;
-      } else {
-         if (s_cmds [i].alen != x_len)                        continue;
-         if (s_cmds [i].abbr [0] != x_fields [0][0])          continue;
-         if (strcmp (s_cmds [i].abbr, x_fields [0]) != 0)     continue;
-      }
-      /*---(execute)---------------------*/
-      DEBUG_USER   yLOG_note    ("found it");
-      if        (strcmp (s_cmds [i].terms, ""    ) == 0) {
-         DEBUG_USER   yLOG_note    ("void type, no args");
-         rc = s_cmds [i].f.v   ();
-      } else if (strcmp (s_cmds [i].terms, "c"   ) == 0) {
-         DEBUG_USER   yLOG_note    ("one char arg");
-         rc = s_cmds [i].f.c   (x_fields [1][0]);
-      } else if (strcmp (s_cmds [i].terms, "s"   ) == 0) {
-         DEBUG_USER   yLOG_note    ("one string arg");
-         rc = s_cmds [i].f.s   (x_fields [1]);
-      } else if (strcmp (s_cmds [i].terms, "a"   ) == 0) {
-         DEBUG_USER   yLOG_note    ("one long string arg");
-         rc = s_cmds [i].f.s   (x_all);
-      } else if (strcmp (s_cmds [i].terms, "ss"  ) == 0) {
-         DEBUG_USER   yLOG_note    ("two string args");
-         rc = s_cmds [i].f.ss  (x_fields [1], x_fields [1]);
-      } else if (strcmp (s_cmds [i].terms, "is"  ) == 0) {
-         DEBUG_USER   yLOG_note    ("integer arg and string arg");
-         rc = s_cmds [i].f.is  (atoi (x_fields [1]), x_fields [1]);
-      } else {
-         DEBUG_USER   yLOG_note    ("crazy other shit, please update or fix");
-         sta_error = 'y';
-      }
-      DEBUG_USER   yLOG_value   ("rc"        , rc);
-      if (s_cmds [i].redraw == 'y')   CURS_screen_reset ();
-      break;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return rc;
-
-   if (strlen (p) == 7 && strcmp (p, ":errors") == 0) {
-      ERROR_list ();
-      return 0;
-   }
-   /*---(layout commands)----------------*/
-   if (x_len >= 12 && strcmp (p, ":formula") == 0) {
-      PROG_layout_set ("cmd", "formula"  , x_work + 9);
-      return 0;
-   }
-   if (x_len >= 11 && strcmp (p, ":status") == 0) {
-      PROG_layout_set ("cmd", "status"   , x_work + 8);
-      return 0;
-   }
-   if (x_len >= 12 && strcmp (p, ":command") == 0) {
-      PROG_layout_set ("cmd", "command"  , x_work + 9);
-      return 0;
-   }
-   if (x_len >= 11 && strcmp (p, ":layout" ) == 0) {
-      PROG_layout_set ("cmd", "layout"   , x_work + 8);
-      return 0;
-   }
-   if   (strncmp(p, ":q"        , LEN_RECD) == 0 ||
-         strncmp(p, ":qa"       , LEN_RECD) == 0) {
-      g_done = 0;
-      return 0;
-   }
-   if (strcmp (p, ":lock")  == 0 ||
-         strcmp (p, ":lockr") == 0 ||
-         strcmp (p, ":lockc") == 0) {
-      x_flag = '-';
-      if (strlen (p) == 6)  x_flag = p[5];
-      KEYS_unlock ();
-      p = strtok (NULL  , q);
-      if (p == NULL) {
-         KEYS_unlock ();
-         return 0;
-      }
-      rc = LOC_parse (p, NULL, &FR_BCOL, &FR_BROW, NULL);
-      if (rc < 0) {
-         KEYS_unlock ();
-         return 0;
-      }
-      FR_ECOL = FR_BCOL;
-      FR_EROW = FR_BROW;
-      p = strtok (NULL  , q);
-      if (p != NULL) {
-         rc = LOC_parse (p, NULL, &FR_ECOL, &FR_EROW, NULL);
-         if (rc < 0) {
-            FR_ECOL = FR_BCOL;
-            FR_EROW = FR_BROW;
-         }
-      }
-      switch (x_flag) {
-      case  'c' :
-         FR_COL  = 'y';
-         BCOL = CCOL = FR_ECOL + 1;
-         BROW = CROW = FR_EROW;
-         FR_BROW = 0;
-         FR_EROW = 0;
-         break;
-      case  'r' :
-         FR_ROW  = 'y';
-         BCOL = CCOL = FR_ECOL;
-         BROW = CROW = FR_EROW + 1;
-         FR_BCOL = 0;
-         FR_ECOL = 0;
-         break;
-      case  '-' :
-         FR_COL  = 'y';
-         FR_ROW  = 'y';
-         BCOL = CCOL = FR_ECOL + 1;
-         BROW = CROW = FR_EROW + 1;
-         break;
-      default   :
-         KEYS_unlock ();
-         break;
-      }
-      MOVE_horz ('r');
-      MOVE_vert ('r');
-      return 0;
-   }
-   if   (strncmp(p, ":!"        , 2      ) == 0) {
-      system (a_command + 2);
-      return 0;
-   }
-   sta_error = 'y';
-   /*> if        (strncmp(p, "o"        , LEN_RECD) == 0) {                            <* 
-    *>    p = strtok(NULL, q);                                                        <* 
-    *>    if (p == NULL) return 0;                                                    <* 
-    *>    INPT_main ();                                                              <* 
-    *> } else if (strncmp(p, "q"        , LEN_RECD) == 0) {                            <* 
-    *>    g_done = 0;                                                                   <* 
-    *> }                                                                              <*/
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> process keys for input/append ------[ ------ [gc.LE5.266.I3]*/ /*-[05.0000.102.M]-*/ /*-[--.---.---.--]-*/
-CMDS_mode          (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   int         x_len       = 0;
-   char        x_temp      [11]        = "";
-   char        rc          =    0;
-   char        x_majors    [LEN_LABEL] = ": ";
-   static char x_quoted    = '-';
-   static char x_escaped   = '-';
-   /*---(header)--------------------s----*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_value   ("a_major"   , a_major);
-   DEBUG_USER   yLOG_value   ("a_minor"   , a_minor);
-   /*---(get existing len)---------------*/
-   DEBUG_USER   yLOG_info    ("s_command" , s_command);
-   x_len = strlen (s_command);
-   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-   /*---(check for quoting)--------------*/
-   if (x_escaped != 'y' && a_minor == G_KEY_DQUOTE) {
-      if (x_quoted != 'y') {
-         DEBUG_USER   yLOG_note    ("entering quoted string");
-         x_quoted = 'y';
-      } else {
-         DEBUG_USER   yLOG_note    ("exiting quoted string");
-         x_quoted = '-';
-      }
-   }
-   /*---(check for special codes)--------*/
-   if (x_escaped != 'y' && a_minor == G_KEY_BSLASH) {
-      x_escaped = 'y';
-      DEBUG_USER   yLOG_note    ("begin escaped character");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   } else if (x_escaped == 'y') {
-      x_escaped = '-';
-      DEBUG_USER   yLOG_note    ("convert escaped character");
-      switch (a_minor) {
-      case 'n'      :  a_minor = G_CHAR_RETURN;  break;  /* return char           */
-      case 'e'      :  a_minor = G_CHAR_ESCAPE;  break;  /* escape char           */
-      case 't'      :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
-      case 'b'      :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
-      case 's'      :  a_minor = G_CHAR_SPACE;   break;  /* visual space          */
-      case 'f'      :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
-      case 'g'      :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
-      case '0'      :  a_minor = G_CHAR_NULL;    break;  /* null                  */
-      case 'a'      :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
-      case 'c'      :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
-      case 'w'      :  a_minor = G_CHAR_WAIT;    break;  /* wait/pause            */
-      case 'p'      :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
-      case 'h'      :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
-      case 'd'      :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
-      case G_KEY_DQUOTE :  a_minor = G_KEY_DQUOTE;       break;  /* quote without quoting */
-      default       :  a_minor = G_CHAR_SPACE;   break;
-      }
-   }
-   /*---(check for control keys)---------*/
-   if (x_quoted != 'y') {
-      switch (a_minor) {
-      case   G_KEY_RETURN : yVIKEYS_mode_exit ();
-                            rc = CMDS_execute (s_command);
-                            DEBUG_USER   yLOG_note    ("return, execute command");
-                            DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                            return rc;   /* return  */
-      case   G_KEY_ESCAPE : yVIKEYS_mode_exit ();
-                            CMDS_clear ();
-                            DEBUG_USER   yLOG_note    ("escape, ignore command");
-                            DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                            return 0;
-      }
-   }
-   /*---(check for backspace)------------*/
-   if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {
-      DEBUG_USER   yLOG_note    ("bs/del, remove character");
-      --x_len;
-      if (s_command [x_len] == G_KEY_DQUOTE) {
-         if (x_quoted == 'y')  x_quoted = '-';
-         else                  x_quoted = 'y';
-      }
-      if (x_len < 0)   x_len = 0;
-      s_command [x_len] = '\0';
-      DEBUG_USER   yLOG_info    ("s_command" , s_command);
-      DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(handle space)-------------------*/
-   /*---(normal characters)--------------*/
-   DEBUG_USER   yLOG_note    ("update command line");
-   if (a_minor == G_KEY_RETURN)    a_minor = G_CHAR_RETURN;
-   if (a_minor == G_KEY_ESCAPE)    a_minor = G_CHAR_ESCAPE;
-   if (a_minor == G_KEY_TAB   )    a_minor = G_CHAR_TAB;
-   if (a_minor == G_KEY_BS    )    a_minor = G_CHAR_BS;
-   if (a_minor == G_KEY_SPACE )    a_minor = G_CHAR_SPACE;
-   snprintf (x_temp, 10, "%c", a_minor);
-   strcat   (s_command, x_temp);
-   x_len = strlen (s_command);
-   DEBUG_USER   yLOG_info    ("s_command" , s_command);
-   DEBUG_USER   yLOG_value   ("x_len"     , x_len);
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
 
 char         /*-> process keys for wander mode -------[ ------ [ge.FE0.223.65]*/ /*-[05.0000.102.!]-*/ /*-[--.---.---.--]-*/
 SMOD_wander        (char a_prev, char a_curr)
@@ -2199,20 +1753,20 @@ SMOD_wander        (char a_prev, char a_curr)
 /*====================------------------------------------====================*/
 static void  o___UNIT_TEST_______o () { return; }
 
-char*        /*-> unit test accessor -----------------[ light  [us.310.111.10]*/ /*-[01.0000.00#.S]-*/ /*-[--.---.---.--]-*/
-CMDS__unit         (char *a_question)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        x_list      [LEN_RECD];
-   /*---(preprare)-----------------------*/
-   strcpy  (unit_answer, "cmds             : question not understood");
-   /*---(selection)----------------------*/
-   if      (strcmp (a_question, "current"      )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "cmds current     : %2d%-.45s", strlen (s_command), s_command);
-   }
-   /*---(complete)-----------------------*/
-   return unit_answer;
-}
+/*> char*        /+-> unit test accessor -----------------[ light  [us.310.111.10]+/ /+-[01.0000.00#.S]-+/ /+-[--.---.---.--]-+/   <* 
+ *> CMDS__unit         (char *a_question)                                                                                          <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        x_list      [LEN_RECD];                                                                                         <* 
+ *>    /+---(preprare)-----------------------+/                                                                                    <* 
+ *>    strcpy  (unit_answer, "cmds             : question not understood");                                                        <* 
+ *>    /+---(selection)----------------------+/                                                                                    <* 
+ *>    if      (strcmp (a_question, "current"      )  == 0) {                                                                      <* 
+ *>       snprintf (unit_answer, LEN_UNIT, "cmds current     : %2d%-.45s", strlen (s_command), s_command);                         <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return unit_answer;                                                                                                         <* 
+ *> }                                                                                                                              <*/
 
 char*        /*-> unit test accessor -----------------[ light  [us.420.111.11]*/ /*-[01.0000.00#.Z]-*/ /*-[--.---.---.--]-*/
 KEYS__unit         (char *a_question)
