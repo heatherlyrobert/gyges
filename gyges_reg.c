@@ -362,137 +362,137 @@ REG_set            (char a_reg)
 /*====================------------------------------------====================*/
 static void  o___KEYS____________o () { return; }
 
-char         /*-> process keys for register actions --[ leaf   [ge.RK0.23#.FC]*/ /*-[05.0000.102.!]-*/ /*-[--.---.---.--]-*/
-REG_mode           (int a_major, int a_minor)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   int         x_buf       =   -1;
-   char       *p           = NULL;
-   /*---(defenses)-----------------------*/
-   --rce;  if (yVIKEYS_mode_not (SMOD_REGISTER)) {
-      return rce;
-   }
-   if (a_minor == G_KEY_ESCAPE)  {
-      yVIKEYS_mode_exit ();
-      return  0;
-   }
-   /*---(check for control keys)---------*/
-   --rce;  if (a_major == '"') {
-      if (strchr (s_regnames, a_minor) != 0) {
-         REG_set    (a_minor);
-         return 0;
-      } else if (a_minor == '?') {
-         my.info_win = G_INFO_REGS;
-         REG_set ('"');
-         /*> yVIKEYS_mode_exit ();                                                          <*/
-         return  0;
-      } else if (a_minor == '!') {
-         my.layout_status = G_STATUS_REGS;
-         REG_set ('"');
-         yVIKEYS_mode_exit ();
-         return  0;
-      }
-      return rce;
-   }
-   --rce;  if (a_major == ' ' && my.reg_curr == '+') {
-      p = strchr ("vsctrVSCTR", a_minor);
-      if        (p != NULL) {
-         REG_inpt_driver (a_minor);
-      }
-      REG_set ('"');
-      yVIKEYS_mode_exit ();
-      if (p == NULL)   return rce;
-      return 0;
-   }
-   --rce;  if (a_major == ' ' && my.reg_curr == '-') {
-      switch (a_minor) {
-      case  'v' : REG_valuesout('v');
-                  break;
-      case  'V' : REG_valuesout('V');
-                  break;
-      case  'r' : REG_valuesout('r');
-                  break;
-      case  'm' : REG_valuesout('m');
-                  break;
-      case  'M' : REG_valuesout('M');
-                  break;
-      case  'c' : REG_valuesout('c');
-                  break;
-      case  'C' : REG_valuesout('C');
-                  break;
-      case  't' : REG_valuesout('t');
-                  break;
-      case  'T' : REG_valuesout('T');
-                  break;
-      case  's' : REG_valuesout('s');
-                  break;
-      case  'S' : REG_valuesout('S');
-                  break;
-      case  'f' : REG_valuesout('f');
-                  break;
-      case  'F' : REG_valuesout('F');
-                  break;
-      case  'p' : case  'P' :
-                  REG_inpt_driver ('-');
-                  break;
-      default   : REG_set ('"');
-                  yVIKEYS_mode_exit ();
-                  return rce;
-                  break;
-      }
-      REG_set ('"');
-      yVIKEYS_mode_exit ();
-      return 0;
-   }
-   --rce;  if (a_major == ' ') {
-      switch (a_minor) {
-      case  '#' : REG_clear (my.reg_curr, '-');
-                  break;
-      case  'y' : REG_copy  ();
-                  break;
-      case  'p' : REG_paste (G_PASTE_NORM);
-                  break;
-      case  'd' :
-      case  'D' :
-      case  'x' :
-      case  'X' : REG_cut   ();
-                  break;
-      case  'W' : REG_bufwrite (my.reg_curr);
-                  break;
-      case  'g' : x_buf  = REG__reg2index  (my.reg_curr);
-                  if (x_buf < 0) {
-                     REG_set ('"');
-                     return rce;
-                     break;
-                  }
-                  if (s_reg[x_buf].nbuf <= 0) {
-                     REG_set ('"');
-                     return rce;
-                     break;
-                  }
-                  VISU_set   (s_reg[x_buf].otab,
-                        s_reg[x_buf].begc, s_reg[x_buf].begr,
-                        s_reg[x_buf].endc, s_reg[x_buf].endr);
-                  CTAB = s_reg[x_buf].otab;
-                  CCOL = s_reg[x_buf].begc;
-                  CROW = s_reg[x_buf].begr;
-                  break;
-      default   : REG_set ('"');
-                  yVIKEYS_mode_exit ();
-                  return rce;
-                  break;
-      }
-      REG_set ('"');
-      yVIKEYS_mode_exit ();
-      return 0;
-   }
-   /*---(failure)------------------------*/
-   --rce;
-   REG_set ('"');
-   yVIKEYS_mode_exit ();
-   return rce;
-}
+/*> char         /+-> process keys for register actions --[ leaf   [ge.RK0.23#.FC]+/ /+-[05.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_mode           (int a_major, int a_minor)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    int         x_buf       =   -1;                                                                                             <* 
+ *>    char       *p           = NULL;                                                                                             <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    --rce;  if (yVIKEYS_mode_not (SMOD_REGISTER)) {                                                                             <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    if (a_minor == G_KEY_ESCAPE)  {                                                                                             <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       return  0;                                                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check for control keys)---------+/                                                                                    <* 
+ *>    --rce;  if (a_major == '"') {                                                                                               <* 
+ *>       if (strchr (s_regnames, a_minor) != 0) {                                                                                 <* 
+ *>          REG_set    (a_minor);                                                                                                 <* 
+ *>          return 0;                                                                                                             <* 
+ *>       } else if (a_minor == '?') {                                                                                             <* 
+ *>          my.info_win = G_INFO_REGS;                                                                                            <* 
+ *>          REG_set ('"');                                                                                                        <* 
+ *>          /+> yVIKEYS_mode_exit ();                                                          <+/                                <* 
+ *>          return  0;                                                                                                            <* 
+ *>       } else if (a_minor == '!') {                                                                                             <* 
+ *>          my.layout_status = G_STATUS_REGS;                                                                                     <* 
+ *>          REG_set ('"');                                                                                                        <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          return  0;                                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (a_major == ' ' && my.reg_curr == '+') {                                                                         <* 
+ *>       p = strchr ("vsctrVSCTR", a_minor);                                                                                      <* 
+ *>       if        (p != NULL) {                                                                                                  <* 
+ *>          REG_inpt_driver (a_minor);                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>       REG_set ('"');                                                                                                           <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       if (p == NULL)   return rce;                                                                                             <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (a_major == ' ' && my.reg_curr == '-') {                                                                         <* 
+ *>       switch (a_minor) {                                                                                                       <* 
+ *>       case  'v' : REG_valuesout('v');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'V' : REG_valuesout('V');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'r' : REG_valuesout('r');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'm' : REG_valuesout('m');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'M' : REG_valuesout('M');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'c' : REG_valuesout('c');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'C' : REG_valuesout('C');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  't' : REG_valuesout('t');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'T' : REG_valuesout('T');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  's' : REG_valuesout('s');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'S' : REG_valuesout('S');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'f' : REG_valuesout('f');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'F' : REG_valuesout('F');                                                                                          <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'p' : case  'P' :                                                                                                  <* 
+ *>                   REG_inpt_driver ('-');                                                                                       <* 
+ *>                   break;                                                                                                       <* 
+ *>       default   : REG_set ('"');                                                                                               <* 
+ *>                   yVIKEYS_mode_exit ();                                                                                        <* 
+ *>                   return rce;                                                                                                  <* 
+ *>                   break;                                                                                                       <* 
+ *>       }                                                                                                                        <* 
+ *>       REG_set ('"');                                                                                                           <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (a_major == ' ') {                                                                                               <* 
+ *>       switch (a_minor) {                                                                                                       <* 
+ *>       case  '#' : REG_clear (my.reg_curr, '-');                                                                                <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'y' : REG_copy  ();                                                                                                <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'p' : REG_paste (G_PASTE_NORM);                                                                                    <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'd' :                                                                                                              <* 
+ *>       case  'D' :                                                                                                              <* 
+ *>       case  'x' :                                                                                                              <* 
+ *>       case  'X' : REG_cut   ();                                                                                                <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'W' : REG_bufwrite (my.reg_curr);                                                                                  <* 
+ *>                   break;                                                                                                       <* 
+ *>       case  'g' : x_buf  = REG__reg2index  (my.reg_curr);                                                                      <* 
+ *>                   if (x_buf < 0) {                                                                                             <* 
+ *>                      REG_set ('"');                                                                                            <* 
+ *>                      return rce;                                                                                               <* 
+ *>                      break;                                                                                                    <* 
+ *>                   }                                                                                                            <* 
+ *>                   if (s_reg[x_buf].nbuf <= 0) {                                                                                <* 
+ *>                      REG_set ('"');                                                                                            <* 
+ *>                      return rce;                                                                                               <* 
+ *>                      break;                                                                                                    <* 
+ *>                   }                                                                                                            <* 
+ *>                   VISU_set   (s_reg[x_buf].otab,                                                                               <* 
+ *>                         s_reg[x_buf].begc, s_reg[x_buf].begr,                                                                  <* 
+ *>                         s_reg[x_buf].endc, s_reg[x_buf].endr);                                                                 <* 
+ *>                   CTAB = s_reg[x_buf].otab;                                                                                    <* 
+ *>                   CCOL = s_reg[x_buf].begc;                                                                                    <* 
+ *>                   CROW = s_reg[x_buf].begr;                                                                                    <* 
+ *>                   break;                                                                                                       <* 
+ *>       default   : REG_set ('"');                                                                                               <* 
+ *>                   yVIKEYS_mode_exit ();                                                                                        <* 
+ *>                   return rce;                                                                                                  <* 
+ *>                   break;                                                                                                       <* 
+ *>       }                                                                                                                        <* 
+ *>       REG_set ('"');                                                                                                           <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(failure)------------------------+/                                                                                    <* 
+ *>    --rce;                                                                                                                      <* 
+ *>    REG_set ('"');                                                                                                              <* 
+ *>    yVIKEYS_mode_exit ();                                                                                                       <* 
+ *>    return rce;                                                                                                                 <* 
+ *> }                                                                                                                              <*/
 
 
 /*====================------------------------------------====================*/
@@ -1457,7 +1457,7 @@ REG__inpt_done       (void)
    DEBUG_REGS   yLOG_note    ("closing file");
    fclose  (s_clip);
    /*---(screen)-------------------------*/
-   CURS_screen_reset ();
+   /*> CURS_screen_reset ();                                                          <*/
    /*---(calculate)----------------------*/
    DEBUG_INPT  yLOG_note    ("recalc");
    SEQ_calc_full ();
@@ -2099,133 +2099,133 @@ TREG_paste         (char a_dir)
    return 0;
 }
 
-char         /*-> process keys for register actions --[ leaf   [ge.QG5.287.FB]*/ /*-[02.0000.102.!]-*/ /*-[--.---.---.--]-*/
-TREG_mode          (int a_major, int a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         x_buf       =  -1;
-   int         x_index     =   0;
-   int         i           =   0;
-   char       *x_start     = NULL;
-   int         x_len       =   0;
-   char        x_label     [10]        = "";
-   int         x_diff      =   0;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
-   --rce;  if (yVIKEYS_mode_not (SMOD_TEXTREG )) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(escape)-------------------------*/
-   if (a_minor == G_KEY_ESCAPE)  {
-      DEBUG_USER   yLOG_note    ("escape and return to previous mode");
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-   }
-   /*---(check for control keys)---------*/
-   --rce;  if (a_major == '"') {
-      if (strchr (s_regnames, a_minor) != 0) {
-         DEBUG_USER   yLOG_note    ("select a text register");
-         s_treg_curr = a_minor;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      } else if (a_minor == '?') {
-         DEBUG_USER   yLOG_note    ("show text register inventory");
-         my.info_win  = G_INFO_TREG;
-         s_treg_curr = '"';
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return  0;
-      }
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   --rce;  if (a_major == ' ') {
-      switch (a_minor) {
-      case  '!' :
-         my.layout_status     = G_STATUS_TREG;
-         s_treg_watch = s_treg_curr;
-         yVIKEYS_mode_exit ();
-         break;
-      case  '#' :
-         DEBUG_USER   yLOG_note    ("wipe text register");
-         x_index = REG__reg2index (s_treg_curr);
-         strlcpy (s_textreg [x_index].label, "", 10);
-         s_textreg [x_index].bpos  = -1;
-         s_textreg [x_index].epos  = -1;
-         s_textreg [x_index].len   =  0;
-         strlcpy (s_textreg [x_index].data , "", LEN_RECD);
-         yVIKEYS_mode_exit ();
-         break;
-      case  'y' : case  'Y' :
-         DEBUG_USER   yLOG_note    ("yank selection text");
-         TREG_copy   ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'x' : case  'X' :
-         DEBUG_USER   yLOG_note    ("delete selection text");
-         TREG_copy   ();
-         TREG_clear  ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'd' : case  'D' :
-         DEBUG_USER   yLOG_note    ("delete selection text");
-         TREG_copy   ();
-         TREG_delete ();
-         EDIT_done ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'r' : case  'R' :
-         DEBUG_USER   yLOG_note    ("replace selection text");
-         TREG_replace();
-         EDIT_done ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'p' :
-         DEBUG_USER   yLOG_note    ("paste after selection text");
-         TREG_paste  ('>');
-         EDIT_done ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'P' :
-         DEBUG_USER   yLOG_note    ("paste before selection text");
-         TREG_paste  ('<');
-         EDIT_done ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'g' :
-         DEBUG_USER   yLOG_note    ("go to beginning selection position");
-         x_index = REG__reg2index (s_treg_curr);
-         my.cpos = s_textreg [x_index].bpos;
-         EDIT_done ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      case  'G' :
-         DEBUG_USER   yLOG_note    ("go to ending selection position");
-         x_index = REG__reg2index (s_treg_curr);
-         my.cpos = s_textreg [x_index].epos;
-         EDIT_done ();
-         yVIKEYS_mode_exit ();
-         if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);
-         break;
-      }
-   }
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process keys for register actions --[ leaf   [ge.QG5.287.FB]+/ /+-[02.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_mode          (int a_major, int a_minor)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         x_buf       =  -1;                                                                                              <* 
+ *>    int         x_index     =   0;                                                                                              <* 
+ *>    int         i           =   0;                                                                                              <* 
+ *>    char       *x_start     = NULL;                                                                                             <* 
+ *>    int         x_len       =   0;                                                                                              <* 
+ *>    char        x_label     [10]        = "";                                                                                   <* 
+ *>    int         x_diff      =   0;                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());                                                              <* 
+ *>    --rce;  if (yVIKEYS_mode_not (SMOD_TEXTREG )) {                                                                             <* 
+ *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(escape)-------------------------+/                                                                                    <* 
+ *>    if (a_minor == G_KEY_ESCAPE)  {                                                                                             <* 
+ *>       DEBUG_USER   yLOG_note    ("escape and return to previous mode");                                                        <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return  0;                                                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check for control keys)---------+/                                                                                    <* 
+ *>    --rce;  if (a_major == '"') {                                                                                               <* 
+ *>       if (strchr (s_regnames, a_minor) != 0) {                                                                                 <* 
+ *>          DEBUG_USER   yLOG_note    ("select a text register");                                                                 <* 
+ *>          s_treg_curr = a_minor;                                                                                                <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                             <* 
+ *>          return 0;                                                                                                             <* 
+ *>       } else if (a_minor == '?') {                                                                                             <* 
+ *>          DEBUG_USER   yLOG_note    ("show text register inventory");                                                           <* 
+ *>          my.info_win  = G_INFO_TREG;                                                                                           <* 
+ *>          s_treg_curr = '"';                                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                             <* 
+ *>          return  0;                                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (a_major == ' ') {                                                                                               <* 
+ *>       switch (a_minor) {                                                                                                       <* 
+ *>       case  '!' :                                                                                                              <* 
+ *>          my.layout_status     = G_STATUS_TREG;                                                                                 <* 
+ *>          s_treg_watch = s_treg_curr;                                                                                           <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          break;                                                                                                                <* 
+ *>       case  '#' :                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("wipe text register");                                                                     <* 
+ *>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
+ *>          strlcpy (s_textreg [x_index].label, "", 10);                                                                          <* 
+ *>          s_textreg [x_index].bpos  = -1;                                                                                       <* 
+ *>          s_textreg [x_index].epos  = -1;                                                                                       <* 
+ *>          s_textreg [x_index].len   =  0;                                                                                       <* 
+ *>          strlcpy (s_textreg [x_index].data , "", LEN_RECD);                                                                    <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'y' : case  'Y' :                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_note    ("yank selection text");                                                                    <* 
+ *>          TREG_copy   ();                                                                                                       <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'x' : case  'X' :                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
+ *>          TREG_copy   ();                                                                                                       <* 
+ *>          TREG_clear  ();                                                                                                       <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'd' : case  'D' :                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
+ *>          TREG_copy   ();                                                                                                       <* 
+ *>          TREG_delete ();                                                                                                       <* 
+ *>          EDIT_done ();                                                                                                         <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'r' : case  'R' :                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_note    ("replace selection text");                                                                 <* 
+ *>          TREG_replace();                                                                                                       <* 
+ *>          EDIT_done ();                                                                                                         <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'p' :                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("paste after selection text");                                                             <* 
+ *>          TREG_paste  ('>');                                                                                                    <* 
+ *>          EDIT_done ();                                                                                                         <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'P' :                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("paste before selection text");                                                            <* 
+ *>          TREG_paste  ('<');                                                                                                    <* 
+ *>          EDIT_done ();                                                                                                         <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'g' :                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("go to beginning selection position");                                                     <* 
+ *>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
+ *>          my.cpos = s_textreg [x_index].bpos;                                                                                   <* 
+ *>          EDIT_done ();                                                                                                         <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       case  'G' :                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("go to ending selection position");                                                        <* 
+ *>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
+ *>          my.cpos = s_textreg [x_index].epos;                                                                                   <* 
+ *>          EDIT_done ();                                                                                                         <* 
+ *>          yVIKEYS_mode_exit ();                                                                                                 <* 
+ *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+ *>          break;                                                                                                                <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char         /*-> tbd --------------------------------[ ------ [ge.742.554.11]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source)

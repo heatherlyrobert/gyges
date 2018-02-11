@@ -2251,355 +2251,355 @@ SCRP          v21  test vi_replace sub-mode                                   
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  verify row movement                                          KEYS_row                                                                ((44.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-
-   COND       v21  setup custom variables                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
-
-#   COND       v21  setup initial vertical values                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  window size full                     - - - - - - - - - -   my.y_full         =  44;                                                                                                                                       
-     code     v21  window size top                      - - - - - - - - - -   my.y_top          =   2;                                                                                                                                       
-     code     v21  window size bottom                   - - - - - - - - - -   my.y_bottom       =   2;                                                                                                                                       
-     code     v21  window size avail                    - - - - - - - - - -   my.y_avail        =  40;                                                                                                                                       
-#     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      = 200;                                                                                                                                       
-     code     v21  beginning row                        - - - - - - - - - -   BROW              =   0;                                                                                                                                       
-     code     v21  ending row                           - - - - - - - - - -   EROW              =   0;                                                                                                                                       
-#     code     v21  current row                          - - - - - - - - - -   s_tabs[0].crow      =   0;                                                                                                                                       
-
-   COND       v21  setup initial horizonal values                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  window size full                     - - - - - - - - - -   my.x_full         =  80;                                                                                                                                       
-     code     v21  window size left                     - - - - - - - - - -   my.x_left         =   5;                                                                                                                                       
-     code     v21  window size right                    - - - - - - - - - -   my.x_right        =   0;                                                                                                                                       
-     code     v21  window size availible                - - - - - - - - - -   my.x_avail        =  75;                                                                                                                                       
-#     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      = 100;                                                                                                                                       
-     code     v21  beginning col                        - - - - - - - - - -   BCOL              =   0;                                                                                                                                       
-     code     v21  ending col                           - - - - - - - - - -   ECOL              =   0;                                                                                                                                       
-#     code     v21  current cols                         - - - - - - - - - -   s_tabs[0].ccol      =   0;                                                                                                                                       
-
-   COND       v21  initialize the variables                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'r'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move down a row                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   1, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move down again                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   2, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move down a big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   7, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move down a big move again                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  12, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move one row up                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  11, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move one row up again                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  10, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a big move                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   5, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a couple                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  try a illegal row movement                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'h'                                                                i_lesser    0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  try a illegal modifier                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'h', 'j'                                                                i_lesser    0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  try a blank movement string                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', ' '                                                                i_lesser    0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  try a long movement string                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_lesser    0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  try a empty movement string                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', ' '                                                                i_lesser    0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  try a NULL movement string                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', ' '                                                                i_lesser    0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a big move (not enough room)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a row (not enough room)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to bottom of screen                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  39, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a row                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  38, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move down a row                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  39, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move past the bottom                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   1, cur=  40, end=  40    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move past the bottom with a big move                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   6, cur=  45, end=  45    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up three rows                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   6, cur=  42, end=  45    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move past the bottom with a big move                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   8, cur=  47, end=  47    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to top of the screen                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   8, cur=   8, end=  47    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a row                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   7, cur=   7, end=  46    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a big move                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   2, cur=   2, end=  41    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move up a big move again (without enough room)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move down a big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   5, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to middle of the screen                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  19, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to top quarter                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  10, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to bottom quarter                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  30, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to the top of the screen                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to bottom quarter                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  30, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to middle of the screen                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.039))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  19, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to the bottom of the screen                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.040))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  39, end=  39    
-     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
-
-   COND       v21  move to the very bottom                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.041))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'G'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=199, e=199                   
-
-   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.042))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=198, e=199                   
-
-   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=197, e=199                   
-
-   COND       v21  move up one big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=192, e=199                   
-
-   COND       v21  move down                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=193, e=199                   
-
-   COND       v21  move down by big move                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.046))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=198, e=199                   
-
-   COND       v21  move down by big move (again)                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.047))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=199, e=199                   
-
-   COND       v21  move down, again                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.048))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=199, e=199                   
-
-   COND       v21  move to top                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.049))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', '_'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c=  0, e= 39                   
-
-   COND       v21  move to screen bottom                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 39, e= 39                   
-
-   COND       v21  move to screen middle                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 19, e= 39                   
-
-   COND       v21  move to screen top quarter                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.052))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 10, e= 39                   
-
-   COND       v21  move to screen bottom quarter                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.053))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 30, e= 39                   
-
-   COND       v21  move to screen bottom                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.054))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 39, e= 39                   
-
-   COND       v21  move down                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.055))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  1, c= 40, e= 40                   
-
-   COND       v21  move down by big move                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 45, e= 45                   
-
-   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.057))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 44, e= 45                   
-
-   COND       v21  move up one big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.058))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 39, e= 45                   
-
-   COND       v21  move to screen top                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.059))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c=  6, e= 45                   
-
-   COND       v21  move to screen middle                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.060))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 25, e= 45                   
-
-   COND       v21  move to screen top                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.061))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c=  6, e= 45                   
-
-   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.062))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  5, c=  5, e= 44                   
-
-   COND       v21  move up one big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.063))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c=  0, e= 39                   
-
-   COND       v21  page down                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.064))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'c', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 39, e= 78                   
-
-   COND       v21  page down, again                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.065))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'c', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 78, c= 78, e=117                   
-
-   COND       v21  page up                                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.066))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'c', 't'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
-
-   COND       v21  scroll to top                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.067))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', 't'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 78, c= 78, e=117                   
-
-   COND       v21  scroll to bottom                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.068))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
-
-   COND       v21  scroll to top quarter                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.069))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', 'k'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 69, c= 78, e=108                   
-
-   COND       v21  scroll to bottom quarter                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.070))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', 'j'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 49, c= 78, e= 88                   
-
-   COND       v21  scroll to bottom                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.071))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
-
-   COND       v21  scroll to bottom (again)                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.072))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', 'b'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
-
-   COND       v21  scroll to middle                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.073))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  process row movement                 KEYS_row              'z', '.'                                                                i_equal     0                                                                      
-     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 60, c= 78, e= 99                   
-
-   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.074))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+#SCRP          v21  verify row movement                                          KEYS_row                                                                ((44.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+#
+#   COND       v21  setup custom variables                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
+#
+##   COND       v21  setup initial vertical values                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     code     v21  window size full                     - - - - - - - - - -   my.y_full         =  44;                                                                                                                                       
+#     code     v21  window size top                      - - - - - - - - - -   my.y_top          =   2;                                                                                                                                       
+#     code     v21  window size bottom                   - - - - - - - - - -   my.y_bottom       =   2;                                                                                                                                       
+#     code     v21  window size avail                    - - - - - - - - - -   my.y_avail        =  40;                                                                                                                                       
+##     code     v21  number of rows                       - - - - - - - - - -   s_tabs[0].nrow      = 200;                                                                                                                                       
+#     code     v21  beginning row                        - - - - - - - - - -   BROW              =   0;                                                                                                                                       
+#     code     v21  ending row                           - - - - - - - - - -   EROW              =   0;                                                                                                                                       
+##     code     v21  current row                          - - - - - - - - - -   s_tabs[0].crow      =   0;                                                                                                                                       
+#
+#   COND       v21  setup initial horizonal values                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     code     v21  window size full                     - - - - - - - - - -   my.x_full         =  80;                                                                                                                                       
+#     code     v21  window size left                     - - - - - - - - - -   my.x_left         =   5;                                                                                                                                       
+#     code     v21  window size right                    - - - - - - - - - -   my.x_right        =   0;                                                                                                                                       
+#     code     v21  window size availible                - - - - - - - - - -   my.x_avail        =  75;                                                                                                                                       
+##     code     v21  number of cols                       - - - - - - - - - -   s_tabs[0].ncol      = 100;                                                                                                                                       
+#     code     v21  beginning col                        - - - - - - - - - -   BCOL              =   0;                                                                                                                                       
+#     code     v21  ending col                           - - - - - - - - - -   ECOL              =   0;                                                                                                                                       
+##     code     v21  current cols                         - - - - - - - - - -   s_tabs[0].ccol      =   0;                                                                                                                                       
+#
+#   COND       v21  initialize the variables                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'r'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move down a row                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   1, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move down again                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   2, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move down a big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   7, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move down a big move again                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  12, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move one row up                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  11, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move one row up again                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  10, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a big move                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   5, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a couple                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  try a illegal row movement                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'h'                                                                i_lesser    0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  try a illegal modifier                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'h', 'j'                                                                i_lesser    0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  try a blank movement string                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', ' '                                                                i_lesser    0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  try a long movement string                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_lesser    0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  try a empty movement string                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', ' '                                                                i_lesser    0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  try a NULL movement string                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', ' '                                                                i_lesser    0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   3, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a big move (not enough room)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a row (not enough room)                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to bottom of screen                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  39, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a row                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  38, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move down a row                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  39, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move past the bottom                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   1, cur=  40, end=  40    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move past the bottom with a big move                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   6, cur=  45, end=  45    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up three rows                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   6, cur=  42, end=  45    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move past the bottom with a big move                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   8, cur=  47, end=  47    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to top of the screen                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   8, cur=   8, end=  47    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a row                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   7, cur=   7, end=  46    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a big move                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   2, cur=   2, end=  41    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move up a big move again (without enough room)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move down a big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   5, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to middle of the screen                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  19, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to top quarter                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  10, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to bottom quarter                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  30, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to the top of the screen                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=   0, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to bottom quarter                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  30, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to middle of the screen                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.039))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  19, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to the bottom of the screen                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.040))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   MOVE_unit             "row_stats"          , NULL                                             s_equal     s_move row stat  : num= 200, scr=  40, beg=   0, cur=  39, end=  39    
+#     get      v21  check the col data                   MOVE_unit             "col_stats"          , NULL                                             s_equal     s_move col stat  : num= 100, scr=  75, beg=   0, cur=   0, end=   0    
+#
+#   COND       v21  move to the very bottom                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.041))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'G'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=199, e=199                   
+#
+#   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.042))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=198, e=199                   
+#
+#   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=197, e=199                   
+#
+#   COND       v21  move up one big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=192, e=199                   
+#
+#   COND       v21  move down                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=193, e=199                   
+#
+#   COND       v21  move down by big move                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.046))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=198, e=199                   
+#
+#   COND       v21  move down by big move (again)                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.047))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=199, e=199                   
+#
+#   COND       v21  move down, again                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.048))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=160, c=199, e=199                   
+#
+#   COND       v21  move to top                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.049))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', '_'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c=  0, e= 39                   
+#
+#   COND       v21  move to screen bottom                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 39, e= 39                   
+#
+#   COND       v21  move to screen middle                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 19, e= 39                   
+#
+#   COND       v21  move to screen top quarter                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.052))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 10, e= 39                   
+#
+#   COND       v21  move to screen bottom quarter                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.053))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 30, e= 39                   
+#
+#   COND       v21  move to screen bottom                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.054))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c= 39, e= 39                   
+#
+#   COND       v21  move down                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.055))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  1, c= 40, e= 40                   
+#
+#   COND       v21  move down by big move                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'J'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 45, e= 45                   
+#
+#   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.057))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 44, e= 45                   
+#
+#   COND       v21  move up one big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.058))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 39, e= 45                   
+#
+#   COND       v21  move to screen top                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.059))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c=  6, e= 45                   
+#
+#   COND       v21  move to screen middle                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.060))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', '.'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c= 25, e= 45                   
+#
+#   COND       v21  move to screen top                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.061))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'g', 't'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  6, c=  6, e= 45                   
+#
+#   COND       v21  move up one                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.062))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  5, c=  5, e= 44                   
+#
+#   COND       v21  move up one big move                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.063))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              ' ', 'K'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b=  0, c=  0, e= 39                   
+#
+#   COND       v21  page down                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.064))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'c', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 39, e= 78                   
+#
+#   COND       v21  page down, again                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.065))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'c', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 78, c= 78, e=117                   
+#
+#   COND       v21  page up                                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.066))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'c', 't'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
+#
+#   COND       v21  scroll to top                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.067))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', 't'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 78, c= 78, e=117                   
+#
+#   COND       v21  scroll to bottom                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.068))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
+#
+#   COND       v21  scroll to top quarter                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.069))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', 'k'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 69, c= 78, e=108                   
+#
+#   COND       v21  scroll to bottom quarter                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.070))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', 'j'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 49, c= 78, e= 88                   
+#
+#   COND       v21  scroll to bottom                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.071))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
+#
+#   COND       v21  scroll to bottom (again)                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.072))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', 'b'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 39, c= 78, e= 78                   
+#
+#   COND       v21  scroll to middle                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.073))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  process row movement                 KEYS_row              'z', '.'                                                                i_equal     0                                                                      
+#     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 60, c= 78, e= 99                   
+#
+#   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.074))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 
 
 

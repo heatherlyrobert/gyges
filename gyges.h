@@ -137,8 +137,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "2.7c"
-#define     VER_TXT   "moved all of command and search into yVIKEYS ;)  wow !!!"
+#define     VER_NUM   "3.0a"
+#define     VER_TXT   "moved to using yVIKEYS_mode, but will only show cells yet"
 
 
 
@@ -198,13 +198,7 @@ typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 /*---(registers)----------------------*/
 
 
-char        reqs        [LEN_RECD];
-char        deps        [LEN_RECD];
-char        like        [LEN_RECD];
-char        rpn         [LEN_RECD];
-char        keys        [LEN_RECD];
 char        buf0        [LEN_RECD];
-char        bufc        [LEN_RECD];
 
 char        keylog      [10000];
 int         nkeylog;
@@ -318,9 +312,16 @@ struct cACCESSOR {
    /*---(count)-----------*/
    /*> char        repeat;         /+ multiplier for normal keys                  +/   <*/
    /*> char        repeat_macro;   /+ multiplier for macro execution              +/   <*/
-   /*---(cursus)----------*/
+   /*---(ncurses)---------*/
    char        info_win;
    char        menu;
+   char        reqs_list   [LEN_RECD];     /* cell requires                   */
+   char        deps_list   [LEN_RECD];     /* cell depends                    */
+   char        like_list   [LEN_RECD];     /* cell likes                      */
+   char        rpn_list    [LEN_RECD];     /* cell rpn contents               */
+   char        reg_list    [LEN_RECD];     /* register contents               */
+   char        keys        [LEN_RECD];     /* current keystrokes              */
+   /*---(done)------------*/
 };
 extern    struct cACCESSOR my;
 
@@ -844,9 +845,9 @@ char      PROG_begin           (void);
 char      PROG_final           (void);
 char      PROG_end             (void);
 
-char      PROG_main_input      (char  a_mode, char a_key);
-char      PROG_main_handle     (char  a_key);
-char      PROG_main_string     (char *a_keys);
+/*> char      PROG_main_input      (char  a_mode, char a_key);                        <*/
+/*> char      PROG_main_handle     (char  a_key);                                     <*/
+/*> char      PROG_main_string     (char *a_keys);                                    <*/
 
 char      PROG_layout_init     (void);
 char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
@@ -1056,10 +1057,9 @@ char      SMOD_menus           (char  a_major, char  a_minor);
 /*> char      UMOD_repeat          (char  a_major, char  a_minor);                    <*/
 /*> char      UMOD_repeat_done     (void);                                            <*/
 
-char      KEYS_init          (void);
+/*> char      KEYS_init          (void);                                              <*/
 char      KEYS_record        (char  a_curr);
 char      KEYS_reverse       (char  a_curr);
-char      KEYS_status        (char *msg);
 char      KEYS_z_family      (char  a_major, char  a_minor);
 char      KEYS_col           (char  a_major, char  a_minor);
 char      KEYS_bcol          (int);
@@ -1097,7 +1097,22 @@ char*     MOVE_unit          (char *a_question, int a_num);
 
 
 /*---(ncurses)----------------------------------*/
-char      CURS_screen_reset    (void);
+
+char        CURS_status_cell     (char *a_list);
+char        CURS_status_deps     (char *a_list);
+char        CURS_status_rpn      (char *a_list);
+char        CURS_status_file     (char *a_list);
+char        CURS_status_buffer   (char *a_list);
+char        CURS_status_textreg  (char *a_list);
+char        CURS_status_mark     (char *a_list);
+char        CURS_status_tab      (char *a_list);
+char        CURS_status_reg      (char *a_list);
+char        CURS_status_visual   (char *a_list);
+char        CURS_status_error    (char *a_list);
+char        CURS_status_history  (char *a_list);
+
+
+/*> char      CURS_screen_reset    (void);                                            <*/
 char      CURS_begin           (void);
 char      CURS_end             (void);
 char      CURS_main            (void);
@@ -1108,9 +1123,9 @@ char      CURS_cell            (int a_col, int a_row, short a_ypos, short a_xpos
 char      CURS_size            (void);
 char      CURS_info_cell       (void);
 char      CURS_info_layout     (void);
-char      CURS_list_mark         (void);
-char      CURS_listreg         (void);
-char      CURS_listtreg        (void);
+/*> char      CURS_list_mark         (void);                                          <*/
+/*> char      CURS_listreg         (void);                                            <*/
+/*> char      CURS_listtreg        (void);                                            <*/
 
 char      CALC_init            (void);
 char      CALC_cleanse         (tCELL *a_cell);
@@ -1312,6 +1327,7 @@ char        LOC_col_width        /* petal  2----- */  (short a_tab, short a_col)
 char        LOC_col_widen        /* stigma 3----- */  (short a_tab, short a_col, short a_size);
 char        LOC_col_freeze       (short a_tab, short a_bcol, short a_ecol);
 char        LOC_col_unfreeze     (short a_tab);
+char        LOC_col_map          (char  a_type);
 /*---(rows)----------------------*/
 char        LOC_row_clear        /* septal 1----- */  (short a_tab);
 char        LOC_row_valid        /* petal  2----- */  (short a_tab, short a_row);
@@ -1325,6 +1341,8 @@ char        LOC_row_height       /* petal  2----- */  (short a_tab, short a_row)
 char        LOC_row_heighten     /* sigma  3----- */  (short a_tab, short a_row, short a_size);
 char        LOC_row_freeze       (short a_tab, short a_brow, short a_erow);
 char        LOC_row_unfreeze     (short a_tab);
+char        LOC_row_map          (char a_type);
+
 /*---(unit testing)--------------*/
 char*       LOC__unit            /* petal  2----- */  (char *a_question, char *a_label);
 char*       TAB__unit            /* petal  2----- */  (char *a_question, int a_num);

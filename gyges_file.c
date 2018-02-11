@@ -1112,7 +1112,7 @@ INPT_done          (void)
    DEBUG_INPT  yLOG_enter   (__FUNCTION__);
    /*---(screen)-------------------------*/
    DEBUG_INPT   yLOG_note    ("set screen positions correctly");
-   KEYS_basics (' ', 'r');
+   /*> KEYS_basics (' ', 'r');                                                        <*/
    KEYS_bcol (BCOL);
    CURS_col_head();
    KEYS_brow (BROW);

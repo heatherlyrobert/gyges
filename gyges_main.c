@@ -10,8 +10,8 @@ int          /*-> tbd --------------------------------[ ------ [gn.842.232.99]*/
 main (int argc, char *argv[])
 {
    /*---(locals)-----------+-----------+-*/
-   int         updates     = 0;
-   char        cch         = ' ';      /* current keystroke                   */
+   int         x_loop      = 0;
+   uchar       x_key       = ' ';      /* current keystroke                   */
    char        rc          = 0;
    /*---(initialize)---------------------*/
    if (rc >= 0)  rc = yURG_logger  (argc, argv);
@@ -28,13 +28,11 @@ main (int argc, char *argv[])
    DEBUG_TOPS   yLOG_note    ("entering main processing loop");
    DEBUG_TOPS   yLOG_break   ();
    while (g_done) {
-      cch = PROG_main_input (RUN_USER, '-');
-      if (cch == -1) continue;
-      /*---(log)-------------------------*/
-      ++updates;
-      DEBUG_LOOP  yLOG_complex ("update"    , "loop = %6d, val = %4d, cch = %c", updates, cch, (cch > 32) ? cch : '-');
-      /*---(handle keystroke)------------*/
-      rc = PROG_main_handle (cch);
+      x_key = yVIKEYS_main_input  (RUN_USER, x_key);
+      yVIKEYS_main_handle (x_key);
+      if (yVIKEYS_quit ())  break;
+      ++x_loop;
+      x_key = CURS_main  ();
       /*---(done)------------------------*/
    }
    DEBUG_TOPS  yLOG_break   ();

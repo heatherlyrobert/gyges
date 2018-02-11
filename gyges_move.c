@@ -43,6 +43,9 @@ save_saved    (void)
 
 
 
+
+
+
 /*====================------------------------------------====================*/
 /*===----                        prep and wrapup                       ----===*/
 /*====================------------------------------------====================*/
@@ -463,125 +466,125 @@ MOVE_horz          (char a_minor)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.OI5.238.I4]*/ /*-[04.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-KEYS_col           (char a_major, char a_minor)
-{
-   /*---(locals)-------------------------*/
-   int         s_beg       = 0;             /* save the beginning col         */
-   int         s_end       = 0;             /* save the ending col            */
-   char        rce         = -10;           /* return code for error          */
-   /*---(header)-------------------------*/
-   DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   DEBUG_USER  yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense: modifier)--------------*/
-   --rce;  // illegal value for modifier (tight input)
-   if (strchr (" cgze", a_major) == NULL) {
-      DEBUG_USER  yLOG_note    ("unrecognized modifier passed to function");
-      DEBUG_USER  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(init)------------------------*/
-   s_beg   = BCOL;
-   s_end   = ECOL;
-   DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
-   DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
-   /*---(adjust curr)-----------------*/
-   --rce;  // bad basic request
-   if (a_major == ' ') switch (a_minor) {
-   case '0' : CCOL = 0;                     break;
-   case 'H' : CCOL -= 5;                    break;
-   case 'h' : --CCOL;                       break;
-   case 'l' : ++CCOL;                       break;
-   case 'L' : CCOL += 5;                    break;
-   case '$' : CCOL = NCOL - 1;              break;
-   case 'o' : /* see above           */  break;    /* add                     */
-   case 'x' : /* see above           */  break;    /* delete                  */
-   case 'w' : /* see above           */  break;    /* delete                  */
-   case 'r' : if (CCOL > ECOL)
-                 ECOL = CCOL;
-              else if (CCOL < BCOL)
-                 BCOL = CCOL;
-              /*> else                                                                <*/
-              /*> s_beg = -1;                                                      <*/
-              break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);
-   DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);
-   /*---(page moves)---------------------*/
-   --rce;  // bad page request
-   if (a_major == 'c') switch (a_minor) {
-   case 's' : ECOL = CCOL = BCOL;          break;
-   case 'h' : MOVE_gz_horz ('c', 'h');       break;
-   case 'l' : MOVE_gz_horz ('c', 'l');       break;
-   case 'e' : BCOL = CCOL = ECOL;          break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(screen moves)-------------------*/
-   --rce;  // bad goto request
-   if (a_major == 'g') switch (a_minor) {
-   case 's' : MOVE_gz_horz (a_major, a_minor);              break;
-   case 'h' : MOVE_gz_horz (a_major, a_minor);              break;
-   case ',' : MOVE_gz_horz (a_major, a_minor);              break;
-   case 'l' : MOVE_gz_horz (a_major, a_minor);              break;
-   case 'e' : MOVE_gz_horz (a_major, a_minor);              break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(scrolling)----------------------*/
-   --rce;  // bad scroll request
-   if (a_major == 'z') switch (a_minor) {
-   case 's' : MOVE_gz_horz (a_major, a_minor);              break;
-   case 'h' : MOVE_gz_horz (a_major, a_minor);              break;
-   case ',' : MOVE_gz_horz (a_major, a_minor);              break;
-   case 'l' : MOVE_gz_horz (a_major, a_minor);              break;
-   case 'e' : MOVE_gz_horz (a_major, a_minor);              break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(end)----------------------------*/
-   --rce;  // bad end request
-   if (a_major == 'e') switch (a_minor) {
-   case 'h' : MOVE_ends  ('l');                       break;
-   case 'l' : MOVE_ends  ('r');                       break;
-   case 'H' : MOVE_edges ('H');                       break;
-   case 's' : MOVE_edges ('s');                       break;
-   case 'L' : MOVE_edges ('L');                       break;
-   case 'e' : MOVE_edges ('e');                       break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(check lock)------------------*/
-   if (FR_COL == 'y') {
-      DEBUG_USER  yLOG_note    ("correct for locked areas");
-      if (BCOL <= FR_ECOL)   BCOL   = FR_ECOL + 1;
-      if (CCOL <= FR_ECOL)   CCOL   = FR_ECOL + 1;
-      if (ECOL <= FR_ECOL)   ECOL   = FR_ECOL + 1;
-   }
-   /*---(update screen)---------------*/
-   MOVE_done   ();
-   /*---(complete)--------------------*/
-   DEBUG_USER  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.OI5.238.I4]+/ /+-[04.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_col           (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-------------------------+/                                                                                    <* 
+ *>    int         s_beg       = 0;             /+ save the beginning col         +/                                               <* 
+ *>    int         s_end       = 0;             /+ save the ending col            +/                                               <* 
+ *>    char        rce         = -10;           /+ return code for error          +/                                               <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    DEBUG_USER  yLOG_char    ("a_major"   , a_major);                                                                           <* 
+ *>    DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);                                                                           <* 
+ *>    /+---(defense: modifier)--------------+/                                                                                    <* 
+ *>    --rce;  // illegal value for modifier (tight input)                                                                         <* 
+ *>    if (strchr (" cgze", a_major) == NULL) {                                                                                    <* 
+ *>       DEBUG_USER  yLOG_note    ("unrecognized modifier passed to function");                                                   <* 
+ *>       DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                                 <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(init)------------------------+/                                                                                       <* 
+ *>    s_beg   = BCOL;                                                                                                             <* 
+ *>    s_end   = ECOL;                                                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);                                                                             <* 
+ *>    /+---(adjust curr)-----------------+/                                                                                       <* 
+ *>    --rce;  // bad basic request                                                                                                <* 
+ *>    if (a_major == ' ') switch (a_minor) {                                                                                      <* 
+ *>    case '0' : CCOL = 0;                     break;                                                                             <* 
+ *>    case 'H' : CCOL -= 5;                    break;                                                                             <* 
+ *>    case 'h' : --CCOL;                       break;                                                                             <* 
+ *>    case 'l' : ++CCOL;                       break;                                                                             <* 
+ *>    case 'L' : CCOL += 5;                    break;                                                                             <* 
+ *>    case '$' : CCOL = NCOL - 1;              break;                                                                             <* 
+ *>    case 'o' : /+ see above           +/  break;    /+ add                     +/                                               <* 
+ *>    case 'x' : /+ see above           +/  break;    /+ delete                  +/                                               <* 
+ *>    case 'w' : /+ see above           +/  break;    /+ delete                  +/                                               <* 
+ *>    case 'r' : if (CCOL > ECOL)                                                                                                 <* 
+ *>                  ECOL = CCOL;                                                                                                  <* 
+ *>               else if (CCOL < BCOL)                                                                                            <* 
+ *>                  BCOL = CCOL;                                                                                                  <* 
+ *>               /+> else                                                                <+/                                      <* 
+ *>               /+> s_beg = -1;                                                      <+/                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", a_minor, a_minor);               <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_value   ("bcol/s_beg", BCOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("ecol/s_end", ECOL);                                                                             <* 
+ *>    /+---(page moves)---------------------+/                                                                                    <* 
+ *>    --rce;  // bad page request                                                                                                 <* 
+ *>    if (a_major == 'c') switch (a_minor) {                                                                                      <* 
+ *>    case 's' : ECOL = CCOL = BCOL;          break;                                                                              <* 
+ *>    case 'h' : MOVE_gz_horz ('c', 'h');       break;                                                                            <* 
+ *>    case 'l' : MOVE_gz_horz ('c', 'l');       break;                                                                            <* 
+ *>    case 'e' : BCOL = CCOL = ECOL;          break;                                                                              <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", a_minor, a_minor);              <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(screen moves)-------------------+/                                                                                    <* 
+ *>    --rce;  // bad goto request                                                                                                 <* 
+ *>    if (a_major == 'g') switch (a_minor) {                                                                                      <* 
+ *>    case 's' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case 'h' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case ',' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case 'l' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case 'e' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", a_minor, a_minor);                 <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(scrolling)----------------------+/                                                                                    <* 
+ *>    --rce;  // bad scroll request                                                                                               <* 
+ *>    if (a_major == 'z') switch (a_minor) {                                                                                      <* 
+ *>    case 's' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case 'h' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case ',' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case 'l' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    case 'e' : MOVE_gz_horz (a_major, a_minor);              break;                                                             <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", a_minor, a_minor);               <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(end)----------------------------+/                                                                                    <* 
+ *>    --rce;  // bad end request                                                                                                  <* 
+ *>    if (a_major == 'e') switch (a_minor) {                                                                                      <* 
+ *>    case 'h' : MOVE_ends  ('l');                       break;                                                                   <* 
+ *>    case 'l' : MOVE_ends  ('r');                       break;                                                                   <* 
+ *>    case 'H' : MOVE_edges ('H');                       break;                                                                   <* 
+ *>    case 's' : MOVE_edges ('s');                       break;                                                                   <* 
+ *>    case 'L' : MOVE_edges ('L');                       break;                                                                   <* 
+ *>    case 'e' : MOVE_edges ('e');                       break;                                                                   <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", a_minor, a_minor);                  <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check lock)------------------+/                                                                                       <* 
+ *>    if (FR_COL == 'y') {                                                                                                        <* 
+ *>       DEBUG_USER  yLOG_note    ("correct for locked areas");                                                                   <* 
+ *>       if (BCOL <= FR_ECOL)   BCOL   = FR_ECOL + 1;                                                                             <* 
+ *>       if (CCOL <= FR_ECOL)   CCOL   = FR_ECOL + 1;                                                                             <* 
+ *>       if (ECOL <= FR_ECOL)   ECOL   = FR_ECOL + 1;                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(update screen)---------------+/                                                                                       <* 
+ *>    MOVE_done   ();                                                                                                             <* 
+ *>    /+---(complete)--------------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 int          /*-> find size of locke columns ---------[ ------ [gn.430.032.32]*/ /*-[01.0000.024.!]-*/ /*-[--.---.---.--]-*/
 KEYS_lcol          (void)
@@ -888,131 +891,131 @@ MOVE_vert          (char a_minor)
    return 0;
 }
 
-char         /*-> handle row movement input ----------[ ------ [ge.QJ4.248.N4]*/ /*-[04.0000.00#.#]-*/ /*-[--.---.---.--]-*/
-KEYS_row           (char a_major, char a_minor)
-{
-   /*---(locals)-------------------------*/
-   int         s_beg       = BROW;       /* save the beginning row         */
-   int         s_end       = EROW;       /* save the ending row            */
-   int         s_cur       = CROW;          /* save the current row           */
-   char        rce         = -10;           /* return code for error          */
-   /*---(header)-------------------------*/
-   DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   DEBUG_USER  yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense: modifier)--------------*/
-   --rce;  // illegal value for modifier (tight input)
-   if (strchr (" cgze", a_major) == NULL) {
-      DEBUG_USER  yLOG_note    ("unrecognized modifier passed to function");
-      DEBUG_USER  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(check adds)------------------*/
-   --rce;  // bad add request
-   if        (a_minor == 'o') {
-      ++NROW;
-      if (NROW <     1) NROW =    1;
-      if (NROW >  MAX_ROWS) NROW = MAX_ROWS;
-      s_end = -1;
-      CROW  = NROW;
-   } else if (a_minor == 'x') {
-      --NROW;
-      if (NROW <     1) NROW =    1;
-      if (NROW >  MAX_ROWS) NROW = MAX_ROWS;
-      s_beg = -1;
-      CROW  = 0;
-   }
-   /*---(adjust curr)-----------------*/
-   --rce;  // bad basic request
-   if (a_major == ' ') switch (a_minor) {
-   case '_' : CROW = 0;                     break;    /* line moves              */
-   case 'K' : CROW -= 5;                    break;
-   case 'k' : --CROW;                       break;
-   case 'j' : ++CROW;                       break;
-   case 'J' : CROW += 5;                    break;
-   case 'G' : CROW = NROW - 1;         break;
-   case 'o' : /* see above           */          break;    /* add                     */
-   case 'x' : /* see above           */          break;    /* delete                  */
-   case 'r' : if (CROW > EROW)
-                 EROW = CROW;
-              else if (CROW < BROW)
-                 BROW = CROW;
-              else
-                 s_beg = -1;
-              break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(screen moves)-------------------*/
-   --rce;  // bad goto request
-   if (a_major == 'g') switch (a_minor) {
-   case 't' : MOVE_gz_vert (a_major, a_minor);              break;
-   case 'k' : MOVE_gz_vert (a_major, a_minor);              break;
-   case '.' : MOVE_gz_vert (a_major, a_minor);              break;
-   case 'j' : MOVE_gz_vert (a_major, a_minor);              break;
-   case 'b' : MOVE_gz_vert (a_major, a_minor);              break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(scrolling)----------------------*/
-   --rce;  // bad scroll request
-   if (a_major == 'z') switch (a_minor) {
-   case 't' : MOVE_gz_vert (a_major, a_minor);              break;
-   case 'k' : MOVE_gz_vert (a_major, a_minor);              break;
-   case '.' : MOVE_gz_vert (a_major, a_minor);              break;
-   case 'j' : MOVE_gz_vert (a_major, a_minor);              break;
-   case 'b' : MOVE_gz_vert (a_major, a_minor);              break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(control keys)---------s---------*/
-   --rce;  // bad control request
-   if (a_major == 'c') switch (a_minor) {
-   case 't' : EROW =  CROW = BROW;         break;
-   case 'b' : BROW =  CROW = EROW;         break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(control keys)---------s---------*/
-   --rce;  // bad control request
-   if (a_major == 'e') switch (a_minor) {
-   case 'k' : MOVE_ends  ('u');                       break;
-   case 'j' : MOVE_ends  ('d');                       break;
-   case 'K' : MOVE_edges ('K');                       break;
-   case 't' : MOVE_edges ('t');                       break;
-   case 'J' : MOVE_edges ('J');                       break;
-   case 'b' : MOVE_edges ('b');                       break;
-   default  :
-              DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", a_minor, a_minor);
-              DEBUG_USER  yLOG_exit    (__FUNCTION__);
-              return rce;
-              break;
-   }
-   /*---(check lock)------------------*/
-   if (FR_ROW == 'y') {
-      DEBUG_USER  yLOG_note    ("correct for locked areas");
-      if (BROW <= FR_EROW)   BROW   = FR_EROW + 1;
-      if (CROW <= FR_EROW)   CROW   = FR_EROW + 1;
-      if (EROW <= FR_EROW)   EROW   = FR_EROW + 1;
-   }
-   /*---(update screen)---------------*/
-   MOVE_done   ();
-   /*---(complete)--------------------*/
-   DEBUG_USER  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> handle row movement input ----------[ ------ [ge.QJ4.248.N4]+/ /+-[04.0000.00#.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_row           (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-------------------------+/                                                                                    <* 
+ *>    int         s_beg       = BROW;       /+ save the beginning row         +/                                                  <* 
+ *>    int         s_end       = EROW;       /+ save the ending row            +/                                                  <* 
+ *>    int         s_cur       = CROW;          /+ save the current row           +/                                               <* 
+ *>    char        rce         = -10;           /+ return code for error          +/                                               <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    DEBUG_USER  yLOG_char    ("a_major"   , a_major);                                                                           <* 
+ *>    DEBUG_USER  yLOG_char    ("a_minor"   , a_minor);                                                                           <* 
+ *>    /+---(defense: modifier)--------------+/                                                                                    <* 
+ *>    --rce;  // illegal value for modifier (tight input)                                                                         <* 
+ *>    if (strchr (" cgze", a_major) == NULL) {                                                                                    <* 
+ *>       DEBUG_USER  yLOG_note    ("unrecognized modifier passed to function");                                                   <* 
+ *>       DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                                 <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check adds)------------------+/                                                                                       <* 
+ *>    --rce;  // bad add request                                                                                                  <* 
+ *>    if        (a_minor == 'o') {                                                                                                <* 
+ *>       ++NROW;                                                                                                                  <* 
+ *>       if (NROW <     1) NROW =    1;                                                                                           <* 
+ *>       if (NROW >  MAX_ROWS) NROW = MAX_ROWS;                                                                                   <* 
+ *>       s_end = -1;                                                                                                              <* 
+ *>       CROW  = NROW;                                                                                                            <* 
+ *>    } else if (a_minor == 'x') {                                                                                                <* 
+ *>       --NROW;                                                                                                                  <* 
+ *>       if (NROW <     1) NROW =    1;                                                                                           <* 
+ *>       if (NROW >  MAX_ROWS) NROW = MAX_ROWS;                                                                                   <* 
+ *>       s_beg = -1;                                                                                                              <* 
+ *>       CROW  = 0;                                                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(adjust curr)-----------------+/                                                                                       <* 
+ *>    --rce;  // bad basic request                                                                                                <* 
+ *>    if (a_major == ' ') switch (a_minor) {                                                                                      <* 
+ *>    case '_' : CROW = 0;                     break;    /+ line moves              +/                                            <* 
+ *>    case 'K' : CROW -= 5;                    break;                                                                             <* 
+ *>    case 'k' : --CROW;                       break;                                                                             <* 
+ *>    case 'j' : ++CROW;                       break;                                                                             <* 
+ *>    case 'J' : CROW += 5;                    break;                                                                             <* 
+ *>    case 'G' : CROW = NROW - 1;         break;                                                                                  <* 
+ *>    case 'o' : /+ see above           +/          break;    /+ add                     +/                                       <* 
+ *>    case 'x' : /+ see above           +/          break;    /+ delete                  +/                                       <* 
+ *>    case 'r' : if (CROW > EROW)                                                                                                 <* 
+ *>                  EROW = CROW;                                                                                                  <* 
+ *>               else if (CROW < BROW)                                                                                            <* 
+ *>                  BROW = CROW;                                                                                                  <* 
+ *>               else                                                                                                             <* 
+ *>                  s_beg = -1;                                                                                                   <* 
+ *>               break;                                                                                                           <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "normal mode key %c (%3d) not handled", a_minor, a_minor);               <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(screen moves)-------------------+/                                                                                    <* 
+ *>    --rce;  // bad goto request                                                                                                 <* 
+ *>    if (a_major == 'g') switch (a_minor) {                                                                                      <* 
+ *>    case 't' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case 'k' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case '.' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case 'j' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case 'b' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "goto mode key %c (%3d) not handled", a_minor, a_minor);                 <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(scrolling)----------------------+/                                                                                    <* 
+ *>    --rce;  // bad scroll request                                                                                               <* 
+ *>    if (a_major == 'z') switch (a_minor) {                                                                                      <* 
+ *>    case 't' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case 'k' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case '.' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case 'j' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    case 'b' : MOVE_gz_vert (a_major, a_minor);              break;                                                             <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "scroll mode key %c (%3d) not handled", a_minor, a_minor);               <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(control keys)---------s---------+/                                                                                    <* 
+ *>    --rce;  // bad control request                                                                                              <* 
+ *>    if (a_major == 'c') switch (a_minor) {                                                                                      <* 
+ *>    case 't' : EROW =  CROW = BROW;         break;                                                                              <* 
+ *>    case 'b' : BROW =  CROW = EROW;         break;                                                                              <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "control mode key %c (%3d) not handled", a_minor, a_minor);              <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(control keys)---------s---------+/                                                                                    <* 
+ *>    --rce;  // bad control request                                                                                              <* 
+ *>    if (a_major == 'e') switch (a_minor) {                                                                                      <* 
+ *>    case 'k' : MOVE_ends  ('u');                       break;                                                                   <* 
+ *>    case 'j' : MOVE_ends  ('d');                       break;                                                                   <* 
+ *>    case 'K' : MOVE_edges ('K');                       break;                                                                   <* 
+ *>    case 't' : MOVE_edges ('t');                       break;                                                                   <* 
+ *>    case 'J' : MOVE_edges ('J');                       break;                                                                   <* 
+ *>    case 'b' : MOVE_edges ('b');                       break;                                                                   <* 
+ *>    default  :                                                                                                                  <* 
+ *>               DEBUG_USER  yLOG_complex ("ERROR"     , "end mode key %c (%3d) not handled", a_minor, a_minor);                  <* 
+ *>               DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                         <* 
+ *>               return rce;                                                                                                      <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check lock)------------------+/                                                                                       <* 
+ *>    if (FR_ROW == 'y') {                                                                                                        <* 
+ *>       DEBUG_USER  yLOG_note    ("correct for locked areas");                                                                   <* 
+ *>       if (BROW <= FR_EROW)   BROW   = FR_EROW + 1;                                                                             <* 
+ *>       if (CROW <= FR_EROW)   CROW   = FR_EROW + 1;                                                                             <* 
+ *>       if (EROW <= FR_EROW)   EROW   = FR_EROW + 1;                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(update screen)---------------+/                                                                                       <* 
+ *>    MOVE_done   ();                                                                                                             <* 
+ *>    /+---(complete)--------------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 int          /*-> firgure out size of locked rows ----[ ------ [gn.430.032.32]*/ /*-[01.0000.024.!]-*/ /*-[--.---.---.--]-*/
 KEYS_lrow          (void)

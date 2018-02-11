@@ -1395,6 +1395,7 @@ char       DEP_disp_reqs      (tCELL  *a_me, char *a_list) { return DEP__disp_ma
 char       DEP_disp_pros      (tCELL  *a_me, char *a_list) { return DEP__disp_master (a_me, a_list, 'P', S_DEP_PROS); }
 char       DEP_disp_like      (tCELL  *a_me, char *a_list) { return DEP__disp_master (a_me, a_list, 'P', S_DEP_LIKE); }
 
+
 /*> char       /+----: list the requirements -------------------------------------+/   <* 
  *> DEP_disp_reqs      (tCELL  *a_me, char *a_list)                                    <* 
  *> {                                                                                  <* 

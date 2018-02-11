@@ -102,16 +102,12 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
-   yVIKEYS_srch_clear   ();
-   yVIKEYS_cmds_clear   ();
-   yVIKEYS_macro_init   (CELL_macro_get, CELL_macro_set);
-   yVIKEYS_cmds_init    ();
-   yVIKEYS_srch_init    (SRCH_searcher , SRCH_clearer);
+   yVIKEYS_init         ();
+   yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
+   yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
-   yVIKEYS_mode_init   ();
-   yVIKEYS_mode_enter  (MODE_MAP);
    PROG_layout_init    ();
    CALC_init           ();
    my.info_win       = G_INFO_NONE;
@@ -179,14 +175,14 @@ PROG_begin         (void)
    /*---(locals)-------------------------*/
    VISU_init ();
    REG_init  ();
-   KEYS_init ();
+   /*> KEYS_init ();                                                                  <*/
    /*---(char settings)------------------*/
    my.npos =    1;
    my.cpos =    0;
    my.bpos =    0;
    my.epos =    my.npos - 1;;
    /*---(repeat settings)----------------*/
-   yVIKEYS_repeat_init ();
+   /*> yVIKEYS_repeat_init ();                                                        <*/
    /*---(prepare)------------------------*/
    DEP_init  ();
    /*---(complete)-----------------------*/
@@ -199,214 +195,227 @@ PROG_final         (void)
 {
    CURS_begin ();
    INPT_main         ();
-   CURS_screen_reset ();
+   /*> CURS_screen_reset ();                                                          <*/
    SEQ_calc_full     ();
    hist_active = 'y';
    /*---(process)------------------------*/
    MOVE_vert ('r');
    MOVE_horz ('r');
-   yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());
+   /*> yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());                          <*/
+   /*---(status options)-----------------*/
+   yVIKEYS_view_option (YVIKEYS_STATUS, "file"   , CURS_status_file    , "file name, control, and version"            );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "visual" , CURS_status_visual  , "details of visual selection"                );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "mark"   , CURS_status_mark    , "details of cell and location marks"         );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "deps"   , CURS_status_deps    , "details of current cell dependencies"       );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
 }
 
-char         /*-> gather main loop keyboard input ----[ ------ [gc.D44.233.C7]*/ /*-[02.0000.111.R]-*/ /*-[--.---.---.--]-*/
-PROG_main_input    (char a_mode, char a_key)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        x_ch        = ' ';
-   char        x_play      = ' ';
-   /*---(header)-------------------------*/
-   DEBUG_LOOP   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOOP   yLOG_char    ("a_mode"    , a_mode);
-   DEBUG_LOOP   yLOG_value   ("a_key"     , a_key);
-   DEBUG_LOOP   yLOG_char    ("m mode"    , my.macro_mode);
-   DEBUG_LOOP   yLOG_char    ("m delay"   , my.macro_delay);
-   DEBUG_LOOP   yLOG_value   ("m pos"     , my.macro_pos);
-   /*---(normal)-------------------------*/
-   IF_MACRO_OFF {
-      DEBUG_LOOP   yLOG_note    ("normal/macro off");
-      if (yVIKEYS_repeat_macro ()) {
-         DEBUG_USER   yLOG_note    ("but, in macro repeat mode");
-         yVIKEYS_macro_exec_beg ('@');
-         a_key = ' ';
-      } else {
-         if (a_mode == RUN_USER)  x_ch   = CURS_main  ();
-         else                     x_ch   = a_key;
-      }
-   }
-   /*---(recording)----------------------*/
-   else IF_MACRO_RECORDING {
-      DEBUG_LOOP   yLOG_note    ("macro recording");
-      if (a_mode == RUN_USER) {
-         IF_MACRO_NOT_RUN      x_ch   = CURS_main  ();
-      }
-      else                     x_ch   = a_key;
-   }
-   /*---(run, delay, or playback)--------*/
-   else IF_MACRO_PLAYING {
-      DEBUG_LOOP   yLOG_note    ("macro running, delay, or playback");
-      x_ch = yVIKEYS_macro_exec_key ();
-      IF_MACRO_OFF {
-         DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
-         return -1;
-      }
-      DEBUG_LOOP   yLOG_note    ("show screen");
-      if (a_mode == RUN_USER)  CURS_main  ();
-      yVIKEYS_macro_exec_wait ();
-      DEBUG_LOOP   yLOG_note    ("read playback keystroke");
-      if (a_mode == RUN_USER)  x_play = CURS_playback ();
-      else                     x_play = a_key;
-      DEBUG_LOOP   yLOG_value   ("x_play"    , x_play);
-      if (yVIKEYS_macro_exec_play (x_play) < 0) {
-         DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
-         return -2;
-      }
-   }
-   /*---(record)-------------------------*/
-   DEBUG_LOOP   yLOG_note    ("handle keystroke normally");
-   KEYS_record (x_ch);
-   /*---(complete)-----------------------*/
-   DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
-   return x_ch;
-}
+/*> char         /+-> gather main loop keyboard input ----[ ------ [gc.D44.233.C7]+/ /+-[02.0000.111.R]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_main_input    (char a_mode, char a_key)                                                                                   <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        x_ch        = ' ';                                                                                              <* 
+ *>    char        x_play      = ' ';                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_LOOP   yLOG_char    ("a_mode"    , a_mode);                                                                           <* 
+ *>    DEBUG_LOOP   yLOG_value   ("a_key"     , a_key);                                                                            <* 
+ *>    DEBUG_LOOP   yLOG_char    ("m mode"    , my.macro_mode);                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_char    ("m delay"   , my.macro_delay);                                                                   <* 
+ *>    DEBUG_LOOP   yLOG_value   ("m pos"     , my.macro_pos);                                                                     <* 
+ *>    /+---(normal)-------------------------+/                                                                                    <* 
+ *>    IF_MACRO_OFF {                                                                                                              <* 
+ *>       DEBUG_LOOP   yLOG_note    ("normal/macro off");                                                                          <* 
+ *>       if (yVIKEYS_repeat_macro ()) {                                                                                           <* 
+ *>          DEBUG_USER   yLOG_note    ("but, in macro repeat mode");                                                              <* 
+ *>          yVIKEYS_macro_exec_beg ('@');                                                                                         <* 
+ *>          a_key = ' ';                                                                                                          <* 
+ *>       } else {                                                                                                                 <* 
+ *>          if (a_mode == RUN_USER)  x_ch   = CURS_main  ();                                                                      <* 
+ *>          else                     x_ch   = a_key;                                                                              <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(recording)----------------------+/                                                                                    <* 
+ *>    else IF_MACRO_RECORDING {                                                                                                   <* 
+ *>       DEBUG_LOOP   yLOG_note    ("macro recording");                                                                           <* 
+ *>       if (a_mode == RUN_USER) {                                                                                                <* 
+ *>          IF_MACRO_NOT_RUN      x_ch   = CURS_main  ();                                                                         <* 
+ *>       }                                                                                                                        <* 
+ *>       else                     x_ch   = a_key;                                                                                 <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(run, delay, or playback)--------+/                                                                                    <* 
+ *>    else IF_MACRO_PLAYING {                                                                                                     <* 
+ *>       DEBUG_LOOP   yLOG_note    ("macro running, delay, or playback");                                                         <* 
+ *>       x_ch = yVIKEYS_macro_exec_key ();                                                                                        <* 
+ *>       IF_MACRO_OFF {                                                                                                           <* 
+ *>          DEBUG_LOOP   yLOG_exit    (__FUNCTION__);                                                                             <* 
+ *>          return -1;                                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>       DEBUG_LOOP   yLOG_note    ("show screen");                                                                               <* 
+ *>       if (a_mode == RUN_USER)  CURS_main  ();                                                                                  <* 
+ *>       yVIKEYS_macro_exec_wait ();                                                                                              <* 
+ *>       DEBUG_LOOP   yLOG_note    ("read playback keystroke");                                                                   <* 
+ *>       if (a_mode == RUN_USER)  x_play = CURS_playback ();                                                                      <* 
+ *>       else                     x_play = a_key;                                                                                 <* 
+ *>       DEBUG_LOOP   yLOG_value   ("x_play"    , x_play);                                                                        <* 
+ *>       if (yVIKEYS_macro_exec_play (x_play) < 0) {                                                                              <* 
+ *>          DEBUG_LOOP   yLOG_exit    (__FUNCTION__);                                                                             <* 
+ *>          return -2;                                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(record)-------------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_note    ("handle keystroke normally");                                                                    <* 
+ *>    KEYS_record (x_ch);                                                                                                         <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return x_ch;                                                                                                                <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process main loop keyboard input ---[ leaf   [gc.GD1.132.IM]*/ /*-[05.0000.111.R]-*/ /*-[--.---.---.--]-*/
-PROG_main_handle   (char a_key)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   static char x_major     = ' ';      /* saved keystroke                     */
-   static char x_savemode  = '-';
-   char        rc          = 0;
-   int         x_repeat    = 0;
-   /*---(header)-------------------------*/
-   DEBUG_LOOP   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOOP   yLOG_value   ("a_key"     , a_key);
-   /*---(defense)------------------------*/
-   if (a_key == K_DONE) {
-      DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
-      return a_key;
-   }
-   /*---(handle count)-------------------*/
-   if (yVIKEYS_mode_curr () == SMOD_REPEAT) {
-      rc = yVIKEYS_repeat_umode (x_major, a_key);
-      if (rc >  0)  x_major = ' ';
-   }
-   /*---(handle keystroke)---------------*/
-   while (1) {
-      switch (yVIKEYS_mode_curr ()) {
-      case MODE_GOD      : rc = MODE_god            (x_major , a_key);  break;
-      case MODE_MAP      : rc = MODE_map            (x_major , a_key);  break;
-      case MODE_SOURCE   : rc = MODE_source         (x_major , a_key);  break;
-      case MODE_INPUT    : rc = MODE_input          (x_major , a_key);  break;
-      case MODE_COMMAND  : rc = yVIKEYS_cmds_mode   (x_major , a_key);  break;
-      case MODE_SEARCH   : rc = yVIKEYS_srch_mode   (x_major , a_key);  break;
-      case MODE_VISUAL   : rc = VISU_submode        (x_major , a_key);  break;
-      case SMOD_ERROR    : rc = SMOD_error          (x_major , a_key);  break;
-      case SMOD_SELECT   : rc = SELC_mode           (x_major , a_key);  break;
-      case SMOD_TEXTREG  : rc = TREG_mode           (x_major , a_key);  break;
-      case SMOD_REPLACE  : rc = SMOD_replace        (x_major , a_key);  break;
-      case SMOD_FORMAT   : rc = SMOD_format         (x_major , a_key);  break;
-      case SMOD_BUFFER   : rc = SMOD_buffer         (x_major , a_key);  break;
-      case SMOD_WANDER   : rc = SMOD_wander         (G_KEY_SPACE , a_key);  break;
-      case SMOD_REGISTER : rc = REG_mode            (x_major , a_key);  break;
-      case SMOD_MARK     : rc = MARK_submode        (x_major , a_key);  break;
-      case SMOD_MENUS    : rc = SMOD_menus          (x_major , a_key);  break;
-      case SMOD_MACRO    : rc = yVIKEYS_macro_smode (x_major , a_key);  break;
-      }
-      /*---(translate unprintable)----------*/
-      x_repeat = yVIKEYS_repeat_value ();
-      if      (a_key == 0       )      snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_NULL  );
-      else if (a_key == G_KEY_RETURN)  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_RETURN);
-      else if (a_key == G_KEY_ESCAPE)  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_ESCAPE);
-      else if (a_key == G_KEY_TAB   )  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_TAB   );
-      else if (a_key == G_KEY_BS    )  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_BS    );
-      else if (a_key == G_KEY_SPACE )  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_SPACE );
-      else if (a_key <= G_KEY_SPACE )  snprintf (g_cmd,   9, "%2d %c%02x", x_repeat, x_major, a_key);
-      else                             snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, a_key);
-      /*---(multiplier)---------------------*/
-      if (rc == 0 && x_repeat > 0 && yVIKEYS_mode_curr () != SMOD_REPEAT) {
-         yVIKEYS_repeat_dec ();
-         continue;
-      }
-      break;
-   }
-   /*---(setup for next keystroke)-------*/
-   if      (rc == 0)    x_major = ' ';
-   else if (rc >  0)    x_major = rc;
-   else               { x_major = ' ';  sta_error = 'y';  yVIKEYS_repeat_init (); }
-   /*---(setup status line)--------------*/
-   if        (yVIKEYS_mode_curr() == MODE_COMMAND) {
-      yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());
-   } else if (yVIKEYS_mode_curr() == MODE_SEARCH ) {
-      yVIKEYS_mode_mesg (my.message, yVIKEYS_srch_curr ());
-   } else if (x_savemode != yVIKEYS_mode_curr()) {
-      yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());
-   }
-   x_savemode = yVIKEYS_mode_curr ();
-   /*---(advance macros)-----------------*/
-   IF_MACRO_ON  yVIKEYS_macro_exec_adv ();
-   /*---(complete)-----------------------*/
-   DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process main loop keyboard input ---[ leaf   [gc.GD1.132.IM]+/ /+-[05.0000.111.R]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_main_handle   (char a_key)                                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    static char x_major     = ' ';      /+ saved keystroke                     +/                                               <* 
+ *>    static char x_savemode  = '-';                                                                                              <* 
+ *>    char        rc          = 0;                                                                                                <* 
+ *>    int         x_repeat    = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_LOOP   yLOG_value   ("a_key"     , a_key);                                                                            <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    if (a_key == K_DONE) {                                                                                                      <* 
+ *>       DEBUG_LOOP   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_key;                                                                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(handle count)-------------------+/                                                                                    <* 
+ *>    if (yVIKEYS_mode_curr () == SMOD_REPEAT) {                                                                                  <* 
+ *>       rc = yVIKEYS_repeat_umode (x_major, a_key);                                                                              <* 
+ *>       if (rc >  0)  x_major = ' ';                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(handle keystroke)---------------+/                                                                                    <* 
+ *>    while (1) {                                                                                                                 <* 
+ *>       switch (yVIKEYS_mode_curr ()) {                                                                                          <* 
+ *>       case MODE_GOD      : rc = MODE_god            (x_major , a_key);  break;                                                 <* 
+ *>       case MODE_MAP      : rc = MODE_map            (x_major , a_key);  break;                                                 <* 
+ *>       case MODE_SOURCE   : rc = MODE_source         (x_major , a_key);  break;                                                 <* 
+ *>       case MODE_INPUT    : rc = MODE_input          (x_major , a_key);  break;                                                 <* 
+ *>       case MODE_COMMAND  : rc = yVIKEYS_cmds_mode   (x_major , a_key);  break;                                                 <* 
+ *>       case MODE_SEARCH   : rc = yVIKEYS_srch_mode   (x_major , a_key);  break;                                                 <* 
+ *>       case MODE_VISUAL   : rc = VISU_submode        (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_ERROR    : rc = SMOD_error          (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_SELECT   : rc = SELC_mode           (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_TEXTREG  : rc = TREG_mode           (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_REPLACE  : rc = SMOD_replace        (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_FORMAT   : rc = SMOD_format         (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_BUFFER   : rc = SMOD_buffer         (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_WANDER   : rc = SMOD_wander         (G_KEY_SPACE , a_key);  break;                                             <* 
+ *>       case SMOD_REGISTER : rc = REG_mode            (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_MARK     : rc = MARK_submode        (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_MENUS    : rc = SMOD_menus          (x_major , a_key);  break;                                                 <* 
+ *>       case SMOD_MACRO    : rc = yVIKEYS_macro_smode (x_major , a_key);  break;                                                 <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(translate unprintable)----------+/                                                                                 <* 
+ *>       x_repeat = yVIKEYS_repeat_value ();                                                                                      <* 
+ *>       if      (a_key == 0       )      snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_NULL  );                  <* 
+ *>       else if (a_key == G_KEY_RETURN)  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_RETURN);                  <* 
+ *>       else if (a_key == G_KEY_ESCAPE)  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_ESCAPE);                  <* 
+ *>       else if (a_key == G_KEY_TAB   )  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_TAB   );                  <* 
+ *>       else if (a_key == G_KEY_BS    )  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_BS    );                  <* 
+ *>       else if (a_key == G_KEY_SPACE )  snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, G_CHAR_SPACE );                  <* 
+ *>       else if (a_key <= G_KEY_SPACE )  snprintf (g_cmd,   9, "%2d %c%02x", x_repeat, x_major, a_key);                          <* 
+ *>       else                             snprintf (g_cmd,   9, "%2d %c%c"  , x_repeat, x_major, a_key);                          <* 
+ *>       /+---(multiplier)---------------------+/                                                                                 <* 
+ *>       if (rc == 0 && x_repeat > 0 && yVIKEYS_mode_curr () != SMOD_REPEAT) {                                                    <* 
+ *>          yVIKEYS_repeat_dec ();                                                                                                <* 
+ *>          continue;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       break;                                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(setup for next keystroke)-------+/                                                                                    <* 
+ *>    if      (rc == 0)    x_major = ' ';                                                                                         <* 
+ *>    else if (rc >  0)    x_major = rc;                                                                                          <* 
+ *>    else               { x_major = ' ';  sta_error = 'y';  yVIKEYS_repeat_init (); }                                            <* 
+ *>    /+---(setup status line)--------------+/                                                                                    <* 
+ *>    if        (yVIKEYS_mode_curr() == MODE_COMMAND) {                                                                           <* 
+ *>       yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());                                                                    <* 
+ *>    } else if (yVIKEYS_mode_curr() == MODE_SEARCH ) {                                                                           <* 
+ *>       yVIKEYS_mode_mesg (my.message, yVIKEYS_srch_curr ());                                                                    <* 
+ *>    } else if (x_savemode != yVIKEYS_mode_curr()) {                                                                             <* 
+ *>       yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    x_savemode = yVIKEYS_mode_curr ();                                                                                          <* 
+ *>    /+---(advance macros)-----------------+/                                                                                    <* 
+ *>    IF_MACRO_ON  yVIKEYS_macro_exec_adv ();                                                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process input string in main loop --[ ------ [ge.C74.153.42]*/ /*-[02.0000.00#.D]-*/ /*-[--.---.---.--]-*/
-PROG_main_string     (char *a_keys)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;     /* return code for errors              */
-   char        rc          =    0;
-   int         i           =    0;
-   int         x_len       =    0;
-   char        x_ch        =  ' ';     /* current keystroke                   */
-   /*---(header)-------------------------*/
-   DEBUG_LOOP   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOOP   yLOG_point   ("a_keys"    , a_keys);
-   --rce;  if (a_keys == NULL) {
-      DEBUG_LOOP   yLOG_note    ("a_keys is null");
-      DEBUG_LOOP   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_LOOP   yLOG_info    ("a_keys"    , a_keys);
-   x_len = strlen (a_keys);
-   DEBUG_LOOP   yLOG_value   ("x_len"     , x_len);
-   --rce;
-   for (i = 0; i < x_len; ++i) {
-      DEBUG_LOOP   yLOG_value   ("LOOP"      , i);
-      /*---(get next char)---------------*/
-      x_ch = a_keys [i];
-      DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);
-      if (x_ch <  0) {
-         DEBUG_SCRP   yLOG_note    ("special character");
-         DEBUG_SCRP   yLOG_value   ("256 + x_ch", 256 + x_ch);
-         /*---(translate special)--------*/
-         switch (256 + x_ch) {
-         case G_CHAR_RETURN  :  x_ch = G_KEY_RETURN;  break;
-         case G_CHAR_ESCAPE  :  x_ch = G_KEY_ESCAPE;  break;
-         case G_CHAR_BS      :  x_ch = G_KEY_BS;      break;
-         case G_CHAR_TAB     :  x_ch = G_KEY_TAB;     break;
-         case G_CHAR_SPACE   :  x_ch = G_KEY_SPACE;   break;
-         case G_CHAR_GROUP   :  x_ch = G_KEY_GROUP;   break;
-         case G_CHAR_FIELD   :  x_ch = G_KEY_FIELD;   break;
-         }
-         DEBUG_SCRP   yLOG_value   ("x_ch (new)", x_ch);
-      }
-      /*---(handle input)----------------*/
-      x_ch = PROG_main_input (RUN_TEST, x_ch);
-      DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);
-      if (x_ch == -1) continue;
-      /*---(handle keystroke)------------*/
-      rc = PROG_main_handle (x_ch);
-      DEBUG_LOOP   yLOG_value   ("rc"        , rc);
-      /*---(done)------------------------*/
-   }
-   DEBUG_LOOP   yLOG_note    ("main loop done");
-   /*---(complete)-----------------------*/
-   DEBUG_LOOP   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process input string in main loop --[ ------ [ge.C74.153.42]+/ /+-[02.0000.00#.D]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_main_string     (char *a_keys)                                                                                            <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         =  -10;     /+ return code for errors              +/                                               <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    int         i           =    0;                                                                                             <* 
+ *>    int         x_len       =    0;                                                                                             <* 
+ *>    char        x_ch        =  ' ';     /+ current keystroke                   +/                                               <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_LOOP   yLOG_point   ("a_keys"    , a_keys);                                                                           <* 
+ *>    --rce;  if (a_keys == NULL) {                                                                                               <* 
+ *>       DEBUG_LOOP   yLOG_note    ("a_keys is null");                                                                            <* 
+ *>       DEBUG_LOOP   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_LOOP   yLOG_info    ("a_keys"    , a_keys);                                                                           <* 
+ *>    x_len = strlen (a_keys);                                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_value   ("x_len"     , x_len);                                                                            <* 
+ *>    --rce;                                                                                                                      <* 
+ *>    for (i = 0; i < x_len; ++i) {                                                                                               <* 
+ *>       DEBUG_LOOP   yLOG_value   ("LOOP"      , i);                                                                             <* 
+ *>       /+---(get next char)---------------+/                                                                                    <* 
+ *>       x_ch = a_keys [i];                                                                                                       <* 
+ *>       DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);                                                                          <* 
+ *>       if (x_ch <  0) {                                                                                                         <* 
+ *>          DEBUG_SCRP   yLOG_note    ("special character");                                                                      <* 
+ *>          DEBUG_SCRP   yLOG_value   ("256 + x_ch", 256 + x_ch);                                                                 <* 
+ *>          /+---(translate special)--------+/                                                                                    <* 
+ *>          switch (256 + x_ch) {                                                                                                 <* 
+ *>          case G_CHAR_RETURN  :  x_ch = G_KEY_RETURN;  break;                                                                   <* 
+ *>          case G_CHAR_ESCAPE  :  x_ch = G_KEY_ESCAPE;  break;                                                                   <* 
+ *>          case G_CHAR_BS      :  x_ch = G_KEY_BS;      break;                                                                   <* 
+ *>          case G_CHAR_TAB     :  x_ch = G_KEY_TAB;     break;                                                                   <* 
+ *>          case G_CHAR_SPACE   :  x_ch = G_KEY_SPACE;   break;                                                                   <* 
+ *>          case G_CHAR_GROUP   :  x_ch = G_KEY_GROUP;   break;                                                                   <* 
+ *>          case G_CHAR_FIELD   :  x_ch = G_KEY_FIELD;   break;                                                                   <* 
+ *>          }                                                                                                                     <* 
+ *>          DEBUG_SCRP   yLOG_value   ("x_ch (new)", x_ch);                                                                       <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(handle input)----------------+/                                                                                    <* 
+ *>       x_ch = PROG_main_input (RUN_TEST, x_ch);                                                                                 <* 
+ *>       DEBUG_LOOP   yLOG_value   ("x_ch"      , x_ch);                                                                          <* 
+ *>       if (x_ch == -1) continue;                                                                                                <* 
+ *>       /+---(handle keystroke)------------+/                                                                                    <* 
+ *>       rc = PROG_main_handle (x_ch);                                                                                            <* 
+ *>       DEBUG_LOOP   yLOG_value   ("rc"        , rc);                                                                            <* 
+ *>       /+---(done)------------------------+/                                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_LOOP   yLOG_note    ("main loop done");                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char         /*-> shutdown program and free memory ---[ ------ [gz.422.001.03]*/ /*-[00.0000.111.!]-*/ /*-[--.---.---.--]-*/
 PROG_end             (void)
@@ -576,7 +585,7 @@ PROG__unit           (char *a_question, void *a_thing)
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
       snprintf(unit_answer, LEN_UNIT, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
    } else if (strcmp(a_question, "mode")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Mode             : %c", yVIKEYS_mode_curr ());
+      /*> snprintf(unit_answer, LEN_UNIT, "Mode             : %c", yVIKEYS_mode_curr ());   <*/
    }
    /*---(cell focus)---------------------*/
    else if   (strcmp(a_question, "cell_where")     == 0) {

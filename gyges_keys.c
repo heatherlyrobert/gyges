@@ -32,928 +32,912 @@ static char   wref  [20];
 static char   wref2 [20];
 static char   wsave [LEN_RECD];
 
-char         /*-> tbd --------------------------------[ shoot  [gz.633.011.20]*/ /*-[01.0000.102.1]-*/ /*-[--.---.---.--]-*/
-KEYS_init          (void)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   int         i           =    0;
-   char        rc          =    0;
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_note    ("basic init");
-   nkeylog = 0;
-   strcpy (keylog, "");
+/*> char         /+-> tbd --------------------------------[ shoot  [gz.633.011.20]+/ /+-[01.0000.102.1]-+/ /+-[--.---.---.--]-+/                                        <* 
+ *> KEYS_init          (void)                                                                                                                                           <* 
+ *> {                                                                                                                                                                   <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                                                         <* 
+ *>    int         i           =    0;                                                                                                                                  <* 
+ *>    char        rc          =    0;                                                                                                                                  <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                                                        <* 
+ *>    DEBUG_USER   yLOG_note    ("basic init");                                                                                                                        <* 
+ *>    nkeylog = 0;                                                                                                                                                     <* 
+ *>    strcpy (keylog, "");                                                                                                                                             <* 
+ *>                                                                                                                                                                     <* 
+ *>    /+---(file)---------------------------+/                                                                                                                         <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "file"        , "f"   , "s"    , FILE_rename          , "change the current spreadsheet file name"                    );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "read"        , "r"   , ""     , NULL                 , "read the current spreadsheet from file"                      );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "edit"        , "e"   , ""     , NULL                 , "re-read the current spreadsheet from file"                   );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "write"       , "w"   , ""     , FILE_write           , "write the current spreadsheet to file"                       );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "writeall"    , "wa"  , ""     , FILE_write           , "write the current spreadsheet to file"                       );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "writeas"     , "was" , "s"    , FILE_writeas         , "write the current spreadsheet to a temp filename"            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "quit"        , "q"   , ""     , KEYS_quit            , "quit current file (if no changes), exit if the only file"    );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "quitall"     , "qa"  , ""     , KEYS_quit            , "quit all files (if no changes), and exit"                    );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "writequit"   , "wq"  , ""     , KEYS_writequit       , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "writequitall", "wqa" , ""     , KEYS_writequit       , ""                                                            );             <* 
+ *>    /+---(versioning)---------------------+/                                                                                                                         <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "control"     , ""    , ""     , FILE_control         , "turn version control ON for current file"                    );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "nocontrol"   , ""    , ""     , FILE_nocontrol       , "turn version control OFF for current file"                   );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "version"     , ""    , "s"    , FILE_version         , "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "vertxt"      , ""    , "a"    , FILE_vertxt          , "set a file version description"                              );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "major"       , ""    , ""     , FILE_bump_major      , "increment the version number by a MAJOR version"             );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "minor"       , ""    , ""     , FILE_bump_minor      , "increment the version number by a MINOR version"             );             <* 
+ *>    rc = yVIKEYS_cmds_add ('f', "bump"        , ""    , ""     , FILE_bump_inc        , "increment the version number by a INC version"               );             <* 
+ *>    /+---(tab)----------------------------+/                                                                                                                         <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "rename"      , ""    , "s"    , LOC_tab_rename_curr  , "change the name of the current tab"                          );             <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "resize"      , ""    , "s"    , LOC_tab_resize_curr  , "change the size of the current tab"                          );             <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "first"       , ""    , ""     , LOC_tab_first        , "change the size of a specific tab"                           );             <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "prev"        , ""    , ""     , LOC_tab_prev         , "change the size of a specific tab"                           );             <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "next"        , ""    , ""     , LOC_tab_next         , "change the size of a specific tab"                           );             <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "last"        , ""    , ""     , LOC_tab_last         , "change the size of a specific tab"                           );             <* 
+ *>    rc = yVIKEYS_cmds_add ('t', "switch"      , ""    , "c"    , LOC_tab_switch_char  , "change the size of a specific tab"                           );             <* 
+ *>    /+---(view)---------------------------+/                                                                                                                         <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "formula"     , ""    , "s"    , PROG_layout_formula  , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "status"      , ""    , "s"    , PROG_layout_status   , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "command"     , ""    , "s"    , PROG_layout_command  , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "layout"      , ""    , "s"    , PROG_layout_layout   , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "lock_head"   , "lh"  , ""     , NULL                 , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "lock_foot"   , "lf"  , ""     , NULL                 , ""                                                            );             <* 
+ *>    rc = yVIKEYS_cmds_add ('v', "lock_col"    , "lc"  , ""     , NULL                 , ""                                                            );             <* 
+ *>    /+---(config)-------------------------+/                                                                                                                         <* 
+ *>    /+> rc = yVIKEYS_cmds_add ('c', "macro"       , ""    , "a"    , yVIKEYS_macro_define , "direct definition of a keyboard macro"                       );   <+/   <* 
+ *>    rc = yVIKEYS_cmds_add ('c', "mark"        , ""    , "a"    , MARK_define          , "direct definition of a location mark"                        );             <* 
+ *>    rc = yVIKEYS_cmds_add ('c', "mark_unset"  , ""    , "c"    , MARK_unset           , "direct clearing of a location mark"                          );             <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                        <* 
+ *>    return 0;                                                                                                                                                        <* 
+ *> }                                                                                                                                                                   <*/
 
-   /*---(file)---------------------------*/
-   rc = yVIKEYS_cmds_add ('f', "file"        , "f"   , "s"    , FILE_rename          , "change the current spreadsheet file name"                    );
-   rc = yVIKEYS_cmds_add ('f', "read"        , "r"   , ""     , NULL                 , "read the current spreadsheet from file"                      );
-   rc = yVIKEYS_cmds_add ('f', "edit"        , "e"   , ""     , NULL                 , "re-read the current spreadsheet from file"                   );
-   rc = yVIKEYS_cmds_add ('f', "write"       , "w"   , ""     , FILE_write           , "write the current spreadsheet to file"                       );
-   rc = yVIKEYS_cmds_add ('f', "writeall"    , "wa"  , ""     , FILE_write           , "write the current spreadsheet to file"                       );
-   rc = yVIKEYS_cmds_add ('f', "writeas"     , "was" , "s"    , FILE_writeas         , "write the current spreadsheet to a temp filename"            );
-   rc = yVIKEYS_cmds_add ('f', "quit"        , "q"   , ""     , KEYS_quit            , "quit current file (if no changes), exit if the only file"    );
-   rc = yVIKEYS_cmds_add ('f', "quitall"     , "qa"  , ""     , KEYS_quit            , "quit all files (if no changes), and exit"                    );
-   rc = yVIKEYS_cmds_add ('f', "writequit"   , "wq"  , ""     , KEYS_writequit       , ""                                                            );
-   rc = yVIKEYS_cmds_add ('f', "writequitall", "wqa" , ""     , KEYS_writequit       , ""                                                            );
-   /*---(versioning)---------------------*/
-   rc = yVIKEYS_cmds_add ('f', "control"     , ""    , ""     , FILE_control         , "turn version control ON for current file"                    );
-   rc = yVIKEYS_cmds_add ('f', "nocontrol"   , ""    , ""     , FILE_nocontrol       , "turn version control OFF for current file"                   );
-   rc = yVIKEYS_cmds_add ('f', "version"     , ""    , "s"    , FILE_version         , "set a specific file version ([0-9A-Z].[0-9A-Z][a-z])"        );
-   rc = yVIKEYS_cmds_add ('f', "vertxt"      , ""    , "a"    , FILE_vertxt          , "set a file version description"                              );
-   rc = yVIKEYS_cmds_add ('f', "major"       , ""    , ""     , FILE_bump_major      , "increment the version number by a MAJOR version"             );
-   rc = yVIKEYS_cmds_add ('f', "minor"       , ""    , ""     , FILE_bump_minor      , "increment the version number by a MINOR version"             );
-   rc = yVIKEYS_cmds_add ('f', "bump"        , ""    , ""     , FILE_bump_inc        , "increment the version number by a INC version"               );
-   /*---(tab)----------------------------*/
-   rc = yVIKEYS_cmds_add ('t', "rename"      , ""    , "s"    , LOC_tab_rename_curr  , "change the name of the current tab"                          );
-   rc = yVIKEYS_cmds_add ('t', "resize"      , ""    , "s"    , LOC_tab_resize_curr  , "change the size of the current tab"                          );
-   rc = yVIKEYS_cmds_add ('t', "first"       , ""    , ""     , LOC_tab_first        , "change the size of a specific tab"                           );
-   rc = yVIKEYS_cmds_add ('t', "prev"        , ""    , ""     , LOC_tab_prev         , "change the size of a specific tab"                           );
-   rc = yVIKEYS_cmds_add ('t', "next"        , ""    , ""     , LOC_tab_next         , "change the size of a specific tab"                           );
-   rc = yVIKEYS_cmds_add ('t', "last"        , ""    , ""     , LOC_tab_last         , "change the size of a specific tab"                           );
-   rc = yVIKEYS_cmds_add ('t', "switch"      , ""    , "c"    , LOC_tab_switch_char  , "change the size of a specific tab"                           );
-   /*---(view)---------------------------*/
-   rc = yVIKEYS_cmds_add ('v', "formula"     , ""    , "s"    , PROG_layout_formula  , ""                                                            );
-   rc = yVIKEYS_cmds_add ('v', "status"      , ""    , "s"    , PROG_layout_status   , ""                                                            );
-   rc = yVIKEYS_cmds_add ('v', "command"     , ""    , "s"    , PROG_layout_command  , ""                                                            );
-   rc = yVIKEYS_cmds_add ('v', "layout"      , ""    , "s"    , PROG_layout_layout   , ""                                                            );
-   rc = yVIKEYS_cmds_add ('v', "lock_head"   , "lh"  , ""     , NULL                 , ""                                                            );
-   rc = yVIKEYS_cmds_add ('v', "lock_foot"   , "lf"  , ""     , NULL                 , ""                                                            );
-   rc = yVIKEYS_cmds_add ('v', "lock_col"    , "lc"  , ""     , NULL                 , ""                                                            );
-   /*---(config)-------------------------*/
-   rc = yVIKEYS_cmds_add ('c', "macro"       , ""    , "a"    , yVIKEYS_macro_define , "direct definition of a keyboard macro"                       );
-   rc = yVIKEYS_cmds_add ('c', "mark"        , ""    , "a"    , MARK_define          , "direct definition of a location mark"                        );
-   rc = yVIKEYS_cmds_add ('c', "mark_unset"  , ""    , "c"    , MARK_unset           , "direct clearing of a location mark"                          );
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [gz.420.121.11]+/ /+-[01.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_record        (char a_curr)                                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        t           [10];                                                                                               <* 
+ *>    int         x_key       =0;                                                                                                 <* 
+ *>    /+---(normal)-------------------------+/                                                                                    <* 
+ *>    x_key = '_';                                                                                                                <* 
+ *>    if (a_curr >= ' ' && a_curr <= '~')  x_key = a_curr;                                                                        <* 
+ *>    sprintf (t, "%c:%02x ", x_key, a_curr);                                                                                     <* 
+ *>    strcat  (keylog, t);                                                                                                        <* 
+ *>    ++nkeylog;                                                                                                                  <* 
+ *>    /+---(macro)--------------------------+/                                                                                    <* 
+ *>    IF_MACRO_RECORDING {                                                                                                        <* 
+ *>       yVIKEYS_macro_rec_key (a_curr);                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [gz.420.121.11]*/ /*-[01.0000.102.!]-*/ /*-[--.---.---.--]-*/
-KEYS_record        (char a_curr)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        t           [10];
-   int         x_key       =0;
-   /*---(normal)-------------------------*/
-   x_key = '_';
-   if (a_curr >= ' ' && a_curr <= '~')  x_key = a_curr;
-   sprintf (t, "%c:%02x ", x_key, a_curr);
-   strcat  (keylog, t);
-   ++nkeylog;
-   /*---(macro)--------------------------*/
-   IF_MACRO_RECORDING {
-      yVIKEYS_macro_rec_key (a_curr);
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> process basic movements ------------[ ------ [ge.B72.223.54]+/ /+-[01.0000.413.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_basics        (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        x_minors    [LEN_RECD]  = "0HhlL$_KkjJGr";                                                                      <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_major != ' ') {                                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not a space");                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);                                                                         <* 
+ *>    --rce;  if (strchr (x_minors, a_minor) == 0) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("a_minor is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    MOVE_prep    ();                                                                                                            <* 
+ *>    /+---(basic horizontal)---------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case '0'      : MOVE_horz ('0');       break;                                                                               <* 
+ *>    case 'H'      : MOVE_horz ('H');       break;                                                                               <* 
+ *>    case 'h'      : MOVE_horz ('h');       break;                                                                               <* 
+ *>    case 'l'      : MOVE_horz ('l');       break;                                                                               <* 
+ *>    case 'L'      : MOVE_horz ('L');       break;                                                                               <* 
+ *>    case '$'      : MOVE_horz ('$');       break;                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(basic vertical)-----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case '_'      : MOVE_vert ('_');       break;                                                                               <* 
+ *>    case 'K'      : MOVE_vert ('K');       break;                                                                               <* 
+ *>    case 'k'      : MOVE_vert ('k');       break;                                                                               <* 
+ *>    case 'j'      : MOVE_vert ('j');       break;                                                                               <* 
+ *>    case 'J'      : MOVE_vert ('J');       break;                                                                               <* 
+ *>    case 'G'      : MOVE_vert ('G');       break;                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(special)------------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'r'      : break;                                                                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(clean-up)-----------------------+/                                                                                    <* 
+ *>    MOVE_done    ();                                                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ leaf   [gz.430.151.10]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
-KEYS_status        (char *a_msg)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        t           [LEN_RECD];
-   int         x_key       = 0;
-   int         x_len       = 0;             /* string length                  */
-   int         i           = 0;             /* iterator -- keys               */
-   int         x_start     = 0;             /* iterator -- keys               */
-   x_len = strlen (keylog) - 1;
-   x_start = x_len - (20 * 5);
-   if (x_start < 0) x_start = 0;
-   snprintf (a_msg, 500, "[ keys %4d : %-100.100s ]", nkeylog, keylog + x_start);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.KB2.235.84]+/ /+-[03.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_gz_family     (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                /+ return code for errors    +/                                               <* 
+ *>    char        rc          =   0;                /+ generic return code       +/                                               <* 
+ *>    char        x_minors    [LEN_RECD]  = "shcletkmjbazudno.ifSHLETKJBNOIFAZUD";                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_major != 'g' && a_major != 'z') {                                                                             <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not g or z");                                                                     <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);                                                                         <* 
+ *>    --rce;  if (strchr (x_minors, a_minor) == 0) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("a_minor is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    MOVE_prep    ();                                                                                                            <* 
+ *>    /+---(horizontal, simple)-------------+/                                                                                    <* 
+ *>    if (strchr ("shcle", a_minor) != NULL)                                                                                      <* 
+ *>       rc = MOVE_gz_horz (a_major, a_minor);                                                                                    <* 
+ *>    /+---(horizontal, complex)------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'S' : case 'A' :                                                                                                       <* 
+ *>       rc = MOVE_gz_horz ('g', 's');                                                                                            <* 
+ *>       rc = MOVE_gz_horz ('z', 'e');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'H' : case 'D' :                                                                                                       <* 
+ *>       rc = MOVE_gz_horz ('g', 's');                                                                                            <* 
+ *>       rc = MOVE_gz_horz ('z', 'c');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'L' : case 'U' :                                                                                                       <* 
+ *>       rc = MOVE_gz_horz ('g', 'e');                                                                                            <* 
+ *>       rc = MOVE_gz_horz ('z', 'c');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'E' : case 'Z' :                                                                                                       <* 
+ *>       rc = MOVE_gz_horz ('g', 'e');                                                                                            <* 
+ *>       rc = MOVE_gz_horz ('z', 's');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(vertical, simple)---------------+/                                                                                    <* 
+ *>    if (strchr ("tkmjb", a_minor) != NULL)                                                                                      <* 
+ *>       rc = MOVE_gz_vert (a_major, a_minor);                                                                                    <* 
+ *>    /+---(vertical, complex)--------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'T' : case 'A' :                                                                                                       <* 
+ *>       rc = MOVE_gz_vert ('g', 't');                                                                                            <* 
+ *>       rc = MOVE_gz_vert ('z', 'b');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'K' : case 'U' :                                                                                                       <* 
+ *>       rc = MOVE_gz_vert ('g', 't');                                                                                            <* 
+ *>       rc = MOVE_gz_vert ('z', 'm');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'J' : case 'D' :                                                                                                       <* 
+ *>       rc = MOVE_gz_vert ('g', 'b');                                                                                            <* 
+ *>       rc = MOVE_gz_vert ('z', 'm');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'B' : case 'Z' :                                                                                                       <* 
+ *>       rc = MOVE_gz_vert ('g', 'b');                                                                                            <* 
+ *>       rc = MOVE_gz_vert ('z', 't');                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(combination)--------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'a' : rc = MOVE_gz_horz (a_major, 's');   /+ alpha = top-left    +/                                                    <* 
+ *>               rc = MOVE_gz_vert (a_major, 't');                                                                                <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'z' : rc = MOVE_gz_horz (a_major, 'e');   /+ omega = bot-right   +/                                                    <* 
+ *>               rc = MOVE_gz_vert (a_major, 'b');                                                                                <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'u' : rc = MOVE_gz_horz (a_major, 'e');   /+ near  = top-right   +/                                                    <* 
+ *>               rc = MOVE_gz_vert (a_major, 't');                                                                                <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'd' : rc = MOVE_gz_horz (a_major, 's');   /+ far   = bot-left    +/                                                    <* 
+ *>               rc = MOVE_gz_vert (a_major, 'b');                                                                                <* 
+ *>               break;                                                                                                           <* 
+ *>    case '.' : rc = MOVE_gz_horz (a_major, 'c');   /+ core  = cen-mid     +/                                                    <* 
+ *>               rc = MOVE_gz_vert (a_major, 'm');                                                                                <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(frozen)-------------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>       /+> case '_' : /+ go to frozen header rows +/     break;                           <*                                    <* 
+ *>        *> case '0' : /+ go to frozen cols        +/     break;                           <+/                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(clean-up)-----------------------+/                                                                                    <* 
+ *>    MOVE_done    ();                                                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process basic movements ------------[ ------ [ge.B72.223.54]*/ /*-[01.0000.413.!]-*/ /*-[--.---.---.--]-*/
-KEYS_basics        (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_minors    [LEN_RECD]  = "0HhlL$_KkjJGr";
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense)------------------------*/
-   --rce;  if (a_major != ' ') {
-      DEBUG_USER   yLOG_note    ("a_major is not a space");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
-   --rce;  if (strchr (x_minors, a_minor) == 0) {
-      DEBUG_USER   yLOG_note    ("a_minor is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   MOVE_prep    ();
-   /*---(basic horizontal)---------------*/
-   switch (a_minor) {
-   case '0'      : MOVE_horz ('0');       break;
-   case 'H'      : MOVE_horz ('H');       break;
-   case 'h'      : MOVE_horz ('h');       break;
-   case 'l'      : MOVE_horz ('l');       break;
-   case 'L'      : MOVE_horz ('L');       break;
-   case '$'      : MOVE_horz ('$');       break;
-   }
-   /*---(basic vertical)-----------------*/
-   switch (a_minor) {
-   case '_'      : MOVE_vert ('_');       break;
-   case 'K'      : MOVE_vert ('K');       break;
-   case 'k'      : MOVE_vert ('k');       break;
-   case 'j'      : MOVE_vert ('j');       break;
-   case 'J'      : MOVE_vert ('J');       break;
-   case 'G'      : MOVE_vert ('G');       break;
-   }
-   /*---(special)------------------------*/
-   switch (a_minor) {
-   case 'r'      : break;
-   }
-   /*---(clean-up)-----------------------*/
-   MOVE_done    ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.KE2.243.86]+/ /+-[03.0000.113.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_e_family      (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        rc          =   0;                                                                                              <* 
+ *>    /+-------------------------------------(-horz--)(-vert--)(-zoom--)(-edge--)+/                                               <* 
+ *>    char        x_minors    [LEN_RECD]  = "SsHhclLeETtKkmjJbBNnOo.iIfFaAzZ+uUdD";                                               <* 
+ *>    char        x_nothere   [LEN_RECD]  = "NnOo.iIfF";                                                                          <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_major != 'e') {                                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not e");                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);                                                                         <* 
+ *>    --rce;  if (strchr (x_minors, a_minor) == 0) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("a_minor is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    MOVE_prep    ();                                                                                                            <* 
+ *>    /+---(simple ends)--------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'k' : rc = MOVE_ends  (a_minor);     break;                                                                            <* 
+ *>    case 'j' : rc = MOVE_ends  (a_minor);     break;                                                                            <* 
+ *>    case 'h' : rc = MOVE_ends  (a_minor);     break;                                                                            <* 
+ *>    case 'l' : rc = MOVE_ends  (a_minor);     break;                                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(vertical edges)-----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 't' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    case 'K' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    case 'J' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    case 'b' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(horizontal edges)---------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 's' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    case 'H' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    case 'L' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    case 'e' : rc = MOVE_edges (a_minor);     break;                                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(combination)--------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'a' : rc = MOVE_edges ('s');                                                                                           <* 
+ *>               rc = MOVE_edges ('t');                                                                                           <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'z' : rc = MOVE_edges ('e');                                                                                           <* 
+ *>               rc = MOVE_edges ('b');                                                                                           <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'u' : rc = MOVE_edges ('e');                                                                                           <* 
+ *>               rc = MOVE_edges ('t');                                                                                           <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'd' : rc = MOVE_edges ('s');                                                                                           <* 
+ *>               rc = MOVE_edges ('b');                                                                                           <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(maximums)-----------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'S' : rc = MOVE_horz    ('0');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'E' : rc = MOVE_horz    ('$');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'T' : rc = MOVE_vert    ('_');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'B' : rc = MOVE_vert    ('G');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(max combos)---------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'A' : rc = MOVE_horz    ('0');            /+ ALPHA = origin      +/                                                    <* 
+ *>               rc = MOVE_vert    ('_');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'Z' : rc = MOVE_horz    ('$');            /+ OMEGA = maximum     +/                                                    <* 
+ *>               rc = MOVE_vert    ('G');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'U' : rc = MOVE_horz    ('$');            /+ NEAR  = maximum     +/                                                    <* 
+ *>               rc = MOVE_vert    ('_');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'D' : rc = MOVE_horz    ('0');            /+ FAR   = maximum     +/                                                    <* 
+ *>               rc = MOVE_vert    ('G');                                                                                         <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(clean-up)-----------------------+/                                                                                    <* 
+ *>    MOVE_done    ();                                                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.KB2.235.84]*/ /*-[03.0000.213.!]-*/ /*-[--.---.---.--]-*/
-KEYS_gz_family     (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;                /* return code for errors    */
-   char        rc          =   0;                /* generic return code       */
-   char        x_minors    [LEN_RECD]  = "shcletkmjbazudno.ifSHLETKJBNOIFAZUD";
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense)------------------------*/
-   --rce;  if (a_major != 'g' && a_major != 'z') {
-      DEBUG_USER   yLOG_note    ("a_major is not g or z");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
-   --rce;  if (strchr (x_minors, a_minor) == 0) {
-      DEBUG_USER   yLOG_note    ("a_minor is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   MOVE_prep    ();
-   /*---(horizontal, simple)-------------*/
-   if (strchr ("shcle", a_minor) != NULL)
-      rc = MOVE_gz_horz (a_major, a_minor);
-   /*---(horizontal, complex)------------*/
-   switch (a_minor) {
-   case 'S' : case 'A' :
-      rc = MOVE_gz_horz ('g', 's');
-      rc = MOVE_gz_horz ('z', 'e');
-      break;
-   case 'H' : case 'D' :
-      rc = MOVE_gz_horz ('g', 's');
-      rc = MOVE_gz_horz ('z', 'c');
-      break;
-   case 'L' : case 'U' :
-      rc = MOVE_gz_horz ('g', 'e');
-      rc = MOVE_gz_horz ('z', 'c');
-      break;
-   case 'E' : case 'Z' :
-      rc = MOVE_gz_horz ('g', 'e');
-      rc = MOVE_gz_horz ('z', 's');
-      break;
-   }
-   /*---(vertical, simple)---------------*/
-   if (strchr ("tkmjb", a_minor) != NULL)
-      rc = MOVE_gz_vert (a_major, a_minor);
-   /*---(vertical, complex)--------------*/
-   switch (a_minor) {
-   case 'T' : case 'A' :
-      rc = MOVE_gz_vert ('g', 't');
-      rc = MOVE_gz_vert ('z', 'b');
-      break;
-   case 'K' : case 'U' :
-      rc = MOVE_gz_vert ('g', 't');
-      rc = MOVE_gz_vert ('z', 'm');
-      break;
-   case 'J' : case 'D' :
-      rc = MOVE_gz_vert ('g', 'b');
-      rc = MOVE_gz_vert ('z', 'm');
-      break;
-   case 'B' : case 'Z' :
-      rc = MOVE_gz_vert ('g', 'b');
-      rc = MOVE_gz_vert ('z', 't');
-      break;
-   }
-   /*---(combination)--------------------*/
-   switch (a_minor) {
-   case 'a' : rc = MOVE_gz_horz (a_major, 's');   /* alpha = top-left    */
-              rc = MOVE_gz_vert (a_major, 't');
-              break;
-   case 'z' : rc = MOVE_gz_horz (a_major, 'e');   /* omega = bot-right   */
-              rc = MOVE_gz_vert (a_major, 'b');
-              break;
-   case 'u' : rc = MOVE_gz_horz (a_major, 'e');   /* near  = top-right   */
-              rc = MOVE_gz_vert (a_major, 't');
-              break;
-   case 'd' : rc = MOVE_gz_horz (a_major, 's');   /* far   = bot-left    */
-              rc = MOVE_gz_vert (a_major, 'b');
-              break;
-   case '.' : rc = MOVE_gz_horz (a_major, 'c');   /* core  = cen-mid     */
-              rc = MOVE_gz_vert (a_major, 'm');
-              break;
-   }
-   /*---(frozen)-------------------------*/
-   switch (a_minor) {
-      /*> case '_' : /+ go to frozen header rows +/     break;                           <* 
-       *> case '0' : /+ go to frozen cols        +/     break;                           <*/
-   }
-   /*---(clean-up)-----------------------*/
-   MOVE_done    ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.LC2.233.64]+/ /+-[05.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_c_family      (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        rc          =   0;                                                                                              <* 
+ *>    char        x_minors    [LEN_RECD]  = "hljksetbaonfAONF";                                                                   <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_major != 'c') {                                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not c");                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);                                                                         <* 
+ *>    --rce;  if (strchr (x_minors, a_minor) == 0) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("a_minor is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    MOVE_prep    ();                                                                                                            <* 
+ *>    /+---(move cursor)--------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 's' : rc = MOVE_gz_horz ('g', 's');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'e' : rc = MOVE_gz_horz ('g', 'e');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'h' :                                                                                                                  <* 
+ *>    case 'l' : rc = MOVE_gz_horz ('g', 'c');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 't' : rc = MOVE_gz_vert ('g', 't');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'b' : rc = MOVE_gz_vert ('g', 'b');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'j' :                                                                                                                  <* 
+ *>    case 'k' : rc = MOVE_gz_vert ('g', 'm');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'A' : rc = MOVE_gz_horz ('g', 's');                                                                                    <* 
+ *>               rc = MOVE_gz_vert ('g', 't');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'a' :                                                                                                                  <* 
+ *>    case 'o' :                                                                                                                  <* 
+ *>    case 'n' :                                                                                                                  <* 
+ *>    case 'f' : rc = MOVE_gz_horz ('g', 'c');                                                                                    <* 
+ *>               rc = MOVE_gz_vert ('g', 'm');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(horz/vert)----------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 's' :                                                                                                                  <* 
+ *>    case 'h' : rc = MOVE_gz_horz ('z', 'e');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'e' :                                                                                                                  <* 
+ *>    case 'l' : rc = MOVE_gz_horz ('z', 's');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'b' :                                                                                                                  <* 
+ *>    case 'j' : rc = MOVE_gz_vert ('z', 't');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 't' :                                                                                                                  <* 
+ *>    case 'k' : rc = MOVE_gz_vert ('z', 'b');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(half diagonals)-----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 'a' : rc = MOVE_gz_horz ('z', 'e');                                                                                    <* 
+ *>               rc = MOVE_gz_vert ('z', 'b');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'o' : rc = MOVE_gz_horz ('z', 's');                                                                                    <* 
+ *>               rc = MOVE_gz_vert ('z', 't');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'n' : rc = MOVE_gz_horz ('z', 's');                                                                                    <* 
+ *>               rc = MOVE_gz_vert ('z', 'b');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    case 'f' : rc = MOVE_gz_horz ('z', 'e');                                                                                    <* 
+ *>               rc = MOVE_gz_vert ('z', 't');                                                                                    <* 
+ *>               break;                                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(update)-------------------------+/                                                                                    <* 
+ *>    MOVE_done    ();                                                                                                            <* 
+ *>    MOVE_prep    ();                                                                                                            <* 
+ *>    /+---(move cursor)--------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case 's' : case 'e' :                                                                                                       <* 
+ *>    case 'h' : case 'l' : rc = MOVE_gz_horz ('g', 'c');                                                                         <* 
+ *>                          break;                                                                                                <* 
+ *>    case 't' : case 'b' :                                                                                                       <* 
+ *>    case 'j' : case 'k' : rc = MOVE_gz_vert ('g', 'm');                                                                         <* 
+ *>                          break;                                                                                                <* 
+ *>    case 'a' : case 'o' :                                                                                                       <* 
+ *>    case 'n' : case 'f' : rc = MOVE_gz_horz ('g', 'c');                                                                         <* 
+ *>                          rc = MOVE_gz_vert ('g', 'm');                                                                         <* 
+ *>                          break;                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(clean-up)-----------------------+/                                                                                    <* 
+ *>    MOVE_done    ();                                                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.KE2.243.86]*/ /*-[03.0000.113.#]-*/ /*-[--.---.---.--]-*/
-KEYS_e_family      (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          =   0;
-   /*-------------------------------------(-horz--)(-vert--)(-zoom--)(-edge--)*/
-   char        x_minors    [LEN_RECD]  = "SsHhclLeETtKkmjJbBNnOo.iIfFaAzZ+uUdD";
-   char        x_nothere   [LEN_RECD]  = "NnOo.iIfF";
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense)------------------------*/
-   --rce;  if (a_major != 'e') {
-      DEBUG_USER   yLOG_note    ("a_major is not e");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
-   --rce;  if (strchr (x_minors, a_minor) == 0) {
-      DEBUG_USER   yLOG_note    ("a_minor is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   MOVE_prep    ();
-   /*---(simple ends)--------------------*/
-   switch (a_minor) {
-   case 'k' : rc = MOVE_ends  (a_minor);     break;
-   case 'j' : rc = MOVE_ends  (a_minor);     break;
-   case 'h' : rc = MOVE_ends  (a_minor);     break;
-   case 'l' : rc = MOVE_ends  (a_minor);     break;
-   }
-   /*---(vertical edges)-----------------*/
-   switch (a_minor) {
-   case 't' : rc = MOVE_edges (a_minor);     break;
-   case 'K' : rc = MOVE_edges (a_minor);     break;
-   case 'J' : rc = MOVE_edges (a_minor);     break;
-   case 'b' : rc = MOVE_edges (a_minor);     break;
-   }
-   /*---(horizontal edges)---------------*/
-   switch (a_minor) {
-   case 's' : rc = MOVE_edges (a_minor);     break;
-   case 'H' : rc = MOVE_edges (a_minor);     break;
-   case 'L' : rc = MOVE_edges (a_minor);     break;
-   case 'e' : rc = MOVE_edges (a_minor);     break;
-   }
-   /*---(combination)--------------------*/
-   switch (a_minor) {
-   case 'a' : rc = MOVE_edges ('s');
-              rc = MOVE_edges ('t');
-              break;
-   case 'z' : rc = MOVE_edges ('e');
-              rc = MOVE_edges ('b');
-              break;
-   case 'u' : rc = MOVE_edges ('e');
-              rc = MOVE_edges ('t');
-              break;
-   case 'd' : rc = MOVE_edges ('s');
-              rc = MOVE_edges ('b');
-              break;
-   }
-   /*---(maximums)-----------------------*/
-   switch (a_minor) {
-   case 'S' : rc = MOVE_horz    ('0');
-              break;
-   case 'E' : rc = MOVE_horz    ('$');
-              break;
-   case 'T' : rc = MOVE_vert    ('_');
-              break;
-   case 'B' : rc = MOVE_vert    ('G');
-              break;
-   }
-   /*---(max combos)---------------------*/
-   switch (a_minor) {
-   case 'A' : rc = MOVE_horz    ('0');            /* ALPHA = origin      */
-              rc = MOVE_vert    ('_');
-              break;
-   case 'Z' : rc = MOVE_horz    ('$');            /* OMEGA = maximum     */
-              rc = MOVE_vert    ('G');
-              break;
-   case 'U' : rc = MOVE_horz    ('$');            /* NEAR  = maximum     */
-              rc = MOVE_vert    ('_');
-              break;
-   case 'D' : rc = MOVE_horz    ('0');            /* FAR   = maximum     */
-              rc = MOVE_vert    ('G');
-              break;
-   }
-   /*---(clean-up)-----------------------*/
-   MOVE_done    ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process keystrokes in map mode -----[ ------ [ge.933.233.33]+/ /+-[01.0000.113.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_regbasic       (char a_major, char a_minor)                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        rc          =   0;                                                                                              <* 
+ *>    char        x_minors    [LEN_RECD]  = "ypdx";                                                                               <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_major != ' ') {                                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not empty");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);                                                                         <* 
+ *>    --rce;  if (strchr (x_minors, a_minor) == NULL) {                                                                           <* 
+ *>       DEBUG_USER   yLOG_note    ("a_minor is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(process)------------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'y' :                                                                                                                 <* 
+ *>       DEBUG_USER   yLOG_note    ("call REG_copy");                                                                             <* 
+ *>       REG_copy  ();                                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    case  'p' :                                                                                                                 <* 
+ *>       DEBUG_USER   yLOG_note    ("call REG_paste");                                                                            <* 
+ *>       REG_paste (G_PASTE_NORM);                                                                                                <* 
+ *>       break;                                                                                                                   <* 
+ *>    case  'x' :                                                                                                                 <* 
+ *>    case  'd' :                                                                                                                 <* 
+ *>       DEBUG_USER   yLOG_note    ("call REG_cut");                                                                              <* 
+ *>       REG_cut   ();                                                                                                            <* 
+ *>       break;                                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.LC2.233.64]*/ /*-[05.0000.013.!]-*/ /*-[--.---.---.--]-*/
-KEYS_c_family      (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          =   0;
-   char        x_minors    [LEN_RECD]  = "hljksetbaonfAONF";
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense)------------------------*/
-   --rce;  if (a_major != 'c') {
-      DEBUG_USER   yLOG_note    ("a_major is not c");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
-   --rce;  if (strchr (x_minors, a_minor) == 0) {
-      DEBUG_USER   yLOG_note    ("a_minor is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   MOVE_prep    ();
-   /*---(move cursor)--------------------*/
-   switch (a_minor) {
-   case 's' : rc = MOVE_gz_horz ('g', 's');
-              break;
-   case 'e' : rc = MOVE_gz_horz ('g', 'e');
-              break;
-   case 'h' :
-   case 'l' : rc = MOVE_gz_horz ('g', 'c');
-              break;
-   case 't' : rc = MOVE_gz_vert ('g', 't');
-              break;
-   case 'b' : rc = MOVE_gz_vert ('g', 'b');
-              break;
-   case 'j' :
-   case 'k' : rc = MOVE_gz_vert ('g', 'm');
-              break;
-   case 'A' : rc = MOVE_gz_horz ('g', 's');
-              rc = MOVE_gz_vert ('g', 't');
-              break;
-   case 'a' :
-   case 'o' :
-   case 'n' :
-   case 'f' : rc = MOVE_gz_horz ('g', 'c');
-              rc = MOVE_gz_vert ('g', 'm');
-              break;
-   }
-   /*---(horz/vert)----------------------*/
-   switch (a_minor) {
-   case 's' :
-   case 'h' : rc = MOVE_gz_horz ('z', 'e');
-              break;
-   case 'e' :
-   case 'l' : rc = MOVE_gz_horz ('z', 's');
-              break;
-   case 'b' :
-   case 'j' : rc = MOVE_gz_vert ('z', 't');
-              break;
-   case 't' :
-   case 'k' : rc = MOVE_gz_vert ('z', 'b');
-              break;
-   }
-   /*---(half diagonals)-----------------*/
-   switch (a_minor) {
-   case 'a' : rc = MOVE_gz_horz ('z', 'e');
-              rc = MOVE_gz_vert ('z', 'b');
-              break;
-   case 'o' : rc = MOVE_gz_horz ('z', 's');
-              rc = MOVE_gz_vert ('z', 't');
-              break;
-   case 'n' : rc = MOVE_gz_horz ('z', 's');
-              rc = MOVE_gz_vert ('z', 'b');
-              break;
-   case 'f' : rc = MOVE_gz_horz ('z', 'e');
-              rc = MOVE_gz_vert ('z', 't');
-              break;
-   }
-   /*---(update)-------------------------*/
-   MOVE_done    ();
-   MOVE_prep    ();
-   /*---(move cursor)--------------------*/
-   switch (a_minor) {
-   case 's' : case 'e' :
-   case 'h' : case 'l' : rc = MOVE_gz_horz ('g', 'c');
-                         break;
-   case 't' : case 'b' :
-   case 'j' : case 'k' : rc = MOVE_gz_vert ('g', 'm');
-                         break;
-   case 'a' : case 'o' :
-   case 'n' : case 'f' : rc = MOVE_gz_horz ('g', 'c');
-                         rc = MOVE_gz_vert ('g', 'm');
-                         break;
-   }
-   /*---(clean-up)-----------------------*/
-   MOVE_done    ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process keystrokes in normal mode --[ leaf   [ge.#X9.22#.NP]+/ /+-[05.0000.102.!]-+/ /+-[--.---.---.--]-+/     <* 
+ *> MODE_map           (char a_major, char a_minor)                                                                                  <* 
+ *> {                                                                                                                                <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                      <* 
+ *>    char        rce         = -10;                                                                                                <* 
+ *>    char        rc          = 0;                                                                                                  <* 
+ *>    /+---(header)-------------------------+/                                                                                      <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                     <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                            <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                            <* 
+ *>    /+---(defenses)-----------------------+/                                                                                      <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());                                                               <* 
+ *>    --rce;  if (yVIKEYS_mode_not (MODE_MAP    )) {                                                                                <* 
+ *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                        <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return rce;                                                                                                                <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(space)--------------------------+/                                                                                      <* 
+ *>    if (a_minor == G_KEY_SPACE ) {                                                                                                <* 
+ *>       DEBUG_USER   yLOG_note    ("space, nothing to do");                                                                        <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return  0;                                                                                                                 <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(major mode changes)-------------+/                                                                                      <* 
+ *>    if (a_minor == G_KEY_RETURN) {                                                                                                <* 
+ *>       yVIKEYS_mode_enter  (MODE_SOURCE);                                                                                         <* 
+ *>       EDIT_pos    ('0');                                                                                                         <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return  0;                                                                                                                 <* 
+ *>    }                                                                                                                             <* 
+ *>    if (a_minor == G_KEY_ESCAPE) {                                                                                                <* 
+ *>       VISU_clear ();                                                                                                             <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return  0;                                                                                                                 <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(single key)---------------------+/                                                                                      <* 
+ *>    --rce;                                                                                                                        <* 
+ *>    if (a_major == ' ') {                                                                                                         <* 
+ *>       /+---(multiplier)------------------+/                                                                                      <* 
+ *>       if (strchr ("123456789"  , a_minor) != 0) {                                                                                <* 
+ *>          yVIKEYS_mode_enter  (SMOD_REPEAT);                                                                                      <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;                                                                                                         <* 
+ *>       }                                                                                                                          <* 
+ *>       /+---(multikey prefixes)-----------+/                                                                                      <* 
+ *>       if (strchr ("gzced"  , a_minor) != 0) {                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;                                                                                                         <* 
+ *>       }                                                                                                                          <* 
+ *>       /+---(mode switch)-----------------+/                                                                                      <* 
+ *>       switch (a_minor) {                                                                                                         <* 
+ *>       case 'v'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (MODE_VISUAL);                                                                                      <* 
+ *>          VISU_start  (CTAB, CCOL, CROW, VISU_FROM);                                                                              <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>          break;                                                                                                                  <* 
+ *>       case 'V'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (MODE_VISUAL);                                                                                      <* 
+ *>          VISU_restore ();                                                                                                        <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>          break;                                                                                                                  <* 
+ *>       case ':'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (MODE_COMMAND);                                                                                     <* 
+ *>          yVIKEYS_cmds_start ();                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;                                                                                                         <* 
+ *>          break;                                                                                                                  <* 
+ *>       case '/'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (MODE_SEARCH);                                                                                      <* 
+ *>          yVIKEYS_srch_start ();                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;                                                                                                         <* 
+ *>          break;                                                                                                                  <* 
+ *>       case 's'      :                                                                                                            <* 
+ *>          EDIT_start  ("");                                                                                                       <* 
+ *>          yVIKEYS_mode_enter  (MODE_INPUT  );                                                                                     <* 
+ *>          MODE_input ('m', 'i');                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 'i';                                                                                                             <* 
+ *>          break;                                                                                                                  <* 
+ *>       case '='      :                                                                                                            <* 
+ *>          EDIT_start  ("=");                                                                                                      <* 
+ *>          yVIKEYS_mode_enter  (MODE_INPUT  );                                                                                     <* 
+ *>          MODE_input ('m', 'a');                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 'a';                                                                                                             <* 
+ *>          break;                                                                                                                  <* 
+ *>       case '#'      :                                                                                                            <* 
+ *>          EDIT_start  ("#");                                                                                                      <* 
+ *>          yVIKEYS_mode_enter  (MODE_INPUT  );                                                                                     <* 
+ *>          MODE_input ('m', 'a');                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 'a';                                                                                                             <* 
+ *>          break;                                                                                                                  <* 
+ *>       case '+'      :                                                                                                            <* 
+ *>          EDIT_start  ("+");                                                                                                      <* 
+ *>          yVIKEYS_mode_enter  (MODE_INPUT  );                                                                                     <* 
+ *>          MODE_input ('m', 'a');                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 'a';                                                                                                             <* 
+ *>          break;                                                                                                                  <* 
+ *>       case '-'      :                                                                                                            <* 
+ *>          EDIT_start  ("-");                                                                                                      <* 
+ *>          yVIKEYS_mode_enter  (MODE_INPUT  );                                                                                     <* 
+ *>          MODE_input ('m', 'a');                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 'a';                                                                                                             <* 
+ *>          break;                                                                                                                  <* 
+ *>       }                                                                                                                          <* 
+ *>       /+---(submodes)--------------------+/                                                                                      <* 
+ *>       switch (a_minor) {                                                                                                         <* 
+ *>       case '\\'     :                                                                                                            <* 
+ *>          DEBUG_USER   yLOG_note    ("selected menu mode");                                                                       <* 
+ *>          yVIKEYS_mode_enter  (SMOD_MENUS  );                                                                                     <* 
+ *>          my.menu = MENU_ROOT;                                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>          break;                                                                                                                  <* 
+ *>       /+> case '@'      :                                                             <*                                         <* 
+ *>        *>    IF_MACRO_OFF {                                                           <*                                         <* 
+ *>        *>       yVIKEYS_macro_reset  ();                                              <*                                         <* 
+ *>        *>       yVIKEYS_mode_enter  (SMOD_MACRO   );                                  <*                                         <* 
+ *>        *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                             <*                                         <* 
+ *>        *>       return a_minor;                                                       <*                                         <* 
+ *>        *>    }                                                                        <*                                         <* 
+ *>        *>    yVIKEYS_macro_reset  ();                                                 <*                                         <* 
+ *>        *>    DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);                           <*                                         <* 
+ *>        *>    return rce;                                                              <*                                         <* 
+ *>        *>    break;                                                                   <+/                                        <* 
+ *>       /+> case 'q'      :                                                             <*                                         <* 
+ *>        *>    IF_MACRO_OFF {                                                           <*                                         <* 
+ *>        *>       yVIKEYS_mode_enter  (SMOD_MACRO   );                                  <*                                         <* 
+ *>        *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                             <*                                         <* 
+ *>        *>       return a_minor;                                                       <*                                         <* 
+ *>        *>    }                                                                        <*                                         <* 
+ *>        *>    yVIKEYS_macro_rec_end ();                                                <*                                         <* 
+ *>        *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                <*                                         <* 
+ *>        *>    return 0;                                                                <*                                         <* 
+ *>        *>    break;                                                                   <+/                                        <* 
+ *>       case 'Q'      :                                                                                                            <* 
+ *>          yVIKEYS_macro_reset ();                                                                                                 <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>          break;                                                                                                                  <* 
+ *>       case 'F'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (SMOD_FORMAT  );                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>          break;                                                                                                                  <* 
+ *>       case ','      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (SMOD_BUFFER  );                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;                                                                                                         <* 
+ *>          break;                                                                                                                  <* 
+ *>       case '"'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (SMOD_REGISTER);                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;  /+ make sure double quote goes in prev char +/                                                         <* 
+ *>          break;                                                                                                                  <* 
+ *>       case 'm'      :                                                                                                            <* 
+ *>       case '\''     :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (SMOD_MARK    );                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return a_minor;  /+ make sure single quote goes in prev char +/                                                         <* 
+ *>          break;                                                                                                                  <* 
+ *>       case 'E'      :                                                                                                            <* 
+ *>          yVIKEYS_mode_enter  (SMOD_ERROR   );                                                                                    <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return SMOD_ERROR;  /+ make sure mode indicator goes also       +/                                                      <* 
+ *>          break;                                                                                                                  <* 
+ *>       }                                                                                                                          <* 
+ *>       /+---(normal)----------------------+/                                                                                      <* 
+ *>       if (a_minor == 6) {                                                                                                        <* 
+ *>          rc = KEYS_gz_family  ('g', 'B');                                                                                        <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>       }                                                                                                                          <* 
+ *>       if (a_minor == 2) {                                                                                                        <* 
+ *>          rc = KEYS_gz_family  ('g', 'T');                                                                                        <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>       }                                                                                                                          <* 
+ *>       rc = KEYS_basics   (a_major, a_minor);                                                                                     <* 
+ *>       if (rc == 0) {                                                                                                             <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>       }                                                                                                                          <* 
+ *>       rc = KEYS_regbasic (a_major, a_minor);                                                                                     <* 
+ *>       if (rc == 0) {                                                                                                             <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                               <* 
+ *>          return 0;                                                                                                               <* 
+ *>       }                                                                                                                          <* 
+ *>       /+---(special)------------------+/                                                                                         <* 
+ *>       switch (a_minor) {                                                                                                         <* 
+ *>       case K_CTRL_L : clear ();                       break;                                                                     <* 
+ *>       case 'P'      : DEP_writeall (); LOC_col_map ('i'); LOC_row_map ('i'); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;   <* 
+ *>                       /+---(formatting)---------------+/                                                                         <* 
+ *>       case '<'      : CELL_align (CHG_INPUT, '<');               break;                                                          <* 
+ *>       case '|'      : CELL_align (CHG_INPUT, '|');               break;                                                          <* 
+ *>       case '>'      : CELL_align (CHG_INPUT, '>');               break;                                                          <* 
+ *>                       /+---(selection)----------------+/                                                                         <* 
+ *>                       /+> case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;          <+/                        <* 
+ *>                       /+> case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;          <+/                        <* 
+ *>                       /+> case 'y'      : REG_copy  ();                   break;                      <+/                        <* 
+ *>                       /+> case 'p'      : REG_paste (G_PASTE_NORM);       break;                      <+/                        <* 
+ *>                       /+---(modes and multikey)-------+/                                                                         <* 
+ *>       case '@'      : SEQ_calc_full ();               break;                                                                     <* 
+ *>                       /+> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <+/                        <* 
+ *>                       /+---(new stuff)----------------+/                                                                         <* 
+ *>       case 'u'      : HIST_undo ();                   break;                                                                     <* 
+ *>       case 'U'      : HIST_redo ();                   break;                                                                     <* 
+ *>                       /+> case 'W'      : REG_bufwrite (my.reg_curr);     break;                      <+/                        <* 
+ *>       case '?'      : my.info_win = G_INFO_CELL;      break;                                                                     <* 
+ *>       default       : /+ unknown problem +/                                                                                      <* 
+ *>                       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                  <* 
+ *>                       return rce;                                                                                                <* 
+ *>                       break;                                                                                                     <* 
+ *>       }                                                                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(special family)------------------------+/                                                                               <* 
+ *>    /+> --rce;                                                                         <*                                         <* 
+ *>     *> if (a_major == 'c') {                                                           <*                                        <* 
+ *>     *>    switch (a_minor) {                                                           <*                                        <* 
+ *>     *>    case 's'      : KEYS_col ("cs");                break;                      <*                                         <* 
+ *>     *>    case 'h'      : KEYS_col ("ch");                break;                      <*                                         <* 
+ *>     *>    case 'l'      : KEYS_col ("cl");                break;                      <*                                         <* 
+ *>     *>    case 'e'      : KEYS_col ("ce");                break;                      <*                                         <* 
+ *>     *>    case 't'      : KEYS_row ("ct");                break;                      <*                                         <* 
+ *>     *>    case 'b'      : KEYS_row ("cb");                break;                      <*                                         <* 
+ *>     *>    default       : return rce;                     break;                      <*                                         <* 
+ *>     *>    }                                                                           <*                                         <* 
+ *>     *>    return 0;                                                                   <*                                         <* 
+ *>     *> }                                                                              <+/                                        <* 
+ *>    /+> else if (a_major == 'x') {                                                      <*                                        <* 
+ *>     *>    sch = ' ';                                                                  <*                                         <* 
+ *>     *>    ch  = 24;                                                                   <*                                         <* 
+ *>     *> }                                                                              <+/                                        <* 
+ *>    /+---(goto family)--------------------+/                                                                                      <* 
+ *>    if (a_major == 'g') {                                                                                                         <* 
+ *>       rc = KEYS_gz_family  (a_major, a_minor);                                                                                   <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(scroll family)------------------+/                                                                                      <* 
+ *>    if (a_major == 'z') {                                                                                                         <* 
+ *>       rc = KEYS_gz_family  (a_major, a_minor);                                                                                   <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(end family)---------------------+/                                                                                      <* 
+ *>    if (a_major == 'e') {                                                                                                         <* 
+ *>       rc = KEYS_e_family   (a_major, a_minor);                                                                                   <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(end family)---------------------+/                                                                                      <* 
+ *>    if (a_major == 'c') {                                                                                                         <* 
+ *>       rc = KEYS_c_family   (a_major, a_minor);                                                                                   <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(delete family)-------------------------+/                                                                               <* 
+ *>    /+> --rce;                                                                         <*                                         <* 
+ *>     *> if (a_major == 'd') {                                                           <*                                        <* 
+ *>     *>    switch (a_minor) {                                                           <*                                        <* 
+ *>     *>    case 'd' : --NROW;          break;                                          <*                                         <* 
+ *>     *>    case 'w' : --NCOL;     break;                                               <*                                         <* 
+ *>     *>    default  : return rce;                         break;                       <*                                         <* 
+ *>     *>    }                                                                           <*                                         <* 
+ *>     *>    return 0;                                                                   <*                                         <* 
+ *>     *> }                                                                              <+/                                        <* 
+ *>    /+---(complete)------------------------------+/                                                                               <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                     <* 
+ *>    return 0;                                                                                                                     <* 
+ *> }                                                                                                                                <*/
 
-char         /*-> process keystrokes in map mode -----[ ------ [ge.933.233.33]*/ /*-[01.0000.113.!]-*/ /*-[--.---.---.--]-*/
-KEYS_regbasic       (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          =   0;
-   char        x_minors    [LEN_RECD]  = "ypdx";
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defense)------------------------*/
-   --rce;  if (a_major != ' ') {
-      DEBUG_USER   yLOG_note    ("a_major is not empty");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_minors"  , x_minors);
-   --rce;  if (strchr (x_minors, a_minor) == NULL) {
-      DEBUG_USER   yLOG_note    ("a_minor is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(process)------------------------*/
-   switch (a_minor) {
-   case  'y' :
-      DEBUG_USER   yLOG_note    ("call REG_copy");
-      REG_copy  ();
-      break;
-   case  'p' :
-      DEBUG_USER   yLOG_note    ("call REG_paste");
-      REG_paste (G_PASTE_NORM);
-      break;
-   case  'x' :
-   case  'd' :
-      DEBUG_USER   yLOG_note    ("call REG_cut");
-      REG_cut   ();
-      break;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process keystrokes in visual mode --[ leaf   [gz.210.201.00]+/ /+-[00.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_visual   (int a_prev, int a_curr)                                                                                         <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(complete)------------------------------+/                                                                             <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keystrokes in normal mode --[ leaf   [ge.#X9.22#.NP]*/ /*-[05.0000.102.!]-*/ /*-[--.---.---.--]-*/
-MODE_map           (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          = 0;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
-   --rce;  if (yVIKEYS_mode_not (MODE_MAP    )) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(space)--------------------------*/
-   if (a_minor == G_KEY_SPACE ) {
-      DEBUG_USER   yLOG_note    ("space, nothing to do");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-   }
-   /*---(major mode changes)-------------*/
-   if (a_minor == G_KEY_RETURN) {
-      yVIKEYS_mode_enter  (MODE_SOURCE);
-      EDIT_pos    ('0');
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-   }
-   if (a_minor == G_KEY_ESCAPE) {
-      VISU_clear ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return  0;
-   }
-   /*---(single key)---------------------*/
-   --rce;
-   if (a_major == ' ') {
-      /*---(multiplier)------------------*/
-      if (strchr ("123456789"  , a_minor) != 0) {
-         yVIKEYS_mode_enter  (SMOD_REPEAT);
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-      }
-      /*---(multikey prefixes)-----------*/
-      if (strchr ("gzced"  , a_minor) != 0) {
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-      }
-      /*---(mode switch)-----------------*/
-      switch (a_minor) {
-      case 'v'      :
-         yVIKEYS_mode_enter  (MODE_VISUAL);
-         VISU_start  (CTAB, CCOL, CROW, VISU_FROM);
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case 'V'      :
-         yVIKEYS_mode_enter  (MODE_VISUAL);
-         VISU_restore ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case ':'      :
-         yVIKEYS_mode_enter  (MODE_COMMAND);
-         yVIKEYS_cmds_start ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-         break;
-      case '/'      :
-         yVIKEYS_mode_enter  (MODE_SEARCH);
-         yVIKEYS_srch_start ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-         break;
-      case 's'      :
-         EDIT_start  ("");
-         yVIKEYS_mode_enter  (MODE_INPUT  );
-         MODE_input ('m', 'i');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 'i';
-         break;
-      case '='      :
-         EDIT_start  ("=");
-         yVIKEYS_mode_enter  (MODE_INPUT  );
-         MODE_input ('m', 'a');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 'a';
-         break;
-      case '#'      :
-         EDIT_start  ("#");
-         yVIKEYS_mode_enter  (MODE_INPUT  );
-         MODE_input ('m', 'a');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 'a';
-         break;
-      case '+'      :
-         EDIT_start  ("+");
-         yVIKEYS_mode_enter  (MODE_INPUT  );
-         MODE_input ('m', 'a');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 'a';
-         break;
-      case '-'      :
-         EDIT_start  ("-");
-         yVIKEYS_mode_enter  (MODE_INPUT  );
-         MODE_input ('m', 'a');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 'a';
-         break;
-      }
-      /*---(submodes)--------------------*/
-      switch (a_minor) {
-      case '\\'     :
-         DEBUG_USER   yLOG_note    ("selected menu mode");
-         yVIKEYS_mode_enter  (SMOD_MENUS  );
-         my.menu = MENU_ROOT;
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case '@'      :
-         IF_MACRO_OFF {
-            yVIKEYS_macro_reset  ();
-            yVIKEYS_mode_enter  (SMOD_MACRO   );
-            DEBUG_USER   yLOG_exit    (__FUNCTION__);
-            return a_minor;
-         }
-         yVIKEYS_macro_reset  ();
-         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-         break;
-      case 'q'      :
-         IF_MACRO_OFF {
-            yVIKEYS_mode_enter  (SMOD_MACRO   );
-            DEBUG_USER   yLOG_exit    (__FUNCTION__);
-            return a_minor;
-         }
-         yVIKEYS_macro_rec_end ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case 'Q'      :
-         yVIKEYS_macro_reset ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case 'F'      :
-         yVIKEYS_mode_enter  (SMOD_FORMAT  );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case ','      :
-         yVIKEYS_mode_enter  (SMOD_BUFFER  );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-         break;
-      case '"'      :
-         yVIKEYS_mode_enter  (SMOD_REGISTER);
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;  /* make sure double quote goes in prev char */
-         break;
-      case 'm'      : 
-      case '\''     :
-         yVIKEYS_mode_enter  (SMOD_MARK    );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;  /* make sure single quote goes in prev char */
-         break;
-      case 'E'      :
-         yVIKEYS_mode_enter  (SMOD_ERROR   );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return SMOD_ERROR;  /* make sure mode indicator goes also       */
-         break;
-      }
-      /*---(normal)----------------------*/
-      if (a_minor == 6) {
-         rc = KEYS_gz_family  ('g', 'B');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      if (a_minor == 2) {
-         rc = KEYS_gz_family  ('g', 'T');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      rc = KEYS_basics   (a_major, a_minor);
-      if (rc == 0) {
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      rc = KEYS_regbasic (a_major, a_minor);
-      if (rc == 0) {
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      /*---(special)------------------*/
-      switch (a_minor) {
-      case K_CTRL_L : clear ();                       break;
-      case 'P'      : DEP_writeall (); KEYS_pcol (); KEYS_prow (); HIST_list ();  break;
-                      /*---(formatting)---------------*/
-      case '<'      : CELL_align (CHG_INPUT, '<');               break;
-      case '|'      : CELL_align (CHG_INPUT, '|');               break;
-      case '>'      : CELL_align (CHG_INPUT, '>');               break;
-                      /*---(selection)----------------*/
-                      /*> case 'v'      : VISU_start (CTAB, CCOL, CROW, VISU_FROM);   break;          <*/
-                      /*> case 'V'      : VISU_start (CTAB, CCOL, CROW, VISU_CUM);    break;          <*/
-                      /*> case 'y'      : REG_copy  ();                   break;                      <*/
-                      /*> case 'p'      : REG_paste (G_PASTE_NORM);       break;                      <*/
-                      /*---(modes and multikey)-------*/
-      case '@'      : SEQ_calc_full ();               break;
-                      /*> case '[' : if (escaped) { sch = ch; special = 1; } else sch = 'x'; break;   <*/
-                      /*---(new stuff)----------------*/
-      case 'u'      : HIST_undo ();                   break;
-      case 'U'      : HIST_redo ();                   break;
-                      /*> case 'W'      : REG_bufwrite (my.reg_curr);     break;                      <*/
-      case '?'      : my.info_win = G_INFO_CELL;      break;
-      default       : /* unknown problem */
-                      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                      return rce;
-                      break;
-      }
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(special family)------------------------*/
-   /*> --rce;                                                                         <* 
-    *> if (a_major == 'c') {                                                           <* 
-    *>    switch (a_minor) {                                                           <* 
-    *>    case 's'      : KEYS_col ("cs");                break;                      <* 
-    *>    case 'h'      : KEYS_col ("ch");                break;                      <* 
-    *>    case 'l'      : KEYS_col ("cl");                break;                      <* 
-    *>    case 'e'      : KEYS_col ("ce");                break;                      <* 
-    *>    case 't'      : KEYS_row ("ct");                break;                      <* 
-    *>    case 'b'      : KEYS_row ("cb");                break;                      <* 
-    *>    default       : return rce;                     break;                      <* 
-    *>    }                                                                           <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
-   /*> else if (a_major == 'x') {                                                      <* 
-    *>    sch = ' ';                                                                  <* 
-    *>    ch  = 24;                                                                   <* 
-    *> }                                                                              <*/
-   /*---(goto family)--------------------*/
-   if (a_major == 'g') {
-      rc = KEYS_gz_family  (a_major, a_minor);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(scroll family)------------------*/
-   if (a_major == 'z') {
-      rc = KEYS_gz_family  (a_major, a_minor);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(end family)---------------------*/
-   if (a_major == 'e') {
-      rc = KEYS_e_family   (a_major, a_minor);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(end family)---------------------*/
-   if (a_major == 'c') {
-      rc = KEYS_c_family   (a_major, a_minor);
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(delete family)-------------------------*/
-   /*> --rce;                                                                         <* 
-    *> if (a_major == 'd') {                                                           <* 
-    *>    switch (a_minor) {                                                           <* 
-    *>    case 'd' : --NROW;          break;                                          <* 
-    *>    case 'w' : --NCOL;     break;                                               <* 
-    *>    default  : return rce;                         break;                       <* 
-    *>    }                                                                           <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
-   /*---(complete)------------------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> PRIV char    /+-> remove the current character -------[ ------ [fc.630.114.62]+/ /+-[02.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS__del          (char a_key)                                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    int       i    = 0;                       /+ loop iterator                 +/                                               <* 
+ *>    /+---(check room for backspace)-------+/                                                                                    <* 
+ *>    EDIT_prep ();                                                                                                               <* 
+ *>    if (my.npos == 0) {                                                                                                         <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    if (a_key == 'x') {                                                                                                         <* 
+ *>       if (my.cpos >= my.npos)  return -2;                                                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    if (a_key == 'X') {                                                                                                         <* 
+ *>       --(my.cpos);                                                                                                             <* 
+ *>       if (my.cpos < 0) {                                                                                                       <* 
+ *>          my.cpos = 0;                                                                                                          <* 
+ *>          return -1;                                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(pull back text)-----------------+/                                                                                    <* 
+ *>    for (i = my.cpos; i <= my.npos; ++i) {                                                                                      <* 
+ *>       g_contents[i] = g_contents[i + 1];                                                                                       <* 
+ *>    }                                                                                                                           <* 
+ *>    EDIT_done ();                                                                                                               <* 
+ *>    /+---(adjust for delete)--------------+/                                                                                    <* 
+ *>    /+> if (my.cpos >=  my.npos) my.cpos = my.npos - 1;                                <+/                                      <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keystrokes in visual mode --[ leaf   [gz.210.201.00]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-KEYS_visual   (int a_prev, int a_curr)
-{
-   /*---(complete)------------------------------*/
-   return 0;
-}
+/*> char         /+-> process keys for buffer movement ---[ leaf   [ge.F64.217.CA]+/ /+-[01.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> SMOD_buffer   (char a_major, char a_minor)                                                                                     <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(design notes)-------------------+/                                                                                    <* 
+ *>    /+                                                                                                                          <* 
+ *>     *   this should imitate our RBUF capability in vimm                                                                        <* 
+ *>     +/                                                                                                                         <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(request buffer mode)------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_value   ("SMOD_BUF"  , yVIKEYS_mode_not (SMOD_BUFFER));                                                   <* 
+ *>    if (a_major != ' ' && a_minor == ',') {                                                                                     <* 
+ *>       DEBUG_USER   yLOG_note    ("enter buffer mode");                                                                         <* 
+ *>       if (yVIKEYS_mode_not (SMOD_BUFFER))  yVIKEYS_mode_enter  (SMOD_BUFFER  );                                                <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_minor;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    if (a_major == ',' && yVIKEYS_mode_not (SMOD_BUFFER)) {                                                                     <* 
+ *>       DEBUG_USER   yLOG_note    ("force enter buffer mode");                                                                   <* 
+ *>       yVIKEYS_mode_enter  (SMOD_BUFFER  );                                                                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (a_major != ',') {                                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is wrong)");                                                                         <* 
+ *>       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER)) {                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("not in buffer mode");                                                                        <* 
+ *>       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(mode changes)-------------------+/                                                                                    <* 
+ *>    if (a_minor == G_KEY_ESCAPE) {                                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("escape, choose nothing");                                                                    <* 
+ *>       my.menu = ' ';                                                                                                           <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check for control keys)---------+/                                                                                    <* 
+ *>    --rce;                                                                                                                      <* 
+ *>    if (strchr ("[<>]", a_minor) != NULL) {                                                                                     <* 
+ *>       DEBUG_USER   yLOG_note    ("relative mode");                                                                             <* 
+ *>       switch (a_minor) {                                                                                                       <* 
+ *>       case '[' :  LOC_tab_first ();  break;                                                                                    <* 
+ *>       case '<' :  LOC_tab_prev  ();  break;                                                                                    <* 
+ *>       case '>' :  LOC_tab_next  ();  break;                                                                                    <* 
+ *>       case ']' :  LOC_tab_last  ();  break;                                                                                    <* 
+ *>       }                                                                                                                        <* 
+ *>    } else if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", a_minor) != NULL) {                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("relative mode");                                                                             <* 
+ *>       LOC_tab_switch_char (a_minor);                                                                                           <* 
+ *>    } else if (a_minor == ',') {                                                                                                <* 
+ *>       my.info_win = G_INFO_BUFS;                                                                                               <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_major;                                                                                                          <* 
+ *>    } else {                                                                                                                    <* 
+ *>       yVIKEYS_mode_exit  ();                                                                                                   <* 
+ *>       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(exit mode)----------------------+/                                                                                    <* 
+ *>    CURS_screen_reset  ();                                                                                                      <* 
+ *>    DEBUG_USER   yLOG_value   ("done"      , yVIKEYS_repeat_norm ());                                                           <* 
+ *>    if (yVIKEYS_repeat_norm () == 0)  yVIKEYS_mode_exit  ();                                                                    <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-PRIV char    /*-> remove the current character -------[ ------ [fc.630.114.62]*/ /*-[02.0000.013.!]-*/ /*-[--.---.---.--]-*/
-KEYS__del          (char a_key)
-{
-   int       i    = 0;                       /* loop iterator                 */
-   /*---(check room for backspace)-------*/
-   EDIT_prep ();
-   if (my.npos == 0) {
-      return 0;
-   }
-   if (a_key == 'x') {
-      if (my.cpos >= my.npos)  return -2;
-   }
-   if (a_key == 'X') {
-      --(my.cpos);
-      if (my.cpos < 0) {
-         my.cpos = 0;
-         return -1;
-      }
-   }
-   /*---(pull back text)-----------------*/
-   for (i = my.cpos; i <= my.npos; ++i) {
-      g_contents[i] = g_contents[i + 1];
-   }
-   EDIT_done ();
-   /*---(adjust for delete)--------------*/
-   /*> if (my.cpos >=  my.npos) my.cpos = my.npos - 1;                                <*/
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> process keys for buffer movement ---[ leaf   [ge.F64.217.CA]*/ /*-[01.0000.102.!]-*/ /*-[--.---.---.--]-*/
-SMOD_buffer   (char a_major, char a_minor)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   this should imitate our RBUF capability in vimm
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(request buffer mode)------------*/
-   DEBUG_USER   yLOG_value   ("SMOD_BUF"  , yVIKEYS_mode_not (SMOD_BUFFER));
-   if (a_major != ' ' && a_minor == ',') {
-      DEBUG_USER   yLOG_note    ("enter buffer mode");
-      if (yVIKEYS_mode_not (SMOD_BUFFER))  yVIKEYS_mode_enter  (SMOD_BUFFER  );
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_minor;
-   }
-   /*---(defenses)-----------------------*/
-   if (a_major == ',' && yVIKEYS_mode_not (SMOD_BUFFER)) {
-      DEBUG_USER   yLOG_note    ("force enter buffer mode");
-      yVIKEYS_mode_enter  (SMOD_BUFFER  );
-   }
-   --rce;  if (a_major != ',') {
-      DEBUG_USER   yLOG_note    ("a_major is wrong)");
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   --rce;  if (yVIKEYS_mode_not (SMOD_BUFFER)) {
-      DEBUG_USER   yLOG_note    ("not in buffer mode");
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(mode changes)-------------------*/
-   if (a_minor == G_KEY_ESCAPE) {
-      DEBUG_USER   yLOG_note    ("escape, choose nothing");
-      my.menu = ' ';
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(check for control keys)---------*/
-   --rce;
-   if (strchr ("[<>]", a_minor) != NULL) {
-      DEBUG_USER   yLOG_note    ("relative mode");
-      switch (a_minor) {
-      case '[' :  LOC_tab_first ();  break;
-      case '<' :  LOC_tab_prev  ();  break;
-      case '>' :  LOC_tab_next  ();  break;
-      case ']' :  LOC_tab_last  ();  break;
-      }
-   } else if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", a_minor) != NULL) {
-      DEBUG_USER   yLOG_note    ("relative mode");
-      LOC_tab_switch_char (a_minor);
-   } else if (a_minor == ',') {
-      my.info_win = G_INFO_BUFS;
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   } else {
-      yVIKEYS_mode_exit  ();
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(exit mode)----------------------*/
-   CURS_screen_reset  ();
-   DEBUG_USER   yLOG_value   ("done"      , yVIKEYS_repeat_norm ());
-   if (yVIKEYS_repeat_norm () == 0)  yVIKEYS_mode_exit  ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> menu sub-mode ----------------------[ ------ [ge.943.234.55]*/ /*-[02.0000.102.!]-*/ /*-[--.---.---.--]-*/
-SMOD_menus         (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   static char x_append    = '-';
-   static char x_saved = '\0';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
-   --rce;  if (yVIKEYS_mode_not (SMOD_MENUS  )) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(mode changes)-------------------*/
-   if (a_minor == G_KEY_ESCAPE) {
-      DEBUG_USER   yLOG_note    ("escape, choose nothing");
-      my.menu = ' ';
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(top menu)-----------------------*/
-   if (a_major == ' ') {
-      my.menu = a_minor;
-   } else {
-      DEBUG_USER   yLOG_note    ("execute option");
-      if (a_major == 'F') {
-         yVIKEYS_mode_enter  (SMOD_FORMAT);
-         SMOD_format (' ', a_minor);
-      }
-      my.menu = ' ';
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return a_minor;
-}
+/*> char         /+-> menu sub-mode ----------------------[ ------ [ge.943.234.55]+/ /+-[02.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> SMOD_menus         (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    static char x_append    = '-';                                                                                              <* 
+ *>    static char x_saved = '\0';                                                                                                 <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());                                                             <* 
+ *>    --rce;  if (yVIKEYS_mode_not (SMOD_MENUS  )) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(mode changes)-------------------+/                                                                                    <* 
+ *>    if (a_minor == G_KEY_ESCAPE) {                                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("escape, choose nothing");                                                                    <* 
+ *>       my.menu = ' ';                                                                                                           <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(top menu)-----------------------+/                                                                                    <* 
+ *>    if (a_major == ' ') {                                                                                                       <* 
+ *>       my.menu = a_minor;                                                                                                       <* 
+ *>    } else {                                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_note    ("execute option");                                                                            <* 
+ *>       if (a_major == 'F') {                                                                                                    <* 
+ *>          yVIKEYS_mode_enter  (SMOD_FORMAT);                                                                                    <* 
+ *>          SMOD_format (' ', a_minor);                                                                                           <* 
+ *>       }                                                                                                                        <* 
+ *>       my.menu = ' ';                                                                                                           <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return a_minor;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -962,641 +946,641 @@ SMOD_menus         (char a_major, char a_minor)
 /*====================------------------------------------====================*/
 PRIV void  o___CONTENT_________o () { return; }
 
-char         /*-> process keys for cell edit mode ----[ leaf   [ge.#R6.23#.HG]*/ /*-[05.0000.102.#]-*/ /*-[--.---.---.--]-*/
-MODE_source   (char a_major, char a_minor)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   this should imitate the vi-normal mode, but only horizontally.
-    *   all formulas and contents should be relatively short or they
-    *   should be broken up (formulas) or in a database (text).  so,
-    *   forget wordwrap, 'g', and 'z' commands.
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_multi     [LEN_RECD]   = "cdgz";
-   tCELL      *x_curr      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
-   --rce;  if (yVIKEYS_mode_not (MODE_SOURCE)) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(check for control keys)---------*/
-   /*---(range corrections)--------------*/
-   /*> my.npos  = strlen (g_contents);                                                <* 
-    *> if (my.cpos <  0      )   my.cpos = 0;                                         <* 
-    *> if (my.cpos >= my.npos)   my.cpos = my.npos - 1;                               <*/
-   /*---(single letter)------------------*/
-   if (a_major == ' ') {
-      /*---(space)--------------------------*/
-      if (a_minor == G_KEY_SPACE ) {
-         DEBUG_USER   yLOG_note    ("space, nothing to do");
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return  0;
-      }
-      /*---(mode changes)----------------*/
-      switch (a_minor) {
-      case G_KEY_RETURN :
-         DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");
-         CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
-         EDIT_pos     ('r');
-         yVIKEYS_mode_exit  ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;   /* escape  */
-         break;
-      case G_KEY_ESCAPE : case  'U' :
-         DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");
-         x_curr = LOC_cell_at_curr ();
-         if (x_curr != NULL && x_curr->s != NULL) {
-            strncpy (g_contents, x_curr->s, LEN_RECD); 
-         }
-         EDIT_pos     ('r');
-         yVIKEYS_mode_exit  ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case  'r' : case  'R' :
-         DEBUG_USER   yLOG_note    ("rR keys for replace sub-mode");
-         yVIKEYS_mode_enter   (SMOD_REPLACE);
-         SMOD_replace ('m', ' ');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-         break;
-      case  'v' :
-         DEBUG_USER   yLOG_note    ("v key for text select sub-mode");
-         yVIKEYS_mode_enter   (SMOD_SELECT );
-         SELC_mode    ('m', ' ');
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return 0;
-         break;
-      case '"'  :
-         yVIKEYS_mode_enter   (SMOD_TEXTREG );
-         return a_minor;  /* make sure double quote goes in prev char */
-         break;
-      case 'E'  :
-         yVIKEYS_mode_enter   (SMOD_ERROR   );
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return SMOD_ERROR;  /* make sure mode indicator goes also       */
-         break;
-      }
-      /*---(multikey prefixes)-----------*/
-      if (strchr (x_multi, a_minor) != 0) {
-         DEBUG_USER   yLOG_note    ("captured a multikey prefix a_minor");
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
-         return a_minor;
-      }
-      /*---(cut/copy/paste)--------------*/
-      switch (a_minor) {
-      case  'y' : case  'Y' :
-         DEBUG_USER   yLOG_note    ("yank selection text");
-         TREG_copy   ();
-         break;
-      case  'd' :
-         DEBUG_USER   yLOG_note    ("delete selection text");
-         TREG_copy   ();
-         TREG_delete ();
-         EDIT_done   ();
-         break;
-      case  'p' :
-         DEBUG_USER   yLOG_note    ("paste after selection text");
-         TREG_paste  ('>');
-         EDIT_done   ();
-         break;
-      case  'P' :
-         DEBUG_USER   yLOG_note    ("paste before selection text");
-         TREG_paste  ('<');
-         EDIT_done   ();
-         break;
-      }
-      /*---(basic movement)--------------*/
-      switch (a_minor) {
-      case '0' : EDIT_pos ('0');    break;
-      case 'H' : EDIT_pos ('l');    break;
-      case 'h' : EDIT_pos ('-');    break;
-      case 'l' : EDIT_pos ('+');    break;
-      case 'L' : EDIT_pos ('m');    break;
-      case '$' : EDIT_pos ('$');    break;
-      }
-      /*---(word movement)---------------*/
-      switch (a_minor) {
-      case 'w' : EDIT_pos ('w');    break;
-      case 'b' : EDIT_pos ('W');    break;
-      case 'e' : EDIT_pos ('e');    break;
-      }
-      /*---(changes)---------------------*/
-      switch (a_minor) {
-      case 'x' :
-         TREG_copy   ();
-         KEYS__del   ('x');
-         break;
-      case 'X' :
-         TREG_copy   ();
-         KEYS__del   ('X');
-         break;
-      case 'D' : g_contents[my.cpos] = '\0';
-                 EDIT_done ();
-                 break;
-      case 'S' : EDIT_start  ("");
-                 yVIKEYS_mode_enter  (MODE_INPUT);
-                 MODE_input ('m', 'i');
-                 return 'i';
-                 break;
-      }
-      /*---(going to input)--------------*/
-      switch (a_minor) {
-      case 'I' : EDIT_pos   ('0');
-      case 'i' : yVIKEYS_mode_enter  (MODE_INPUT);
-                 MODE_input ('m', tolower (a_minor));
-                 DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                 return tolower (a_minor);
-                 break;
-      case 'A' : EDIT_pos   ('$');
-      case 'a' : yVIKEYS_mode_enter  (MODE_INPUT);
-                 MODE_input ('m', tolower (a_minor));
-                 DEBUG_USER   yLOG_exit    (__FUNCTION__);
-                 return tolower (a_minor);
-                 break;
-                 /*> case '.' : yVIKEYS_mode_enter (SMOD_WANDER); wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <* 
-                  *> case ':' : yVIKEYS_mode_enter (SMOD_WANDER); wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <*/
-      }
-      /*---(multikey)--------------------*/
-   } else if (a_major == 'g') {
-      switch (a_minor) {
-      case 's' : EDIT_pos ('T');    break;
-      case 'h' : EDIT_pos ('t');    break;
-      case 'c' : EDIT_pos ('.');    break;
-      case 'l' : EDIT_pos ('b');    break;
-      case 'e' : EDIT_pos ('B');    break;
-      }
-   } else if (a_major == 'z') {
-      switch (a_minor) {
-      case 's' : EDIT_pos ('^');    break;
-      case 'h' : EDIT_pos ('k');    break;
-      case 'c' : EDIT_pos (',');    break;
-      case 'l' : EDIT_pos ('j');    break;
-      case 'e' : EDIT_pos ('v');    break;
-      }
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process keys for cell edit mode ----[ leaf   [ge.#R6.23#.HG]+/ /+-[05.0000.102.#]-+/ /+-[--.---.---.--]-+/                                                                                                               <* 
+ *> MODE_source   (char a_major, char a_minor)                                                                                                                                                                                                 <* 
+ *> {                                                                                                                                                                                                                                          <* 
+ *>    /+---(design notes)-------------------+/                                                                                                                                                                                                <* 
+ *>    /+                                                                                                                                                                                                                                      <* 
+ *>     *   this should imitate the vi-normal mode, but only horizontally.                                                                                                                                                                     <* 
+ *>     *   all formulas and contents should be relatively short or they                                                                                                                                                                       <* 
+ *>     *   should be broken up (formulas) or in a database (text).  so,                                                                                                                                                                       <* 
+ *>     *   forget wordwrap, 'g', and 'z' commands.                                                                                                                                                                                            <* 
+ *>     +/                                                                                                                                                                                                                                     <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                                                                                                                <* 
+ *>    char        rce         = -10;                                                                                                                                                                                                          <* 
+ *>    char        x_multi     [LEN_RECD]   = "cdgz";                                                                                                                                                                                          <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                                                                                                                                         <* 
+ *>    /+---(header)-------------------------+/                                                                                                                                                                                                <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                                                                                                                               <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                                                                                                                                      <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                                                                                                                                      <* 
+ *>    /+---(defenses)-----------------------+/                                                                                                                                                                                                <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());                                                                                                                                                                          <* 
+ *>    --rce;  if (yVIKEYS_mode_not (MODE_SOURCE)) {                                                                                                                                                                                           <* 
+ *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                                                                                                                                  <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                            <* 
+ *>       return rce;                                                                                                                                                                                                                          <* 
+ *>    }                                                                                                                                                                                                                                       <* 
+ *>    /+---(check for control keys)---------+/                                                                                                                                                                                                <* 
+ *>    /+---(range corrections)--------------+/                                                                                                                                                                                                <* 
+ *>    /+> my.npos  = strlen (g_contents);                                                <*                                                                                                                                                   <* 
+ *>     *> if (my.cpos <  0      )   my.cpos = 0;                                         <*                                                                                                                                                   <* 
+ *>     *> if (my.cpos >= my.npos)   my.cpos = my.npos - 1;                               <+/                                                                                                                                                  <* 
+ *>    /+---(single letter)------------------+/                                                                                                                                                                                                <* 
+ *>    if (a_major == ' ') {                                                                                                                                                                                                                   <* 
+ *>       /+---(space)--------------------------+/                                                                                                                                                                                             <* 
+ *>       if (a_minor == G_KEY_SPACE ) {                                                                                                                                                                                                       <* 
+ *>          DEBUG_USER   yLOG_note    ("space, nothing to do");                                                                                                                                                                               <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return  0;                                                                                                                                                                                                                        <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(mode changes)----------------+/                                                                                                                                                                                                <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case G_KEY_RETURN :                                                                                                                                                                                                                  <* 
+ *>          DEBUG_USER   yLOG_note    ("enter, save, and return to previous mode");                                                                                                                                                           <* 
+ *>          CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);                                                                                                                                                                     <* 
+ *>          EDIT_pos     ('r');                                                                                                                                                                                                               <* 
+ *>          yVIKEYS_mode_exit  ();                                                                                                                                                                                                            <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return 0;   /+ escape  +/                                                                                                                                                                                                         <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case G_KEY_ESCAPE : case  'U' :                                                                                                                                                                                                      <* 
+ *>          DEBUG_USER   yLOG_note    ("escape, forget, and return to previous mode");                                                                                                                                                        <* 
+ *>          x_curr = LOC_cell_at_curr ();                                                                                                                                                                                                     <* 
+ *>          if (x_curr != NULL && x_curr->s != NULL) {                                                                                                                                                                                        <* 
+ *>             strncpy (g_contents, x_curr->s, LEN_RECD);                                                                                                                                                                                     <* 
+ *>          }                                                                                                                                                                                                                                 <* 
+ *>          EDIT_pos     ('r');                                                                                                                                                                                                               <* 
+ *>          yVIKEYS_mode_exit  ();                                                                                                                                                                                                            <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return 0;                                                                                                                                                                                                                         <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case  'r' : case  'R' :                                                                                                                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("rR keys for replace sub-mode");                                                                                                                                                                       <* 
+ *>          yVIKEYS_mode_enter   (SMOD_REPLACE);                                                                                                                                                                                              <* 
+ *>          SMOD_replace ('m', ' ');                                                                                                                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return a_minor;                                                                                                                                                                                                                   <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case  'v' :                                                                                                                                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_note    ("v key for text select sub-mode");                                                                                                                                                                     <* 
+ *>          yVIKEYS_mode_enter   (SMOD_SELECT );                                                                                                                                                                                              <* 
+ *>          SELC_mode    ('m', ' ');                                                                                                                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return 0;                                                                                                                                                                                                                         <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case '"'  :                                                                                                                                                                                                                          <* 
+ *>          yVIKEYS_mode_enter   (SMOD_TEXTREG );                                                                                                                                                                                             <* 
+ *>          return a_minor;  /+ make sure double quote goes in prev char +/                                                                                                                                                                   <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case 'E'  :                                                                                                                                                                                                                          <* 
+ *>          yVIKEYS_mode_enter   (SMOD_ERROR   );                                                                                                                                                                                             <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return SMOD_ERROR;  /+ make sure mode indicator goes also       +/                                                                                                                                                                <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(multikey prefixes)-----------+/                                                                                                                                                                                                <* 
+ *>       if (strchr (x_multi, a_minor) != 0) {                                                                                                                                                                                                <* 
+ *>          DEBUG_USER   yLOG_note    ("captured a multikey prefix a_minor");                                                                                                                                                                 <* 
+ *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                         <* 
+ *>          return a_minor;                                                                                                                                                                                                                   <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(cut/copy/paste)--------------+/                                                                                                                                                                                                <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case  'y' : case  'Y' :                                                                                                                                                                                                              <* 
+ *>          DEBUG_USER   yLOG_note    ("yank selection text");                                                                                                                                                                                <* 
+ *>          TREG_copy   ();                                                                                                                                                                                                                   <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case  'd' :                                                                                                                                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                                                                                                                              <* 
+ *>          TREG_copy   ();                                                                                                                                                                                                                   <* 
+ *>          TREG_delete ();                                                                                                                                                                                                                   <* 
+ *>          EDIT_done   ();                                                                                                                                                                                                                   <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case  'p' :                                                                                                                                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_note    ("paste after selection text");                                                                                                                                                                         <* 
+ *>          TREG_paste  ('>');                                                                                                                                                                                                                <* 
+ *>          EDIT_done   ();                                                                                                                                                                                                                   <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case  'P' :                                                                                                                                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_note    ("paste before selection text");                                                                                                                                                                        <* 
+ *>          TREG_paste  ('<');                                                                                                                                                                                                                <* 
+ *>          EDIT_done   ();                                                                                                                                                                                                                   <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(basic movement)--------------+/                                                                                                                                                                                                <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case '0' : EDIT_pos ('0');    break;                                                                                                                                                                                                 <* 
+ *>       case 'H' : EDIT_pos ('l');    break;                                                                                                                                                                                                 <* 
+ *>       case 'h' : EDIT_pos ('-');    break;                                                                                                                                                                                                 <* 
+ *>       case 'l' : EDIT_pos ('+');    break;                                                                                                                                                                                                 <* 
+ *>       case 'L' : EDIT_pos ('m');    break;                                                                                                                                                                                                 <* 
+ *>       case '$' : EDIT_pos ('$');    break;                                                                                                                                                                                                 <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(word movement)---------------+/                                                                                                                                                                                                <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case 'w' : EDIT_pos ('w');    break;                                                                                                                                                                                                 <* 
+ *>       case 'b' : EDIT_pos ('W');    break;                                                                                                                                                                                                 <* 
+ *>       case 'e' : EDIT_pos ('e');    break;                                                                                                                                                                                                 <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(changes)---------------------+/                                                                                                                                                                                                <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case 'x' :                                                                                                                                                                                                                           <* 
+ *>          TREG_copy   ();                                                                                                                                                                                                                   <* 
+ *>          KEYS__del   ('x');                                                                                                                                                                                                                <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case 'X' :                                                                                                                                                                                                                           <* 
+ *>          TREG_copy   ();                                                                                                                                                                                                                   <* 
+ *>          KEYS__del   ('X');                                                                                                                                                                                                                <* 
+ *>          break;                                                                                                                                                                                                                            <* 
+ *>       case 'D' : g_contents[my.cpos] = '\0';                                                                                                                                                                                               <* 
+ *>                  EDIT_done ();                                                                                                                                                                                                             <* 
+ *>                  break;                                                                                                                                                                                                                    <* 
+ *>       case 'S' : EDIT_start  ("");                                                                                                                                                                                                         <* 
+ *>                  yVIKEYS_mode_enter  (MODE_INPUT);                                                                                                                                                                                         <* 
+ *>                  MODE_input ('m', 'i');                                                                                                                                                                                                    <* 
+ *>                  return 'i';                                                                                                                                                                                                               <* 
+ *>                  break;                                                                                                                                                                                                                    <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(going to input)--------------+/                                                                                                                                                                                                <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case 'I' : EDIT_pos   ('0');                                                                                                                                                                                                         <* 
+ *>       case 'i' : yVIKEYS_mode_enter  (MODE_INPUT);                                                                                                                                                                                         <* 
+ *>                  MODE_input ('m', tolower (a_minor));                                                                                                                                                                                      <* 
+ *>                  DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                 <* 
+ *>                  return tolower (a_minor);                                                                                                                                                                                                 <* 
+ *>                  break;                                                                                                                                                                                                                    <* 
+ *>       case 'A' : EDIT_pos   ('$');                                                                                                                                                                                                         <* 
+ *>       case 'a' : yVIKEYS_mode_enter  (MODE_INPUT);                                                                                                                                                                                         <* 
+ *>                  MODE_input ('m', tolower (a_minor));                                                                                                                                                                                      <* 
+ *>                  DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                 <* 
+ *>                  return tolower (a_minor);                                                                                                                                                                                                 <* 
+ *>                  break;                                                                                                                                                                                                                    <* 
+ *>                  /+> case '.' : yVIKEYS_mode_enter (SMOD_WANDER); wtype = 'c'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <*    <* 
+ *>                   *> case ':' : yVIKEYS_mode_enter (SMOD_WANDER); wtype = 'r'; wtab = CTAB; wcol = tabs[CTAB].ccol; wrow = tabs[CTAB].crow; wpos = my.cpos; strcpy(wref, ""); strcpy(wref2, ""); strcpy(wsave, g_contents); break;   <+/   <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>       /+---(multikey)--------------------+/                                                                                                                                                                                                <* 
+ *>    } else if (a_major == 'g') {                                                                                                                                                                                                            <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case 's' : EDIT_pos ('T');    break;                                                                                                                                                                                                 <* 
+ *>       case 'h' : EDIT_pos ('t');    break;                                                                                                                                                                                                 <* 
+ *>       case 'c' : EDIT_pos ('.');    break;                                                                                                                                                                                                 <* 
+ *>       case 'l' : EDIT_pos ('b');    break;                                                                                                                                                                                                 <* 
+ *>       case 'e' : EDIT_pos ('B');    break;                                                                                                                                                                                                 <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>    } else if (a_major == 'z') {                                                                                                                                                                                                            <* 
+ *>       switch (a_minor) {                                                                                                                                                                                                                   <* 
+ *>       case 's' : EDIT_pos ('^');    break;                                                                                                                                                                                                 <* 
+ *>       case 'h' : EDIT_pos ('k');    break;                                                                                                                                                                                                 <* 
+ *>       case 'c' : EDIT_pos (',');    break;                                                                                                                                                                                                 <* 
+ *>       case 'l' : EDIT_pos ('j');    break;                                                                                                                                                                                                 <* 
+ *>       case 'e' : EDIT_pos ('v');    break;                                                                                                                                                                                                 <* 
+ *>       }                                                                                                                                                                                                                                    <* 
+ *>    }                                                                                                                                                                                                                                       <* 
+ *>    /+---(complete)-----------------------+/                                                                                                                                                                                                <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                                                                                                                               <* 
+ *>    return 0;                                                                                                                                                                                                                               <* 
+ *> }                                                                                                                                                                                                                                          <*/
 
-char         /*-> replace sub-mode -------------------[ ------ [ge.RG6.25#.E5]*/ /*-[02.0000.112.E]-*/ /*-[--.---.---.--]-*/
-SMOD_replace  (char a_major, char a_minor)
-{  /*---(design notes)-------------------*/
-   /*
-    *   very limited sub-mode of SOURCE mode.  allows a user to "type over"
-    *   existing text including past the end of the line.  there are no
-    *   special keys except ESCAPE to return to SOURCE mode.
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_majors    [LEN_RECD]  = "rRm\\";
-   static char x_append    = '-';
-   static char x_saved = '\0';
-   static char x_prev  = '-';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
-   --rce;  if (yVIKEYS_mode_not (SMOD_REPLACE)) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);
-   --rce;  if (strchr (x_majors, a_major) == 0) {
-      DEBUG_USER   yLOG_note    ("a_major is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   EDIT_prep   ();
-   /*---(escaped chars)------------------*/
-   if (a_minor == '\\' && x_prev != '\\') {
-      x_prev = '\\';
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   }
-   if (x_prev == '\\') {
-      x_prev = '-';
-      switch (a_minor) {
-      case 'n'  :  a_minor = G_CHAR_RETURN;  break;  /* return char           */
-      case 'e'  :  a_minor = G_CHAR_ESCAPE;  break;  /* escape char           */
-      case 't'  :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
-      case 'b'  :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
-      case 's'  :  a_minor = G_CHAR_SPACE;   break;  /* visual space          */
-      case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
-      case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
-      case '0'  :  a_minor = G_CHAR_NULL;    break;  /* null                  */
-      case 'a'  :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
-      case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
-      case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
-      case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
-      case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
-      case '"'  :  a_minor = '"';            break;
-      case '\'' :  a_minor = '\'';           break;
-      case '\\' :  a_minor = '\\';           break;
-      default   :  return a_major;           break;
-      }
-   }
-   /*---(mode changes)-------------------*/
-   if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {
-      DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
-      if (x_append == 'y') {
-         g_contents [my.cpos] = '\0';
-      }
-      if (x_saved != '\0') {
-         g_contents [my.cpos] = x_saved;
-      }
-      x_append = '-';
-      EDIT_done   ();
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(handle keys)--------------------*/
-   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-   DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);
-   /*---(check for backspace)------------*/
-   if (a_major == 'R' && (a_minor == G_KEY_DEL || a_minor == G_KEY_BS)) {
-      DEBUG_USER   yLOG_note    ("handle a backspace/delete");
-      if (my.cpos > 0) {
-         g_contents [my.cpos] = x_saved;
-         --(my.cpos);
-         x_saved = g_contents [my.cpos];
-         g_contents [my.cpos] = G_CHAR_PLACE;
-      }
-      EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   }
-   /*---(check for mark)-----------------*/
-   if (a_major == 'm') {
-      DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
-      x_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = G_CHAR_PLACE;
-      EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(handle normal chars)------------*/
-   if (a_major == 'r') {
-      DEBUG_USER   yLOG_note    ("replace the marked character");
-      g_contents [my.cpos] = a_minor;
-      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
-      yVIKEYS_mode_exit ();
-      EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   if (a_major == 'R') {
-      DEBUG_USER   yLOG_note    ("replace the marked character");
-      g_contents [my.cpos] = a_minor;
-      DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);
-      ++(my.cpos);
-      x_saved = g_contents [my.cpos];
-      g_contents [my.cpos] = G_CHAR_PLACE;
-   }
-   /*---(correct current position)-------*/
-   DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-   DEBUG_USER   yLOG_value   ("curr end"  , my.npos);
-   if (my.cpos  >= my.npos) {
-      DEBUG_USER   yLOG_note    ("update the end pos");
-      g_contents [my.npos    ] = G_CHAR_PLACE;
-      g_contents [my.npos + 1] = '\0';
-      x_append = 'y';
-   }
-   /*---(wrap up)------------------------*/
-   EDIT_done   ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return a_major;
-}
+/*> char         /+-> replace sub-mode -------------------[ ------ [ge.RG6.25#.E5]+/ /+-[02.0000.112.E]-+/ /+-[--.---.---.--]-+/   <* 
+ *> SMOD_replace  (char a_major, char a_minor)                                                                                     <* 
+ *> {  /+---(design notes)-------------------+/                                                                                    <* 
+ *>    /+                                                                                                                          <* 
+ *>     *   very limited sub-mode of SOURCE mode.  allows a user to "type over"                                                    <* 
+ *>     *   existing text including past the end of the line.  there are no                                                        <* 
+ *>     *   special keys except ESCAPE to return to SOURCE mode.                                                                   <* 
+ *>     +/                                                                                                                         <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        x_majors    [LEN_RECD]  = "rRm\\";                                                                              <* 
+ *>    static char x_append    = '-';                                                                                              <* 
+ *>    static char x_saved = '\0';                                                                                                 <* 
+ *>    static char x_prev  = '-';                                                                                                  <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());                                                             <* 
+ *>    --rce;  if (yVIKEYS_mode_not (SMOD_REPLACE)) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);                                                                        <* 
+ *>    --rce;  if (strchr (x_majors, a_major) == 0) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    EDIT_prep   ();                                                                                                             <* 
+ *>    /+---(escaped chars)------------------+/                                                                                    <* 
+ *>    if (a_minor == '\\' && x_prev != '\\') {                                                                                    <* 
+ *>       x_prev = '\\';                                                                                                           <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_major;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    if (x_prev == '\\') {                                                                                                       <* 
+ *>       x_prev = '-';                                                                                                            <* 
+ *>       switch (a_minor) {                                                                                                       <* 
+ *>       case 'n'  :  a_minor = G_CHAR_RETURN;  break;  /+ return char           +/                                               <* 
+ *>       case 'e'  :  a_minor = G_CHAR_ESCAPE;  break;  /+ escape char           +/                                               <* 
+ *>       case 't'  :  a_minor = G_CHAR_TAB;     break;  /+ tab char              +/                                               <* 
+ *>       case 'b'  :  a_minor = G_CHAR_BS;      break;  /+ backspace char        +/                                               <* 
+ *>       case 's'  :  a_minor = G_CHAR_SPACE;   break;  /+ visual space          +/                                               <* 
+ *>       case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /+ field delimiter       +/                                               <* 
+ *>       case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /+ group delimiter       +/                                               <* 
+ *>       case '0'  :  a_minor = G_CHAR_NULL;    break;  /+ null                  +/                                               <* 
+ *>       case 'a'  :  a_minor = G_CHAR_ALT;     break;  /+ alt prefix            +/                                               <* 
+ *>       case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /+ control prefix        +/                                               <* 
+ *>       case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /+ break point           +/                                               <* 
+ *>       case 'h'  :  a_minor = G_CHAR_HALT;    break;  /+ halt  <C-c>           +/                                               <* 
+ *>       case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /+ force redisplay       +/                                               <* 
+ *>       case '"'  :  a_minor = '"';            break;                                                                            <* 
+ *>       case '\'' :  a_minor = '\'';           break;                                                                            <* 
+ *>       case '\\' :  a_minor = '\\';           break;                                                                            <* 
+ *>       default   :  return a_major;           break;                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(mode changes)-------------------+/                                                                                    <* 
+ *>    if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {                                                                   <* 
+ *>       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");                                                      <* 
+ *>       if (x_append == 'y') {                                                                                                   <* 
+ *>          g_contents [my.cpos] = '\0';                                                                                          <* 
+ *>       }                                                                                                                        <* 
+ *>       if (x_saved != '\0') {                                                                                                   <* 
+ *>          g_contents [my.cpos] = x_saved;                                                                                       <* 
+ *>       }                                                                                                                        <* 
+ *>       x_append = '-';                                                                                                          <* 
+ *>       EDIT_done   ();                                                                                                          <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(handle keys)--------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("curr char" , g_contents [my.cpos]);                                                             <* 
+ *>    /+---(check for backspace)------------+/                                                                                    <* 
+ *>    if (a_major == 'R' && (a_minor == G_KEY_DEL || a_minor == G_KEY_BS)) {                                                      <* 
+ *>       DEBUG_USER   yLOG_note    ("handle a backspace/delete");                                                                 <* 
+ *>       if (my.cpos > 0) {                                                                                                       <* 
+ *>          g_contents [my.cpos] = x_saved;                                                                                       <* 
+ *>          --(my.cpos);                                                                                                          <* 
+ *>          x_saved = g_contents [my.cpos];                                                                                       <* 
+ *>          g_contents [my.cpos] = G_CHAR_PLACE;                                                                                  <* 
+ *>       }                                                                                                                        <* 
+ *>       EDIT_done   ();                                                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_major;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check for mark)-----------------+/                                                                                    <* 
+ *>    if (a_major == 'm') {                                                                                                       <* 
+ *>       DEBUG_USER   yLOG_note    ("mark replacement position and save existing");                                               <* 
+ *>       x_saved = g_contents [my.cpos];                                                                                          <* 
+ *>       g_contents [my.cpos] = G_CHAR_PLACE;                                                                                     <* 
+ *>       EDIT_done   ();                                                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(handle normal chars)------------+/                                                                                    <* 
+ *>    if (a_major == 'r') {                                                                                                       <* 
+ *>       DEBUG_USER   yLOG_note    ("replace the marked character");                                                              <* 
+ *>       g_contents [my.cpos] = a_minor;                                                                                          <* 
+ *>       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);                                                          <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       EDIT_done   ();                                                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    if (a_major == 'R') {                                                                                                       <* 
+ *>       DEBUG_USER   yLOG_note    ("replace the marked character");                                                              <* 
+ *>       g_contents [my.cpos] = a_minor;                                                                                          <* 
+ *>       DEBUG_USER   yLOG_char    ("new  char" , g_contents [my.cpos]);                                                          <* 
+ *>       ++(my.cpos);                                                                                                             <* 
+ *>       x_saved = g_contents [my.cpos];                                                                                          <* 
+ *>       g_contents [my.cpos] = G_CHAR_PLACE;                                                                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(correct current position)-------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);                                                                          <* 
+ *>    DEBUG_USER   yLOG_value   ("curr end"  , my.npos);                                                                          <* 
+ *>    if (my.cpos  >= my.npos) {                                                                                                  <* 
+ *>       DEBUG_USER   yLOG_note    ("update the end pos");                                                                        <* 
+ *>       g_contents [my.npos    ] = G_CHAR_PLACE;                                                                                 <* 
+ *>       g_contents [my.npos + 1] = '\0';                                                                                         <* 
+ *>       x_append = 'y';                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(wrap up)------------------------+/                                                                                    <* 
+ *>    EDIT_done   ();                                                                                                             <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return a_major;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> review cell errors -----------------[ ------ [ge.933.236.32]*/ /*-[01.0000.102.!]-*/ /*-[--.---.---.--]-*/
-SMOD_error         (char a_major, char a_minor)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   static char x_append    = '-';
-   static char x_saved = '\0';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());
-   /*> --rce;  if (yVIKEYS_mode_not (SMOD_ERROR)) {                                           <* 
-    *>    DEBUG_USER   yLOG_note    ("not the correct mode");                         <* 
-    *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
-   /*---(mode changes)-------------------*/
-   /*> if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {                                          <* 
-    *>    DEBUG_USER   yLOG_note    ("escape/return, return to previous mode");       <* 
-    *>    yVIKEYS_mode_exit ();                                                             <* 
-    *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
-   if (a_minor == '?') {
-      DEBUG_USER   yLOG_note    ("display errors for cell");
-      my.info_win = G_INFO_ERROR;
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   }
-   /*---(complete)-----------------------*/
-   yVIKEYS_mode_exit ();
+/*> char         /+-> review cell errors -----------------[ ------ [ge.933.236.32]+/ /+-[01.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> SMOD_error         (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    static char x_append    = '-';                                                                                              <* 
+ *>    static char x_saved = '\0';                                                                                                 <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr ());                                                             <* 
+ *>    /+> --rce;  if (yVIKEYS_mode_not (SMOD_ERROR)) {                                           <*                               <* 
+ *>     *>    DEBUG_USER   yLOG_note    ("not the correct mode");                         <*                                       <* 
+ *>     *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <*                                       <* 
+ *>     *>    return rce;                                                                 <*                                       <* 
+ *>     *> }                                                                              <+/                                      <* 
+ *>    /+---(mode changes)-------------------+/                                                                                    <* 
+ *>    /+> if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {                                          <*                   <* 
+ *>     *>    DEBUG_USER   yLOG_note    ("escape/return, return to previous mode");       <*                                       <* 
+ *>     *>    yVIKEYS_mode_exit ();                                                             <*                                 <* 
+ *>     *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                   <*                                       <* 
+ *>     *>    return 0;                                                                   <*                                       <* 
+ *>     *> }                                                                              <+/                                      <* 
+ *>    if (a_minor == '?') {                                                                                                       <* 
+ *>       DEBUG_USER   yLOG_note    ("display errors for cell");                                                                   <* 
+ *>       my.info_win = G_INFO_ERROR;                                                                                              <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_major;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    yVIKEYS_mode_exit ();                                                                                                       <* 
+ *>                                                                                                                                <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>                                                                                                                                <* 
+ *>    return 0;                                                                                                                   <* 
+ *>                                                                                                                                <* 
+ *>    return a_major;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+/*> char         /+-> process keys for input mode --------[ ------ [ge.TQ5.25#.F9]+/ /+-[03.0000.122.R]-+/ /+-[--.---.---.--]-+/   <* 
+ *> MODE_input         (char  a_major, char  a_minor)                                                                              <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(design notes)-------------------+/                                                                                    <* 
+ *>    /+                                                                                                                          <* 
+ *>     *   this should imitate a very basic vi-input mode by handling                                                             <* 
+ *>     *   all characters, ignoring new line, and popping out with escape                                                         <* 
+ *>     +/                                                                                                                         <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        x_majors    [LEN_RECD]   = "IiaAm\\";                                                                           <* 
+ *>    int         i           = 0;             /+ loop iterator                  +/                                               <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                             <* 
+ *>    static char x_prev      = '-';                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
+ *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());                                                              <* 
+ *>    --rce;  if (yVIKEYS_mode_not (MODE_INPUT )) {                                                                               <* 
+ *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);                                                                        <* 
+ *>    --rce;  if (strchr (x_majors, a_major) == 0) {                                                                              <* 
+ *>       DEBUG_USER   yLOG_note    ("a_major is not valid");                                                                      <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    EDIT_prep   ();                                                                                                             <* 
+ *>    /+---(check for initial mark)---------+/                                                                                    <* 
+ *>    if (a_major == 'm') {                                                                                                       <* 
+ *>       DEBUG_USER   yLOG_note    ("mark replacement position and save existing");                                               <* 
+ *>       if (a_minor == 'a' && g_contents [my.cpos] != '\0')  ++(my.cpos);                                                        <* 
+ *>       DEBUG_USER   yLOG_value   ("total pos" , my.npos);                                                                       <* 
+ *>       DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);                                                                       <* 
+ *>       for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];                                                 <* 
+ *>       g_contents [my.cpos] = G_CHAR_PLACE;                                                                                     <* 
+ *>       EDIT_done   ();                                                                                                          <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_minor;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(escaped chars)------------------+/                                                                                    <* 
+ *>    if (a_minor == '\\' && x_prev != '\\') {                                                                                    <* 
+ *>       x_prev = '\\';                                                                                                           <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_major;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    if (x_prev == '\\') {                                                                                                       <* 
+ *>       x_prev = '-';                                                                                                            <* 
+ *>       switch (a_minor) {                                                                                                       <* 
+ *>       case 'n'  :  a_minor = G_CHAR_RETURN;  break;  /+ return char           +/                                               <* 
+ *>       case 'e'  :  a_minor = G_CHAR_ESCAPE;  break;  /+ escape char           +/                                               <* 
+ *>       case 't'  :  a_minor = G_CHAR_TAB;     break;  /+ tab char              +/                                               <* 
+ *>       case 'b'  :  a_minor = G_CHAR_BS;      break;  /+ backspace char        +/                                               <* 
+ *>       case 's'  :  a_minor = G_CHAR_SPACE;   break;  /+ visual space          +/                                               <* 
+ *>       case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /+ field delimiter       +/                                               <* 
+ *>       case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /+ group delimiter       +/                                               <* 
+ *>       case '0'  :  a_minor = G_CHAR_NULL;    break;  /+ null                  +/                                               <* 
+ *>       case 'a'  :  a_minor = G_CHAR_ALT;     break;  /+ alt prefix            +/                                               <* 
+ *>       case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /+ control prefix        +/                                               <* 
+ *>       case 'w'  :  a_minor = G_CHAR_WAIT;    break;  /+ wait/pause            +/                                               <* 
+ *>       case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /+ break point           +/                                               <* 
+ *>       case 'h'  :  a_minor = G_CHAR_HALT;    break;  /+ halt  <C-c>           +/                                               <* 
+ *>       case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /+ force redisplay       +/                                               <* 
+ *>       case 'A'  :  a_minor = G_CHAR_ALPHA;   break;                                                                            <* 
+ *>       case 'B'  :  a_minor = G_CHAR_BETA;    break;                                                                            <* 
+ *>       case 'G'  :  a_minor = G_CHAR_GAMMA;   break;                                                                            <* 
+ *>       case 'D'  :  a_minor = G_CHAR_DELTA;   break;                                                                            <* 
+ *>       case 'E'  :  a_minor = G_CHAR_EPSILON; break;                                                                            <* 
+ *>       case 'Z'  :  a_minor = G_CHAR_ZETA;    break;                                                                            <* 
+ *>       case 'H'  :  a_minor = G_CHAR_ETA;     break;                                                                            <* 
+ *>       case 'Y'  :  a_minor = G_CHAR_THETA;   break;                                                                            <* 
+ *>       case 'I'  :  a_minor = G_CHAR_IOTA;    break;                                                                            <* 
+ *>       case 'K'  :  a_minor = G_CHAR_KAPPA;   break;                                                                            <* 
+ *>       case 'L'  :  a_minor = G_CHAR_LAMBDA;  break;                                                                            <* 
+ *>       case 'M'  :  a_minor = G_CHAR_MU;      break;                                                                            <* 
+ *>       case 'N'  :  a_minor = G_CHAR_NU;      break;                                                                            <* 
+ *>       case 'X'  :  a_minor = G_CHAR_XI;      break;                                                                            <* 
+ *>       case 'O'  :  a_minor = G_CHAR_OMICRON; break;                                                                            <* 
+ *>       case 'P'  :  a_minor = G_CHAR_PI;      break;                                                                            <* 
+ *>       case 'R'  :  a_minor = G_CHAR_RHO;     break;                                                                            <* 
+ *>       case 'S'  :  a_minor = G_CHAR_SIGMA;   break;                                                                            <* 
+ *>       case 'T'  :  a_minor = G_CHAR_TAU;     break;                                                                            <* 
+ *>       case 'U'  :  a_minor = G_CHAR_UPSILON; break;                                                                            <* 
+ *>       case 'F'  :  a_minor = G_CHAR_PHI;     break;                                                                            <* 
+ *>       case 'C'  :  a_minor = G_CHAR_CHI;     break;                                                                            <* 
+ *>       case 'Q'  :  a_minor = G_CHAR_PSI;     break;                                                                            <* 
+ *>       case 'W'  :  a_minor = G_CHAR_OMEGA;   break;                                                                            <* 
+ *>       case '"'  :  a_minor = '"';            break;                                                                            <* 
+ *>       case '\'' :  a_minor = '\'';           break;                                                                            <* 
+ *>       case '\\' :  a_minor = '\\';           break;                                                                            <* 
+ *>       default   :  return a_major;           break;                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(mode changes)-------------------+/                                                                                    <* 
+ *>    if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {                                                                   <* 
+ *>       DEBUG_USER   yLOG_note    ("escape/return, return to source mode");                                                      <* 
+ *>       for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];                                                 <* 
+ *>       if (a_major == 'a')  --(my.cpos);                                                                                        <* 
+ *>       EDIT_done   ();                                                                                                          <* 
+ *>       if (a_minor == G_KEY_RETURN && yVIKEYS_mode_prev() == MODE_MAP) {                                                        <* 
+ *>          CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);                                                         <* 
+ *>       }                                                                                                                        <* 
+ *>       if (a_minor == G_KEY_ESCAPE && yVIKEYS_mode_prev() == MODE_MAP) {                                                        <* 
+ *>          x_curr = LOC_cell_at_curr ();                                                                                         <* 
+ *>          if (x_curr != NULL && x_curr->s != NULL) {                                                                            <* 
+ *>             strlcpy (g_contents, x_curr->s, LEN_RECD);                                                                         <* 
+ *>          } else {                                                                                                              <* 
+ *>             strlcpy (g_contents, ""                            , LEN_RECD);                                                    <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       EDIT_pos  ('r');                                                                                                         <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check for backspace)------------+/                                                                                    <* 
+ *>    if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {                                                                          <* 
+ *>       DEBUG_USER   yLOG_note    ("handle a backspace/delete");                                                                 <* 
+ *>       if (my.cpos > 0) {                                                                                                       <* 
+ *>          --(my.cpos);                                                                                                          <* 
+ *>          DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);                                                                    <* 
+ *>          for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];                                              <* 
+ *>          EDIT_done   ();                                                                                                       <* 
+ *>       }                                                                                                                        <* 
+ *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return a_major;                                                                                                          <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(handle new character)-----------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_note    ("move remaining chars to the right");                                                            <* 
+ *>    for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];                                                    <* 
+ *>    DEBUG_USER   yLOG_note    ("add the character");                                                                            <* 
+ *>    g_contents [my.cpos] = a_minor;                                                                                             <* 
+ *>    ++(my.cpos);                                                                                                                <* 
+ *>    /+---(wrap up)------------------------+/                                                                                    <* 
+ *>    EDIT_done   ();                                                                                                             <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return a_major;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
-   return 0;
+/*> char         /+-> process keys for god mode ----------[ leaf   [gz.210.201.00]+/ /+-[00.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> MODE_god           (char a_prev, char a_curr)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-   return a_major;
-}
+/*> char         /+-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]+/ /+-[01.0000.112.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> SMOD_format        (char a_major, char a_minor)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(check for control keys)---------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case   G_KEY_RETURN : case   G_KEY_ESCAPE :                                                                                 <* 
+ *>       yVIKEYS_mode_exit ();                                                                                                    <* 
+ *>       return 0;   /+ escape  +/                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(column widths)------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'm' : CELL_width    (CHG_INPUT, 'm');  break;  /+ smallest    +/                                                      <* 
+ *>    case  'h' : CELL_width    (CHG_INPUT, 'h');  break;  /+ less by 1   +/                                                      <* 
+ *>    case  'H' : CELL_width    (CHG_INPUT, 'H');  break;  /+ less by 5   +/                                                      <* 
+ *>    case  'l' : CELL_width    (CHG_INPUT, 'l');  break;  /+ more by 1   +/                                                      <* 
+ *>    case  'L' : CELL_width    (CHG_INPUT, 'L');  break;  /+ more by 5   +/                                                      <* 
+ *>    case  'n' : CELL_width    (CHG_INPUT, 'n');  break;  /+ normal      +/                                                      <* 
+ *>    case  'N' : CELL_width    (CHG_INPUT, 'N');  break;  /+ normal-plus +/                                                      <* 
+ *>    case  'w' : CELL_width    (CHG_INPUT, 'w');  break;  /+ wide        +/                                                      <* 
+ *>    case  'W' : CELL_width    (CHG_INPUT, 'W');  break;  /+ largest     +/                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(decimal places)-----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  '0' : CELL_decimals (CHG_INPUT, '0');  break;  /+ none        +/                                                      <* 
+ *>    case  '1' : CELL_decimals (CHG_INPUT, '1');  break;  /+ less by 1   +/                                                      <* 
+ *>    case  '2' : CELL_decimals (CHG_INPUT, '2');  break;  /+ exactly 2   +/                                                      <* 
+ *>    case  '3' : CELL_decimals (CHG_INPUT, '3');  break;  /+ exactly 3   +/                                                      <* 
+ *>    case  '4' : CELL_decimals (CHG_INPUT, '4');  break;  /+ exactly 4   +/                                                      <* 
+ *>    case  '5' : CELL_decimals (CHG_INPUT, '5');  break;  /+ exactly 5   +/                                                      <* 
+ *>    case  '6' : CELL_decimals (CHG_INPUT, '6');  break;  /+ exactly 6   +/                                                      <* 
+ *>    case  '7' : CELL_decimals (CHG_INPUT, '7');  break;  /+ exactly 7   +/                                                      <* 
+ *>    case  '8' : CELL_decimals (CHG_INPUT, '8');  break;  /+ exactly 8   +/                                                      <* 
+ *>    case  '9' : CELL_decimals (CHG_INPUT, '9');  break;  /+ exactly 9   +/                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(horizontal alignments)----------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  '<' : CELL_align    (CHG_INPUT, '<');  break;  /+ left        +/                                                      <* 
+ *>    case  '|' : CELL_align    (CHG_INPUT, '|');  break;  /+ center      +/                                                      <* 
+ *>    case  '>' : CELL_align    (CHG_INPUT, '>');  break;  /+ right       +/                                                      <* 
+ *>    case  '[' : CELL_align    (CHG_INPUT, '[');  break;  /+ left dec    +/                                                      <* 
+ *>    case  '^' : CELL_align    (CHG_INPUT, '^');  break;  /+ center dec  +/                                                      <* 
+ *>    case  ']' : CELL_align    (CHG_INPUT, ']');  break;  /+ right dec   +/                                                      <* 
+ *>    case  '}' : CELL_align    (CHG_INPUT, '}');  break;  /+ right +2    +/                                                      <* 
+ *>    case  '{' : CELL_align    (CHG_INPUT, '{');  break;  /+ left  +2    +/                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(merging)------------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'M' : CELL_merge_visu ();              break;  /+ merge       +/                                                      <* 
+ *>    case  'U' : CELL_unmerge_visu ();            break;  /+ unmerge     +/                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(integer formats)----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /+ integer         +/                                                  <* 
+ *>    case  'f' : CELL_format   (CHG_INPUT, 'f');  CELL_decimals (CHG_INPUT, '3'); break;  /+ real/float      +/                  <* 
+ *>    case  'g' : CELL_format   (CHG_INPUT, 'f');  CELL_decimals (CHG_INPUT, '6'); break;  /+ real/float      +/                  <* 
+ *>    case  'e' : CELL_format   (CHG_INPUT, 'e');  CELL_decimals (CHG_INPUT, '3'); break;  /+ exponencial     +/                  <* 
+ *>    case  'E' : CELL_format   (CHG_INPUT, 'E');  CELL_decimals (CHG_INPUT, '3'); break;  /+ spaced exponent +/                  <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(comma formats)------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'c' : CELL_format   (CHG_INPUT, 'c');  break;  /+ comma           +/                                                  <* 
+ *>    case  'C' : CELL_format   (CHG_INPUT, 'C');  break;  /+ comma           +/                                                  <* 
+ *>    case  'a' : CELL_format   (CHG_INPUT, 'a');  break;  /+ accounting      +/                                                  <* 
+ *>    case  'A' : CELL_format   (CHG_INPUT, 'A');  break;  /+ accounting      +/                                                  <* 
+ *>    case  '$' : CELL_format   (CHG_INPUT, '$');  break;  /+ dollar          +/                                                  <* 
+ *>    case  's' : CELL_format   (CHG_INPUT, 's');  break;  /+ signed          +/                                                  <* 
+ *>    case  'S' : CELL_format   (CHG_INPUT, 'S');  break;  /+ signed          +/                                                  <* 
+ *>    case  '#' : CELL_format   (CHG_INPUT, '#');  CELL_decimals (CHG_INPUT, '6'); break;  /+ technical       +/                  <* 
+ *>    case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /+ bullet point    +/                                                  <* 
+ *>    case  'P' : CELL_format   (CHG_INPUT, 'P');  break;  /+ bullet point    +/                                                  <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(roman numerals)-----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'r' : CELL_format   (CHG_INPUT, 'r');  break;  /+ roman           +/                                                  <* 
+ *>    case  'R' : CELL_format   (CHG_INPUT, 'R');  break;  /+ roman upper     +/                                                  <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(special formats)----------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  'o' : CELL_format   (CHG_INPUT, 'o');  break;  /+ octal           +/                                                  <* 
+ *>    case  'O' : CELL_format   (CHG_INPUT, 'O');  break;  /+ spaced octal    +/                                                  <* 
+ *>    case  'x' : CELL_format   (CHG_INPUT, 'x');  break;  /+ hex             +/                                                  <* 
+ *>    case  'X' : CELL_format   (CHG_INPUT, 'X');  break;  /+ spaced hex      +/                                                  <* 
+ *>    case  'b' : CELL_format   (CHG_INPUT, 'b');  break;  /+ binary          +/                                                  <* 
+ *>    case  'B' : CELL_format   (CHG_INPUT, 'B');  break;  /+ spaced binary   +/                                                  <* 
+ *>    case  'z' : CELL_format   (CHG_INPUT, 'z');  break;  /+ base-62         +/                                                  <* 
+ *>    case  'Z' : CELL_format   (CHG_INPUT, 'Z');  break;  /+ spaced base-62  +/                                                  <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(time and date)------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  't' : CELL_format   (CHG_INPUT, 't');  break;  /+ time            +/                                                  <* 
+ *>    case  'T' : CELL_format   (CHG_INPUT, 'T');  break;  /+ timestamp       +/                                                  <* 
+ *>    case  'd' : CELL_format   (CHG_INPUT, 'd');  break;  /+ date            +/                                                  <* 
+ *>    case  'D' : CELL_format   (CHG_INPUT, 'D');  break;  /+ full date       +/                                                  <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(string fills)-------------------+/                                                                                    <* 
+ *>    switch (a_minor) {                                                                                                          <* 
+ *>    case  '-' : CELL_format   (CHG_INPUT, '-');  break;  /+ filled dash     +/                                                  <* 
+ *>    case  '=' : CELL_format   (CHG_INPUT, '=');  break;  /+ filled equal    +/                                                  <* 
+ *>    case  '_' : CELL_format   (CHG_INPUT, '_');  break;  /+ filled under    +/                                                  <* 
+ *>    case  '.' : CELL_format   (CHG_INPUT, '.');  break;  /+ filled period   +/                                                  <* 
+ *>    case  '+' : CELL_format   (CHG_INPUT, '+');  break;  /+ filled plus     +/                                                  <* 
+ *>    case  '/' : CELL_format   (CHG_INPUT, '/');  break;  /+ filled divs     +/                                                  <* 
+ *>    case  '"' : CELL_format   (CHG_INPUT, '"');  break;  /+ filled euro quot+/                                                  <* 
+ *>    case  '!' : CELL_format   (CHG_INPUT, ' ');  break;  /+ filled empty    +/                                                  <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    if (a_major == 'f')  yVIKEYS_mode_exit ();                                                                                  <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keys for input mode --------[ ------ [ge.TQ5.25#.F9]*/ /*-[03.0000.122.R]-*/ /*-[--.---.---.--]-*/
-MODE_input         (char  a_major, char  a_minor)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   this should imitate a very basic vi-input mode by handling
-    *   all characters, ignoring new line, and popping out with escape
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_majors    [LEN_RECD]   = "IiaAm\\";
-   int         i           = 0;             /* loop iterator                  */
-   tCELL      *x_curr      = NULL;
-   static char x_prev      = '-';
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);
-   /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());
-   --rce;  if (yVIKEYS_mode_not (MODE_INPUT )) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   DEBUG_USER   yLOG_info    ("x_majors"   , x_majors);
-   --rce;  if (strchr (x_majors, a_major) == 0) {
-      DEBUG_USER   yLOG_note    ("a_major is not valid");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   EDIT_prep   ();
-   /*---(check for initial mark)---------*/
-   if (a_major == 'm') {
-      DEBUG_USER   yLOG_note    ("mark replacement position and save existing");
-      if (a_minor == 'a' && g_contents [my.cpos] != '\0')  ++(my.cpos);
-      DEBUG_USER   yLOG_value   ("total pos" , my.npos);
-      DEBUG_USER   yLOG_value   ("new pos"   , my.cpos);
-      for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
-      g_contents [my.cpos] = G_CHAR_PLACE;
-      EDIT_done   ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_minor;
-   }
-   /*---(escaped chars)------------------*/
-   if (a_minor == '\\' && x_prev != '\\') {
-      x_prev = '\\';
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   }
-   if (x_prev == '\\') {
-      x_prev = '-';
-      switch (a_minor) {
-      case 'n'  :  a_minor = G_CHAR_RETURN;  break;  /* return char           */
-      case 'e'  :  a_minor = G_CHAR_ESCAPE;  break;  /* escape char           */
-      case 't'  :  a_minor = G_CHAR_TAB;     break;  /* tab char              */
-      case 'b'  :  a_minor = G_CHAR_BS;      break;  /* backspace char        */
-      case 's'  :  a_minor = G_CHAR_SPACE;   break;  /* visual space          */
-      case 'f'  :  a_minor = G_CHAR_FIELD;   break;  /* field delimiter       */
-      case 'g'  :  a_minor = G_CHAR_GROUP;   break;  /* group delimiter       */
-      case '0'  :  a_minor = G_CHAR_NULL;    break;  /* null                  */
-      case 'a'  :  a_minor = G_CHAR_ALT;     break;  /* alt prefix            */
-      case 'c'  :  a_minor = G_CHAR_CONTROL; break;  /* control prefix        */
-      case 'w'  :  a_minor = G_CHAR_WAIT;    break;  /* wait/pause            */
-      case 'p'  :  a_minor = G_CHAR_BREAK;   break;  /* break point           */
-      case 'h'  :  a_minor = G_CHAR_HALT;    break;  /* halt  <C-c>           */
-      case 'd'  :  a_minor = G_CHAR_DISPLAY; break;  /* force redisplay       */
-      case 'A'  :  a_minor = G_CHAR_ALPHA;   break;
-      case 'B'  :  a_minor = G_CHAR_BETA;    break;
-      case 'G'  :  a_minor = G_CHAR_GAMMA;   break;
-      case 'D'  :  a_minor = G_CHAR_DELTA;   break;
-      case 'E'  :  a_minor = G_CHAR_EPSILON; break;
-      case 'Z'  :  a_minor = G_CHAR_ZETA;    break;
-      case 'H'  :  a_minor = G_CHAR_ETA;     break;
-      case 'Y'  :  a_minor = G_CHAR_THETA;   break;
-      case 'I'  :  a_minor = G_CHAR_IOTA;    break;
-      case 'K'  :  a_minor = G_CHAR_KAPPA;   break;
-      case 'L'  :  a_minor = G_CHAR_LAMBDA;  break;
-      case 'M'  :  a_minor = G_CHAR_MU;      break;
-      case 'N'  :  a_minor = G_CHAR_NU;      break;
-      case 'X'  :  a_minor = G_CHAR_XI;      break;
-      case 'O'  :  a_minor = G_CHAR_OMICRON; break;
-      case 'P'  :  a_minor = G_CHAR_PI;      break;
-      case 'R'  :  a_minor = G_CHAR_RHO;     break;
-      case 'S'  :  a_minor = G_CHAR_SIGMA;   break;
-      case 'T'  :  a_minor = G_CHAR_TAU;     break;
-      case 'U'  :  a_minor = G_CHAR_UPSILON; break;
-      case 'F'  :  a_minor = G_CHAR_PHI;     break;
-      case 'C'  :  a_minor = G_CHAR_CHI;     break;
-      case 'Q'  :  a_minor = G_CHAR_PSI;     break;
-      case 'W'  :  a_minor = G_CHAR_OMEGA;   break;
-      case '"'  :  a_minor = '"';            break;
-      case '\'' :  a_minor = '\'';           break;
-      case '\\' :  a_minor = '\\';           break;
-      default   :  return a_major;           break;
-      }
-   }
-   /*---(mode changes)-------------------*/
-   if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {
-      DEBUG_USER   yLOG_note    ("escape/return, return to source mode");
-      for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
-      if (a_major == 'a')  --(my.cpos);
-      EDIT_done   ();
-      if (a_minor == G_KEY_RETURN && yVIKEYS_mode_prev() == MODE_MAP) {
-         CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
-      }
-      if (a_minor == G_KEY_ESCAPE && yVIKEYS_mode_prev() == MODE_MAP) {
-         x_curr = LOC_cell_at_curr ();
-         if (x_curr != NULL && x_curr->s != NULL) {
-            strlcpy (g_contents, x_curr->s, LEN_RECD); 
-         } else {
-            strlcpy (g_contents, ""                            , LEN_RECD); 
-         }
-      }
-      EDIT_pos  ('r');
-      yVIKEYS_mode_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(check for backspace)------------*/
-   if (a_minor == G_KEY_DEL || a_minor == G_KEY_BS) {
-      DEBUG_USER   yLOG_note    ("handle a backspace/delete");
-      if (my.cpos > 0) {
-         --(my.cpos);
-         DEBUG_USER   yLOG_value   ("curr pos"  , my.cpos);
-         for (i = my.cpos; i <= my.npos; ++i)  g_contents[i] = g_contents[i + 1];
-         EDIT_done   ();
-      }
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return a_major;
-   }
-   /*---(handle new character)-----------*/
-   DEBUG_USER   yLOG_note    ("move remaining chars to the right");
-   for (i = my.npos; i >= my.cpos; --i)  g_contents[i + 1] = g_contents[i];
-   DEBUG_USER   yLOG_note    ("add the character");
-   g_contents [my.cpos] = a_minor;
-   ++(my.cpos);
-   /*---(wrap up)------------------------*/
-   EDIT_done   ();
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return a_major;
-}
-
-char         /*-> process keys for god mode ----------[ leaf   [gz.210.201.00]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
-MODE_god           (char a_prev, char a_curr)
-{
-   return 0;
-}
-
-char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
-SMOD_format        (char a_major, char a_minor)
-{
-   /*---(check for control keys)---------*/
-   switch (a_minor) {
-   case   G_KEY_RETURN : case   G_KEY_ESCAPE :
-      yVIKEYS_mode_exit ();
-      return 0;   /* escape  */
-   }
-   /*---(column widths)------------------*/
-   switch (a_minor) {
-   case  'm' : CELL_width    (CHG_INPUT, 'm');  break;  /* smallest    */
-   case  'h' : CELL_width    (CHG_INPUT, 'h');  break;  /* less by 1   */
-   case  'H' : CELL_width    (CHG_INPUT, 'H');  break;  /* less by 5   */
-   case  'l' : CELL_width    (CHG_INPUT, 'l');  break;  /* more by 1   */
-   case  'L' : CELL_width    (CHG_INPUT, 'L');  break;  /* more by 5   */
-   case  'n' : CELL_width    (CHG_INPUT, 'n');  break;  /* normal      */
-   case  'N' : CELL_width    (CHG_INPUT, 'N');  break;  /* normal-plus */
-   case  'w' : CELL_width    (CHG_INPUT, 'w');  break;  /* wide        */
-   case  'W' : CELL_width    (CHG_INPUT, 'W');  break;  /* largest     */
-   }
-   /*---(decimal places)-----------------*/
-   switch (a_minor) {
-   case  '0' : CELL_decimals (CHG_INPUT, '0');  break;  /* none        */
-   case  '1' : CELL_decimals (CHG_INPUT, '1');  break;  /* less by 1   */
-   case  '2' : CELL_decimals (CHG_INPUT, '2');  break;  /* exactly 2   */
-   case  '3' : CELL_decimals (CHG_INPUT, '3');  break;  /* exactly 3   */
-   case  '4' : CELL_decimals (CHG_INPUT, '4');  break;  /* exactly 4   */
-   case  '5' : CELL_decimals (CHG_INPUT, '5');  break;  /* exactly 5   */
-   case  '6' : CELL_decimals (CHG_INPUT, '6');  break;  /* exactly 6   */
-   case  '7' : CELL_decimals (CHG_INPUT, '7');  break;  /* exactly 7   */
-   case  '8' : CELL_decimals (CHG_INPUT, '8');  break;  /* exactly 8   */
-   case  '9' : CELL_decimals (CHG_INPUT, '9');  break;  /* exactly 9   */
-   }
-   /*---(horizontal alignments)----------*/
-   switch (a_minor) {
-   case  '<' : CELL_align    (CHG_INPUT, '<');  break;  /* left        */
-   case  '|' : CELL_align    (CHG_INPUT, '|');  break;  /* center      */
-   case  '>' : CELL_align    (CHG_INPUT, '>');  break;  /* right       */
-   case  '[' : CELL_align    (CHG_INPUT, '[');  break;  /* left dec    */
-   case  '^' : CELL_align    (CHG_INPUT, '^');  break;  /* center dec  */
-   case  ']' : CELL_align    (CHG_INPUT, ']');  break;  /* right dec   */
-   case  '}' : CELL_align    (CHG_INPUT, '}');  break;  /* right +2    */
-   case  '{' : CELL_align    (CHG_INPUT, '{');  break;  /* left  +2    */
-   }
-   /*---(merging)------------------------*/
-   switch (a_minor) {
-   case  'M' : CELL_merge_visu ();              break;  /* merge       */
-   case  'U' : CELL_unmerge_visu ();            break;  /* unmerge     */
-   }
-   /*---(integer formats)----------------*/
-   switch (a_minor) {
-   case  'i' : CELL_format   (CHG_INPUT, 'i');  break;  /* integer         */
-   case  'f' : CELL_format   (CHG_INPUT, 'f');  CELL_decimals (CHG_INPUT, '3'); break;  /* real/float      */
-   case  'g' : CELL_format   (CHG_INPUT, 'f');  CELL_decimals (CHG_INPUT, '6'); break;  /* real/float      */
-   case  'e' : CELL_format   (CHG_INPUT, 'e');  CELL_decimals (CHG_INPUT, '3'); break;  /* exponencial     */
-   case  'E' : CELL_format   (CHG_INPUT, 'E');  CELL_decimals (CHG_INPUT, '3'); break;  /* spaced exponent */
-   }
-   /*---(comma formats)------------------*/
-   switch (a_minor) {
-   case  'c' : CELL_format   (CHG_INPUT, 'c');  break;  /* comma           */
-   case  'C' : CELL_format   (CHG_INPUT, 'C');  break;  /* comma           */
-   case  'a' : CELL_format   (CHG_INPUT, 'a');  break;  /* accounting      */
-   case  'A' : CELL_format   (CHG_INPUT, 'A');  break;  /* accounting      */
-   case  '$' : CELL_format   (CHG_INPUT, '$');  break;  /* dollar          */
-   case  's' : CELL_format   (CHG_INPUT, 's');  break;  /* signed          */
-   case  'S' : CELL_format   (CHG_INPUT, 'S');  break;  /* signed          */
-   case  '#' : CELL_format   (CHG_INPUT, '#');  CELL_decimals (CHG_INPUT, '6'); break;  /* technical       */
-   case  'p' : CELL_format   (CHG_INPUT, 'p');  break;  /* bullet point    */
-   case  'P' : CELL_format   (CHG_INPUT, 'P');  break;  /* bullet point    */
-   }
-   /*---(roman numerals)-----------------*/
-   switch (a_minor) {
-   case  'r' : CELL_format   (CHG_INPUT, 'r');  break;  /* roman           */
-   case  'R' : CELL_format   (CHG_INPUT, 'R');  break;  /* roman upper     */
-   }
-   /*---(special formats)----------------*/
-   switch (a_minor) {
-   case  'o' : CELL_format   (CHG_INPUT, 'o');  break;  /* octal           */
-   case  'O' : CELL_format   (CHG_INPUT, 'O');  break;  /* spaced octal    */
-   case  'x' : CELL_format   (CHG_INPUT, 'x');  break;  /* hex             */
-   case  'X' : CELL_format   (CHG_INPUT, 'X');  break;  /* spaced hex      */
-   case  'b' : CELL_format   (CHG_INPUT, 'b');  break;  /* binary          */
-   case  'B' : CELL_format   (CHG_INPUT, 'B');  break;  /* spaced binary   */
-   case  'z' : CELL_format   (CHG_INPUT, 'z');  break;  /* base-62         */
-   case  'Z' : CELL_format   (CHG_INPUT, 'Z');  break;  /* spaced base-62  */
-   }
-   /*---(time and date)------------------*/
-   switch (a_minor) {
-   case  't' : CELL_format   (CHG_INPUT, 't');  break;  /* time            */
-   case  'T' : CELL_format   (CHG_INPUT, 'T');  break;  /* timestamp       */
-   case  'd' : CELL_format   (CHG_INPUT, 'd');  break;  /* date            */
-   case  'D' : CELL_format   (CHG_INPUT, 'D');  break;  /* full date       */
-   }
-   /*---(string fills)-------------------*/
-   switch (a_minor) {
-   case  '-' : CELL_format   (CHG_INPUT, '-');  break;  /* filled dash     */
-   case  '=' : CELL_format   (CHG_INPUT, '=');  break;  /* filled equal    */
-   case  '_' : CELL_format   (CHG_INPUT, '_');  break;  /* filled under    */
-   case  '.' : CELL_format   (CHG_INPUT, '.');  break;  /* filled period   */
-   case  '+' : CELL_format   (CHG_INPUT, '+');  break;  /* filled plus     */
-   case  '/' : CELL_format   (CHG_INPUT, '/');  break;  /* filled divs     */
-   case  '"' : CELL_format   (CHG_INPUT, '"');  break;  /* filled euro quot*/
-   case  '!' : CELL_format   (CHG_INPUT, ' ');  break;  /* filled empty    */
-   }
-   /*---(complete)-----------------------*/
-   if (a_major == 'f')  yVIKEYS_mode_exit ();
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [gc.320.000.02]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
-KEYS_unlock        (void)
-{
-   FR_COL  = '-';
-   FR_BCOL = 0;
-   FR_ECOL = 0;
-   MOVE_horz ('r');
-   FR_ROW  = '-';
-   FR_BROW = 0;
-   FR_EROW = 0;
-   MOVE_vert ('r');
-}
+/*> char         /+-> tbd --------------------------------[ ------ [gc.320.000.02]+/ /+-[00.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> KEYS_unlock        (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    FR_COL  = '-';                                                                                                              <* 
+ *>    FR_BCOL = 0;                                                                                                                <* 
+ *>    FR_ECOL = 0;                                                                                                                <* 
+ *>    MOVE_horz ('r');                                                                                                            <* 
+ *>    FR_ROW  = '-';                                                                                                              <* 
+ *>    FR_BROW = 0;                                                                                                                <* 
+ *>    FR_EROW = 0;                                                                                                                <* 
+ *>    MOVE_vert ('r');                                                                                                            <* 
+ *> }                                                                                                                              <*/
 
 char        KEYS_quit            (void) { g_done = 0; return 0; }
 char        KEYS_writequit       (void) { FILE_write (); g_done = 0; return 0; }
@@ -1675,76 +1659,76 @@ SRCH_searcher      (char *a_search)
 }
 
 
-char         /*-> process keys for wander mode -------[ ------ [ge.FE0.223.65]*/ /*-[05.0000.102.!]-*/ /*-[--.---.---.--]-*/
-SMOD_wander        (char a_prev, char a_curr)
-{
-   /*---(design notes)-------------------*/
-   /*
-    *   this should allow keyboard selection of cells and ranges for formulas
-    *   much like excel does
-    */
-   char    post = ' ';
-   char    rce  = -10;
-   /*---(defenses)-----------------------*/
-   --rce;  if (yVIKEYS_mode_not (SMOD_WANDER )) {
-      return rce;
-   }
-   /*---(check for control keys)---------*/
-   switch (a_curr) {
-   case  ',' :
-   case  ')' : post = a_curr;
-   case  G_KEY_RETURN  :
-   case  G_KEY_ESCAPE  : VISU_clear ();
-                         LOC_ref (CTAB, CCOL, CROW, 0, wref);
-                         CTAB = wtab;
-                         CCOL = wcol;
-                         CROW = wrow;
-                         my.cpos = wpos;
-                         strcpy (g_contents, wsave);
-                         if (strcmp (wref2, "") != 0) {
-                            strcat (g_contents, wref2);
-                            strcat (g_contents, ":");
-                         }
-                         strcat (g_contents, wref);
-                         my.npos = strlen(g_contents);
-                         if (post != ' ') {
-                            g_contents[my.npos]   = post;
-                            g_contents[++my.npos] = '\0';
-                         }
-                         my.cpos = my.npos;
-                         yVIKEYS_mode_exit ();
-                         return  0;   /* escape -- back to source mode */
-   }
-   /*---(basic movement)-----------*/
-   /*> switch (a_curr) {                                                              <* 
-    *> case '_'      : KEYS_row(" _");    break;                                      <* 
-    *> case 'K'      : KEYS_row(" K");    break;                                      <* 
-    *> case 'k'      : KEYS_row(" k");    break;                                      <* 
-    *> case 'j'      : KEYS_row(" j");    break;                                      <* 
-    *> case 'J'      : KEYS_row(" J");    break;                                      <* 
-    *> case 'G'      : KEYS_row(" G");    break;                                      <* 
-    *> case '{'      : KEYS_row(" {");    break;                                      <* 
-    *> case '}'      : KEYS_row(" }");    break;                                      <* 
-    *> case K_CTRL_B : KEYS_row("^b"); clear(); break;                                <* 
-    *> case K_CTRL_F : KEYS_row("^f"); clear(); break;                                <* 
-    *> case '0'      : KEYS_col (" 0");     break;                                    <* 
-    *> case 'H'      : KEYS_col (" H");     break;                                    <* 
-    *> case 'h'      : KEYS_col (" h");     break;                                    <* 
-    *> case 'l'      : KEYS_col (" l");     break;                                    <* 
-    *> case 'L'      : KEYS_col (" L");     break;                                    <* 
-    *> case '$'      : KEYS_col (" $");     break;                                    <* 
-    *> case 'b'      : KEYS_col ("es");     break;                                    <* 
-    *> case 'e'      : KEYS_col ("ee");     break;                                    <* 
-    *> case 'c'      : VISU_col();          break;                                    <* 
-    *> case 'r'      : VISU_row();          break;                                    <* 
-    *> }                                                                              <*/
-   if (a_curr == ':') {
-      LOC_ref    (CTAB, CCOL, CROW, 0, wref2);
-      VISU_start (CTAB, CCOL, CROW, VISU_FROM);
-   }
-   /*---(complete)-----------------------*/
-   return  0;
-}
+/*> char         /+-> process keys for wander mode -------[ ------ [ge.FE0.223.65]+/ /+-[05.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> SMOD_wander        (char a_prev, char a_curr)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(design notes)-------------------+/                                                                                    <* 
+ *>    /+                                                                                                                          <* 
+ *>     *   this should allow keyboard selection of cells and ranges for formulas                                                  <* 
+ *>     *   much like excel does                                                                                                   <* 
+ *>     +/                                                                                                                         <* 
+ *>    char    post = ' ';                                                                                                         <* 
+ *>    char    rce  = -10;                                                                                                         <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    --rce;  if (yVIKEYS_mode_not (SMOD_WANDER )) {                                                                              <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(check for control keys)---------+/                                                                                    <* 
+ *>    switch (a_curr) {                                                                                                           <* 
+ *>    case  ',' :                                                                                                                 <* 
+ *>    case  ')' : post = a_curr;                                                                                                  <* 
+ *>    case  G_KEY_RETURN  :                                                                                                       <* 
+ *>    case  G_KEY_ESCAPE  : VISU_clear ();                                                                                        <* 
+ *>                          LOC_ref (CTAB, CCOL, CROW, 0, wref);                                                                  <* 
+ *>                          CTAB = wtab;                                                                                          <* 
+ *>                          CCOL = wcol;                                                                                          <* 
+ *>                          CROW = wrow;                                                                                          <* 
+ *>                          my.cpos = wpos;                                                                                       <* 
+ *>                          strcpy (g_contents, wsave);                                                                           <* 
+ *>                          if (strcmp (wref2, "") != 0) {                                                                        <* 
+ *>                             strcat (g_contents, wref2);                                                                        <* 
+ *>                             strcat (g_contents, ":");                                                                          <* 
+ *>                          }                                                                                                     <* 
+ *>                          strcat (g_contents, wref);                                                                            <* 
+ *>                          my.npos = strlen(g_contents);                                                                         <* 
+ *>                          if (post != ' ') {                                                                                    <* 
+ *>                             g_contents[my.npos]   = post;                                                                      <* 
+ *>                             g_contents[++my.npos] = '\0';                                                                      <* 
+ *>                          }                                                                                                     <* 
+ *>                          my.cpos = my.npos;                                                                                    <* 
+ *>                          yVIKEYS_mode_exit ();                                                                                 <* 
+ *>                          return  0;   /+ escape -- back to source mode +/                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(basic movement)-----------+/                                                                                          <* 
+ *>    /+> switch (a_curr) {                                                              <*                                       <* 
+ *>     *> case '_'      : KEYS_row(" _");    break;                                      <*                                       <* 
+ *>     *> case 'K'      : KEYS_row(" K");    break;                                      <*                                       <* 
+ *>     *> case 'k'      : KEYS_row(" k");    break;                                      <*                                       <* 
+ *>     *> case 'j'      : KEYS_row(" j");    break;                                      <*                                       <* 
+ *>     *> case 'J'      : KEYS_row(" J");    break;                                      <*                                       <* 
+ *>     *> case 'G'      : KEYS_row(" G");    break;                                      <*                                       <* 
+ *>     *> case '{'      : KEYS_row(" {");    break;                                      <*                                       <* 
+ *>     *> case '}'      : KEYS_row(" }");    break;                                      <*                                       <* 
+ *>     *> case K_CTRL_B : KEYS_row("^b"); clear(); break;                                <*                                       <* 
+ *>     *> case K_CTRL_F : KEYS_row("^f"); clear(); break;                                <*                                       <* 
+ *>     *> case '0'      : KEYS_col (" 0");     break;                                    <*                                       <* 
+ *>     *> case 'H'      : KEYS_col (" H");     break;                                    <*                                       <* 
+ *>     *> case 'h'      : KEYS_col (" h");     break;                                    <*                                       <* 
+ *>     *> case 'l'      : KEYS_col (" l");     break;                                    <*                                       <* 
+ *>     *> case 'L'      : KEYS_col (" L");     break;                                    <*                                       <* 
+ *>     *> case '$'      : KEYS_col (" $");     break;                                    <*                                       <* 
+ *>     *> case 'b'      : KEYS_col ("es");     break;                                    <*                                       <* 
+ *>     *> case 'e'      : KEYS_col ("ee");     break;                                    <*                                       <* 
+ *>     *> case 'c'      : VISU_col();          break;                                    <*                                       <* 
+ *>     *> case 'r'      : VISU_row();          break;                                    <*                                       <* 
+ *>     *> }                                                                              <+/                                      <* 
+ *>    if (a_curr == ':') {                                                                                                        <* 
+ *>       LOC_ref    (CTAB, CCOL, CROW, 0, wref2);                                                                                 <* 
+ *>       VISU_start (CTAB, CCOL, CROW, VISU_FROM);                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return  0;                                                                                                                  <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -1777,7 +1761,7 @@ KEYS__unit         (char *a_question)
    strcpy  (unit_answer, "keys             : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "mode_stack"   )  == 0) {
-      yVIKEYS_mode_list (x_list);
+      /*> yVIKEYS_mode_list (x_list);                                                 <*/
       snprintf (unit_answer, LEN_UNIT, "keys mode stack  : %s", x_list);
    }
    /*---(complete)-----------------------*/
