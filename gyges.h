@@ -119,6 +119,10 @@
 #include    <time.h>         /* C_ANSI : time, strftime, localtime            */
 #include    <malloc.h>       /* C_ANSI : malloc, free                         */
 
+/*---(posix standard)--------------------*/
+#include   <unistd.h>             /* POSIX  standard operating system API     */
+#include   <sys/time.h>           /* POSIX  standard time access              */
+
 /*===[[ DE-FACTO STANDARD LIBRARIES ]]========================================*/
 #include    <ncurses.h>      /* CURSES : mvprintw, refresh, getch, ...        */
 
@@ -137,8 +141,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0a"
-#define     VER_TXT   "moved to using yVIKEYS_mode, but will only show cells yet"
+#define     VER_NUM   "3.0b"
+#define     VER_TXT   "achieved basic display of status, command, row, and column in yVIKEYS"
 
 
 
@@ -164,6 +168,7 @@ typedef     struct   cCALC        tCALC;         /* cell calculation entry    */
 typedef     struct   cREG         tREG;          /* cut and paste registers   */
 typedef     struct   cHIST        tHIST;         /* undo-redo history         */
 
+typedef struct timespec  tTSPEC;
 
 
 /*===[[ CONSTANTS : LIMITS ]]=================================================*/
@@ -1113,9 +1118,11 @@ char        CURS_status_history  (char *a_list);
 
 
 /*> char      CURS_screen_reset    (void);                                            <*/
-char      CURS_begin           (void);
-char      CURS_end             (void);
-char      CURS_main            (void);
+char      DRAW_init            (void);
+char      DRAW_wrap            (void);
+char      DRAW_xaxis           (void);
+char      DRAW_yaxis           (void);
+char      DRAW_main            (void);
 char      CURS_playback        (void);
 char      CURS_col_head        (void);
 char      CURS_row_head        (void);
@@ -1342,6 +1349,8 @@ char        LOC_row_heighten     /* sigma  3----- */  (short a_tab, short a_row,
 char        LOC_row_freeze       (short a_tab, short a_brow, short a_erow);
 char        LOC_row_unfreeze     (short a_tab);
 char        LOC_row_map          (char a_type);
+
+char        MAP_mapper           (char a_req);
 
 /*---(unit testing)--------------*/
 char*       LOC__unit            /* petal  2----- */  (char *a_question, char *a_label);

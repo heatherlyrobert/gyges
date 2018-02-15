@@ -560,18 +560,18 @@ PRIV void  o___SPECIFIC________o () { return; }
 /*> char  DEP_reqs_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
  *> char  DEP_pros_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
  *> char  DEP_like_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <*/
-char  CURS_status_cell     (char *a_list) { snprintf (a_list, 500, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
-char  CURS_status_deps     (char *a_list) { snprintf (a_list, 500, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
-char  CURS_status_rpn      (char *a_list) { snprintf (a_list, 500, "[ rpn =%-80.80s ]", my.rpn_list); }
-char  CURS_status_file     (char *a_list) { snprintf (a_list, 500, " %-20.20s%*.*s%30.30s %-4.4s ", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num); }
+char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
+char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
+char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
+char  CURS_status_file     (char *a_list) { snprintf (a_list, LEN_STR, "[ file %-20.20s%*.*s%30.30s %-4.4s ]", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num); }
 char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
 char  CURS_status_textreg  (char *a_list) { TREG_entry     (REG_CURR, a_list); }
 char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
 char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
-char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, 500, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
-char  CURS_status_reg      (char *a_list) { snprintf (a_list, 500, "[ reg %-100.100s ]", my.reg_list); }
-char  CURS_status_error    (char *a_list) { snprintf (a_list, 500, "errors (%3d)", nerror); };
-char  CURS_status_history  (char *a_list) { snprintf (a_list, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act); }
+char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
+char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_STR, "[ reg %-100.100s ]", my.reg_list); }
+char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_STR, "errors (%3d)", nerror); };
+char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act); }
 
 /*> char         /+-> tbd --------------------------------[ ------ [gc.HB1.152.98]+/ /+-[02.3000.013.!]-+/ /+-[--.---.---.--]-+/                                                   <* 
  *> CURS_status        (tCELL *a_curr)                                                                                                                                             <* 
@@ -673,6 +673,72 @@ CURS_col_color     (short a_col)
    else if (FR_COL == 'y' && a_col <= FR_ECOL)   attron  (S_COLOR_HEADL   );
    else if (LOC_col_used (CTAB, a_col) >  0)     attron  (S_COLOR_HEADF   );
    else                                          attron  (S_COLOR_HEADN   );
+   return 0;
+}
+
+char         /*-> update the row labels --------------[ ------ [gz.D91.061.A5]*/ /*-[02.3000.323.!]-*/ /*-[--.---.---.--]-*/
+DRAW_yaxis         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   int         x_tall      = 0;
+   int         x_left      = 0;
+   int         x_bott      = 0;
+   yVIKEYS_view_size     (YVIKEYS_YAXIS, &x_left, NULL, &x_bott, &x_tall, NULL);
+   CURS_col_color  (1);
+   for (i = 0; i < x_tall; ++i) {
+      mvprintw (x_bott - i, x_left, "%-4d", i + 1000);
+   }
+   return 0;
+}
+
+char         /*-> update the column labels -----------[ ------ [gz.D91.061.A5]*/ /*-[02.3000.323.!]-*/ /*-[--.---.---.--]-*/
+DRAW_xaxis         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_left      = 0;
+   int         x_wide      = 0;
+   int         x_bott      = 0;
+   int         i           = 0;                  /* iterator -- columns       */
+   int         w           = 0;                  /* column width              */
+   int         wa          = 0;                  /* adjusted column width     */
+   int         cw          = 0;                  /* adjusted column width     */
+   char        msg         [500]       = "";     /* temporary display message */
+   char        label       [3]         = "";     /* column lable              */
+   yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &cw    , NULL   , NULL, NULL);
+   yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
+   CURS_col_color  (1);
+   /*> mvprintw (x_bott, x_left, "    [-----a][-----b][-----c][-----d][-----e]");     <*/
+   /*> return 0;                                                                      <*/
+   /*> for (i = BCOL; i <=  ECOL; ++i) {                                              <*/
+      /*> if (i >= NCOL) break;                                                       <*/
+   for (i = 0; i <=  10; ++i) {
+      /*---(prepare)---------------------*/
+      w     = LOC_col_width (CTAB, i);
+      wa    = w - 4;
+      LOC_col_label (CTAB, i, label);
+      /*---(output)----------------------*/
+      snprintf (msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
+      CURS_col_color  (i);
+      mvprintw (x_bott, cw, msg);
+      attrset (0);
+      cw += w;
+   }
+   /*---(fill in right side)-------------*/
+   if (cw < x_wide) {
+      w     = x_wide - cw;
+      wa    = w - 4;
+      LOC_col_label (CTAB, ECOL + 1, label);
+      if (ECOL < NCOL - 1){
+         if      (w == 1) snprintf(msg, 500, ">");
+         else if (w == 2) snprintf(msg, 500, "\[>");
+         else if (w == 3) snprintf(msg, 500, "\[->");
+         else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);
+      } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);
+      CURS_col_color  (ECOL + 1);
+      mvprintw (row_chead, cw, msg);
+      attrset (0);
+   }
    return 0;
 }
 
@@ -1232,8 +1298,17 @@ PRIV void  o___SCREEN__________o () { return; }
  *>    return ch;                                                                                                                  <* 
  *> }                                                                                                                              <*/
 
+char
+DRAW_main            (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*-> present screen elements ------------[ leaf   [gc.IC1.021.AS]*/ /*-[05.2001.202.!]-*/ /*-[--.---.---.--]-*/
-CURS_main          (void)
+CURS_main_OLD      (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         ch          = 0;
@@ -1274,8 +1349,8 @@ CURS_main          (void)
    /*---(update cells)-------------------*/
    /*> CURS_formula   (x_curr);                                                       <*/
    /*> CURS_status    (x_curr);                                                       <*/
-   CURS_col_head  ();
-   CURS_row_head  ();
+   /*> CURS_col_head  ();                                                             <*/
+   /*> CURS_row_head  ();                                                             <*/
    /*> CURS_page      ();                                                             <*/
    /*> CURS_message   ();                                                             <*/
    /*> switch (my.info_win) {                                                         <* 
@@ -1516,16 +1591,26 @@ CURS_size         (void)
 }
 
 char         /*-> initiate curses --------------------[ ------ [gz.421.001.02]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
-CURS_begin         (void)
+DRAW_init          (void)
 {
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
-   initscr();       /* fire up ncurses with a default screen (stdscr)         */
-   raw();           /* read key-by-key rather than waiting for \n (raw mode)  */
-   noecho();        /* don't automatically echo keypresses to the screen      */
-   ESCDELAY = 0;    /* so escape responds immediately                         */
+   yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
+   yVIKEYS_view_moderate (YVIKEYS_MAIN     , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
+   yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
+   yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0             , DRAW_xaxis  );
+   yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0             , DRAW_yaxis  );
+   yVIKEYS_cmds_direct   (":layout min");
+   yVIKEYS_cmds_direct   (":status show");
+   yVIKEYS_cmds_direct   (":command show");
+   yVIKEYS_cmds_direct   (":xaxis show");
+   yVIKEYS_cmds_direct   (":yaxis show");
+   /*> initscr();       /+ fire up ncurses with a default screen (stdscr)         +/   <* 
+    *> raw();           /+ read key-by-key rather than waiting for \n (raw mode)  +/   <* 
+    *> noecho();        /+ don't automatically echo keypresses to the screen      +/   <* 
+    *> ESCDELAY = 0;    /+ so escape responds immediately                         +/   <*/
    /*---(get window size)-------------*/
-   CURS_size   ();
+   /*> CURS_size   ();                                                                <*/
    /*---(colors)----------------------*/
    start_color ();
    use_default_colors();
@@ -1536,10 +1621,10 @@ CURS_begin         (void)
 }
 
 char         /*-> shutdown curses --------------------[ leaf   [gz.211.001.00]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
-CURS_end           (void)
+DRAW_wrap          (void)
 {
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   endwin();        /* shut down ncurses                                      */
+   /*> endwin();        /+ shut down ncurses                                      +/   <*/
    /*---(complete)--------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;

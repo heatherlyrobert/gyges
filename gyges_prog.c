@@ -193,7 +193,7 @@ PROG_begin         (void)
 char         /*-> initialize program and variables ---[ ------ [gz.421.001.08]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
 PROG_final         (void)
 {
-   CURS_begin ();
+   DRAW_init  ();
    INPT_main         ();
    /*> CURS_screen_reset ();                                                          <*/
    SEQ_calc_full     ();
@@ -215,6 +215,8 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
+   yVIKEYS_cmds_direct (":status file");
+   yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -428,6 +430,8 @@ PROG_end             (void)
    DEP_wrap     ();   /* disconnect all cells */
    DEBUG_PROG   yLOG_note    ("LOC_wrap");
    LOC_wrap     ();
+   DEBUG_PROG   yLOG_note    ("yVIKEYS_wrap");
+   yVIKEYS_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_TOPS   yLOG_end     ();
    return 0;
