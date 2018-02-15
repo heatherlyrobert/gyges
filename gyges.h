@@ -134,6 +134,7 @@
 #include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
 #include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
+#include    <yCOLOR.h>             /* heatherly color library                 */
 
 
 
@@ -141,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0b"
-#define     VER_TXT   "achieved basic display of status, command, row, and column in yVIKEYS"
+#define     VER_NUM   "3.0c"
+#define     VER_TXT   "colors moved to yCOLOR, main area now displays correctly"
 
 
 

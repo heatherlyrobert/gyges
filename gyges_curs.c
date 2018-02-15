@@ -124,92 +124,6 @@ tMENU       s_menus     [MAX_MENU] = {
 
 
 
-#define     MAX_COLORS    20
-typedef  struct cCOLOR  tCOLOR;
-struct cCOLOR {
-   char        abbr;
-   char        terse       [ 5];
-   char        desc        [20];
-   short       value;
-};
-static tCOLOR  s_colors [MAX_COLORS] = {
-   {  ' ' , "trn" , "transparent"          , -1                    },
-   {  'k' , "blk" , "black"                , COLOR_BLACK           },
-   {  'r' , "red" , "red"                  , COLOR_RED             },
-   {  'g' , "grn" , "green"                , COLOR_GREEN           },
-   {  'y' , "yel" , "yellow"               , COLOR_YELLOW          },
-   {  'b' , "blu" , "blue"                 , COLOR_BLUE            },
-   {  'm' , "mag" , "magenta"              , COLOR_MAGENTA         },
-   {  'c' , "cyn" , "cyan"                 , COLOR_CYAN            },
-   {  'w' , "whi" , "white"                , COLOR_WHITE           },
-   {  '-' , "---" , "end-of-colors"        , -1                    },
-};
-
-#define     MAX_COLOR_INFO  100
-typedef  struct cCOLOR_INFO  tCOLOR_INFO;
-struct cCOLOR_INFO {
-   char        terse       [10];            /* short description              */
-   char        ctype;                       /* cell type, if it applies       */
-   char        desc        [50];            /* description/reason             */
-   char        fg_color;                    /* foreground color               */
-   char        bg_color;                    /* background color               */
-   char        bold;                        /* bold y/n                       */
-   int         value;                       /* curses attribute value         */
-};
-static tCOLOR_INFO  s_color_info [MAX_COLOR_INFO] = {
-   /*---terse--- -ty- ---description---------------------------------------- -fg-- -bg-- --b- --v- */
-   /*---(window)---------*/
-   { "t_norm"   , ' ', "normal title color"                                 , 'k' , 'k' , 'y',   0 },
-   { "t_err"    , ' ', "title color when in error"                          , 'w' , 'r' , '-',   0 },
-   { "s_norm"   , ' ', "normal status color"                                , 'k' , 'k' , 'y',   0 },
-   { "s_err"    , ' ', "status color when in error"                         , 'w' , 'r' , '-',   0 },
-   { "w_keys"   , ' ', "window keystoke display"                            , 'r' , ' ' , 'y',   0 },
-   { "w_mesg"   , ' ', "window message"                                     , 'w' , ' ' , '-',   0 },
-   { "menu"     , ' ', "menus and menu entries "                            , 'k' , 'y' , 'b',   0 },
-   /*---(modes)----------*/
-   { "m_map"    , ' ', "map mode (2d review of sheet/cell collection"       , 'k' , 'y' , 'b',   0 },
-   { "m_src"    , ' ', "source mode (single cell review)"                   , 'k' , 'g' , 'b',   0 },
-   { "m_input"  , ' ', "input mode"                                         , 'k' , 'b' , 'b',   0 },
-   { "m_repl"   , ' ', "replace sub-mode"                                   , 'k' , 'c' , 'b',   0 },
-   { "m_wand"   , ' ', "wander mode"                                        , 'k' , 'r' , 'b',   0 },
-   /*---(row/col header)-*/
-   { "h_cur"    , ' ', "current row/column header"                          , 'y' , 'k' , 'y',   0 },
-   { "h_loc"    , ' ', "locked row/column header"                           , 'b' , 'y' , 'y',   0 },
-   { "h_use"    , ' ', "row/column with entries"                            , 'y' , ' ' , '-',   0 },
-   { "h_not"    , ' ', "row/column with no entries"                         , 'b' , ' ' , '-',   0 },
-   /*---(selection)------*/
-   { "curr"     , ' ', "current cell"                                       , 'k' , 'y' , 'b',   0 },
-   { "root"     , ' ', "root of visual selection"                           , 'y' , 'k' , 'y',   0 },
-   { "visu"     , ' ', "selected, not root/curr"                            , 'y' , 'y' , 'y',   0 },
-   { "mark"     , ' ', "location marks"                                     , 'w' , 'c' , 'y',   0 },
-   { "srch"     , ' ', "found by search"                                    , 'k' , 'r' , 'y',   0 },
-   /*---(dep type)-------*/
-   { "reqs"     , ' ', "value required from cell"                           , 'm' , 'm' , 'b',   0 },
-   { "pros"     , ' ', "value provided to cell"                             , 'g' , 'g' , 'b',   0 },
-   { "like"     , ' ', "formula is copy/variation"                          , 'b' , 'b' , 'b',   0 },
-   /*---(danger signs)---*/
-   { "fdang"    , 'f', "complex numeric formula"                            , 'r' , ' ' , 'y',   0 },
-   { "mdang"    , 'm', "complex string formula"                             , 'r' , ' ' , 'y',   0 },
-   /*---(cell types)-----*/
-   { "num"      , 'n', "numeric literal"                                    , 'b' , ' ' , 'y',   0 },
-   { "for"      , 'f', "numeric formula"                                    , 'g' , ' ' , 'y',   0 },
-   { "flike"    , 'l', "numeric formula (copy)"                             , 'g' , ' ' , '-',   0 },
-   { "str"      , 's', "string literal"                                     , 'y' , ' ' , 'y',   0 },
-   { "mod"      , 'm', "string formula"                                     , 'm' , ' ' , 'y',   0 },
-   { "mlike"    , 'L', "string formula (copy)"                              , 'm' , ' ' , '-',   0 },
-   { "range"    , 'p', "range pointer"                                      , 'c' , ' ' , 'y',   0 },
-   { "addr"     , 'p', "address pointer"                                    , 'c' , ' ' , 'y',   0 },
-   { "blank"    , '-', "blank cell"                                         , 'b' , ' ' , 'y',   0 },
-   { "def"      , ' ', "default for unidentified cells"                     , 'y' , ' ' , 'y',   0 },
-   /*---(other)----------*/
-   { "warn"     , 'w', "cell warning"                                       , 'w' , 'r' , 'y',   0 },
-   { "error"    , 'E', "cell error"                                         , 'w' , 'r' , 'y',   0 },
-   { "found"    , ' ', "cell found in most recent search"                   , 'g' , 'w' , 'y',   0 },
-   /*---(end)------------*/
-   { "-----"    , ' ', "end-of-colors"                                      , '-' , '-' , '-',   0 },
-};
-
-
 /*===[[ COLOR DEFINITIONS ]]==================================================*/
 /*---(window)-------------------------*/
 static int  S_COLOR_TITLE      = COLOR_PAIR(40) | A_BOLD;
@@ -237,6 +151,8 @@ static int  S_COLOR_PROS       = COLOR_PAIR(22) | A_BOLD;
 static int  S_COLOR_LIKE       = COLOR_PAIR(24) | A_BOLD;
 
 static int  S_COLOR_ERROR      = COLOR_PAIR(61) | A_BOLD;
+static int  S_COLOR_WARN       = COLOR_PAIR(61) | A_BOLD;
+static int  S_COLOR_FOUND      = COLOR_PAIR(61) | A_BOLD;
 
 static int  S_COLOR_POINTER    = COLOR_PAIR(76) | A_BOLD;
 static int  S_COLOR_ADDRESS    = COLOR_PAIR(76) | A_BOLD;
@@ -255,10 +171,10 @@ static int  S_COLOR_NULL       = COLOR_PAIR(70) | A_BOLD;
 
 static int  S_COLOR_NORMAL     = COLOR_PAIR(73) | A_BOLD;
 /*---(row and column headers)---------*/
-static int  S_COLOR_HEADY      = COLOR_PAIR(33) | A_BOLD;
-static int  S_COLOR_HEADL      = COLOR_PAIR(43) | A_BOLD;
-static int  S_COLOR_HEADF      = COLOR_PAIR(73);
-static int  S_COLOR_HEADN      = COLOR_PAIR(74);
+static int  S_COLOR_HCURR      = COLOR_PAIR(33) | A_BOLD;
+static int  S_COLOR_HUSED      = COLOR_PAIR(43) | A_BOLD;
+static int  S_COLOR_HLOCK      = COLOR_PAIR(73);
+static int  S_COLOR_HNORM      = COLOR_PAIR(74);
 
 
 char        msg_type  = '-';
@@ -287,160 +203,6 @@ CURS_info_request  (char a_type)
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
-
-
-/*====================------------------------------------====================*/
-/*===----                      color configuration                     ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___COLORS__________o () { return; }
-int         s_color_try = 0;
-int         s_color_err = 0;
-
-int          /*-> tbd --------------------------------[ leaf   [gn.422.112.20]*/ /*-[01.0000.015.!]-*/ /*-[--.---.---.--]-*/
-COLOR_find                (char a_abbr)
-{
-   DEBUG_GRAF  yLOG_senter  (__FUNCTION__);
-   DEBUG_GRAF  yLOG_schar   (a_abbr);
-   int         i           = 0;
-   for (i = 0; i < MAX_COLORS; ++i) { 
-      if (s_colors [i].abbr == '-')              break;
-      if (s_colors [i].abbr != a_abbr)           continue;
-      DEBUG_GRAF  yLOG_svalue  ("found"     , s_colors [i].value);
-      DEBUG_GRAF  yLOG_sinfo   ("name"      , s_colors [i].terse);
-      DEBUG_GRAF  yLOG_sexit   (__FUNCTION__);
-      return s_colors [i].value;
-   }
-   DEBUG_GRAF  yLOG_snote   ("FAIL, not found");
-   DEBUG_GRAF  yLOG_sexit   (__FUNCTION__);
-   return -2;
-}
-
-char         /*-> tbd --------------------------------[ ------ [gc.842.031.62]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
-COLOR_setup               (void)
-{
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   int         i           = 0;
-   int         x_fg        = 0;
-   int         x_bg        = 0;
-   for (i = 0; i < MAX_COLOR_INFO; ++i) {
-      DEBUG_GRAF  yLOG_value   ("ENTRY#----", i);
-      /*---(filter)----------------------*/
-      if (s_color_info [i].terse [0] == '-')              break;
-      /*---(get colors)------------------*/
-      DEBUG_GRAF  yLOG_info    ("name"      , s_color_info [i].terse);
-      s_color_try += 2;
-      x_fg = COLOR_find  (s_color_info [i].fg_color);
-      if (x_fg == -2) {
-         ++s_color_err;
-         x_fg  = COLOR_find  ('w');
-      }
-      x_bg = COLOR_find  (s_color_info [i].bg_color);
-      if (x_bg == -2) {
-         ++s_color_err;
-         x_bg  = COLOR_find  (' ');
-      }
-      init_pair (i + 20, x_fg, x_bg);
-      if (s_color_info [i].bold == 'y') {
-         s_color_info [i].value =  COLOR_PAIR (i + 20) | A_BOLD;
-         DEBUG_GRAF  yLOG_value   ("bold"      , s_color_info [i].value);
-      } else if (s_color_info [i].bold == 'b') {
-         s_color_info [i].value =  COLOR_PAIR (i + 20) | A_BLINK;
-         DEBUG_GRAF  yLOG_value   ("blink"     , s_color_info [i].value);
-      } else {
-         s_color_info [i].value =  COLOR_PAIR (i + 20);
-         DEBUG_GRAF  yLOG_value   ("normal"    , s_color_info [i].value);
-      }
-   }
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return  0;
-}
-
-int          /*-> tbd --------------------------------[ leaf   [gn.532.112.30]*/ /*-[01.0000.014.!]-*/ /*-[--.---.---.--]-*/
-COLOR_assign              (char *a_terse)
-{
-   DEBUG_GRAF  yLOG_senter  (__FUNCTION__);
-   int         i           = 0;
-   ++s_color_try;
-   for (i = 0; i < MAX_COLOR_INFO; ++i) {
-      /*---(filter)----------------------*/
-      if (s_color_info [i].terse [0] == '-')              break;
-      if (s_color_info [i].terse [0] != a_terse [0])      continue;
-      if (strcmp (s_color_info [i].terse, a_terse) != 0)  continue;
-      DEBUG_GRAF  yLOG_svalue  ("found"     , s_color_info [i].desc);
-      DEBUG_GRAF  yLOG_sexit   (__FUNCTION__);
-      return s_color_info [i].value;
-   }
-   ++s_color_err;
-   DEBUG_GRAF  yLOG_snote   ("not found, returning default");
-   DEBUG_GRAF  yLOG_sexit   (__FUNCTION__);
-   return s_color_info [0].value;
-}
-
-char         /*-> tbd --------------------------------[ shoot  [gc.D92.001.02]*/ /*-[00.0000.013.!]-*/ /*-[--.---.---.--]-*/
-COLOR_init                (void)
-{
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   /*---(setup colors)-------------------*/
-   DEBUG_GRAF  yLOG_note    ("base color setup");
-   COLOR_setup   ();
-   /*---(summary)------------------------*/
-   DEBUG_GRAF  yLOG_value   ("attempts"  , s_color_try);
-   DEBUG_GRAF  yLOG_value   ("errors"    , s_color_err);
-   /*---(prepare)------------------------*/
-   DEBUG_GRAF  yLOG_note    ("color configuration");
-   s_color_try        = 0;
-   s_color_err        = 0;
-   /*---(window)-------------------------*/
-   S_COLOR_TITLE      = COLOR_assign ("t_norm" );
-   S_COLOR_TITLEE     = COLOR_assign ("t_err"  );
-   S_COLOR_STATUS     = COLOR_assign ("s_norm" );
-   S_COLOR_STATUSE    = COLOR_assign ("s_err"  );
-   S_COLOR_KEYS       = COLOR_assign ("w_keys" );
-   S_COLOR_MESSAGE    = COLOR_assign ("w_mesg" );
-   S_COLOR_MENU       = COLOR_assign ("menu"   );
-   /*---(edit modes)---------------------*/
-   S_COLOR_CONTENT    = COLOR_assign ("m_map"  );
-   S_COLOR_SOURCE     = COLOR_assign ("m_src"  );
-   S_COLOR_INPUT      = COLOR_assign ("m_input");
-   S_COLOR_REPLACE    = COLOR_assign ("m_repl" );
-   S_COLOR_WANDER     = COLOR_assign ("m_wand" );
-   /*---(selection)----------------------*/
-   S_COLOR_CURRENT    = COLOR_assign ("curr"   );
-   S_COLOR_ROOT       = COLOR_assign ("root"   );
-   S_COLOR_VISUAL     = COLOR_assign ("visu"   );
-   S_COLOR_MARK       = COLOR_assign ("mark"   );
-   S_COLOR_SEARCH     = COLOR_assign ("srch"   );
-   /*---(deps)---------------------------*/
-   S_COLOR_REQS       = COLOR_assign ("reqs"   );
-   S_COLOR_PROS       = COLOR_assign ("pros"   );
-   S_COLOR_LIKE       = COLOR_assign ("like"   );
-   /*---(danger)-------------------------*/
-   S_COLOR_FDANGER    = COLOR_assign ("fdang"  );
-   S_COLOR_FSTRDAG    = COLOR_assign ("mdang"  );
-   /*---(cells)--------------------------*/
-   S_COLOR_NUMBER     = COLOR_assign ("num"    );
-   S_COLOR_FSIMPLE    = COLOR_assign ("for"    );
-   S_COLOR_FLIKE      = COLOR_assign ("flike"  );
-   S_COLOR_STRING     = COLOR_assign ("str"    );
-   S_COLOR_FSTRING    = COLOR_assign ("mod"    );
-   S_COLOR_MLIKE      = COLOR_assign ("mlike"  );
-   S_COLOR_POINTER    = COLOR_assign ("range"  );
-   S_COLOR_ADDRESS    = COLOR_assign ("addr"   );
-   S_COLOR_NULL       = COLOR_assign ("blank"  );
-   S_COLOR_NORMAL     = COLOR_assign ("def"    );
-   S_COLOR_ERROR      = COLOR_assign ("error"  );
-   /*---(row and column headers)---------*/
-   S_COLOR_HEADY      = COLOR_assign ("h_cur"  );
-   S_COLOR_HEADL      = COLOR_assign ("h_loc"  );
-   S_COLOR_HEADF      = COLOR_assign ("h_use"  );
-   S_COLOR_HEADN      = COLOR_assign ("h_not"  );
-   /*---(summary)------------------------*/
-   DEBUG_GRAF  yLOG_value   ("attempts"  , s_color_try);
-   DEBUG_GRAF  yLOG_value   ("errors"    , s_color_err);
-   /*---(complete)-----------------------*/
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return  0;
-}
 
 
 
@@ -669,10 +431,20 @@ char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist 
 char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
 CURS_col_color     (short a_col)
 {
-   if      (a_col == CCOL)                       attron  (S_COLOR_HEADY   );
-   else if (FR_COL == 'y' && a_col <= FR_ECOL)   attron  (S_COLOR_HEADL   );
-   else if (LOC_col_used (CTAB, a_col) >  0)     attron  (S_COLOR_HEADF   );
-   else                                          attron  (S_COLOR_HEADN   );
+   if      (a_col == CCOL)                       attron  (S_COLOR_HCURR   );
+   else if (FR_COL == 'y' && a_col <= FR_ECOL)   attron  (S_COLOR_HLOCK   );
+   else if (LOC_col_used (CTAB, a_col) >  0)     attron  (S_COLOR_HUSED   );
+   else                                          attron  (S_COLOR_HNORM   );
+   return 0;
+}
+
+char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
+CURS_row_color       (short a_row)
+{
+   if      (a_row == CROW)                       attron  (S_COLOR_HCURR   );
+   else if (FR_ROW == 'y' && a_row <= FR_EROW)   attron  (S_COLOR_HLOCK   );
+   else if (LOC_row_used (CTAB, a_row) >  0)     attron  (S_COLOR_HUSED   );
+   else                                          attron  (S_COLOR_HNORM   );
    return 0;
 }
 
@@ -685,9 +457,14 @@ DRAW_yaxis         (void)
    int         x_left      = 0;
    int         x_bott      = 0;
    yVIKEYS_view_size     (YVIKEYS_YAXIS, &x_left, NULL, &x_bott, &x_tall, NULL);
-   CURS_col_color  (1);
-   for (i = 0; i < x_tall; ++i) {
-      mvprintw (x_bott - i, x_left, "%-4d", i + 1000);
+   /*---(process rows)-----------------------*/
+   for (i = BROW; i <=  EROW; ++i) {
+      if (i >= NROW)  break;
+      /*---(prepare)----------------------------*/
+      CURS_row_color  (i);
+      mvprintw (x_bott - x_tall + 1 + (i - BROW), x_left, "%4d", i + 1);
+      attrset (0);
+      mvprintw (x_bott - x_tall + 1 + (i - BROW), x_left + 4, " ");
    }
    return 0;
 }
@@ -707,12 +484,9 @@ DRAW_xaxis         (void)
    char        label       [3]         = "";     /* column lable              */
    yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &cw    , NULL   , NULL, NULL);
    yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
-   CURS_col_color  (1);
-   /*> mvprintw (x_bott, x_left, "    [-----a][-----b][-----c][-----d][-----e]");     <*/
-   /*> return 0;                                                                      <*/
-   /*> for (i = BCOL; i <=  ECOL; ++i) {                                              <*/
-      /*> if (i >= NCOL) break;                                                       <*/
-   for (i = 0; i <=  10; ++i) {
+   mvprintw (x_bott, 0, "%*.*s", cw, cw, "       ");
+   for (i = BCOL; i <=  ECOL; ++i) {
+      if (i >= NCOL) break;
       /*---(prepare)---------------------*/
       w     = LOC_col_width (CTAB, i);
       wa    = w - 4;
@@ -736,7 +510,7 @@ DRAW_xaxis         (void)
          else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);
       } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);
       CURS_col_color  (ECOL + 1);
-      mvprintw (row_chead, cw, msg);
+      mvprintw (x_bott, cw, msg);
       attrset (0);
    }
    return 0;
@@ -802,16 +576,6 @@ CURS_col_head      (void)
    }
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
-CURS_row_color       (short a_row)
-{
-   if      (a_row == CROW)                       attron  (S_COLOR_HEADY   );
-   else if (FR_ROW == 'y' && a_row <= FR_EROW)   attron  (S_COLOR_HEADL   );
-   else if (LOC_row_used (CTAB, a_row) >  0)     attron  (S_COLOR_HEADF   );
-   else                                          attron  (S_COLOR_HEADN   );
    return 0;
 }
 
@@ -1298,14 +1062,19 @@ PRIV void  o___SCREEN__________o () { return; }
  *>    return ch;                                                                                                                  <* 
  *> }                                                                                                                              <*/
 
-char
-DRAW_main            (void)
-{
-   /*---(header)-------------------------*/
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char                                                                              <* 
+ *> DRAW_main            (void)                                                       <* 
+ *> {                                                                                 <* 
+ *>    char        t          [100];                                                  <* 
+ *>    /+---(header)-------------------------+/                                       <* 
+ *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                       <* 
+ *>    snprintf (t, 50, "BCOL %3d   CCOL %3d   ECOL %3d", BCOL, CCOL, ECOL);          <* 
+ *>    mvprintw ( 8 , 10, "%s", t);                                                   <* 
+ *>    snprintf (t, 50, "BROW %3d   CROW %3d   EROW %3d", BROW, CROW, EROW);          <* 
+ *>    mvprintw (10 , 10, "%s", t);                                                   <* 
+ *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                       <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
 
 char         /*-> present screen elements ------------[ leaf   [gc.IC1.021.AS]*/ /*-[05.2001.202.!]-*/ /*-[--.---.---.--]-*/
 CURS_main_OLD      (void)
@@ -1476,6 +1245,42 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    return 0;
 }
 
+char         /*-> tbd --------------------------------[ ------ [gn.860.371.25]*/ /*-[03.0000.014.!]-*/ /*-[--.---.---.--]-*/
+DRAW_main          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_left, x_wide;
+   int         x_bott, x_tall;
+   int         y_cur       = 0;
+   int         x_cur       = 0;
+   int         x_avail     = my.x_full - 1;
+   int         i           = 0;
+   short       y_pos      = 0;
+   short       x_pos      = 0;
+   int         w           = 0;
+   yVIKEYS_view_size     (YVIKEYS_MAIN, &x_left, &x_wide, &x_bott, &x_tall, NULL);
+   for (y_cur = BROW; y_cur <= EROW; ++y_cur) {
+      /*---(prepare)---------------------*/
+      /*> y_pos  = x_bott + x_tall - 1 + (y_cur - BROW);                              <*/
+      /*> y_pos  = x_bott - y_cur;                                                    <*/
+      y_pos  = x_bott - x_tall + 1 + y_cur;
+      x_pos   = x_left;
+      /*---(cycle normal columns)--------*/
+      for (x_cur = BCOL; x_cur <= ECOL; ++x_cur) {
+         w  = LOC_col_width  (CTAB, x_cur);
+         /*> mvprintw (y_pos, x_pos, "%-*.*s", w, w, "test");                         <*/
+         CURS_cell (x_cur, y_cur, y_pos, x_pos, w);
+         x_pos += w;
+      }
+      /*---(fill in at end)--------------*/
+      /*> x_pos  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);           <* 
+       *> x_wide = x_avail - x_pos + 1;                                              <* 
+       *> if (x_wide > 0)  CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, x_wide);       <*/
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -1525,6 +1330,8 @@ CURS_page          (void)
 {
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
+   int         x_left, x_wide;
+   int         x_bott, x_tall;
    int         y_cur       = 0;
    int         x_cur       = 0;
    int       end   = 0;
@@ -1534,12 +1341,12 @@ CURS_page          (void)
    int         ch          = 0;
    int         i           = 0;
    /*---(cycle rows)---------------------*/
-   if (FR_ROW == 'y')  ch = CURS_line (ch, FR_BROW, FR_EROW);
+   /*> if (FR_ROW == 'y')  ch = CURS_line (ch, FR_BROW, FR_EROW);                     <*/
    ch = CURS_line (ch, BROW, EROW);
    /*---(fill in bottom)-----------------*/
-   for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {
-      mvprintw (LOC_row_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);
-   }
+   /*> for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {                                          <* 
+    *>    mvprintw (LOC_row_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);   <* 
+    *> }                                                                                        <*/
    /*---(complete)------------------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1612,9 +1419,54 @@ DRAW_init          (void)
    /*---(get window size)-------------*/
    /*> CURS_size   ();                                                                <*/
    /*---(colors)----------------------*/
-   start_color ();
-   use_default_colors();
-   COLOR_init  ();
+   /*> COLOR_init  ();                                                                <*/
+   /*---(window)---------*/
+   S_COLOR_TITLE      = yCOLOR_curs_value ("title"    );
+   S_COLOR_TITLEE     = yCOLOR_curs_value ("error"    );
+   S_COLOR_STATUS     = yCOLOR_curs_value ("status"   );
+   S_COLOR_STATUSE    = yCOLOR_curs_value ("error"    );
+   S_COLOR_KEYS       = yCOLOR_curs_value ("keys"     );
+   S_COLOR_MESSAGE    = yCOLOR_curs_value ("command"  );
+   S_COLOR_MENU       = yCOLOR_curs_value ("menu"     );
+   /*---(trouble)--------*/
+   S_COLOR_ERROR      = yCOLOR_curs_value ("error"    );
+   S_COLOR_WARN       = yCOLOR_curs_value ("warn"     );
+   S_COLOR_FOUND      = yCOLOR_curs_value ("found"    );
+   /*---(formula)--------*/
+   S_COLOR_CONTENT    = yCOLOR_curs_value ("map"      );
+   S_COLOR_SOURCE     = yCOLOR_curs_value ("source"   );
+   S_COLOR_INPUT      = yCOLOR_curs_value ("input"    );
+   S_COLOR_REPLACE    = yCOLOR_curs_value ("replace"  );
+   S_COLOR_WANDER     = yCOLOR_curs_value ("wander"   );
+   /*---(row and column headers)---------*/
+   S_COLOR_HCURR      = yCOLOR_curs_add   ("h_current", ' ', "row/col header current"                             , 'k' , 'y' , '-');
+   S_COLOR_HLOCK      = yCOLOR_curs_add   ("h_locked" , ' ', "row/col header locked in place"                     , 'k' , 'r' , '-');
+   S_COLOR_HUSED      = yCOLOR_curs_add   ("h_used"   , ' ', "row/col header with used cells"                     , 'y' , 'k' , '-');
+   S_COLOR_HNORM      = yCOLOR_curs_add   ("h_normal" , ' ', "row/col header normal"                              , 'y' , ' ' , '-');
+   /*---(selection)----------------------*/
+   S_COLOR_CURRENT    = yCOLOR_curs_value ("curr"     );
+   S_COLOR_ROOT       = yCOLOR_curs_value ("root"     );
+   S_COLOR_VISUAL     = yCOLOR_curs_value ("visu"     );
+   S_COLOR_MARK       = yCOLOR_curs_value ("mark"     );
+   S_COLOR_SEARCH     = yCOLOR_curs_value ("srch"     );
+   /*---(dep type)-------*/
+   S_COLOR_REQS       = yCOLOR_curs_add   ("reqs"     , ' ', "value required from cell"                           , 'm' , 'm' , 'b');
+   S_COLOR_PROS       = yCOLOR_curs_add   ("pros"     , ' ', "value provided to cell"                             , 'g' , 'g' , 'b');
+   S_COLOR_LIKE       = yCOLOR_curs_add   ("like"     , ' ', "formula is copy/variation"                          , 'b' , 'b' , 'b');
+   /*---(danger signs)---*/
+   S_COLOR_FDANGER    = yCOLOR_curs_add   ("fdang"    , 'f', "complex numeric formula"                            , 'r' , ' ' , 'y');
+   S_COLOR_FSTRDAG    = yCOLOR_curs_add   ("mdang"    , 'm', "complex string formula"                             , 'r' , ' ' , 'y');
+   /*---(cell types)-----*/
+   S_COLOR_NUMBER     = yCOLOR_curs_add   ("num"      , 'n', "numeric literal"                                    , 'b' , ' ' , 'y');
+   S_COLOR_FSIMPLE    = yCOLOR_curs_add   ("for"      , 'f', "numeric formula"                                    , 'g' , ' ' , 'y');
+   S_COLOR_FLIKE      = yCOLOR_curs_add   ("flike"    , 'l', "numeric formula (copy)"                             , 'g' , ' ' , '-');
+   S_COLOR_STRING     = yCOLOR_curs_add   ("str"      , 's', "string literal"                                     , 'y' , ' ' , 'y');
+   S_COLOR_FSTRING    = yCOLOR_curs_add   ("mod"      , 'm', "string formula"                                     , 'm' , ' ' , 'y');
+   S_COLOR_MLIKE      = yCOLOR_curs_add   ("mlike"    , 'L', "string formula (copy)"                              , 'm' , ' ' , '-');
+   S_COLOR_POINTER    = yCOLOR_curs_add   ("range"    , 'p', "range pointer"                                      , 'c' , ' ' , 'y');
+   S_COLOR_ADDRESS    = yCOLOR_curs_add   ("addr"     , 'p', "address pointer"                                    , 'c' , ' ' , 'y');
+   S_COLOR_NULL       = yCOLOR_curs_add   ("blank"    , '-', "blank cell"                                         , 'b' , ' ' , 'y');
+   S_COLOR_NORMAL     = yCOLOR_curs_add   ("def"      , ' ', "default for unidentified cells"                     , 'y' , ' ' , 'y');
    /*---(complete)--------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;

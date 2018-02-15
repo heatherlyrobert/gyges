@@ -1155,8 +1155,8 @@ MAP_mapper           (char a_req)
       LOC__mapper   ('C');
       LOC__mapper   ('R');
    }
-   BCOL = g_xmap.beg;
-   CCOL = g_xmap.cur;
+   BCOL = g_xmap.gbeg;
+   CCOL = g_xmap.gcur;
    ECOL = g_xmap.gend;
    BROW = g_ymap.gbeg;
    CROW = g_ymap.cur;
