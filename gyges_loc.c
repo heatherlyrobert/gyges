@@ -1150,6 +1150,8 @@ LOC__mapprint    (char a_dir)
 char
 MAP_mapper           (char a_req)
 {
+   tCELL      *x_curr      = NULL;
+   char        t           [LEN_RECD];
    yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.avail, NULL, &g_ymap.avail, NULL);
    if (a_req == YVIKEYS_INIT) {
       LOC__mapper   ('C');
@@ -1161,6 +1163,10 @@ MAP_mapper           (char a_req)
    BROW = g_ymap.gbeg;
    CROW = g_ymap.cur;
    EROW = g_ymap.gend;
+   x_curr = LOC_cell_at_curr ();
+   if      (x_curr == NULL)     yVIKEYS_view_text (YVIKEYS_FORMULA, "n/a");
+   else if (x_curr->s == NULL)  yVIKEYS_view_text (YVIKEYS_FORMULA, "n/a");
+   else                         yVIKEYS_view_text (YVIKEYS_FORMULA, x_curr->s);
    return 0;
 }
 

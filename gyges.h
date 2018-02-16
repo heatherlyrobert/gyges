@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0c"
-#define     VER_TXT   "colors moved to yCOLOR, main area now displays correctly"
+#define     VER_NUM   "3.0d"
+#define     VER_TXT   "basic formula bar displays now"
 
 
 
@@ -1124,6 +1124,7 @@ char      DRAW_wrap            (void);
 char      DRAW_xaxis           (void);
 char      DRAW_yaxis           (void);
 char      DRAW_main            (void);
+char      DRAW_coloration      (char *a_opt);
 char      CURS_playback        (void);
 char      CURS_col_head        (void);
 char      CURS_row_head        (void);
