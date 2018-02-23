@@ -102,9 +102,11 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
+   yURG_name   ("prog", YURG_ON);
    yVIKEYS_init         ();
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
+   yVIKEYS_src_config   (CELL_saver);
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
@@ -217,6 +219,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status file");
    yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper);
+   yVIKEYS_map_refresh ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

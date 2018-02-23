@@ -1164,9 +1164,9 @@ MAP_mapper           (char a_req)
    CROW = g_ymap.cur;
    EROW = g_ymap.gend;
    x_curr = LOC_cell_at_curr ();
-   if      (x_curr == NULL)     yVIKEYS_view_text (YVIKEYS_FORMULA, "n/a");
-   else if (x_curr->s == NULL)  yVIKEYS_view_text (YVIKEYS_FORMULA, "n/a");
-   else                         yVIKEYS_view_text (YVIKEYS_FORMULA, x_curr->s);
+   if      (x_curr == NULL)     yVIKEYS_source ("", "");
+   else if (x_curr->s == NULL)  yVIKEYS_source ("", "");
+   else                         yVIKEYS_source (x_curr->label, x_curr->s);
    return 0;
 }
 

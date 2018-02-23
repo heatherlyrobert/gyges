@@ -332,7 +332,7 @@ char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%
 char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
 char  CURS_status_file     (char *a_list) { snprintf (a_list, LEN_STR, "[ file %-20.20s%*.*s%30.30s %-4.4s ]", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num); }
 char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
-char  CURS_status_textreg  (char *a_list) { TREG_entry     (REG_CURR, a_list); }
+char  CURS_status_textreg  (char *a_list) { TREG_status    (REG_CURR, a_list); }
 char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
 char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
 char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
@@ -1459,6 +1459,7 @@ DRAW_init          (void)
    yVIKEYS_cmds_direct   (":layout min");
    yVIKEYS_cmds_direct   (":status show");
    yVIKEYS_cmds_direct   (":command show");
+   yVIKEYS_cmds_direct   (":formula show");
    yVIKEYS_cmds_direct   (":xaxis show");
    yVIKEYS_cmds_direct   (":yaxis show");
    yVIKEYS_cmds_add      ('v', "coloration"  , "col" , "s"    , DRAW_coloration            , "" );

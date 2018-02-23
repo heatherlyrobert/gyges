@@ -1900,204 +1900,204 @@ static      tTEXTREG    s_textreg   [MAX_REG];
 #define     TREG_FILE     'f'
 #define     TREG_IMPORT   'i'
 
-char         /*-> clear all selections ---------------[ shoot  [gz.530.011.00]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-TREG_init          (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   /*---(registers)----------------------*/
-   strlcpy (s_regnames , REG_NAMES, MAX_REG);
-   s_treg_curr  = '"';
-   s_treg_watch = '"';
-   /*---(purge)--------------------------*/
-   for (i = 0; i < MAX_REG; ++i) {
-      strlcpy (s_textreg [i].label, "", 10);
-      s_textreg [i].bpos   = -1;
-      s_textreg [i].epos   = -1;
-      s_textreg [i].len    =  0;
-      strlcpy (s_textreg [i].data , "", LEN_RECD);
-      s_textreg [i].source = TREG_NONE;
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> clear all selections ---------------[ shoot  [gz.530.011.00]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_init          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    /+---(registers)----------------------+/                                                                                    <* 
+ *>    strlcpy (s_regnames , REG_NAMES, MAX_REG);                                                                                  <* 
+ *>    s_treg_curr  = '"';                                                                                                         <* 
+ *>    s_treg_watch = '"';                                                                                                         <* 
+ *>    /+---(purge)--------------------------+/                                                                                    <* 
+ *>    for (i = 0; i < MAX_REG; ++i) {                                                                                             <* 
+ *>       strlcpy (s_textreg [i].label, "", 10);                                                                                   <* 
+ *>       s_textreg [i].bpos   = -1;                                                                                               <* 
+ *>       s_textreg [i].epos   = -1;                                                                                               <* 
+ *>       s_textreg [i].len    =  0;                                                                                               <* 
+ *>       strlcpy (s_textreg [i].data , "", LEN_RECD);                                                                             <* 
+ *>       s_textreg [i].source = TREG_NONE;                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.C53.244.61]*/ /*-[02.0000.204.!]-*/ /*-[--.---.---.--]-*/
-TREG_entry         (char a_reg, char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         x_reg       = 0;
-   char        x_line      [LEN_RECD];
-   int         x_len       = 0;
-   /*---(beginning)----------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);
-   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
-   /*---(defenses)--------------------*/
-   --rce;  if (a_list  == NULL) {
-      DEBUG_REGS   yLOG_note    ("list is null, no point");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, g_empty, 80);
-      return rce;
-   }
-   /*---(buffer number)------------------*/
-   if (a_reg == REG_CURR)  a_reg = s_treg_watch;  /* for status line */
-   x_reg  = REG__reg2index  (a_reg);
-   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
-   --rce;  if (x_reg < 0)  {
-      DEBUG_REGS   yLOG_note    ("register is no good");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, g_empty, 80);
-      return rce;
-   }
-   /*---(write empty line)------------*/
-   if (s_textreg [x_reg].len == 0) {
-      sprintf (x_line, "  %c    -                                                      -   -  -  ", a_reg);
-      strlcpy (a_list, x_line, 80);
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(write line)------------------*/
-   sprintf (x_line , "  %c  %3d [%-40.40s  %-7.7s %3d %3d  %c  ",
-         a_reg                   ,
-         s_textreg [x_reg].len   ,
-         s_textreg [x_reg].data  ,
-         s_textreg [x_reg].label ,
-         s_textreg [x_reg].bpos  ,
-         s_textreg [x_reg].epos  ,
-         s_textreg [x_reg].source);
-   x_len = s_textreg [x_reg].len;
-   if (x_len <= 40) {
-      x_line [10 + x_len] = ']';
-   } else if (x_len > 40) {
-      x_line [10 + 40   ] = '>';
-   }
-   strlcpy (a_list, x_line, 80);
-   /*---(complete)--------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.C53.244.61]+/ /+-[02.0000.204.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_entry         (char a_reg, char *a_list)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         x_reg       = 0;                                                                                                <* 
+ *>    char        x_line      [LEN_RECD];                                                                                         <* 
+ *>    int         x_len       = 0;                                                                                                <* 
+ *>    /+---(beginning)----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);                                                                            <* 
+ *>    DEBUG_REGS   yLOG_point   ("a_list"    , a_list);                                                                           <* 
+ *>    /+---(defenses)--------------------+/                                                                                       <* 
+ *>    --rce;  if (a_list  == NULL) {                                                                                              <* 
+ *>       DEBUG_REGS   yLOG_note    ("list is null, no point");                                                                    <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       strlcpy (a_list, g_empty, 80);                                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(buffer number)------------------+/                                                                                    <* 
+ *>    if (a_reg == REG_CURR)  a_reg = s_treg_watch;  /+ for status line +/                                                        <* 
+ *>    x_reg  = REG__reg2index  (a_reg);                                                                                           <* 
+ *>    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);                                                                            <* 
+ *>    --rce;  if (x_reg < 0)  {                                                                                                   <* 
+ *>       DEBUG_REGS   yLOG_note    ("register is no good");                                                                       <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       strlcpy (a_list, g_empty, 80);                                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(write empty line)------------+/                                                                                       <* 
+ *>    if (s_textreg [x_reg].len == 0) {                                                                                           <* 
+ *>       sprintf (x_line, "  %c    -                                                      -   -  -  ", a_reg);                    <* 
+ *>       strlcpy (a_list, x_line, 80);                                                                                            <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(write line)------------------+/                                                                                       <* 
+ *>    sprintf (x_line , "  %c  %3d [%-40.40s  %-7.7s %3d %3d  %c  ",                                                              <* 
+ *>          a_reg                   ,                                                                                             <* 
+ *>          s_textreg [x_reg].len   ,                                                                                             <* 
+ *>          s_textreg [x_reg].data  ,                                                                                             <* 
+ *>          s_textreg [x_reg].label ,                                                                                             <* 
+ *>          s_textreg [x_reg].bpos  ,                                                                                             <* 
+ *>          s_textreg [x_reg].epos  ,                                                                                             <* 
+ *>          s_textreg [x_reg].source);                                                                                            <* 
+ *>    x_len = s_textreg [x_reg].len;                                                                                              <* 
+ *>    if (x_len <= 40) {                                                                                                          <* 
+ *>       x_line [10 + x_len] = ']';                                                                                               <* 
+ *>    } else if (x_len > 40) {                                                                                                    <* 
+ *>       x_line [10 + 40   ] = '>';                                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    strlcpy (a_list, x_line, 80);                                                                                               <* 
+ *>    /+---(complete)--------------------+/                                                                                       <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keys for register actions --[ ------ [gz.320.011.02]*/ /*-[01.0000.113.!]-*/ /*-[--.---.---.--]-*/
-TREG_clear         (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           =   0;
-   /*---(delete)-------------------------*/
-   for (i = SELC_from (); i <= SELC_to (); ++i) {
-      g_contents [i] = ' ';
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> process keys for register actions --[ ------ [gz.320.011.02]+/ /+-[01.0000.113.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_clear         (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           =   0;                                                                                              <* 
+ *>    /+---(delete)-------------------------+/                                                                                    <* 
+ *>    for (i = SELC_from (); i <= SELC_to (); ++i) {                                                                              <* 
+ *>       g_contents [i] = ' ';                                                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keys for register action ---[ ------ [gz.430.031.02]*/ /*-[01.0000.213.!]-*/ /*-[--.---.---.--]-*/
-TREG_delete        (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_len       =   0;
-   int         x_diff      =   0;
-   int         i           =   0;
-   /*---(set size)-----------------------*/
-   x_len   = strlen (g_contents);
-   x_diff  = SELC_to() - SELC_from() + 1;
-   /*---(delete)-------------------------*/
-   for (i = SELC_to () + 1; i <= x_len; ++i) {
-      g_contents [i - x_diff] = g_contents [i];
-   }
-   my.cpos = SELC_from ();
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> process keys for register action ---[ ------ [gz.430.031.02]+/ /+-[01.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_delete        (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_len       =   0;                                                                                              <* 
+ *>    int         x_diff      =   0;                                                                                              <* 
+ *>    int         i           =   0;                                                                                              <* 
+ *>    /+---(set size)-----------------------+/                                                                                    <* 
+ *>    x_len   = strlen (g_contents);                                                                                              <* 
+ *>    x_diff  = SELC_to() - SELC_from() + 1;                                                                                      <* 
+ *>    /+---(delete)-------------------------+/                                                                                    <* 
+ *>    for (i = SELC_to () + 1; i <= x_len; ++i) {                                                                                 <* 
+ *>       g_contents [i - x_diff] = g_contents [i];                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    my.cpos = SELC_from ();                                                                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keys for register actions --[ ------ [ge.640.051.04]*/ /*-[00.0000.213.!]-*/ /*-[--.---.---.--]-*/
-TREG_copy          (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_index     =   0;
-   char       *x_start     = NULL;
-   int         x_len       =   0;
-   char        x_label     [10]        = "";
-   char        rce         = -10;
-   /*---(identify register)--------------*/
-   x_index = REG__reg2index (s_treg_curr);
-   /*---(set size)-----------------------*/
-   x_start = g_contents + SELC_from();
-   x_len   = SELC_to() - SELC_from() + 1;
-   /*---(copy)---------------------------*/
-   strlcpy (s_textreg [x_index].data, x_start, x_len + 1);
-   /*---(fill in details)----------------*/
-   s_textreg [x_index].len    = x_len;
-   s_textreg [x_index].bpos   = SELC_from ();
-   s_textreg [x_index].epos   = SELC_to   ();
-   LOC_ref (CTAB, CCOL, CROW, 0, x_label );
-   strlcpy (s_textreg [x_index].label, x_label, 10);
-   s_textreg [x_index].source = TREG_USER;
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> process keys for register actions --[ ------ [ge.640.051.04]+/ /+-[00.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_copy          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_index     =   0;                                                                                              <* 
+ *>    char       *x_start     = NULL;                                                                                             <* 
+ *>    int         x_len       =   0;                                                                                              <* 
+ *>    char        x_label     [10]        = "";                                                                                   <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(identify register)--------------+/                                                                                    <* 
+ *>    x_index = REG__reg2index (s_treg_curr);                                                                                     <* 
+ *>    /+---(set size)-----------------------+/                                                                                    <* 
+ *>    x_start = g_contents + SELC_from();                                                                                         <* 
+ *>    x_len   = SELC_to() - SELC_from() + 1;                                                                                      <* 
+ *>    /+---(copy)---------------------------+/                                                                                    <* 
+ *>    strlcpy (s_textreg [x_index].data, x_start, x_len + 1);                                                                     <* 
+ *>    /+---(fill in details)----------------+/                                                                                    <* 
+ *>    s_textreg [x_index].len    = x_len;                                                                                         <* 
+ *>    s_textreg [x_index].bpos   = SELC_from ();                                                                                  <* 
+ *>    s_textreg [x_index].epos   = SELC_to   ();                                                                                  <* 
+ *>    LOC_ref (CTAB, CCOL, CROW, 0, x_label );                                                                                    <* 
+ *>    strlcpy (s_textreg [x_index].label, x_label, 10);                                                                           <* 
+ *>    s_textreg [x_index].source = TREG_USER;                                                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keys for register actions --[ ------ [gz.740.061.21]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-TREG_replace       (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_index     =   0;
-   int         x_len       =   0;
-   int         x_gap       =   0;
-   int         x_start     =   0;
-   char        x_null      = '-';
-   int         i           =   0;
-   /*---(identify register)--------------*/
-   x_index = REG__reg2index (s_treg_curr);
-   /*---(set the start)------------------*/
-   x_start = my.cpos;
-   /*---(open)---------------------------*/
-   x_len   = strlen (g_contents);
-   x_gap   = s_textreg [x_index].len;
-   if (x_start + x_gap >= x_len)  x_null = 'y';
-   /*---(open)---------------------------*/
-   x_len   = s_textreg [x_index].len;
-   for (i  = 0; i < x_len; ++i) {
-      g_contents [i + x_start] = s_textreg [x_index].data [i];
-   }
-   /*---(final null)---------------------*/
-   if (x_null == 'y') {
-      g_contents [x_start + x_gap + 1] == '\0';
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> process keys for register actions --[ ------ [gz.740.061.21]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_replace       (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_index     =   0;                                                                                              <* 
+ *>    int         x_len       =   0;                                                                                              <* 
+ *>    int         x_gap       =   0;                                                                                              <* 
+ *>    int         x_start     =   0;                                                                                              <* 
+ *>    char        x_null      = '-';                                                                                              <* 
+ *>    int         i           =   0;                                                                                              <* 
+ *>    /+---(identify register)--------------+/                                                                                    <* 
+ *>    x_index = REG__reg2index (s_treg_curr);                                                                                     <* 
+ *>    /+---(set the start)------------------+/                                                                                    <* 
+ *>    x_start = my.cpos;                                                                                                          <* 
+ *>    /+---(open)---------------------------+/                                                                                    <* 
+ *>    x_len   = strlen (g_contents);                                                                                              <* 
+ *>    x_gap   = s_textreg [x_index].len;                                                                                          <* 
+ *>    if (x_start + x_gap >= x_len)  x_null = 'y';                                                                                <* 
+ *>    /+---(open)---------------------------+/                                                                                    <* 
+ *>    x_len   = s_textreg [x_index].len;                                                                                          <* 
+ *>    for (i  = 0; i < x_len; ++i) {                                                                                              <* 
+ *>       g_contents [i + x_start] = s_textreg [x_index].data [i];                                                                 <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(final null)---------------------+/                                                                                    <* 
+ *>    if (x_null == 'y') {                                                                                                        <* 
+ *>       g_contents [x_start + x_gap + 1] == '\0';                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> process keys for register actions --[ ------ [gz.640.151.11]*/ /*-[01.0000.213.!]-*/ /*-[--.---.---.--]-*/
-TREG_paste         (char a_dir)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_index     =   0;
-   int         x_len       =   0;
-   int         x_gap       =   0;
-   int         x_start     =   0;
-   int         i           =   0;
-   /*---(identify register)--------------*/
-   x_index = REG__reg2index (s_treg_curr);
-   /*---(set the start)------------------*/
-   x_start = my.cpos;
-   if (a_dir == '>')   ++x_start;
-   /*---(open)---------------------------*/
-   x_len   = strlen (g_contents);
-   x_gap   = s_textreg [x_index].len;
-   for (i = x_len; i >= x_start; --i) {
-      g_contents [i + x_gap] = g_contents [i];
-      g_contents [i]         = G_CHAR_PLACE;
-   }
-   /*---(fill)---------------------------*/
-   x_len   = s_textreg [x_index].len;
-   for (i  = 0; i < x_len; ++i) {
-      g_contents [i + x_start] = s_textreg [x_index].data [i];
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> process keys for register actions --[ ------ [gz.640.151.11]+/ /+-[01.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_paste         (char a_dir)                                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_index     =   0;                                                                                              <* 
+ *>    int         x_len       =   0;                                                                                              <* 
+ *>    int         x_gap       =   0;                                                                                              <* 
+ *>    int         x_start     =   0;                                                                                              <* 
+ *>    int         i           =   0;                                                                                              <* 
+ *>    /+---(identify register)--------------+/                                                                                    <* 
+ *>    x_index = REG__reg2index (s_treg_curr);                                                                                     <* 
+ *>    /+---(set the start)------------------+/                                                                                    <* 
+ *>    x_start = my.cpos;                                                                                                          <* 
+ *>    if (a_dir == '>')   ++x_start;                                                                                              <* 
+ *>    /+---(open)---------------------------+/                                                                                    <* 
+ *>    x_len   = strlen (g_contents);                                                                                              <* 
+ *>    x_gap   = s_textreg [x_index].len;                                                                                          <* 
+ *>    for (i = x_len; i >= x_start; --i) {                                                                                        <* 
+ *>       g_contents [i + x_gap] = g_contents [i];                                                                                 <* 
+ *>       g_contents [i]         = G_CHAR_PLACE;                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(fill)---------------------------+/                                                                                    <* 
+ *>    x_len   = s_textreg [x_index].len;                                                                                          <* 
+ *>    for (i  = 0; i < x_len; ++i) {                                                                                              <* 
+ *>       g_contents [i + x_start] = s_textreg [x_index].data [i];                                                                 <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 /*> char         /+-> process keys for register actions --[ leaf   [ge.QG5.287.FB]+/ /+-[02.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> TREG_mode          (int a_major, int a_minor)                                                                                  <* 

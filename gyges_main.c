@@ -11,7 +11,7 @@ main (int argc, char *argv[])
 {
    /*---(locals)-----------+-----------+-*/
    int         x_loop      = 0;
-   char        x_ch        = ' ';      /* current keystroke                   */
+   int         x_ch        = ' ';      /* current keystroke                   */
    uchar       x_key       = ' ';      /* current keystroke                   */
    char        rc          = 0;
    tTSPEC      x_dur;
@@ -34,6 +34,7 @@ main (int argc, char *argv[])
    DEBUG_TOPS   yLOG_break   ();
    while (g_done) {
       x_ch = getch ();
+      if (x_ch == KEY_RESIZE)  yVIKEYS_view_resize (0, 0, 0);
       if (x_ch < 0)  x_key = 0;
       else           x_key = x_ch;
       DEBUG_GRAF  yLOG_value   ("x_key"     , x_key);

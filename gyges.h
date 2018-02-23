@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0d"
-#define     VER_TXT   "basic formula bar displays now"
+#define     VER_NUM   "3.0e"
+#define     VER_TXT   "now saves yVIKEYS source mode edits back to cell/recalcs"
 
 
 
@@ -982,16 +982,16 @@ char      REG__unhook        (tCELL *a_curr);
 char      REG_mode           (int a_prev , int a_curr);
 
 /*---(text registers)-------*/
-char      TREG_init          (void);
-char      TREG_entry         (char  a_reg   , char *a_list);
-char      TREG_clear         (void);
-char      TREG_delete        (void);
-char      TREG_copy          (void);
-char      TREG_replace       (void);
-char      TREG_paste         (char  a_dir);
-char      TREG_mode          (int   a_major , int   a_minor);
-char      TREG_read          (char  a_reg, char *a_label, int a_beg, int a_end, char *a_source);
-char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);
+/*> char      TREG_init          (void);                                                               <* 
+ *> char      TREG_entry         (char  a_reg   , char *a_list);                                       <* 
+ *> char      TREG_clear         (void);                                                               <* 
+ *> char      TREG_delete        (void);                                                               <* 
+ *> char      TREG_copy          (void);                                                               <* 
+ *> char      TREG_replace       (void);                                                               <* 
+ *> char      TREG_paste         (char  a_dir);                                                        <* 
+ *> char      TREG_mode          (int   a_major , int   a_minor);                                      <* 
+ *> char      TREG_read          (char  a_reg, char *a_label, int a_beg, int a_end, char *a_source);   <* 
+ *> char      TREG_write         (FILE *a_file, int  *a_seq, char a_buf);                              <*/
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
@@ -1391,6 +1391,7 @@ char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
+char      CELL_saver           (char *a_contents);
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
 tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 

@@ -811,6 +811,13 @@ char      xlabel    [200] = "";
 char      s_bsource [200] = "";
 char      s_bformat [200] = "";
 
+char
+CELL_saver         (char *a_contents)
+{
+   CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, a_contents);
+   return 0;
+}
+
 char         /*-> change te contents of a cell -------[ leaf   [ge.M96.647.HB]*/ /*-[02.0000.953.#]-*/ /*-[--.---.---.--]-*/
 CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row, char *a_source)
 {
