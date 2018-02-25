@@ -316,6 +316,69 @@ CELL_wrap          (void)
    return 0;
 }
 
+char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
+SRCH_searcher      (char *a_search)
+{
+   /*---(locals)-----------+------+----+-*/
+   char        rce         =   -10;
+   char        rc          =     0;
+   tCELL      *x_next      = NULL;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   /*---(header)--------------------s----*/
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH   yLOG_point   ("a_search"  , a_search);
+   /*---(defenses)---------------------------*/
+   --rce;  if (a_search == NULL) {
+      DEBUG_SRCH   yLOG_note    ("can not use null search");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+   }
+   DEBUG_SRCH   yLOG_info    ("a_search"  , a_search);
+   rc = yREGEX_comp (a_search + 1);
+   DEBUG_SRCH   yLOG_value   ("comp rc"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_SRCH   yLOG_note    ("could not compile search");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(process range)----------------------*/
+   DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
+   x_next = hcell;
+   /*> x_next  = VISU_first (&x_tab, &x_col, &x_row);                                 <*/
+   do {
+      DEBUG_SRCH   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
+      if (x_next != NULL && x_next->s != NULL) {
+         DEBUG_SRCH   yLOG_char    ("->type"    , x_next->t);
+         switch (x_next->t) {
+         case CTYPE_STR   :
+            DEBUG_SRCH   yLOG_info    ("->s"       , x_next->s);
+            rc = yREGEX_exec (x_next->s);
+            break;
+         case CTYPE_MOD   :
+         case CTYPE_MLIKE :
+            DEBUG_SRCH   yLOG_info    ("->v_str"   , x_next->v_str);
+            rc = yREGEX_exec (x_next->v_str);
+            break;
+         default          :
+            DEBUG_SRCH   yLOG_note    ("can not process cell type");
+            rc = -1;
+            break;
+         }
+         DEBUG_SRCH   yLOG_value   ("exec rc"   , rc);
+         if (rc > 0) {
+            yVIKEYS_srch_found (x_next->label);
+            x_next->n = 's';
+         }
+      }
+      x_next = x_next->next;
+      /*> x_next  = VISU_next (&x_tab, &x_col, &x_row);                               <*/
+   } while (x_next != NULL && x_next != DONE_DONE);
+   /*---(complete)---------------------------*/
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -1896,7 +1959,7 @@ CELL_width         (char a_mode, char a_num)
    }
    /*---(reset headers)---------------*/
    KEYS_bcol    (BCOL);
-   CURS_col_head ();
+   /*> CURS_col_head ();                                                              <*/
    /*---(complete)---------------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;

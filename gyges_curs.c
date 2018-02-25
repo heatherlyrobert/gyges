@@ -142,6 +142,7 @@ static int  S_COLOR_MENU       = COLOR_PAIR(43) | A_BLINK;
 static int  S_COLOR_CONTENT    = COLOR_PAIR(43) | A_BLINK;
 static int  S_COLOR_SOURCE     = COLOR_PAIR(42) | A_BLINK;
 static int  S_COLOR_INPUT      = COLOR_PAIR(47) | A_BLINK;
+static int  S_COLOR_TEXREG     = COLOR_PAIR(47) | A_BLINK;
 static int  S_COLOR_REPLACE    = COLOR_PAIR(47) | A_BLINK;
 static int  S_COLOR_WANDER     = COLOR_PAIR(41) | A_BLINK;
 /*---(cells)--------------------------*/
@@ -332,7 +333,7 @@ char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%
 char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
 char  CURS_status_file     (char *a_list) { snprintf (a_list, LEN_STR, "[ file %-20.20s%*.*s%30.30s %-4.4s ]", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num); }
 char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
-char  CURS_status_textreg  (char *a_list) { TREG_status    (REG_CURR, a_list); }
+char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }
 char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
 char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
 char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
@@ -478,145 +479,159 @@ char         /*-> update the column labels -----------[ ------ [gz.D91.061.A5]*/
 DRAW_xaxis         (void)
 {
    /*---(locals)-----------+-----------+-*/
+   int         x_pref      = 0;
    int         x_left      = 0;
    int         x_wide      = 0;
    int         x_bott      = 0;
    int         i           = 0;                  /* iterator -- columns       */
    int         w           = 0;                  /* column width              */
    int         wa          = 0;                  /* adjusted column width     */
-   int         cw          = 0;                  /* adjusted column width     */
-   char        msg         [500]       = "";     /* temporary display message */
-   char        label       [3]         = "";     /* column lable              */
-   yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &cw    , NULL   , NULL, NULL);
-   yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
-   mvprintw (x_bott, x_left, "%*.*s", cw, cw, "       ");
-   for (i = BCOL; i <=  ECOL; ++i) {
-      if (i >= NCOL) break;
-      /*---(prepare)---------------------*/
-      w     = LOC_col_width (CTAB, i);
-      wa    = w - 4;
-      LOC_col_label (CTAB, i, label);
-      /*---(output)----------------------*/
-      snprintf (msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
-      CURS_col_color  (i);
-      mvprintw (x_bott, cw, msg);
-      attrset (0);
-      cw += w;
-   }
-   /*---(fill in right side)-------------*/
-   if (cw < x_wide) {
-      w     = x_wide - cw;
-      wa    = w - 4;
-      LOC_col_label (CTAB, ECOL + 1, label);
-      if (ECOL < NCOL - 1){
-         if      (w == 1) snprintf(msg, 500, ">");
-         else if (w == 2) snprintf(msg, 500, "\[>");
-         else if (w == 3) snprintf(msg, 500, "\[->");
-         else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);
-      } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);
-      CURS_col_color  (ECOL + 1);
-      mvprintw (x_bott, cw, msg);
-      attrset (0);
-   }
-   return 0;
-}
-
-char         /*-> update the column labels -----------[ ------ [gz.D91.061.A5]*/ /*-[02.3000.323.!]-*/ /*-[--.---.---.--]-*/
-CURS_col_head      (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;                  /* iterator -- columns       */
-   int         w           = 0;                  /* column width              */
-   int         wa          = 0;                  /* adjusted column width     */
-   int         cw          = my.x_left;          /* cumulative column width   */
-   char        msg         [500]       = "";     /* temporary display message */
-   char        label       [3]         = "";     /* column lable              */
+   char        x_label     [3]         = "";     /* column lable              */
+   int         x_pos       = 0;                  /* adjusted column width     */
+   char        x_disp      [500]       = "";     /* temporary display message */
    /*---(begin)--------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   /*---(process locked)-----------------*/
-   if (FR_COL == 'y') {
-      for (i = FR_BCOL; i <=  FR_ECOL; ++i) {
-         if (i >= NCOL) break;
-         /*---(prepare)---------------------*/
-         w     = LOC_col_width (CTAB, i);
-         wa    = w - 4;
-         cw    = LOC_col_xpos  (CTAB, i) + w;
-         LOC_col_label (CTAB, i, label);
-         /*---(output)----------------------*/
-         snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
-         CURS_col_color  (i);
-         mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);
-         attrset (0);
-      }
-   }
-   /*---(process oolumns)----------------*/
-   KEYS_pcol ();
+   /*---(begin)--------------------------*/
+   yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &x_pref, NULL   , NULL, NULL);
+   yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
+   DEBUG_GRAF  yLOG_value   ("x_pref"    , x_pref);
+   DEBUG_GRAF  yLOG_value   ("x_left"    , x_left);
+   DEBUG_GRAF  yLOG_value   ("x_wide"    , x_wide);
+   DEBUG_GRAF  yLOG_value   ("x_bott"    , x_bott);
+   x_pos = x_pref;
+   mvprintw (x_bott, x_left, "%*.*s", x_pos, x_pos, "       ");
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/
       w     = LOC_col_width (CTAB, i);
       wa    = w - 4;
-      cw    = LOC_col_xpos  (CTAB, i) + w;
-      LOC_col_label (CTAB, i, label);
+      LOC_col_label (CTAB, i, x_label);
+      DEBUG_GRAF  yLOG_value   (x_label     , w);
+      DEBUG_GRAF  yLOG_value   ("x_pos"       , x_pos);
       /*---(output)----------------------*/
-      snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);
+      snprintf (x_disp, 500, "\[%*.*s%s\]", wa, wa, g_dashes, x_label);
+      DEBUG_GRAF  yLOG_info    ("x_disp"      , x_disp);
       CURS_col_color  (i);
-      mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);
+      mvprintw (x_bott, x_pos, x_disp);
       attrset (0);
+      x_pos += w;
    }
    /*---(fill in right side)-------------*/
-   if (cw < (my.x_full - my.x_right)) {
-      w     = my.x_full - cw;
-      wa    = w - 4;
-      LOC_col_label (CTAB, ECOL + 1, label);
-      if (ECOL < NCOL - 1){
-         if      (w == 1) snprintf(msg, 500, ">");
-         else if (w == 2) snprintf(msg, 500, "\[>");
-         else if (w == 3) snprintf(msg, 500, "\[->");
-         else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);
-      } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);
-      CURS_col_color  (ECOL + 1);
-      mvprintw (row_chead, cw, msg);
-      attrset (0);
-   }
+   /*> if (x_pos < x_wide) {                                                                     <* 
+    *>    w     = x_wide - x_pos;                                                                <* 
+    *>    wa    = w - 4;                                                                         <* 
+    *>    LOC_col_label (CTAB, ECOL + 1, x_label);                                               <* 
+    *>    if (ECOL < NCOL - 1){                                                                  <* 
+    *>       if      (w == 1) snprintf (x_disp, 500, ">");                                       <* 
+    *>       else if (w == 2) snprintf (x_disp, 500, "\[>");                                     <* 
+    *>       else if (w == 3) snprintf (x_disp, 500, "\[->");                                    <* 
+    *>       else             snprintf (x_disp, 500, "\[%*.*s%s>", wa, wa, g_dashes, x_label);   <* 
+    *>    } else              snprintf (x_disp, 500, "%*.*s ", w, w, g_empty);                   <* 
+    *>    CURS_col_color  (ECOL + 1);                                                            <* 
+    *>    mvprintw (x_bott, x_pos, x_disp);                                                      <* 
+    *>    attrset (0);                                                                           <* 
+    *> }                                                                                         <*/
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
-char         /*-> update row labels ------------------[ ------ [gz.741.041.33]*/ /*-[02.2000.223.!]-*/ /*-[--.---.---.--]-*/
-CURS_row_head      (void)
-{
-   /*---(locals)-----------------------------*/
-   int       i         = 0;                    /* iterator -- rows            */
-   int       j         = 0;                    /* iterator -- rows            */
-   int       h         = 0;                    /* row height                  */
-   int       ch        = row_main;             /* cumulative column width     */
-   /*---(header)-----------------------------*/
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   /*---(process locked rows)----------------*/
-   if (FR_ROW == 'y') {
-      for (i = FR_BROW; i <=  FR_EROW; ++i) {
-         if (i >= NROW)  break;
-         /*---(prepare)----------------------------*/
-         CURS_row_color  (i);
-         mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);
-         attrset (0);
-      }
-   }
-   KEYS_prow ();
-   /*---(process rows)-----------------------*/
-   for (i = BROW; i <=  EROW; ++i) {
-      if (i >= NROW)  break;
-      /*---(prepare)----------------------------*/
-      CURS_row_color  (i);
-      mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);
-      attrset (0);
-   }
-   /*---(complete)---------------------------*/
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> update the column labels -----------[ ------ [gz.D91.061.A5]+/ /+-[02.3000.323.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> CURS_col_head      (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           = 0;                  /+ iterator -- columns       +/                                               <* 
+ *>    int         w           = 0;                  /+ column width              +/                                               <* 
+ *>    int         wa          = 0;                  /+ adjusted column width     +/                                               <* 
+ *>    int         cw          = my.x_left;          /+ cumulative column width   +/                                               <* 
+ *>    char        msg         [500]       = "";     /+ temporary display message +/                                               <* 
+ *>    char        label       [3]         = "";     /+ column lable              +/                                               <* 
+ *>    /+---(begin)--------------------------+/                                                                                    <* 
+ *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(process locked)-----------------+/                                                                                    <* 
+ *>    if (FR_COL == 'y') {                                                                                                        <* 
+ *>       for (i = FR_BCOL; i <=  FR_ECOL; ++i) {                                                                                  <* 
+ *>          if (i >= NCOL) break;                                                                                                 <* 
+ *>          /+---(prepare)---------------------+/                                                                                 <* 
+ *>          w     = LOC_col_width (CTAB, i);                                                                                      <* 
+ *>          wa    = w - 4;                                                                                                        <* 
+ *>          cw    = LOC_col_xpos  (CTAB, i) + w;                                                                                  <* 
+ *>          LOC_col_label (CTAB, i, label);                                                                                       <* 
+ *>          /+---(output)----------------------+/                                                                                 <* 
+ *>          snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);                                                           <* 
+ *>          CURS_col_color  (i);                                                                                                  <* 
+ *>          mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);                                                                   <* 
+ *>          attrset (0);                                                                                                          <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(process oolumns)----------------+/                                                                                    <* 
+ *>    KEYS_pcol ();                                                                                                               <* 
+ *>    for (i = BCOL; i <=  ECOL; ++i) {                                                                                           <* 
+ *>       if (i >= NCOL) break;                                                                                                    <* 
+ *>       /+---(prepare)---------------------+/                                                                                    <* 
+ *>       w     = LOC_col_width (CTAB, i);                                                                                         <* 
+ *>       wa    = w - 4;                                                                                                           <* 
+ *>       cw    = LOC_col_xpos  (CTAB, i) + w;                                                                                     <* 
+ *>       LOC_col_label (CTAB, i, label);                                                                                          <* 
+ *>       /+---(output)----------------------+/                                                                                    <* 
+ *>       snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);                                                              <* 
+ *>       CURS_col_color  (i);                                                                                                     <* 
+ *>       mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);                                                                      <* 
+ *>       attrset (0);                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(fill in right side)-------------+/                                                                                    <* 
+ *>    if (cw < (my.x_full - my.x_right)) {                                                                                        <* 
+ *>       w     = my.x_full - cw;                                                                                                  <* 
+ *>       wa    = w - 4;                                                                                                           <* 
+ *>       LOC_col_label (CTAB, ECOL + 1, label);                                                                                   <* 
+ *>       if (ECOL < NCOL - 1){                                                                                                    <* 
+ *>          if      (w == 1) snprintf(msg, 500, ">");                                                                             <* 
+ *>          else if (w == 2) snprintf(msg, 500, "\[>");                                                                           <* 
+ *>          else if (w == 3) snprintf(msg, 500, "\[->");                                                                          <* 
+ *>          else             snprintf(msg, 500, "\[%*.*s%s>", wa, wa, g_dashes, label);                                           <* 
+ *>       } else              snprintf(msg, 500, "%*.*s ", w, w, g_empty);                                                         <* 
+ *>       CURS_col_color  (ECOL + 1);                                                                                              <* 
+ *>       mvprintw (row_chead, cw, msg);                                                                                           <* 
+ *>       attrset (0);                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> update row labels ------------------[ ------ [gz.741.041.33]+/ /+-[02.2000.223.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> CURS_row_head      (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------------------------+/                                                                                <* 
+ *>    int       i         = 0;                    /+ iterator -- rows            +/                                               <* 
+ *>    int       j         = 0;                    /+ iterator -- rows            +/                                               <* 
+ *>    int       h         = 0;                    /+ row height                  +/                                               <* 
+ *>    int       ch        = row_main;             /+ cumulative column width     +/                                               <* 
+ *>    /+---(header)-----------------------------+/                                                                                <* 
+ *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(process locked rows)----------------+/                                                                                <* 
+ *>    if (FR_ROW == 'y') {                                                                                                        <* 
+ *>       for (i = FR_BROW; i <=  FR_EROW; ++i) {                                                                                  <* 
+ *>          if (i >= NROW)  break;                                                                                                <* 
+ *>          /+---(prepare)----------------------------+/                                                                          <* 
+ *>          CURS_row_color  (i);                                                                                                  <* 
+ *>          mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);                                                                  <* 
+ *>          attrset (0);                                                                                                          <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    KEYS_prow ();                                                                                                               <* 
+ *>    /+---(process rows)-----------------------+/                                                                                <* 
+ *>    for (i = BROW; i <=  EROW; ++i) {                                                                                           <* 
+ *>       if (i >= NROW)  break;                                                                                                   <* 
+ *>       /+---(prepare)----------------------------+/                                                                             <* 
+ *>       CURS_row_color  (i);                                                                                                     <* 
+ *>       mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);                                                                     <* 
+ *>       attrset (0);                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)---------------------------+/                                                                                <* 
+ *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 /*> char         /+-> tbd --------------------------------[ leaf   [gz.860.161.50]+/ /+-[03.3000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> CURS_menuroot      (char a_menu)                                                                                               <* 
@@ -1067,108 +1082,108 @@ PRIV void  o___SCREEN__________o () { return; }
  *>    return ch;                                                                                                                  <* 
  *> }                                                                                                                              <*/
 
-char         /*-> present screen elements ------------[ leaf   [gc.IC1.021.AS]*/ /*-[05.2001.202.!]-*/ /*-[--.---.---.--]-*/
-CURS_main_OLD      (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         ch          = 0;
-   tCELL      *x_curr      = NULL;
-   tCELL      *x_save      =    1;
-   /*---(header)-------------------------*/
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   /*---(initialize)---------------------*/
-   switch (my.layout_formula) {
-   case G_FORMULA_DEBUG : my.apos = my.x_full - 29 - 15 -  2;
-                          break;
-   case G_FORMULA_SMALL : my.apos = my.x_full -  6 -  5 -  2;
-                          break;
-   case G_FORMULA_TINY  : my.apos = my.x_full -  0 -  0 -  2;
-                          break;
-   }
-   /*---(update globals)-----------------*/
-   x_curr    = LOC_cell_at_curr ();
-   if (x_curr != x_save) {
-      if (x_curr != NULL) {
-         DEP_disp_reqs (x_curr, my.reqs_list);
-         DEP_disp_pros (x_curr, my.deps_list);
-         DEP_disp_like (x_curr, my.like_list);
-         strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);
-      } else {
-         strncpy (my.reqs_list, "n/a", LEN_RECD);
-         strncpy (my.deps_list, "n/a", LEN_RECD);
-         strncpy (my.like_list, "n/a", LEN_RECD);
-         strncpy (my.rpn_list , "n/a", LEN_RECD);
-      }
-   }
-   x_save = x_curr;
-   REG_list   (my.reg_curr  , my.reg_list);
-   strncpy (s_mark_list, "+", LEN_RECD);
-   MARK_list  (s_mark_list);
-   /*> strncpy (s_mark_plus, "+", LEN_RECD);                                          <*/
-   /*> MARK_listplus  (s_mark_plus);                                                  <*/
-   /*---(update cells)-------------------*/
-   /*> CURS_formula   (x_curr);                                                       <*/
-   /*> CURS_status    (x_curr);                                                       <*/
-   /*> CURS_col_head  ();                                                             <*/
-   /*> CURS_row_head  ();                                                             <*/
-   /*> CURS_page      ();                                                             <*/
-   /*> CURS_message   ();                                                             <*/
-   /*> switch (my.info_win) {                                                         <* 
-    *> case G_INFO_BUFS   : CURS_listbufs    ();                                      <* 
-    *>                      break;                                                    <* 
-    *> case G_INFO_MARK   : CURS_list_mark   ();                                      <* 
-    *>                      break;                                                    <* 
-    *> case G_INFO_REGS   : CURS_listreg     ();                                      <* 
-    *>                      break;                                                    <* 
-    *> case G_INFO_TREG   : CURS_listtreg    ();                                      <* 
-    *>                      break;                                                    <* 
-    *> case G_INFO_CELL   : CURS_info_cell   ();                                      <* 
-    *>                      break;                                                    <* 
-    *> case G_INFO_ERROR  : CURS_listerror   (x_curr);                                <* 
-    *>                      break;                                                    <* 
-    *> case G_INFO_LAYOUT : CURS_info_layout ();                                      <* 
-    *>                      break;                                                    <* 
-    *> }                                                                              <*/
-   /*> if (my.menu != MENU_NONE) {                                                    <* 
-    *>    CURS_menuroot (my.menu);                                                    <* 
-    *>    if (my.menu != MENU_ROOT)  CURS_menusub  (my.menu);                         <* 
-    *> }                                                                              <*/
-   /*---(label/keys)---------------------*/
-   /*> if (my.layout_formula == G_FORMULA_DEBUG || my.layout_formula == G_FORMULA_SMALL) {   <* 
-    *>    attron   (S_COLOR_KEYS);                                                           <* 
-    *>    mvprintw (row_chead, 0, g_cmd);                                                    <* 
-    *>    attroff  (S_COLOR_KEYS);                                                           <* 
-    *> } else {                                                                              <* 
-    *>    mvprintw (row_chead, 0, s_label + 1);                                              <* 
-    *> }                                                                                     <*/
-   /*---(cursor pos)---------------------*/
-   /*> if (my.info_win != G_INFO_NONE)                                                                                                                                  <* 
-    *>    move ( 4, 10);                                                                                                                                                <* 
-    *> else if (my.menu     != MENU_NONE)                                                                                                                               <* 
-    *>    move ( 2,  1);                                                                                                                                                <* 
-    *> else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)   <* 
-    *>    move (row_formula, s_start + my.cpos - my.bpos);                                                                                                              <* 
-    *> else                                                                                                                                                             <* 
-    *>    move (LOC_row_ypos (CTAB, CROW), LOC_col_xpos (CTAB, CCOL) + LOC_col_width (CTAB, CCOL) - 1);                                                                 <*/
-   /*---(refresh)------------------------*/
-   /*> my.info_win = G_INFO_NONE;                                                     <*/
-   refresh ();
-   /*> IF_MACRO_NOT_PLAYING {                                                         <* 
-    *>    ch = getch ();                                                              <* 
-    *>    DEBUG_GRAF  yLOG_value   ("key"       , ch);                                <* 
-    *> }                                                                              <*/
-      ch = getch ();
-      DEBUG_GRAF  yLOG_value   ("key"       , ch);
-   /*---(check layout)-------------------*/
-   if (ch == KEY_RESIZE) {
-      CURS_size ();
-      MOVE_horz  ('r');
-      MOVE_vert  ('r');
-   }
-   /*---(complete)--------------------------*/
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return ch;
-}
+/*> char         /+-> present screen elements ------------[ leaf   [gc.IC1.021.AS]+/ /+-[05.2001.202.!]-+/ /+-[--.---.---.--]-+/                                                  <* 
+ *> CURS_main_OLD      (void)                                                                                                                                                     <* 
+ *> {                                                                                                                                                                             <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                                                   <* 
+ *>    int         ch          = 0;                                                                                                                                               <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                                                                            <* 
+ *>    tCELL      *x_save      =    1;                                                                                                                                            <* 
+ *>    /+---(header)-------------------------+/                                                                                                                                   <* 
+ *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                                                                   <* 
+ *>    /+---(initialize)---------------------+/                                                                                                                                   <* 
+ *>    switch (my.layout_formula) {                                                                                                                                               <* 
+ *>    case G_FORMULA_DEBUG : my.apos = my.x_full - 29 - 15 -  2;                                                                                                                 <* 
+ *>                           break;                                                                                                                                              <* 
+ *>    case G_FORMULA_SMALL : my.apos = my.x_full -  6 -  5 -  2;                                                                                                                 <* 
+ *>                           break;                                                                                                                                              <* 
+ *>    case G_FORMULA_TINY  : my.apos = my.x_full -  0 -  0 -  2;                                                                                                                 <* 
+ *>                           break;                                                                                                                                              <* 
+ *>    }                                                                                                                                                                          <* 
+ *>    /+---(update globals)-----------------+/                                                                                                                                   <* 
+ *>    x_curr    = LOC_cell_at_curr ();                                                                                                                                           <* 
+ *>    if (x_curr != x_save) {                                                                                                                                                    <* 
+ *>       if (x_curr != NULL) {                                                                                                                                                   <* 
+ *>          DEP_disp_reqs (x_curr, my.reqs_list);                                                                                                                                <* 
+ *>          DEP_disp_pros (x_curr, my.deps_list);                                                                                                                                <* 
+ *>          DEP_disp_like (x_curr, my.like_list);                                                                                                                                <* 
+ *>          strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);                                                                                                                        <* 
+ *>       } else {                                                                                                                                                                <* 
+ *>          strncpy (my.reqs_list, "n/a", LEN_RECD);                                                                                                                             <* 
+ *>          strncpy (my.deps_list, "n/a", LEN_RECD);                                                                                                                             <* 
+ *>          strncpy (my.like_list, "n/a", LEN_RECD);                                                                                                                             <* 
+ *>          strncpy (my.rpn_list , "n/a", LEN_RECD);                                                                                                                             <* 
+ *>       }                                                                                                                                                                       <* 
+ *>    }                                                                                                                                                                          <* 
+ *>    x_save = x_curr;                                                                                                                                                           <* 
+ *>    REG_list   (my.reg_curr  , my.reg_list);                                                                                                                                   <* 
+ *>    strncpy (s_mark_list, "+", LEN_RECD);                                                                                                                                      <* 
+ *>    MARK_list  (s_mark_list);                                                                                                                                                  <* 
+ *>    /+> strncpy (s_mark_plus, "+", LEN_RECD);                                          <+/                                                                                     <* 
+ *>    /+> MARK_listplus  (s_mark_plus);                                                  <+/                                                                                     <* 
+ *>    /+---(update cells)-------------------+/                                                                                                                                   <* 
+ *>    /+> CURS_formula   (x_curr);                                                       <+/                                                                                     <* 
+ *>    /+> CURS_status    (x_curr);                                                       <+/                                                                                     <* 
+ *>    /+> CURS_col_head  ();                                                             <+/                                                                                     <* 
+ *>    /+> CURS_row_head  ();                                                             <+/                                                                                     <* 
+ *>    /+> CURS_page      ();                                                             <+/                                                                                     <* 
+ *>    /+> CURS_message   ();                                                             <+/                                                                                     <* 
+ *>    /+> switch (my.info_win) {                                                         <*                                                                                      <* 
+ *>     *> case G_INFO_BUFS   : CURS_listbufs    ();                                      <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> case G_INFO_MARK   : CURS_list_mark   ();                                      <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> case G_INFO_REGS   : CURS_listreg     ();                                      <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> case G_INFO_TREG   : CURS_listtreg    ();                                      <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> case G_INFO_CELL   : CURS_info_cell   ();                                      <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> case G_INFO_ERROR  : CURS_listerror   (x_curr);                                <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> case G_INFO_LAYOUT : CURS_info_layout ();                                      <*                                                                                      <* 
+ *>     *>                      break;                                                    <*                                                                                      <* 
+ *>     *> }                                                                              <+/                                                                                     <* 
+ *>    /+> if (my.menu != MENU_NONE) {                                                    <*                                                                                      <* 
+ *>     *>    CURS_menuroot (my.menu);                                                    <*                                                                                      <* 
+ *>     *>    if (my.menu != MENU_ROOT)  CURS_menusub  (my.menu);                         <*                                                                                      <* 
+ *>     *> }                                                                              <+/                                                                                     <* 
+ *>    /+---(label/keys)---------------------+/                                                                                                                                   <* 
+ *>    /+> if (my.layout_formula == G_FORMULA_DEBUG || my.layout_formula == G_FORMULA_SMALL) {   <*                                                                               <* 
+ *>     *>    attron   (S_COLOR_KEYS);                                                           <*                                                                               <* 
+ *>     *>    mvprintw (row_chead, 0, g_cmd);                                                    <*                                                                               <* 
+ *>     *>    attroff  (S_COLOR_KEYS);                                                           <*                                                                               <* 
+ *>     *> } else {                                                                              <*                                                                               <* 
+ *>     *>    mvprintw (row_chead, 0, s_label + 1);                                              <*                                                                               <* 
+ *>     *> }                                                                                     <+/                                                                              <* 
+ *>    /+---(cursor pos)---------------------+/                                                                                                                                   <* 
+ *>    /+> if (my.info_win != G_INFO_NONE)                                                                                                                                  <*    <* 
+ *>     *>    move ( 4, 10);                                                                                                                                                <*    <* 
+ *>     *> else if (my.menu     != MENU_NONE)                                                                                                                               <*    <* 
+ *>     *>    move ( 2,  1);                                                                                                                                                <*    <* 
+ *>     *> else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)   <*    <* 
+ *>     *>    move (row_formula, s_start + my.cpos - my.bpos);                                                                                                              <*    <* 
+ *>     *> else                                                                                                                                                             <*    <* 
+ *>     *>    move (LOC_row_ypos (CTAB, CROW), LOC_col_xpos (CTAB, CCOL) + LOC_col_width (CTAB, CCOL) - 1);                                                                 <+/   <* 
+ *>    /+---(refresh)------------------------+/                                                                                                                                   <* 
+ *>    /+> my.info_win = G_INFO_NONE;                                                     <+/                                                                                     <* 
+ *>    refresh ();                                                                                                                                                                <* 
+ *>    /+> IF_MACRO_NOT_PLAYING {                                                         <*                                                                                      <* 
+ *>     *>    ch = getch ();                                                              <*                                                                                      <* 
+ *>     *>    DEBUG_GRAF  yLOG_value   ("key"       , ch);                                <*                                                                                      <* 
+ *>     *> }                                                                              <+/                                                                                     <* 
+ *>       ch = getch ();                                                                                                                                                          <* 
+ *>       DEBUG_GRAF  yLOG_value   ("key"       , ch);                                                                                                                            <* 
+ *>    /+---(check layout)-------------------+/                                                                                                                                   <* 
+ *>    if (ch == KEY_RESIZE) {                                                                                                                                                    <* 
+ *>       CURS_size ();                                                                                                                                                           <* 
+ *>       MOVE_horz  ('r');                                                                                                                                                       <* 
+ *>       MOVE_vert  ('r');                                                                                                                                                       <* 
+ *>    }                                                                                                                                                                          <* 
+ *>    /+---(complete)--------------------------+/                                                                                                                                <* 
+ *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                                                   <* 
+ *>    return ch;                                                                                                                                                                 <* 
+ *> }                                                                                                                                                                             <*/
 
 char         /*-> set color model --------------------[ ------ [gc.D70.532.S5]*/ /*-[02.2000.015.!]-*/ /*-[--.---.---.--]-*/
 DRAW_coloration      (char *a_opt)
@@ -1265,10 +1280,13 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    if (s_coloration == 'F')  CURS_color_full (a_col, a_row, x_curr);
    else                      CURS_color_min  (a_col, a_row, x_curr);
    /*---(display cell)-------------------*/
-   if (x_curr == NULL || x_curr->p == NULL) 
+   if (x_curr == NULL || x_curr->p == NULL)  {
+      DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, "");
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, g_empty);
-   else
+   } else {
+      DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->p);
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->p);
+   }
    /*---(highlight off)------------------*/
    attrset (0);
    /*---(complete)-----------------------*/
@@ -1336,70 +1354,70 @@ DRAW_main          (void)
 /*===----                      private functions                       ----===*/
 /*====================------------------------------------====================*/
 
-PRIV int     /*-> tbd --------------------------------[ ------ [gn.860.371.25]*/ /*-[03.0000.014.!]-*/ /*-[--.---.---.--]-*/
-CURS_line          (int a_ch, int a_brow, int a_erow)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         y_cur       = 0;
-   int         x_cur       = 0;
-   int         x_avail     = my.x_full - 1;
-   int         i           = 0;
-   short       x_ypos      = 0;
-   short       x_xpos      = 0;
-   int         x_wide      = 0;
-   for (y_cur = a_brow; y_cur <= a_erow; ++y_cur) {
-      /*---(prepare)---------------------*/
-      a_ch   += LOC_row_height (CTAB, y_cur);
-      x_ypos  = LOC_row_ypos   (CTAB, y_cur);
-      /*---(cycle normal columns)--------*/
-      for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {
-         x_xpos  = LOC_col_xpos   (CTAB, x_cur);
-         x_wide  = LOC_col_width  (CTAB, x_cur);
-         CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);
-      }
-      /*---(cycle locked columns)--------*/
-      if (FR_COL == 'y') {
-         for (x_cur = FR_ECOL; x_cur >= FR_BCOL; --x_cur) {
-            x_xpos  = LOC_col_xpos   (CTAB, x_cur);
-            x_wide  = LOC_col_width  (CTAB, x_cur);
-            CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);
-         }
-      }
-      /*---(fill in at end)--------------*/
-      x_xpos  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);
-      x_wide = x_avail - x_xpos + 1;
-      if (x_wide > 0)  CURS_cell (ECOL + 1, y_cur, x_ypos, x_xpos, x_wide);
-   }
-   /*---(complete)-----------------------*/
-   return a_ch;
-}
+/*> PRIV int     /+-> tbd --------------------------------[ ------ [gn.860.371.25]+/ /+-[03.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> CURS_line          (int a_ch, int a_brow, int a_erow)                                                                          <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         y_cur       = 0;                                                                                                <* 
+ *>    int         x_cur       = 0;                                                                                                <* 
+ *>    int         x_avail     = my.x_full - 1;                                                                                    <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    short       x_ypos      = 0;                                                                                                <* 
+ *>    short       x_xpos      = 0;                                                                                                <* 
+ *>    int         x_wide      = 0;                                                                                                <* 
+ *>    for (y_cur = a_brow; y_cur <= a_erow; ++y_cur) {                                                                            <* 
+ *>       /+---(prepare)---------------------+/                                                                                    <* 
+ *>       a_ch   += LOC_row_height (CTAB, y_cur);                                                                                  <* 
+ *>       x_ypos  = LOC_row_ypos   (CTAB, y_cur);                                                                                  <* 
+ *>       /+---(cycle normal columns)--------+/                                                                                    <* 
+ *>       for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {                                                                             <* 
+ *>          x_xpos  = LOC_col_xpos   (CTAB, x_cur);                                                                               <* 
+ *>          x_wide  = LOC_col_width  (CTAB, x_cur);                                                                               <* 
+ *>          CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(cycle locked columns)--------+/                                                                                    <* 
+ *>       if (FR_COL == 'y') {                                                                                                     <* 
+ *>          for (x_cur = FR_ECOL; x_cur >= FR_BCOL; --x_cur) {                                                                    <* 
+ *>             x_xpos  = LOC_col_xpos   (CTAB, x_cur);                                                                            <* 
+ *>             x_wide  = LOC_col_width  (CTAB, x_cur);                                                                            <* 
+ *>             CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);                                                                  <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(fill in at end)--------------+/                                                                                    <* 
+ *>       x_xpos  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);                                                        <* 
+ *>       x_wide = x_avail - x_xpos + 1;                                                                                           <* 
+ *>       if (x_wide > 0)  CURS_cell (ECOL + 1, y_cur, x_ypos, x_xpos, x_wide);                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return a_ch;                                                                                                                <* 
+ *> }                                                                                                                              <*/
 
-PRIV char    /*-> redisplay all cell data on screen --[ ------ [gz.531.081.12]*/ /*-[01.1000.013.!]-*/ /*-[--.---.---.--]-*/
-CURS_page          (void)
-{
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
-   /*---(locals)-----------+-----------+-*/
-   int         x_left, x_wide;
-   int         x_bott, x_tall;
-   int         y_cur       = 0;
-   int         x_cur       = 0;
-   int       end   = 0;
-   int       avail = my.x_full - 1;
-   int       left  = 0;
-   int       xmax  = 0;
-   int         ch          = 0;
-   int         i           = 0;
-   /*---(cycle rows)---------------------*/
-   /*> if (FR_ROW == 'y')  ch = CURS_line (ch, FR_BROW, FR_EROW);                     <*/
-   ch = CURS_line (ch, BROW, EROW);
-   /*---(fill in bottom)-----------------*/
-   /*> for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {                                          <* 
-    *>    mvprintw (LOC_row_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);   <* 
-    *> }                                                                                        <*/
-   /*---(complete)------------------------------*/
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> PRIV char    /+-> redisplay all cell data on screen --[ ------ [gz.531.081.12]+/ /+-[01.1000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> CURS_page          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_left, x_wide;                                                                                                 <* 
+ *>    int         x_bott, x_tall;                                                                                                 <* 
+ *>    int         y_cur       = 0;                                                                                                <* 
+ *>    int         x_cur       = 0;                                                                                                <* 
+ *>    int       end   = 0;                                                                                                        <* 
+ *>    int       avail = my.x_full - 1;                                                                                            <* 
+ *>    int       left  = 0;                                                                                                        <* 
+ *>    int       xmax  = 0;                                                                                                        <* 
+ *>    int         ch          = 0;                                                                                                <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    /+---(cycle rows)---------------------+/                                                                                    <* 
+ *>    /+> if (FR_ROW == 'y')  ch = CURS_line (ch, FR_BROW, FR_EROW);                     <+/                                      <* 
+ *>    ch = CURS_line (ch, BROW, EROW);                                                                                            <* 
+ *>    /+---(fill in bottom)-----------------+/                                                                                    <* 
+ *>    /+> for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {                                          <*                             <* 
+ *>     *>    mvprintw (LOC_row_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);   <*                             <* 
+ *>     *> }                                                                                        <+/                            <* 
+ *>    /+---(complete)------------------------------+/                                                                             <* 
+ *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -1483,6 +1501,7 @@ DRAW_init          (void)
    S_COLOR_CONTENT    = yCOLOR_curs_value ("map"      );
    S_COLOR_SOURCE     = yCOLOR_curs_value ("source"   );
    S_COLOR_INPUT      = yCOLOR_curs_value ("input"    );
+   S_COLOR_TEXREG     = yCOLOR_curs_value ("textreg"  );
    S_COLOR_REPLACE    = yCOLOR_curs_value ("replace"  );
    S_COLOR_WANDER     = yCOLOR_curs_value ("wander"   );
    /*---(row and column headers)---------*/

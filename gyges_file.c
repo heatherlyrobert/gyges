@@ -1113,10 +1113,10 @@ INPT_done          (void)
    /*---(screen)-------------------------*/
    DEBUG_INPT   yLOG_note    ("set screen positions correctly");
    /*> KEYS_basics (' ', 'r');                                                        <*/
-   KEYS_bcol (BCOL);
-   CURS_col_head();
-   KEYS_brow (BROW);
-   CURS_row_head();
+   /*> KEYS_bcol (BCOL);                                                              <*/
+   /*> CURS_col_head();                                                               <*/
+   /*> KEYS_brow (BROW);                                                              <*/
+   /*> CURS_row_head();                                                               <*/
    /*---(calculate)----------------------*/
    DEBUG_INPT  yLOG_note    ("recalc");
    SEQ_calc_full ();

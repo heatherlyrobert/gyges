@@ -461,112 +461,112 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    ++x_xtotal;
    if (x_xtab == a_tab && x_xcol == a_col && x_xrow == a_row) {
       ++x_xshort;
-      DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-      DEBUG_LOCS   yLOG_snote   ("same as last search");
-      DEBUG_LOCS   yLOG_sint    (x_xrc);
-      DEBUG_LOCS   yLOG_sint    (x_xtotal);
-      DEBUG_LOCS   yLOG_sint    (x_xshort);
-      DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+      DEBUG_LOCS_M   yLOG_senter  (__FUNCTION__);
+      DEBUG_LOCS_M   yLOG_snote   ("same as last search");
+      DEBUG_LOCS_M   yLOG_sint    (x_xrc);
+      DEBUG_LOCS_M   yLOG_sint    (x_xtotal);
+      DEBUG_LOCS_M   yLOG_sint    (x_xshort);
+      DEBUG_LOCS_M   yLOG_sexit   (__FUNCTION__);
       return x_xrc;
    }
    /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(save values)--------------------*/
    x_xtab = a_tab;
    x_xcol = a_col;
    x_xrow = a_row;
    /*---(check absolute boudaries)-------*/
-   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_LOCS_M   yLOG_value   ("a_tab"     , a_tab);
    --rce;  if (a_tab <  0       ) {
-      DEBUG_LOCS   yLOG_note    ("tab less than zero");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("tab less than zero");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return x_xrc = rce;
    }
    --rce;  if (a_tab >= MAX_TABS) {
-      DEBUG_LOCS   yLOG_note    ("tab greater than max");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("tab greater than max");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return x_xrc = rce;
    }
-   DEBUG_LOCS   yLOG_value   ("a_col"     , a_col);
+   DEBUG_LOCS_M   yLOG_value   ("a_col"     , a_col);
    --rce;  if (a_col <  0       ) {
-      DEBUG_LOCS   yLOG_note    ("col less than zero");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("col less than zero");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return x_xrc = rce;
    }
    --rce;  if (a_col >= MAX_COLS) {
-      DEBUG_LOCS   yLOG_note    ("col greater than max");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("col greater than max");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return x_xrc = rce;
    }
-   DEBUG_LOCS   yLOG_value   ("a_row"     , a_row);
+   DEBUG_LOCS_M   yLOG_value   ("a_row"     , a_row);
    --rce;  if (a_row <  0       ) {
-      DEBUG_LOCS   yLOG_note    ("row less than zero");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("row less than zero");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return x_xrc = rce;
    }
    --rce;  if (a_row >= MAX_ROWS) {
-      DEBUG_LOCS   yLOG_note    ("row greater than max");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("row greater than max");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return x_xrc = rce;
    }
    /*---(if fixed)-----------------------*/
    if (a_adapt == CELL_FIXED) {
-      DEBUG_LOCS   yLOG_note    ("checking a fixed, no expansion allowed (FIXED)");
-      DEBUG_LOCS   yLOG_value   ("ncol"      , s_tabs[a_tab].ncol);
+      DEBUG_LOCS_M   yLOG_note    ("checking a fixed, no expansion allowed (FIXED)");
+      DEBUG_LOCS_M   yLOG_value   ("ncol"      , s_tabs[a_tab].ncol);
       --rce;  if (a_col >= s_tabs[a_tab].ncol) {
-         DEBUG_LOCS   yLOG_note    ("col greater than current size");
-         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_LOCS_M   yLOG_note    ("col greater than current size");
+         DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
          return x_xrc = rce;
       }
-      DEBUG_LOCS   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
+      DEBUG_LOCS_M   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
       --rce;  if (a_row >= s_tabs[a_tab].nrow) {
-         DEBUG_LOCS   yLOG_note    ("row greater than current size");
-         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_LOCS_M   yLOG_note    ("row greater than current size");
+         DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
          return x_xrc = rce;
       }
    }
    /*---(if adapting)--------------------*/
    else if (a_adapt == CELL_GROW ) {
-      DEBUG_LOCS   yLOG_note    ("checking a expansion allowed (GROW)");
+      DEBUG_LOCS_M   yLOG_note    ("checking a expansion allowed (GROW)");
       if (a_col >=  s_tabs[a_tab].ncol)     s_tabs[a_tab].ncol = a_col  + 1;
       if (a_row >=  s_tabs[a_tab].nrow)     s_tabs[a_tab].nrow = a_row  + 1;
       /*---(update)---------*/
       if (a_tab == CTAB) {
          NCOL = s_tabs[a_tab].ncol;
          NROW = s_tabs[a_tab].nrow;
-         DEBUG_LOCS   yLOG_value   ("NCOL"      , NCOL);
-         DEBUG_LOCS   yLOG_value   ("NROW"      , NROW);
+         DEBUG_LOCS_M   yLOG_value   ("NCOL"      , NCOL);
+         DEBUG_LOCS_M   yLOG_value   ("NROW"      , NROW);
       }
    }
    /*---(if forcing)---------------------*/
    else if (a_adapt == CELL_EXACT) {
-      DEBUG_LOCS   yLOG_note    ("checking exact size, expansion allowed (EXACT)");
+      DEBUG_LOCS_M   yLOG_note    ("checking exact size, expansion allowed (EXACT)");
       /*---(cols)-----------*/
-      DEBUG_LOCS   yLOG_value   ("ncol"      , s_tabs[a_tab].ncol);
+      DEBUG_LOCS_M   yLOG_value   ("ncol"      , s_tabs[a_tab].ncol);
       for (i = 0; i < s_tabs [a_tab].ncol; ++i) {
          if (s_tabs [a_tab].cols [i].c > 0)  x_max   = i;
       }
-      DEBUG_LOCS   yLOG_value   ("max used"  , x_max);
+      DEBUG_LOCS_M   yLOG_value   ("max used"  , x_max);
       if      (a_col >=  x_max  )          s_tabs[a_tab].ncol = a_col   + 1;
       else                                 s_tabs[a_tab].ncol = x_max   + 1;
       /*---(rows)-----------*/
-      DEBUG_LOCS   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
+      DEBUG_LOCS_M   yLOG_value   ("nrow"      , s_tabs[a_tab].nrow);
       for (i = 0; i < s_tabs [a_tab].nrow; ++i) {
          if (s_tabs [a_tab].rows [i].c > 0)  x_max   = i;
       }
-      DEBUG_LOCS   yLOG_value   ("max used"  , x_max);
+      DEBUG_LOCS_M   yLOG_value   ("max used"  , x_max);
       if      (a_row >=  x_max  )          s_tabs[a_tab].nrow = a_row   + 1;
       else                                 s_tabs[a_tab].nrow = x_max   + 1;
       /*---(update)---------*/
       if (a_tab == CTAB) {
          NCOL = s_tabs[a_tab].ncol;
          NROW = s_tabs[a_tab].nrow;
-         DEBUG_LOCS   yLOG_value   ("NCOL"      , NCOL);
-         DEBUG_LOCS   yLOG_value   ("NROW"      , NROW);
+         DEBUG_LOCS_M   yLOG_value   ("NCOL"      , NCOL);
+         DEBUG_LOCS_M   yLOG_value   ("NROW"      , NROW);
       }
    }
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return x_xrc = 0;
 }
 
@@ -577,18 +577,18 @@ LOC_cell_at_curr     (void)
    char        rc          =    0;
    tCELL      *x_curr      = NULL;
    /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
    rc = LOC_legal (CTAB, CCOL, CROW, CELL_FIXED);
    if (rc < 0)  {
-      DEBUG_LOCS   yLOG_note    ("nothing found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS_M   yLOG_note    ("nothing found");
+      DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
    x_curr = s_tabs [CTAB].sheet[CCOL][CROW];
-   DEBUG_LOCS   yLOG_point   ("found"     , x_curr);
+   DEBUG_LOCS_M   yLOG_point   ("found"     , x_curr);
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return x_curr;
 }
 
@@ -599,18 +599,18 @@ LOC_cell_at_loc      (short a_tab, short a_col, short a_row)
    char        rc          =    0;
    tCELL      *x_curr      = NULL;
    /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    if (rc < 0)  {
-      DEBUG_LOCS   yLOG_note    ("nothing found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS_M   yLOG_note    ("nothing found");
+      DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
    x_curr = s_tabs[a_tab].sheet[a_col][a_row];
-   DEBUG_LOCS   yLOG_point   ("found"     , x_curr);
+   DEBUG_LOCS_M   yLOG_point   ("found"     , x_curr);
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return x_curr;
 }
 
@@ -624,23 +624,23 @@ LOC_cell_labeled   (char *a_label)
    short       x_row       =   0;           /* working row value              */
    tCELL      *x_curr      = NULL;
    /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
    if (rc < 0)  {
-      DEBUG_LOCS   yLOG_note    ("nothing found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS_M   yLOG_note    ("nothing found");
+      DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
    x_curr = LOC_cell_at_loc  (x_tab, x_col, x_row);
-   DEBUG_LOCS   yLOG_point   ("cell"      , x_curr);
+   DEBUG_LOCS_M   yLOG_point   ("cell"      , x_curr);
    if (x_curr == NULL) {
-      DEBUG_LOCS   yLOG_note    ("nothing found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS_M   yLOG_note    ("nothing found");
+      DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return x_curr;
 }
 
@@ -671,6 +671,33 @@ LOC_jump           (
    CROW          = a_row;
    /*---(selection)----------------------*/
    VISU_update (a_tab, a_col, a_row);
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> go directly to a specific cell -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
+LOC_locator        (char *a_label, int *a_x, int *a_y, int *a_z)
+{
+   char        rc;
+   short       x_tab;
+   short       x_col;
+   short       x_row;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
+   DEBUG_LOCS   yLOG_point   ("a_x"       , a_x);
+   DEBUG_LOCS   yLOG_point   ("a_y"       , a_y);
+   DEBUG_LOCS   yLOG_point   ("a_z"       , a_z);
+   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+   if (rc < 0)  {
+      DEBUG_LOCS   yLOG_note    ("nothing found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return NULL;
+   }
+   if (a_x != NULL)  *a_x = x_col;
+   if (a_y != NULL)  *a_y = x_row;
+   if (a_z != NULL)  *a_z = x_tab;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -758,29 +785,29 @@ LOC_label         (
    char        rce         = -10;           /* return code for errors         */
    char        rc          =   0;           /* return code                    */
    /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_point   ("*a_cell"   , a_cell);
-   DEBUG_LOCS   yLOG_point   ("*a_final"  , a_final);
+   DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_point   ("*a_cell"   , a_cell);
+   DEBUG_LOCS_M   yLOG_point   ("*a_final"  , a_final);
    /*---(defense: valid output)----------*/
    --rce;  if (a_final == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    strlcpy (a_final, "((null))", LEN_LABEL);
    /*---(defense: valid cell)------------*/
    --rce;  if (a_cell  == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(fiugure out reference)----------*/
    rc = LOC_ref (a_cell->tab, a_cell->col, a_cell->row, 0, a_final);
-   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   DEBUG_LOCS_M   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return  rc;
 }
 
@@ -827,12 +854,12 @@ LOC_parse         (
    int         e_row       =   0;           /* ending position of row chars   */
    int         x_abs       =   0;           /* working value for absolutes    */
    /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
-   DEBUG_LOCS   yLOG_point   ("*a_tab"    , a_tab);
-   DEBUG_LOCS   yLOG_point   ("*a_col"    , a_col);
-   DEBUG_LOCS   yLOG_point   ("*a_row"    , a_row);
-   DEBUG_LOCS   yLOG_point   ("*a_abs"    , a_abs);
+   DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_info    ("a_label"   , a_label);
+   DEBUG_LOCS_M   yLOG_point   ("*a_tab"    , a_tab);
+   DEBUG_LOCS_M   yLOG_point   ("*a_col"    , a_col);
+   DEBUG_LOCS_M   yLOG_point   ("*a_row"    , a_row);
+   DEBUG_LOCS_M   yLOG_point   ("*a_abs"    , a_abs);
    /*---(prepare values)-----------------*/
    if (a_tab != NULL)  *a_tab = -1;
    if (a_col != NULL)  *a_col = -1;
@@ -840,55 +867,55 @@ LOC_parse         (
    if (a_abs != NULL)  *a_abs =  0;
    /*---(defense: empty label)-----------*/
    --rce;  if (a_label == NULL) {
-      DEBUG_LOCS   yLOG_note    ("aborting, no a_label means no point");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, no a_label means no point");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(check sizes)--------------------*/
    len = strlen (a_label);
-   DEBUG_LOCS   yLOG_value   ("len"       , len);
+   DEBUG_LOCS_M   yLOG_value   ("len"       , len);
    --rce;  if (len <=  0) {
-      DEBUG_LOCS   yLOG_note    ("aborting, a_label contains nothing, no point");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, a_label contains nothing, no point");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (len >  12) {  /* a1 to $24$ab$12345 */
-      DEBUG_LOCS   yLOG_note    ("aborting, a_label too long for legal address");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, a_label too long for legal address");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(defense: check special)---------*/
    --rce;  if (strcmp (a_label, "root") == 0) {
-      DEBUG_LOCS   yLOG_note    ("aborting, no need to parse root");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, no need to parse root");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (strcmp (a_label, ".") == 0) {
-      DEBUG_LOCS   yLOG_note    ("aborting, no need to parse dot (.)");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, no need to parse dot (.)");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (strcmp (a_label, "-") == 0) {
-      DEBUG_LOCS   yLOG_note    ("aborting, no need to parse dash (-)");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, no need to parse dash (-)");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(look for absolute tab)----------*/
-   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
+   DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[s_tab]);
    if (a_label[s_tab] == '@') {
       x_abs  = 7;
       ++s_tab;
-      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
+      DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[s_tab]);
    }
    else if (a_label[s_tab] == '$') {
       x_abs  = 4;
       ++s_tab;
    }
-   DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
-   DEBUG_LOCS   yLOG_value   ("s_tab"     , s_tab);
+   DEBUG_LOCS_M   yLOG_value   ("x_abs"     , x_abs);
+   DEBUG_LOCS_M   yLOG_value   ("s_tab"     , s_tab);
    /*---(parse tab characters)-----------*/
    s_col = s_tab;
-   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_tab]);
+   DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[s_tab]);
    if (strchr ("0123456789"                , a_label[s_tab]) != NULL) {
       x_tab = a_label[s_tab] - '0';
       ++s_col;
@@ -900,84 +927,84 @@ LOC_parse         (
    }
    /*> printf ("x_tab = %d\n", x_tab);                                                <*/
    --rce;  if (x_tab + 1 <  MIN_TABS) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_tab + 1 >  MAX_TABS) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    if (s_col == s_tab && x_abs == 4)  x_abs = 1;
-   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
-   DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
+   DEBUG_LOCS_M   yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_LOCS_M   yLOG_value   ("s_col"     , s_col);
    /*---(look for absolute col)----------*/
-   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_col]);
+   DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[s_col]);
    if (a_label [s_col] == '$') {
       x_abs += 1;
       ++s_col;
    }
-   DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
-   DEBUG_LOCS   yLOG_value   ("s_col"     , s_col);
+   DEBUG_LOCS_M   yLOG_value   ("x_abs"     , x_abs);
+   DEBUG_LOCS_M   yLOG_value   ("s_col"     , s_col);
    /*---(parse col characters)-----------*/
    s_row = s_col;
    for (i = s_col; i < s_col + 2; ++i) {
-      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
+      DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[i]);
       if (strchr ("abcdefghijklmnopqrstuvwxyz", a_label[i]) == 0)   break;
       if (i >  s_col)  x_col *= 26;
       x_col += a_label[i] - 'a' + 1;
       ++s_row;
    }
-   DEBUG_LOCS   yLOG_value   ("x_col"     , x_col);
-   DEBUG_LOCS   yLOG_value   ("s_row"     , s_row);
+   DEBUG_LOCS_M   yLOG_value   ("x_col"     , x_col);
+   DEBUG_LOCS_M   yLOG_value   ("s_row"     , s_row);
    --rce;  if (s_row == s_col) {
-      DEBUG_LOCS   yLOG_note    ("aborting, no column found");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, no column found");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --x_col;
    /*> printf ("x_col = %d\n", x_col);                                                <*/
    --rce;  if (x_col + 1 <  MIN_COLS) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_col + 1 >  MAX_COLS) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_value   ("x_col fix" , x_col);
+   DEBUG_LOCS_M   yLOG_value   ("x_col fix" , x_col);
    /*---(look for absolute row)----------*/
-   DEBUG_LOCS   yLOG_char    ("CH"        , a_label[s_row]);
+   DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[s_row]);
    if (a_label [s_row] == '$') {
       x_abs += 2;
       ++s_row;
    }
-   DEBUG_LOCS   yLOG_value   ("x_abs"     , x_abs);
-   DEBUG_LOCS   yLOG_value   ("s_row"     , s_row);
+   DEBUG_LOCS_M   yLOG_value   ("x_abs"     , x_abs);
+   DEBUG_LOCS_M   yLOG_value   ("s_row"     , s_row);
    if (x_abs > 7)  x_abs = 7;
    /*---(parse row characters)-----------*/
    e_row = s_row;
    for (i = s_row; i < len; ++i) {
-      DEBUG_LOCS   yLOG_char    ("CH"        , a_label[i]);
+      DEBUG_LOCS_M   yLOG_char    ("CH"        , a_label[i]);
       if (strchr ("0123456789", a_label[i]) == 0)   break;
       if (i >  s_row)  x_row *= 10;
       x_row += a_label[i] - '0';
       ++e_row;
    }
-   DEBUG_LOCS   yLOG_value   ("x_row"     , x_row);
-   DEBUG_LOCS   yLOG_value   ("e_row"     , e_row);
+   DEBUG_LOCS_M   yLOG_value   ("x_row"     , x_row);
+   DEBUG_LOCS_M   yLOG_value   ("e_row"     , e_row);
    --rce;  if (e_row != len  ) {
-      DEBUG_LOCS   yLOG_note    ("aborting, no row found");
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_note    ("aborting, no row found");
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --x_row;
    /*> printf ("x_row = %d\n", x_row);                                                <*/
    --rce;  if (x_row + 1 <  MIN_ROWS) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_row + 1 >  MAX_ROWS) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(return values)------------------*/
@@ -986,7 +1013,7 @@ LOC_parse         (
    if (a_row != NULL)  *a_row = x_row;
    if (a_abs != NULL)  *a_abs = x_abs;
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return  0;
 }
 
@@ -1164,9 +1191,12 @@ MAP_mapper           (char a_req)
    CROW = g_ymap.cur;
    EROW = g_ymap.gend;
    x_curr = LOC_cell_at_curr ();
-   if      (x_curr == NULL)     yVIKEYS_source ("", "");
-   else if (x_curr->s == NULL)  yVIKEYS_source ("", "");
-   else                         yVIKEYS_source (x_curr->label, x_curr->s);
+   if      (x_curr == NULL || x_curr->s == NULL) {
+      LOC_ref (CTAB, CCOL, CROW, 0, t);
+      yVIKEYS_source (t, "");
+   } else {
+      yVIKEYS_source (x_curr->label, x_curr->s);
+   }
    return 0;
 }
 

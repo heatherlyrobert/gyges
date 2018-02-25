@@ -75,89 +75,89 @@ MOVE_prep          (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gz.H97.021.Q8]*/ /*-[01.0000.823.!]-*/ /*-[--.---.---.--]-*/
-MOVE_done          (void)
-{
-   int         i           = 0;
-   tCELL      *x_curr      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_USER  yLOG_enter   (__FUNCTION__);
-   /*---(show updated)----------------*/
-   DEBUG_USER   yLOG_note    ("show updated col pos...");
-   DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
-   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);
-   DEBUG_USER   yLOG_note    ("show updated row pos...");
-   DEBUG_USER   yLOG_value   ("tab->brow" , BROW);
-   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
-   DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
-   /*---(check current)---------------*/
-   DEBUG_USER  yLOG_note    ("correct for min/max violations");
-   if (CCOL <  0   )    CCOL   =    0;
-   if (CCOL >= NCOL)    CCOL   = NCOL - 1;
-   if (CROW <  0   )    CROW   =    0;
-   if (CROW >= NROW)    CROW   = NROW - 1;
-   /*---(check beginning)-------------*/
-   DEBUG_USER  yLOG_note    ("correct for beginning violations");
-   if (BCOL <  0   )    BCOL   =    0;
-   if (BCOL >= NCOL)    BCOL   = NCOL - 1;
-   if (BROW <  0   )    BROW   =    0;
-   if (BROW >= NROW)    BROW   = NROW - 1;
-   /*---(check ending)----------------*/
-   DEBUG_USER  yLOG_note    ("correct for ending violations");
-   if (ECOL <  0   )    ECOL   =    0;
-   if (ECOL >= NCOL)    ECOL   = NCOL - 1;
-   if (EROW <     0)    EROW   =    0;
-   if (EROW >= NROW)    EROW   = NROW - 1;
-   /*---(adjust screen)---------------*/
-   DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");
-   if (CCOL <  BCOL)    BCOL   = CCOL;
-   if (CCOL >  ECOL)    ECOL   = CCOL;
-   if (CROW <  BROW)    BROW   = CROW;
-   if (CROW >  EROW)    EROW   = CROW;
-   /*---(update selection)------------*/
-   VISU_update  (CTAB, CCOL, CROW);
-   /*---(update contents)-------------*/
-   DEBUG_USER   yLOG_note    ("get current cell");
-   x_curr = LOC_cell_at_curr ();
-   DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);
-   DEBUG_USER   yLOG_note    ("clear current contents");
-   for (i = 0; i < LEN_RECD; ++i)  g_contents [i] = '\0';
-   DEBUG_USER   yLOG_note    ("get current contents");
-   if (x_curr != NULL) {
-      DEBUG_USER   yLOG_info    ("x_curr->s" , x_curr->s);
-      if (x_curr->s != NULL)  strlcpy (g_contents, x_curr->s, LEN_RECD);
-      else                    strlcpy (g_contents, ""       , LEN_RECD);
-   } else {
-      strlcpy (g_contents, ""       , LEN_RECD);
-   }
-   DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);
-   DEBUG_USER   yLOG_info    ("g_contents", g_contents);
-   my.npos = strlen (g_contents);
-   my.bpos = 0;
-   if (my.npos >= my.apos)  my.epos = my.apos;
-   else                     my.epos = my.npos - 1;
-   my.cpos = 0;
-   /*---(update screen)---------------*/
-   DEBUG_USER  yLOG_note    ("update col headers");
-   if      (BCOL != s_begc) { KEYS_bcol (BCOL); CURS_col_head(); }
-   else if (ECOL != s_endc) { KEYS_ecol (ECOL); CURS_col_head(); }
-   DEBUG_USER  yLOG_note    ("update col headers");
-   if      (BROW != s_begr) { KEYS_brow (BROW); CURS_row_head(); }
-   else if (EROW != s_endr) { KEYS_erow (EROW); CURS_row_head(); }
-   /*---(show final)------------------*/
-   DEBUG_USER   yLOG_note    ("show final col pos...");
-   DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);
-   DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);
-   DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);
-   DEBUG_USER   yLOG_note    ("show final row pos...");
-   DEBUG_USER   yLOG_value   ("tab->brow" , BROW);
-   DEBUG_USER   yLOG_value   ("tab->crow" , CROW);
-   DEBUG_USER   yLOG_value   ("tab->erow" , EROW);
-   /*---(complete)-----------------------*/
-   DEBUG_USER  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [gz.H97.021.Q8]+/ /+-[01.0000.823.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> MOVE_done          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_USER  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(show updated)----------------+/                                                                                       <* 
+ *>    DEBUG_USER   yLOG_note    ("show updated col pos...");                                                                      <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_note    ("show updated row pos...");                                                                      <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->brow" , BROW);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->crow" , CROW);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->erow" , EROW);                                                                             <* 
+ *>    /+---(check current)---------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_note    ("correct for min/max violations");                                                                <* 
+ *>    if (CCOL <  0   )    CCOL   =    0;                                                                                         <* 
+ *>    if (CCOL >= NCOL)    CCOL   = NCOL - 1;                                                                                     <* 
+ *>    if (CROW <  0   )    CROW   =    0;                                                                                         <* 
+ *>    if (CROW >= NROW)    CROW   = NROW - 1;                                                                                     <* 
+ *>    /+---(check beginning)-------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_note    ("correct for beginning violations");                                                              <* 
+ *>    if (BCOL <  0   )    BCOL   =    0;                                                                                         <* 
+ *>    if (BCOL >= NCOL)    BCOL   = NCOL - 1;                                                                                     <* 
+ *>    if (BROW <  0   )    BROW   =    0;                                                                                         <* 
+ *>    if (BROW >= NROW)    BROW   = NROW - 1;                                                                                     <* 
+ *>    /+---(check ending)----------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_note    ("correct for ending violations");                                                                 <* 
+ *>    if (ECOL <  0   )    ECOL   =    0;                                                                                         <* 
+ *>    if (ECOL >= NCOL)    ECOL   = NCOL - 1;                                                                                     <* 
+ *>    if (EROW <     0)    EROW   =    0;                                                                                         <* 
+ *>    if (EROW >= NROW)    EROW   = NROW - 1;                                                                                     <* 
+ *>    /+---(adjust screen)---------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_note    ("adust screen if beg or end changed");                                                            <* 
+ *>    if (CCOL <  BCOL)    BCOL   = CCOL;                                                                                         <* 
+ *>    if (CCOL >  ECOL)    ECOL   = CCOL;                                                                                         <* 
+ *>    if (CROW <  BROW)    BROW   = CROW;                                                                                         <* 
+ *>    if (CROW >  EROW)    EROW   = CROW;                                                                                         <* 
+ *>    /+---(update selection)------------+/                                                                                       <* 
+ *>    VISU_update  (CTAB, CCOL, CROW);                                                                                            <* 
+ *>    /+---(update contents)-------------+/                                                                                       <* 
+ *>    DEBUG_USER   yLOG_note    ("get current cell");                                                                             <* 
+ *>    x_curr = LOC_cell_at_curr ();                                                                                               <* 
+ *>    DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);                                                                           <* 
+ *>    DEBUG_USER   yLOG_note    ("clear current contents");                                                                       <* 
+ *>    for (i = 0; i < LEN_RECD; ++i)  g_contents [i] = '\0';                                                                      <* 
+ *>    DEBUG_USER   yLOG_note    ("get current contents");                                                                         <* 
+ *>    if (x_curr != NULL) {                                                                                                       <* 
+ *>       DEBUG_USER   yLOG_info    ("x_curr->s" , x_curr->s);                                                                     <* 
+ *>       if (x_curr->s != NULL)  strlcpy (g_contents, x_curr->s, LEN_RECD);                                                       <* 
+ *>       else                    strlcpy (g_contents, ""       , LEN_RECD);                                                       <* 
+ *>    } else {                                                                                                                    <* 
+ *>       strlcpy (g_contents, ""       , LEN_RECD);                                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_USER   yLOG_point   ("x_curr"    , x_curr);                                                                           <* 
+ *>    DEBUG_USER   yLOG_info    ("g_contents", g_contents);                                                                       <* 
+ *>    my.npos = strlen (g_contents);                                                                                              <* 
+ *>    my.bpos = 0;                                                                                                                <* 
+ *>    if (my.npos >= my.apos)  my.epos = my.apos;                                                                                 <* 
+ *>    else                     my.epos = my.npos - 1;                                                                             <* 
+ *>    my.cpos = 0;                                                                                                                <* 
+ *>    /+---(update screen)---------------+/                                                                                       <* 
+ *>    DEBUG_USER  yLOG_note    ("update col headers");                                                                            <* 
+ *>    if      (BCOL != s_begc) { KEYS_bcol (BCOL); CURS_col_head(); }                                                             <* 
+ *>    else if (ECOL != s_endc) { KEYS_ecol (ECOL); CURS_col_head(); }                                                             <* 
+ *>    DEBUG_USER  yLOG_note    ("update col headers");                                                                            <* 
+ *>    if      (BROW != s_begr) { KEYS_brow (BROW); CURS_row_head(); }                                                             <* 
+ *>    else if (EROW != s_endr) { KEYS_erow (EROW); CURS_row_head(); }                                                             <* 
+ *>    /+---(show final)------------------+/                                                                                       <* 
+ *>    DEBUG_USER   yLOG_note    ("show final col pos...");                                                                        <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->bcol" , BCOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->ccol" , CCOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->ecol" , ECOL);                                                                             <* 
+ *>    DEBUG_USER   yLOG_note    ("show final row pos...");                                                                        <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->brow" , BROW);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->crow" , CROW);                                                                             <* 
+ *>    DEBUG_USER   yLOG_value   ("tab->erow" , EROW);                                                                             <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_USER  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 

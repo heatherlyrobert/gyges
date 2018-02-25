@@ -107,6 +107,7 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    yVIKEYS_src_config   (CELL_saver);
+   yVIKEYS_hint_config  (LOC_locator);
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
@@ -142,11 +143,11 @@ PROG_args          (int argc, char *argv[])
       else if (strncmp (a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp (a, "--help"    ,10) == 0)  PROG_usage();
       /*---(prefixes)--------------------*/
-      else if (strncmp (a, "--formula-"          , 10) == 0)  PROG_layout_set ("cli", "formula"  , a + 10);
-      else if (strncmp (a, "--status-"           ,  9) == 0)  PROG_layout_set ("cli", "status"   , a +  9);
-      else if (strncmp (a, "--command-"          , 10) == 0)  PROG_layout_set ("cli", "command"  , a + 10);
-      else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);
-      else if (strncmp (a, "--function-list"     ,  9) == 0)  CALC_func_list  ();
+      /*> else if (strncmp (a, "--formula-"          , 10) == 0)  PROG_layout_set ("cli", "formula"  , a + 10);   <* 
+       *> else if (strncmp (a, "--status-"           ,  9) == 0)  PROG_layout_set ("cli", "status"   , a +  9);   <* 
+       *> else if (strncmp (a, "--command-"          , 10) == 0)  PROG_layout_set ("cli", "command"  , a + 10);   <* 
+       *> else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);   <* 
+       *> else if (strncmp (a, "--function-list"     ,  9) == 0)  CALC_func_list  ();                             <*/
       /*---(other)-----------------------*/
       else if (a[0] != '-'                     )   strlcpy (x_name , argv[i]  , LEN_RECD);
    }
@@ -201,8 +202,8 @@ PROG_final         (void)
    SEQ_calc_full     ();
    hist_active = 'y';
    /*---(process)------------------------*/
-   MOVE_vert ('r');
-   MOVE_horz ('r');
+   /*> MOVE_vert ('r');                                                               <*/
+   /*> MOVE_horz ('r');                                                               <*/
    /*> yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());                          <*/
    /*---(status options)-----------------*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "file"   , CURS_status_file    , "file name, control, and version"            );
@@ -217,7 +218,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
-   yVIKEYS_cmds_direct (":status file");
+   yVIKEYS_cmds_direct (":status mode");
    yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper);
    yVIKEYS_map_refresh ();
    /*---(complete)-----------------------*/
@@ -467,101 +468,101 @@ PROG_layout_init    (void)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [gc.850.323.C5]*/ /*-[02.0000.152.!]-*/ /*-[--.---.---.--]-*/
-PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   int         x_found     = -1;
-   /*---(defense)------------------------*/
-   if (a_cat == NULL)   return -1;
-   if (a_opt == NULL)   return -2;
-   /*---(list)---------------------------*/
-   if (strcmp (a_opt, "options") == 0)  PROG_layout_list (a_who);
-   /*---(find)---------------------------*/
-   for (i = 0; i <= g_nlayout; ++i) {
-      /*---(filter)----------------------*/
-      if (g_layouts [i].cat [0] == '\0')            break;
-      if (g_layouts [i].cat [0] != a_cat [0])       continue;
-      if (g_layouts [i].opt [0] != a_opt [0])       continue;
-      if (strcmp (g_layouts [i].cat, a_cat) != 0)   continue;
-      if (strcmp (g_layouts [i].opt, a_opt) != 0)   continue;
-      /*---(assign)----------------------*/
-      x_found = i;
-      if (g_layouts [i].formula > 0)  my.layout_formula = g_layouts [i].formula;
-      if (g_layouts [i].status  > 0)  my.layout_status  = g_layouts [i].status;
-      if (g_layouts [i].command > 0)  my.layout_command = g_layouts [i].command;
-      /*---(reset)-----------------------*/
-      CURS_size    ();
-      if (strcmp (a_who, "cmd") == 0) {
-         MOVE_prep    ();
-         EROW         = 10000;
-         MOVE_vert    ('r');
-         MOVE_done    ();
-      }
-      break;
-      /*---(done)------------------------*/
-   }
-   /*---(complete)-----------------------*/
-   return x_found;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [gc.850.323.C5]+/ /+-[02.0000.152.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    int         x_found     = -1;                                                                                               <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    if (a_cat == NULL)   return -1;                                                                                             <* 
+ *>    if (a_opt == NULL)   return -2;                                                                                             <* 
+ *>    /+---(list)---------------------------+/                                                                                    <* 
+ *>    if (strcmp (a_opt, "options") == 0)  PROG_layout_list (a_who);                                                              <* 
+ *>    /+---(find)---------------------------+/                                                                                    <* 
+ *>    for (i = 0; i <= g_nlayout; ++i) {                                                                                          <* 
+ *>       /+---(filter)----------------------+/                                                                                    <* 
+ *>       if (g_layouts [i].cat [0] == '\0')            break;                                                                     <* 
+ *>       if (g_layouts [i].cat [0] != a_cat [0])       continue;                                                                  <* 
+ *>       if (g_layouts [i].opt [0] != a_opt [0])       continue;                                                                  <* 
+ *>       if (strcmp (g_layouts [i].cat, a_cat) != 0)   continue;                                                                  <* 
+ *>       if (strcmp (g_layouts [i].opt, a_opt) != 0)   continue;                                                                  <* 
+ *>       /+---(assign)----------------------+/                                                                                    <* 
+ *>       x_found = i;                                                                                                             <* 
+ *>       if (g_layouts [i].formula > 0)  my.layout_formula = g_layouts [i].formula;                                               <* 
+ *>       if (g_layouts [i].status  > 0)  my.layout_status  = g_layouts [i].status;                                                <* 
+ *>       if (g_layouts [i].command > 0)  my.layout_command = g_layouts [i].command;                                               <* 
+ *>       /+---(reset)-----------------------+/                                                                                    <* 
+ *>       CURS_size    ();                                                                                                         <* 
+ *>       if (strcmp (a_who, "cmd") == 0) {                                                                                        <* 
+ *>          /+> MOVE_prep    ();                                                         <+/                                      <* 
+ *>          EROW         = 10000;                                                                                                 <* 
+ *>          MOVE_vert    ('r');                                                                                                   <* 
+ *>          MOVE_done    ();                                                                                                      <* 
+ *>       }                                                                                                                        <* 
+ *>       break;                                                                                                                   <* 
+ *>       /+---(done)------------------------+/                                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return x_found;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
-char PROG_layout_formula (char *a_opt) { return PROG_layout_set ("cmd", "formula", a_opt); }
-char PROG_layout_status  (char *a_opt) { return PROG_layout_set ("cmd", "status" , a_opt); }
-char PROG_layout_command (char *a_opt) { return PROG_layout_set ("cmd", "command", a_opt); }
-char PROG_layout_layout  (char *a_opt) { return PROG_layout_set ("cmd", "layout" , a_opt); }
+/*> char PROG_layout_formula (char *a_opt) { return PROG_layout_set ("cmd", "formula", a_opt); }   <*/
+/*> char PROG_layout_status  (char *a_opt) { return PROG_layout_set ("cmd", "status" , a_opt); }   <*/
+/*> char PROG_layout_command (char *a_opt) { return PROG_layout_set ("cmd", "command", a_opt); }   <*/
+/*> char PROG_layout_layout  (char *a_opt) { return PROG_layout_set ("cmd", "layout" , a_opt); }   <*/
 
-char         /*-> tbd --------------------------------[ ------ [gc.750.153.41]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-PROG_layout_list    (char *a_who)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   char        x_save      [LEN_LABEL] = "";
-   char        x_cli       [LEN_DESC];
-   char        x_cmd       [LEN_DESC];
-   char       *x_title     = "   ---option-----------  ---command----------  ---description------------------------";
-   /*---(defense)------------------------*/
-   if (a_who == NULL)  return -1;
-   if (strcmp (a_who, "cmd") == 0) {
-      CURS_info_request  (G_INFO_LAYOUT);
-      return 0;
-   }
-   /*---(header)-------------------------*/
-   printf ("gyges_hekatonkheires - screen layout options/commands\n");
-   printf ("\n%s\n", x_title);
-   for (i = 0; i <= MAX_LAYOUT; ++i) {
-      /*---(filter)----------------------*/
-      if (g_layouts [i].cat [0] == '\0')            break;
-      /*---(show)------------------------*/
-      if (strcmp (g_layouts [i].cat, x_save) != 0)  printf ("\n   %s options\n", g_layouts [i].cat);
-      sprintf (x_cli, "--%s-%s", g_layouts [i].cat, g_layouts [i].opt);
-      sprintf (x_cmd, ":%s %s" , g_layouts [i].cat, g_layouts [i].opt);
-      printf  ("   %-20.20s  %-20.20s  %s\n", x_cli, x_cmd, g_layouts [i].desc);
-      strcpy  (x_save, g_layouts [i].cat);
-   }
-   /*---(complete)-----------------------*/
-   printf ("\n%s\n", x_title);
-   exit (-1);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [gc.750.153.41]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_layout_list    (char *a_who)                                                                                              <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    char        x_save      [LEN_LABEL] = "";                                                                                   <* 
+ *>    char        x_cli       [LEN_DESC];                                                                                         <* 
+ *>    char        x_cmd       [LEN_DESC];                                                                                         <* 
+ *>    char       *x_title     = "   ---option-----------  ---command----------  ---description------------------------";          <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    if (a_who == NULL)  return -1;                                                                                              <* 
+ *>    if (strcmp (a_who, "cmd") == 0) {                                                                                           <* 
+ *>       CURS_info_request  (G_INFO_LAYOUT);                                                                                      <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    printf ("gyges_hekatonkheires - screen layout options/commands\n");                                                         <* 
+ *>    printf ("\n%s\n", x_title);                                                                                                 <* 
+ *>    for (i = 0; i <= MAX_LAYOUT; ++i) {                                                                                         <* 
+ *>       /+---(filter)----------------------+/                                                                                    <* 
+ *>       if (g_layouts [i].cat [0] == '\0')            break;                                                                     <* 
+ *>       /+---(show)------------------------+/                                                                                    <* 
+ *>       if (strcmp (g_layouts [i].cat, x_save) != 0)  printf ("\n   %s options\n", g_layouts [i].cat);                           <* 
+ *>       sprintf (x_cli, "--%s-%s", g_layouts [i].cat, g_layouts [i].opt);                                                        <* 
+ *>       sprintf (x_cmd, ":%s %s" , g_layouts [i].cat, g_layouts [i].opt);                                                        <* 
+ *>       printf  ("   %-20.20s  %-20.20s  %s\n", x_cli, x_cmd, g_layouts [i].desc);                                               <* 
+ *>       strcpy  (x_save, g_layouts [i].cat);                                                                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    printf ("\n%s\n", x_title);                                                                                                 <* 
+ *>    exit (-1);                                                                                                                  <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ leaf   [ge.430.224.30]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
-PROG_layout_entry   (int a_num, char *a_line)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_cmd       [LEN_DESC];
-   /*---(defense)------------------------*/
-   --rce;  if (a_line == NULL)       return rce;
-   strcpy (a_line, " -------------------- ---------------------------------------- ");
-   --rce;  if (a_num <  0        )  return rce;
-   --rce;  if (a_num >= g_nlayout)  return rce;
-   /*---(format)-------------------------*/
-   sprintf (x_cmd , ":%s %s" , g_layouts [a_num].cat, g_layouts [a_num].opt);
-   sprintf (a_line, " %-20.20s %-40.40s ", x_cmd, g_layouts [a_num].desc);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ leaf   [ge.430.224.30]+/ /+-[00.0000.104.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_layout_entry   (int a_num, char *a_line)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        x_cmd       [LEN_DESC];                                                                                         <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_line == NULL)       return rce;                                                                               <* 
+ *>    strcpy (a_line, " -------------------- ---------------------------------------- ");                                         <* 
+ *>    --rce;  if (a_num <  0        )  return rce;                                                                                <* 
+ *>    --rce;  if (a_num >= g_nlayout)  return rce;                                                                                <* 
+ *>    /+---(format)-------------------------+/                                                                                    <* 
+ *>    sprintf (x_cmd , ":%s %s" , g_layouts [a_num].cat, g_layouts [a_num].opt);                                                  <* 
+ *>    sprintf (a_line, " %-20.20s %-40.40s ", x_cmd, g_layouts [a_num].desc);                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 

@@ -116,7 +116,6 @@ REG_init           (void)
    /*---(registers)----------------------*/
    strlcpy (s_regnames , REG_NAMES, MAX_REG);
    REG_purge    ('y');
-   TREG_init    ();
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -2226,65 +2225,65 @@ static      tTEXTREG    s_textreg   [MAX_REG];
  *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
+/*>                                                                                                                                <* 
+ *> char         /+-> tbd --------------------------------[ ------ [ge.742.554.11]+/ /+-[01.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source)                                           <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
+ *>    char        rc          =   0;           /+ generic return code            +/                                               <* 
+ *>    int         x_reg       = 0;                                                                                                <* 
+ *>    int         x_col       = 0;                                                                                                <* 
+ *>    int         x_row       = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_INPT   yLOG_char    ("a_reg"     , a_reg);                                                                            <* 
+ *>    /+---(buffer number)------------------+/                                                                                    <* 
+ *>    x_reg  = REG__reg2index  (a_reg);                                                                                           <* 
+ *>    DEBUG_INPT   yLOG_value   ("x_reg"     , x_reg);                                                                            <* 
+ *>    --rce;  if (x_reg < 0) {                                                                                                    <* 
+ *>       DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(data)---------------------------+/                                                                                    <* 
+ *>    strlcpy (s_textreg [x_reg].label, a_label , 10);                                                                            <* 
+ *>    s_textreg [x_reg].bpos   = a_beg;                                                                                           <* 
+ *>    s_textreg [x_reg].epos   = a_end;                                                                                           <* 
+ *>    strlcpy (s_textreg [x_reg].data , a_source, LEN_RECD);                                                                      <* 
+ *>    s_textreg [x_reg].len    = strllen (s_textreg [x_reg].data, LEN_RECD);                                                      <* 
+ *>    s_textreg [x_reg].source = TREG_FILE;                                                                                       <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.742.554.11]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   char        rc          =   0;           /* generic return code            */
-   int         x_reg       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT   yLOG_char    ("a_reg"     , a_reg);
-   /*---(buffer number)------------------*/
-   x_reg  = REG__reg2index  (a_reg);
-   DEBUG_INPT   yLOG_value   ("x_reg"     , x_reg);
-   --rce;  if (x_reg < 0) {
-      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(data)---------------------------*/
-   strlcpy (s_textreg [x_reg].label, a_label , 10);
-   s_textreg [x_reg].bpos   = a_beg;
-   s_textreg [x_reg].epos   = a_end;
-   strlcpy (s_textreg [x_reg].data , a_source, LEN_RECD);
-   s_textreg [x_reg].len    = strllen (s_textreg [x_reg].data, LEN_RECD);
-   s_textreg [x_reg].source = TREG_FILE;
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [ge.640.354.22]*/ /*-[02.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-TREG_write         (FILE *a_file, int  *a_seq, char a_buf)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   int         i           = 0;             /* iterator -- buffer entry       */
-   int         x_buf       = 0;
-   char        x_regid     [20];
-   int         x_tab       = 0;
-   /*---(buffer number)------------------*/
-   x_buf  = REG__reg2index  (a_buf);
-   --rce;  if (x_buf < 0 )                         return rce;
-   --rce;  if (s_textreg [x_buf].len  <= 0)        return rce;
-   /*---(register entry)-----------------*/
-   LOC_parse (s_textreg [x_buf].label, &x_tab, NULL, NULL, NULL);
-   sprintf (x_regid, "%c", a_buf);
-   fprintf (a_file, "#---------  ver  ---lvl/reg--  -tab-  --beg---  --end---  --min---  --max---  t  ---data------------\n");
-   fprintf (a_file, "source_reg  -A-  %-12.12s    %1d    %-8.8s  %-8.8s  %-8d  %-8d  %c  %s\n",
-         x_regid                , x_tab                  ,
-         s_textreg [x_buf].label, "-"                    ,
-         s_textreg [x_buf].bpos , s_textreg [x_buf].epos ,
-         't'                    , s_textreg [x_buf].data );
-   ++(*a_seq);
-   /*---(complete)-----------------------*/
-   fflush (a_file);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.640.354.22]+/ /+-[02.0000.00#.!]-+/ /+-[--.---.---.--]-+/              <* 
+ *> TREG_write         (FILE *a_file, int  *a_seq, char a_buf)                                                                                <* 
+ *> {                                                                                                                                         <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                               <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                                          <* 
+ *>    int         i           = 0;             /+ iterator -- buffer entry       +/                                                          <* 
+ *>    int         x_buf       = 0;                                                                                                           <* 
+ *>    char        x_regid     [20];                                                                                                          <* 
+ *>    int         x_tab       = 0;                                                                                                           <* 
+ *>    /+---(buffer number)------------------+/                                                                                               <* 
+ *>    x_buf  = REG__reg2index  (a_buf);                                                                                                      <* 
+ *>    --rce;  if (x_buf < 0 )                         return rce;                                                                            <* 
+ *>    --rce;  if (s_textreg [x_buf].len  <= 0)        return rce;                                                                            <* 
+ *>    /+---(register entry)-----------------+/                                                                                               <* 
+ *>    LOC_parse (s_textreg [x_buf].label, &x_tab, NULL, NULL, NULL);                                                                         <* 
+ *>    sprintf (x_regid, "%c", a_buf);                                                                                                        <* 
+ *>    fprintf (a_file, "#---------  ver  ---lvl/reg--  -tab-  --beg---  --end---  --min---  --max---  t  ---data------------\n");   <* 
+ *>    fprintf (a_file, "source_reg  -A-  %-12.12s    %1d    %-8.8s  %-8.8s  %-8d  %-8d  %c  %s\n",                                  <* 
+ *>          x_regid                , x_tab                  ,                                                                                <* 
+ *>          s_textreg [x_buf].label, "-"                    ,                                                                                <* 
+ *>          s_textreg [x_buf].bpos , s_textreg [x_buf].epos ,                                                                                <* 
+ *>          't'                    , s_textreg [x_buf].data );                                                                               <* 
+ *>    ++(*a_seq);                                                                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                               <* 
+ *>    fflush (a_file);                                                                                                                       <* 
+ *>    return 0;                                                                                                                              <* 
+ *> }                                                                                                                                         <*/
 
 
 

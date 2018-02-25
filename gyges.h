@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0e"
-#define     VER_TXT   "now saves yVIKEYS source mode edits back to cell/recalcs"
+#define     VER_NUM   "3.0g"
+#define     VER_TXT   "now uses yVIKEYS sourch mode for command and search"
 
 
 
@@ -875,8 +875,8 @@ char      PROG__unitend       (void);
 char      save_saved         (void);
 char      clear_input        (void);
 
-char        SRCH_clearer         (tCELL *a_cell);
-char        SRCH_searcher        (char  *a_search);
+char        SRCH_clearer         (char *a_label );
+char        SRCH_searcher        (char *a_search);
 
 
 /*---(screen formatting)------------------------*/
@@ -1290,6 +1290,7 @@ char        LOC_wrap             /* shoot  0----- */  (void);
 
 char        LOC_legal            /* stigma 4----- */  (short a_tab, short a_col, short a_row, char a_adapt);
 char        LOC_jump             /* stigma 3----- */  (short a_tab, short a_col, short a_row);
+char        LOC_locator          (char *a_label, int *a_x, int *a_y, int *a_z);
 
 char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, short a_tab , short a_col , short a_row);
 char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);

@@ -1591,14 +1591,25 @@ char        KEYS_writequit       (void) { FILE_write (); g_done = 0; return 0; }
 PRIV void  o___SEARCH__________o () { return; }
 
 char
-SRCH_clearer         (tCELL* a_cell)
+SRCH_clearer         (char *a_label)
 {
-   if (a_cell != NULL) a_cell->n = '-';
+   /*---(locals)-----------+------+----+-*/
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH   yLOG_info    ("a_label"   , a_label);
+   x_curr = LOC_cell_labeled (a_label);
+   DEBUG_SRCH   yLOG_point   ("x_curr"    , x_curr);
+   if (x_curr != NULL) x_curr->n = '-';
+   DEBUG_SRCH   yLOG_char    ("x_curr->n" , x_curr->n);
+   /*---(complete)---------------------------*/
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
+
 char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
-SRCH_searcher      (char *a_search)
+SRCH_searcher_OLD  (char *a_search)
 {
    /*---(locals)-----------+------+----+-*/
    char        rce         =   -10;
@@ -1608,52 +1619,52 @@ SRCH_searcher      (char *a_search)
    int         x_col       = 0;
    int         x_row       = 0;
    /*---(header)--------------------s----*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_point   ("a_search"  , a_search);
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH   yLOG_point   ("a_search"  , a_search);
    /*---(defenses)---------------------------*/
    --rce;  if (a_search == NULL) {
-      DEBUG_USER   yLOG_note    ("can not use null search");
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_SRCH   yLOG_note    ("can not use null search");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
    }
-   DEBUG_USER   yLOG_info    ("a_search"  , a_search);
+   DEBUG_SRCH   yLOG_info    ("a_search"  , a_search);
    rc = yREGEX_comp (a_search + 1);
-   DEBUG_USER   yLOG_value   ("comp rc"   , rc);
+   DEBUG_SRCH   yLOG_value   ("comp rc"   , rc);
    --rce;  if (rc < 0) {
-      DEBUG_USER   yLOG_note    ("could not compile search");
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_SRCH   yLOG_note    ("could not compile search");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(process range)----------------------*/
    x_next  = VISU_first (&x_tab, &x_col, &x_row);
    do {
-      DEBUG_USER   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
+      DEBUG_SRCH   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
       if (x_next != NULL && x_next->s != NULL) {
-         DEBUG_USER   yLOG_char    ("->type"    , x_next->t);
+         DEBUG_SRCH   yLOG_char    ("->type"    , x_next->t);
          switch (x_next->t) {
          case CTYPE_STR   :
-            DEBUG_USER   yLOG_info    ("->s"       , x_next->s);
+            DEBUG_SRCH   yLOG_info    ("->s"       , x_next->s);
             rc = yREGEX_exec (x_next->s);
             break;
          case CTYPE_MOD   :
          case CTYPE_MLIKE :
-            DEBUG_USER   yLOG_info    ("->v_str"   , x_next->v_str);
+            DEBUG_SRCH   yLOG_info    ("->v_str"   , x_next->v_str);
             rc = yREGEX_exec (x_next->v_str);
             break;
          default          :
-            DEBUG_USER   yLOG_note    ("can not process cell type");
+            DEBUG_SRCH   yLOG_note    ("can not process cell type");
             rc = -1;
             break;
          }
-         DEBUG_USER   yLOG_value   ("exec rc"   , rc);
+         DEBUG_SRCH   yLOG_value   ("exec rc"   , rc);
          if (rc > 0) {
-            yVIKEYS_srch_found (x_next);
+            yVIKEYS_srch_found (x_next->label);
             x_next->n = 's';
          }
       }
       x_next  = VISU_next (&x_tab, &x_col, &x_row);
    } while (x_next != DONE_DONE);
    /*---(complete)---------------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

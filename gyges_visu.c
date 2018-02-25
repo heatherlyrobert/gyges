@@ -115,15 +115,6 @@ tMARK       s_mark_info [S_MAX_MARK];
 static char S_MARK_LIST [S_MAX_MARK] = "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()";
 
 
-typedef     struct cSELC    tSELC;
-struct cSELC {
-   char        live;         /* is the selection active: 0=no, 1=yes          */
-   int         root;         /* first selected position                       */
-   int         bpos;         /* start of selection in source                  */
-   int         epos;         /* end of selection in source                    */
-};
-static tSELC  s_selc;
-static tSELC  s_prev;
 
 /*====================------------------------------------====================*/
 /*===----                          initialization                      ----===*/
@@ -154,11 +145,11 @@ VISU_clear          (void)
    /*---(back to original cell)----------*/
    if (s_visu.live == VISU_YES) {
       DEBUG_VISU   yLOG_note    ("return to original cell");
-      MOVE_prep   ();
+      /*> MOVE_prep   ();                                                             <*/
       CTAB = s_visu.otab;
       CCOL = s_visu.ocol;
       CROW = s_visu.orow;
-      MOVE_done   ();
+      /*> MOVE_done   ();                                                             <*/
    }
    /*---(status)-------------------------*/
    DEBUG_VISU   yLOG_note    ("turn range off");
@@ -245,11 +236,11 @@ VISU_restore       (void)
    s_visu.curr  = s_save.curr;
    /*---(go to the right place)----------*/
    DEBUG_VISU   yLOG_snote   ("pointers");
-   MOVE_prep    ();
+   /*> MOVE_prep    ();                                                               <*/
    CTAB = s_visu.otab;
    CCOL = s_visu.ecol;
    CROW = s_visu.erow;
-   MOVE_done    ();
+   /*> MOVE_done    ();                                                               <*/
    /*---(complete)-----------------------*/
    DEBUG_VISU   yLOG_sexit   (__FUNCTION__);
    return 0;
@@ -477,7 +468,7 @@ VISU_reverse       (void)
       CCOL = s_visu.ccol = s_visu.ecol;
       CROW = s_visu.crow = s_visu.erow;
    }
-   MOVE_done ();
+   /*> MOVE_done ();                                                                  <*/
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -709,130 +700,6 @@ VISU_nextreal        (int *a_tab, int *a_col, int *a_row)
    if (a_row != NULL)  *a_row = s_visu.crow;
    /*---(complete)-----------------------*/
    return s_visu.curr;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                      selection on text                       ----===*/
-/*====================------------------------------------====================*/
-static void  o___SELECT__________o () { return; }
-
-char         /*-> tbd --------------------------------[ leaf   [gz.220.001.00]*/ /*-[00.0000.013.!]-*/ /*-[--.---.---.--]-*/
-SELC_clear         (void)
-{
-   s_selc.live        = VISU_NOT;
-   s_selc.root        = -1;
-   s_selc.bpos        = -1;
-   s_selc.epos        = -1;
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ leaf   [gz.220.001.00]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-SELC_save          (void)
-{
-   s_prev.live        = VISU_NOT;
-   s_prev.root        = s_selc.root;
-   s_prev.bpos        = s_selc.bpos;
-   s_prev.epos        = s_selc.epos;
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ leaf   [gz.220.001.00]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-SELC_restore       (void)
-{
-   s_selc.live        = VISU_YES;
-   s_selc.root        = s_prev.root;
-   s_selc.bpos        = s_prev.bpos;
-   s_selc.epos        = s_prev.epos;
-   return 0;
-}
-
-char         /*-> start the visual selection ---------[ leaf   [ge.732.023.20]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-SELC_start         (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          = 0;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   /*---(defenses)-----------------------*/
-   --rce;  if (my.cpos <  0      ) {
-      DEBUG_USER   yLOG_note    ("my.cpos before zero/start");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   --rce;  if (my.cpos >= my.npos) {
-      DEBUG_USER   yLOG_note    ("my.cpos after end/my.npos");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(change settings)----------------*/
-   s_selc.root  = my.cpos;
-   s_selc.bpos  = my.cpos;
-   s_selc.epos  = my.cpos;
-   s_selc.live  = VISU_YES;
-   DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
-   DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
-   DEBUG_USER   yLOG_value   ("epos"      , s_selc.bpos);
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> adjust the visual selection --------[ leaf   [ge.733.023.50]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-SELC_increase      (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          = 0;
-   /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   /*---(defenses)-----------------------*/
-   --rce;  if (my.cpos <  0      ) {
-      DEBUG_USER   yLOG_note    ("my.cpos before zero/start");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   --rce;  if (my.cpos >= my.npos) {
-      DEBUG_USER   yLOG_note    ("my.cpos after end/my.npos");
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(process)------------------------*/
-   DEBUG_USER   yLOG_value   ("live"      , s_selc.live);
-   DEBUG_USER   yLOG_value   ("cpos"      , my.cpos);
-   DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
-   DEBUG_USER   yLOG_value   ("epos"      , s_selc.epos);
-   if      (my.cpos <  s_selc.bpos)   s_selc.bpos = my.cpos;
-   else if (my.cpos >  s_selc.epos)   s_selc.epos = my.cpos;
-   else if (my.cpos >  s_selc.epos)   s_selc.epos = my.cpos;
-   DEBUG_USER   yLOG_value   ("bpos"      , s_selc.bpos);
-   DEBUG_USER   yLOG_value   ("epos"      , s_selc.epos);
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> selection active or not ------------[ leaf   [gc.210.002.20]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
-SELC_islive        (void)
-{
-   if (s_selc.live == VISU_YES)  return 1;
-   else                          return 0;
-}
-
-int          /*-> simplifier for beginning -----------[ leaf   [gn.210.002.20]*/ /*-[00.0000.404.!]-*/ /*-[--.---.---.--]-*/
-SELC_from          (void)
-{
-   if (s_selc.live == VISU_YES)  return s_selc.bpos;
-   else                          return my.cpos;
-}
-
-int          /*-> simplifier for ending --------------[ leaf   [gn.210.002.20]*/ /*-[00.0000.404.!]-*/ /*-[--.---.---.--]-*/
-SELC_to            (void)
-{ 
-   if (s_selc.live == VISU_YES)  return s_selc.epos;
-   else                          return my.cpos;
 }
 
 
@@ -1751,107 +1618,6 @@ VISU_status        (char *a_msg)
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
-/*> char         /+-> tbd --------------------------------[ leaf   [ge.LD4.225.8C]+/ /+-[02.0000.302.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> SELC_mode          (char  a_major, char  a_minor)                                                                              <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         = -10;                                                                                              <* 
- *>    char        x_majors    [LEN_RECD]   = "";                                                                                  <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
- *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
- *>    /+---(defenses)-----------------------+/                                                                                    <* 
- *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());                                                              <* 
- *>    --rce;  if (yVIKEYS_mode_not (SMOD_SELECT)) {                                                                               <* 
- *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                      <* 
- *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       return rce;                                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    /+---(check for escape)---------------+/                                                                                    <* 
- *>    if (a_minor == G_KEY_ESCAPE)  {                                                                                             <* 
- *>       SELC_clear ();                                                                                                           <* 
- *>       DEBUG_USER   yLOG_value   ("live"      , s_selc.live);                                                                   <* 
- *>       yVIKEYS_mode_exit ();                                                                                                    <* 
- *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       return  0;                                                                                                               <* 
- *>    }                                                                                                                           <* 
- *>    /+---(check for start mark)-----------+/                                                                                    <* 
- *>    --rce;  if (a_major == 'm') {                                                                                               <* 
- *>       SELC_start ();                                                                                                           <* 
- *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       return 0;                                                                                                                <* 
- *>    }                                                                                                                           <* 
- *>    /+---(check for simple keys-----------+/                                                                                    <* 
- *>    --rce;  if (a_major == ' ') {                                                                                               <* 
- *>       /+---(submodes)--------------------+/                                                                                    <* 
- *>       switch (a_minor) {                                                                                                       <* 
- *>       case '"'      :                                                                                                          <* 
- *>          yVIKEYS_mode_enter (SMOD_TEXTREG );                                                                                   <* 
- *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                             <* 
- *>          return a_minor;  /+ make sure double quote goes in prev char +/                                                       <* 
- *>          break;                                                                                                                <* 
- *>       case  'y' : case  'Y' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("yank selection text");                                                                    <* 
- *>          TREG_copy   ();                                                                                                       <* 
- *>          SELC_clear  ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       case  'x' : case  'X' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
- *>          TREG_copy   ();                                                                                                       <* 
- *>          TREG_clear  ();                                                                                                       <* 
- *>          SELC_clear  ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       case  'd' : case  'D' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
- *>          TREG_copy   ();                                                                                                       <* 
- *>          TREG_delete ();                                                                                                       <* 
- *>          SELC_clear  ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       case  'p' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("paste after selection text");                                                             <* 
- *>          TREG_paste  ('>');                                                                                                    <* 
- *>          SELC_clear  ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       case  'P' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("paste before selection text");                                                            <* 
- *>          TREG_paste  ('<');                                                                                                    <* 
- *>          SELC_clear  ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       }                                                                                                                        <* 
- *>       /+---(actions)---------------------+/                                                                                    <* 
- *>       switch (a_minor) {                                                                                                       <* 
- *>          /+> case 'v'      : VISU_reverse ();                                            <*                                    <* 
- *>           *>                 break;                                                      <+/                                   <* 
- *>          /+> case 'x'      : REG_cut   ();                                               <*                                    <* 
- *>           *>                 break;                                                      <+/                                   <* 
- *>       }                                                                                                                        <* 
- *>       /+---(basic movement)--------------+/                                                                                    <* 
- *>       switch (a_minor) {                                                                                                       <* 
- *>       case '0' : EDIT_pos ('0');    break;                                                                                     <* 
- *>       case 'H' : EDIT_pos ('l');    break;                                                                                     <* 
- *>       case 'h' : EDIT_pos ('-');    break;                                                                                     <* 
- *>       case 'l' : EDIT_pos ('+');    break;                                                                                     <* 
- *>       case 'L' : EDIT_pos ('m');    break;                                                                                     <* 
- *>       case '$' : EDIT_pos ('$');    break;                                                                                     <* 
- *>       }                                                                                                                        <* 
- *>       /+---(word movement)---------------+/                                                                                    <* 
- *>       switch (a_minor) {                                                                                                       <* 
- *>       case 'w' : EDIT_pos ('w');    break;                                                                                     <* 
- *>       case 'b' : EDIT_pos ('W');    break;                                                                                     <* 
- *>       case 'e' : EDIT_pos ('e');    break;                                                                                     <* 
- *>       }                                                                                                                        <* 
- *>       /+---(normal)----------------------+/                                                                                    <* 
- *>       SELC_increase ();                                                                                                        <* 
- *>    }                                                                                                                           <* 
- *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
 
 /*> char         /+-> process keys for marks -------------[ leaf   [ge.UD8.24#.JA]+/ /+-[03.0000.102.E]-+/ /+-[--.---.---.--]-+/   <* 
  *> MARK_submode       (char a_major, char a_minor)                                                                                <* 
