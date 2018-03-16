@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0g"
-#define     VER_TXT   "now uses yVIKEYS sourch mode for command and search"
+#define     VER_NUM   "3.0h"
+#define     VER_TXT   "now writes cells to files using new yVIKEYS method"
 
 
 
@@ -855,14 +855,14 @@ char      PROG_end             (void);
 /*> char      PROG_main_handle     (char  a_key);                                     <*/
 /*> char      PROG_main_string     (char *a_keys);                                    <*/
 
-char      PROG_layout_init     (void);
-char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);
-char      PROG_layout_list     (char *a_who);
-char      PROG_layout_entry    (int   a_num, char *a_line);
-char      PROG_layout_formula  (char *a_opt);
-char      PROG_layout_status   (char *a_opt);
-char      PROG_layout_command  (char *a_opt);
-char      PROG_layout_layout   (char *a_opt);
+/*> char      PROG_layout_init     (void);                                            <*/
+/*> char      PROG_layout_set      (char *a_who, char *a_cat, char *a_opt);           <* 
+ *> char      PROG_layout_list     (char *a_who);                                     <* 
+ *> char      PROG_layout_entry    (int   a_num, char *a_line);                       <* 
+ *> char      PROG_layout_formula  (char *a_opt);                                     <* 
+ *> char      PROG_layout_status   (char *a_opt);                                     <* 
+ *> char      PROG_layout_command  (char *a_opt);                                     <* 
+ *> char      PROG_layout_layout   (char *a_opt);                                     <*/
 
 char     *PROG__unit          (char *a_question, void *a_thing);
 char      PROG__testing       (void);
@@ -875,8 +875,8 @@ char      PROG__unitend       (void);
 char      save_saved         (void);
 char      clear_input        (void);
 
-char        SRCH_clearer         (char *a_label );
 char        SRCH_searcher        (char *a_search);
+char        SRCH_clearer         (int a_x, int a_y, int a_z);
 
 
 /*---(screen formatting)------------------------*/
@@ -936,9 +936,9 @@ int       SELC_to              (void);
 
 /*===[ MARK   ]===============================================================*/
 /*---(program)--------------*/
-char      MARK_init            (void);
-char      MARK_purge           (char  a_scope);
-char      MARK_wrap            (void);
+/*> char      MARK_init            (void);                                            <*/
+/*> char      MARK_purge           (char  a_scope);                                   <*/
+/*> char      MARK_wrap            (void);                                            <*/
 /*---(basics)---------------*/
 char      MARK_valid           (char  a_mark);
 char      MARK_set             (char  a_mark);
@@ -1055,7 +1055,7 @@ char      MODE_input           (char  a_major, char  a_minor);
 /*---(sub-modes)------------*/
 char      SMOD_buffer          (char  a_major, char  a_minor);
 char      SMOD_replace         (char  a_major, char  a_minor);
-char      SMOD_format          (char  a_major, char  a_minor);
+char      SMOD_format          (int   a_major, int   a_minor);
 char      SMOD_wander          (char  a_major, char  a_minor);
 char      SMOD_error           (char  a_major, char  a_minor);
 char      SMOD_menus           (char  a_major, char  a_minor);
@@ -1243,7 +1243,7 @@ char      SEQ_calc_up        (tCELL *a_cell);
 char      SEQ_calc_down      (tCELL *a_cell);
 char      SEQ_calc_full      (void);
 char      SEQ_wipe_deps      (void);
-char      SEQ_file_deps      (long a_stamp, FILE *a_file);
+char      SEQ_file_deps      (long a_stamp);
 char      SEQ_reg_deps       (long a_stamp);
 
 
@@ -1266,8 +1266,6 @@ char        CELL__merge_right    (tCELL *a_left);
 char        CELL__unmerge_right  (tCELL *a_left);
 char        CELL_merge           (tCELL *a_curr);
 char        CELL_unmerge         (tCELL *a_curr);
-char        CELL_merge_visu      (void);
-char        CELL_unmerge_visu    (void);
 /*---(unit-testing)-------------------*/
 char        CELL__unitchange     (tCELL *a_cell, char *a_source);
 
@@ -1291,6 +1289,7 @@ char        LOC_wrap             /* shoot  0----- */  (void);
 char        LOC_legal            /* stigma 4----- */  (short a_tab, short a_col, short a_row, char a_adapt);
 char        LOC_jump             /* stigma 3----- */  (short a_tab, short a_col, short a_row);
 char        LOC_locator          (char *a_label, int *a_x, int *a_y, int *a_z);
+char        LOC_addressor        (char *a_label, int a_x, int a_y, int a_z);
 
 char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, short a_tab , short a_col , short a_row);
 char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
@@ -1413,14 +1412,28 @@ char      CELL_init            (void);
 char      CELL_wrap            (void);
 char      CELL__interpret      (tCELL *a_curr);
 
-char      CELL_erase           (void);
+
+char      CELL_erase           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_align           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_decimals        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_width           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_format          (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_merge_visu      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_unmerge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_visual          (char   a_what, char a_mode, char a_how);
+
 char      CELL_align_valid     (char   a_align);
-char      CELL_align           (char   a_mode, char a_align);
 char      CELL_decimals_valid  (char   a_decs);
-char      CELL_decimals        (char   a_mode, char a_decs);
 char      CELL_format_valid    (char   a_format);
-char      CELL_format          (char   a_mode, char a_format);
-char      CELL_width           (char   a_mode, char a_num);
+#define   CHANGE_WIDTH    'w'
+#define   CHANGE_FORMAT   'f'
+#define   CHANGE_ERASE    'e'
+#define   CHANGE_ALIGN    'a'
+#define   CHANGE_DECIMAL  'd'
+#define   CHANGE_MERGE    'm'
+#define   CHANGE_UNMERGE  'u'
+
+
 char      CELL_macro_get       (char   a_name, char  *a_keys);
 char      CELL_macro_set       (char   a_name, char  *a_keys);
 char      CELL_printable       (tCELL *a_cell);
@@ -1455,10 +1468,15 @@ char      OUTP_col_head        (FILE  *a_file );
 char      OUTP_col_foot        (FILE  *a_file , int   a_count);
 int       OUTP_cols            (FILE  *a_file );
 /*---(cells)-----------------*/
-char      INPT_cell            (char *a_label, char *a_format, char *a_source);
-char      OUTP_cell            (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr);
-char      OUTP_cell_dep        (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);
-char      OUTP_cell_free       (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow);
+char      INPT_cell_OLD        (char *a_label, char *a_format, char *a_source);
+/*> char      OUTP_cell            (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr);   <*/
+/*> char      OUTP_cell_dep        (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);   <*/
+/*> char      OUTP_cell_free       (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow);   <*/
+
+char        OUTP_cell            (char a_type, int a_seq, int a_level, tCELL *a_curr);
+char        OUTP_cell_dep        (void);
+char        OUTP_cell_free       (void);
+char        INPT_cell            (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
 
 
 
@@ -1467,12 +1485,12 @@ char      INPT_open            (void);
 char      INPT_read            (void);
 char      INPT_parse           (cchar *a_recd);
 char      INPT_close           (void);
-char      INPT_main            (void);
+/*> char      INPT_main            (void);                                            <*/
 
 char      OUTP_header          (FILE *a_file);
 
 char      FILE_write           (void);
-char      FILE_writeas         (char *a_name);
+/*> char      FILE_writeas         (char *a_name);                                    <*/
 char      XML3_read            (char *a_name);
 
 

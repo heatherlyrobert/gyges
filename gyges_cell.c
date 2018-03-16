@@ -367,7 +367,7 @@ SRCH_searcher      (char *a_search)
          }
          DEBUG_SRCH   yLOG_value   ("exec rc"   , rc);
          if (rc > 0) {
-            yVIKEYS_srch_found (x_next->label);
+            yVIKEYS_srch_found (x_next->label, x_next->col, x_next->row, x_next->tab);
             x_next->n = 's';
          }
       }
@@ -1657,58 +1657,29 @@ CELL_unmerge         (tCELL *a_curr)
 }
 
 char         /*-> merge horizontal cells -------------[ ------ [gc.530.062.64]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
-CELL_merge_visu    (void)
+CELL_merge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 {
    /*---(defenses)---------------------------*/
    char      a_type = 'm';
    char     *valid = "mu";
    if (strchr(valid, a_type) == 0) return -1;
-   int       xcol, xrow;
    /*---(process range)----------------------*/
-   tCELL   *first = VISU_first(NULL, &xcol, &xrow);
-   tCELL   *next  = first;
-   do {
-      if (a_type == 'm') {
-         if (next == NULL) {
-            CELL_change (&next, CHG_NOHIST, CTAB, xcol, xrow, "<");
-         }
-         if (first->col != next->col) next->a = '+';
-      } else if (next != NULL) next->a = a_type;
-      CELL_printable (next);
-      next  = VISU_next(NULL, &xcol, &xrow);
-   } while (next != DONE_DONE);
+   /*> if (a_type == 'm') {                                                           <* 
+    *>    CELL_change (&x_next, CHG_NOHIST, x_tab, x_col, x_row, "<");                <* 
+    *>    if (a_head->col != a_curr->col) a_curr->a = '+';                            <* 
+    *> } else {                                                                       <* 
+    *>    a_curr->a = a_type;                                                         <* 
+    *> }                                                                              <*/
    /*---(complete)---------------------------*/
    return 0;
 }
 
 char         /*-> unmerge horizontal cells -----------[ ------ [gz.740.061.44]*/ /*-[02.0000.103.!]-*/ /*-[--.---.---.--]-*/
-CELL_unmerge_visu  (void)
+CELL_unmerge_visu  (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 {
-   /*---(locals)-----------+-----------+-*/
-   tCELL      *x_start     = NULL;      
-   tCELL      *x_next      = NULL;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_row_save  = 0;
-   int         x_inc       = 0;
-   /*---(start in upper left)------------*/
-   x_start  = VISU_first (NULL, &x_col, &x_row);
-   x_next   = x_start;
-   /*---(process range)------------------*/
-   do {
-      /*---(nulls)-----------------------*/
-      if (x_next == NULL) {
-         x_start = x_next  = VISU_next (NULL, &x_col, &x_row);
-         continue;
-      }
-      /*---(new line)--------------------*/
-      if (x_next->l == 1)
-         CELL_change (&x_next, CHG_NOHIST, CTAB, x_col, x_row, "<");
-      if (x_start->col != x_next->col) x_next->a = '+';
-      CELL_printable (x_next);
-      x_next  = VISU_next (NULL, &x_col, &x_row);
-   } while (x_next != DONE_DONE);
-   /*---(complete)-----------------------*/
+   if (a_curr->l == 1)
+      CELL_change (NULL, CHG_NOHIST, a_curr->tab, a_curr->col, a_curr->row, "<");
+   if (a_head->col != a_curr->col) a_curr->a = '+';
    return 0;
 }
 
@@ -1720,36 +1691,10 @@ CELL_unmerge_visu  (void)
 PRIV void  o___FORMATTING______o () { return; }
 
 char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.106.!]-*/ /*-[--.---.---.--]-*/
-CELL_erase         (void)
+CELL_erase         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   char        rc          = 0;             /* generic return code            */
-   long        x_stamp     = 0;             /* timestamp for cell marking     */
-   int         x_seq       = 0;             /* sequential number for action   */
-   tCELL      *x_next      = NULL;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_count     = 0;
-   /*---(process dedependent cells)----------*/
-   /*> x_stamp = rand ();                                                             <* 
-    *> DEBUG_CELL   yLOG_llong   ("x_stamp"   , x_stamp);                             <* 
-    *> x_seq   = 0;                                                                   <* 
-    *> DEBUG_CELL   yLOG_note    ("dependent cells");                                 <* 
-    *> DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);                               <* 
-    *> rc = DEP__tail (NULL, '-', &x_seq, 0, s_root, x_stamp, CELL_depwipe);            <* 
-    *> DEBUG_CELL   yLOG_value   ("x_seq"     , x_seq);                               <*/
-   /*---(process independent cells)----------*/
-   x_next = VISU_first(NULL, &x_col, &x_row);
-   do {
-      if (x_count == 0)  CELL_delete (CHG_INPUT   , CTAB, x_col, x_row);
-      else               CELL_delete (CHG_INPUTAND, CTAB, x_col, x_row);
-      /*> CELL_printable (x_next);                                                      <*/
-      ++x_count;
-      x_next  = VISU_next(NULL, &x_col, &x_row);
-   } while (x_next != DONE_DONE);
-   /*---(complete)---------------------------*/
+   if (a_head == a_curr) CELL_delete (CHG_INPUT   , a_curr->tab, a_curr->col, a_curr->row);
+   else                  CELL_delete (CHG_INPUTAND, a_curr->tab, a_curr->col, a_curr->row);
    return 0;
 }
 
@@ -1761,7 +1706,7 @@ CELL_format_valid    (char a_format)
 }
 
 char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.303.#]-*/ /*-[--.---.---.--]-*/
-CELL_format        (char a_mode, char a_format)
+CELL_format        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 {
    /*---(design notes)-------------------*/
    /*
@@ -1775,28 +1720,17 @@ CELL_format        (char a_mode, char a_format)
    int         x_row       = 0;
    int         x_count     = 0;
    /*---(defenses)-----------------------*/
+   if (x_next->a == '+')    return 0;
    if (strchr (sv_formats, a_format)  == 0) return -1;
    /*---(prepare)------------------------*/
-   x_next  = VISU_first (&x_tab, &x_col, &x_row);
-   /*> if (a_format == '"')  a_format = x_next->f;                                    <*/
-   /*---(process range)------------------*/
-   do {
-      if (x_next != NULL) {
-         if (x_next->a != '+') {
-            if (a_mode == CHG_INPUT) {
-               if (x_count == 0)  HIST_format ("format", x_tab, x_col, x_row, x_next->f, a_format);
-               else               HIST_format ("FORMAT", x_tab, x_col, x_row, x_next->f, a_format);
-            }
-            if      (strchr (G_CELL_STR , x_next->t) != 0 && strchr (sv_fillers, a_format) != NULL)
-               x_next->f = a_format;
-            else if (strchr (G_CELL_NUM , x_next->t) != 0 && strchr (sv_fillers, a_format) == NULL)
-               x_next->f = a_format;
-            ++x_count;
-         }
-         CELL_printable (x_next);
-      }
-      x_next  = VISU_next (&x_tab, &x_col, &x_row);
-   } while (x_next != DONE_DONE);
+   if (a_mode == CHG_INPUT) {
+      if (a_head == a_curr) HIST_format ("format", a_curr->tab, a_curr->col, a_curr->row, a_curr->f, a_format);
+      else                  HIST_format ("FORMAT", a_curr->tab, a_curr->col, a_curr->row, a_curr->f, a_format);
+   }
+   if      (strchr (G_CELL_STR , x_next->t) != 0 && strchr (sv_fillers, a_format) != NULL)
+      x_next->f = a_format;
+   else if (strchr (G_CELL_NUM , x_next->t) != 0 && strchr (sv_fillers, a_format) == NULL)
+      x_next->f = a_format;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1809,43 +1743,21 @@ CELL_align_valid   (char a_align)
 }
 
 char         /*-> change cell horizontal alignment ---[ ------ [gc.940.262.94]*/ /*-[04.0000.403.Y]-*/ /*-[--.---.---.--]-*/
-CELL_align         (char a_mode, char a_align)
+CELL_align         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_align)
 {
-   /*---(design notes)-------------------*/
-   /*
-    *  update all cells to new alignment regardless of type to keep complexity
-    *  down and flexibility up.  if there is no cell, simply move on.
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        x_align     = ' ';
-   tCELL      *x_next      = NULL;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_count     = 0;
    /*---(defense: bad alignment code)----*/
    if (strchr (sv_align, a_align) == 0) return -1;
    /*---(prepare)------------------------*/
-   x_next  = VISU_first (&x_tab, &x_col, &x_row);
-   if (a_align == '"')  a_align = x_next->a;
+   if (a_curr->a == '+')  return 0;
+   if (a_align   == '"')  a_align = a_curr->a;
    /*---(process all cells in range)-----*/
-   do {
-      x_align = a_align;
-      if (x_next != NULL) {
-         /*> if ((x_align == '}' || x_align == '{') &&                                <* 
-          *>       (x_next->t != 'n' && x_next->t != 'f')) x_align = x_next->a;       <*/
-         if (x_next->a != '+') {
-            if (a_mode == CHG_INPUT) {
-               if (x_count == 0) HIST_format ("align", x_tab, x_col, x_row, x_next->a, x_align);
-               else              HIST_format ("ALIGN", x_tab, x_col, x_row, x_next->a, x_align);
-            }
-            x_next->a = x_align;
-            ++x_count;
-         }
-         CELL_printable (x_next);
-      }
-      x_next  = VISU_next (&x_tab, &x_col, &x_row);
-   } while (x_next != DONE_DONE);
+   /*> if ((a_align == '}' || a_align == '{') &&                                <* 
+    *>       (a_curr->t != 'n' && a_curr->t != 'f')) a_align = a_curr->a;       <*/
+   if (a_mode == CHG_INPUT) {
+      if (a_head == a_curr) HIST_format ("align", a_curr->tab, a_curr->col, a_curr->row, a_curr->a, a_align);
+      else                  HIST_format ("ALIGN", a_curr->tab, a_curr->col, a_curr->row, a_curr->a, a_align);
+   }
+   a_curr->a = a_align;
    /*---(complete)---------------------------*/
    return 0;
 }
@@ -1858,110 +1770,149 @@ CELL_decimals_valid  (char a_decs)
 }
 
 char         /*-> change cell decimal places ---------[ ------ [gc.950.272.94]*/ /*-[03.0000.303.S]-*/ /*-[--.---.---.--]-*/
-CELL_decimals      (char a_mode, char a_num)
+CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
 {
-   /*---(design notes)-------------------*/
-   /*
-    *  update all cells to new format regardless of type to keep complexity
-    *  down and flexibility up.  if there is no cell, simply move on.
-    */
    /*---(locals)-----------+-----------+-*/
    char        x_decs      = 0;
-   tCELL      *x_next      = NULL;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_count     = 0;
-   /*---(defenses)---------------------------*/
-   char     *valid = "0123456789\"";
-   if (strchr(valid, a_num)   == 0) return -1;
-   /*---(process range)----------------------*/
-   x_next  = VISU_first (&x_tab, &x_col, &x_row);
-   x_decs  = a_num;
-   if (x_decs < '0') x_decs = '0';
-   if (x_decs > '9') x_decs = '9';
-   if (a_num  == '"')  a_num  = x_next->d;
-   do {
-      if (x_next != NULL) {
-         /*---(update)-----------------------*/
-         if (a_mode == CHG_INPUT) {
-            if (x_count == 0)  HIST_format ("decimals", x_tab, x_col, x_row, x_next->d, x_decs);
-            else               HIST_format ("DECIMALS", x_tab, x_col, x_row, x_next->d, x_decs);
-         }
-         x_next->d = x_decs;
-         ++x_count;
-         CELL_printable (x_next);
-      }
-      x_next  = VISU_next (&x_tab, &x_col, &x_row);
-   } while (x_next != DONE_DONE);
+   /*---(handle input)-----------------------*/
+   if (a_num  == '"')  x_decs = a_curr->d;
+   else                x_decs = a_num;
+   /*---(fix ranges)-------------------------*/
+   if      (x_decs <  '0')  x_decs = '0';
+   else if (x_decs >  '9')  x_decs = '9';
+   /*---(update)-----------------------*/
+   if (a_mode == CHG_INPUT) {
+      if (a_head == a_curr)  HIST_format ("decimals", a_curr->tab, a_curr->col, a_curr->row, a_curr->d, x_decs);
+      else                   HIST_format ("DECIMALS", a_curr->tab, a_curr->col, a_curr->row, a_curr->d, x_decs);
+   }
+   a_curr->d = x_decs;
    /*---(complete)---------------------------*/
    return 0;
 }
 
 char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
-CELL_width         (char a_mode, char a_num)
+CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
 {  /*---(design notes)-------------------*/
    /*  update all cells to new width, either a standard size, or a specific   */
    /*  value communicated as a negative number.                               */
    /*---(locals)-----------+-----------+-*/
-   /*------(positions)-----*/
-   int         x_tab       = 0;
-   int         x_bcol      = 0;
-   int         x_ecol      = 0;
-   /*------(objects)-------*/
-   tCELL      *x_cell      = NULL;      /* cell for updating                  */
-   /*------(working)-------*/
-   int         x_col       = 0;
+   int         x_width     = 0;
    int         x_row       = 0;
    int         x_last      = 0;
-   int         x_width     = 0;
-   /*---(header)-----------------------------*/
-   DEBUG_CELL  yLOG_enter  (__FUNCTION__);
-   /*---(defenses)---------------------------*/
-   char     *valid = "mnNwWhHlL";
-   if (a_num >   0 && strchr(valid, a_num)   == 0) {
-      DEBUG_CELL  yLOG_exit   (__FUNCTION__);
-      return -1;
-   }
+   tCELL      *x_cell      = NULL;
+   /*---(stop early)-------------------------*/
+   if (a_head->row != a_curr->row)  return 1;
    /*---(process range)----------------------*/
-   VISU_range (&x_tab, &x_bcol, NULL, &x_ecol, NULL);
-   x_last = LOC_row_max (x_tab);
-   for (x_col = x_bcol; x_col <= x_ecol; ++x_col) {
-      DEBUG_CELL  yLOG_complex ("position"  , "tab=%3d, col=%3d", x_tab, x_col);
-      /*---(adjust)----------------------*/
-      if (a_num <   0) {
-         x_width                = -(a_num);
-      } else {
-         x_width = LOC_col_width (x_tab, x_col);
-         switch (a_num) {
-         case  'm' : x_width    = 0;                           break;
-         case  'n' : x_width    = 8;                           break;
-         case  'N' : x_width    = 12;                          break;
-         case  'w' : x_width    = 20;                          break;
-         case  'W' : x_width    = 50;                          break;
-         case  'h' : x_width   -= 1;                           break;
-         case  'l' : x_width   += 1;                           break;
-         case  'H' : x_width    = ((x_width / 5) * 5);         break;
-         case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
-         }
+   x_last = LOC_row_max (a_curr->tab);
+   /*---(adjust)----------------------*/
+   if (a_num <   0) {
+      x_width                = -(a_num);
+   } else {
+      x_width = LOC_col_width (a_curr->tab, a_curr->col);
+      switch (a_num) {
+      case  'm' : x_width    = 0;                           break;
+      case  'n' : x_width    = 8;                           break;
+      case  'N' : x_width    = 12;                          break;
+      case  'w' : x_width    = 20;                          break;
+      case  'W' : x_width    = 50;                          break;
+      case  'h' : x_width   -= 1;                           break;
+      case  'l' : x_width   += 1;                           break;
+      case  'H' : x_width    = ((x_width / 5) * 5);         break;
+      case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
       }
-      /*---(set width)--------------------*/
-      LOC_col_widen  (x_tab, x_col, x_width);
-      /*---(update column printables)----*/
-      for (x_row = 0; x_row < x_last; ++x_row) {
-         x_cell = LOC_cell_at_loc (x_tab, x_col, x_row);
-         if (x_cell == NULL) continue;
-         /*---(update merged cells)----------*/
-         if (x_cell->t == CTYPE_MERGE)  SEQ_calc_up (x_cell);
-         /*---(update printable)-------------*/
-         CELL_printable (x_cell);
-      }
+   }
+   /*---(set width)--------------------*/
+   LOC_col_widen  (a_curr->tab, a_curr->col, x_width);
+   /*---(update column printables)----*/
+   for (x_row = 0; x_row < x_last; ++x_row) {
+      x_cell = LOC_cell_at_loc (a_curr->tab, a_curr->col, x_row);
+      if (x_cell == NULL) continue;
+      /*---(update merged cells)----------*/
+      if (x_cell->t == CTYPE_MERGE)  SEQ_calc_up (x_cell);
+      /*---(update printable)-------------*/
+      CELL_printable (x_cell);
    }
    /*---(reset headers)---------------*/
-   KEYS_bcol    (BCOL);
+   /*> KEYS_bcol    (BCOL);                                                           <*/
    /*> CURS_col_head ();                                                              <*/
    /*---(complete)---------------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
+   return 0;
+}
+
+char
+CELL_visual        (char a_what, char a_mode, char a_how)
+{
+   /*---(design notes)-------------------*/
+   /*
+    * called functions return...
+    *   0     for success
+    *   < 0   to indicate error/stop
+    *   > 0   to indicate done early, no need to continue
+    *
+    */
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tCELL      *x_first     = NULL;
+   tCELL      *x_next      = NULL;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   int         x_total     =    0;
+   int         x_handle    =    0;
+   /*---(header)-------------------------*/
+   DEBUG_CELL    yLOG_enter  (__FUNCTION__);
+   DEBUG_CELL    yLOG_char   ("a_what"    , a_what);
+   DEBUG_CELL    yLOG_char   ("a_mode"    , a_mode);
+   DEBUG_CELL    yLOG_char   ("a_how"     , a_how);
+   /*---(get first)----------------------*/
+   rc       = yVIKEYS_first (&x_col, &x_row, &x_tab);
+   DEBUG_CELL    yLOG_value  ("rc"        , rc);
+   x_first  = LOC_cell_at_loc (x_tab, x_col, x_row);
+   DEBUG_CELL    yLOG_point  ("x_first"   , x_first);
+   x_next   = x_first;
+   /*---(process range)------------------*/
+   while (rc >= 0) {
+      ++x_total;
+      if (x_next != NULL) {
+         ++x_handle;
+         DEBUG_CELL_M  yLOG_note   ("handlers");
+         switch (a_what) {
+         case CHANGE_WIDTH   : rc = CELL_width        (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_DECIMAL : rc = CELL_decimals     (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_ALIGN   : rc = CELL_align        (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_FORMAT  : rc = CELL_format       (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_ERASE   : rc = CELL_erase        (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_MERGE   : rc = CELL_merge_visu   (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_UNMERGE : rc = CELL_unmerge_visu (x_first, x_next, a_mode, a_how); break;
+         }
+         DEBUG_CELL_M  yLOG_value  ("rc"        , rc);
+         /*---(trouble)---------------------*/
+         if (rc < 0) {
+            DEBUG_CELL    yLOG_note   ("detailed function indicated trouble");
+            DEBUG_CELL    yLOG_exitr  (__FUNCTION__, rc);
+            return rc;
+         }
+         /*---(early exit)------------------*/
+         if (rc > 0)  {
+            DEBUG_CELL    yLOG_note   ("detailed function indicated done early");
+            DEBUG_CELL    yLOG_exit   (__FUNCTION__);
+            return 0;
+         }
+         /*---(done)------------------------*/
+         CELL_printable (x_next);
+      }
+      /*---(get next)--------------------*/
+      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+      DEBUG_CELL_M  yLOG_value  ("rc"        , rc);
+      x_next  = LOC_cell_at_loc (x_tab, x_col, x_row);
+      DEBUG_CELL_M  yLOG_point  ("x_next"    , x_next);
+      /*---(done)------------------------*/
+   }
+   DEBUG_CELL    yLOG_value  ("x_total"   , x_total);
+   DEBUG_CELL    yLOG_value  ("x_handle"  , x_handle);
+   /*---(complete)-----------------------*/
+   DEBUG_CELL    yLOG_exit   (__FUNCTION__);
    return 0;
 }
 

@@ -81,210 +81,210 @@ static FILE    *s_file;                      /* file pointer                   *
 /*====================------------------------------------====================*/
 PRIV void  o___VERSIONING______o () { return; }
 
-char FILE_bump_major    (void)  { return FILE_bump ("M"); }
-char FILE_bump_minor    (void)  { return FILE_bump ("m"); }
-char FILE_bump_inc      (void)  { return FILE_bump ("i"); }
+/*> char FILE_bump_major    (void)  { return FILE_bump ("M"); }                                                                    <* 
+ *> char FILE_bump_minor    (void)  { return FILE_bump ("m"); }                                                                    <* 
+ *> char FILE_bump_inc      (void)  { return FILE_bump ("i"); }                                                                    <* 
+ *>                                                                                                                                <* 
+ *> char         /+-> tbd --------------------------------[ ------ [ge.C70.13#.E1]+/ /+-[02.0000.03#.T]-+/ /+-[--.---.---.--]-+/   <* 
+ *> FILE_bump          (char *a_type)                                                                                              <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rc          = 0;                                                                                                <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        x_type      = ' ';                                                                                              <* 
+ *>    /+---(defense : not controlled)-------+/                                                                                    <* 
+ *>    --rce;  if (ver_ctrl != 'y')  return rce;                                                                                   <* 
+ *>    /+---(defense: a_type)----------------+/                                                                                    <* 
+ *>    --rce;  if (a_type == NULL)                   return rce;                                                                   <* 
+ *>    --rce;  if (a_type [0] == '\0')               return rce;                                                                   <* 
+ *>    x_type = a_type [0];                                                                                                        <* 
+ *>    --rce;  if (strchr ("Mmi", x_type) == NULL)   return rce;                                                                   <* 
+ *>    FILE_vertxt (NULL);                                                                                                         <* 
+ *>    /+---(tiny)---------------------------+/                                                                                    <* 
+ *>    if (strchr ("i", x_type) != NULL) {                                                                                         <* 
+ *>       if (ver_num [3] <  'z') {                                                                                                <* 
+ *>          ++ver_num[3];                                                                                                         <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    ver_num [3] = 'a';                                                                                                          <* 
+ *>    /+---(minor)--------------------------+/                                                                                    <* 
+ *>    if (strchr ("mi", x_type) != NULL) {                                                                                        <* 
+ *>       if (ver_num [2] <  '9') {                                                                                                <* 
+ *>          ++ver_num[2];                                                                                                         <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       if (ver_num [2] == '9') {                                                                                                <* 
+ *>          ver_num  [2] =  'A';                                                                                                  <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       if (ver_num [2] <  'Z') {                                                                                                <* 
+ *>          ++ver_num[2];                                                                                                         <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    ver_num [2] = '0';                                                                                                          <* 
+ *>    /+---(major)--------------------------+/                                                                                    <* 
+ *>    if (strchr ("Mmi", x_type) != NULL) {                                                                                       <* 
+ *>       if (ver_num [0] <  '9') {                                                                                                <* 
+ *>          ++ver_num[0];                                                                                                         <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       if (ver_num [0] == '9') {                                                                                                <* 
+ *>          ver_num  [0] =  'A';                                                                                                  <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       if (ver_num [0] <  'Z') {                                                                                                <* 
+ *>          ++ver_num[0];                                                                                                         <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    strcpy (ver_num, "Z.Zz");                                                                                                   <* 
+ *>    --rce;  return  rce;                                                                                                        <* 
+ *> }                                                                                                                              <* 
+ *>                                                                                                                                <* 
+ *> char FILE_control       (void)  { return FILE_controlled ("y"); }                                                              <* 
+ *> char FILE_nocontrol     (void)  { return FILE_controlled ("n"); }                                                              <* 
+ *>                                                                                                                                <* 
+ *> char         /+-> tbd --------------------------------[ ------ [gc.520.103.41]+/ /+-[02.0000.02#.G]-+/ /+-[--.---.---.--]-+/   <* 
+ *> FILE_controlled    (char *a_yes)                                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    FILE_vertxt (NULL);                                                                                                         <* 
+ *>    if (a_yes [0] == 'n') {                                                                                                     <* 
+*>       if (ver_ctrl == 'y') {                                                                                                   <* 
+   *>          ver_ctrl = '-';                                                                                                       <* 
+      *>          strcpy (ver_num, "----");                                                                                             <* 
+      *>       }                                                                                                                        <* 
+      *>       return 0;                                                                                                                <* 
+      *>    }                                                                                                                           <* 
+      *>    if (a_yes [0] == 'y') {                                                                                                     <* 
+         *>       if (ver_ctrl == '-') {                                                                                                   <* 
+            *>          ver_ctrl = 'y';                                                                                                       <* 
+               *>          strcpy (ver_num, "0.0a");                                                                                             <* 
+               *>       }                                                                                                                        <* 
+               *>       return 0;                                                                                                                <* 
+               *>    }                                                                                                                           <* 
+               *>    return -1;                                                                                                                  <* 
+               *> }                                                                                                                              <* 
+               *>                                                                                                                                <* 
+               *> char         /+-> tbd --------------------------------[ ------ [ge.880.13#.G1]+/ /+-[02.0000.00#.#]-+/ /+-[--.---.---.--]-+/   <* 
+               *> FILE_version       (char *a_ver)                                                                                               <* 
+               *> {                                                                                                                              <* 
+                  *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+                     *>    int         x_len       = 0;                                                                                                <* 
+                     *>    char        rce         = -10;                                                                                              <* 
+                     *>    char        x_work      [10];                                                                                               <* 
+                     *>    /+---(defense : not controlled)-------+/                                                                                    <* 
+                     *>    --rce;  if (ver_ctrl != 'y')  return rce;                                                                                   <* 
+                     *>    /+---(defense : empty)----------------+/                                                                                    <* 
+                     *>    --rce;  if (a_ver == NULL)               return rce;                                                                        <* 
+                     *>    x_len = strlen (a_ver);                                                                                                     <* 
+                     *>    --rce;  if (strcmp (a_ver, "") == 0)     return rce;                                                                        <* 
+                     *>    --rce;  if (x_len <= 0)                  return rce;                                                                        <* 
+                     *>    /+---(defense: bad length)------------+/                                                                                    <* 
+                     *>    --rce;  if (x_len < 4)                   return rce;                                                                        <* 
+                     *>    --rce;  if (x_len > 4)                   return rce;                                                                        <* 
+                     *>    /+---(prepare)------------------------+/                                                                                    <* 
+                     *>    strcpy  (x_work, a_ver);                                                                                                    <* 
+                     *>    /+---(test chars)---------------------+/                                                                                    <* 
+                     *>    --rce;  if (strchr ("abcdefghijklmnopqrstuvwxyz",           x_work [3]) == 0)  return rce;                                  <* 
+                     *>    --rce;  if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", x_work [2]) == 0)  return rce;                                  <* 
+                     *>    --rce;  if (x_work [1] != '.')                       return rce;                                                            <* 
+                     *>    --rce;  if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", x_work [0]) == 0)  return rce;                                  <* 
+                     *>    /+---(check increase only)------------+/                                                                                    <* 
+                     *>    --rce;  if (x_work [0] <  ver_num [0])    return rce;                                                                       <* 
+                     *>    if (x_work [0] == ver_num [0]) {                                                                                            <* 
+                        *>       --rce;  if (x_work [2] <  ver_num [2])    return rce;                                                                    <* 
+                           *>       if (x_work [2] == ver_num [2]) {                                                                                         <* 
+                              *>          --rce;  if (x_work [3] <  ver_num [3])    return rce;                                                                 <* 
+                                 *>          --rce;  if (x_work [3] == ver_num [3])    return rce;                                                                 <* 
+                                 *>       }                                                                                                                        <* 
+                                 *>    }                                                                                                                           <* 
+                                 *>    /+---(finalize)-----------------------+/                                                                                    <* 
+                                 *>    strcpy (ver_num, x_work);                                                                                                   <* 
+                                 *>    FILE_vertxt (NULL);                                                                                                         <* 
+                                 *>    /+---(complete)-----------------------+/                                                                                    <* 
+                                 *>    return 0;                                                                                                                   <* 
+                                 *> }                                                                                                                              <* 
+                                 *>                                                                                                                                <* 
+                                 *> char         /+-> tbd --------------------------------[ leaf   [ge.330.114.30]+/ /+-[00.0000.03#.7]-+/ /+-[--.---.---.--]-+/   <* 
+                                 *> FILE_vertxt        (char *a_txt)                                                                                               <* 
+                                 *> {                                                                                                                              <* 
+                                    *>    char        rce         =  -10;                                                                                             <* 
+                                       *>    strlcpy (ver_txt, "-----", LEN_DESC);                                                                                       <* 
+                                       *>    --rce;  if (ver_ctrl   != 'y' )  return rce;                                                                                <* 
+                                       *>    --rce;  if (a_txt      == NULL)  return rce;                                                                                <* 
+                                       *>    --rce;  if (a_txt [0]  == '\0')  return rce;                                                                                <* 
+                                       *>    strlcpy (ver_txt, a_txt, LEN_DESC);                                                                                         <* 
+                                       *>    return 0;                                                                                                                   <* 
+                                       *> }                                                                                                                              <* 
+                                       *>                                                                                                                                <* 
+                                       *> char         /+-> tbd --------------------------------[ leaf   [gc.C55.124.30]+/ /+-[01.0000.112.!]-+/ /+-[--.---.---.--]-+/   <* 
+                                       *> FILE_rename          (char *a_name)                                                                                            <* 
+                                       *> {                                                                                                                              <* 
+                                          *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+                                             *>    char        t           [LEN_STR]   = "";                                                                                   <* 
+                                             *>    char       *p           = NULL;                                                                                             <* 
+                                             *>    /+---(header)-------------------------+/                                                                                    <* 
+                                             *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+                                             *>    /+---(defense)------------------------+/                                                                                    <* 
+                                             *>    DEBUG_INPT   yLOG_point   ("a_name"    , a_name);                                                                           <* 
+                                             *>    if (a_name == NULL) {                                                                                                       <* 
+                                                *>       DEBUG_INPT   yLOG_note    ("a_name was null, using defaults");                                                           <* 
+                                                   *>       strlcpy (my.f_loc  , ""        , LEN_RECD);                                                                              <* 
+                                                   *>       strlcpy (my.f_name , FILE_BLANK, LEN_RECD);                                                                              <* 
+                                                   *>       sprintf (my.f_title, "%s.%s"   , my.f_name, FILE_SUFFIX);                                                                <* 
+                                                   *>       DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);                                                                     <* 
+                                                   *>       DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);                                                                    <* 
+                                                   *>       DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                <* 
+                                                   *>       return 0;                                                                                                                <* 
+                                                   *>    }                                                                                                                           <* 
+                                                   *>    DEBUG_INPT   yLOG_info    ("a_name"    , a_name);                                                                           <* 
+                                                   *>    if (a_name [0] == '\0') {                                                                                                   <* 
+                                                      *>       DEBUG_INPT   yLOG_note    ("a_name was blank, using defaults");                                                          <* 
+                                                         *>       strlcpy (my.f_loc  , ""        , LEN_RECD);                                                                              <* 
+                                                         *>       strlcpy (my.f_name , FILE_BLANK, LEN_RECD);                                                                              <* 
+                                                         *>       sprintf (my.f_title, "%s.%s"   , my.f_name, FILE_SUFFIX);                                                                <* 
+                                                         *>       DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);                                                                     <* 
+                                                         *>       DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);                                                                    <* 
+                                                         *>       DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                <* 
+                                                         *>       return 0;                                                                                                                <* 
+                                                         *>    }                                                                                                                           <* 
+                                                         *>    /+---(parse base name)----------------+/                                                                                    <* 
+                                                         *>    strlcpy (t, a_name, LEN_STR);                                                                                               <* 
+                                                         *>    p = strrchr (t, "/");                                                                                                       <* 
+                                                         *>    DEBUG_INPT   yLOG_point   ("p"         , p);                                                                                <* 
+                                                         *>    if (p == NULL) {                                                                                                            <* 
+                                                            *>       DEBUG_INPT   yLOG_note    ("name only, no directory");                                                                   <* 
+                                                               *>       strlcpy (my.f_loc  , ""        , LEN_RECD);                                                                              <* 
+                                                               *>       strlcpy (my.f_name , a_name, LEN_RECD);                                                                                  <* 
+                                                               *>       sprintf (my.f_title, "%s.%s", my.f_name, FILE_SUFFIX);                                                                   <* 
+                                                               *>       DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);                                                                     <* 
+                                                               *>       DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);                                                                    <* 
+                                                               *>       DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                <* 
+                                                               *>       return 0;                                                                                                                <* 
+                                                               *>    }                                                                                                                           <* 
+                                                               *>    /+---(parse qualified name)-----------+/                                                                                    <* 
+                                                               *>    DEBUG_INPT   yLOG_note    ("fully qualified name, with directory");                                                         <* 
+                                                               *>    p = '\0';                                                                                                                   <* 
+                                                               *>    strlcpy (my.f_loc  , t     , LEN_RECD);                                                                                     <* 
+                                                               *>    strlcpy (my.f_name , p + 1 , LEN_RECD);                                                                                     <* 
+                                                               *>    sprintf (my.f_title, "%s/%s.%s", my.f_loc, my.f_name, FILE_SUFFIX);                                                         <* 
+                                                               *>    DEBUG_INPT   yLOG_info    ("my.f_loc"  , my.f_loc);                                                                         <* 
+                                                               *>    DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);                                                                        <* 
+                                                               *>    DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);                                                                       <* 
+                                                               *>    /+---(complete)-----------------------+/                                                                                    <* 
+                                                               *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+                                                               *>    return 0;                                                                                                                   <* 
+                                                               *> }                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.C70.13#.E1]*/ /*-[02.0000.03#.T]-*/ /*-[--.---.---.--]-*/
-FILE_bump          (char *a_type)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
-   char        rce         = -10;
-   char        x_type      = ' ';
-   /*---(defense : not controlled)-------*/
-   --rce;  if (ver_ctrl != 'y')  return rce;
-   /*---(defense: a_type)----------------*/
-   --rce;  if (a_type == NULL)                   return rce;
-   --rce;  if (a_type [0] == '\0')               return rce;
-   x_type = a_type [0];
-   --rce;  if (strchr ("Mmi", x_type) == NULL)   return rce;
-   FILE_vertxt (NULL);
-   /*---(tiny)---------------------------*/
-   if (strchr ("i", x_type) != NULL) {
-      if (ver_num [3] <  'z') {
-         ++ver_num[3];
-         return 0;
-      }
-   }
-   ver_num [3] = 'a';
-   /*---(minor)--------------------------*/
-   if (strchr ("mi", x_type) != NULL) {
-      if (ver_num [2] <  '9') {
-         ++ver_num[2];
-         return 0;
-      }
-      if (ver_num [2] == '9') {
-         ver_num  [2] =  'A';
-         return 0;
-      }
-      if (ver_num [2] <  'Z') {
-         ++ver_num[2];
-         return 0;
-      }
-   }
-   ver_num [2] = '0';
-   /*---(major)--------------------------*/
-   if (strchr ("Mmi", x_type) != NULL) {
-      if (ver_num [0] <  '9') {
-         ++ver_num[0];
-         return 0;
-      }
-      if (ver_num [0] == '9') {
-         ver_num  [0] =  'A';
-         return 0;
-      }
-      if (ver_num [0] <  'Z') {
-         ++ver_num[0];
-         return 0;
-      }
-   }
-   /*---(complete)-----------------------*/
-   strcpy (ver_num, "Z.Zz");
-   --rce;  return  rce;
-}
-
-char FILE_control       (void)  { return FILE_controlled ("y"); }
-char FILE_nocontrol     (void)  { return FILE_controlled ("n"); }
-
-char         /*-> tbd --------------------------------[ ------ [gc.520.103.41]*/ /*-[02.0000.02#.G]-*/ /*-[--.---.---.--]-*/
-FILE_controlled    (char *a_yes)
-{
-   FILE_vertxt (NULL);
-   if (a_yes [0] == 'n') {
-      if (ver_ctrl == 'y') {
-         ver_ctrl = '-';
-         strcpy (ver_num, "----");
-      }
-      return 0;
-   }
-   if (a_yes [0] == 'y') {
-      if (ver_ctrl == '-') {
-         ver_ctrl = 'y';
-         strcpy (ver_num, "0.0a");
-      }
-      return 0;
-   }
-   return -1;
-}
-
-char         /*-> tbd --------------------------------[ ------ [ge.880.13#.G1]*/ /*-[02.0000.00#.#]-*/ /*-[--.---.---.--]-*/
-FILE_version       (char *a_ver)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_len       = 0;
-   char        rce         = -10;
-   char        x_work      [10];
-   /*---(defense : not controlled)-------*/
-   --rce;  if (ver_ctrl != 'y')  return rce;
-   /*---(defense : empty)----------------*/
-   --rce;  if (a_ver == NULL)               return rce;
-   x_len = strlen (a_ver);
-   --rce;  if (strcmp (a_ver, "") == 0)     return rce;
-   --rce;  if (x_len <= 0)                  return rce;
-   /*---(defense: bad length)------------*/
-   --rce;  if (x_len < 4)                   return rce;
-   --rce;  if (x_len > 4)                   return rce;
-   /*---(prepare)------------------------*/
-   strcpy  (x_work, a_ver);
-   /*---(test chars)---------------------*/
-   --rce;  if (strchr ("abcdefghijklmnopqrstuvwxyz",           x_work [3]) == 0)  return rce;
-   --rce;  if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", x_work [2]) == 0)  return rce;
-   --rce;  if (x_work [1] != '.')                       return rce;
-   --rce;  if (strchr ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", x_work [0]) == 0)  return rce;
-   /*---(check increase only)------------*/
-   --rce;  if (x_work [0] <  ver_num [0])    return rce;
-   if (x_work [0] == ver_num [0]) {
-      --rce;  if (x_work [2] <  ver_num [2])    return rce;
-      if (x_work [2] == ver_num [2]) {
-         --rce;  if (x_work [3] <  ver_num [3])    return rce;
-         --rce;  if (x_work [3] == ver_num [3])    return rce;
-      }
-   }
-   /*---(finalize)-----------------------*/
-   strcpy (ver_num, x_work);
-   FILE_vertxt (NULL);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ leaf   [ge.330.114.30]*/ /*-[00.0000.03#.7]-*/ /*-[--.---.---.--]-*/
-FILE_vertxt        (char *a_txt)
-{
-   char        rce         =  -10;
-   strlcpy (ver_txt, "-----", LEN_DESC);
-   --rce;  if (ver_ctrl   != 'y' )  return rce;
-   --rce;  if (a_txt      == NULL)  return rce;
-   --rce;  if (a_txt [0]  == '\0')  return rce;
-   strlcpy (ver_txt, a_txt, LEN_DESC);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ leaf   [gc.C55.124.30]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
-FILE_rename          (char *a_name)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        t           [LEN_STR]   = "";
-   char       *p           = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_INPT   yLOG_point   ("a_name"    , a_name);
-   if (a_name == NULL) {
-      DEBUG_INPT   yLOG_note    ("a_name was null, using defaults");
-      strlcpy (my.f_loc  , ""        , LEN_RECD);
-      strlcpy (my.f_name , FILE_BLANK, LEN_RECD);
-      sprintf (my.f_title, "%s.%s"   , my.f_name, FILE_SUFFIX);
-      DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
-      DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
-      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   DEBUG_INPT   yLOG_info    ("a_name"    , a_name);
-   if (a_name [0] == '\0') {
-      DEBUG_INPT   yLOG_note    ("a_name was blank, using defaults");
-      strlcpy (my.f_loc  , ""        , LEN_RECD);
-      strlcpy (my.f_name , FILE_BLANK, LEN_RECD);
-      sprintf (my.f_title, "%s.%s"   , my.f_name, FILE_SUFFIX);
-      DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
-      DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
-      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(parse base name)----------------*/
-   strlcpy (t, a_name, LEN_STR);
-   p = strrchr (t, "/");
-   DEBUG_INPT   yLOG_point   ("p"         , p);
-   if (p == NULL) {
-      DEBUG_INPT   yLOG_note    ("name only, no directory");
-      strlcpy (my.f_loc  , ""        , LEN_RECD);
-      strlcpy (my.f_name , a_name, LEN_RECD);
-      sprintf (my.f_title, "%s.%s", my.f_name, FILE_SUFFIX);
-      DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
-      DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
-      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(parse qualified name)-----------*/
-   DEBUG_INPT   yLOG_note    ("fully qualified name, with directory");
-   p = '\0';
-   strlcpy (my.f_loc  , t     , LEN_RECD);
-   strlcpy (my.f_name , p + 1 , LEN_RECD);
-   sprintf (my.f_title, "%s/%s.%s", my.f_loc, my.f_name, FILE_SUFFIX);
-   DEBUG_INPT   yLOG_info    ("my.f_loc"  , my.f_loc);
-   DEBUG_INPT   yLOG_info    ("my.f_name" , my.f_name);
-   DEBUG_INPT   yLOG_info    ("my.f_title", my.f_title);
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
 
 
-
-/*====================------------------------------------====================*/
-/*===----                       history recording                      ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___HISTORY_________o () { return; }
+                                                               /*====================------------------------------------====================*/
+                                                               /*===----                       history recording                      ----===*/
+                                                               /*====================------------------------------------====================*/
+                                                               PRIV void  o___HISTORY_________o () { return; }
 
 char         /*-> clear out the history --------------[ leaf   [gz.530.011.00]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 HIST_clear         (void)
@@ -438,7 +438,7 @@ HIST_undo          (void)
    DEBUG_HIST  yLOG_info    ("upper"     , x_upper);
    /*---(get to right location)----------*/
    DEBUG_HIST  yLOG_note    ("clear any existing selection");
-   VISU_clear ();
+   /*> VISU_clear ();                                                                 <*/
    DEBUG_HIST  yLOG_complex ("jump to"   , "t=%4d, c=%4d, r=%4d", hist[chist].btab, hist[chist].bcol, hist[chist].brow);
    LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
    /*---(handle request)-----------------*/
@@ -459,20 +459,20 @@ HIST_undo          (void)
          CELL_overwrite (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before + 5, x_temp);
       }
    } else if (strcmp ("delete", x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_delete");
+      DEBUG_HIST  yLOG_note    ("delete/erase");
       CELL_change   (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
    } else if (strcmp ("decimals", x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_decimals");
-      CELL_decimals (CHG_NOHIST, hist[chist].before[0]);
+      DEBUG_HIST  yLOG_note    ("decimals");
+      CELL_visual   (CHANGE_DECIMAL, CHG_NOHIST, hist[chist].before[0]);
    } else if (strcmp ("align"   , x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_align");
-      CELL_align    (CHG_NOHIST, hist[chist].before[0]);
+      DEBUG_HIST  yLOG_note    ("align");
+      CELL_visual   (CHANGE_ALIGN  , CHG_NOHIST, hist[chist].before[0]);
    } else if (strcmp ("format"  , x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_format");
-      CELL_format   (CHG_NOHIST, hist[chist].before[0]);
+      DEBUG_HIST  yLOG_note    ("format");
+      CELL_visual   (CHANGE_FORMAT , CHG_NOHIST, hist[chist].before[0]);
    } else if (strcmp ("width"   , x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_width");
-      CELL_width    (CHG_NOHIST, -(atoi (hist[chist].before)));
+      DEBUG_HIST  yLOG_note    ("width");
+      CELL_visual   (CHANGE_WIDTH  , CHG_NOHIST, -(atoi (hist[chist].before)));
    }
    /*---(uptate)-------------------------*/
    --chist;
@@ -519,7 +519,7 @@ HIST_redo          (void)
    for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
    /*---(get to right location)----------*/
    LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
-   VISU_clear ();
+   /*> VISU_clear ();                                                                 <*/
    /*---(handle request)-----------------*/
    if        (strcmp ("change"  , x_lower) == 0) {
       if (strcmp (hist[chist].after , "[<{(null)}>]") == 0) {
@@ -538,13 +538,13 @@ HIST_redo          (void)
    } else if (strcmp ("delete", x_lower) == 0) {
       CELL_delete (CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow);
    } else if (strcmp ("decimals", x_lower) == 0) {
-      CELL_decimals (CHG_NOHIST, hist[chist].after[0]);
+      CELL_visual   (CHANGE_DECIMAL, CHG_NOHIST, hist[chist].after[0]);
    } else if (strcmp ("align"   , x_lower) == 0) {
-      CELL_align    (CHG_NOHIST, hist[chist].after[0]);
+      CELL_visual   (CHANGE_ALIGN  , CHG_NOHIST, hist[chist].after[0]);
    } else if (strcmp ("format"  , x_lower) == 0) {
-      CELL_format   (CHG_NOHIST, hist[chist].after[0]);
+      CELL_visual   (CHANGE_FORMAT , CHG_NOHIST, hist[chist].after[0]);
    } else if (strcmp ("width"   , x_lower) == 0) {
-      CELL_width    (CHG_NOHIST, -(atoi (hist[chist].after )));
+      CELL_visual   (CHANGE_WIDTH  , CHG_NOHIST, -(atoi (hist[chist].after)));
    }
    /*---(tail recursion)-----------------*/
    if (chist <  nhist - 1) {
@@ -889,7 +889,7 @@ PRIV void  o___CELLS___________o () { return; }
  */
 
 char         /*-> tbd --------------------------------[ ------ [ge.F75.3A6.86]*/ /*-[01.0000.013.H]-*/ /*-[--.---.---.--]-*/
-INPT_cell          (char *a_label, char *a_format, char *a_source)
+INPT_cell_OLD      (char *a_label, char *a_format, char *a_source)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -961,90 +961,241 @@ INPT_cell          (char *a_label, char *a_format, char *a_source)
    return 0;
 }
 
+/*> char         /+-> write a single cell to a file ------[ leaf   [ge.630.514.50]+/ /+-[02.0000.124.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)                                       <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    --rce;  if (a_type  == NULL)   return rce;                                                                                  <* 
+ *>    --rce;  if (a_level == NULL)   return rce;                                                                                  <* 
+ *>    --rce;  if (a_curr  == NULL)   return rce;                                                                                  <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    if ((a_seq % 5) == 0 && a_file != NULL) {                                                                                   <* 
+ *>       fprintf (a_file, "#---------  ver  ---lvl/reg--  -seq-  ---loc-- ");                                                 <* 
+ *>       fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(build record)-------------------+/                                                                                    <* 
+ *>    sprintf (my.f_recd, "%-10.10s  -D-  %-12.12s  %5d  %-8.8s  %c %c %c %c %c  %s",                                       <* 
+ *>          a_type, a_level, a_seq,                                                                                               <* 
+ *>          a_curr->label,                                                                                                        <* 
+ *>          a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n,                                                                <* 
+ *>          a_curr->s);                                                                                                           <* 
+ *>    /+---(write entry)--------------------+/                                                                                    <* 
+ *>    if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);                                                                   <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> write file dependent cells ---------[ ------ [gz.420.411.51]+/ /+-[00.0000.104.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_cell_dep      (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)                                                       <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        x_pre       [50]        = "-           ";                                                                       <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    if (a_curr    == NULL)        return;     /+ no cell                       +/                                               <* 
+ *>    if (a_curr->s == NULL)        return;     /+ nothing to write              +/                                               <* 
+ *>    if (a_curr->t == '-')         return;     /+ don't write, recreate on read +/                                               <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");                   <* 
+ *>    else                 sprintf (x_pre, "            +");                                                                      <* 
+ *>    /+---(print)--------------------------+/                                                                                    <* 
+ *>    OUTP_cell (a_file, "cell_dep", a_seq, x_pre, a_curr);                                                                       <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    fflush (a_file);                                                                                                            <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> write file independent cells -------[ ------ [ge.9A0.86#.I4]+/ /+-[02.0000.01#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)         <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x           = 0;             /+ iterator -- columns            +/                                               <* 
+ *>    int         y           = 0;             /+ iterator -- row                +/                                               <* 
+ *>    char        rc          = 0;             /+ generic return code            +/                                               <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
+ *>    char        x_label     [20];            /+ holder for cell address        +/                                               <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                             <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    --rce;  if (a_file == NULL)                        return rce;                                                              <* 
+ *>    --rce;  if (*a_seq <  0)                           return rce;                                                              <* 
+ *>    --rce;  if (a_tab  <  0)                           return rce;                                                              <* 
+ *>    --rce;  if (a_tab  >= MAX_TABS)                    return rce;                                                              <* 
+ *>    --rce;  if (a_bcol <  0)                           return rce;                                                              <* 
+ *>    --rce;  if (a_bcol >= LOC_col_max (a_tab))         return rce;                                                              <* 
+ *>    --rce;  if (a_ecol <  a_bcol)                      return rce;                                                              <* 
+ *>    --rce;  if (a_ecol <  0)                           return rce;                                                              <* 
+ *>    --rce;  if (a_ecol >= LOC_col_max (a_tab))         return rce;                                                              <* 
+ *>    --rce;  if (a_brow <  0)                           return rce;                                                              <* 
+ *>    --rce;  if (a_brow >= LOC_row_max (a_tab))         return rce;                                                              <* 
+ *>    --rce;  if (a_erow <  a_brow)                      return rce;                                                              <* 
+ *>    --rce;  if (a_erow <  0)                           return rce;                                                              <* 
+ *>    --rce;  if (a_erow >= LOC_row_max (a_tab))         return rce;                                                              <* 
+ *>    /+---(cells)--------------------------+/                                                                                    <* 
+ *>    for (x = a_bcol; x <= a_ecol; ++x) {                                                                                        <* 
+ *>       for (y = a_brow; y <= a_erow; ++y) {                                                                                     <* 
+ *>          x_curr = LOC_cell_at_loc (a_tab, x, y);                                                                               <* 
+ *>          if (x_curr    == NULL)                       continue;                                                                <* 
+ *>          if (x_curr->s == NULL)                       continue;                                                                <* 
+ *>          if (x_curr->t == CTYPE_BLANK)                continue;                                                                <* 
+ *>          if (x_curr->u == a_stamp)                    continue;                                                                <* 
+ *>          OUTP_cell (a_file, "cell_free", *a_seq, "", x_curr);                                                                  <* 
+ *>          ++(*a_seq);                                                                                                           <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    fflush (a_file);                                                                                                            <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+
+
+
+
+
+static int s_stamp     = 0;
+
 char         /*-> write a single cell to a file ------[ leaf   [ge.630.514.50]*/ /*-[02.0000.124.!]-*/ /*-[--.---.---.--]-*/
-OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)
+OUTP_cell          (char a_type, int a_seq, int a_level, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_type  == NULL)   return rce;
-   --rce;  if (a_level == NULL)   return rce;
-   --rce;  if (a_curr  == NULL)   return rce;
+   char        x_format    [LEN_LABEL] = "";
+   char        x_level     [LEN_LABEL] = "";
    /*---(header)-------------------------*/
-   if ((a_seq % 5) == 0 && a_file != NULL) {
-      fprintf (a_file, "#---------  ver  ---lvl/reg--  -seq-  ---loc-- ");
-      fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   DEBUG_OUTP   yLOG_point   ("a_curr"    , a_curr);
+   --rce;  if (a_curr  == NULL) {
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   /*---(build record)-------------------*/
-   sprintf (my.f_recd, "%-10.10s  -D-  %-12.12s  %5d  %-8.8s  %c %c %c %c %c  %s",
-         a_type, a_level, a_seq,
-         a_curr->label,
-         a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n,
-         a_curr->s);
-   /*---(write entry)--------------------*/
-   if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
+   /*---(level)--------------------------*/
+   if      (a_level <   0)   sprintf (x_level, "             ");
+   else if (a_level <  10)   sprintf (x_level, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");
+   else                      sprintf (x_level, "          +++");
+   /*---(format)-------------------------*/
+   sprintf (x_format, "%c %c %c %c %c", a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n);
+   /*---(call writer)--------------------*/
+   yVIKEYS_file_write (a_type, x_level, &a_seq, a_curr->label, x_format, a_curr->s, NULL, NULL, NULL, NULL);
    /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> write file dependent cells ---------[ ------ [gz.420.411.51]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
-OUTP_cell_dep      (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        x_pre       [50]        = "-           ";
-   /*---(defense)------------------------*/
-   if (a_curr    == NULL)        return;     /* no cell                       */
-   if (a_curr->s == NULL)        return;     /* nothing to write              */
-   if (a_curr->t == '-')         return;     /* don't write, recreate on read */
-   /*---(prepare)------------------------*/
-   if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");
-   else                 sprintf (x_pre, "            +");
-   /*---(print)--------------------------*/
-   OUTP_cell (a_file, "cell_dep", a_seq, x_pre, a_curr);
-   /*---(complete)-----------------------*/
-   fflush (a_file);
+   DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*-> write file independent cells -------[ ------ [ge.9A0.86#.I4]*/ /*-[02.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)
+OUTP_cell_free          (void)
 {
    /*---(locals)-----------+-----------+-*/
-   int         x           = 0;             /* iterator -- columns            */
-   int         y           = 0;             /* iterator -- row                */
-   char        rc          = 0;             /* generic return code            */
-   char        rce         = -10;           /* return code for errors         */
-   char        x_label     [20];            /* holder for cell address        */
+   int         x           =    0;             /* iterator -- columns            */
+   int         x_end       =    0;
+   int         y           =    0;             /* iterator -- row                */
+   int         y_end       =    0;
+   int         z           =    0;             /* iterator -- tabs               */
    tCELL      *x_curr      = NULL;
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                        return rce;
-   --rce;  if (*a_seq <  0)                           return rce;
-   --rce;  if (a_tab  <  0)                           return rce;
-   --rce;  if (a_tab  >= MAX_TABS)                    return rce;
-   --rce;  if (a_bcol <  0)                           return rce;
-   --rce;  if (a_bcol >= LOC_col_max (a_tab))         return rce;
-   --rce;  if (a_ecol <  a_bcol)                      return rce;
-   --rce;  if (a_ecol <  0)                           return rce;
-   --rce;  if (a_ecol >= LOC_col_max (a_tab))         return rce;
-   --rce;  if (a_brow <  0)                           return rce;
-   --rce;  if (a_brow >= LOC_row_max (a_tab))         return rce;
-   --rce;  if (a_erow <  a_brow)                      return rce;
-   --rce;  if (a_erow <  0)                           return rce;
-   --rce;  if (a_erow >= LOC_row_max (a_tab))         return rce;
+   int         x_seq       =    0;
    /*---(cells)--------------------------*/
-   for (x = a_bcol; x <= a_ecol; ++x) {
-      for (y = a_brow; y <= a_erow; ++y) {
-         x_curr = LOC_cell_at_loc (a_tab, x, y);
-         if (x_curr    == NULL)                       continue;
-         if (x_curr->s == NULL)                       continue;
-         if (x_curr->t == CTYPE_BLANK)                continue;
-         if (x_curr->u == a_stamp)                    continue;
-         OUTP_cell (a_file, "cell_free", *a_seq, "", x_curr);
-         ++(*a_seq);
+   for (z = 0; z < NTAB; ++z) {
+      x_end = LOC_col_max (z) - 1;
+      y_end = LOC_row_max (z) - 1;
+      for (x = 0; x <= x_end; ++x) {
+         for (y = 0; y <= y_end; ++y) {
+            x_curr = LOC_cell_at_loc (z, x, y);
+            if (x_curr    == NULL)                       continue;
+            if (x_curr->s == NULL)                       continue;
+            if (x_curr->t == CTYPE_BLANK)                continue;
+            if (x_curr->u == s_stamp)                    continue;
+            OUTP_cell (FILE_FREECEL, x_seq++, -1, x_curr);
+         }
       }
    }
    /*---(complete)-----------------------*/
-   fflush (a_file);
+   return 0;
+}
+
+char
+OUTP_cell_dep           (void)
+{
+   char        rc          =    0;
+   s_stamp   = rand ();
+   rc = SEQ_file_deps (s_stamp);
+   return 0;
+}
+
+char
+INPT_cell            (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -11;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   char        x_string    [LEN_LABEL] = "?0?";
+   tCELL      *x_new       = NULL;
+   char        x_format    =  '?';
+   char        x_decs      =  '0';
+   char        x_align     =  '?';
+   /*> int         x_index     =    0;                                                <*/
+   /*> char        x_label     [LEN_LABEL] = "";                                      <*/
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(check version)------------------*/
+   DEBUG_INPT   yLOG_char    ("version"   , n);
+   --rce;  if (strchr ("D", n) == NULL) {
+      DEBUG_INPT   yLOG_note    ("illegal version");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(parse address)------------*/
+   DEBUG_INPT  yLOG_point   ("label"     , c);
+   --rce;  if (*c  == NULL)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = LOC_parse (c, &x_tab, &x_col, &x_row, NULL);
+   DEBUG_INPT  yLOG_value   ("parse"     , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("label"     , c);
+   /*---(get position)-------------------*/
+   DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
+   DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
+   /*---(expand everything as needed)----*/
+   rc = LOC_legal (x_tab, x_col, x_row, CELL_GROW);
+   DEBUG_INPT  yLOG_value   ("legal"     , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(fix format)---------------------*/
+   if (d == NULL) {
+      strcpy  (x_string, "??0");
+   } else if (strlen (d) == 9) {
+      x_format  = CELL_format_valid   (d [2]);
+      DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
+      x_decs    = CELL_decimals_valid (d [4]);
+      DEBUG_INPT  yLOG_char    ("x_decs"    , x_decs);
+      x_align   = CELL_align_valid    (d [6]);
+      DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
+      sprintf (x_string, "%c%c%c", x_format, x_align, x_decs);
+   } else {
+      strcpy  (x_string, "??0");
+   }
+   DEBUG_INPT  yLOG_info    ("x_string"  , x_string);
+   /*---(update)-------------------------*/
+   DEBUG_INPT  yLOG_info    ("source"    , e);
+   x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, e, x_string);
+   DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
+   --rce;  if (x_new == NULL)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1055,223 +1206,223 @@ OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bco
 /*====================------------------------------------====================*/
 static void   o___READ____________o (void) { return; }
 
-char         /*-> open file for reading and prep -----[ leaf   [ge.723.023.20]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-INPT_open          ()
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;
-   char       *p           = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_info    ("f_loc"     , my.f_loc);
-   DEBUG_INPT  yLOG_info    ("f_name"    , my.f_name);
-   DEBUG_INPT  yLOG_info    ("f_title"   , my.f_title);
-   /*---(parse name)---------------------*/
-   s_file = NULL;
-   --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {
-      DEBUG_INPT  yLOG_note    ("file name is default");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(open file)----------------------*/
-   s_file = fopen (my.f_title, "r");
-   DEBUG_INPT  yLOG_point   ("s_file"    , s_file);
-   --rce;  if (s_file == NULL) {
-      DEBUG_INPT  yLOG_note    ("file could not be openned");
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   DEBUG_INPT  yLOG_note    ("file successfully opened");
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> open file for reading and prep -----[ leaf   [ge.723.023.20]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_open          ()                                                                                                          <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char       *p           = NULL;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_info    ("f_loc"     , my.f_loc);                                                                          <* 
+ *>    DEBUG_INPT  yLOG_info    ("f_name"    , my.f_name);                                                                         <* 
+ *>    DEBUG_INPT  yLOG_info    ("f_title"   , my.f_title);                                                                        <* 
+ *>    /+---(parse name)---------------------+/                                                                                    <* 
+ *>    s_file = NULL;                                                                                                              <* 
+ *>    --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {                                                                          <* 
+ *>       DEBUG_INPT  yLOG_note    ("file name is default");                                                                       <* 
+ *>       DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                 <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(open file)----------------------+/                                                                                    <* 
+ *>    s_file = fopen (my.f_title, "r");                                                                                           <* 
+ *>    DEBUG_INPT  yLOG_point   ("s_file"    , s_file);                                                                            <* 
+ *>    --rce;  if (s_file == NULL) {                                                                                               <* 
+ *>       DEBUG_INPT  yLOG_note    ("file could not be openned");                                                                  <* 
+ *>       DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                 <* 
+ *>       return 0;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_INPT  yLOG_note    ("file successfully opened");                                                                      <* 
+ *>    /+---(complete)-----------------+/                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> open file for reading and prep -----[ leaf   [gz.421.001.00]*/ /*-[00.0000.013.!]-*/ /*-[--.---.---.--]-*/
-INPT_prep          (void)
-{
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(initialize)---------------------*/
-   strncpy (f_maker, "unknown", LEN_RECD);
-   my.f_lines = 0;
-   DEBUG_INPT  yLOG_note    ("setting default size and locations");
-   NCOL = DEF_COLS;
-   BCOL = ECOL = 0;
-   NROW = DEF_ROWS;
-   BROW = EROW = 0;
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> open file for reading and prep -----[ leaf   [gz.421.001.00]+/ /+-[00.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_prep          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(initialize)---------------------+/                                                                                    <* 
+ *>    strncpy (f_maker, "unknown", LEN_RECD);                                                                                     <* 
+ *>    my.f_lines = 0;                                                                                                             <* 
+ *>    DEBUG_INPT  yLOG_note    ("setting default size and locations");                                                            <* 
+ *>    NCOL = DEF_COLS;                                                                                                            <* 
+ *>    BCOL = ECOL = 0;                                                                                                            <* 
+ *>    NROW = DEF_ROWS;                                                                                                            <* 
+ *>    BROW = EROW = 0;                                                                                                            <* 
+ *>    /+---(complete)-----------------+/                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> open file for reading and prep -----[ ------ [gz.421.001.06]*/ /*-[00.0000.013.!]-*/ /*-[--.---.---.--]-*/
-INPT_done          (void)
-{
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(screen)-------------------------*/
-   DEBUG_INPT   yLOG_note    ("set screen positions correctly");
-   /*> KEYS_basics (' ', 'r');                                                        <*/
-   /*> KEYS_bcol (BCOL);                                                              <*/
-   /*> CURS_col_head();                                                               <*/
-   /*> KEYS_brow (BROW);                                                              <*/
-   /*> CURS_row_head();                                                               <*/
-   /*---(calculate)----------------------*/
-   DEBUG_INPT  yLOG_note    ("recalc");
-   SEQ_calc_full ();
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> open file for reading and prep -----[ ------ [gz.421.001.06]+/ /+-[00.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_done          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(screen)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT   yLOG_note    ("set screen positions correctly");                                                               <* 
+ *>    /+> KEYS_basics (' ', 'r');                                                        <+/                                      <* 
+ *>    /+> KEYS_bcol (BCOL);                                                              <+/                                      <* 
+ *>    /+> CURS_col_head();                                                               <+/                                      <* 
+ *>    /+> KEYS_brow (BROW);                                                              <+/                                      <* 
+ *>    /+> CURS_row_head();                                                               <+/                                      <* 
+ *>    /+---(calculate)----------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_note    ("recalc");                                                                                        <* 
+ *>    SEQ_calc_full ();                                                                                                           <* 
+ *>    /+---(complete)-----------------+/                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> close file for reading and wrap ----[ leaf   [ge.411.011.20]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-INPT_close         (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(close file)---------------------*/
-   if (s_file == NULL) {
-      DEBUG_INPT  yLOG_note    ("no file to close");
-   } else {
-      DEBUG_INPT  yLOG_note    ("close file");
-      fclose  (s_file);
-   }
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> close file for reading and wrap ----[ leaf   [ge.411.011.20]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_close         (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(close file)---------------------+/                                                                                    <* 
+ *>    if (s_file == NULL) {                                                                                                       <* 
+ *>       DEBUG_INPT  yLOG_note    ("no file to close");                                                                           <* 
+ *>    } else {                                                                                                                    <* 
+ *>       DEBUG_INPT  yLOG_note    ("close file");                                                                                 <* 
+ *>       fclose  (s_file);                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------+/                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> file reading driver ----------------[ leaf   [ge.632.025.30]*/ /*-[01.0001.013.!]-*/ /*-[--.---.---.--]-*/
-INPT_read          (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;               /* return code for errors    */
-   int         x_len       =    0;               /* string length             */
-   /*---(read and clean)--------------*/
-   ++my.f_lines;
-   DEBUG_INPT  yLOG_value   ("line"      , my.f_lines);
-   fgets (my.f_recd, LEN_RECD, s_file);
-   --rce;  if (feof (s_file))  {
-      DEBUG_INPT  yLOG_note    ("end of file reached");
-      return rce;
-   }
-   x_len = strlen (my.f_recd);
-   --rce;  if (x_len <= 0)  {
-      DEBUG_INPT  yLOG_note    ("record empty");
-      return -rce;
-   }
-   my.f_recd [--x_len] = '\0';
-   DEBUG_INPT  yLOG_value   ("length"    , x_len);
-   DEBUG_INPT  yLOG_info    ("fixed"     , my.f_recd);
-   --rce;  if (my.f_recd [0] == '#') {
-      DEBUG_INPT  yLOG_note    ("comment line, skipping");
-      return -rce;
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> file reading driver ----------------[ leaf   [ge.632.025.30]+/ /+-[01.0001.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_read          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         =  -10;               /+ return code for errors    +/                                               <* 
+ *>    int         x_len       =    0;               /+ string length             +/                                               <* 
+ *>    /+---(read and clean)--------------+/                                                                                       <* 
+ *>    ++my.f_lines;                                                                                                               <* 
+ *>    DEBUG_INPT  yLOG_value   ("line"      , my.f_lines);                                                                        <* 
+ *>    fgets (my.f_recd, LEN_RECD, s_file);                                                                                        <* 
+ *>    --rce;  if (feof (s_file))  {                                                                                               <* 
+ *>       DEBUG_INPT  yLOG_note    ("end of file reached");                                                                        <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    x_len = strlen (my.f_recd);                                                                                                 <* 
+ *>    --rce;  if (x_len <= 0)  {                                                                                                  <* 
+ *>       DEBUG_INPT  yLOG_note    ("record empty");                                                                               <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    my.f_recd [--x_len] = '\0';                                                                                                 <* 
+ *>    DEBUG_INPT  yLOG_value   ("length"    , x_len);                                                                             <* 
+ *>    DEBUG_INPT  yLOG_info    ("fixed"     , my.f_recd);                                                                         <* 
+ *>    --rce;  if (my.f_recd [0] == '#') {                                                                                         <* 
+ *>       DEBUG_INPT  yLOG_note    ("comment line, skipping");                                                                     <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> file reading driver ----------------[ leaf   [ge.851.163.30]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-INPT_parse         (cchar *a_recd)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;               /* return code for errors    */
-   char        x_recd      [LEN_RECD];
-   int         x_len       =    0;
-   char       *p           = NULL;               /* strtok pointer            */
-   char       *q           = "";               /* strtok delimeters         */
-   char       *r           = NULL;               /* strtok context variable   */
-   /*---(cleanse)---------------------*/
-   for (s_nfield = 0; s_nfield < 20; ++s_nfield) {
-      strlcpy (s_fields [s_nfield], "", LEN_RECD);
-   }
-   s_nfield = 0;
-   strlcpy (x_recd, a_recd, LEN_RECD);
-   /*---(parse fields)----------------*/
-   p = strtok_r (x_recd, q, &r);
-   while (p != NULL) {
-      strltrim  (p, ySTR_BOTH, LEN_RECD);
-      DEBUG_INPT  yLOG_bullet  (s_nfield    , p);
-      strncpy   (s_fields [s_nfield++], p, LEN_RECD);
-      p = strtok_r (NULL     , q, &r);
-   }
-   --rce;  if (s_nfield < 1) {
-      DEBUG_INPT  yLOG_note    ("no fields found");
-      return -rce;
-   }
-   strncpy   (my.f_type, s_fields [0], LEN_RECD);
-   DEBUG_INPT  yLOG_info    ("type"      , my.f_type);
-   if (s_fields [1][0] == '-' && s_fields [1][2] == '-')
-      my.f_vers  = s_fields [1][1];
-   else
-      my.f_vers  = '?';
-   DEBUG_INPT  yLOG_char    ("vers"      , my.f_vers);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> file reading driver ----------------[ leaf   [ge.851.163.30]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_parse         (cchar *a_recd)                                                                                             <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         =  -10;               /+ return code for errors    +/                                               <* 
+ *>    char        x_recd      [LEN_RECD];                                                                                         <* 
+ *>    int         x_len       =    0;                                                                                             <* 
+ *>    char       *p           = NULL;               /+ strtok pointer            +/                                               <* 
+ *>    char       *q           = "";               /+ strtok delimeters         +/                                                <* 
+ *>    char       *r           = NULL;               /+ strtok context variable   +/                                               <* 
+ *>    /+---(cleanse)---------------------+/                                                                                       <* 
+ *>    for (s_nfield = 0; s_nfield < 20; ++s_nfield) {                                                                             <* 
+ *>       strlcpy (s_fields [s_nfield], "", LEN_RECD);                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    s_nfield = 0;                                                                                                               <* 
+ *>    strlcpy (x_recd, a_recd, LEN_RECD);                                                                                         <* 
+ *>    /+---(parse fields)----------------+/                                                                                       <* 
+ *>    p = strtok_r (x_recd, q, &r);                                                                                               <* 
+ *>    while (p != NULL) {                                                                                                         <* 
+ *>       strltrim  (p, ySTR_BOTH, LEN_RECD);                                                                                      <* 
+ *>       DEBUG_INPT  yLOG_bullet  (s_nfield    , p);                                                                              <* 
+ *>       strncpy   (s_fields [s_nfield++], p, LEN_RECD);                                                                          <* 
+ *>       p = strtok_r (NULL     , q, &r);                                                                                         <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (s_nfield < 1) {                                                                                                 <* 
+ *>       DEBUG_INPT  yLOG_note    ("no fields found");                                                                            <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    strncpy   (my.f_type, s_fields [0], LEN_RECD);                                                                              <* 
+ *>    DEBUG_INPT  yLOG_info    ("type"      , my.f_type);                                                                         <* 
+ *>    if (s_fields [1][0] == '-' && s_fields [1][2] == '-')                                                                       <* 
+ *>       my.f_vers  = s_fields [1][1];                                                                                            <* 
+ *>    else                                                                                                                        <* 
+ *>       my.f_vers  = '?';                                                                                                        <* 
+ *>    DEBUG_INPT  yLOG_char    ("vers"      , my.f_vers);                                                                         <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> file reading driver ----------------[ leaf   [ge.C71.072.GA]*/ /*-[02.0000.102.!]-*/ /*-[--.---.---.--]-*/
-INPT_main          (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   char        x_temp      [LEN_RECD];            /* strtok version of input   */
-   int         x_len       = 0;                  /* string length             */
-   char       *p;
-   int         x_celltry   = 0;
-   int         x_cellbad   = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(open file)----------------------*/
-   rc = INPT_open   ();
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   rc = INPT_prep   ();
-   /*---(read lines)---------------------*/
-   DEBUG_INPT  yLOG_note    ("read lines");
-   while (s_file != NULL) {
-      /*---(read and clean)--------------*/
-      rc = INPT_read ();
-      if (rc < 0)  break;
-      if (rc > 0)  continue;
-      rc = INPT_parse (my.f_recd);
-      if (rc < 0)  break;
-      if (rc > 0)  continue;
-      /*---(handle types)----------------*/
-      switch (my.f_type [0]) {
-      case 'w' :
-         if  (my.f_vers == 'B')  rc = INPT_col   (s_fields [2], atoi (s_fields [3]), atoi (s_fields [4]));
-         if  (my.f_vers == 'A')  rc = INPT_col   (s_fields [2], atoi (s_fields [3]), 1);
-         if  (my.f_vers == '?')  rc = INPT_col   (s_fields [1], atoi (s_fields [2]), 1);
-         break;
-      case 't' :
-         if  (my.f_vers == 'F')  rc = INPT_tab   (s_fields [3], s_fields [9], '-');
-         if  (my.f_vers == 'G')  rc = INPT_tab   (s_fields [2], s_fields [3], '-');
-         if  (my.f_vers == 'H')  rc = INPT_tab   (s_fields [2], s_fields [3], s_fields [4][0]);
-         break;
-      case 'c' :
-         if  (my.f_vers == 'D')  rc = INPT_cell  (s_fields [4], s_fields [5], s_fields [6]);
-         if (rc < 0)  ++x_cellbad;
-         break;
-      case 'l' :
-         if  (my.f_vers == 'A')  rc = MARK_read  (s_fields [2][0], s_fields [3]);
-         if (rc < 0)  ++x_cellbad;
-         break;
-      }
-   }
-   /*---(close file)---------------------*/
-   INPT_close ();
-   INPT_done  ();
-   /*---(complete)-------------------------*/
-   DEBUG_INPT yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> file reading driver ----------------[ leaf   [ge.C71.072.GA]+/ /+-[02.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_main          (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         rc          = 0;                                                                                                <* 
+ *>    char        x_temp      [LEN_RECD];            /+ strtok version of input   +/                                              <* 
+ *>    int         x_len       = 0;                  /+ string length             +/                                               <* 
+ *>    char       *p;                                                                                                              <* 
+ *>    int         x_celltry   = 0;                                                                                                <* 
+ *>    int         x_cellbad   = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(open file)----------------------+/                                                                                    <* 
+ *>    rc = INPT_open   ();                                                                                                        <* 
+ *>    --rce;  if (rc < 0) {                                                                                                       <* 
+ *>       DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                 <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    rc = INPT_prep   ();                                                                                                        <* 
+ *>    /+---(read lines)---------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_note    ("read lines");                                                                                    <* 
+ *>    while (s_file != NULL) {                                                                                                    <* 
+ *>       /+---(read and clean)--------------+/                                                                                    <* 
+ *>       rc = INPT_read ();                                                                                                       <* 
+ *>       if (rc < 0)  break;                                                                                                      <* 
+ *>       if (rc > 0)  continue;                                                                                                   <* 
+ *>       rc = INPT_parse (my.f_recd);                                                                                             <* 
+ *>       if (rc < 0)  break;                                                                                                      <* 
+ *>       if (rc > 0)  continue;                                                                                                   <* 
+ *>       /+---(handle types)----------------+/                                                                                    <* 
+ *>       switch (my.f_type [0]) {                                                                                                 <* 
+ *>       case 'w' :                                                                                                               <* 
+ *>          if  (my.f_vers == 'B')  rc = INPT_col   (s_fields [2], atoi (s_fields [3]), atoi (s_fields [4]));                     <* 
+ *>          if  (my.f_vers == 'A')  rc = INPT_col   (s_fields [2], atoi (s_fields [3]), 1);                                       <* 
+ *>          if  (my.f_vers == '?')  rc = INPT_col   (s_fields [1], atoi (s_fields [2]), 1);                                       <* 
+ *>          break;                                                                                                                <* 
+ *>       case 't' :                                                                                                               <* 
+ *>          if  (my.f_vers == 'F')  rc = INPT_tab   (s_fields [3], s_fields [9], '-');                                            <* 
+ *>          if  (my.f_vers == 'G')  rc = INPT_tab   (s_fields [2], s_fields [3], '-');                                            <* 
+ *>          if  (my.f_vers == 'H')  rc = INPT_tab   (s_fields [2], s_fields [3], s_fields [4][0]);                                <* 
+ *>          break;                                                                                                                <* 
+ *>       case 'c' :                                                                                                               <* 
+ *>          if  (my.f_vers == 'D')  rc = INPT_cell_OLD  (s_fields [4], s_fields [5], s_fields [6]);                               <* 
+ *>          if (rc < 0)  ++x_cellbad;                                                                                             <* 
+ *>          break;                                                                                                                <* 
+ *>       case 'l' :                                                                                                               <* 
+ *>          if  (my.f_vers == 'A')  rc = MARK_read  (s_fields [2][0], s_fields [3]);                                              <* 
+ *>          if (rc < 0)  ++x_cellbad;                                                                                             <* 
+ *>          break;                                                                                                                <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(close file)---------------------+/                                                                                    <* 
+ *>    INPT_close ();                                                                                                              <* 
+ *>    INPT_done  ();                                                                                                              <* 
+ *>    /+---(complete)-------------------------+/                                                                                  <* 
+ *>    DEBUG_INPT yLOG_exit    (__FUNCTION__);                                                                                     <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -1280,111 +1431,111 @@ INPT_main          (void)
 /*====================------------------------------------====================*/
 PRIV void  o___WRITE___________o () { return; }
 
-char         /*-> write file header ------------------[ leaf   [ge.850.154.20]*/ /*-[03.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_header        (FILE *a_file)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;             /* iterator -- tab                */
-   char        rc          = 0;             /* generic return code            */
-   char        rce         = -10;           /* return code for errors         */
-   char        x_temp      [100];
-   time_t      x_time;
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   /*---(introduction)---------------------*/
-   fprintf (a_file, "#!/usr/local/bin/gyges\n");
-   fprintf (a_file, "#   generated by the heatherly spreadsheet tool gyges-hekatonkheires (hundred-handed)\n");
-   /*---(write header)---------------------*/
-   fprintf (a_file, "\n\n\n");
-   fprintf (a_file, "#===[[ GENERAL ]]====================================================================================================#\n");
-   fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);
-   /*---(format identifiers)---------------*/
-   fprintf (a_file, "gyges      %c %5s %c %-60.60s %c\n", 31, VER_NUM, 31, VER_TXT                      , 31);
-   /*---(timestamp)------------------------*/
-   x_time = time(NULL);
-   strftime (x_temp, 100, "%Y.%m.%d.%H.%M.%S", localtime(&x_time));
-   fprintf (a_file, "timestamp  %c %5s %c %-60.60s %c\n", 31, "-----", 31, x_temp                       , 31);
-   /*---(version)------------------------*/
-   if (ver_ctrl == 'y') {
-      fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",
-            31, ver_num, 31, ver_txt, 31);
-   }
-   /*---(finish)-------------------------*/
-   fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);
-   fprintf (a_file, "\n\n\n");
-   fflush  (a_file);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> write file header ------------------[ leaf   [ge.850.154.20]+/ /+-[03.0000.01#.!]-+/ /+-[--.---.---.--]-+/                       <* 
+ *> OUTP_header        (FILE *a_file)                                                                                                                  <* 
+ *> {                                                                                                                                                  <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                        <* 
+ *>    int         i           = 0;             /+ iterator -- tab                +/                                                                   <* 
+ *>    char        rc          = 0;             /+ generic return code            +/                                                                   <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                                                   <* 
+ *>    char        x_temp      [100];                                                                                                                  <* 
+ *>    time_t      x_time;                                                                                                                             <* 
+ *>    /+---(defenses)-----------------------+/                                                                                                        <* 
+ *>    --rce;  if (a_file == NULL)                   return rce;                                                                                       <* 
+ *>    /+---(introduction)---------------------+/                                                                                                      <* 
+ *>    fprintf (a_file, "#!/usr/local/bin/gyges\n");                                                                                                   <* 
+ *>    fprintf (a_file, "#   generated by the heatherly spreadsheet tool gyges-hekatonkheires (hundred-handed)\n");                                    <* 
+ *>    /+---(write header)---------------------+/                                                                                                      <* 
+ *>    fprintf (a_file, "\n\n\n");                                                                                                                     <* 
+ *>    fprintf (a_file, "#===[[ GENERAL ]]====================================================================================================#\n");   <* 
+ *>    fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);                           <* 
+ *>    /+---(format identifiers)---------------+/                                                                                                      <* 
+ *>    fprintf (a_file, "gyges      %c %5s %c %-60.60s %c\n", 31, VER_NUM, 31, VER_TXT                      , 31);                                     <* 
+ *>    /+---(timestamp)------------------------+/                                                                                                      <* 
+ *>    x_time = time(NULL);                                                                                                                            <* 
+ *>    strftime (x_temp, 100, "%Y.%m.%d.%H.%M.%S", localtime(&x_time));                                                                                <* 
+ *>    fprintf (a_file, "timestamp  %c %5s %c %-60.60s %c\n", 31, "-----", 31, x_temp                       , 31);                                     <* 
+ *>    /+---(version)------------------------+/                                                                                                        <* 
+ *>    if (ver_ctrl == 'y') {                                                                                                                          <* 
+ *>       fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",                                                                                       <* 
+ *>             31, ver_num, 31, ver_txt, 31);                                                                                                         <* 
+ *>    }                                                                                                                                               <* 
+ *>    /+---(finish)-------------------------+/                                                                                                        <* 
+ *>    fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);                           <* 
+ *>    fprintf (a_file, "\n\n\n");                                                                                                                     <* 
+ *>    fflush  (a_file);                                                                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                                                        <* 
+ *>    return 0;                                                                                                                                       <* 
+ *> }                                                                                                                                                  <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.C71.093.38]*/ /*-[01.0000.11#.!]-*/ /*-[--.---.---.--]-*/
-FILE_write         (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   FILE       *f           = NULL;
-   int         x_seq;
-   int         i           = 0;       /* iterator -- columns                            */
-   long        x_stamp     = 0;
-   char        x_temp      [100];
-   char       *x_bufs      = "abcdefghijklmnopqrstuvwxyz";
-   int         x_len       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_OUTP yLOG_enter   (__FUNCTION__);
-   /*---(open file)----------------------*/
-   --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {
-      DEBUG_OUTP  yLOG_note    ("file name is default");
-      DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   f = fopen (my.f_title, "w");
-   if (f == NULL)      return -2;
-   /*---(header)-------------------------*/
-   OUTP_header (f);
-   /*---(tab data)-----------------------*/
-   OUTP_tabs   (f);
-   /*---(column data)--------------------*/
-   OUTP_cols   (f);
-   /*---(dependent cells)------------------*/
-   fprintf (f, "#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");
-   x_stamp   = rand ();
-   rc = SEQ_file_deps (x_stamp, f);
-   fprintf (f, "# dependent cells complete\n\n\n\n");
-   /*---(non-dependency cells)-------------*/
-   fprintf (f, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");
-   x_seq     = 0;
-   for (i = 0; i < MAX_TABS; ++i) {
-      rc = OUTP_cell_free (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);
-   }
-   fprintf (f, "# independent cells complete\n\n\n\n");
-   /*---(mark data)----------------------*/
-   MARK_writeall (f);
-   /*---(footer data)----------------------*/
-   fprintf (f, "# done, finito, complete\n");
-   /*---(close file)-----------------------*/
-   fclose  (f);
-   /*---(make version)---------------------*/
-   if (ver_ctrl == 'y') {
-      sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", my.f_title, my.f_name, ver_num[0], ver_num[1], ver_num + 3);
-      system (x_temp);
-   }
-   /*---(complete)-------------------------*/
-   DEBUG_INPT yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.C71.093.38]+/ /+-[01.0000.11#.!]-+/ /+-[--.---.---.--]-+/                  <* 
+ *> FILE_write         (void)                                                                                                                     <* 
+ *> {                                                                                                                                             <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                   <* 
+ *>    char        rce         =  -10;                                                                                                            <* 
+ *>    char        rc          =    0;                                                                                                            <* 
+ *>    FILE       *f           = NULL;                                                                                                            <* 
+ *>    int         x_seq;                                                                                                                         <* 
+ *>    int         i           = 0;       /+ iterator -- columns                            +/                                                    <* 
+ *>    long        x_stamp     = 0;                                                                                                               <* 
+ *>    char        x_temp      [100];                                                                                                             <* 
+ *>    char       *x_bufs      = "abcdefghijklmnopqrstuvwxyz";                                                                                    <* 
+ *>    int         x_len       = 0;                                                                                                               <* 
+ *>    /+---(header)-------------------------+/                                                                                                   <* 
+ *>    DEBUG_OUTP yLOG_enter   (__FUNCTION__);                                                                                                    <* 
+ *>    /+---(open file)----------------------+/                                                                                                   <* 
+ *>    --rce;  if (strcmp (my.f_name, FILE_BLANK) == 0) {                                                                                         <* 
+ *>       DEBUG_OUTP  yLOG_note    ("file name is default");                                                                                      <* 
+ *>       DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                                <* 
+ *>       return rce;                                                                                                                             <* 
+ *>    }                                                                                                                                          <* 
+ *>    f = fopen (my.f_title, "w");                                                                                                               <* 
+ *>    if (f == NULL)      return -2;                                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                                   <* 
+ *>    OUTP_header (f);                                                                                                                           <* 
+ *>    /+---(tab data)-----------------------+/                                                                                                   <* 
+ *>    OUTP_tabs   (f);                                                                                                                           <* 
+ *>    /+---(column data)--------------------+/                                                                                                   <* 
+ *>    OUTP_cols   (f);                                                                                                                           <* 
+ *>    /+---(dependent cells)------------------+/                                                                                                 <* 
+ *>    fprintf (f, "#===[[ DEPENDENCY TREE CELLS, in reverse order ]]====================================================================#\n");   <* 
+ *>    x_stamp   = rand ();                                                                                                                       <* 
+ *>    /+> rc = SEQ_file_deps (x_s, f);                                               <+/                                                         <* 
+ *>    fprintf (f, "# dependent cells complete\n\n\n\n");                                                                                         <* 
+ *>    /+---(non-dependency cells)-------------+/                                                                                                 <* 
+ *>    fprintf (f, "#===[[ INDENPENDENT CELLS, tab then col then row order]]=============================================================#\n");   <* 
+ *>    x_seq     = 0;                                                                                                                             <* 
+ *>    for (i = 0; i < MAX_TABS; ++i) {                                                                                                           <* 
+ *>       /+> rc = OUTP_cell_free (f, &x_seq, x_stamp, i, 0, LOC_col_max (i) - 1, 0, LOC_row_max (i) - 1);   <+/                                  <* 
+ *>    }                                                                                                                                          <* 
+ *>    fprintf (f, "# independent cells complete\n\n\n\n");                                                                                       <* 
+ *>    /+---(mark data)----------------------+/                                                                                                   <* 
+ *>    /+> MARK_writeall (f);                                                             <+/                                                     <* 
+ *>    /+---(footer data)----------------------+/                                                                                                 <* 
+ *>    fprintf (f, "# done, finito, complete\n");                                                                                                 <* 
+ *>    /+---(close file)-----------------------+/                                                                                                 <* 
+ *>    fclose  (f);                                                                                                                               <* 
+ *>    /+---(make version)---------------------+/                                                                                                 <* 
+ *>    if (ver_ctrl == 'y') {                                                                                                                     <* 
+ *>       sprintf (x_temp, "cp -f %s %s.v%c%c%s.gyges", my.f_title, my.f_name, ver_num[0], ver_num[1], ver_num + 3);                              <* 
+ *>       system (x_temp);                                                                                                                        <* 
+ *>    }                                                                                                                                          <* 
+ *>    /+---(complete)-------------------------+/                                                                                                 <* 
+ *>    DEBUG_INPT yLOG_exit    (__FUNCTION__);                                                                                                    <* 
+ *>    return 0;                                                                                                                                  <* 
+ *> }                                                                                                                                             <*/
 
-char         /*-> tbd --------------------------------[ ------ [gc.320.121.32]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-FILE_writeas         (char *a_name)
-{
-   char        rc          =    0;
-   char        x_name      [LEN_RECD]  = "";
-   strlcpy (x_name, my.f_name, LEN_RECD);
-   if (rc >= 0)  rc = FILE_rename (a_name);
-   if (rc >= 0)  rc = FILE_write  ();
-   if (rc >= 0)  rc = FILE_rename (x_name);
-   return rc;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [gc.320.121.32]+/ /+-[00.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> FILE_writeas         (char *a_name)                                                                                            <* 
+ *> {                                                                                                                              <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    char        x_name      [LEN_RECD]  = "";                                                                                   <* 
+ *>    strlcpy (x_name, my.f_name, LEN_RECD);                                                                                      <* 
+ *>    if (rc >= 0)  rc = FILE_rename (a_name);                                                                                    <* 
+ *>    if (rc >= 0)  rc = FILE_write  ();                                                                                          <* 
+ *>    if (rc >= 0)  rc = FILE_rename (x_name);                                                                                    <* 
+ *>    return rc;                                                                                                                  <* 
+ *> }                                                                                                                              <*/
 
 
 

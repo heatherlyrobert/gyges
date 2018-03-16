@@ -135,7 +135,7 @@ char         /*-> initialize location function -------[ shoot  [gz.421.001.02]*/
 LOC_init             (void)
 {
    /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(clean tabs)---------------------*/
    LOC__purge    ();
    /*---(set defaults)-------------------*/
@@ -145,7 +145,7 @@ LOC_init             (void)
    CCOL      = 0;
    CROW      = 0;
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -157,32 +157,32 @@ LOC__clear_locs      (short a_tab)
    short       x_col       =   0;
    short       x_row       =   0;
    /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   DEBUG_PROG   yLOG_senter  (__FUNCTION__);
+   DEBUG_PROG   yLOG_svalue  ("a_tab"     , a_tab);
    /*---(defense)------------------------*/
    --rce;  if (a_tab <  0) {
-      DEBUG_LOCS   yLOG_snote   ("tab too small");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_PROG   yLOG_snote   ("tab too small");
+      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (a_tab >= MAX_TABS) {
-      DEBUG_LOCS   yLOG_snote   ("tab too big");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_PROG   yLOG_snote   ("tab too big");
+      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(unhook all cells)---------------*/
    /* tbd */
    /*---(initialize cells)---------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear cells off sheet");
-   DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
-   DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
+   DEBUG_PROG   yLOG_snote   ("clear cells off sheet");
+   DEBUG_PROG   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
+   DEBUG_PROG   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
    for (x_col = 0; x_col < MAX_COLS; ++x_col) {
       for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
          s_tabs [a_tab].sheet [x_col][x_row] = NULL;
       }
    }
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -194,29 +194,29 @@ LOC__purge           (void)
    short       x_tab       = 0;
    char        t           [LEN_RECD];
    /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/
    for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
-      DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+      DEBUG_PROG   yLOG_value   ("x_tab"     , x_tab);
       /*---(main config)-----------------*/
-      DEBUG_LOCS   yLOG_note    ("reset naming");
+      DEBUG_PROG   yLOG_note    ("reset naming");
       sprintf (t, "tab_%02d", x_tab);
       strlcpy (s_tabs [x_tab].name, t, LEN_RECD);
       s_tabs [x_tab].tab     = x_tab;
       s_tabs [x_tab].type    = G_TAB_NORMAL;
       s_tabs [x_tab].c       =    0;
       /*---(size limits)-----------------*/
-      DEBUG_LOCS   yLOG_note    ("reset default size");
-      DEBUG_LOCS   yLOG_value   ("DEF_COLS"  , DEF_COLS);
-      DEBUG_LOCS   yLOG_value   ("DEF_ROWS"  , DEF_ROWS);
+      DEBUG_PROG   yLOG_note    ("reset default size");
+      DEBUG_PROG   yLOG_value   ("DEF_COLS"  , DEF_COLS);
+      DEBUG_PROG   yLOG_value   ("DEF_ROWS"  , DEF_ROWS);
       s_tabs [x_tab].ncol    = DEF_COLS;
       s_tabs [x_tab].nrow    = DEF_ROWS;
       /*---(current position)------------*/
-      DEBUG_LOCS   yLOG_note    ("reset current position");
+      DEBUG_PROG   yLOG_note    ("reset current position");
       s_tabs [x_tab].ccol    =    0;
       s_tabs [x_tab].crow    =    0;
       /*---(screen position)-------------*/
-      DEBUG_LOCS   yLOG_note    ("reset beginning and ending cells");
+      DEBUG_PROG   yLOG_note    ("reset beginning and ending cells");
       s_tabs [x_tab].bcol    =    0;
       s_tabs [x_tab].brow    =    0;
       s_tabs [x_tab].ecol    =    0;
@@ -228,16 +228,16 @@ LOC__purge           (void)
       /*---(done)------------------------*/
    }
    /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*-> wrap up location function ----------[ shoot  [gc.211.000.01]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
 LOC_wrap             (void)
 {
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    LOC__purge  ();
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
 }
 
 
@@ -670,13 +670,13 @@ LOC_jump           (
    CCOL          = a_col;
    CROW          = a_row;
    /*---(selection)----------------------*/
-   VISU_update (a_tab, a_col, a_row);
+   /*> VISU_update (a_tab, a_col, a_row);                                             <*/
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
-char         /*-> go directly to a specific cell -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
+char         /*-> return coordinates for address -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
 LOC_locator        (char *a_label, int *a_x, int *a_y, int *a_z)
 {
    char        rc;
@@ -698,6 +698,28 @@ LOC_locator        (char *a_label, int *a_x, int *a_y, int *a_z)
    if (a_x != NULL)  *a_x = x_col;
    if (a_y != NULL)  *a_y = x_row;
    if (a_z != NULL)  *a_z = x_tab;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> return address for coordinates -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
+LOC_addressor      (char *a_label, int a_x, int a_y, int a_z)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_value   ("a_x"       , a_x);
+   DEBUG_LOCS   yLOG_value   ("a_y"       , a_y);
+   DEBUG_LOCS   yLOG_value   ("a_z"       , a_z);
+   rc = LOC_ref (a_z, a_x, a_y, 0, a_label);
+   if (rc < 0)  {
+      DEBUG_LOCS   yLOG_note    ("nothing found");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return -1;
+   }
+   DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1060,13 +1082,17 @@ LOC__mapper                (char a_dir)
    int         x_mark      =    0;
    /*---(prepare)------------------------*/
    switch (a_dir) {
+   case 'C' : case 'c' :
+      x_map  = &g_xmap;
+      x_max  = NCOL - 1;
+      break;
    case 'R' : case 'r' :
       x_map  = &g_ymap;
       x_max  = NROW - 1;
       break;
-   case 'C' : case 'c' :
-      x_map  = &g_xmap;
-      x_max  = NCOL - 1;
+   case 'T' : case 't' :
+      x_map  = &g_zmap;
+      x_max  = NTAB - 1;
       break;
    }
    x_mark = x_map->gcur;
@@ -1077,14 +1103,22 @@ LOC__mapper                (char a_dir)
    /*---(do columns)---------------------*/
    for (x_cell = 0; x_cell <= x_max; ++x_cell) {
       /*---(get base data)---------------*/
-      if (strchr ("Rr", a_dir) != NULL) {
-         x_size  = s_tabs [CTAB].rows [x_cell].h;
-         x_curr  = LOC_cell_at_loc (CTAB, CCOL, x_cell);
-         x_count = s_tabs [CTAB].rows [x_cell].c;
-      } else {
+      switch (a_dir) {
+      case 'C' : case 'c' :
          x_size  = s_tabs [CTAB].cols [x_cell].w;
          x_curr  = LOC_cell_at_loc (CTAB, x_cell, CROW);
          x_count = s_tabs [CTAB].cols [x_cell].c;
+         break;
+      case 'R' : case 'r' :
+         x_size  = s_tabs [CTAB].rows [x_cell].h;
+         x_curr  = LOC_cell_at_loc (CTAB, CCOL, x_cell);
+         x_count = s_tabs [CTAB].rows [x_cell].c;
+         break;
+      case 'T' : case 't' :
+         x_size  = 1;
+         x_curr  = LOC_cell_at_loc (x_cell, CCOL, CROW);
+         x_count = 1;
+         break;
       }
       /*---(mins)------------------------*/
       x_map->gmin = 0;
@@ -1143,13 +1177,17 @@ LOC__mapprint    (char a_dir)
    int         i           =    0;
    /*---(prepare)------------------------*/
    switch (a_dir) {
+   case 'c' :
+      x_map = &g_xmap;
+      strlcpy (x_name, "gyges.cmap", LEN_LABEL);
+      break;
    case 'r' :
       x_map = &g_ymap;
       strlcpy (x_name, "gyges.rmap", LEN_LABEL);
       break;
-   case 'c' :
-      x_map = &g_xmap;
-      strlcpy (x_name, "gyges.cmap", LEN_LABEL);
+   case 't' :
+      x_map = &g_zmap;
+      strlcpy (x_name, "gyges.tmap", LEN_LABEL);
       break;
    }
    /*---(write it out)-------------------*/
@@ -1183,6 +1221,7 @@ MAP_mapper           (char a_req)
    if (a_req == YVIKEYS_INIT) {
       LOC__mapper   ('C');
       LOC__mapper   ('R');
+      LOC__mapper   ('T');
    }
    BCOL = g_xmap.gbeg;
    CCOL = g_xmap.gcur;
@@ -1190,6 +1229,7 @@ MAP_mapper           (char a_req)
    BROW = g_ymap.gbeg;
    CROW = g_ymap.cur;
    EROW = g_ymap.gend;
+   CTAB = g_zmap.cur;
    x_curr = LOC_cell_at_curr ();
    if      (x_curr == NULL || x_curr->s == NULL) {
       LOC_ref (CTAB, CCOL, CROW, 0, t);

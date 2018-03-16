@@ -226,17 +226,17 @@ DEP_init           (void)
    int         x_pros      = 0;
    int         t           [5];
    /*---(header)-------------------------*/
-   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(root tree)----------------------*/
    s_root = NULL;
    rc = CELL__new (&s_root, UNLINKED);
-   DEBUG_DEPS   yLOG_value   ("rc"        , rc);
+   DEBUG_PROG   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
-      DEBUG_DEPS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (s_root == NULL) {
-      DEBUG_DEPS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    strcpy (s_root->label, "root");
@@ -250,18 +250,18 @@ DEP_init           (void)
    /*---(complete info table)------------*/
    --rce;
    for (i = 0; i < MAX_DEPTYPE; ++i) {
-      DEBUG_DEPS   yLOG_char    ("type"      , s_dep_info [i].type);
+      DEBUG_PROG   yLOG_char    ("type"      , s_dep_info [i].type);
       /*---(check for end)---------------*/
       if (s_dep_info [i].type == G_DEP_BLANK)  break;
       /*---(add to lists)----------------*/
       sprintf (t, "%c", s_dep_info [i].type);
-      DEBUG_DEPS   yLOG_info    ("str type"  , t);
-      DEBUG_DEPS   yLOG_char    ("dir"       , s_dep_info [i].dir);
+      DEBUG_PROG   yLOG_info    ("str type"  , t);
+      DEBUG_PROG   yLOG_char    ("dir"       , s_dep_info [i].dir);
       if      (s_dep_info [i].dir  == S_DEP_DIRREQ)  strcat (S_DEP_REQS, t);
       else if (s_dep_info [i].dir  == S_DEP_DIRPRO)  strcat (S_DEP_PROS, t);
       else {
-         DEBUG_DEPS   yLOG_note    ("type direction not + or -");
-         DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+         DEBUG_PROG   yLOG_note    ("type direction not + or -");
+         DEBUG_PROG   yLOG_exit    (__FUNCTION__);
          return rce;
       }
       /*---(find match)------------------*/
@@ -270,23 +270,23 @@ DEP_init           (void)
          if (s_dep_info [j].type != s_dep_info [i].match) continue;
          ++x_found;
          s_dep_info [i].match_index = j;
-         DEBUG_DEPS   yLOG_char    ("match"     , s_dep_info [j].type);
-         DEBUG_DEPS   yLOG_value   ("match_indx", s_dep_info [i].match_index);
+         DEBUG_PROG   yLOG_char    ("match"     , s_dep_info [j].type);
+         DEBUG_PROG   yLOG_value   ("match_indx", s_dep_info [i].match_index);
       }
    }
-   DEBUG_DEPS   yLOG_value   ("x_count"   , x_count);
-   DEBUG_DEPS   yLOG_value   ("x_found"   , x_found);
+   DEBUG_PROG   yLOG_value   ("x_count"   , x_count);
+   DEBUG_PROG   yLOG_value   ("x_found"   , x_found);
    --rce;  if (x_found != x_count) {
-      DEBUG_DEPS   yLOG_note    ("could not match all dep types");
-      DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+      DEBUG_PROG   yLOG_note    ("could not match all dep types");
+      DEBUG_PROG   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(report out)---------------------*/
-   DEBUG_DEPS   yLOG_info    ("S_DEP_REQS", S_DEP_REQS);
-   DEBUG_DEPS   yLOG_info    ("S_DEP_PROS", S_DEP_PROS);
-   DEBUG_DEPS   yLOG_info    ("S_DEP_LIKE", S_DEP_LIKE);
+   DEBUG_PROG   yLOG_info    ("S_DEP_REQS", S_DEP_REQS);
+   DEBUG_PROG   yLOG_info    ("S_DEP_PROS", S_DEP_PROS);
+   DEBUG_PROG   yLOG_info    ("S_DEP_LIKE", S_DEP_LIKE);
    /*---(complete)-----------------------*/
-   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -300,11 +300,11 @@ DEP__purge         (void)
    char        rce         =  -10;
    tDEP     *curr      = NULL;
    tDEP     *next      = NULL;
-   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(walk through list)--------------*/
    /*> printf ("DEP__purge : defenses\n");                                             <*/
    --rce;  if (s_hdep == NULL) {
-      DEBUG_DEPS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    next = s_hdep;
@@ -322,14 +322,14 @@ DEP__purge         (void)
    /*---(ending)-------------------------*/
    /*> DEBUG_CELL  printf("DEP__purge      :: end\n");                                 <*/
    /*---(complete)-----------------------*/
-   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*-> shut down dependency usage ---------[ shoot  [gz.421.001.02]*/ /*-[00.0000.102.1]-*/ /*-[--.---.---.--]-*/
 DEP_wrap           (void)
 {
-   DEBUG_DEPS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(dependencies)-------------------*/
    DEP__purge ();
    CELL__free (&s_root, UNLINKED);
@@ -338,7 +338,7 @@ DEP_wrap           (void)
    s_tdep   = NULL;
    s_ndep   = 0;
    /*---(complete)-----------------------*/
-   DEBUG_DEPS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1858,20 +1858,25 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
       if (a_dir == 'd') x_off = cmax - i;
       DEBUG_CALC   yLOG_value   ("LEVEL"     , x_off);
       x_cell = cheads [x_off];
+      DEBUG_CALC   yLOG_point   ("x_cell"    , x_cell);
       x_sub = 0;
       while (x_cell != NULL) {
          switch (a_action) {
          case 'c' :  /* calculation               */
+            DEBUG_CALC   yLOG_note    ("perform calc");
             CALC_eval      (x_cell);
             CELL_printable (x_cell);
             break;
          case 'w' :  /* purge cells               */
+            DEBUG_CALC   yLOG_note    ("purge cell");
             CELL__wipe     (x_cell);
             break;
          case 'f' :  /* write to a file           */
-            OUTP_cell_dep  (a_file, x_tot, x_off, x_cell);
+            DEBUG_CALC   yLOG_note    ("write cell to file");
+            OUTP_cell      (FILE_DEPCEL, x_tot, x_off, x_cell);
             break;
          case 'r' :  /* write to a register       */
+            DEBUG_CALC   yLOG_note    ("write cell to register");
             REG_deps       (x_cell, a_stamp);
             break;
          case 'p' :  /* print the sequence        */
@@ -1898,16 +1903,16 @@ char         /*-> dependency-based calc downward -----[ leaf   [gc.940.027.3A]*/
 SEQ_calc_down      (tCELL *a_cell) { return SEQ__driver (a_cell, 'd', rand() , 'c', NULL); }
 
 char         /*-> dependency-based calculation all ---[ ------ [gc.840.026.38]*/ /*-[02.0000.402.1]-*/ /*-[--.---.---.--]-*/
-SEQ_calc_full      (void)          { return SEQ__driver (s_root , 'd', rand() , 'c', NULL); }
+SEQ_calc_full      (void)          { return SEQ__driver (s_root, 'd', rand() , 'c', NULL); }
 
 char         /*-> dependency-based wiping of cells ---[ ------ [gc.740.025.36]*/ /*-[02.0000.104.!]-*/ /*-[--.---.---.--]-*/
-SEQ_wipe_deps      (void)          { return SEQ__driver (s_root , 'd', rand() , 'w', NULL); }
+SEQ_wipe_deps      (void)          { return SEQ__driver (s_root, 'd', rand() , 'w', NULL); }
 
 char         /*-> dependency-based writing of file ---[ ------ [gc.740.624.34]*/ /*-[02.0000.10#.!]-*/ /*-[--.---.---.--]-*/
-SEQ_file_deps      (long a_stamp, FILE *a_file)  { return SEQ__driver (s_root , 'd', a_stamp, 'f', a_file); }
+SEQ_file_deps      (long a_stamp)  { return SEQ__driver (s_root, 'd', a_stamp, 'f', NULL); }
 
 char         /*-> dependency-based writing of reg ----[ ------ [gc.640.523.32]*/ /*-[02.0000.105.!]-*/ /*-[--.---.---.--]-*/
-SEQ_reg_deps       (long a_stamp)                { return SEQ__driver (s_root , 'd', a_stamp, 'r', NULL  ); }
+SEQ_reg_deps       (long a_stamp)  { return SEQ__driver (s_root, 'd', a_stamp, 'r', NULL); }
 
 char         /*-> tbd --------------------------------[ leaf   [gc.630.122.30]*/ /*-[02.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 SEQ_calclist       (char *a_list)

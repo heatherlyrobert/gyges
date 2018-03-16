@@ -112,12 +112,12 @@ char         /*-> clear all selections ---------------[ shoot  [gz.311.001.02]*/
 REG_init           (void)
 {
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(registers)----------------------*/
    strlcpy (s_regnames , REG_NAMES, MAX_REG);
    REG_purge    ('y');
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -128,7 +128,7 @@ REG_purge          (char a_init)
    int         i           = 0;
    int         x_len       = 0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
    my.reg_curr  = '"';
    x_len = strlen (s_regnames);
@@ -136,7 +136,7 @@ REG_purge          (char a_init)
       REG_clear (s_regnames[i], a_init);
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -528,7 +528,8 @@ REG_deps           (tCELL *a_curr, long a_stamp)
       return rce;     /* don't write, recreate on read */
    }
    /*---(check for bounds)---------------*/
-   rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);
+   /*> rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);                    <*/
+   rc = yVIKEYS_visual (a_curr->tab, a_curr->col, a_curr->row);
    DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
    --rce;  if (rc == 0)  {
       DEBUG_REGS   yLOG_note    ("could not get cell");
@@ -709,23 +710,28 @@ REG_save             (void)
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
    /*---(process independent cells)------*/
    DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
-   x_curr  = VISU_first (&x_tab, &x_col, &x_row);
+   rc      = yVIKEYS_first (&x_col, &x_row, &x_tab);
+   x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    /*> s_reg[x_reg].scol = x_col;                                                       <* 
     *> s_reg[x_reg].srow = x_row;                                                       <*/
-   while (x_curr != DONE_DONE) {
+   while (rc >= 0) {
       ++x_total;
       DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL) {
          DEBUG_REGS   yLOG_note    ("skipping, nobody home");
          ++x_skipped;
-         x_curr  = VISU_next (&x_tab, &x_col, &x_row);
+         /*> x_curr  = VISU_next (&x_tab, &x_col, &x_row);                            <*/
+         rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+         x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
          continue;
       }
       DEBUG_REGS   yLOG_complex ("current"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", x_curr, x_tab, x_col, x_row, x_curr->t, x_curr->u);
       if (x_curr->u == x_stamp) {
          DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");
          ++x_skipped;
-         x_curr  = VISU_next (&x_tab, &x_col, &x_row);
+         /*> x_curr  = VISU_next (&x_tab, &x_col, &x_row);                            <*/
+         rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+         x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
          continue;
       }
       ++x_processed;
@@ -736,7 +742,9 @@ REG_save             (void)
       rc = REG__hook   (x_copy, my.reg_curr, '-');
       ++x_seq;
       DEBUG_REGS   yLOG_note    ("copied");
-      x_curr  = VISU_next (&x_tab, &x_col, &x_row);
+      /*> x_curr  = VISU_next (&x_tab, &x_col, &x_row);                               <*/
+      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+      x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    };
    DEBUG_REGS   yLOG_value   ("x_seq"     , x_seq);
    DEBUG_REGS   yLOG_value   ("x_total"   , x_total);
@@ -917,7 +925,7 @@ REG_copy           (void)
    char        rc          = 0;
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    rc = REG_save    ();
-   rc = VISU_clear ();
+   /*> rc = VISU_clear ();                                                            <*/
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -930,7 +938,7 @@ REG_cut            (void)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    rc = REG_save    ();
    rc = REG_delorig ();
-   rc = VISU_clear ();
+   /*> rc = VISU_clear ();                                                            <*/
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1011,15 +1019,15 @@ REG__paste_clear     (char a_clear)
    }
    /*---(select)-------------------------*/
    DEBUG_REGS   yLOG_note    ("visually select the desination area");
-   VISU_set   (
-         s_reg [s_index].otab + s_atab,
-         s_reg [s_index].begc + s_acol, s_reg [s_index].begr + s_arow,
-         s_reg [s_index].endc + s_acol, s_reg [s_index].endr + s_arow);
+   /*> VISU_set   (                                                                   <* 
+    *>       s_reg [s_index].otab + s_atab,                                           <* 
+    *>       s_reg [s_index].begc + s_acol, s_reg [s_index].begr + s_arow,            <* 
+    *>       s_reg [s_index].endc + s_acol, s_reg [s_index].endr + s_arow);           <*/
    /*---(clear)--------------------------*/
    DEBUG_REGS   yLOG_note    ("erase the selection");
-   CELL_erase ();
+   CELL_visual   (CHANGE_ERASE  , ' ', ' ');
    DEBUG_REGS   yLOG_note    ("clear the visual selection");
-   VISU_clear ();
+   /*> VISU_clear ();                                                                 <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1612,9 +1620,10 @@ REG_valuesout     (char a_style)
       return rce;
    }
    /*---(process independent cells)------*/
-   curr  = VISU_first (&x_tab, &x_col, &x_row);
+   rc    = yVIKEYS_first (&x_col, &x_row, &x_tab);
+   curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    x_rowsave = x_row;
-   while (curr != DONE_DONE) {
+   while (rc >= 0) {
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
       ++c;
       /*---(look for line break)---------*/
@@ -1704,7 +1713,8 @@ REG_valuesout     (char a_style)
          }
       }
       x_rowsave = x_row;
-      curr  = VISU_next (&x_tab, &x_col, &x_row);
+      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+      curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    };
    /*---(close file)---------------------*/
    DEBUG_REGS   yLOG_note    ("closing file");
@@ -1802,7 +1812,7 @@ REG_write          (FILE *a_file, int  *a_seq, char a_buf)
    /*---(cell entries)-------------------*/
    for (i = 0; i < s_reg[x_buf].nbuf; ++i) {
       x_curr = s_reg[x_buf].buf[i];
-      OUTP_cell (a_file, "cell_reg", *a_seq, x_regid, x_curr);
+      /*> OUTP_cell ( "cell_reg", *a_seq, x_regid, x_curr);                           <*/
       ++(*a_seq);
    }
    /*---(complete)-----------------------*/

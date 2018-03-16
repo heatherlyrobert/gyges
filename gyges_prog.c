@@ -104,14 +104,14 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(initialize)---------------------*/
    yURG_name   ("prog", YURG_ON);
    yVIKEYS_init         ();
+   yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT);
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    yVIKEYS_src_config   (CELL_saver);
-   yVIKEYS_hint_config  (LOC_locator);
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
-   PROG_layout_init    ();
+   /*> PROG_layout_init    ();                                                        <*/
    CALC_init           ();
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
@@ -131,7 +131,7 @@ PROG_args          (int argc, char *argv[])
    int         x_args      = 0;
    char        x_name      [LEN_STR]   = "";
    /*---(begin)--------------------------*/
-   FILE_rename ("");
+   /*> FILE_rename ("");                                                              <*/
    /*---(process)------------------------*/
    for (i = 1; i < argc; ++i) {
       a = argv[i];
@@ -157,7 +157,7 @@ PROG_args          (int argc, char *argv[])
       DEBUG_ARGS  yLOG_note   ("no arguments identified");
    }
    /*---(update title)-------------------*/
-   FILE_rename (x_name);
+   /*> FILE_rename (x_name);                                                          <*/
    /*---(complete)-----------------------*/
    DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -172,7 +172,7 @@ PROG_begin         (void)
    char        tmp         [100];
    /*---(clear)--------------------------*/
    CELL_init ();
-   MARK_init ();
+   /*> MARK_init ();                                                                  <*/
    /*---(overall tab settings)-----------*/
    LOC_init  ();
    /*---(locals)-------------------------*/
@@ -196,8 +196,9 @@ PROG_begin         (void)
 char         /*-> initialize program and variables ---[ ------ [gz.421.001.08]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
 PROG_final         (void)
 {
+   DEBUG_PROG  yLOG_enter (__FUNCTION__);
    DRAW_init  ();
-   INPT_main         ();
+   /*> INPT_main         ();                                                          <*/
    /*> CURS_screen_reset ();                                                          <*/
    SEQ_calc_full     ();
    hist_active = 'y';
@@ -206,7 +207,6 @@ PROG_final         (void)
    /*> MOVE_horz ('r');                                                               <*/
    /*> yVIKEYS_mode_mesg (my.message, yVIKEYS_cmds_curr ());                          <*/
    /*---(status options)-----------------*/
-   yVIKEYS_view_option (YVIKEYS_STATUS, "file"   , CURS_status_file    , "file name, control, and version"            );
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
    yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );
    yVIKEYS_view_option (YVIKEYS_STATUS, "visual" , CURS_status_visual  , "details of visual selection"                );
@@ -219,8 +219,13 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper);
+   yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
    yVIKEYS_map_refresh ();
+   yVIKEYS_mode_formatter    (SMOD_format);
+   /*---(read/write)---------------------*/
+   yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT);
+   yVIKEYS_file_add (FILE_DEPCEL , OUTP_cell_dep , INPT_cell);
+   yVIKEYS_file_add (FILE_FREECEL, OUTP_cell_free, INPT_cell);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -448,25 +453,25 @@ PROG_end             (void)
 /*====================------------------------------------====================*/
 PRIV void  o___LAYOUT__________o () { return; }
 
-char         /*-> tbd --------------------------------[ shoot  [gz.430.011.10]*/ /*-[01.0000.012.!]-*/ /*-[--.---.---.--]-*/
-PROG_layout_init    (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   /*---(initialize data)----------------*/
-   g_nlayout = 0;
-   for (i = 0; i <= MAX_LAYOUT; ++i) {
-      /*---(filter)----------------------*/
-      if (g_layouts [i].cat [0] == '\0')            break;
-      ++g_nlayout;
-   }
-   /*---(set defaults)-------------------*/
-   my.layout_formula     = G_FORMULA_SMALL;
-   my.layout_status      = G_STATUS_FILE;
-   my.layout_command     = G_COMMAND_SHOW;
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ shoot  [gz.430.011.10]+/ /+-[01.0000.012.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> PROG_layout_init    (void)                                                                                                     <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    /+---(initialize data)----------------+/                                                                                    <* 
+ *>    g_nlayout = 0;                                                                                                              <* 
+ *>    for (i = 0; i <= MAX_LAYOUT; ++i) {                                                                                         <* 
+ *>       /+---(filter)----------------------+/                                                                                    <* 
+ *>       if (g_layouts [i].cat [0] == '\0')            break;                                                                     <* 
+ *>       ++g_nlayout;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(set defaults)-------------------+/                                                                                    <* 
+ *>    my.layout_formula     = G_FORMULA_SMALL;                                                                                    <* 
+ *>    my.layout_status      = G_STATUS_FILE;                                                                                      <* 
+ *>    my.layout_command     = G_COMMAND_SHOW;                                                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 /*> char         /+-> tbd --------------------------------[ ------ [gc.850.323.C5]+/ /+-[02.0000.152.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)                                                                    <* 

@@ -331,7 +331,6 @@ PRIV void  o___SPECIFIC________o () { return; }
 char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
 char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
 char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
-char  CURS_status_file     (char *a_list) { snprintf (a_list, LEN_STR, "[ file %-20.20s%*.*s%30.30s %-4.4s ]", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num); }
 char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
 char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }
 char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
@@ -1202,8 +1201,8 @@ CURS_color_min       (int a_col, int a_row, tCELL *a_curr)
    if      (a_col == CCOL && a_row == CROW)             attron (S_COLOR_HCURR  );
    else if (a_curr != NULL && a_curr->n == 's')         attron (S_COLOR_HUSED  );
    /*---(visual-range)-------------------*/
-   else if (VISU_root     (CTAB, a_col, a_row))         attron (S_COLOR_ROOT   );
-   else if (VISU_selected (CTAB, a_col, a_row))         attron (S_COLOR_VISUAL );
+   else if (yVIKEYS_root   (CTAB, a_col, a_row))        attron (S_COLOR_ROOT   );
+   else if (yVIKEYS_visual (CTAB, a_col, a_row))        attron (S_COLOR_VISUAL );
    else                                                 attron (S_COLOR_HNORM  );
    /*---(complete)-----------------------*/
    return 0;
@@ -1227,8 +1226,8 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    if      (a_col == CCOL && a_row == CROW)             attron (S_COLOR_CURRENT);
    else if (a_curr != NULL && a_curr->n == 's')         attron (S_COLOR_SEARCH );
    /*---(visual-range)-------------------*/
-   else if (VISU_root     (CTAB, a_col, a_row))         attron (S_COLOR_ROOT   );
-   else if (VISU_selected (CTAB, a_col, a_row))         attron (S_COLOR_VISUAL );
+   else if (yVIKEYS_root   (a_col, a_row, CTAB))        attron (S_COLOR_ROOT   );
+   else if (yVIKEYS_visual (a_col, a_row, CTAB))        attron (S_COLOR_VISUAL );
    /*---(marks)--------------------------*/
    else if (my.mark_show  == 'y' &&
          strstr (s_mark_list, label) != NULL)           attron (S_COLOR_MARK     );
@@ -1326,7 +1325,7 @@ DRAW_main          (void)
    x_save = x_curr;
    REG_list   (my.reg_curr  , my.reg_list);
    strncpy (s_mark_list, "+", LEN_RECD);
-   MARK_list  (s_mark_list);
+   yVIKEYS_hint_marklist  (s_mark_list);
    /*---(display all)--------------------*/
    yVIKEYS_view_size     (YVIKEYS_MAIN, &x_left, &x_wide, &x_bott, &x_tall, NULL);
    for (y_cur = BROW; y_cur <= EROW; ++y_cur) {
@@ -1467,7 +1466,7 @@ CURS_size         (void)
 char         /*-> initiate curses --------------------[ ------ [gz.421.001.02]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
 DRAW_init          (void)
 {
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
    yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_view_moderate (YVIKEYS_MAIN     , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
@@ -1505,10 +1504,10 @@ DRAW_init          (void)
    S_COLOR_REPLACE    = yCOLOR_curs_value ("replace"  );
    S_COLOR_WANDER     = yCOLOR_curs_value ("wander"   );
    /*---(row and column headers)---------*/
-   S_COLOR_HCURR      = yCOLOR_curs_add   ("h_current", ' ', "row/col header current"                             , 'k' , 'y' , '-');
-   S_COLOR_HLOCK      = yCOLOR_curs_add   ("h_locked" , ' ', "row/col header locked in place"                     , 'k' , 'r' , '-');
-   S_COLOR_HUSED      = yCOLOR_curs_add   ("h_used"   , ' ', "row/col header with used cells"                     , 'y' , 'k' , '-');
-   S_COLOR_HNORM      = yCOLOR_curs_add   ("h_normal" , ' ', "row/col header normal"                              , 'y' , ' ' , '-');
+   S_COLOR_HCURR      = yCOLOR_curs_value ("h_current");
+   S_COLOR_HLOCK      = yCOLOR_curs_value ("h_locked" );
+   S_COLOR_HUSED      = yCOLOR_curs_value ("h_used"   );
+   S_COLOR_HNORM      = yCOLOR_curs_value ("h_normal" );
    /*---(selection)----------------------*/
    S_COLOR_CURRENT    = yCOLOR_curs_value ("curr"     );
    S_COLOR_ROOT       = yCOLOR_curs_value ("root"     );
@@ -1534,17 +1533,17 @@ DRAW_init          (void)
    S_COLOR_NULL       = yCOLOR_curs_add   ("blank"    , '-', "blank cell"                                         , 'b' , ' ' , 'y');
    S_COLOR_NORMAL     = yCOLOR_curs_add   ("def"      , ' ', "default for unidentified cells"                     , 'y' , ' ' , 'y');
    /*---(complete)--------------------*/
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*-> shutdown curses --------------------[ leaf   [gz.211.001.00]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
 DRAW_wrap          (void)
 {
-   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*> endwin();        /+ shut down ncurses                                      +/   <*/
    /*---(complete)--------------------*/
-   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

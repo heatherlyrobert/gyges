@@ -1727,7 +1727,7 @@ SCRP          v21  test vi_input mode                                         
 
    COND       v21  set the mode to source, then input                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
-     exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_INPUT                                                              i_equal     0                                                                      
+     exec     v21  set the mode                         yVIKEYS_mode_enter    SMOD_INPUT                                                              i_equal     0                                                                      
      exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -1787,7 +1787,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input in the middle                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_INPUT                                                              i_equal     0                                                                      
+     exec     v21  set the mode                         yVIKEYS_mode_enter    SMOD_INPUT                                                              i_equal     0                                                                      
      exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -1810,7 +1810,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input before the beginning                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_INPUT                                                              i_equal     0                                                                      
+     exec     v21  set the mode                         yVIKEYS_mode_enter    SMOD_INPUT                                                              i_equal     0                                                                      
      exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -1826,7 +1826,7 @@ SCRP          v21  test vi_input mode                                         
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  send a character to source           MODE_source           ' ', '$'                                                                i_equal     0                                                                      
-     exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_INPUT                                                              i_equal     0                                                                      
+     exec     v21  set the mode                         yVIKEYS_mode_enter    SMOD_INPUT                                                              i_equal     0                                                                      
      exec     v21  set the initial mark                 MODE_input            'm'            , 'a'                                                    i_equal     'a'                                                                    
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 
@@ -1841,7 +1841,7 @@ SCRP          v21  test vi_input mode                                         
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : S                                                   
 
    COND       v21  get back into input after the ending                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_INPUT                                                              i_equal     0                                                                      
+     exec     v21  set the mode                         yVIKEYS_mode_enter    SMOD_INPUT                                                              i_equal     0                                                                      
      code     v21  put the position in the middle       - - - - - - - - - -   my.cpos = 300;                                                                                                                                                 
      exec     v21  set the initial mark                 MODE_input            'm'            , 'i'                                                    i_equal     'i'                                                                    
      get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : I                                                   
@@ -2895,91 +2895,6 @@ SCRP          v21  (s_calc) verify custom strtok handling                     
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
 
-
-
-#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
-#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (gyges_keys) verify correct functioning of mode stack        MODE_enter, MODE_return, MODE_curr, MODE_prev, MODE_not                 ((48.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
-
-   COND       v21  check initial modes                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     77                                                                     
-     exec     v21  check the previous mode              yVIKEYS_mode_prev                                                                             i_lesser    0                                                                      
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (1) M - - - - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_equal     0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_lesser    0                                                                      
-
-   COND       v21  push a mode                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  enter a mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     83                                                                     
-     exec     v21  check the previous mode              yVIKEYS_mode_prev                                                                             i_equal     77                                                                     
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (2) M S - - - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_equal     0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_lesser    0                                                                      
-
-   COND       v21  pop a mode                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  exit a mode                          yVIKEYS_mode_exit                                                                             i_equal     0                                                                      
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     77                                                                     
-     exec     v21  check the previous mode              yVIKEYS_mode_prev                                                                             i_lesser    0                                                                      
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (1) M - - - - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_equal     0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_lesser    0                                                                      
-
-   COND       v21  push the same mode, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  enter a mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     83                                                                     
-     exec     v21  check the previous mode              yVIKEYS_mode_prev                                                                             i_equal     77                                                                     
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (2) M S - - - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_equal     0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_lesser    0                                                                      
-
-   COND       v21  push a sub-mode                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  enter a mode                         yVIKEYS_mode_enter    SMOD_SELECT                                                             i_equal     0                                                                      
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     115                                                                    
-     exec     v21  check the previous mode              yVIKEYS_mode_prev                                                                             i_equal     83                                                                     
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (3) M S s - - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_equal     0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_lesser    0                                                                      
-
-   COND       v21  push a another sub-mode                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  enter a mode                         yVIKEYS_mode_enter    SMOD_TEXTREG                                                            i_equal     0                                                                      
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     116                                                                    
-     exec     v21  check the previous mode (harder)     yVIKEYS_mode_prev                                                                             i_equal     83                                                                     
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (4) M S s t - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_equal     0                                                                      
-
-   COND       v21  try an illegal mode change                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  enter a mode                         yVIKEYS_mode_enter    MODE_VISUAL                                                             i_lesser    0                                                                      
-     exec     v21  enter a mode                         yVIKEYS_mode_enter    SMOD_BUFFER                                                             i_lesser    0                                                                      
-
-   COND       v21  pop twice                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  exit a mode                          yVIKEYS_mode_exit                                                                             i_equal     0                                                                      
-     exec     v21  exit a mode                          yVIKEYS_mode_exit                                                                             i_equal     0                                                                      
-     exec     v21  check the current mode               yVIKEYS_mode_curr                                                                             i_equal     83                                                                     
-     exec     v21  check the previous mode              yVIKEYS_mode_prev                                                                             i_equal     77                                                                     
-     get      v21  check current mode stack             KEYS__unit            "mode_stack"                                                            s_equal     keys mode stack  : modes (2) M S - - - - - -                           
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_MAP                                                                i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      MODE_SOURCE                                                             i_equal     0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_SELECT                                                             i_lesser    0                                                                      
-     exec     v21  test against a mode                  yVIKEYS_mode_not      SMOD_TEXTREG                                                            i_lesser    0                                                                      
-
-   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((48.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
 
 
 
