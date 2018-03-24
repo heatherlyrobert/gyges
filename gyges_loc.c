@@ -88,6 +88,8 @@ struct cTAB {
    tROWS       rows  [MAX_ROWS];            /* row characteristics            */
    tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
    int         c;                           /* count of entries in sheet      */
+   short       defwide;                     /* default col width              */
+   short       deftall;                     /* default row height             */
    /*---(current size limits)------------*/
    /* while a maximum size sheet is allocated, there are logical user set     */
    /* maximums in order to manage the complexity.                             */
@@ -205,6 +207,8 @@ LOC__purge           (void)
       s_tabs [x_tab].tab     = x_tab;
       s_tabs [x_tab].type    = G_TAB_NORMAL;
       s_tabs [x_tab].c       =    0;
+      s_tabs [x_tab].defwide = DEF_WIDTH;
+      s_tabs [x_tab].deftall = DEF_HEIGHT;
       /*---(size limits)-----------------*/
       DEBUG_PROG   yLOG_note    ("reset default size");
       DEBUG_PROG   yLOG_value   ("DEF_COLS"  , DEF_COLS);
@@ -1573,7 +1577,7 @@ LOC_col_clear        (short a_tab)
    DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
    for (x_col = 0; x_col < MAX_COLS; ++x_col) {
       /*---(characteristics)-------------*/
-      s_tabs [a_tab].cols [x_col].w       = DEF_WIDTH;
+      s_tabs [a_tab].cols [x_col].w       = s_tabs [a_tab].defwide;
       s_tabs [a_tab].cols [x_col].x       = 0;
       s_tabs [a_tab].cols [x_col].c       = 0;
       /*---(labels)----------------------*/
@@ -1659,6 +1663,24 @@ LOC_col_label        (short a_tab, short a_col, char *a_label)
    return 0;
 }
 
+char         /*-> set the default width --------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
+LOC_col_defwidth     (short a_tab, short a_size)
+{
+   char        rc          =    0;
+   short       x_col       =    0;
+   rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
+   if (a_size  < MIN_WIDTH)    a_size = MIN_WIDTH;
+   if (a_size  > MAX_WIDTH)    a_size = MAX_WIDTH;
+   for (x_col = 0; x_col < MAX_ROWS; ++x_col) {
+      if (s_tabs [a_tab].cols [x_col].w != s_tabs [a_tab].defwide)  continue;
+      if (s_tabs [a_tab].cols [x_col].c >  0)                       continue;
+      s_tabs [a_tab].cols [x_col].w = a_size;
+   }
+   s_tabs [a_tab].defwide = a_size;
+   return 0;
+}
+
 char         /*-> return the col width ---------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
 LOC_col_width        (short a_tab, short a_col)
 {
@@ -1739,7 +1761,7 @@ LOC_row_clear        (short a_tab)
    DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");
    DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
    for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
-      s_tabs [a_tab].rows [x_row].h = DEF_HEIGHT;
+      s_tabs [a_tab].rows [x_row].h = s_tabs [a_tab].deftall;
       s_tabs [a_tab].rows [x_row].y = 0;
       s_tabs [a_tab].rows [x_row].c = 0;
    }
@@ -1803,6 +1825,24 @@ LOC_row_yset         (short a_tab, short a_row, short a_pos)
    char rc = LOC_row_valid (a_tab, a_row);
    if (rc < 0) return rc;
    s_tabs [a_tab].rows [a_row].y = a_pos;
+   return 0;
+}
+
+char         /*-> set the default width --------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
+LOC_row_defheight    (short a_tab, short a_size)
+{
+   char        rc          =    0;
+   short       x_row       =    0;
+   rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
+   if (a_size  < MIN_HEIGHT)   a_size = MIN_HEIGHT;
+   if (a_size  > MAX_HEIGHT)   a_size = MAX_HEIGHT;
+   for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
+      if (s_tabs [a_tab].rows [x_row].h != s_tabs [a_tab].deftall)  continue;
+      if (s_tabs [a_tab].rows [x_row].c >  0)                       continue;
+      s_tabs [a_tab].rows [x_row].h = a_size;
+   }
+   s_tabs [a_tab].deftall = a_size;
    return 0;
 }
 
@@ -1903,6 +1943,9 @@ LOC__unit          (char *a_question, char *a_label)
    }
    else if (strcmp(a_question, "loc_row"       )  == 0) {
       snprintf (unit_answer, LEN_UNIT, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);
+   }
+   else if (strcmp(a_question, "tab_def"       )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "LOC tab defaults : col=%2d, row=%2d", s_tabs[x_tab].defwide, s_tabs[x_tab].deftall);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 

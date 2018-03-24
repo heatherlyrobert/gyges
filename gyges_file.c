@@ -886,7 +886,7 @@ INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char 
    int         x_tab       =    0;
    int         x_col       =    0;
    int         x_row       =    0;
-   char        x_label     [LEN_LABEL];
+   int         x_size      =    0;
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(check version)------------------*/
@@ -905,9 +905,24 @@ INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(resize)-------------------------*/
+   x_col   = atoi (d);
+   if (x_col == 0)  x_col = LOC_col_max (x_tab);
+   DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
+   x_row   = atoi (f);
+   if (x_row == 0)  x_row = LOC_row_max (x_tab);
+   DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
+   rc = LOC_legal  (x_tab, x_col - 1, x_row - 1, CELL_EXACT);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_value   ("col_max"   , LOC_col_max (x_tab));
+   DEBUG_INPT  yLOG_value   ("row_max"   , LOC_row_max (x_tab));
    /*---(check name)---------------------*/
    DEBUG_INPT  yLOG_point   ("name"      , b);
-   if (b != NULL) {
+   if (b != NULL && strllen (b, LEN_LABEL) > 0) {
       rc = LOC_tab_rename     (x_tab, b);
       DEBUG_INPT  yLOG_value   ("rename"    , rc);
       --rce;  if (rc < 0)  {
@@ -916,26 +931,11 @@ INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char 
       }
       DEBUG_INPT  yLOG_info    ("a_name"    , b);
    }
-   /*---(resize)-------------------------*/
-   x_col   = atoi (d);
-   DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
-   x_row   = atoi (f);
-   DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
-   rc = LOC_ref (x_tab, x_col - 1, x_row - 1, 0, x_label);
-   DEBUG_INPT  yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_info    ("x_label"   , x_label);
-   rc = LOC_tab_resize     (x_label);
-   DEBUG_INPT  yLOG_value   ("resize"    , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_value   ("col_max"   , LOC_col_max (x_tab));
-   DEBUG_INPT  yLOG_value   ("row_max"   , LOC_row_max (x_tab));
+   /*---(default sizes)------------------*/
+   x_size  = atoi (g);
+   if (x_size > 0)  LOC_col_defwidth  (x_tab, x_size);
+   x_size  = atoi (h);
+   if (x_size > 0)  LOC_row_defheight (x_tab, x_size);
    /*---(complete)-----------------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;

@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0i"
-#define     VER_TXT   "added new INPT_tab and fixed tab resize and loc legal issue"
+#define     VER_NUM   "3.0j"
+#define     VER_TXT   "tab reading unit test is complete, including default width/height"
 
 
 
@@ -1332,6 +1332,7 @@ short       LOC_col_used         /* petal  2----- */  (short a_tab, short a_col)
 short       LOC_col_xpos         /* petal  2----- */  (short a_tab, short a_col);
 char        LOC_col_xset         /* stigma 3----- */  (short a_tab, short a_col, short a_pos);
 char        LOC_col_label        /* petal  3----- */  (short a_tab, short a_col, char *a_label);
+char        LOC_col_defwidth     (short a_tab, short a_size);
 char        LOC_col_width        /* petal  2----- */  (short a_tab, short a_col);
 char        LOC_col_widen        /* stigma 3----- */  (short a_tab, short a_col, short a_size);
 char        LOC_col_freeze       (short a_tab, short a_bcol, short a_ecol);
@@ -1346,6 +1347,7 @@ short       LOC_row_used         /* petal  2----- */  (short a_tab, short a_row)
 short       LOC_row_ypos         /* petal  2----- */  (short a_tab, short a_row);
 char        LOC_row_yset         /* sigma  3----- */  (short a_tab, short a_row, short a_pos);
 char        LOC_row_label        /* petal  3----- */  (short a_tab, short a_row, char *a_label);
+char        LOC_row_defheight    (short a_tab, short a_size);
 char        LOC_row_height       /* petal  2----- */  (short a_tab, short a_row);
 char        LOC_row_heighten     /* sigma  3----- */  (short a_tab, short a_row, short a_size);
 char        LOC_row_freeze       (short a_tab, short a_brow, short a_erow);
