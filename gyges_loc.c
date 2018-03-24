@@ -454,12 +454,13 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    static short  x_xtab    = -666;
    static short  x_xcol    = -666;
    static short  x_xrow    = -666;
+   static short  x_adapt   = -666;
    static char   x_xrc     =  -66;
    static int    x_xtotal  =    0;
    static int    x_xshort  =    0;
    /*---(shortcut)-----------------------*/
    ++x_xtotal;
-   if (x_xtab == a_tab && x_xcol == a_col && x_xrow == a_row) {
+   if (x_xtab == a_tab && x_xcol == a_col && x_xrow == a_row &&  x_adapt == a_adapt) {
       ++x_xshort;
       DEBUG_LOCS_M   yLOG_senter  (__FUNCTION__);
       DEBUG_LOCS_M   yLOG_snote   ("same as last search");
@@ -472,9 +473,10 @@ LOC_legal          (short a_tab, short a_col, short a_row, char a_adapt)
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(save values)--------------------*/
-   x_xtab = a_tab;
-   x_xcol = a_col;
-   x_xrow = a_row;
+   x_xtab  = a_tab;
+   x_xcol  = a_col;
+   x_xrow  = a_row;
+   x_adapt = a_adapt;
    /*---(check absolute boudaries)-------*/
    DEBUG_LOCS_M   yLOG_value   ("a_tab"     , a_tab);
    --rce;  if (a_tab <  0       ) {

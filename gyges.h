@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0h"
-#define     VER_TXT   "now writes cells to files using new yVIKEYS method"
+#define     VER_NUM   "3.0i"
+#define     VER_TXT   "added new INPT_tab and fixed tab resize and loc legal issue"
 
 
 
@@ -1456,17 +1456,20 @@ char      FILE_rename          (char  *a_name);
 
 
 /*---(tabs)------------------*/
-char      INPT_tab             (char  *a_label, char *a_name, char a_type);
 char      OUTP_tab             (short  a_tab  );
 char      OUTP_tab_head        (FILE  *a_file );
 char      OUTP_tab_foot        (FILE  *a_file , int   a_count);
 int       OUTP_tabs            (FILE  *a_file );
 /*---(columns)---------------*/
-char      INPT_col             (char  *a_label, int   a_size, int a_count);
 char      OUTP_col             (short  a_tab  , short a_col);
 char      OUTP_col_head        (FILE  *a_file );
 char      OUTP_col_foot        (FILE  *a_file , int   a_count);
 int       OUTP_cols            (FILE  *a_file );
+/*---(file)------------------*/
+char      INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char      INPT_col             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char      INPT_row             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char      OUTP_row             (void);
 /*---(cells)-----------------*/
 char      INPT_cell_OLD        (char *a_label, char *a_format, char *a_source);
 /*> char      OUTP_cell            (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr);   <*/

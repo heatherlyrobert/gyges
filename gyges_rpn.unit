@@ -415,181 +415,181 @@ SCRP          v21  (RPN   ) adjusting single references in formulas           
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-SCRP          v21  (RPN   ) adjusting cut selection using inner                 RPN_adjust_reg                                                          ((25.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
-
-   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     code     v21  create a register list holder        - - - - - - - - - -   char x_updated[2000];                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0g5  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0g3  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0d3  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0a3  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0c1  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0c2  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0c4  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0e2  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0e4  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0d2  = NULL;                                                                                                                                          
-     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0d4  = NULL;                                                                                                                                          
-
-   COND       v21  setup the primary, interconnected set of cells               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add the absolute providing cell      CELL_change           &x_0g5, CHG_INPUT, 0,  6,  4, "-2"                                      i_pass      0                                                                                                    
-     exec     v21  add the relative providing cell      CELL_change           &x_0g3, CHG_INPUT, 0,  6,  2, "+92"                                     i_pass      0                                                                                                    
-     exec     v21  add the primary cell                 CELL_change           &x_0d3, CHG_INPUT, 0,  3,  2, "=$g$5*g3+d7+c2+$c$4"                     i_pass      0                                                                                                    
-     exec     v21  add the relative requiring cell      CELL_change           &x_0a3, CHG_INPUT, 0,  0,  2, "=d3+5"                                   i_pass      0                                                                                                    
-     exec     v21  add the absolute requiring cell      CELL_change           &x_0c1, CHG_INPUT, 0,  2,  0, "=$d$3*2"                                 i_pass      0                                                                                                    
-
-   COND       v21  setup the inner copy group                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add top-left provides                CELL_change           &x_0c2, CHG_INPUT, 0,  2,  1, "+10"                                     i_pass      0                                                                                                    
-     exec     v21  add bottom-left provides             CELL_change           &x_0c4, CHG_INPUT, 0,  2,  3, "-10"                                     i_pass      0                                                                                                    
-     exec     v21  add top-right requires relative      CELL_change           &x_0e2, CHG_INPUT, 0,  4,  1, "=d3-16"                                  i_pass      0                                                                                                    
-     exec     v21  add bottom-right requires absolute   CELL_change           &x_0e4, CHG_INPUT, 0,  4,  3, "=$d$3+4"                                 i_pass      0                                                                                                    
-
-   COND       v21  setup the non-formual inner group                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  add top-middle empty cell            CELL_change           &x_0d2, CHG_INPUT, 0,  3,  1, ""                                        i_pass      0                                                                                                    
-     exec     v21  add bottom-middle test cell          CELL_change           &x_0d4, CHG_INPUT, 0,  3,  3, "testing"                                 i_pass      0                                                                                                    
-
-   GROUP      v21  select and cut a group into register                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  select the inner range and delete                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  select the primary cells             VISU_set              0,    2,    1,    4,    3                                               i_equal     0                                                                                                    
-     get      v21  review the selection count           VISU__unit            "count"        , 0                                                      s_equal     VISU count       : 7                                                                                 
-     exec     v21  call the cut command                 REG_copy                                                                                      i_equal     0                                                                                                    
-
-   GROUP      v21  review none option                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0d3 - 16                                          
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$d$3 + 4                                         
-
-   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0g3 + 0d7 + 0c2 + 0$c$4                    
-
-   GROUP      v21  review normal, relative only option                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0e6 - 16                                          
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$d$3 + 4                                         
-
-   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0h6 + 0e10 + 0d5 + 0$c$4                  
-
-   GROUP      v21  review inner option                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0e6 - 16                                          
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$e$6 + 4                                         
-
-   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0g3 + 0d7 + 0d5 + 0$d$7                    
-
-   GROUP      v21  review both, or complete, option                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0e6 - 16                                          
-     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$e$6 + 4                                         
-
-   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0h6 + 0e10 + 0d5 + 0$d$7                  
-
-   GROUP      v21  feed it bad information                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  try bad scope/options                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , '?'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , ' '        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , 'm'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , 'Z'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , '0'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-   COND       v21  try bad arguments                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  try null cell                        RPN_adjust_reg        NULL    , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  try null cell                        RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, NULL        , 0              i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  try bad index                        RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, x_updated   , -1             i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-     exec     v21  try bad index                        RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 30             i_lesser    0                                                                      
-     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
-
-
-
-
-
-   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
+#SCRP          v21  (RPN   ) adjusting cut selection using inner                 RPN_adjust_reg                                                          ((25.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
+#
+#   COND       v21  setup some testing variables                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     code     v21  create a register list holder        - - - - - - - - - -   char x_updated[2000];                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0g5  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0g3  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0d3  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0a3  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0c1  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0c2  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0c4  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0e2  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0e4  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0d2  = NULL;                                                                                                                                          
+#     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_0d4  = NULL;                                                                                                                                          
+#
+#   COND       v21  setup the primary, interconnected set of cells               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  add the absolute providing cell      CELL_change           &x_0g5, CHG_INPUT, 0,  6,  4, "-2"                                      i_pass      0                                                                                                    
+#     exec     v21  add the relative providing cell      CELL_change           &x_0g3, CHG_INPUT, 0,  6,  2, "+92"                                     i_pass      0                                                                                                    
+#     exec     v21  add the primary cell                 CELL_change           &x_0d3, CHG_INPUT, 0,  3,  2, "=$g$5*g3+d7+c2+$c$4"                     i_pass      0                                                                                                    
+#     exec     v21  add the relative requiring cell      CELL_change           &x_0a3, CHG_INPUT, 0,  0,  2, "=d3+5"                                   i_pass      0                                                                                                    
+#     exec     v21  add the absolute requiring cell      CELL_change           &x_0c1, CHG_INPUT, 0,  2,  0, "=$d$3*2"                                 i_pass      0                                                                                                    
+#
+#   COND       v21  setup the inner copy group                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  add top-left provides                CELL_change           &x_0c2, CHG_INPUT, 0,  2,  1, "+10"                                     i_pass      0                                                                                                    
+#     exec     v21  add bottom-left provides             CELL_change           &x_0c4, CHG_INPUT, 0,  2,  3, "-10"                                     i_pass      0                                                                                                    
+#     exec     v21  add top-right requires relative      CELL_change           &x_0e2, CHG_INPUT, 0,  4,  1, "=d3-16"                                  i_pass      0                                                                                                    
+#     exec     v21  add bottom-right requires absolute   CELL_change           &x_0e4, CHG_INPUT, 0,  4,  3, "=$d$3+4"                                 i_pass      0                                                                                                    
+#
+#   COND       v21  setup the non-formual inner group                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  add top-middle empty cell            CELL_change           &x_0d2, CHG_INPUT, 0,  3,  1, ""                                        i_pass      0                                                                                                    
+#     exec     v21  add bottom-middle test cell          CELL_change           &x_0d4, CHG_INPUT, 0,  3,  3, "testing"                                 i_pass      0                                                                                                    
+#
+#   GROUP      v21  select and cut a group into register                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  select the inner range and delete                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  select the primary cells             VISU_set              0,    2,    1,    4,    3                                               i_equal     0                                                                                                    
+#     get      v21  review the selection count           VISU__unit            "count"        , 0                                                      s_equal     VISU count       : 7                                                                                 
+#     exec     v21  call the cut command                 REG_copy                                                                                      i_equal     0                                                                                                    
+#
+#   GROUP      v21  review none option                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0d3 - 16                                          
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$d$3 + 4                                         
+#
+#   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_NONE ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0g3 + 0d7 + 0c2 + 0$c$4                    
+#
+#   GROUP      v21  review normal, relative only option                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0e6 - 16                                          
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$d$3 + 4                                         
+#
+#   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_NORM ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0h6 + 0e10 + 0d5 + 0$c$4                  
+#
+#   GROUP      v21  review inner option                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0e6 - 16                                          
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$e$6 + 4                                         
+#
+#   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_INNER,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0g3 + 0d7 + 0d5 + 0$d$7                    
+#
+#   GROUP      v21  review both, or complete, option                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  review non-formula strings                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on empty                       RPN_adjust_reg        x_0d2   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on string                      RPN_adjust_reg        x_0d4   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  review non-formual numbers                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c2   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  check on required number             RPN_adjust_reg        x_0c4   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  adjust fully inner formulas                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e2   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0e6 - 16                                          
+#     exec     v21  check on simple inner formula        RPN_adjust_reg        x_0e4   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$e$6 + 4                                         
+#
+#   COND       v21  adjust complicated mixed formula                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_equal     0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : = 0$g$5 * 0h6 + 0e10 + 0d5 + 0$d$7                  
+#
+#   GROUP      v21  feed it bad information                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  try bad scope/options                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , '?'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , ' '        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , 'm'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , 'Z'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  call the formula adjustment          RPN_adjust_reg        x_0d3   , '0'        ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#   COND       v21  try bad arguments                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  try null cell                        RPN_adjust_reg        NULL    , G_RPN_BOTH ,    0,     1,     3, x_updated   , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  try null cell                        RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, NULL        , 0              i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  try bad index                        RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, x_updated   , -1             i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#     exec     v21  try bad index                        RPN_adjust_reg        x_0d3   , G_RPN_BOTH ,    0,     1,     3, x_updated   , 30             i_lesser    0                                                                      
+#     get      v21  review the updated formula           RPN_unit              "rpn_updated"    ,  NULL                                                s_equal     s_rpn updated    : n/a                                                  
+#
+#
+#
+#
+#
+#   GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#
+#   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((25.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
+#     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
 
 

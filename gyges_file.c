@@ -613,48 +613,53 @@ static void   o___TABS____________o (void) { return; }
  *
  */
 
-char         /*-> process a tab size record ----------[ ------ [ge.943.354.35]*/ /*-[01.0000.013.E]-*/ /*-[--.---.---.--]-*/
-INPT_tab           (char *a_label, char *a_name, char a_type)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_point   ("a_name"    , a_name);
-   /*---(parse address)------------*/
-   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   DEBUG_INPT  yLOG_value   ("parse"     , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_info    ("a_label"   , a_label);
-   /*---(update size)--------------*/
-   rc = LOC_tab_resize     (a_label);
-   DEBUG_INPT  yLOG_value   ("resize"    , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_value   ("col_max"   , LOC_col_max (x_tab));
-   DEBUG_INPT  yLOG_value   ("row_max"   , LOC_row_max (x_tab));
-   /*---(change name)--------------*/
-   rc = LOC_tab_rename     (x_tab, a_name);
-   DEBUG_INPT  yLOG_value   ("rename"    , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_info    ("a_name"    , a_name);
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process a tab size record ----------[ ------ [ge.943.354.35]+/ /+-[01.0000.013.E]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_tab           (char *a_label, char *a_name, char a_type)                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         rc          = 0;                                                                                                <* 
+ *>    int         x_tab       = 0;                                                                                                <* 
+ *>    int         x_col       = 0;                                                                                                <* 
+ *>    int         x_row       = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_point   ("a_label"   , a_label);                                                                           <* 
+ *>    DEBUG_INPT  yLOG_point   ("a_name"    , a_name);                                                                            <* 
+ *>    /+---(parse address)------------+/                                                                                          <* 
+ *>    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);                                                                     <* 
+ *>    DEBUG_INPT  yLOG_value   ("parse"     , rc);                                                                                <* 
+ *>    --rce;  if (rc < 0)  {                                                                                                      <* 
+ *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                                                            <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_INPT  yLOG_info    ("a_label"   , a_label);                                                                           <* 
+ *>    /+---(update size)--------------+/                                                                                          <* 
+ *>    rc = LOC_tab_resize     (a_label);                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_value   ("resize"    , rc);                                                                                <* 
+ *>    --rce;  if (rc < 0)  {                                                                                                      <* 
+ *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                                                            <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_INPT  yLOG_value   ("col_max"   , LOC_col_max (x_tab));                                                               <* 
+ *>    DEBUG_INPT  yLOG_value   ("row_max"   , LOC_row_max (x_tab));                                                               <* 
+ *>    /+---(change name)--------------+/                                                                                          <* 
+ *>    rc = LOC_tab_rename     (x_tab, a_name);                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_value   ("rename"    , rc);                                                                                <* 
+ *>    --rce;  if (rc < 0)  {                                                                                                      <* 
+ *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                                                            <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_INPT  yLOG_info    ("a_name"    , a_name);                                                                            <* 
+ *>    /+---(complete)-----------------+/                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+
+
+
+
 
 char         /*-> write file tab information ---------[ ------ [ge.960.195.59]*/ /*-[01.0000.01#.#]-*/ /*-[--.---.---.--]-*/
 OUTP_tab             (short a_tab)
@@ -752,45 +757,45 @@ OUTP_tabs            (FILE *a_file)
 /*====================------------------------------------====================*/
 static void   o___COLUMNS_________o (void) { return; }
 
-char         /*-> process a column width record ------[ ------ [ge.733.253.22]*/ /*-[01.0000.013.8]-*/ /*-[--.---.---.--]-*/
-INPT_col           (char *a_label, int a_size, int a_count)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         rc          = 0;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         i           = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_value   ("a_size"    , a_size);
-   DEBUG_INPT  yLOG_value   ("a_count"   , a_count);
-   /*---(parse address)------------*/
-   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   DEBUG_INPT  yLOG_value   ("parse"     , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_info    ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_value   ("tab"       , x_tab);
-   DEBUG_INPT  yLOG_value   ("col"       , x_col);
-   /*---(update size)--------------*/
-   if (a_count == 0)  a_count = 1;
-   for (i = 0; i < a_count; ++i) {
-      rc = LOC_col_widen      (x_tab, x_col + i, a_size);
-      DEBUG_INPT  yLOG_value   ("widen"     , rc);
-      --rce;  if (rc < 0) {
-         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-   }
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> process a column width record ------[ ------ [ge.733.253.22]+/ /+-[01.0000.013.8]-+/ /+-[--.---.---.--]-+/   <* 
+ *> INPT_col           (char *a_label, int a_size, int a_count)                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         rc          = 0;                                                                                                <* 
+ *>    int         x_tab       = 0;                                                                                                <* 
+ *>    int         x_col       = 0;                                                                                                <* 
+ *>    int         x_row       = 0;                                                                                                <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_point   ("a_label"   , a_label);                                                                           <* 
+ *>    DEBUG_INPT  yLOG_value   ("a_size"    , a_size);                                                                            <* 
+ *>    DEBUG_INPT  yLOG_value   ("a_count"   , a_count);                                                                           <* 
+ *>    /+---(parse address)------------+/                                                                                          <* 
+ *>    rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);                                                                     <* 
+ *>    DEBUG_INPT  yLOG_value   ("parse"     , rc);                                                                                <* 
+ *>    --rce;  if (rc < 0) {                                                                                                       <* 
+ *>       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                                                            <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_INPT  yLOG_info    ("a_label"   , a_label);                                                                           <* 
+ *>    DEBUG_INPT  yLOG_value   ("tab"       , x_tab);                                                                             <* 
+ *>    DEBUG_INPT  yLOG_value   ("col"       , x_col);                                                                             <* 
+ *>    /+---(update size)--------------+/                                                                                          <* 
+ *>    if (a_count == 0)  a_count = 1;                                                                                             <* 
+ *>    for (i = 0; i < a_count; ++i) {                                                                                             <* 
+ *>       rc = LOC_col_widen      (x_tab, x_col + i, a_size);                                                                      <* 
+ *>       DEBUG_INPT  yLOG_value   ("widen"     , rc);                                                                             <* 
+ *>       --rce;  if (rc < 0) {                                                                                                    <* 
+ *>          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                                                         <* 
+ *>          return rce;                                                                                                           <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------+/                                                                                          <* 
+ *>    DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char         /*-> write file col information ---------[ ------ [ge.640.266.34]*/ /*-[00.0000.01#.#]-*/ /*-[--.---.---.--]-*/
 OUTP_col             (short a_tab, short a_col)
@@ -872,186 +877,203 @@ OUTP_cols            (FILE *a_file)
 }
 
 
+char
+INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -11;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   char        x_label     [LEN_LABEL];
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(check version)------------------*/
+   DEBUG_INPT   yLOG_char    ("version"   , n);
+   --rce;  if (n != 'I') {
+      DEBUG_INPT   yLOG_note    ("illegal version");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check tab)----------------------*/
+   x_tab   = atoi (a);
+   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
+   rc = LOC_tab_valid (x_tab);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check name)---------------------*/
+   DEBUG_INPT  yLOG_point   ("name"      , b);
+   if (b != NULL) {
+      rc = LOC_tab_rename     (x_tab, b);
+      DEBUG_INPT  yLOG_value   ("rename"    , rc);
+      --rce;  if (rc < 0)  {
+         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      DEBUG_INPT  yLOG_info    ("a_name"    , b);
+   }
+   /*---(resize)-------------------------*/
+   x_col   = atoi (d);
+   DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
+   x_row   = atoi (f);
+   DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
+   rc = LOC_ref (x_tab, x_col - 1, x_row - 1, 0, x_label);
+   DEBUG_INPT  yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_info    ("x_label"   , x_label);
+   rc = LOC_tab_resize     (x_label);
+   DEBUG_INPT  yLOG_value   ("resize"    , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT  yLOG_value   ("col_max"   , LOC_col_max (x_tab));
+   DEBUG_INPT  yLOG_value   ("row_max"   , LOC_row_max (x_tab));
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+INPT_col             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -11;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_size      =    0;
+   int         x_count     =    0;
+   int         z           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(check version)------------------*/
+   DEBUG_INPT   yLOG_char    ("version"   , n);
+   --rce;  if (n != 'B') {
+      DEBUG_INPT   yLOG_note    ("illegal version");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check tab)----------------------*/
+   x_tab   = atoi (a);
+   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
+   rc = LOC_tab_valid (x_tab);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check col)----------------------*/
+   x_col   = atoi (b);
+   DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
+   rc = LOC_tab_valid (x_col);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update size)--------------*/
+   x_size  = atoi (c);
+   x_count = atoi (d);
+   if (x_count == 0)  x_count = 1;
+   for (z = 0; z < x_count; ++z) {
+      rc = LOC_col_widen      (x_tab, x_col + z, x_size);
+      DEBUG_INPT  yLOG_value   ("widen"     , rc);
+      --rce;  if (rc < 0) {
+         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+INPT_row             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -11;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_row       =    0;
+   int         x_size      =    0;
+   int         x_count     =    0;
+   int         z           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(check version)------------------*/
+   DEBUG_INPT   yLOG_char    ("version"   , n);
+   --rce;  if (n != 'B') {
+      DEBUG_INPT   yLOG_note    ("illegal version");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check tab)----------------------*/
+   x_tab   = atoi (a);
+   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
+   rc = LOC_tab_valid (x_tab);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check col)----------------------*/
+   x_row   = atoi (b);
+   DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
+   rc = LOC_tab_valid (x_row);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update size)--------------*/
+   x_size  = atoi (c);
+   x_count = atoi (d);
+   if (x_count == 0)  x_count = 1;
+   for (z = 0; z < x_count; ++z) {
+      rc = LOC_row_heighten   (x_tab, x_row + z, x_size);
+      DEBUG_INPT  yLOG_value   ("heighten"  , rc);
+      --rce;  if (rc < 0) {
+         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
+OUTP_row              (void)
+{
+   /*> /+---(locals)-----------+-----------+-+/                                                                                                                       <* 
+    *> char        i           =    0;                                                                                                                                <* 
+    *> char        c           =    0;                                                                                                                                <* 
+    *> /+---(find marked entries)------------+/                                                                                                                       <* 
+    *> for (i = 1; i < s_nmark; ++i) {                                                                                                                                <* 
+    *>    strlcpy (myVIKEYS.f_recd, "", LEN_RECD);                                                                                                                    <* 
+    *>    if (s_mark_info [i].source == MARK_NONE)  continue;                                                                                                         <* 
+    *>    yVIKEYS_file_write (UMOD_MARK, &(S_MARK_LIST [i]), &s_mark_info [i].x_pos, &s_mark_info [i].y_pos, &s_mark_info [i].z_pos, NULL, NULL, NULL, NULL, NULL);   <* 
+    *>    ++c;                                                                                                                                                        <* 
+    *> }                                                                                                                                                              <* 
+    *> /+---(complete)-----------------------+/                                                                                                                       <* 
+    *> return c;                                                                                                                                                      <*/
+}
+
 
 
 /*====================------------------------------------====================*/
 /*===----                    reading and writing cells                 ----===*/
 /*====================------------------------------------====================*/
 PRIV void  o___CELLS___________o () { return; }
-
-
-/* cell records are allowed to evolve separately from other input types as the
- * need arises.  as such, they have their own versioning and format.
- *
- * D) cell        tab#  ver  ---lvl/reg---  -seq-  --loc--  t-f-d-a-m  ---source--------------
- *    cell           0  -D-  ---3              21  0e4      f ? 0 < -  =now()
- *
- */
-
-char         /*-> tbd --------------------------------[ ------ [ge.F75.3A6.86]*/ /*-[01.0000.013.H]-*/ /*-[--.---.---.--]-*/
-INPT_cell_OLD      (char *a_label, char *a_format, char *a_source)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   int         rc          =    0;
-   int         x_tab       =    0;
-   int         x_col       =    0;
-   int         x_row       =    0;
-   char        x_string    [LEN_LABEL] = "?0?";
-   tCELL      *x_new       = NULL;
-   char        x_format    =  '?';
-   char        x_decs      =  '0';
-   char        x_align     =  '?';
-   /*---(header)-------------------------*/
-   DEBUG_INPT  yLOG_enter   (__FUNCTION__);
-   /*---(defence)------------------*/
-   DEBUG_INPT  yLOG_point   ("a_source"  , a_source);
-   --rce;  if (a_source == NULL)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(parse address)------------*/
-   DEBUG_INPT  yLOG_point   ("a_label"   , a_label);
-   --rce;  if (a_label  == NULL)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   rc = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
-   DEBUG_INPT  yLOG_value   ("parse"     , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_INPT  yLOG_info    ("a_label"   , a_label);
-   DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
-   DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
-   DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
-   /*---(expand everything as needed)----*/
-   rc = LOC_legal (x_tab, x_col, x_row, CELL_GROW);
-   DEBUG_INPT  yLOG_value   ("legal"     , rc);
-   --rce;  if (rc < 0)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(fix format)---------------------*/
-   if (a_format == NULL) {
-      strcpy  (x_string, "??0");
-   } else if (strlen (a_format) == 9) {
-      x_format  = CELL_format_valid   (a_format [2]);
-      DEBUG_INPT  yLOG_char    ("x_format"  , x_format);
-      x_decs    = CELL_decimals_valid (a_format [4]);
-      DEBUG_INPT  yLOG_char    ("x_decs"    , x_decs);
-      x_align   = CELL_align_valid    (a_format [6]);
-      DEBUG_INPT  yLOG_char    ("x_align"   , x_align);
-      sprintf (x_string, "%c%c%c", x_format, x_align, x_decs);
-   } else {
-      strcpy  (x_string, "??0");
-   }
-   DEBUG_INPT  yLOG_info    ("x_string"  , x_string);
-   /*---(update)-------------------------*/
-   DEBUG_INPT  yLOG_info    ("a_source"  , a_source);
-   x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, a_source, x_string);
-   DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
-   --rce;  if (x_new == NULL)  {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(complete)-----------------*/
-   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-/*> char         /+-> write a single cell to a file ------[ leaf   [ge.630.514.50]+/ /+-[02.0000.124.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> OUTP_cell          (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr)                                       <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         = -10;                                                                                              <* 
- *>    /+---(defenses)-----------------------+/                                                                                    <* 
- *>    --rce;  if (a_type  == NULL)   return rce;                                                                                  <* 
- *>    --rce;  if (a_level == NULL)   return rce;                                                                                  <* 
- *>    --rce;  if (a_curr  == NULL)   return rce;                                                                                  <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    if ((a_seq % 5) == 0 && a_file != NULL) {                                                                                   <* 
- *>       fprintf (a_file, "#---------  ver  ---lvl/reg--  -seq-  ---loc-- ");                                                 <* 
- *>       fprintf (a_file, " t-f-d-a-m  ---source--------------------------------------\n");                                     <* 
- *>    }                                                                                                                           <* 
- *>    /+---(build record)-------------------+/                                                                                    <* 
- *>    sprintf (my.f_recd, "%-10.10s  -D-  %-12.12s  %5d  %-8.8s  %c %c %c %c %c  %s",                                       <* 
- *>          a_type, a_level, a_seq,                                                                                               <* 
- *>          a_curr->label,                                                                                                        <* 
- *>          a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n,                                                                <* 
- *>          a_curr->s);                                                                                                           <* 
- *>    /+---(write entry)--------------------+/                                                                                    <* 
- *>    if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);                                                                   <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> write file dependent cells ---------[ ------ [gz.420.411.51]+/ /+-[00.0000.104.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> OUTP_cell_dep      (FILE *a_file, int a_seq, int a_level, tCELL *a_curr)                                                       <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        x_pre       [50]        = "-           ";                                                                       <* 
- *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    if (a_curr    == NULL)        return;     /+ no cell                       +/                                               <* 
- *>    if (a_curr->s == NULL)        return;     /+ nothing to write              +/                                               <* 
- *>    if (a_curr->t == '-')         return;     /+ don't write, recreate on read +/                                               <* 
- *>    /+---(prepare)------------------------+/                                                                                    <* 
- *>    if (a_level <  10)   sprintf (x_pre, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");                   <* 
- *>    else                 sprintf (x_pre, "            +");                                                                      <* 
- *>    /+---(print)--------------------------+/                                                                                    <* 
- *>    OUTP_cell (a_file, "cell_dep", a_seq, x_pre, a_curr);                                                                       <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    fflush (a_file);                                                                                                            <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> write file independent cells -------[ ------ [ge.9A0.86#.I4]+/ /+-[02.0000.01#.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> OUTP_cell_free     (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow)         <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         x           = 0;             /+ iterator -- columns            +/                                               <* 
- *>    int         y           = 0;             /+ iterator -- row                +/                                               <* 
- *>    char        rc          = 0;             /+ generic return code            +/                                               <* 
- *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
- *>    char        x_label     [20];            /+ holder for cell address        +/                                               <* 
- *>    tCELL      *x_curr      = NULL;                                                                                             <* 
- *>    /+---(defenses)-----------------------+/                                                                                    <* 
- *>    --rce;  if (a_file == NULL)                        return rce;                                                              <* 
- *>    --rce;  if (*a_seq <  0)                           return rce;                                                              <* 
- *>    --rce;  if (a_tab  <  0)                           return rce;                                                              <* 
- *>    --rce;  if (a_tab  >= MAX_TABS)                    return rce;                                                              <* 
- *>    --rce;  if (a_bcol <  0)                           return rce;                                                              <* 
- *>    --rce;  if (a_bcol >= LOC_col_max (a_tab))         return rce;                                                              <* 
- *>    --rce;  if (a_ecol <  a_bcol)                      return rce;                                                              <* 
- *>    --rce;  if (a_ecol <  0)                           return rce;                                                              <* 
- *>    --rce;  if (a_ecol >= LOC_col_max (a_tab))         return rce;                                                              <* 
- *>    --rce;  if (a_brow <  0)                           return rce;                                                              <* 
- *>    --rce;  if (a_brow >= LOC_row_max (a_tab))         return rce;                                                              <* 
- *>    --rce;  if (a_erow <  a_brow)                      return rce;                                                              <* 
- *>    --rce;  if (a_erow <  0)                           return rce;                                                              <* 
- *>    --rce;  if (a_erow >= LOC_row_max (a_tab))         return rce;                                                              <* 
- *>    /+---(cells)--------------------------+/                                                                                    <* 
- *>    for (x = a_bcol; x <= a_ecol; ++x) {                                                                                        <* 
- *>       for (y = a_brow; y <= a_erow; ++y) {                                                                                     <* 
- *>          x_curr = LOC_cell_at_loc (a_tab, x, y);                                                                               <* 
- *>          if (x_curr    == NULL)                       continue;                                                                <* 
- *>          if (x_curr->s == NULL)                       continue;                                                                <* 
- *>          if (x_curr->t == CTYPE_BLANK)                continue;                                                                <* 
- *>          if (x_curr->u == a_stamp)                    continue;                                                                <* 
- *>          OUTP_cell (a_file, "cell_free", *a_seq, "", x_curr);                                                                  <* 
- *>          ++(*a_seq);                                                                                                           <* 
- *>       }                                                                                                                        <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    fflush (a_file);                                                                                                            <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-
-
-
-
 
 static int s_stamp     = 0;
 
@@ -1062,6 +1084,7 @@ OUTP_cell          (char a_type, int a_seq, int a_level, tCELL *a_curr)
    char        rce         = -10;
    char        x_format    [LEN_LABEL] = "";
    char        x_level     [LEN_LABEL] = "";
+   char        t           [LEN_RECD]  = "";
    /*---(header)-------------------------*/
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
@@ -1077,7 +1100,9 @@ OUTP_cell          (char a_type, int a_seq, int a_level, tCELL *a_curr)
    /*---(format)-------------------------*/
    sprintf (x_format, "%c %c %c %c %c", a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n);
    /*---(call writer)--------------------*/
-   yVIKEYS_file_write (a_type, x_level, &a_seq, a_curr->label, x_format, a_curr->s, NULL, NULL, NULL, NULL);
+   strlcpy  (t, a_curr->s, LEN_RECD);
+   strldchg (t, G_KEY_SPACE, G_CHAR_SPACE, LEN_RECD);
+   yVIKEYS_file_write (a_type, x_level, &a_seq, a_curr->label, x_format, t, NULL, NULL, NULL, NULL);
    /*---(complete)-----------------------*/
    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1188,6 +1213,7 @@ INPT_cell            (char n, char *a, char *b, char *c, char *d, char *e, char 
    DEBUG_INPT  yLOG_info    ("x_string"  , x_string);
    /*---(update)-------------------------*/
    DEBUG_INPT  yLOG_info    ("source"    , e);
+   strldchg (e, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
    x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, e, x_string);
    DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL)  {
@@ -1431,42 +1457,6 @@ static void   o___READ____________o (void) { return; }
 /*====================------------------------------------====================*/
 PRIV void  o___WRITE___________o () { return; }
 
-/*> char         /+-> write file header ------------------[ leaf   [ge.850.154.20]+/ /+-[03.0000.01#.!]-+/ /+-[--.---.---.--]-+/                       <* 
- *> OUTP_header        (FILE *a_file)                                                                                                                  <* 
- *> {                                                                                                                                                  <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                                        <* 
- *>    int         i           = 0;             /+ iterator -- tab                +/                                                                   <* 
- *>    char        rc          = 0;             /+ generic return code            +/                                                                   <* 
- *>    char        rce         = -10;           /+ return code for errors         +/                                                                   <* 
- *>    char        x_temp      [100];                                                                                                                  <* 
- *>    time_t      x_time;                                                                                                                             <* 
- *>    /+---(defenses)-----------------------+/                                                                                                        <* 
- *>    --rce;  if (a_file == NULL)                   return rce;                                                                                       <* 
- *>    /+---(introduction)---------------------+/                                                                                                      <* 
- *>    fprintf (a_file, "#!/usr/local/bin/gyges\n");                                                                                                   <* 
- *>    fprintf (a_file, "#   generated by the heatherly spreadsheet tool gyges-hekatonkheires (hundred-handed)\n");                                    <* 
- *>    /+---(write header)---------------------+/                                                                                                      <* 
- *>    fprintf (a_file, "\n\n\n");                                                                                                                     <* 
- *>    fprintf (a_file, "#===[[ GENERAL ]]====================================================================================================#\n");   <* 
- *>    fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);                           <* 
- *>    /+---(format identifiers)---------------+/                                                                                                      <* 
- *>    fprintf (a_file, "gyges      %c %5s %c %-60.60s %c\n", 31, VER_NUM, 31, VER_TXT                      , 31);                                     <* 
- *>    /+---(timestamp)------------------------+/                                                                                                      <* 
- *>    x_time = time(NULL);                                                                                                                            <* 
- *>    strftime (x_temp, 100, "%Y.%m.%d.%H.%M.%S", localtime(&x_time));                                                                                <* 
- *>    fprintf (a_file, "timestamp  %c %5s %c %-60.60s %c\n", 31, "-----", 31, x_temp                       , 31);                                     <* 
- *>    /+---(version)------------------------+/                                                                                                        <* 
- *>    if (ver_ctrl == 'y') {                                                                                                                          <* 
- *>       fprintf (a_file, "versioned  %c %5s %c %-60.60s %c\n",                                                                                       <* 
- *>             31, ver_num, 31, ver_txt, 31);                                                                                                         <* 
- *>    }                                                                                                                                               <* 
- *>    /+---(finish)-------------------------+/                                                                                                        <* 
- *>    fprintf (a_file, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);                           <* 
- *>    fprintf (a_file, "\n\n\n");                                                                                                                     <* 
- *>    fflush  (a_file);                                                                                                                               <* 
- *>    /+---(complete)-----------------------+/                                                                                                        <* 
- *>    return 0;                                                                                                                                       <* 
- *> }                                                                                                                                                  <*/
 
 /*> char         /+-> tbd --------------------------------[ ------ [ge.C71.093.38]+/ /+-[01.0000.11#.!]-+/ /+-[--.---.---.--]-+/                  <* 
  *> FILE_write         (void)                                                                                                                     <* 

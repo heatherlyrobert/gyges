@@ -102,16 +102,20 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
-   yURG_name   ("prog", YURG_ON);
+   /*> yURG_name   ("prog", YURG_ON);                                                 <*/
    yVIKEYS_init         ();
-   yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT);
+   yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
+   yVIKEYS_file_add (FILE_DEPCEL , OUTP_cell_dep , INPT_cell);
+   yVIKEYS_file_add (FILE_FREECEL, OUTP_cell_free, INPT_cell);
+   yVIKEYS_file_add (FILE_TABS   , OUTP_tab      , INPT_tab );
+   yVIKEYS_file_add (FILE_COLS   , OUTP_col      , INPT_col );
+   yVIKEYS_file_add (FILE_ROWS   , OUTP_row      , INPT_row );
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    yVIKEYS_src_config   (CELL_saver);
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
-   /*> PROG_layout_init    ();                                                        <*/
    CALC_init           ();
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
@@ -222,10 +226,6 @@ PROG_final         (void)
    yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
    yVIKEYS_map_refresh ();
    yVIKEYS_mode_formatter    (SMOD_format);
-   /*---(read/write)---------------------*/
-   yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT);
-   yVIKEYS_file_add (FILE_DEPCEL , OUTP_cell_dep , INPT_cell);
-   yVIKEYS_file_add (FILE_FREECEL, OUTP_cell_free, INPT_cell);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -676,17 +676,18 @@ PROG__unitquiet     (void)
    yURG_urgs   (1, x_args);
    PROG_args   (1, x_args);
    PROG_begin  ();
+   PROG_begin  ();
    return 0;
 }
 
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unitloud      (void)
 {
-   char       *x_args [2]  = { "gyges_unit", "@@kitchen"    };
-   yURG_logger (2, x_args);
-   PROG_init   (2, x_args);
-   yURG_urgs   (2, x_args);
-   PROG_args   (2, x_args);
+   char       *x_args [3]  = { "gyges_unit", "@@kitchen", "@@LOCS"    };
+   yURG_logger (3, x_args);
+   PROG_init   (3, x_args);
+   yURG_urgs   (3, x_args);
+   PROG_args   (3, x_args);
    PROG_begin  ();
    return 0;
 }
