@@ -107,7 +107,7 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
    yVIKEYS_file_add (FILE_DEPCEL , OUTP_cell_dep , INPT_cell);
    yVIKEYS_file_add (FILE_FREECEL, OUTP_cell_free, INPT_cell);
-   yVIKEYS_file_add (FILE_TABS   , OUTP_tab      , INPT_tab );
+   yVIKEYS_file_add (FILE_TABS   , TABS_writer   , TABS_reader);
    yVIKEYS_file_add (FILE_COLS   , OUTP_col      , INPT_col );
    yVIKEYS_file_add (FILE_ROWS   , OUTP_row      , INPT_row );
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);

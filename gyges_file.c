@@ -661,94 +661,94 @@ static void   o___TABS____________o (void) { return; }
 
 
 
-char         /*-> write file tab information ---------[ ------ [ge.960.195.59]*/ /*-[01.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-OUTP_tab             (short a_tab)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;          /* generic return code            */
-   char        rce         =  -10;          /* return code for errors         */
-   char        x_write     =  '-';
-   short       x_cols      =    0;
-   short       x_rows      =    0;
-   char        x_addr      [25]        = "";
-   char        x_name      [25]        = "";
-   char        x_default   [25]        = "";
-   char        x_type      =  '-';
-   /*---(prepare)------------------------*/
-   sprintf (my.f_recd, "");
-   /*---(defense)------------------------*/
-   rc = LOC_tab_valid (a_tab);
-   --rce;  if (rc      <  0)                     return rce;
-   x_type = LOC_tab_type (a_tab);
-   /*---(gather size)--------------------*/
-   x_cols = LOC_col_max (a_tab);
-   /*> printf ("x_cols = %4d, default = %4d\n", x_cols, LOC_col_defmax());            <*/
-   if (x_cols != LOC_col_defmax())       x_write = 'y';
-   x_rows = LOC_row_max (a_tab);
-   /*> printf ("x_rows = %4d, default = %4d\n", x_rows, LOC_row_defmax());            <*/
-   if (x_rows != LOC_row_defmax())       x_write = 'y';
-   LOC_ref (a_tab, x_cols - 1, x_rows - 1, 0, x_addr);
-   /*---(gather name)--------------------*/
-   LOC_tab_name    (a_tab, x_name);
-   LOC_tab_defname (a_tab, x_default);
-   /*> printf ("name   = %-10.10s, default = %-10.10s\n", x_name, x_default);         <*/
-   if (strcmp (x_default, x_name) != 0)  x_write = 'y';
-   /*---(build record)-------------------*/
-   if (x_write == 'y') {
-      sprintf (my.f_recd, "tab         -H-  %-8s  %-12.12s  %c ", x_addr, x_name, x_type);
-      return 1;
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> write file tab information ---------[ ------ [ge.960.195.59]+/ /+-[01.0000.01#.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_tab             (short a_tab)                                                                                             <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rc          =    0;          /+ generic return code            +/                                               <* 
+ *>    char        rce         =  -10;          /+ return code for errors         +/                                               <* 
+ *>    char        x_write     =  '-';                                                                                             <* 
+ *>    short       x_cols      =    0;                                                                                             <* 
+ *>    short       x_rows      =    0;                                                                                             <* 
+ *>    char        x_addr      [25]        = "";                                                                                   <* 
+ *>    char        x_name      [25]        = "";                                                                                   <* 
+ *>    char        x_default   [25]        = "";                                                                                   <* 
+ *>    char        x_type      =  '-';                                                                                             <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    sprintf (my.f_recd, "");                                                                                                    <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    rc = LOC_tab_valid (a_tab);                                                                                                 <* 
+ *>    --rce;  if (rc      <  0)                     return rce;                                                                   <* 
+ *>    x_type = LOC_tab_type (a_tab);                                                                                              <* 
+ *>    /+---(gather size)--------------------+/                                                                                    <* 
+ *>    x_cols = LOC_col_max (a_tab);                                                                                               <* 
+ *>    /+> printf ("x_cols = %4d, default = %4d\n", x_cols, LOC_col_defmax());            <+/                                      <* 
+ *>    if (x_cols != LOC_col_defmax())       x_write = 'y';                                                                        <* 
+ *>    x_rows = LOC_row_max (a_tab);                                                                                               <* 
+ *>    /+> printf ("x_rows = %4d, default = %4d\n", x_rows, LOC_row_defmax());            <+/                                      <* 
+ *>    if (x_rows != LOC_row_defmax())       x_write = 'y';                                                                        <* 
+ *>    LOC_ref (a_tab, x_cols - 1, x_rows - 1, 0, x_addr);                                                                         <* 
+ *>    /+---(gather name)--------------------+/                                                                                    <* 
+ *>    LOC_tab_name    (a_tab, x_name);                                                                                            <* 
+ *>    LOC_tab_defname (a_tab, x_default);                                                                                         <* 
+ *>    /+> printf ("name   = %-10.10s, default = %-10.10s\n", x_name, x_default);         <+/                                      <* 
+ *>    if (strcmp (x_default, x_name) != 0)  x_write = 'y';                                                                        <* 
+ *>    /+---(build record)-------------------+/                                                                                    <* 
+ *>    if (x_write == 'y') {                                                                                                       <* 
+ *>       sprintf (my.f_recd, "tab         -H-  %-8s  %-12.12s  %c ", x_addr, x_name, x_type);                                <* 
+ *>       return 1;                                                                                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> write file tab information ---------[ leaf   [ge.320.113.10]*/ /*-[00.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_tab_head        (FILE *a_file)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   /*---(header)-------------------------*/
-   fprintf (a_file, "#===[[ TAB LAYOUT ]]=================================================================================================#\n");
-   fprintf (a_file, "#---------  ver  --max---  ---name----- \n");
-   fflush  (a_file);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> write file tab information ---------[ leaf   [ge.320.113.10]+/ /+-[00.0000.01#.!]-+/ /+-[--.---.---.--]-+/                       <* 
+ *> OUTP_tab_head        (FILE *a_file)                                                                                                                <* 
+ *> {                                                                                                                                                  <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                        <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                                                   <* 
+ *>    /+---(defenses)-----------------------+/                                                                                                        <* 
+ *>    --rce;  if (a_file == NULL)                   return rce;                                                                                       <* 
+ *>    /+---(header)-------------------------+/                                                                                                        <* 
+ *>    fprintf (a_file, "#===[[ TAB LAYOUT ]]=================================================================================================#\n");   <* 
+ *>    fprintf (a_file, "#---------  ver  --max---  ---name----- \n");                                                                             <* 
+ *>    fflush  (a_file);                                                                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                                                        <* 
+ *>    return 0;                                                                                                                                       <* 
+ *> }                                                                                                                                                  <*/
 
-char         /*-> write file tab information ---------[ leaf   [ge.420.213.30]*/ /*-[00.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_tab_foot        (FILE *a_file, int a_count)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   /*---(header)-------------------------*/
-   if (a_count == 0)  fprintf (a_file, "# no special or unique tab information\n");
-   else               fprintf (a_file, "#---------  ver  --max---  ---name----- \n");
-   fprintf (a_file, "\n\n\n");
-   fflush  (a_file);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> write file tab information ---------[ leaf   [ge.420.213.30]+/ /+-[00.0000.01#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_tab_foot        (FILE *a_file, int a_count)                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    --rce;  if (a_file == NULL)                   return rce;                                                                   <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    if (a_count == 0)  fprintf (a_file, "# no special or unique tab information\n");                                            <* 
+ *>    else               fprintf (a_file, "#---------  ver  --max---  ---name----- \n");                                      <* 
+ *>    fprintf (a_file, "\n\n\n");                                                                                                 <* 
+ *>    fflush  (a_file);                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-int          /*-> write file tab information ---------[ ------ [gn.430.131.23]*/ /*-[01.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_tabs            (FILE *a_file)
-{
-   int i = 0;
-   int c = 0;
-   char rc = 0;
-   rc = OUTP_tab_head  (a_file);
-   for (i = 0; i <  MAX_TABS; ++i) {
-      rc = OUTP_tab    (i);
-      if (rc <= 0)   continue;
-      if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
-      ++c;
-   }
-   rc = OUTP_tab_foot  (a_file, c);
-   return c;
-}
+/*> int          /+-> write file tab information ---------[ ------ [gn.430.131.23]+/ /+-[01.0000.01#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_tabs            (FILE *a_file)                                                                                            <* 
+ *> {                                                                                                                              <* 
+ *>    int i = 0;                                                                                                                  <* 
+ *>    int c = 0;                                                                                                                  <* 
+ *>    char rc = 0;                                                                                                                <* 
+ *>    rc = OUTP_tab_head  (a_file);                                                                                               <* 
+ *>    for (i = 0; i <  MAX_TABS; ++i) {                                                                                           <* 
+ *>       rc = OUTP_tab    (i);                                                                                                    <* 
+ *>       if (rc <= 0)   continue;                                                                                                 <* 
+ *>       if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);                                                                <* 
+ *>       ++c;                                                                                                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    rc = OUTP_tab_foot  (a_file, c);                                                                                            <* 
+ *>    return c;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -876,9 +876,8 @@ OUTP_cols            (FILE *a_file)
    return c;
 }
 
-
 char
-INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -11;
@@ -939,6 +938,47 @@ INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char 
    /*---(complete)-----------------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
+}
+
+char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
+TABS_writer           (char  a_abbr)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   int         i           =    0;
+   char        c           =    0;
+   int         x_beg       =  '-';
+   int         x_end       =  '-';
+   char        x_type      =  '-';
+   int         x_cols      =    0;
+   int         x_rows      =    0;
+   char        x_name      [LEN_LABEL];
+   int         x_zero      =    0;
+   int         x_wide      =    0;
+   int         x_tall      =    0;
+   /*---(prepare)----------------s-------*/
+   yVIKEYS_unit_reset ();
+   if (a_abbr == 0) {
+      x_beg = 0;
+      x_end = MAX_TABS - 1;
+   } else {
+      x_beg = x_end = LOC_tab_index (a_abbr);
+      if (x_beg < 0)  return rce;
+   }
+   /*---(find marked entries)------------*/
+   for (i = x_beg; i <= x_end; ++i) {
+      if (LOC_tab_used (i) <= 0)  continue;
+      x_type = LOC_tab_type (i);
+      x_cols = LOC_col_max  (i);
+      x_rows = LOC_row_max  (i);
+      x_wide = LOC_tab_colwide (i);
+      x_tall = LOC_tab_rowtall (i);
+      LOC_tab_name    (i, x_name);
+      yVIKEYS_file_write (FILE_TABS, &i, x_name, &x_zero, &x_cols, &x_zero, &x_rows, &x_wide, &x_tall, &x_type);
+      ++c;
+   }
+   /*---(complete)-----------------------*/
+   return c;
 }
 
 char

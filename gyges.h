@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0j"
-#define     VER_TXT   "tab reading unit test is complete, including default width/height"
+#define     VER_NUM   "3.0k"
+#define     VER_TXT   "tab writing unit test is complete, including default width/height"
 
 
 
@@ -1306,6 +1306,8 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col, short a_row, char a_abs, char *a_label);
 /*---(tabs)----------------------*/
 char        LOC_tab_valid        /* petal  1----- */  (short a_tab);
+char        LOC_tab_index        (char  a_abbr);
+short       LOC_tab_used         (short a_tab);
 char        LOC_tab_type         (short a_tab);
 char        LOC_tab_retype       (short a_tab, char a_type);
 char        LOC_tab_defname      /* petal  2----- */  (short a_tab, char *a_name);
@@ -1315,6 +1317,8 @@ char        LOC_tab_rename_curr  /* stigma 1----- */  (char *a_name);
 char        LOC_tab_size         /* petal  2----- */  (short a_tab, char *a_max);
 char        LOC_tab_resize       /* stigma 1----- */  (char *a_max);
 char        LOC_tab_resize_curr  /* stigma 1----- */  (char *a_max);
+char        LOC_tab_colwide      (short a_tab);
+char        LOC_tab_rowtall      (short a_tab);
 char        LOC_tab_first        (void);
 char        LOC_tab_prev         (void);
 char        LOC_tab_next         (void);
@@ -1458,17 +1462,14 @@ char      FILE_rename          (char  *a_name);
 
 
 /*---(tabs)------------------*/
-char      OUTP_tab             (short  a_tab  );
-char      OUTP_tab_head        (FILE  *a_file );
-char      OUTP_tab_foot        (FILE  *a_file , int   a_count);
-int       OUTP_tabs            (FILE  *a_file );
+char        TABS_writer           (char  a_abbr);
 /*---(columns)---------------*/
 char      OUTP_col             (short  a_tab  , short a_col);
 char      OUTP_col_head        (FILE  *a_file );
 char      OUTP_col_foot        (FILE  *a_file , int   a_count);
 int       OUTP_cols            (FILE  *a_file );
 /*---(file)------------------*/
-char      INPT_tab             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char      TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
 char      INPT_col             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
 char      INPT_row             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
 char      OUTP_row             (void);

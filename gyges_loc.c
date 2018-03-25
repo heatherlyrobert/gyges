@@ -1274,6 +1274,24 @@ LOC_tab_valid        (short a_tab)
    return 0;
 }
 
+char         /*-> tbd --------------------------------[ leaf   [ge.320.113.20]*/ /*-[00.0000.184.I]-*/ /*-[--.---.---.--]-*/
+LOC_tab_index        (char  a_abbr)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   char       *p           = NULL;
+   int         x_index     =    0;
+   /*---(defense)------------------------*/
+   --rce;  if (a_abbr == 0   )  return rce;
+   p = strchr (x_valid, a_abbr);
+   --rce;  if (p      == NULL)  return rce;
+   /*---(convert to index)---------------*/
+   x_index = (int) (p - x_valid);
+   /*---(complete)-----------------------*/
+   return x_index;
+}
+
 char         /*-> tbd --------------------------------[ ------ [ge.220.122.11]*/ /*-[00.0000.10#.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_type         (short a_tab)
 {
@@ -1282,6 +1300,14 @@ LOC_tab_type         (short a_tab)
    rc = LOC_tab_valid (a_tab);
    if (rc < 0) return rc;
    return s_tabs [a_tab].type;
+}
+
+short        /*-> indicate if tab is used ------------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
+LOC_tab_used         (short a_tab)
+{
+   char rc = LOC_tab_valid (a_tab);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].c;
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
@@ -1483,6 +1509,9 @@ LOC_tab_resize       (char *a_max)
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char  LOC_tab_colwide  (short a_tab) { return s_tabs [a_tab].defwide; }
+char  LOC_tab_rowtall  (short a_tab) { return s_tabs [a_tab].deftall; }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 LOC_tab_line       (char a_tab, char *a_list)
@@ -1930,7 +1959,7 @@ LOC__unit          (char *a_question, char *a_label)
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "LOC              : question not understood");
    if      (strcmp(a_question, "tab_info"      ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%1d) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_tab, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
+      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", a_label [0], s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
    }
    else if (strcmp(a_question, "cell_size"     ) == 0) {
       snprintf(unit_answer, LEN_UNIT, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
