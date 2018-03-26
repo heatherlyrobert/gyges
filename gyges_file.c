@@ -797,84 +797,84 @@ static void   o___COLUMNS_________o (void) { return; }
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
-char         /*-> write file col information ---------[ ------ [ge.640.266.34]*/ /*-[00.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-OUTP_col             (short a_tab, short a_col)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;          /* generic return code            */
-   char        rce         =  -10;          /* return code for errors         */
-   char        x_write     =  '-';
-   short       x_cols      =    0;
-   short       x_size      =    0;
-   char        x_addr      [25]        = "";
-   /*---(prepare)------------------------*/
-   sprintf (my.f_recd, "");
-   /*---(defense)------------------------*/
-   rc = LOC_col_valid (a_tab, a_col);
-   --rce;  if (rc      <  0)                     return rce;
-   /*---(gather size)--------------------*/
-   x_cols = LOC_col_max   (a_tab);
-   --rce;  if (a_col > x_cols)                   return 0;
-   x_size = LOC_col_width (a_tab, a_col);
-   --rce;  if (x_size == DEF_WIDTH)              return 0;
-   /*---(create a label)-----------------*/
-   LOC_ref (a_tab, a_col, 0, 0, x_addr);
-   /*---(build record)-------------------*/
-   sprintf (my.f_recd, "width       -A-  %-8s  %4d ", x_addr, x_size);
-   /*---(complete)-----------------------*/
-   return 1;
-}
+/*> char         /+-> write file col information ---------[ ------ [ge.640.266.34]+/ /+-[00.0000.01#.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_col             (short a_tab, short a_col)                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rc          =    0;          /+ generic return code            +/                                               <* 
+ *>    char        rce         =  -10;          /+ return code for errors         +/                                               <* 
+ *>    char        x_write     =  '-';                                                                                             <* 
+ *>    short       x_cols      =    0;                                                                                             <* 
+ *>    short       x_size      =    0;                                                                                             <* 
+ *>    char        x_addr      [25]        = "";                                                                                   <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    sprintf (my.f_recd, "");                                                                                                    <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    rc = LOC_col_valid (a_tab, a_col);                                                                                          <* 
+ *>    --rce;  if (rc      <  0)                     return rce;                                                                   <* 
+ *>    /+---(gather size)--------------------+/                                                                                    <* 
+ *>    x_cols = LOC_col_max   (a_tab);                                                                                             <* 
+ *>    --rce;  if (a_col > x_cols)                   return 0;                                                                     <* 
+ *>    x_size = LOC_col_width (a_tab, a_col);                                                                                      <* 
+ *>    --rce;  if (x_size == DEF_WIDTH)              return 0;                                                                     <* 
+ *>    /+---(create a label)-----------------+/                                                                                    <* 
+ *>    LOC_ref (a_tab, a_col, 0, 0, x_addr);                                                                                       <* 
+ *>    /+---(build record)-------------------+/                                                                                    <* 
+ *>    sprintf (my.f_recd, "width       -A-  %-8s  %4d ", x_addr, x_size);                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 1;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> write file col header --------------[ leaf   [ge.320.113.10]*/ /*-[00.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_col_head        (FILE *a_file)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   /*---(header)-------------------------*/
-   fprintf (a_file, "#===[[ COLUMN WIDTHS ]]==============================================================================================#\n");
-   fprintf (a_file, "#---------  ver  ---loc--  size \n");
-   fflush  (a_file);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> write file col header --------------[ leaf   [ge.320.113.10]+/ /+-[00.0000.01#.!]-+/ /+-[--.---.---.--]-+/                       <* 
+ *> OUTP_col_head        (FILE *a_file)                                                                                                                <* 
+ *> {                                                                                                                                                  <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                        <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                                                   <* 
+ *>    /+---(defenses)-----------------------+/                                                                                                        <* 
+ *>    --rce;  if (a_file == NULL)                   return rce;                                                                                       <* 
+ *>    /+---(header)-------------------------+/                                                                                                        <* 
+ *>    fprintf (a_file, "#===[[ COLUMN WIDTHS ]]==============================================================================================#\n");   <* 
+ *>    fprintf (a_file, "#---------  ver  ---loc--  size \n");                                                                                     <* 
+ *>    fflush  (a_file);                                                                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                                                        <* 
+ *>    return 0;                                                                                                                                       <* 
+ *> }                                                                                                                                                  <*/
 
-char         /*-> write file col footer --------------[ leaf   [ge.420.213.20]*/ /*-[00.0000.01#.!]-*/ /*-[--.---.---.--]-*/
-OUTP_col_foot        (FILE *a_file, int a_count)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   /*---(defenses)-----------------------*/
-   --rce;  if (a_file == NULL)                   return rce;
-   /*---(header)-------------------------*/
-   if (a_count == 0)  fprintf (a_file, "# no special or unique col information\n");
-   fprintf (a_file, "#---------  ver  ---loc--  size \n");
-   fprintf (a_file, "\n\n\n");
-   fflush  (a_file);
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> write file col footer --------------[ leaf   [ge.420.213.20]+/ /+-[00.0000.01#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_col_foot        (FILE *a_file, int a_count)                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
+ *>    /+---(defenses)-----------------------+/                                                                                    <* 
+ *>    --rce;  if (a_file == NULL)                   return rce;                                                                   <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    if (a_count == 0)  fprintf (a_file, "# no special or unique col information\n");                                            <* 
+ *>    fprintf (a_file, "#---------  ver  ---loc--  size \n");                                                                 <* 
+ *>    fprintf (a_file, "\n\n\n");                                                                                                 <* 
+ *>    fflush  (a_file);                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-int          /*-> write file col section -------------[ ------ [gn.440.141.23]*/ /*-[02.0000.01#.4]-*/ /*-[--.---.---.--]-*/
-OUTP_cols            (FILE *a_file)
-{
-   int i = 0;
-   int j = 0;
-   int c = 0;
-   char rc = 0;
-   rc = OUTP_col_head  (a_file);
-   for (i = 0; i < MAX_TABS; ++i) {
-      for (j = 0; j <= MAX_COLS; ++j) {
-         rc = OUTP_col    (i, j);
-         if (rc <= 0)   continue;
-         if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);
-         ++c;
-      }
-   }
-   rc = OUTP_col_foot  (a_file, c);
-   return c;
-}
+/*> int          /+-> write file col section -------------[ ------ [gn.440.141.23]+/ /+-[02.0000.01#.4]-+/ /+-[--.---.---.--]-+/   <* 
+ *> OUTP_cols            (FILE *a_file)                                                                                            <* 
+ *> {                                                                                                                              <* 
+ *>    int i = 0;                                                                                                                  <* 
+ *>    int j = 0;                                                                                                                  <* 
+ *>    int c = 0;                                                                                                                  <* 
+ *>    char rc = 0;                                                                                                                <* 
+ *>    rc = OUTP_col_head  (a_file);                                                                                               <* 
+ *>    for (i = 0; i < MAX_TABS; ++i) {                                                                                            <* 
+ *>       for (j = 0; j <= MAX_COLS; ++j) {                                                                                        <* 
+ *>          rc = OUTP_col    (i, j);                                                                                              <* 
+ *>          if (rc <= 0)   continue;                                                                                              <* 
+ *>          if (a_file != NULL)  fprintf (a_file, "%s\n", my.f_recd);                                                             <* 
+ *>          ++c;                                                                                                                  <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    rc = OUTP_col_foot  (a_file, c);                                                                                            <* 
+ *>    return c;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char
 TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
@@ -941,14 +941,15 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-TABS_writer           (char  a_abbr)
+TABS_writer           (char  a_tab)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
+   char        rc          =    0;
    int         i           =    0;
    char        c           =    0;
-   int         x_beg       =  '-';
-   int         x_end       =  '-';
+   int         x_btab      =  '-';
+   int         x_etab      =  '-';
    char        x_type      =  '-';
    int         x_cols      =    0;
    int         x_rows      =    0;
@@ -956,17 +957,18 @@ TABS_writer           (char  a_abbr)
    int         x_zero      =    0;
    int         x_wide      =    0;
    int         x_tall      =    0;
-   /*---(prepare)----------------s-------*/
+   /*---(prepare tab)--------------------*/
    yVIKEYS_unit_reset ();
-   if (a_abbr == 0) {
-      x_beg = 0;
-      x_end = MAX_TABS - 1;
+   if (a_tab == -1) {
+      x_btab = 0;
+      x_etab = MAX_TABS - 1;
    } else {
-      x_beg = x_end = LOC_tab_index (a_abbr);
-      if (x_beg < 0)  return rce;
+      rc = LOC_tab_valid (a_tab);
+      if (rc < 0)  return rce;
+      x_btab = x_etab = a_tab;
    }
    /*---(find marked entries)------------*/
-   for (i = x_beg; i <= x_end; ++i) {
+   for (i = x_btab; i <= x_etab; ++i) {
       if (LOC_tab_used (i) <= 0)  continue;
       x_type = LOC_tab_type (i);
       x_cols = LOC_col_max  (i);
@@ -980,6 +982,214 @@ TABS_writer           (char  a_abbr)
    /*---(complete)-----------------------*/
    return c;
 }
+
+char
+COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_size      =    0;
+   int         x_count     =    0;
+   int         x_cols      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(check version)------------------*/
+   DEBUG_INPT   yLOG_char    ("version"   , n);
+   --rce;  if (n != 'D') {
+      DEBUG_INPT   yLOG_note    ("illegal version");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check tab)----------------------*/
+   x_tab   = atoi (a);
+   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
+   rc = LOC_tab_valid (x_tab);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check col)----------------------*/
+   x_col   = atoi (b);
+   DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
+   rc = LOC_legal  (x_tab, x_col, 0, CELL_GROW);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update size)--------------*/
+   x_size   = atoi (c);
+   x_count  = atoi (d);
+   if (x_count == 0)  x_count = 1;
+   for (x_cols = 0; x_cols < x_count; ++x_cols) {
+      rc = LOC_col_widen (x_tab, x_col + x_cols, x_size);
+      DEBUG_INPT  yLOG_value   ("widen"     , rc);
+      --rce;  if (rc < 0) {
+         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
+DETAIL_writer           (char a_type, char a_tab, short a_cur)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        c           =    0;
+   int         n           =    0;
+   int         i           =    0;
+   int         x_btab      =  '-';
+   int         x_etab      =  '-';
+   int         j           =    0;
+   int         x_beg       =  '-';
+   int         x_end       =  '-';
+   int         x_max       =  '-';
+   int         k           =    0;
+   int         x_def       =    0;
+   int         x_size      =    0;
+   int         x_prev      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(clear output)-------------------*/
+   yVIKEYS_unit_reset ();
+   /*---(prepare tab)--------------------*/
+   DEBUG_OUTP   yLOG_value   ("a_tab"     , a_tab);
+   --rce;  if (a_tab == -1) {
+      x_btab = 0;
+      x_etab = MAX_TABS - 1;
+   } else {
+      rc = LOC_tab_valid (a_tab);
+      if (rc < 0) { 
+         DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      x_btab = x_etab = a_tab;
+   }
+   DEBUG_OUTP   yLOG_value   ("x_btab"    , x_btab);
+   DEBUG_OUTP   yLOG_value   ("x_etab"    , x_etab);
+   /*---(prepare col)--------------------*/
+   DEBUG_OUTP   yLOG_value   ("a_cur"     , a_cur);
+   --rce;  if (a_cur == -1) {
+      x_beg = 0;
+      if (a_type == 'c')  x_end = MAX_COLS - 1;
+      else                x_end = MAX_ROWS - 1;
+   } else {
+      if (a_type == 'c')  rc = LOC_col_valid (a_tab, a_cur);
+      else                rc = LOC_row_valid (a_tab, a_cur);
+      if (rc < 0) {
+         DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      x_beg = x_end = a_cur;
+   }
+   DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);
+   DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);
+   /*---(find marked entries)------------*/
+   for (i = x_btab; i <= x_etab; ++i) {
+      DEBUG_OUTP   yLOG_value   ("tab (i)"   , i);
+      if (LOC_tab_used (i) <= 0)  continue;
+      if (a_type == 'c')  x_def  = LOC_tab_colwide (i);
+      else                x_def  = LOC_tab_rowtall (i);
+      DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
+      for (j = x_beg; j <= x_end; ++j) {
+         DEBUG_OUTP   yLOG_value   ("col (j)"   , j);
+         if (LOC_col_valid (i, j) < 0)  continue;
+         if      (a_type == 'c' && j > 0)  x_prev = LOC_col_width  (i, j - 1);
+         else if (a_type == 'r' && j > 0)  x_prev = LOC_row_height (i, j - 1);
+         else                              x_prev = -1;
+         DEBUG_OUTP   yLOG_value   ("x_prev"    , x_prev);
+         if (a_type == 'c')  x_size = LOC_col_width  (i, j);
+         else                x_size = LOC_row_height (i, j);
+         DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
+         if (x_size == x_prev)  continue;
+         if (x_size == x_def )  continue;
+         n = 1;
+         if (a_type == 'c')  x_max = LOC_col_max (i) - 1;
+         else                x_max = LOC_row_max (i) - 1;
+         for (k = j + 1; k <= x_max; ++k) {
+            if (a_type == 'c' && x_size != LOC_col_width  (i, k))  break;
+            if (a_type == 'r' && x_size != LOC_row_height (i, k))  break;
+            ++n;
+         }
+         DEBUG_OUTP   yLOG_value   ("n"         , n);
+         if (a_type == 'c')  yVIKEYS_file_write (FILE_COLS, &i, &j, &x_size, &n, NULL, NULL, NULL, NULL, NULL);
+         else                yVIKEYS_file_write (FILE_ROWS, &i, &j, &x_size, &n, NULL, NULL, NULL, NULL, NULL);
+         c += n;
+         j += n - 1;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return c;
+}
+
+char
+ROWS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_row       =    0;
+   int         x_size      =    0;
+   int         x_count     =    0;
+   int         x_rows      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(check version)------------------*/
+   DEBUG_INPT   yLOG_char    ("version"   , n);
+   --rce;  if (n != 'D') {
+      DEBUG_INPT   yLOG_note    ("illegal version");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check tab)----------------------*/
+   x_tab   = atoi (a);
+   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
+   rc = LOC_tab_valid (x_tab);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check row)----------------------*/
+   x_row   = atoi (b);
+   DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
+   rc = LOC_legal  (x_tab, 0, x_row, CELL_GROW);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update size)--------------*/
+   x_size   = atoi (c);
+   x_count  = atoi (d);
+   if (x_count == 0)  x_count = 1;
+   for (x_rows = 0; x_rows < x_count; ++x_rows) {
+      rc = LOC_row_heighten (x_tab, x_row + x_rows, x_size);
+      DEBUG_INPT  yLOG_value   ("heigten"   , rc);
+      --rce;  if (rc < 0) {
+         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char TABS_writer_all (void) { return TABS_writer    (-1);          }
+char COLS_writer_all (void) { return DETAIL_writer  ('c', -1, -1); }
+char ROWS_writer_all (void) { return DETAIL_writer  ('r', -1, -1); }
 
 char
 INPT_col             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)

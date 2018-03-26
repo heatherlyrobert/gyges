@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0k"
-#define     VER_TXT   "tab writing unit test is complete, including default width/height"
+#define     VER_NUM   "3.0l"
+#define     VER_TXT   "col/row reading and writing unit test is complete"
 
 
 
@@ -1461,28 +1461,21 @@ char      FILE_bump_inc        (void);
 char      FILE_rename          (char  *a_name);
 
 
-/*---(tabs)------------------*/
-char        TABS_writer           (char  a_abbr);
-/*---(columns)---------------*/
-char      OUTP_col             (short  a_tab  , short a_col);
-char      OUTP_col_head        (FILE  *a_file );
-char      OUTP_col_foot        (FILE  *a_file , int   a_count);
-int       OUTP_cols            (FILE  *a_file );
 /*---(file)------------------*/
-char      TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
-char      INPT_col             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
-char      INPT_row             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
-char      OUTP_row             (void);
-/*---(cells)-----------------*/
-char      INPT_cell_OLD        (char *a_label, char *a_format, char *a_source);
-/*> char      OUTP_cell            (FILE *a_file, char *a_type, int a_seq, char *a_level, tCELL *a_curr);   <*/
-/*> char      OUTP_cell_dep        (FILE *a_file, int a_seq, int a_level, tCELL *a_curr);   <*/
-/*> char      OUTP_cell_free       (FILE *a_file, int *a_seq, long a_stamp, int a_tab, int a_bcol, int a_ecol, int a_brow, int a_erow);   <*/
+char        TABS_writer             (char  a_tab);
+char        DETAIL_writer           (char a_type, char a_tab, short a_cur);
+char        TABS_writer_all         (void);
+char        COLS_writer_all         (void);
+char        ROWS_writer_all         (void);
+char        OUTP_cell               (char a_type, int a_seq, int a_level, tCELL *a_curr);
+char        OUTP_cell_dep           (void);
+char        OUTP_cell_free          (void);
+char        TABS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char        COLS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char        ROWS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+char        INPT_cell               (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
 
-char        OUTP_cell            (char a_type, int a_seq, int a_level, tCELL *a_curr);
-char        OUTP_cell_dep        (void);
-char        OUTP_cell_free       (void);
-char        INPT_cell            (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+
 
 
 

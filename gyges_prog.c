@@ -102,17 +102,19 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(initialize)---------------------*/
-   /*> yURG_name   ("prog", YURG_ON);                                                 <*/
    yVIKEYS_init         ();
+   /*---(setup file)---------------------*/
    yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
-   yVIKEYS_file_add (FILE_DEPCEL , OUTP_cell_dep , INPT_cell);
-   yVIKEYS_file_add (FILE_FREECEL, OUTP_cell_free, INPT_cell);
-   yVIKEYS_file_add (FILE_TABS   , TABS_writer   , TABS_reader);
-   yVIKEYS_file_add (FILE_COLS   , OUTP_col      , INPT_col );
-   yVIKEYS_file_add (FILE_ROWS   , OUTP_row      , INPT_row );
+   yVIKEYS_file_add     (FILE_DEPCEL , OUTP_cell_dep  , INPT_cell);
+   yVIKEYS_file_add     (FILE_FREECEL, OUTP_cell_free , INPT_cell);
+   yVIKEYS_file_add     (FILE_TABS   , TABS_writer_all, TABS_reader);
+   yVIKEYS_file_add     (FILE_COLS   , COLS_writer_all, COLS_reader);
+   yVIKEYS_file_add     (FILE_ROWS   , ROWS_writer_all, ROWS_reader);
+   /*---(setup other)--------------------*/
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    yVIKEYS_src_config   (CELL_saver);
+   /*---(globals)------------------------*/
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
