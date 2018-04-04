@@ -114,6 +114,7 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    yVIKEYS_src_config   (CELL_saver);
+   yVIKEYS_regs_config  (CELL_killer, REG_copier, REG_clearer, REG_paster);
    /*---(globals)------------------------*/
    hist_active       = '-';
    nhist             =  0;
@@ -194,6 +195,9 @@ PROG_begin         (void)
    /*> yVIKEYS_repeat_init ();                                                        <*/
    /*---(prepare)------------------------*/
    DEP_init  ();
+   /*---(overall)------------------------*/
+   yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
+   yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -217,7 +221,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );
    yVIKEYS_view_option (YVIKEYS_STATUS, "visual" , CURS_status_visual  , "details of visual selection"                );
    yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );
+   /*> yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );   <*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "mark"   , CURS_status_mark    , "details of cell and location marks"         );
    yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
    yVIKEYS_view_option (YVIKEYS_STATUS, "deps"   , CURS_status_deps    , "details of current cell dependencies"       );
@@ -225,7 +229,6 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_map_config  (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
    yVIKEYS_map_refresh ();
    yVIKEYS_mode_formatter    (SMOD_format);
    /*---(complete)-----------------------*/
@@ -678,7 +681,7 @@ PROG__unitquiet     (void)
    yURG_urgs   (1, x_args);
    PROG_args   (1, x_args);
    PROG_begin  ();
-   PROG_begin  ();
+   PROG_final  ();
    return 0;
 }
 

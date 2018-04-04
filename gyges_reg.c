@@ -176,7 +176,7 @@ REG_clear          (char a_reg, char a_init)
    for (i = 0; i < MAX_BUF; ++i) {
       x_curr = s_reg [x_reg].buf [i];
       if (a_init != 'y' && x_curr != NULL) {
-         rc = CELL_regdel (x_curr);
+         rc = CELL_killer (x_curr);
          if (rc < 0) {
             DEBUG_REGS   yLOG_note    ("found a bad register position");
             DEBUG_REGS   yLOG_value   ("posid"     , i);
@@ -500,7 +500,7 @@ static void  o___KEYS____________o () { return; }
 static void  o___MOVING__________o () { return; }
 
 char         /*-> tail recursion function for copy ---[ ------ [ge.D55.237.63]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
-REG_deps           (tCELL *a_curr, long a_stamp)
+REG_copy_one       (tCELL *a_curr, long a_stamp)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -521,6 +521,7 @@ REG_deps           (tCELL *a_curr, long a_stamp)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;     /* nothing to write              */
    }
+   DEBUG_REGS   yLOG_info    ("s"         , a_curr->s);
    DEBUG_REGS   yLOG_char    ("t"         , a_curr->t);
    --rce;  if (a_curr->t == '-')  {
       DEBUG_REGS   yLOG_note    ("could not copy an empty");
@@ -528,14 +529,20 @@ REG_deps           (tCELL *a_curr, long a_stamp)
       return rce;     /* don't write, recreate on read */
    }
    /*---(check for bounds)---------------*/
-   /*> rc = VISU_selected (a_curr->tab, a_curr->col, a_curr->row);                    <*/
-   rc = yVIKEYS_visual (a_curr->tab, a_curr->col, a_curr->row);
+   rc = yVIKEYS_regs_inside (a_curr->col, a_curr->row, a_curr->tab);
    DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
-   --rce;  if (rc == 0)  {
-      DEBUG_REGS   yLOG_note    ("could not get cell");
+   --rce;  if (rc <= 0)  {
+      DEBUG_REGS   yLOG_note    ("cell not in visual area");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(check timestamp)----------------*/
+   DEBUG_REGS   yLOG_value   ("a_curr->u" , a_curr->u);
+   /*> --rce;  if (a_curr->u == a_stamp) {                                             <* 
+    *>    DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");   <* 
+    *>    DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>    return rce;                                                                  <* 
+    *> }                                                                               <*/
    /*---(make a copy)--------------------*/
    rc = CELL_dup (&x_copy, a_curr);
    DEBUG_REGS   yLOG_value   ("dup_rc"    , rc);
@@ -549,7 +556,7 @@ REG_deps           (tCELL *a_curr, long a_stamp)
    a_curr->u   = a_stamp;
    DEBUG_REGS   yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
    /*---(place in buffer)----------------*/
-   rc = REG__hook   (x_copy, my.reg_curr, 'd');
+   rc = yVIKEYS_regs_add  (x_copy, x_copy->label,'d');
    DEBUG_REGS   yLOG_value   ("hook_rc"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_note    ("could not hook to register");
@@ -739,7 +746,8 @@ REG_save             (void)
       rc = CELL_dup (&x_copy, x_curr);
       strlcpy (x_copy->label, x_curr->label, LEN_LABEL);
       x_copy->u   = x_stamp;
-      rc = REG__hook   (x_copy, my.reg_curr, '-');
+      rc = yVIKEYS_regs_add  (x_copy, x_copy->l, 'd');
+      /*> rc = REG__hook   (x_copy, my.reg_curr, '-');                                <*/
       ++x_seq;
       DEBUG_REGS   yLOG_note    ("copied");
       /*> x_curr  = VISU_next (&x_tab, &x_col, &x_row);                               <*/
@@ -751,6 +759,74 @@ REG_save             (void)
    DEBUG_REGS   yLOG_value   ("x_skipped" , x_skipped);
    DEBUG_REGS   yLOG_value   ("x_process" , x_processed);
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_reg].nbuf);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+REG_copier           (char a_type, long a_stamp)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   DEBUG_REGS   yLOG_value   ("a_stamp"   , a_stamp);
+   /*---(dependents)---------------------*/
+   DEBUG_REGS   yLOG_note    ("DEPENDENT CELLS");
+   rc      = SEQ_reg_deps (a_stamp);
+   /*---(independents)-------------------*/
+   DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
+   rc      = yVIKEYS_first (&x_col, &x_row, &x_tab);
+   while (rc >= 0) {
+      x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
+      if (x_curr != NULL && x_curr->u != a_stamp)   REG_copy_one (x_curr, a_stamp);
+      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+REG_clearer          (char a_1st, int x, int y, int z)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tCELL      *x_curr      = NULL;
+   static int  x_count     =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(check first)--------------------*/
+   DEBUG_REGS   yLOG_char    ("a_1st"     , a_1st);
+   if (a_1st == 'y')  x_count = 0;
+   /*---(identify cell)------------------*/
+   DEBUG_REGS   yLOG_complex ("coords"    , "%3dx, %3dy, %3dz", x, y, z);
+   x_curr = LOC_cell_at_loc (z, x, y);
+   DEBUG_REGS   yLOG_complex ("x_curr"    , x_curr);
+   if (x_curr == NULL) {
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return x_count;
+   }
+   /*---(delete)-------------------------*/
+   DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
+   if (a_1st == 'y')  rc = CELL_delete (CHG_INPUT   , z, x, y);
+   else               rc = CELL_delete (CHG_INPUTAND, z, x, y);
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update count)-------------------*/
+   ++x_count;
+   DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1164,10 +1240,10 @@ REG_paste            (char a_type)
    /*---(check type)---------------------*/
    switch (a_type) {
    case G_PASTE_NORM   :
-      rc = REG__paste_main (G_PASTE_MERGE, G_RPN_NORM , G_RPN_NONE, G_RPN_NONE);
+      rc = REG__paste_main (G_PASTE_MERGE, G_RPN_REL  , G_RPN_NONE, G_RPN_NONE);
       break;
    case G_PASTE_REPL   :
-      rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_NORM , G_RPN_NONE, G_RPN_NONE);
+      rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_REL  , G_RPN_NONE, G_RPN_NONE);
       break;
    case G_PASTE_DUPL   :
       rc = REG__paste_main (G_PASTE_CLEAR, G_RPN_INNER, G_RPN_NONE, G_RPN_NONE);
@@ -1188,6 +1264,79 @@ REG_paste            (char a_type)
    return rc;
 }
 
+char
+REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   short       x_stab, x_scol, x_srow;
+   short       x_dtab, x_dcol, x_drow;
+   char        x_source    [LEN_RECD]   = "";
+   char        x_bformat   [LEN_RECD]   = "";
+   tCELL      *x_copy      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_reqs"    , a_reqs);
+   DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
+   DEBUG_REGS   yLOG_char    ("a_intg"    , a_intg);
+   DEBUG_REGS   yLOG_char    ("a_1st"     , a_1st);
+   DEBUG_REGS   yLOG_complex ("offset"    , "x=%4d, y=%4d, z=%4d", a_xoff, a_yoff, a_zoff);
+   /*---(defense)------------------------*/
+   DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL)  {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (strchr (G_RPN_REQS, a_reqs) == NULL)  {
+      DEBUG_REGS   yLOG_note    ("a_reqs type not recognized");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (strchr (G_RPN_PROS, a_pros) == NULL)  {
+      DEBUG_REGS   yLOG_note    ("a_pros type not recognized");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get original location)----------*/
+   DEBUG_REGS   yLOG_info    ("a_label"   , a_cell->label);
+   rc = LOC_parse (a_cell->label, &x_stab, &x_scol, &x_srow, NULL);
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0)  {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
+   /*---(set new location)---------------*/
+   x_dtab  = x_stab + a_zoff;
+   x_dcol  = x_scol + a_xoff;
+   x_drow  = x_srow + a_yoff;
+   DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
+   /*---(check cell type)----------------*/
+   DEBUG_REGS   yLOG_info    ("source"    , a_cell->s);
+   DEBUG_REGS   yLOG_char    ("type"      , a_cell->t);
+   strcpy (x_source, "");
+   if (strchr (G_CELL_RPN, a_cell->t) != 0) {
+      DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
+      rc = RPN_adjust_reg (a_cell, a_reqs, a_zoff, a_xoff, a_yoff, x_source, s_index);
+      DEBUG_REGS   yLOG_value   ("rc"        , rc);
+      if (rc < 0) {
+         DEBUG_REGS   yLOG_note    ("formula could not be parsed");
+         strcpy (x_source, "not_translatable");
+      }
+   } else {
+      DEBUG_REGS   yLOG_note    ("just copy straight across");
+      strcpy (x_source, a_cell->s);
+   }
+   DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
+   sprintf (x_bformat, "%c%c%c", a_cell->f, a_cell->a, a_cell->d);
+   DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
+   if (a_1st == 'y')  x_copy = CELL_overwrite (CHG_OVER   , x_dtab, x_dcol, x_drow, x_source, x_bformat);
+   else               x_copy = CELL_overwrite (CHG_OVERAND, x_dtab, x_dcol, x_drow, x_source, x_bformat);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 
 /*====================------------------------------------====================*/
@@ -2179,62 +2328,62 @@ static      tTEXTREG    s_textreg   [MAX_REG];
  *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
  *>          break;                                                                                                                <* 
  *>       case  'x' : case  'X' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
- *>          TREG_copy   ();                                                                                                       <* 
- *>          TREG_clear  ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'd' : case  'D' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
- *>          TREG_copy   ();                                                                                                       <* 
- *>          TREG_delete ();                                                                                                       <* 
- *>          EDIT_done ();                                                                                                         <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'r' : case  'R' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("replace selection text");                                                                 <* 
- *>          TREG_replace();                                                                                                       <* 
- *>          EDIT_done ();                                                                                                         <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'p' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("paste after selection text");                                                             <* 
- *>          TREG_paste  ('>');                                                                                                    <* 
- *>          EDIT_done ();                                                                                                         <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'P' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("paste before selection text");                                                            <* 
- *>          TREG_paste  ('<');                                                                                                    <* 
- *>          EDIT_done ();                                                                                                         <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'g' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("go to beginning selection position");                                                     <* 
- *>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
- *>          my.cpos = s_textreg [x_index].bpos;                                                                                   <* 
- *>          EDIT_done ();                                                                                                         <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'G' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("go to ending selection position");                                                        <* 
- *>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
- *>          my.cpos = s_textreg [x_index].epos;                                                                                   <* 
- *>          EDIT_done ();                                                                                                         <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       }                                                                                                                        <* 
- *>    }                                                                                                                           <* 
- *>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
+*>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
+*>          TREG_copy   ();                                                                                                       <* 
+*>          TREG_clear  ();                                                                                                       <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       case  'd' : case  'D' :                                                                                                  <* 
+*>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
+*>          TREG_copy   ();                                                                                                       <* 
+*>          TREG_delete ();                                                                                                       <* 
+*>          EDIT_done ();                                                                                                         <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       case  'r' : case  'R' :                                                                                                  <* 
+*>          DEBUG_USER   yLOG_note    ("replace selection text");                                                                 <* 
+*>          TREG_replace();                                                                                                       <* 
+*>          EDIT_done ();                                                                                                         <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       case  'p' :                                                                                                              <* 
+*>          DEBUG_USER   yLOG_note    ("paste after selection text");                                                             <* 
+*>          TREG_paste  ('>');                                                                                                    <* 
+*>          EDIT_done ();                                                                                                         <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       case  'P' :                                                                                                              <* 
+*>          DEBUG_USER   yLOG_note    ("paste before selection text");                                                            <* 
+*>          TREG_paste  ('<');                                                                                                    <* 
+*>          EDIT_done ();                                                                                                         <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       case  'g' :                                                                                                              <* 
+*>          DEBUG_USER   yLOG_note    ("go to beginning selection position");                                                     <* 
+*>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
+*>          my.cpos = s_textreg [x_index].bpos;                                                                                   <* 
+*>          EDIT_done ();                                                                                                         <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       case  'G' :                                                                                                              <* 
+*>          DEBUG_USER   yLOG_note    ("go to ending selection position");                                                        <* 
+*>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
+*>          my.cpos = s_textreg [x_index].epos;                                                                                   <* 
+*>          EDIT_done ();                                                                                                         <* 
+*>          yVIKEYS_mode_exit ();                                                                                                 <* 
+*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
+*>          break;                                                                                                                <* 
+*>       }                                                                                                                        <* 
+*>    }                                                                                                                           <* 
+*>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+*>    return 0;                                                                                                                   <* 
+*> }                                                                                                                              <*/
 /*>                                                                                                                                <* 
  *> char         /+-> tbd --------------------------------[ ------ [ge.742.554.11]+/ /+-[01.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source)                                           <* 

@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0l"
-#define     VER_TXT   "col/row reading and writing unit test is complete"
+#define     VER_NUM   "3.0m"
+#define     VER_TXT   "copy/paste in normal mode working in unit testing"
 
 
 
@@ -995,7 +995,12 @@ char      REG_mode           (int a_prev , int a_curr);
 
 char      REG_set            (char a_reg);
 char      REG_list           (char a_buf, char *a_list);
-char      REG_deps           (tCELL *a_curr, long a_stamp);
+
+char      REG_killer              (tCELL *a_curr);
+char      REG_copy_one            (tCELL *a_curr, long a_stamp);
+char      REG_copier              (char a_type, long a_stamp);
+char      REG_clearer             (char a_1st, int x, int y, int z);
+char      REG_paster              (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 
 char      REG_save             (void);
 char      REG_delorig          (void);
@@ -1109,7 +1114,7 @@ char        CURS_status_deps     (char *a_list);
 char        CURS_status_rpn      (char *a_list);
 char        CURS_status_file     (char *a_list);
 char        CURS_status_buffer   (char *a_list);
-char        CURS_status_textreg  (char *a_list);
+/*> char        CURS_status_textreg  (char *a_list);                                  <*/
 char        CURS_status_mark     (char *a_list);
 char        CURS_status_tab      (char *a_list);
 char        CURS_status_reg      (char *a_list);
@@ -1158,15 +1163,23 @@ char      ERROR_cleanse        (tCELL  *a_owner);
 
 
 /*---(requires)-----------------------*/
-#define     G_RPN_NONE           '-'    /* no cell adjustments                */
-#define     G_RPN_NORM           'n'    /* adjust all relative references     */
+#define     G_RPN_IGNORE         '-'    /* nothing to do                      */
+#define     G_RPN_NONE           'n'    /* no cell adjustments                */
+#define     G_RPN_REL            'r'    /* adjust all relative references     */
 #define     G_RPN_INNER          'i'    /* adjust all (rel/abs) inner refs    */
 #define     G_RPN_BOTH           'b'    /* adjust both inner and relative     */
+#define     G_RPN_EVERY          'e'    /* adjust all inner, rel, and abs     */
+#define     G_RPN_REQS           "nribe"
+#define     G_RPN_INSIDE         "ibe"
 /*---(provides)-----------------------*/
-#define     G_RPN_PREL           'r'    /* adjust rel provider refs in source */
-#define     G_RPN_PALL           'a'    /* adjust all provider refs in source */
+#define     G_RPN_PIGNORE        '-'    /* nothing to do                      */
+#define     G_RPN_PREL           'R'    /* adjust rel provider refs in source */
+#define     G_RPN_PALL           'A'    /* adjust all provider refs in source */
+#define     G_RPN_PSPLIT         'S'    /* adjust all provider refs in source */
+#define     G_RPN_PROS           "-RAS"
+/*---(compound)-----------------------*/
+#define     G_RPN_ALL            "-nribeRAS"
 /*---(adjustments)--------------------*/
-#define     G_RPN_PREL           'r'    /* adjust rel provider refs in source */
 char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
 char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);
 char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);
@@ -1256,7 +1269,7 @@ char      DEP_writescreen    (void);
 char     *DEP_unit           (char *a_question, char *a_label);
 
 
-char        CELL_regdel        (tCELL *a_curr);
+char        CELL_killer        (tCELL *a_curr);
 
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(merge-specific)-----------------*/

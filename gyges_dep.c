@@ -1877,7 +1877,7 @@ SEQ__driver        (tCELL *a_cell, char a_dir, long a_stamp, char a_action, FILE
             break;
          case 'r' :  /* write to a register       */
             DEBUG_CALC   yLOG_note    ("write cell to register");
-            REG_deps       (x_cell, a_stamp);
+            REG_copy_one   (x_cell, a_stamp);
             break;
          case 'p' :  /* print the sequence        */
             break;

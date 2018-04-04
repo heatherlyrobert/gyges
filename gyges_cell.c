@@ -684,7 +684,7 @@ CELL__depwipe      (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a
 PRIV void  o___SETUP___________o () { return; }
 
 char         /*-> delete a register cell -------------[ ------ [gz.210.101.01]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
-CELL_regdel        (tCELL *a_curr)
+CELL_killer        (tCELL *a_curr)
 {
    CELL__free (&a_curr, LINKED);
    return 0;

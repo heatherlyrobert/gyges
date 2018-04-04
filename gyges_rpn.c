@@ -121,7 +121,7 @@ RPN__check_args      (tCELL *a_cell, char a_scope, char *a_target, char *a_final
       return rce;
    }
    DEBUG_RPN    yLOG_char    ("a_scope"   , a_scope);
-   --rce;  if (strchr ("-nibra", a_scope) == 0)   {
+   --rce;  if (strchr (G_RPN_ALL, a_scope) == 0)   {
       DEBUG_RPN    yLOG_note    ("aborted, a_scope not legal");
       DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -133,12 +133,12 @@ RPN__check_args      (tCELL *a_cell, char a_scope, char *a_target, char *a_final
       DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = REG_inside (a_index, x_tab, x_col, x_row);
-   --rce;  if (strchr ("ib", a_scope) != NULL && rc <= 0) {
-      DEBUG_RPN    yLOG_note    ("cell not inside valid register bounds");
-      DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   /*> rc = REG_inside (a_index, x_tab, x_col, x_row);                                <* 
+    *> --rce;  if (strchr ("ib", a_scope) != NULL && rc <= 0) {                       <* 
+    *>    DEBUG_RPN    yLOG_note    ("cell not inside valid register bounds");        <* 
+    *>    DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_RPN    yLOG_exit    (__FUNCTION__);
    return 0;
@@ -180,7 +180,7 @@ RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
    }
    x_nabs = x_abs;
    /*---(check targeted refs)---------*/
-   --rce;  if (strchr ("ra", a_scope) != NULL) {
+   --rce;  if (strchr (G_RPN_PROS, a_scope) != NULL) {
       if (s_ttab != x_tab || s_tcol != x_col || s_trow != x_row) {
          DEBUG_RPN    yLOG_note    ("tab, col, or row does not match, just append");
          DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
@@ -189,15 +189,15 @@ RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
    }
    /*---(adjust to scopes)------------*/
    rc = REG_inside (a_index, x_tab, x_col, x_row);
-   --rce;  if (strchr ("ib", a_scope) != NULL) {
-      if (a_scope == 'i' && rc <= 0) {
+   --rce;  if (strchr (G_RPN_INSIDE, a_scope) != NULL) {
+      if (a_scope == G_RPN_INNER && rc <= 0) {
          DEBUG_RPN    yLOG_note    ("cell label not inner register area");
          DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
       if (rc > 0)  x_nabs = 0;
    }
-   if (a_scope == 'a')    x_nabs = 0;
+   if (a_scope == G_RPN_PALL)    x_nabs = 0;
    /*---(handle addresses)------------*/
    DEBUG_RPN    yLOG_value   ("x_nabs"    , x_nabs);
    switch (x_nabs) {
@@ -328,7 +328,7 @@ RPN_adjust         (
       int         a_arow,     /* row adjust from original                     */
       char       *a_final)    /* updated source formula (uncompressed)        */
 {  /*---(design notes)--------------------------------------------------------*/
-   return RPN__adjust_main (a_cell, G_RPN_NORM, a_atab, a_acol, a_arow, a_final, -1, "");
+   return RPN__adjust_main (a_cell, G_RPN_REL , a_atab, a_acol, a_arow, a_final, -1, "");
 }
 
 char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
@@ -343,11 +343,11 @@ RPN_adjust_ref     (
       char       *a_target)   /* cell ref to be changed                       */
 {
    strcpy (s_final, "n/a");
-   if (strchr ("ra", a_scope) == NULL)  return -1;
+   if (strchr (G_RPN_INSIDE, a_scope) == NULL)  return -1;
    return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);
 }
 
-char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
+char         /*-> change a register cell -------------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
 RPN_adjust_reg     (
       /*----------+-----------+-----------------------------------------------*/
       tCELL      *a_cell,     /* source cell                                  */
@@ -359,7 +359,7 @@ RPN_adjust_reg     (
       int         a_index)    /* register index                               */
 {
    strcpy (s_final, "n/a");
-   if (strchr ("-nib", a_scope) == NULL)  return -1;
+   if (strchr (G_RPN_REQS  , a_scope) == NULL)  return -1;
    return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, a_index, "");
 }
 

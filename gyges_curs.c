@@ -332,7 +332,7 @@ char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%
 char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
 char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
 char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
-char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }
+/*> char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }   <*/
 char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
 char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
 char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
@@ -1468,7 +1468,6 @@ DRAW_init          (void)
 {
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
-   yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_view_moderate (YVIKEYS_MAIN     , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
    yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
    yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0             , DRAW_xaxis  );
