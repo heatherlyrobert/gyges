@@ -881,13 +881,11 @@ LOC_parse         (
    int         x_row       =   0;           /* working row value              */
    int         e_row       =   0;           /* ending position of row chars   */
    int         x_abs       =   0;           /* working value for absolutes    */
+   static char x_label     [LEN_LABEL] = "-----";
+   static int  x_tsave, x_csave, x_rsave, x_asave;
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS_M   yLOG_info    ("a_label"   , a_label);
-   DEBUG_LOCS_M   yLOG_point   ("*a_tab"    , a_tab);
-   DEBUG_LOCS_M   yLOG_point   ("*a_col"    , a_col);
-   DEBUG_LOCS_M   yLOG_point   ("*a_row"    , a_row);
-   DEBUG_LOCS_M   yLOG_point   ("*a_abs"    , a_abs);
    /*---(prepare values)-----------------*/
    if (a_tab != NULL)  *a_tab = -1;
    if (a_col != NULL)  *a_col = -1;
@@ -899,6 +897,23 @@ LOC_parse         (
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(shortcut)-----------------------*/
+   if (strcmp (a_label, x_label) == 0) {
+      DEBUG_LOCS_M   yLOG_note    ("shortcut, same as last request");
+      /*---(return values)------------------*/
+      if (a_tab != NULL)  *a_tab = x_tsave;
+      if (a_col != NULL)  *a_col = x_csave;
+      if (a_row != NULL)  *a_row = x_rsave;
+      if (a_abs != NULL)  *a_abs = x_asave;
+      /*---(complete)-----------------------*/
+      DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
+      return  0;
+   }
+   /*---(display)------------------------*/
+   DEBUG_LOCS_M   yLOG_point   ("*a_tab"    , a_tab);
+   DEBUG_LOCS_M   yLOG_point   ("*a_col"    , a_col);
+   DEBUG_LOCS_M   yLOG_point   ("*a_row"    , a_row);
+   DEBUG_LOCS_M   yLOG_point   ("*a_abs"    , a_abs);
    /*---(check sizes)--------------------*/
    len = strlen (a_label);
    DEBUG_LOCS_M   yLOG_value   ("len"       , len);
@@ -1035,6 +1050,12 @@ LOC_parse         (
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(save for shortcut)--------------*/
+   strlcpy (x_label, a_label, LEN_LABEL);
+   x_tsave = x_tab;
+   x_csave = x_col;
+   x_rsave = x_row;
+   x_asave = x_abs;
    /*---(return values)------------------*/
    if (a_tab != NULL)  *a_tab = x_tab;
    if (a_col != NULL)  *a_col = x_col;

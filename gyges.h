@@ -142,8 +142,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0m"
-#define     VER_TXT   "copy/paste in normal mode working in unit testing"
+#define     VER_NUM   "3.0n"
+#define     VER_TXT   "all core copy/paste unit tests completed successfully"
 
 
 
@@ -1162,23 +1162,24 @@ char      ERROR_list           (void);
 char      ERROR_cleanse        (tCELL  *a_owner);
 
 
-/*---(requires)-----------------------*/
+/*---(overall)------------------------*/
 #define     G_RPN_IGNORE         '-'    /* nothing to do                      */
-#define     G_RPN_NONE           'n'    /* no cell adjustments                */
-#define     G_RPN_REL            'r'    /* adjust all relative references     */
-#define     G_RPN_INNER          'i'    /* adjust all (rel/abs) inner refs    */
-#define     G_RPN_BOTH           'b'    /* adjust both inner and relative     */
-#define     G_RPN_EVERY          'e'    /* adjust all inner, rel, and abs     */
+/*---(requires)-----------------------*/
+#define     G_RPN_RNONE          'n'    /* no cell adjustments                */
+#define     G_RPN_RREL           'r'    /* adjust all relative references     */
+#define     G_RPN_RINNER         'i'    /* adjust all (rel/abs) inner refs    */
+#define     G_RPN_RBOTH          'b'    /* adjust both inner and relative     */
+#define     G_RPN_REVERY         'e'    /* adjust all inner, rel, and abs     */
 #define     G_RPN_REQS           "nribe"
-#define     G_RPN_INSIDE         "ibe"
+#define     G_RPN_RINSIDE        "ibe"
 /*---(provides)-----------------------*/
-#define     G_RPN_PIGNORE        '-'    /* nothing to do                      */
+#define     G_RPN_PNONE          'N'    /* no provider adjustments            */
 #define     G_RPN_PREL           'R'    /* adjust rel provider refs in source */
 #define     G_RPN_PALL           'A'    /* adjust all provider refs in source */
 #define     G_RPN_PSPLIT         'S'    /* adjust all provider refs in source */
-#define     G_RPN_PROS           "-RAS"
+#define     G_RPN_PROS           "NRAS"
 /*---(compound)-----------------------*/
-#define     G_RPN_ALL            "-nribeRAS"
+#define     G_RPN_ALL            "nribeNRAS"
 /*---(adjustments)--------------------*/
 char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
 char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);

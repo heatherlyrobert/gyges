@@ -133,12 +133,6 @@ RPN__check_args      (tCELL *a_cell, char a_scope, char *a_target, char *a_final
       DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*> rc = REG_inside (a_index, x_tab, x_col, x_row);                                <* 
-    *> --rce;  if (strchr ("ib", a_scope) != NULL && rc <= 0) {                       <* 
-    *>    DEBUG_RPN    yLOG_note    ("cell not inside valid register bounds");        <* 
-    *>    DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_RPN    yLOG_exit    (__FUNCTION__);
    return 0;
@@ -165,7 +159,7 @@ RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
    /*---(prepare)---------------------*/
    strcpy (a_new, a_old);
    /*---(check for do-nothing)--------*/
-   --rce;  if (strchr ("nibra", a_scope) == NULL) {
+   --rce;  if (strchr (G_RPN_ALL, a_scope) == NULL) {
       DEBUG_RPN    yLOG_note    ("scope indicates nothing to do");
       DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -182,15 +176,15 @@ RPN__adjust_one      (char *a_old, char a_scope, int a_index, char *a_new)
    /*---(check targeted refs)---------*/
    --rce;  if (strchr (G_RPN_PROS, a_scope) != NULL) {
       if (s_ttab != x_tab || s_tcol != x_col || s_trow != x_row) {
-         DEBUG_RPN    yLOG_note    ("tab, col, or row does not match, just append");
+         DEBUG_RPN    yLOG_note    ("tab, col, or row does not match target, just append");
          DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    }
    /*---(adjust to scopes)------------*/
-   rc = REG_inside (a_index, x_tab, x_col, x_row);
-   --rce;  if (strchr (G_RPN_INSIDE, a_scope) != NULL) {
-      if (a_scope == G_RPN_INNER && rc <= 0) {
+   rc = yVIKEYS_regs_inside (x_col, x_row, x_tab);
+   --rce;  if (strchr (G_RPN_RINSIDE, a_scope) != NULL) {
+      if (a_scope == G_RPN_RINNER && rc <= 0) {
          DEBUG_RPN    yLOG_note    ("cell label not inner register area");
          DEBUG_RPN    yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -328,7 +322,7 @@ RPN_adjust         (
       int         a_arow,     /* row adjust from original                     */
       char       *a_final)    /* updated source formula (uncompressed)        */
 {  /*---(design notes)--------------------------------------------------------*/
-   return RPN__adjust_main (a_cell, G_RPN_REL , a_atab, a_acol, a_arow, a_final, -1, "");
+   return RPN__adjust_main (a_cell, G_RPN_RREL , a_atab, a_acol, a_arow, a_final, -1, "");
 }
 
 char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
@@ -343,7 +337,7 @@ RPN_adjust_ref     (
       char       *a_target)   /* cell ref to be changed                       */
 {
    strcpy (s_final, "n/a");
-   if (strchr (G_RPN_INSIDE, a_scope) == NULL)  return -1;
+   if (strchr (G_RPN_PROS, a_scope) == NULL)  return -1;
    return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);
 }
 
