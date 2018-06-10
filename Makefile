@@ -8,7 +8,7 @@ NAME_BASE  = gyges
 # additional standard and outside libraries
 LIB_STD    = -lm -lncurses
 # all heatherly libraries used, debug versions whenever available
-LIB_MINE   = -lySTR_debug -lyVIKEYS_debug -lyRPN_debug -lyREGEX_debug -lyCOLOR_debug
+LIB_MINE   = -lySTR_debug -lyVIKEYS_debug -lyRPN_debug -lyREGEX_debug -lyCOLOR_debug -lyCALC_debug
 # directory for production code, no trailing slash
 INST_DIR   = /usr/local/bin
 

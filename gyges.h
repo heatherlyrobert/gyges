@@ -135,6 +135,7 @@
 #include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
 #include    <yCOLOR.h>             /* heatherly color library                 */
+#include    <yCALC.h>        /* CUSTOM : heatherly interactive calculation    */
 
 
 
@@ -142,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.0n"
-#define     VER_TXT   "all core copy/paste unit tests completed successfully"
+#define     VER_NUM   "3.1a"
+#define     VER_TXT   "all yCALC api functions added, but not tested yet"
 
 
 
@@ -465,21 +466,22 @@ struct cCELL {
    /*   in the case that the cell is a formula, this section will contain the */
    /*   conversion into RPN (reverse polish notation) and translation into    */
    /*   a linked list of byte-code to conduct the calculation.                */
-   char        nrpn;         /* number of calculation tokens                  */
-   char       *rpn;          /* rpn version of formula                        */
-   tCALC      *calc;         /* pointer to head of calculation line           */
-   char        clevel;       /* calculation level                             */
-   tCELL      *cprev;        /* pointer to calculation execution prev         */
-   tCELL      *cnext;        /* pointer to calculation execution next         */
+   void       *ycalc;            /* connection to yCALC library               */
+   /*> char        nrpn;         /+ number of calculation tokens                  +/   <* 
+    *> char       *rpn;          /+ rpn version of formula                        +/   <* 
+    *> tCALC      *calc;         /+ pointer to head of calculation line           +/   <* 
+    *> char        clevel;       /+ calculation level                             +/   <* 
+    *> tCELL      *cprev;        /+ pointer to calculation execution prev         +/   <* 
+    *> tCELL      *cnext;        /+ pointer to calculation execution next         +/   <*/
    /*---(#6, DEPENDENCIES)---------------*/
    /*   cells are related to each other as lists of requirements for this     */
    /*   calculation and a list of cells that are dependent on this one.       */
    /*   both lists are kept to enable full dependency calculation.            */
-   char        nrequire;     /* number of required cells                      */
-   tDEP       *requires;     /* incomming predesesors to this calc            */
-   char        nprovide;     /* number of dependent cells                     */
-   tDEP       *provides;     /* outgoing successors to this calc              */
-   long        u;            /* timestamp of last update run                  */
+   /*> char        nrequire;     /+ number of required cells                      +/   <* 
+    *> tDEP       *requires;     /+ incomming predesesors to this calc            +/   <* 
+    *> char        nprovide;     /+ number of dependent cells                     +/   <* 
+    *> tDEP       *provides;     /+ outgoing successors to this calc              +/   <* 
+    *> long        u;            /+ timestamp of last update run                  +/   <*/
    /*---(#7, CELL LIST)------------------*/
    /*   all the cells are stored in a doublly linked list in order to make    */
    /*   them easy to manage and verify as a entire population.  the linked    */
@@ -488,8 +490,8 @@ struct cCELL {
    tCELL      *next;         /* next cell in doubly linked list               */
    tCELL      *prev;         /* previous cell in doubly linked list           */
    /*---(#8, ERRORS)---------------------*/
-   char        nerror;       /* number of current errors                      */
-   tERROR     *errors;       /* error entries                                 */
+   /*> char        nerror;       /+ number of current errors                      +/   <* 
+    *> tERROR     *errors;       /+ error entries                                 +/   <*/
    /*---(end)----------------------------*/
 };
 /*
@@ -1181,12 +1183,11 @@ char      ERROR_cleanse        (tCELL  *a_owner);
 /*---(compound)-----------------------*/
 #define     G_RPN_ALL            "nribeNRAS"
 /*---(adjustments)--------------------*/
-char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);
-char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);
-char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);
+/*> char      RPN_adjust           (tCELL *a_cell, int a_toff, int a_coff, int a_roff, char *a_source);   <*/
+/*> char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);   <*/
+/*> char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);   <*/
 /*---(conversion)---------------------*/
 char      RPN_convert          (tCELL *a_curr);
-
 
 
 
@@ -1411,11 +1412,11 @@ char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
-char      CELL_saver           (char *a_contents);
+char      extern_vikeys_saver  (char *a_contents);
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
 tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 
-char      CELL__depwipe        (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);
+/*> char      CELL__depwipe        (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);   <*/
 char      CELL__purge          (void);
 
 char      CELL__numerics       (tCELL *a_cell);

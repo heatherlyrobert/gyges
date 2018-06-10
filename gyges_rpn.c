@@ -277,7 +277,8 @@ RPN__adjust_main     (
    s_acol = a_acol;
    s_arow = a_arow;
    /*---(prepare tokens)-----------------*/
-   x_tokens = yRPN_stokens (a_cell->s);
+   /*> x_tokens = yRPN_stokens (a_cell->s);                                           <*/
+   rc = yRPN_tokens (a_cell->s, &x_tokens, NULL, 2000);
    DEBUG_RPN    yLOG_info    ("x_tokens"  , x_tokens);
    /*---(parse first token)--------------*/
    p = strtok_r (x_tokens, q, &r);
@@ -313,49 +314,49 @@ RPN__adjust_main     (
    return 0;
 }
 
-char         /*-> adjust addr based on cell move -----[ ------ [gc.310.101.01]*/ /*-[01.0000.016.#]-*/ /*-[--.---.---.--]-*/
-RPN_adjust         (
-      /*----------+-----------+-----------------------------------------------*/
-      tCELL      *a_cell,     /* source cell                                  */
-      int         a_atab,     /* tab adjust from original                     */
-      int         a_acol,     /* col adjust from original                     */
-      int         a_arow,     /* row adjust from original                     */
-      char       *a_final)    /* updated source formula (uncompressed)        */
-{  /*---(design notes)--------------------------------------------------------*/
-   return RPN__adjust_main (a_cell, G_RPN_RREL , a_atab, a_acol, a_arow, a_final, -1, "");
-}
+/*> char         /+-> adjust addr based on cell move -----[ ------ [gc.310.101.01]+/ /+-[01.0000.016.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> RPN_adjust         (                                                                                                           <* 
+ *>       /+----------+-----------+-----------------------------------------------+/                                               <* 
+ *>       tCELL      *a_cell,     /+ source cell                                  +/                                               <* 
+ *>       int         a_atab,     /+ tab adjust from original                     +/                                               <* 
+ *>       int         a_acol,     /+ col adjust from original                     +/                                               <* 
+ *>       int         a_arow,     /+ row adjust from original                     +/                                               <* 
+ *>       char       *a_final)    /+ updated source formula (uncompressed)        +/                                               <* 
+ *> {  /+---(design notes)--------------------------------------------------------+/                                               <* 
+ *>    return RPN__adjust_main (a_cell, G_RPN_RREL , a_atab, a_acol, a_arow, a_final, -1, "");                                     <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> change a specific reference --------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
-RPN_adjust_ref     (
-      /*----------+-----------+-----------------------------------------------*/
-      tCELL      *a_cell,     /* source cell                                  */
-      char        a_scope,    /* what kind of changes                         */
-      int         a_atab,     /* tab offset from original                     */
-      int         a_acol,     /* col offset from original                     */
-      int         a_arow,     /* row offset from original                     */
-      char       *a_final,    /* updated source formula (uncompressed)        */
-      char       *a_target)   /* cell ref to be changed                       */
-{
-   strcpy (s_final, "n/a");
-   if (strchr (G_RPN_PROS, a_scope) == NULL)  return -1;
-   return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);
-}
+/*> char         /+-> change a specific reference --------[ ------ [gc.410.102.11]+/ /+-[01.0000.106.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> RPN_adjust_ref     (                                                                                                           <* 
+ *>       /+----------+-----------+-----------------------------------------------+/                                               <* 
+ *>       tCELL      *a_cell,     /+ source cell                                  +/                                               <* 
+ *>       char        a_scope,    /+ what kind of changes                         +/                                               <* 
+ *>       int         a_atab,     /+ tab offset from original                     +/                                               <* 
+ *>       int         a_acol,     /+ col offset from original                     +/                                               <* 
+ *>       int         a_arow,     /+ row offset from original                     +/                                               <* 
+ *>       char       *a_final,    /+ updated source formula (uncompressed)        +/                                               <* 
+ *>       char       *a_target)   /+ cell ref to be changed                       +/                                               <* 
+ *> {                                                                                                                              <* 
+ *>    strcpy (s_final, "n/a");                                                                                                    <* 
+ *>    if (strchr (G_RPN_PROS, a_scope) == NULL)  return -1;                                                                       <* 
+ *>    return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, -1, a_target);                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> change a register cell -------------[ ------ [gc.410.102.11]*/ /*-[01.0000.106.#]-*/ /*-[--.---.---.--]-*/
-RPN_adjust_reg     (
-      /*----------+-----------+-----------------------------------------------*/
-      tCELL      *a_cell,     /* source cell                                  */
-      char        a_scope,    /* what kind of changes                         */
-      int         a_atab,     /* tab offset from original                     */
-      int         a_acol,     /* col offset from original                     */
-      int         a_arow,     /* row offset from original                     */
-      char       *a_final,    /* updated source formula (uncompressed)        */
-      int         a_index)    /* register index                               */
-{
-   strcpy (s_final, "n/a");
-   if (strchr (G_RPN_REQS  , a_scope) == NULL)  return -1;
-   return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, a_index, "");
-}
+/*> char         /+-> change a register cell -------------[ ------ [gc.410.102.11]+/ /+-[01.0000.106.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> RPN_adjust_reg     (                                                                                                           <* 
+ *>       /+----------+-----------+-----------------------------------------------+/                                               <* 
+ *>       tCELL      *a_cell,     /+ source cell                                  +/                                               <* 
+ *>       char        a_scope,    /+ what kind of changes                         +/                                               <* 
+ *>       int         a_atab,     /+ tab offset from original                     +/                                               <* 
+ *>       int         a_acol,     /+ col offset from original                     +/                                               <* 
+ *>       int         a_arow,     /+ row offset from original                     +/                                               <* 
+ *>       char       *a_final,    /+ updated source formula (uncompressed)        +/                                               <* 
+ *>       int         a_index)    /+ register index                               +/                                               <* 
+ *> {                                                                                                                              <* 
+ *>    strcpy (s_final, "n/a");                                                                                                    <* 
+ *>    if (strchr (G_RPN_REQS  , a_scope) == NULL)  return -1;                                                                     <* 
+ *>    return RPN__adjust_main (a_cell, a_scope, a_atab, a_acol, a_arow, a_final, a_index, "");                                    <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -453,7 +454,9 @@ RPN_convert        (
       }
       strncpy (x_work, x_like->s, LEN_RECD);
       ch = x_work[0];
-      rc = RPN_adjust (x_like, a_curr->tab - x_tab, a_curr->col - x_col, a_curr->row - x_row, x_temp);
+      /*> rc = RPN_adjust (x_like, a_curr->tab - x_tab, a_curr->col - x_col, a_curr->row - x_row, x_temp);   <*/
+      strncpy (x_temp, x_work, LEN_RECD);
+      rc = yRPN_adj_norm (x_temp, a_curr->col - x_col, a_curr->row - x_row, a_curr->tab - x_tab, LEN_RECD);
       DEBUG_RPN    yLOG_value   ("adjust rc" , rc);
       --rce;
       if (rc < 0) {
@@ -468,7 +471,8 @@ RPN_convert        (
    DEBUG_RPN    yLOG_info    ("x_work"    , x_work);
    DEBUG_RPN    yLOG_value   ("prefix"    , ch);
    DEBUG_RPN    yLOG_value   ("CTAB"      , CTAB);
-   x_rpn = yRPN_spreadsheet (x_work, &x_ntoken, CTAB);
+   /*> x_rpn = yRPN_spreadsheet (x_work, &x_ntoken, CTAB);                            <*/
+   rc = yRPN_interpret (x_work, &x_rpn, &x_ntoken, 2000, CTAB);
    --rce;  if (x_rpn == NULL)            return rce;
    DEBUG_RPN    yLOG_point   ("x_rpn"     , x_rpn);
    DEBUG_RPN    yLOG_info    ("x_rpn"     , x_rpn);

@@ -336,7 +336,7 @@ char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
 char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
 char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
 char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
-char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_STR, "[ reg %-100.100s ]", my.reg_list); }
+/*> char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_STR, "[ reg %-100.100s ]", my.reg_list); }   <*/
 char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_STR, "errors (%3d)", nerror); };
 char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act); }
 
@@ -1246,14 +1246,14 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       /*---(numbers)---------------------*/
       else if (a_curr->t == CTYPE_NUM  )                attron (S_COLOR_NUMBER );
       else if (a_curr->t == CTYPE_FORM ) {
-         if   (a_curr->nrequire < 5)                    attron (S_COLOR_FSIMPLE);
+         if   (yCALC_nreq (a_curr->ycalc)  < 5)         attron (S_COLOR_FSIMPLE);
          else                                           attron (S_COLOR_FDANGER);
       }
       else if (a_curr->t == CTYPE_FLIKE)                attron (S_COLOR_FLIKE  );
       /*---(strings)---------------------*/
       else if (a_curr->t == CTYPE_STR  )                attron (S_COLOR_STRING );
       else if (a_curr->t == CTYPE_MOD  ) {
-         if   (a_curr->nrequire < 5)                    attron (S_COLOR_FSTRING);
+         if   (yCALC_nreq (a_curr->ycalc)  < 5)         attron (S_COLOR_FSTRING);
          else                                           attron (S_COLOR_FSTRDAG);
       }
       else if (a_curr->t == CTYPE_MLIKE)                attron (S_COLOR_MLIKE  );
@@ -1313,8 +1313,8 @@ DRAW_main          (void)
          DEP_disp_reqs (x_curr, my.reqs_list);
          DEP_disp_pros (x_curr, my.deps_list);
          DEP_disp_like (x_curr, my.like_list);
-         if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);
-         else                      strncpy (my.rpn_list , "n/a", LEN_RECD);
+         /*> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <* 
+          *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <*/
       } else {
          strncpy (my.reqs_list, "n/a", LEN_RECD);
          strncpy (my.deps_list, "n/a", LEN_RECD);
@@ -1323,7 +1323,7 @@ DRAW_main          (void)
       }
    }
    x_save = x_curr;
-   REG_list   (my.reg_curr  , my.reg_list);
+   /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
    strncpy (s_mark_list, "+", LEN_RECD);
    yVIKEYS_hint_marklist  (s_mark_list);
    /*---(display all)--------------------*/

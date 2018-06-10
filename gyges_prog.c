@@ -113,7 +113,7 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(setup other)--------------------*/
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
-   yVIKEYS_src_config   (CELL_saver);
+   yVIKEYS_src_config   (extern_vikeys_saver);
    yVIKEYS_regs_config  (CELL_killer, REG_copier, REG_clearer, REG_paster);
    /*---(globals)------------------------*/
    hist_active       = '-';
@@ -184,7 +184,7 @@ PROG_begin         (void)
    LOC_init  ();
    /*---(locals)-------------------------*/
    VISU_init ();
-   REG_init  ();
+   /*> REG_init  ();                                                                  <*/
    /*> KEYS_init ();                                                                  <*/
    /*---(char settings)------------------*/
    my.npos =    1;
@@ -220,7 +220,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
    yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );
    yVIKEYS_view_option (YVIKEYS_STATUS, "visual" , CURS_status_visual  , "details of visual selection"                );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );
+   /*> yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );   <*/
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );   <*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "mark"   , CURS_status_mark    , "details of cell and location marks"         );
    yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
@@ -612,7 +612,7 @@ PROG__unit           (char *a_question, void *a_thing)
    } else if (strcmp(a_question, "sheet_who")      == 0) {
       snprintf(unit_answer, LEN_UNIT, "Sheet Location   : p=%9p", x_curr);
    } else if (strcmp(a_question, "cell_info")      == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);
+      /*> snprintf(unit_answer, LEN_UNIT, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <*/
    }
    /*---(cell contents)------------------*/
    else if   (strcmp(a_question, "cell_source")    == 0) {
@@ -629,7 +629,7 @@ PROG__unit           (char *a_question, void *a_thing)
    }
    /*---(cell contents)------------------*/
    else if   (strcmp(a_question, "cell_rpn")       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cell RPN         : (%3d) %-.40s", x_curr->nrpn, x_curr->rpn);
+      /*> snprintf(unit_answer, LEN_UNIT, "Cell RPN         : (%3d) %-.40s", x_curr->nrpn, x_curr->rpn);   <*/
    }
    /*---(display focus)------------------*/
    else if   (strcmp(a_question, "rows")           == 0) {

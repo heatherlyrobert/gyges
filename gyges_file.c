@@ -969,7 +969,7 @@ OUTP_cell_free          (void)
             if (x_curr    == NULL)                       continue;
             if (x_curr->s == NULL)                       continue;
             if (x_curr->t == CTYPE_BLANK)                continue;
-            if (x_curr->u == s_stamp)                    continue;
+            /*> if (x_curr->u == s_stamp)                    continue;                <*/
             OUTP_cell (FILE_FREECEL, x_seq++, -1, x_curr);
          }
       }

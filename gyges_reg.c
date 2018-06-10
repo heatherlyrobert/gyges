@@ -57,45 +57,45 @@
  */
 #define     MAX_REG     100
 #define     MAX_BUF    1000
-struct cREG {
-   /*---(#1, ORIGIN TAB)-----------------*/
-   /*   stores the tab number of the original selection so that cell          */
-   /*   references can be properly adjusted when placed back into a tab.      */
-   int         otab;
-   /*---(#2, MINIMUM REACH)--------------*/
-   /*   stores the column and row of the furthest upper-left cell reference   */
-   /*   within a formula of a register cell (for error-checking).             */
-   int         minc;
-   int         minr;
-   /*---(#3, MINIMUM BOUND)--------------*/
-   /*   stores the column and row of the upper-left corner of the selection   */
-   /*   used to source the cells for the register.                            */
-   int         begc;
-   int         begr;
-   /*---(#4, MAXIMUM BOUND)--------------*/
-   /*   stores the column and row of the lower-right corner of the selection  */
-   /*   used to source the cells for the register.                            */
-   int         endc;
-   int         endr;
-   /*---(#5, MAXIMUM REACH)--------------*/
-   /*   stores the column and row of the furthest lower-right cell reference  */
-   /*   within a formula of a register cell (for error-checking).             */
-   int         maxc;
-   int         maxr;
-   /*---(#6, CELLS)----------------------*/
-   /*   stores the an array of cells within the register in the order that    */
-   /*   they need to be placed back into a tab to correctly calculate.        */
-   int         nbuf;                             /* total spots               */
-   tCELL      *buf         [MAX_BUF];            /* cell pointers             */
-   char        notes       [MAX_BUF];            /* source coding             */
-   int         real;                             /* filled spots              */
-   /*---(#7, SPECIAL)--------------------*/
-   /*   the type flag indicates whether non-selection formula cells with      */
-   /*   references into the selection should be adjusted when pasted.         */
-   char        type;
-   /*---(end)----------------------------*/
-};
-static      tREG        s_reg       [MAX_REG];
+/*> struct cREG {                                                                      <* 
+ *>    /+---(#1, ORIGIN TAB)-----------------+/                                        <* 
+ *>    /+   stores the tab number of the original selection so that cell          +/   <* 
+ *>    /+   references can be properly adjusted when placed back into a tab.      +/   <* 
+ *>    int         otab;                                                               <* 
+ *>    /+---(#2, MINIMUM REACH)--------------+/                                        <* 
+ *>    /+   stores the column and row of the furthest upper-left cell reference   +/   <* 
+ *>    /+   within a formula of a register cell (for error-checking).             +/   <* 
+ *>    int         minc;                                                               <* 
+ *>    int         minr;                                                               <* 
+ *>    /+---(#3, MINIMUM BOUND)--------------+/                                        <* 
+ *>    /+   stores the column and row of the upper-left corner of the selection   +/   <* 
+ *>    /+   used to source the cells for the register.                            +/   <* 
+ *>    int         begc;                                                               <* 
+ *>    int         begr;                                                               <* 
+ *>    /+---(#4, MAXIMUM BOUND)--------------+/                                        <* 
+ *>    /+   stores the column and row of the lower-right corner of the selection  +/   <* 
+ *>    /+   used to source the cells for the register.                            +/   <* 
+ *>    int         endc;                                                               <* 
+ *>    int         endr;                                                               <* 
+ *>    /+---(#5, MAXIMUM REACH)--------------+/                                        <* 
+ *>    /+   stores the column and row of the furthest lower-right cell reference  +/   <* 
+ *>    /+   within a formula of a register cell (for error-checking).             +/   <* 
+ *>    int         maxc;                                                               <* 
+ *>    int         maxr;                                                               <* 
+ *>    /+---(#6, CELLS)----------------------+/                                        <* 
+ *>    /+   stores the an array of cells within the register in the order that    +/   <* 
+ *>    /+   they need to be placed back into a tab to correctly calculate.        +/   <* 
+ *>    int         nbuf;                             /+ total spots               +/   <* 
+ *>    tCELL      *buf         [MAX_BUF];            /+ cell pointers             +/   <* 
+ *>    char        notes       [MAX_BUF];            /+ source coding             +/   <* 
+ *>    int         real;                             /+ filled spots              +/   <* 
+ *>    /+---(#7, SPECIAL)--------------------+/                                        <* 
+ *>    /+   the type flag indicates whether non-selection formula cells with      +/   <* 
+ *>    /+   references into the selection should be adjusted when pasted.         +/   <* 
+ *>    char        type;                                                               <* 
+ *>    /+---(end)----------------------------+/                                        <* 
+ *> };                                                                                 <* 
+ *> static      tREG        s_reg       [MAX_REG];                                     <*/
 
 
 
@@ -108,89 +108,89 @@ static      char        s_regnames     [MAX_REG] = REG_NAMES;
 /*====================------------------------------------====================*/
 static void  o___INTIIALIZE______o () { return; }
 
-char         /*-> clear all selections ---------------[ shoot  [gz.311.001.02]*/ /*-[00.0000.102.1]-*/ /*-[--.---.---.--]-*/
-REG_init           (void)
-{
-   /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   /*---(registers)----------------------*/
-   strlcpy (s_regnames , REG_NAMES, MAX_REG);
-   REG_purge    ('y');
-   /*---(complete)-----------------------*/
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> clear all selections ---------------[ shoot  [gz.311.001.02]+/ /+-[00.0000.102.1]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_init           (void)                                                                                                      <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_PROG   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(registers)----------------------+/                                                                                    <* 
+ *>    strlcpy (s_regnames , REG_NAMES, MAX_REG);                                                                                  <* 
+ *>    REG_purge    ('y');                                                                                                         <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_PROG   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> clear out all buffers --------------[ ------ [gz.421.121.01]*/ /*-[01.0000.013.!]-*/ /*-[--.---.---.--]-*/
-REG_purge          (char a_init)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   int         x_len       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   /*---(clear)--------------------------*/
-   my.reg_curr  = '"';
-   x_len = strlen (s_regnames);
-   for (i = 0; i < x_len; ++i) {
-      REG_clear (s_regnames[i], a_init);
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> clear out all buffers --------------[ ------ [gz.421.121.01]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_purge          (char a_init)                                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    int         x_len       = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_PROG   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(clear)--------------------------+/                                                                                    <* 
+ *>    my.reg_curr  = '"';                                                                                                         <* 
+ *>    x_len = strlen (s_regnames);                                                                                                <* 
+ *>    for (i = 0; i < x_len; ++i) {                                                                                               <* 
+ *>       REG_clear (s_regnames[i], a_init);                                                                                       <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_PROG   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> clear out a register ---------------[ ------ [ge.B63.253.32]*/ /*-[03.0000.043.3]-*/ /*-[--.---.---.--]-*/
-REG_clear          (char a_reg, char a_init)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         x_reg       = 0;
-   int         i           = 0;
-   tCELL      *x_curr      = NULL;
-   char        rc          = 0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);
-   DEBUG_REGS   yLOG_char    ("a_init"    , a_init);
-   /*---(get register number)------------*/
-   x_reg  = REG__reg2index  (a_reg);
-   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
-   --rce;  if (x_reg < 0) {
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(boundaries)---------------------*/
-   DEBUG_REGS   yLOG_note    ("reset all values to zero");
-   s_reg [x_reg].otab  = 0;
-   s_reg [x_reg].minc  = s_reg [x_reg].minr  = 0;
-   s_reg [x_reg].begc  = s_reg [x_reg].begr  = 0;
-   s_reg [x_reg].endc  = s_reg [x_reg].endr  = 0;
-   s_reg [x_reg].maxc  = s_reg [x_reg].maxr  = 0;
-   s_reg [x_reg].type  = '-';
-   s_reg [x_reg].nbuf  = 0;
-   s_reg [x_reg].real  = 0;
-   /*---(cells)--------------------------*/
-   DEBUG_REGS   yLOG_note    ("clear all register positions");
-   --rce;
-   for (i = 0; i < MAX_BUF; ++i) {
-      x_curr = s_reg [x_reg].buf [i];
-      if (a_init != 'y' && x_curr != NULL) {
-         rc = CELL_killer (x_curr);
-         if (rc < 0) {
-            DEBUG_REGS   yLOG_note    ("found a bad register position");
-            DEBUG_REGS   yLOG_value   ("posid"     , i);
-            DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-            return rce;
-         }
-      }
-      s_reg[x_reg].buf  [i] = NULL;
-      s_reg[x_reg].notes[i] = '-';
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> clear out a register ---------------[ ------ [ge.B63.253.32]+/ /+-[03.0000.043.3]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_clear          (char a_reg, char a_init)                                                                                   <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         x_reg       = 0;                                                                                                <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                             <* 
+ *>    char        rc          = 0;                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);                                                                            <* 
+ *>    DEBUG_REGS   yLOG_char    ("a_init"    , a_init);                                                                           <* 
+ *>    /+---(get register number)------------+/                                                                                    <* 
+ *>    x_reg  = REG__reg2index  (a_reg);                                                                                           <* 
+ *>    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);                                                                            <* 
+ *>    --rce;  if (x_reg < 0) {                                                                                                    <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(boundaries)---------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("reset all values to zero");                                                                     <* 
+ *>    s_reg [x_reg].otab  = 0;                                                                                                    <* 
+ *>    s_reg [x_reg].minc  = s_reg [x_reg].minr  = 0;                                                                              <* 
+ *>    s_reg [x_reg].begc  = s_reg [x_reg].begr  = 0;                                                                              <* 
+ *>    s_reg [x_reg].endc  = s_reg [x_reg].endr  = 0;                                                                              <* 
+ *>    s_reg [x_reg].maxc  = s_reg [x_reg].maxr  = 0;                                                                              <* 
+ *>    s_reg [x_reg].type  = '-';                                                                                                  <* 
+ *>    s_reg [x_reg].nbuf  = 0;                                                                                                    <* 
+ *>    s_reg [x_reg].real  = 0;                                                                                                    <* 
+ *>    /+---(cells)--------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("clear all register positions");                                                                 <* 
+ *>    --rce;                                                                                                                      <* 
+ *>    for (i = 0; i < MAX_BUF; ++i) {                                                                                             <* 
+ *>       x_curr = s_reg [x_reg].buf [i];                                                                                          <* 
+ *>       if (a_init != 'y' && x_curr != NULL) {                                                                                   <* 
+ *>          rc = CELL_killer (x_curr);                                                                                            <* 
+ *>          if (rc < 0) {                                                                                                         <* 
+ *>             DEBUG_REGS   yLOG_note    ("found a bad register position");                                                       <* 
+ *>             DEBUG_REGS   yLOG_value   ("posid"     , i);                                                                       <* 
+ *>             DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                          <* 
+ *>             return rce;                                                                                                        <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       s_reg[x_reg].buf  [i] = NULL;                                                                                            <* 
+ *>       s_reg[x_reg].notes[i] = '-';                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -199,60 +199,60 @@ REG_clear          (char a_reg, char a_init)
 /*====================------------------------------------====================*/
 static void  o___CONVERSION______o () { return; }
 
-int          /*-> convert bufname to bufnum ----------[ leaf   [fn.540.134.80]*/ /*-[00.0000.0L3.O]-*/ /*-[--.---.---.--]-*/
-REG__reg2index     (char a_reg)
-{
-   /*---(locals)-----------+-----------+-*/
-   char       *x_loc       = NULL;
-   int         x_index     =  -1;
-   char        rce         = -10;
-   /*---(defense)------------------------*/
-   x_loc     = strchr (s_regnames, a_reg);
-   --rce;  if (x_loc == 0)                            return rce;
-   /*---(buffer number)------------------*/
-   x_index   = (int) (x_loc - s_regnames);
-   /*> if      (a_reg == '0')                   x_index = 0;                          <* 
-    *> else if (a_reg == '-')                   x_index = 1;                          <* 
-    *> else if (a_reg >= 'a' && a_reg <= 'z')   x_index = a_reg - 'a' +  2;           <* 
-    *> else if (a_reg >= 'A' && a_reg <= 'Z')   x_index = a_reg - 'A' + 28;           <* 
-    *> else if (a_reg == '+')                   x_index = 54;                         <*/
-   /*---(defense on range)---------------*/
-   --rce; if (x_index <  0      )                     return rce;
-   --rce; if (x_index >= MAX_REG)                     return rce;
-   /*---(complete)-----------------------*/
-   return x_index;
-}
+/*> int          /+-> convert bufname to bufnum ----------[ leaf   [fn.540.134.80]+/ /+-[00.0000.0L3.O]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__reg2index     (char a_reg)                                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char       *x_loc       = NULL;                                                                                             <* 
+ *>    int         x_index     =  -1;                                                                                              <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    x_loc     = strchr (s_regnames, a_reg);                                                                                     <* 
+ *>    --rce;  if (x_loc == 0)                            return rce;                                                              <* 
+ *>    /+---(buffer number)------------------+/                                                                                    <* 
+ *>    x_index   = (int) (x_loc - s_regnames);                                                                                     <* 
+ *>    /+> if      (a_reg == '0')                   x_index = 0;                          <*                                       <* 
+ *>     *> else if (a_reg == '-')                   x_index = 1;                          <*                                       <* 
+ *>     *> else if (a_reg >= 'a' && a_reg <= 'z')   x_index = a_reg - 'a' +  2;           <*                                       <* 
+ *>     *> else if (a_reg >= 'A' && a_reg <= 'Z')   x_index = a_reg - 'A' + 28;           <*                                       <* 
+ *>     *> else if (a_reg == '+')                   x_index = 54;                         <+/                                      <* 
+ *>    /+---(defense on range)---------------+/                                                                                    <* 
+ *>    --rce; if (x_index <  0      )                     return rce;                                                              <* 
+ *>    --rce; if (x_index >= MAX_REG)                     return rce;                                                              <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return x_index;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
-int          /*-> convert a register to a tabnum -----[ ------ [fn.420.132.11]*/ /*-[00.0000.016.7]-*/ /*-[--.---.---.--]-*/
-REG__reg2tab       (char a_buf)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_buf       =  -1;
-   char        x_tab       =  -1;
-   char        rce         = -10;
-   /*---(get buffer number)--------------*/
-   x_buf = REG__reg2index  (a_buf);
-   if (x_buf < 0)  return rce;
-   /*---(convert to tab number)----------*/
-   x_tab = x_buf + MAX_TABS;
-   /*---(complete)-----------------------*/
-   return x_tab;
-}
+/*> int          /+-> convert a register to a tabnum -----[ ------ [fn.420.132.11]+/ /+-[00.0000.016.7]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__reg2tab       (char a_buf)                                                                                                <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_buf       =  -1;                                                                                              <* 
+ *>    char        x_tab       =  -1;                                                                                              <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(get buffer number)--------------+/                                                                                    <* 
+ *>    x_buf = REG__reg2index  (a_buf);                                                                                            <* 
+ *>    if (x_buf < 0)  return rce;                                                                                                 <* 
+ *>    /+---(convert to tab number)----------+/                                                                                    <* 
+ *>    x_tab = x_buf + MAX_TABS;                                                                                                   <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return x_tab;                                                                                                               <* 
+ *> }                                                                                                                              <*/
 
-int          /*-> convert a tab to register ----------[ leaf   [fn.320.123.20]*/ /*-[00.0000.01#.4]-*/ /*-[--.---.---.--]-*/
-REG__tab2index     (int a_tab)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_index     = 0;
-   char        rce         = -10;
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab <  MAX_TABS)                        return rce;
-   --rce;  if (a_tab >= MAX_TABS + strlen (s_regnames))  return rce;
-   /*---(convert)------------------------*/
-   x_index = a_tab - MAX_TABS;
-   /*---(complete)-----------------------*/
-   return x_index;
-}
+/*> int          /+-> convert a tab to register ----------[ leaf   [fn.320.123.20]+/ /+-[00.0000.01#.4]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__tab2index     (int a_tab)                                                                                                 <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_index     = 0;                                                                                                <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_tab <  MAX_TABS)                        return rce;                                                           <* 
+ *>    --rce;  if (a_tab >= MAX_TABS + strlen (s_regnames))  return rce;                                                           <* 
+ *>    /+---(convert)------------------------+/                                                                                    <* 
+ *>    x_index = a_tab - MAX_TABS;                                                                                                 <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return x_index;                                                                                                             <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -537,7 +537,7 @@ REG_copy_one       (tCELL *a_curr, long a_stamp)
       return rce;
    }
    /*---(check timestamp)----------------*/
-   DEBUG_REGS   yLOG_value   ("a_curr->u" , a_curr->u);
+   /*> DEBUG_REGS   yLOG_value   ("a_curr->u" , a_curr->u);                           <*/
    /*> --rce;  if (a_curr->u == a_stamp) {                                             <* 
     *>    DEBUG_REGS   yLOG_note    ("skipping, timestamp matches, already copied");   <* 
     *>    DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                               <* 
@@ -553,8 +553,8 @@ REG_copy_one       (tCELL *a_curr, long a_stamp)
    }
    /*---(move in critical data)----------*/
    strlcpy (x_copy->label, a_curr->label, LEN_LABEL);
-   a_curr->u   = a_stamp;
-   DEBUG_REGS   yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);
+   /*> a_curr->u   = a_stamp;                                                         <*/
+   /*> DEBUG_REGS   yLOG_complex ("STAMPED"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d, with %d", a_curr, a_curr->tab, a_curr->col, a_curr->row, a_curr->t, a_curr->u, a_stamp);   <*/
    /*---(place in buffer)----------------*/
    rc = yVIKEYS_regs_add  (x_copy, x_copy->label,'d');
    DEBUG_REGS   yLOG_value   ("hook_rc"   , rc);
@@ -568,106 +568,106 @@ REG_copy_one       (tCELL *a_curr, long a_stamp)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.E73.2A4.32]*/ /*-[02.0000.104.!]-*/ /*-[--.---.---.--]-*/
-REG_entry          (char a_reg, char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         x_reg       = 0;
-   char        x_line      [LEN_RECD];
-   char        x_toplef    [10];
-   char        x_botrig    [10];
-   char        x_min       [10];
-   char        x_max       [10];
-   char        x_size      [10];
-   char        x_reach     [10];
-   int         x_cells     = 0;
-   /*---(beginning)----------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);
-   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
-   /*---(defenses)--------------------*/
-   --rce;  if (a_list  == NULL) {
-      DEBUG_REGS   yLOG_note    ("list is null, no point");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, g_empty, 80);
-      return rce;
-   }
-   /*---(buffer number)------------------*/
-   x_reg  = REG__reg2index  (a_reg);
-   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
-   --rce;  if (x_reg < 0)  {
-      DEBUG_REGS   yLOG_note    ("register is no good");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      strlcpy (a_list, g_empty, 80);
-      return rce;
-   }
-   /*---(write line)------------------*/
-   if (s_reg [x_reg].nbuf == 0) {
-      sprintf (x_line, "  %c   -                                                      -  ", a_reg);
-      strlcpy (a_list, x_line, 80);
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(write line)------------------*/
-   DEBUG_INPT  yLOG_complex ("address"   , "r=%4d, t=%4d, c=%4d, r=%4d", x_reg, s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr);
-   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].minc, s_reg [x_reg].minr, 0, x_min   );
-   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr, 0, x_toplef);
-   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].endc, s_reg [x_reg].endr, 0, x_botrig);
-   LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].maxc, s_reg [x_reg].maxr, 0, x_max   );
-   x_cells = (s_reg [x_reg].endc - s_reg [x_reg].begc + 1) *
-      (s_reg [x_reg].endr - s_reg [x_reg].begr + 1);
-   sprintf (x_size , "%dx%d",
-         s_reg [x_reg].endc - s_reg [x_reg].begc + 1,
-         s_reg [x_reg].endr - s_reg [x_reg].begr + 1);
-   sprintf (x_reach, "%dx%d",
-         s_reg [x_reg].maxc - s_reg [x_reg].minc + 1,
-         s_reg [x_reg].maxr - s_reg [x_reg].minr + 1);
-   sprintf (x_line , "  %c   %1d  %-5s  %3d  %3d   %-5.5s  %-5.5s %-5s  %-5.5s  %-5.5s  %c  ",
-         a_reg, s_reg[x_reg].otab,
-         x_size, x_cells, s_reg[x_reg].nbuf, x_toplef + 1, x_botrig + 1,
-         x_reach, x_min + 1, x_max + 1,
-         s_reg[x_reg].type);
-   strlcpy (a_list, x_line, 80);
-   /*---(complete)--------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.E73.2A4.32]+/ /+-[02.0000.104.!]-+/ /+-[--.---.---.--]-+/                   <* 
+ *> REG_entry          (char a_reg, char *a_list)                                                                                                  <* 
+ *> {                                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                    <* 
+ *>    char        rce         = -10;                                                                                                              <* 
+ *>    int         x_reg       = 0;                                                                                                                <* 
+ *>    char        x_line      [LEN_RECD];                                                                                                         <* 
+ *>    char        x_toplef    [10];                                                                                                               <* 
+ *>    char        x_botrig    [10];                                                                                                               <* 
+ *>    char        x_min       [10];                                                                                                               <* 
+ *>    char        x_max       [10];                                                                                                               <* 
+ *>    char        x_size      [10];                                                                                                               <* 
+ *>    char        x_reach     [10];                                                                                                               <* 
+ *>    int         x_cells     = 0;                                                                                                                <* 
+ *>    /+---(beginning)----------------------+/                                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                                   <* 
+ *>    DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);                                                                                            <* 
+ *>    DEBUG_REGS   yLOG_point   ("a_list"    , a_list);                                                                                           <* 
+ *>    /+---(defenses)--------------------+/                                                                                                       <* 
+ *>    --rce;  if (a_list  == NULL) {                                                                                                              <* 
+ *>       DEBUG_REGS   yLOG_note    ("list is null, no point");                                                                                    <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                <* 
+ *>       strlcpy (a_list, g_empty, 80);                                                                                                           <* 
+ *>       return rce;                                                                                                                              <* 
+ *>    }                                                                                                                                           <* 
+ *>    /+---(buffer number)------------------+/                                                                                                    <* 
+ *>    x_reg  = REG__reg2index  (a_reg);                                                                                                           <* 
+ *>    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);                                                                                            <* 
+ *>    --rce;  if (x_reg < 0)  {                                                                                                                   <* 
+ *>       DEBUG_REGS   yLOG_note    ("register is no good");                                                                                       <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                <* 
+ *>       strlcpy (a_list, g_empty, 80);                                                                                                           <* 
+ *>       return rce;                                                                                                                              <* 
+ *>    }                                                                                                                                           <* 
+ *>    /+---(write line)------------------+/                                                                                                       <* 
+ *>    if (s_reg [x_reg].nbuf == 0) {                                                                                                              <* 
+ *>       sprintf (x_line, "  %c   -                                                      -  ", a_reg);                                            <* 
+ *>       strlcpy (a_list, x_line, 80);                                                                                                            <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                <* 
+ *>       return 0;                                                                                                                                <* 
+ *>    }                                                                                                                                           <* 
+ *>    /+---(write line)------------------+/                                                                                                       <* 
+ *>    DEBUG_INPT  yLOG_complex ("address"   , "r=%4d, t=%4d, c=%4d, r=%4d", x_reg, s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr);   <* 
+ *>    LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].minc, s_reg [x_reg].minr, 0, x_min   );                                                          <* 
+ *>    LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr, 0, x_toplef);                                                          <* 
+ *>    LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].endc, s_reg [x_reg].endr, 0, x_botrig);                                                          <* 
+ *>    LOC_ref (s_reg [x_reg].otab, s_reg [x_reg].maxc, s_reg [x_reg].maxr, 0, x_max   );                                                          <* 
+ *>    x_cells = (s_reg [x_reg].endc - s_reg [x_reg].begc + 1) *                                                                                   <* 
+ *>       (s_reg [x_reg].endr - s_reg [x_reg].begr + 1);                                                                                           <* 
+ *>    sprintf (x_size , "%dx%d",                                                                                                                  <* 
+ *>          s_reg [x_reg].endc - s_reg [x_reg].begc + 1,                                                                                          <* 
+ *>          s_reg [x_reg].endr - s_reg [x_reg].begr + 1);                                                                                         <* 
+ *>    sprintf (x_reach, "%dx%d",                                                                                                                  <* 
+ *>          s_reg [x_reg].maxc - s_reg [x_reg].minc + 1,                                                                                          <* 
+ *>          s_reg [x_reg].maxr - s_reg [x_reg].minr + 1);                                                                                         <* 
+ *>    sprintf (x_line , "  %c   %1d  %-5s  %3d  %3d   %-5.5s  %-5.5s %-5s  %-5.5s  %-5.5s  %c  ",                                                 <* 
+ *>          a_reg, s_reg[x_reg].otab,                                                                                                             <* 
+ *>          x_size, x_cells, s_reg[x_reg].nbuf, x_toplef + 1, x_botrig + 1,                                                                       <* 
+ *>          x_reach, x_min + 1, x_max + 1,                                                                                                        <* 
+ *>          s_reg[x_reg].type);                                                                                                                   <* 
+ *>    strlcpy (a_list, x_line, 80);                                                                                                               <* 
+ *>    /+---(complete)--------------------+/                                                                                                       <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                   <* 
+ *>    return 0;                                                                                                                                   <* 
+ *> }                                                                                                                                              <*/
 
-char         /*-> tbd --------------------------------[ ------ [ge.742.243.31]*/ /*-[01.0000.114.!]-*/ /*-[--.---.---.--]-*/
-REG_list           (char a_buf, char *a_list)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         x_buf       = 0;
-   int         i           = 0;
-   char        rce         = -10;
-   tCELL      *curr        = NULL;
-   /*---(beginning)----------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("a_buf"     , a_buf);
-   /*---(buffer number)------------------*/
-   x_buf  = REG__reg2index  (a_buf);
-   DEBUG_REGS   yLOG_value   ("x_buf"     , x_buf);
-   --rce;  if (x_buf < 0)  {
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(defenses)--------------------*/
-   if (a_list  == NULL) return -1;     /* then no point                       */
-   /*---(walk the list)---------------*/
-   DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_buf].nbuf);
-   sprintf (a_list, "%c (%02d) %03d ,", a_buf, x_buf, s_reg[x_buf].nbuf);
-   for (i = 0; i < s_reg [x_buf].nbuf; ++i) {
-      curr = s_reg[x_buf].buf[i];
-      DEBUG_REGS   yLOG_complex ("curr"      , "%2d, %p, %s", i, curr, curr->label);
-      if (curr == NULL)  continue;
-      strncat (a_list, curr->label, LEN_RECD);
-      strncat (a_list, ",", LEN_RECD);
-   }
-   /*---(complete)--------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> tbd --------------------------------[ ------ [ge.742.243.31]+/ /+-[01.0000.114.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_list           (char a_buf, char *a_list)                                                                                  <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_buf       = 0;                                                                                                <* 
+ *>    int         i           = 0;                                                                                                <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    tCELL      *curr        = NULL;                                                                                             <* 
+ *>    /+---(beginning)----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_REGS   yLOG_char    ("a_buf"     , a_buf);                                                                            <* 
+ *>    /+---(buffer number)------------------+/                                                                                    <* 
+ *>    x_buf  = REG__reg2index  (a_buf);                                                                                           <* 
+ *>    DEBUG_REGS   yLOG_value   ("x_buf"     , x_buf);                                                                            <* 
+ *>    --rce;  if (x_buf < 0)  {                                                                                                   <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(defenses)--------------------+/                                                                                       <* 
+ *>    if (a_list  == NULL) return -1;     /+ then no point                       +/                                               <* 
+ *>    /+---(walk the list)---------------+/                                                                                       <* 
+ *>    DEBUG_REGS   yLOG_value   ("nbuf"      , s_reg[x_buf].nbuf);                                                                <* 
+ *>    sprintf (a_list, "%c (%02d) %03d ,", a_buf, x_buf, s_reg[x_buf].nbuf);                                                      <* 
+ *>    for (i = 0; i < s_reg [x_buf].nbuf; ++i) {                                                                                  <* 
+ *>       curr = s_reg[x_buf].buf[i];                                                                                              <* 
+ *>       DEBUG_REGS   yLOG_complex ("curr"      , "%2d, %p, %s", i, curr, curr->label);                                           <* 
+ *>       if (curr == NULL)  continue;                                                                                             <* 
+ *>       strncat (a_list, curr->label, LEN_RECD);                                                                                 <* 
+ *>       strncat (a_list, ",", LEN_RECD);                                                                                         <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)--------------------+/                                                                                       <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 /*> char         /+-> add cells to a register ------------[ ------ [ge.I95.0G2.48]+/ /+-[02.0000.024.!]-+/ /+-[--.---.---.--]-+/                          <* 
  *> REG_save             (void)                                                                                                                           <* 
@@ -786,7 +786,7 @@ REG_copier           (char a_type, long a_stamp)
    rc      = yVIKEYS_first (&x_col, &x_row, &x_tab);
    while (rc >= 0) {
       x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
-      if (x_curr != NULL && x_curr->u != a_stamp)   REG_copy_one (x_curr, a_stamp);
+      if (x_curr != NULL && yCALC_stamp (x_curr->ycalc, a_stamp))   REG_copy_one (x_curr, a_stamp);
       rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
    }
    /*---(complete)-----------------------*/
@@ -1326,7 +1326,8 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
    strcpy (x_source, "");
    if (strchr (G_CELL_RPN, a_cell->t) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-      rc = RPN_adjust_reg (a_cell, a_reqs, a_zoff, a_xoff, a_yoff, x_source, s_index);
+      /*> rc = RPN_adjust_reg (a_cell, a_reqs, a_zoff, a_xoff, a_yoff, x_source, s_index);   <*/
+      rc = yRPN_adj_reqs (a_cell->s, a_reqs, a_xoff, a_yoff, a_zoff, LEN_RECD);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_REGS   yLOG_note    ("formula could not be parsed");
@@ -1368,7 +1369,8 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
          if (rc == 0) {
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->s);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            rc = RPN_adjust_ref (x_provider, a_pros, a_zoff, a_xoff, a_yoff, x_source, a_cell->label);
+            /*> rc = RPN_adjust_ref (x_provider, a_pros, a_zoff, a_xoff, a_yoff, x_source, a_cell->label);   <*/
+            rc = yRPN_adj_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
             sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);
@@ -1407,1088 +1409,522 @@ static short   s_mcol     =    0;
 static short   s_ccol     =    0;
 static short   s_crow     =    0;
 
-char         /*-> prepare for data import ------------[ leaf   [fe.F83.123.30]*/ /*-[01.0000.014.X]-*/ /*-[--.---.---.--]-*/
-REG__inpt_prep       (char a_style)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   int         i           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(save style)---------------------*/
-   DEBUG_REGS   yLOG_note    ("save style");
-   s_style  = a_style;
-   /*---(clear sizer)--------------------*/
-   DEBUG_REGS   yLOG_note    ("clear sizer");
-   s_sizer  = '-';
-   /*---(clear sizer)--------------------*/
-   DEBUG_REGS   yLOG_note    ("clear map");
-   s_mapper = '-';
-   for (i = 0; i < MAX_COLS; ++i)  s_map [i] = 0;
-   /*---(prepare)------------------------*/
-   DEBUG_REGS   yLOG_note    ("prepare positions");
-   s_icol  =    0;
-   s_mcol  =    0;
-   s_ccol  =    0;
-   s_crow  =    0;
-   s_lines =    0;
-   /*---(delimiter)----------------------*/
-   DEBUG_REGS   yLOG_note    ("set delimiter");
-   switch (s_style) {
-   case 's'  : case 'S'  :
-      strlcpy (s_q, " "  , 5);
-      break;
-   case 'c'  : case 'C'  :
-      strlcpy (s_q, ","  , 5);
-      break;
-   case 't'  : case 'T'  :
-      strlcpy (s_q, "\t" , 5);
-      break;
-   case 'r'  : case 'R'  :
-      strlcpy (s_q, "" , 5);
-      break;
-   case 'v'  : case 'V'  :
-      strlcpy (s_q, " "  , 5);
-      break;
-   default   :
-      return rce;
-      break;
-   }
-   /*---(sizer)--------------------------*/
-   DEBUG_REGS   yLOG_note    ("set sizer value");
-   switch (s_style) {
-   case 'T' : case 'C' : case 'R' : case 'V' : case 'S' :
-      s_sizer = 'a';
-      break;
-   case 'v' :
-      s_sizer = 'f';
-      break;
-   default  :
-      s_sizer = '-';
-      break;
-   }
-   /*---(open output file)---------------*/
-   DEBUG_REGS   yLOG_note    ("open clip file");
-   s_clip = fopen("/root/z_gehye/vi_clip.txt", "r");
-   DEBUG_REGS   yLOG_point   ("s_clip"    , s_clip);
-   --rce;  if (s_clip == NULL) {
-      DEBUG_REGS   yLOG_note    ("can not open clip file");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> process a mapping request ----------[ ------ [fe.943.044.31]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
-REG__inpt_map        (void)
-{
-   /*---(locals)-----+-----+-----+-----+-*/
-   char        rce         =  -10;
-   int         i           =    0;
-   tCELL      *x_curr      = NULL;
-   short       x_ccol      =    0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_char    ("s_style"   , s_style);
-   if (s_style == 'v') {
-      DEBUG_REGS   yLOG_note    ("mapping not allowed in this import style");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(import mapping)-----------------*/
-   DEBUG_REGS   yLOG_note    ("start mapping");
-   for (i = 0; i < MAX_COLS; ++i) {
-      x_ccol = CCOL + i;
-      DEBUG_REGS   yLOG_value   ("x_ccol"    , x_ccol);
-      x_curr = LOC_cell_at_loc (CTAB, x_ccol, CROW);
-      DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
-      if (x_curr == NULL)  {
-         DEBUG_REGS   yLOG_note    ("end of mapping (null cell)");
-         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      DEBUG_REGS   yLOG_value   ("v_num"     , x_curr->v_num);
-      if (x_curr->v_num <= 0) {
-         DEBUG_REGS   yLOG_note    ("end of mapping (zero or negative cell)");
-         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      s_mapper = 'y';
-      s_crow   = CROW + 1;
-      s_map [i] = x_curr->v_num;
-      DEBUG_REGS   yLOG_pair    (i          , s_map [i] );
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> read an import record --------------[ leaf   [fe.A34.026.50]*/ /*-[01.0001.014.!]-*/ /*-[--.---.---.--]-*/
-REG__inpt_read       (void)
-{
-   /*---(locals)-----+-----+-----+-----+-*/
-   char        rce         =  -10;
-   int         x_len       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(read and clean)-----------------*/
-   ++s_lines;
-   DEBUG_REGS   yLOG_value   ("line"      , s_lines);
-   fgets (s_recd, LEN_RECD, s_clip);
-   if (feof (s_clip))  {
-      DEBUG_REGS   yLOG_note    ("end of file reached");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   x_len = strlen (s_recd);
-   if (x_len <= 0)  {
-      DEBUG_REGS   yLOG_note    ("record is empty");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
-      return -rce;
-   }
-   s_recd [--x_len] = '\0';
-   DEBUG_REGS   yLOG_value   ("length"    , x_len);
-   DEBUG_REGS   yLOG_info    ("fixed"     , s_recd);
-   if (s_recd [0] == '\0') {
-      DEBUG_REGS   yLOG_note    ("starts with a null");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
-      return -rce;
-   }
-   if (s_recd [0] == ' ' ) {
-      DEBUG_REGS   yLOG_note    ("starts with a space");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
-      return -rce;
-   }
-   if (s_recd [0] == '#' && strchr ("<>=", s_recd [1]) == NULL) {
-      DEBUG_REGS   yLOG_note    ("starts with a comment marker");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
-      return -rce;
-   }
-   s_max = x_len;
-   DEBUG_REGS   yLOG_value   ("s_max"     , s_max);
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> adjust a column sizing -------------[ ------ [fe.420.223.22]*/ /*-[00.0000.015.B]-*/ /*-[--.---.---.--]-*/
-REG__inpt_width      (short a_col, short a_wide)
-{
-   /*---(locals)-----+-----+-----+-----+-*/
-   char        rce         =  -10;
-   short       w           =   0;
-   /*---(defense)------------------------*/
-   --rce;  if (s_sizer != 'a')      return rce;
-   /*---(resize)-------------------------*/
-   w = LOC_col_width (CTAB, CCOL + a_col);
-   --rce;  if (w >= a_wide + 1)     return rce;
-   LOC_col_widen (CTAB, CCOL + a_col, a_wide + 1);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> process a column sizing request ----[ ------ [fe.A53.053.51]*/ /*-[02.0000.014.E]-*/ /*-[--.---.---.--]-*/
-REG__inpt_sizer      (void)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char       *p           = NULL;
-   char       *s           = NULL;
-   int         x_len       =    0;
-   short       x_col       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_value   ("s_sizer"   , s_sizer);
-   --rce;  if (s_sizer != 'a') {
-      DEBUG_REGS   yLOG_note    ("wrong type, only 'a' allowed");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
-   --rce;  if ((s_style != 'C' && strncmp ("#<34", s_recd, 4) != 0) ||
-         (s_style == 'C' && strncmp ("\"#<34", s_recd, 5) != 0)) {
-      DEBUG_REGS   yLOG_note    ("not a sizing line");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(process)------------------------*/
-   p  = strtok_r (s_recd, s_q, &s);
-   while (p != NULL) {
-      DEBUG_REGS   yLOG_value   ("x_col"     , x_col);
-      x_len = strlen (p);
-      if (s_style == 'C' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';
-      strltrim (p, ySTR_BOTH, LEN_RECD);
-      DEBUG_REGS   yLOG_info    ("p (field)" , p);
-      x_len = strlen (p);
-      DEBUG_REGS   yLOG_value   ("x_len"     , x_len);
-      if (x_len == 0)  break;  /* stop at unsized column */
-      LOC_col_widen (CTAB, CCOL + x_col, x_len + 1);
-      ++x_col;
-      p  = strtok_r (NULL, s_q, &s);
-   }
-   /*---(update)-------------------------*/
-   DEBUG_REGS   yLOG_note    ("mark sizer processed");
-   s_sizer  = 's';
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> place import data into a cell ------[ ------ [fz.310.301.21]*/ /*-[01.0000.025.!]-*/ /*-[--.---.---.--]-*/
-REG__inpt_place      (short a_col, short a_row, char *a_value)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   /*---(non-mapped)---------------------*/
-   if (s_mapper == '-') {
-      CELL_change (NULL, CHG_INPUT, CTAB, CCOL + a_col, CROW + a_row, a_value);
-   }
-   /*---(mapped)-------------------------*/
-   else {
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> complete data import ---------------[ ------ [fz.311.001.02]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
-REG__inpt_done       (void)
-{
-   /*---(close file)---------------------*/
-   DEBUG_REGS   yLOG_note    ("closing file");
-   fclose  (s_clip);
-   /*---(screen)-------------------------*/
-   /*> CURS_screen_reset ();                                                          <*/
-   /*---(calculate)----------------------*/
-   DEBUG_INPT  yLOG_note    ("recalc");
-   SEQ_calc_full ();
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [fz.732.141.12]*/ /*-[01.0000.014.3]-*/ /*-[--.---.---.--]-*/
-REG__inpt_values     (short a_row)
-{ 
-   /*---(locals)-----+-----+-----+-----+-*/
-   short       x_col       =    0;
-   int         w           =    0;
-   int         cw          =    0;
-   char        t           [LEN_RECD]  = "";
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(process cells)---------------*/
-   while (cw < s_max) {
-      /*---(read import data)---------*/
-      w     = LOC_col_width (CTAB, CCOL + x_col);
-      DEBUG_REGS  yLOG_value   ("w"         , w);
-      strlcpy (t, s_recd + cw, w);
-      DEBUG_REGS  yLOG_info    ("t (orig)"  , t);
-      /*---(process)------------------*/
-      strltrim (t, ySTR_BOTH, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
-      strlencode   (t, ySTR_NORM, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("t (new)"   , t);
-      DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
-      /*---(change)-------------------*/
-      REG__inpt_place  (x_col, a_row, t);
-      /*---(next)---------------------*/
-      ++x_col;
-      cw += w;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [fz.842.141.32]*/ /*-[01.0000.014.9]-*/ /*-[--.---.---.--]-*/
-REG__inpt_delims     (short a_row)
-{
-   /*---(locals)-----+-----+-----+-----+-*/
-   short       x_col       =    0;
-   char       *p           = NULL;
-   char       *s           = NULL;
-   int         x_len       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(parse first)-----------------*/
-   p  = strtok_r (s_recd, s_q, &s);
-   /*---(process cells)---------------*/
-   while (p != NULL) {
-      /*---(read import data)---------*/
-      DEBUG_REGS  yLOG_info    ("p (orig)"  , p);
-      x_len = strlen (p);
-      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
-      /*---(process)------------------*/
-      if (s_style == 'c' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';
-      strltrim (p, ySTR_BOTH, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("p (trim)"  , p);
-      x_len = strlen (p);
-      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
-      if (s_sizer == 'a')  REG__inpt_width (x_col, x_len);
-      strlencode   (p, ySTR_NORM, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("p (new)"   , p);
-      DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
-      REG__inpt_place  (x_col, a_row, p);
-      /*---(parse next)---------------*/
-      p  = strtok_r (NULL, s_q, &s);
-      ++x_col;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [ge.A42.132.77]*/ /*-[02.0000.013.!]-*/ /*-[--.---.---.--]-*/
-REG_inpt_driver      (char a_style)
-{
-   /*---(locals)-----+-----+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   short       x_row       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(prepare)------------------------*/
-   rc = REG__inpt_prep   (a_style);
-   DEBUG_REGS   yLOG_value   ("prep rc"   , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   rc = REG__inpt_map ();
-   /*---(process lines)------------------*/
-   while (1) {
-      /*---(read)------------------------*/
-      rc = REG__inpt_read ();
-      if (rc >  0)  continue;
-      if (rc <  0)  break;
-      /*---(process cells)---------------*/
-      DEBUG_REGS  yLOG_value   ("x_row"     , x_row);
-      /*---(check sizer)-----------------*/
-      if (strncmp (s_recd, "#<34"  , 4) == 0) {
-         REG__inpt_sizer ();
-         continue;
-      }
-      /*---(handle values)---------------*/
-      if (strchr ("Vv", s_style) != NULL) {
-         REG__inpt_values  (x_row);
-      } else {
-         REG__inpt_delims  (x_row);
-      }
-      /*---(prepare for next)------------*/
-      ++x_row;
-   }
-   /*---(wrap up)------------------------*/
-   rc = REG__inpt_done ();
-   DEBUG_REGS   yLOG_value   ("done rc"   , rc);
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [ge.RE5.1E2.D3]*/ /*-[05.0000.013.!]-*/ /*-[--.---.---.--]-*/
-REG_valuesout     (char a_style)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          = 0;
-   FILE       *f           = NULL;
-   tCELL      *curr        = NULL;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_rowsave   = 0;
-   int         w           = 0;
-   char        x_print     [LEN_RECD]  = "";
-   char        x_trim      [LEN_RECD]  = "";
-   char        x_source    [LEN_RECD]  = "";
-   char        x_full      [LEN_RECD]  = "";
-   int         c           = 0;
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(open output file)---------------*/
-   f = fopen("/root/z_gehye/vi_clip.txt", "w");
-   DEBUG_REGS   yLOG_point   ("f (file)"  , f);
-   --rce;  if (f == NULL) {
-      DEBUG_REGS   yLOG_note    ("can not open clip file");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(process independent cells)------*/
-   rc    = yVIKEYS_first (&x_col, &x_row, &x_tab);
-   curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
-   x_rowsave = x_row;
-   while (rc >= 0) {
-      DEBUG_REGS   yLOG_point   ("curr"      , curr);
-      ++c;
-      /*---(look for line break)---------*/
-      if (strchr ("vVmMcCtTrR", a_style) != 0 && x_row != x_rowsave) {
-         DEBUG_REGS   yLOG_note    ("line break");
-         fprintf (f, "\n");
-      }
-      /*---(fill in blank cells)---------*/
-      if (curr == NULL) {
-         DEBUG_REGS   yLOG_note    ("NULL cell");
-         w = LOC_col_width (x_tab, x_col);
-         switch (a_style) {
-         case 'v' : case 'r' : case 'R' : 
-            fprintf (f, "%*.*s", w, w, g_empty);
-            break;
-         case 'c' : case 'C' :
-            fprintf (f, "\"\",");
-            break;
-         case 't' : case 'T' :
-            fprintf (f, "\t");
-            break;
-         }
-      }
-      /*---(write filled cells)----------*/
-      else {
-         DEBUG_REGS   yLOG_info    ("cell"      , curr->label);
-         /*---(source)-------------------*/
-         if (curr->s != NULL) {
-            DEBUG_REGS   yLOG_note    ("convert source string");
-            strlcpy      (x_source, curr->s, LEN_RECD);
-            strldecode   (x_source, LEN_RECD);
-         } else {
-            DEBUG_REGS   yLOG_note    ("source is NULL");
-         }
-         DEBUG_REGS   yLOG_info    ("source"    , x_source);
-         /*---(full outcome)-------------*/
-         if (curr->v_str != NULL) {
-            DEBUG_REGS   yLOG_note    ("convert modified string");
-            strlcpy      (x_full  , curr->v_str, LEN_RECD);
-            strldecode   (x_full, LEN_RECD);
-         } else {
-            DEBUG_REGS   yLOG_note    ("modified is NULL");
-         }
-         /*---(printable)----------------*/
-         if (curr->p != NULL) {
-            DEBUG_REGS   yLOG_note    ("convert printable");
-            strlcpy  (x_print , curr->p, LEN_RECD);
-            strldecode   (x_print, LEN_RECD);
-            strlcpy  (x_trim  , x_print, LEN_RECD);
-         } else {
-            DEBUG_REGS   yLOG_note    ("printable is NULL");
-         }
-         /*---(trimmed printable)--------*/
-         strltrim (x_trim, ySTR_BOTH, LEN_RECD);
-         DEBUG_REGS   yLOG_info    ("printable" , x_trim);
-         DEBUG_REGS   yLOG_info    ("modified"  , x_full);
-         DEBUG_REGS   yLOG_note    ("handle");
-         switch (a_style) {
-         case 'v' : fprintf (f, "%s"                  , x_print);
-                    break;
-         case 'r' : fprintf (f, "%s  "              , x_print);
-                    break;
-         case 'V' : fprintf (f, "%s "                 , x_trim);
-                    break;
-         case 'm' : 
-         case 'M' : fprintf (f, "%s"                  , x_full);
-                    break;
-         case 'c' : fprintf (f, "\"%s\","             , x_trim);
-                    break;
-         case 'C' : fprintf (f, "\"%s\","             , x_source);
-                    break;
-         case 't' : fprintf (f, "%s\t"                , x_trim);
-                    break;
-         case 'T' : fprintf (f, "%s\t"                , x_source);
-                    break;
-         case 's' : fprintf (f, "%s\n"                , x_source);
-                    break;
-         case 'S' : fprintf (f, "(%s) %s\n"           , curr->label, x_source);
-                    break;
-         case 'f' : fprintf (f, "%-10.10s  %s\n"    , curr->label, x_source);
-                    break;
-         case 'F' : fprintf (f, "cell_reg    -D-                ");
-                    fprintf (f, "%5d  %-8.8s  "   , c, curr->label);
-                    fprintf (f, "%c %c %c %c %c  "  , curr->t, curr->f, curr->d, curr->a, curr->n);
-                    fprintf (f, "%s\n"                , x_source);
-                    break;
-         }
-      }
-      x_rowsave = x_row;
-      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
-      curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
-   };
-   /*---(close file)---------------------*/
-   DEBUG_REGS   yLOG_note    ("closing file");
-   fprintf (f, "\n");
-   fclose  (f);
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                           files                              ----===*/
-/*====================------------------------------------====================*/
-static void  o___FILES___________o () { return; }
-
-char         /*-> tbd --------------------------------[ ------ [ge.A53.754.12]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-REG_read           (char a_reg, int a_tab, char *a_beg, char *a_end, char *a_min, char *a_max, char a_type)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   char        rc          =   0;           /* generic return code            */
-   int         x_reg       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   /*---(header)-------------------------*/
-   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   DEBUG_INPT   yLOG_char    ("a_reg"     , a_reg);
-   /*---(buffer number)------------------*/
-   x_reg  = REG__reg2index  (a_reg);
-   DEBUG_INPT   yLOG_value   ("x_reg"     , x_reg);
-   --rce;  if (x_reg < 0) {
-      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(beg)----------------------------*/
-   rc = LOC_parse (a_beg, NULL, &x_col, &x_row, NULL);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   s_reg [x_reg].begc = x_col;
-   s_reg [x_reg].begr = x_row;
-   DEBUG_INPT  yLOG_complex ("address"   , "r=%4d, t=%4d, c=%4d, r=%4d", x_reg, s_reg [x_reg].otab, s_reg [x_reg].begc, s_reg [x_reg].begr);
-   /*---(end)----------------------------*/
-   rc = LOC_parse (a_end, NULL, &x_col, &x_row, NULL);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   s_reg [x_reg].endc = x_col;
-   s_reg [x_reg].endr = x_row;
-   DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", a_tab, s_reg [x_reg].endc, s_reg [x_reg].endr);
-   /*---(min)----------------------------*/
-   rc = LOC_parse (a_min, NULL, &x_col, &x_row, NULL);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   s_reg [x_reg].minc = x_col;
-   s_reg [x_reg].minr = x_row;
-   DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", a_tab, s_reg [x_reg].minc, s_reg [x_reg].minr);
-   /*---(max)----------------------------*/
-   rc = LOC_parse (a_max, NULL, &x_col, &x_row, NULL);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   s_reg [x_reg].maxc = x_col;
-   s_reg [x_reg].maxr = x_row;
-   DEBUG_INPT  yLOG_complex ("address"   , "t=%4d, c=%4d, r=%4d", a_tab, s_reg [x_reg].maxc, s_reg [x_reg].maxr);
-   /*---(type)---------------------------*/
-   s_reg [x_reg].type = a_type;
-   /*---(complete)-----------------------*/
-   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [ge.860.394.23]*/ /*-[02.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-REG_write          (FILE *a_file, int  *a_seq, char a_buf)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;           /* return code for errors         */
-   int         i           = 0;             /* iterator -- buffer entry       */
-   int         x_buf       = 0;
-   tCELL      *x_curr      = NULL;
-   char        x_regid     [20];
-   char        x_toplef    [10];
-   char        x_botrig    [10];
-   char        x_min       [10];
-   char        x_max       [10];
-   /*---(buffer number)------------------*/
-   x_buf  = REG__reg2index  (a_buf);
-   --rce;  if (x_buf < 0)                   return rce;
-   --rce;  if (s_reg[x_buf].nbuf <= 0)        return rce;
-   /*---(register entry)-----------------*/
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].minc, s_reg [x_buf].minr, 0, x_min   );
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].begc, s_reg [x_buf].begr, 0, x_toplef);
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].endc, s_reg [x_buf].endr, 0, x_botrig);
-   LOC_ref (s_reg [x_buf].otab, s_reg [x_buf].maxc, s_reg [x_buf].maxr, 0, x_max   );
-   sprintf (x_regid, "%c", a_buf);
-   fprintf (a_file, "#---------  ver  ---lvl/reg--  -tab-  --beg---  --end---  --min---  --max---  t \n");
-   fprintf (a_file, "register    -A-  %-12.12s    %1d    %-8.8s  %-8.8s  %-8.8s  %-8.8s  %c \n",
-         x_regid, s_reg [x_buf].otab,
-         x_toplef, x_botrig, x_min, x_max, s_reg [x_buf].type);
-   /*---(cell entries)-------------------*/
-   for (i = 0; i < s_reg[x_buf].nbuf; ++i) {
-      x_curr = s_reg[x_buf].buf[i];
-      /*> OUTP_cell ( "cell_reg", *a_seq, x_regid, x_curr);                           <*/
-      ++(*a_seq);
-   }
-   /*---(complete)-----------------------*/
-   fflush (a_file);
-   return 0;
-}
-
-char         /*-> tbd --------------------------------[ ------ [ge.DA0.194.31]*/ /*-[03.0000.013.!]-*/ /*-[--.---.---.--]-*/
-REG_bufwrite       (char a_buf)
-{
-   /*---(locals)-------------------------*/
-   FILE       *f           = NULL;          /* file for writing               */
-   char        x_temp      [100];
-   char        rce         = -10;           /* return code for errors         */
-   int         x_seq       = 0;             /* sequence number                */
-   int         i           = 0;             /* iterator -- buffer entry       */
-   tCELL      *x_curr      = NULL;
-   long        x_stamp     = 0;
-   time_t      x_time;
-   int         x_buf       = 0;
-   /*---(buffer number)------------------*/
-   x_buf  = REG__reg2index  (a_buf);
-   --rce;  if (x_buf < 0)      return rce;
-   /*---(open file)----------------------*/
-   f = fopen(FILE_BUF, "w");
-   --rce;  if (f == NULL)      return rce;
-   fprintf (f, "#!/usr/local/bin/gyges\n");
-   fprintf (f, "#   generated by the heatherly spreadsheet tool gyges-hekatonkheires (hundred-handed)\n");
-   fprintf (f, "#\n");
-   fprintf (f, "#   this is a buffer transfer extract\n");
-   fprintf (f, "#\n");
-   /*---(header data)--------------------*/
-   x_time = time(NULL);
-   strftime (x_temp, 100, "%y.%m.%d.%H.%M.%S", localtime(&x_time));
-   fprintf (f, "\n\n\n");
-   fprintf (f, "#===[[ GENERAL INFO AND SETTINGS ]]===========================================-=======\n");
-   fprintf (f, "#--------- %c -ver- %c ---description ------------------------------------------------\n", 31, 31);
-   fprintf (f, "gyges      %c %5s %c %-60.60s %c\n", 31, VER_NUM, 31, VER_TXT                      , 31);
-   fprintf (f, "format     %c %5d %c %-60.60s %c\n", 31, 6      , 31, "add bcol and brow for tabs" , 31);
-   fprintf (f, "timestamp  %c %5s %c %-60.60s %c\n", 31, "-----", 31, x_temp                       , 31);
-   /*---(cell header)--------------------*/
-   fprintf (f, "\n\n\n");
-   fprintf (f, "#===[[ DEPENDENCY TREE, in reverse order ]]===============================================\n");
-   /*---(write cells)--------------------*/
-   x_stamp = rand ();
-   /*> for (i = s_reg[x_buf].nbuf - 1; i >= 0; --i) {                                   <*/
-   for (i = 0; i < s_reg[x_buf].nbuf; ++i) {
-      /*---(prepare)----------------------*/
-      x_curr = s_reg[x_buf].buf[i];
-      /*---(print)------------------------*/
-      if (x_seq % 5 == 0) {
-         fprintf (f, "#--------- %c ---level---- %c -seq- %c ---loc--", 31, 31, 31);
-         fprintf (f, " %c t-f-d-a %c ---source-------------------\n", 31, 31);
-      }
-      fprintf (f, "cell_dep   %c %-12.12s %c %5d %c %-8.8s %c %c %c %c %c %c %s\n",
-            31, "------------", 31, x_seq, 31, x_curr->label,
-            31, x_curr->t, x_curr->f, x_curr->d, x_curr->a,
-            31, x_curr->s);
-      ++x_seq;
-      x_curr->u = x_stamp;
-      fflush  (f);
-   }
-   /*---(footer data)----------------------*/
-   fprintf (f, "\n\n\n");
-   fprintf (f, "done\n");
-   /*---(close file)-----------------------*/
-   fclose  (f);
-   /*---(complete)-------------------------*/
-   return 0;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                        text registers                        ----===*/
-/*====================------------------------------------====================*/
-static void  o___TEXT_REGS_______o () { return; }
-
-static char  s_treg_curr  = '"';
-static char  s_treg_watch = '"';
-
-typedef struct  cTEXTREG  tTEXTREG;
-struct cTEXTREG {
-   char        label       [10];            /* original cell                  */
-   int         bpos;                        /* original starting point        */
-   int         epos;                        /* original ending point          */
-   int         len;                         /* length of text                 */
-   char        data        [LEN_RECD];       /* text                           */
-   char        source;                      /* user, file, import             */
-};
-static      tTEXTREG    s_textreg   [MAX_REG];
-#define     TREG_NONE     '-'
-#define     TREG_USER     'u'
-#define     TREG_FILE     'f'
-#define     TREG_IMPORT   'i'
-
-/*> char         /+-> clear all selections ---------------[ shoot  [gz.530.011.00]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_init          (void)                                                                                                      <* 
+/*> char         /+-> prepare for data import ------------[ leaf   [fe.F83.123.30]+/ /+-[01.0000.014.X]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_prep       (char a_style)                                                                                            <* 
  *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         i           = 0;                                                                                                <* 
- *>    /+---(registers)----------------------+/                                                                                    <* 
- *>    strlcpy (s_regnames , REG_NAMES, MAX_REG);                                                                                  <* 
- *>    s_treg_curr  = '"';                                                                                                         <* 
- *>    s_treg_watch = '"';                                                                                                         <* 
- *>    /+---(purge)--------------------------+/                                                                                    <* 
- *>    for (i = 0; i < MAX_REG; ++i) {                                                                                             <* 
- *>       strlcpy (s_textreg [i].label, "", 10);                                                                                   <* 
- *>       s_textreg [i].bpos   = -1;                                                                                               <* 
- *>       s_textreg [i].epos   = -1;                                                                                               <* 
- *>       s_textreg [i].len    =  0;                                                                                               <* 
- *>       strlcpy (s_textreg [i].data , "", LEN_RECD);                                                                             <* 
- *>       s_textreg [i].source = TREG_NONE;                                                                                        <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    int         i           =    0;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(save style)---------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("save style");                                                                                   <* 
+ *>    s_style  = a_style;                                                                                                         <* 
+ *>    /+---(clear sizer)--------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("clear sizer");                                                                                  <* 
+ *>    s_sizer  = '-';                                                                                                             <* 
+ *>    /+---(clear sizer)--------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("clear map");                                                                                    <* 
+ *>    s_mapper = '-';                                                                                                             <* 
+ *>    for (i = 0; i < MAX_COLS; ++i)  s_map [i] = 0;                                                                              <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("prepare positions");                                                                            <* 
+ *>    s_icol  =    0;                                                                                                             <* 
+ *>    s_mcol  =    0;                                                                                                             <* 
+ *>    s_ccol  =    0;                                                                                                             <* 
+ *>    s_crow  =    0;                                                                                                             <* 
+ *>    s_lines =    0;                                                                                                             <* 
+ *>    /+---(delimiter)----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("set delimiter");                                                                                <* 
+ *>    switch (s_style) {                                                                                                          <* 
+ *>    case 's'  : case 'S'  :                                                                                                     <* 
+ *>       strlcpy (s_q, " "  , 5);                                                                                                 <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'c'  : case 'C'  :                                                                                                     <* 
+ *>       strlcpy (s_q, ","  , 5);                                                                                                 <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 't'  : case 'T'  :                                                                                                     <* 
+ *>       strlcpy (s_q, "\t" , 5);                                                                                                 <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'r'  : case 'R'  :                                                                                                     <* 
+ *>       strlcpy (s_q, "" , 5);                                                                                                  <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'v'  : case 'V'  :                                                                                                     <* 
+ *>       strlcpy (s_q, " "  , 5);                                                                                                 <* 
+ *>       break;                                                                                                                   <* 
+ *>    default   :                                                                                                                 <* 
+ *>       return rce;                                                                                                              <* 
+ *>       break;                                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(sizer)--------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("set sizer value");                                                                              <* 
+ *>    switch (s_style) {                                                                                                          <* 
+ *>    case 'T' : case 'C' : case 'R' : case 'V' : case 'S' :                                                                      <* 
+ *>       s_sizer = 'a';                                                                                                           <* 
+ *>       break;                                                                                                                   <* 
+ *>    case 'v' :                                                                                                                  <* 
+ *>       s_sizer = 'f';                                                                                                           <* 
+ *>       break;                                                                                                                   <* 
+ *>    default  :                                                                                                                  <* 
+ *>       s_sizer = '-';                                                                                                           <* 
+ *>       break;                                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(open output file)---------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("open clip file");                                                                               <* 
+ *>    s_clip = fopen("/root/z_gehye/vi_clip.txt", "r");                                                                           <* 
+ *>    DEBUG_REGS   yLOG_point   ("s_clip"    , s_clip);                                                                           <* 
+ *>    --rce;  if (s_clip == NULL) {                                                                                               <* 
+ *>       DEBUG_REGS   yLOG_note    ("can not open clip file");                                                                    <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return rce;                                                                                                              <* 
  *>    }                                                                                                                           <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> tbd --------------------------------[ ------ [ge.C53.244.61]+/ /+-[02.0000.204.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_entry         (char a_reg, char *a_list)                                                                                  <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         = -10;                                                                                              <* 
- *>    int         x_reg       = 0;                                                                                                <* 
- *>    char        x_line      [LEN_RECD];                                                                                         <* 
- *>    int         x_len       = 0;                                                                                                <* 
- *>    /+---(beginning)----------------------+/                                                                                    <* 
- *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    DEBUG_REGS   yLOG_char    ("a_reg"     , a_reg);                                                                            <* 
- *>    DEBUG_REGS   yLOG_point   ("a_list"    , a_list);                                                                           <* 
- *>    /+---(defenses)--------------------+/                                                                                       <* 
- *>    --rce;  if (a_list  == NULL) {                                                                                              <* 
- *>       DEBUG_REGS   yLOG_note    ("list is null, no point");                                                                    <* 
- *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       strlcpy (a_list, g_empty, 80);                                                                                           <* 
- *>       return rce;                                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    /+---(buffer number)------------------+/                                                                                    <* 
- *>    if (a_reg == REG_CURR)  a_reg = s_treg_watch;  /+ for status line +/                                                        <* 
- *>    x_reg  = REG__reg2index  (a_reg);                                                                                           <* 
- *>    DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);                                                                            <* 
- *>    --rce;  if (x_reg < 0)  {                                                                                                   <* 
- *>       DEBUG_REGS   yLOG_note    ("register is no good");                                                                       <* 
- *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       strlcpy (a_list, g_empty, 80);                                                                                           <* 
- *>       return rce;                                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    /+---(write empty line)------------+/                                                                                       <* 
- *>    if (s_textreg [x_reg].len == 0) {                                                                                           <* 
- *>       sprintf (x_line, "  %c    -                                                      -   -  -  ", a_reg);                    <* 
- *>       strlcpy (a_list, x_line, 80);                                                                                            <* 
- *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       return 0;                                                                                                                <* 
- *>    }                                                                                                                           <* 
- *>    /+---(write line)------------------+/                                                                                       <* 
- *>    sprintf (x_line , "  %c  %3d [%-40.40s  %-7.7s %3d %3d  %c  ",                                                              <* 
- *>          a_reg                   ,                                                                                             <* 
- *>          s_textreg [x_reg].len   ,                                                                                             <* 
- *>          s_textreg [x_reg].data  ,                                                                                             <* 
- *>          s_textreg [x_reg].label ,                                                                                             <* 
- *>          s_textreg [x_reg].bpos  ,                                                                                             <* 
- *>          s_textreg [x_reg].epos  ,                                                                                             <* 
- *>          s_textreg [x_reg].source);                                                                                            <* 
- *>    x_len = s_textreg [x_reg].len;                                                                                              <* 
- *>    if (x_len <= 40) {                                                                                                          <* 
- *>       x_line [10 + x_len] = ']';                                                                                               <* 
- *>    } else if (x_len > 40) {                                                                                                    <* 
- *>       x_line [10 + 40   ] = '>';                                                                                               <* 
- *>    }                                                                                                                           <* 
- *>    strlcpy (a_list, x_line, 80);                                                                                               <* 
- *>    /+---(complete)--------------------+/                                                                                       <* 
  *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
-/*> char         /+-> process keys for register actions --[ ------ [gz.320.011.02]+/ /+-[01.0000.113.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_clear         (void)                                                                                                      <* 
+/*> char         /+-> process a mapping request ----------[ ------ [fe.943.044.31]+/ /+-[02.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_map        (void)                                                                                                    <* 
  *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         i           =   0;                                                                                              <* 
- *>    /+---(delete)-------------------------+/                                                                                    <* 
- *>    for (i = SELC_from (); i <= SELC_to (); ++i) {                                                                              <* 
- *>       g_contents [i] = ' ';                                                                                                    <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> process keys for register action ---[ ------ [gz.430.031.02]+/ /+-[01.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_delete        (void)                                                                                                      <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         x_len       =   0;                                                                                              <* 
- *>    int         x_diff      =   0;                                                                                              <* 
- *>    int         i           =   0;                                                                                              <* 
- *>    /+---(set size)-----------------------+/                                                                                    <* 
- *>    x_len   = strlen (g_contents);                                                                                              <* 
- *>    x_diff  = SELC_to() - SELC_from() + 1;                                                                                      <* 
- *>    /+---(delete)-------------------------+/                                                                                    <* 
- *>    for (i = SELC_to () + 1; i <= x_len; ++i) {                                                                                 <* 
- *>       g_contents [i - x_diff] = g_contents [i];                                                                                <* 
- *>    }                                                                                                                           <* 
- *>    my.cpos = SELC_from ();                                                                                                     <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> process keys for register actions --[ ------ [ge.640.051.04]+/ /+-[00.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_copy          (void)                                                                                                      <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         x_index     =   0;                                                                                              <* 
- *>    char       *x_start     = NULL;                                                                                             <* 
- *>    int         x_len       =   0;                                                                                              <* 
- *>    char        x_label     [10]        = "";                                                                                   <* 
- *>    char        rce         = -10;                                                                                              <* 
- *>    /+---(identify register)--------------+/                                                                                    <* 
- *>    x_index = REG__reg2index (s_treg_curr);                                                                                     <* 
- *>    /+---(set size)-----------------------+/                                                                                    <* 
- *>    x_start = g_contents + SELC_from();                                                                                         <* 
- *>    x_len   = SELC_to() - SELC_from() + 1;                                                                                      <* 
- *>    /+---(copy)---------------------------+/                                                                                    <* 
- *>    strlcpy (s_textreg [x_index].data, x_start, x_len + 1);                                                                     <* 
- *>    /+---(fill in details)----------------+/                                                                                    <* 
- *>    s_textreg [x_index].len    = x_len;                                                                                         <* 
- *>    s_textreg [x_index].bpos   = SELC_from ();                                                                                  <* 
- *>    s_textreg [x_index].epos   = SELC_to   ();                                                                                  <* 
- *>    LOC_ref (CTAB, CCOL, CROW, 0, x_label );                                                                                    <* 
- *>    strlcpy (s_textreg [x_index].label, x_label, 10);                                                                           <* 
- *>    s_textreg [x_index].source = TREG_USER;                                                                                     <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> process keys for register actions --[ ------ [gz.740.061.21]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_replace       (void)                                                                                                      <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         x_index     =   0;                                                                                              <* 
- *>    int         x_len       =   0;                                                                                              <* 
- *>    int         x_gap       =   0;                                                                                              <* 
- *>    int         x_start     =   0;                                                                                              <* 
- *>    char        x_null      = '-';                                                                                              <* 
- *>    int         i           =   0;                                                                                              <* 
- *>    /+---(identify register)--------------+/                                                                                    <* 
- *>    x_index = REG__reg2index (s_treg_curr);                                                                                     <* 
- *>    /+---(set the start)------------------+/                                                                                    <* 
- *>    x_start = my.cpos;                                                                                                          <* 
- *>    /+---(open)---------------------------+/                                                                                    <* 
- *>    x_len   = strlen (g_contents);                                                                                              <* 
- *>    x_gap   = s_textreg [x_index].len;                                                                                          <* 
- *>    if (x_start + x_gap >= x_len)  x_null = 'y';                                                                                <* 
- *>    /+---(open)---------------------------+/                                                                                    <* 
- *>    x_len   = s_textreg [x_index].len;                                                                                          <* 
- *>    for (i  = 0; i < x_len; ++i) {                                                                                              <* 
- *>       g_contents [i + x_start] = s_textreg [x_index].data [i];                                                                 <* 
- *>    }                                                                                                                           <* 
- *>    /+---(final null)---------------------+/                                                                                    <* 
- *>    if (x_null == 'y') {                                                                                                        <* 
- *>       g_contents [x_start + x_gap + 1] == '\0';                                                                                <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> process keys for register actions --[ ------ [gz.640.151.11]+/ /+-[01.0000.213.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_paste         (char a_dir)                                                                                                <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         x_index     =   0;                                                                                              <* 
- *>    int         x_len       =   0;                                                                                              <* 
- *>    int         x_gap       =   0;                                                                                              <* 
- *>    int         x_start     =   0;                                                                                              <* 
- *>    int         i           =   0;                                                                                              <* 
- *>    /+---(identify register)--------------+/                                                                                    <* 
- *>    x_index = REG__reg2index (s_treg_curr);                                                                                     <* 
- *>    /+---(set the start)------------------+/                                                                                    <* 
- *>    x_start = my.cpos;                                                                                                          <* 
- *>    if (a_dir == '>')   ++x_start;                                                                                              <* 
- *>    /+---(open)---------------------------+/                                                                                    <* 
- *>    x_len   = strlen (g_contents);                                                                                              <* 
- *>    x_gap   = s_textreg [x_index].len;                                                                                          <* 
- *>    for (i = x_len; i >= x_start; --i) {                                                                                        <* 
- *>       g_contents [i + x_gap] = g_contents [i];                                                                                 <* 
- *>       g_contents [i]         = G_CHAR_PLACE;                                                                                   <* 
- *>    }                                                                                                                           <* 
- *>    /+---(fill)---------------------------+/                                                                                    <* 
- *>    x_len   = s_textreg [x_index].len;                                                                                          <* 
- *>    for (i  = 0; i < x_len; ++i) {                                                                                              <* 
- *>       g_contents [i + x_start] = s_textreg [x_index].data [i];                                                                 <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> process keys for register actions --[ leaf   [ge.QG5.287.FB]+/ /+-[02.0000.102.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_mode          (int a_major, int a_minor)                                                                                  <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         = -10;                                                                                              <* 
- *>    int         x_buf       =  -1;                                                                                              <* 
- *>    int         x_index     =   0;                                                                                              <* 
- *>    int         i           =   0;                                                                                              <* 
- *>    char       *x_start     = NULL;                                                                                             <* 
- *>    int         x_len       =   0;                                                                                              <* 
- *>    char        x_label     [10]        = "";                                                                                   <* 
- *>    int         x_diff      =   0;                                                                                              <* 
+ *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    int         i           =    0;                                                                                             <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                             <* 
+ *>    short       x_ccol      =    0;                                                                                             <* 
  *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_USER   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    DEBUG_USER   yLOG_char    ("a_major"   , a_major);                                                                          <* 
- *>    DEBUG_USER   yLOG_char    ("a_minor"   , a_minor);                                                                          <* 
- *>    /+---(defenses)-----------------------+/                                                                                    <* 
- *>    DEBUG_USER   yLOG_char    ("mode"      , yVIKEYS_mode_curr());                                                              <* 
- *>    --rce;  if (yVIKEYS_mode_not (SMOD_TEXTREG )) {                                                                             <* 
- *>       DEBUG_USER   yLOG_note    ("not the correct mode");                                                                      <* 
- *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       return rce;                                                                                                              <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_REGS   yLOG_char    ("s_style"   , s_style);                                                                          <* 
+ *>    if (s_style == 'v') {                                                                                                       <* 
+ *>       DEBUG_REGS   yLOG_note    ("mapping not allowed in this import style");                                                  <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       return 0;                                                                                                                <* 
  *>    }                                                                                                                           <* 
- *>    /+---(escape)-------------------------+/                                                                                    <* 
- *>    if (a_minor == G_KEY_ESCAPE)  {                                                                                             <* 
- *>       DEBUG_USER   yLOG_note    ("escape and return to previous mode");                                                        <* 
- *>       yVIKEYS_mode_exit ();                                                                                                    <* 
- *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
- *>       return  0;                                                                                                               <* 
- *>    }                                                                                                                           <* 
- *>    /+---(check for control keys)---------+/                                                                                    <* 
- *>    --rce;  if (a_major == '"') {                                                                                               <* 
- *>       if (strchr (s_regnames, a_minor) != 0) {                                                                                 <* 
- *>          DEBUG_USER   yLOG_note    ("select a text register");                                                                 <* 
- *>          s_treg_curr = a_minor;                                                                                                <* 
- *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                             <* 
+ *>    /+---(import mapping)-----------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("start mapping");                                                                                <* 
+ *>    for (i = 0; i < MAX_COLS; ++i) {                                                                                            <* 
+ *>       x_ccol = CCOL + i;                                                                                                       <* 
+ *>       DEBUG_REGS   yLOG_value   ("x_ccol"    , x_ccol);                                                                        <* 
+ *>       x_curr = LOC_cell_at_loc (CTAB, x_ccol, CROW);                                                                           <* 
+ *>       DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);                                                                        <* 
+ *>       if (x_curr == NULL)  {                                                                                                   <* 
+ *>          DEBUG_REGS   yLOG_note    ("end of mapping (null cell)");                                                             <* 
+ *>          DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                             <* 
  *>          return 0;                                                                                                             <* 
- *>       } else if (a_minor == '?') {                                                                                             <* 
- *>          DEBUG_USER   yLOG_note    ("show text register inventory");                                                           <* 
- *>          my.info_win  = G_INFO_TREG;                                                                                           <* 
- *>          s_treg_curr = '"';                                                                                                    <* 
- *>          DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                             <* 
- *>          return  0;                                                                                                            <* 
  *>       }                                                                                                                        <* 
- *>       DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>       DEBUG_REGS   yLOG_value   ("v_num"     , x_curr->v_num);                                                                 <* 
+ *>       if (x_curr->v_num <= 0) {                                                                                                <* 
+ *>          DEBUG_REGS   yLOG_note    ("end of mapping (zero or negative cell)");                                                 <* 
+ *>          DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                             <* 
+ *>          return 0;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       s_mapper = 'y';                                                                                                          <* 
+ *>       s_crow   = CROW + 1;                                                                                                     <* 
+ *>       s_map [i] = x_curr->v_num;                                                                                               <* 
+ *>       DEBUG_REGS   yLOG_pair    (i          , s_map [i] );                                                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> read an import record --------------[ leaf   [fe.A34.026.50]+/ /+-[01.0001.014.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_read       (void)                                                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    int         x_len       =    0;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(read and clean)-----------------+/                                                                                    <* 
+ *>    ++s_lines;                                                                                                                  <* 
+ *>    DEBUG_REGS   yLOG_value   ("line"      , s_lines);                                                                          <* 
+ *>    fgets (s_recd, LEN_RECD, s_clip);                                                                                           <* 
+ *>    if (feof (s_clip))  {                                                                                                       <* 
+ *>       DEBUG_REGS   yLOG_note    ("end of file reached");                                                                       <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
  *>       return rce;                                                                                                              <* 
  *>    }                                                                                                                           <* 
- *>    --rce;  if (a_major == ' ') {                                                                                               <* 
- *>       switch (a_minor) {                                                                                                       <* 
- *>       case  '!' :                                                                                                              <* 
- *>          my.layout_status     = G_STATUS_TREG;                                                                                 <* 
- *>          s_treg_watch = s_treg_curr;                                                                                           <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       case  '#' :                                                                                                              <* 
- *>          DEBUG_USER   yLOG_note    ("wipe text register");                                                                     <* 
- *>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
- *>          strlcpy (s_textreg [x_index].label, "", 10);                                                                          <* 
- *>          s_textreg [x_index].bpos  = -1;                                                                                       <* 
- *>          s_textreg [x_index].epos  = -1;                                                                                       <* 
- *>          s_textreg [x_index].len   =  0;                                                                                       <* 
- *>          strlcpy (s_textreg [x_index].data , "", LEN_RECD);                                                                    <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          break;                                                                                                                <* 
- *>       case  'y' : case  'Y' :                                                                                                  <* 
- *>          DEBUG_USER   yLOG_note    ("yank selection text");                                                                    <* 
- *>          TREG_copy   ();                                                                                                       <* 
- *>          yVIKEYS_mode_exit ();                                                                                                 <* 
- *>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
- *>          break;                                                                                                                <* 
- *>       case  'x' : case  'X' :                                                                                                  <* 
-*>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
-*>          TREG_copy   ();                                                                                                       <* 
-*>          TREG_clear  ();                                                                                                       <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       case  'd' : case  'D' :                                                                                                  <* 
-*>          DEBUG_USER   yLOG_note    ("delete selection text");                                                                  <* 
-*>          TREG_copy   ();                                                                                                       <* 
-*>          TREG_delete ();                                                                                                       <* 
-*>          EDIT_done ();                                                                                                         <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       case  'r' : case  'R' :                                                                                                  <* 
-*>          DEBUG_USER   yLOG_note    ("replace selection text");                                                                 <* 
-*>          TREG_replace();                                                                                                       <* 
-*>          EDIT_done ();                                                                                                         <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       case  'p' :                                                                                                              <* 
-*>          DEBUG_USER   yLOG_note    ("paste after selection text");                                                             <* 
-*>          TREG_paste  ('>');                                                                                                    <* 
-*>          EDIT_done ();                                                                                                         <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       case  'P' :                                                                                                              <* 
-*>          DEBUG_USER   yLOG_note    ("paste before selection text");                                                            <* 
-*>          TREG_paste  ('<');                                                                                                    <* 
-*>          EDIT_done ();                                                                                                         <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       case  'g' :                                                                                                              <* 
-*>          DEBUG_USER   yLOG_note    ("go to beginning selection position");                                                     <* 
-*>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
-*>          my.cpos = s_textreg [x_index].bpos;                                                                                   <* 
-*>          EDIT_done ();                                                                                                         <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       case  'G' :                                                                                                              <* 
-*>          DEBUG_USER   yLOG_note    ("go to ending selection position");                                                        <* 
-*>          x_index = REG__reg2index (s_treg_curr);                                                                               <* 
-*>          my.cpos = s_textreg [x_index].epos;                                                                                   <* 
-*>          EDIT_done ();                                                                                                         <* 
-*>          yVIKEYS_mode_exit ();                                                                                                 <* 
-*>          if (yVIKEYS_mode_curr == SMOD_SELECT)  SELC_mode   (' ', G_KEY_ESCAPE);                                               <* 
-*>          break;                                                                                                                <* 
-*>       }                                                                                                                        <* 
-*>    }                                                                                                                           <* 
-*>    DEBUG_USER   yLOG_exit    (__FUNCTION__);                                                                                   <* 
-*>    return 0;                                                                                                                   <* 
-*> }                                                                                                                              <*/
-/*>                                                                                                                                <* 
- *> char         /+-> tbd --------------------------------[ ------ [ge.742.554.11]+/ /+-[01.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TREG_read          (char a_reg, char *a_label, int a_beg, int a_end, char *a_source)                                           <* 
+ *>    x_len = strlen (s_recd);                                                                                                    <* 
+ *>    if (x_len <= 0)  {                                                                                                          <* 
+ *>       DEBUG_REGS   yLOG_note    ("record is empty");                                                                           <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);                                                                          <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    s_recd [--x_len] = '\0';                                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_value   ("length"    , x_len);                                                                            <* 
+ *>    DEBUG_REGS   yLOG_info    ("fixed"     , s_recd);                                                                           <* 
+ *>    if (s_recd [0] == '\0') {                                                                                                   <* 
+ *>       DEBUG_REGS   yLOG_note    ("starts with a null");                                                                        <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);                                                                          <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    if (s_recd [0] == ' ' ) {                                                                                                   <* 
+ *>       DEBUG_REGS   yLOG_note    ("starts with a space");                                                                       <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);                                                                          <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    if (s_recd [0] == '#' && strchr ("<>=", s_recd [1]) == NULL) {                                                              <* 
+ *>       DEBUG_REGS   yLOG_note    ("starts with a comment marker");                                                              <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);                                                                          <* 
+ *>       return -rce;                                                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    s_max = x_len;                                                                                                              <* 
+ *>    DEBUG_REGS   yLOG_value   ("s_max"     , s_max);                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> adjust a column sizing -------------[ ------ [fe.420.223.22]+/ /+-[00.0000.015.B]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_width      (short a_col, short a_wide)                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    short       w           =   0;                                                                                              <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (s_sizer != 'a')      return rce;                                                                                <* 
+ *>    /+---(resize)-------------------------+/                                                                                    <* 
+ *>    w = LOC_col_width (CTAB, CCOL + a_col);                                                                                     <* 
+ *>    --rce;  if (w >= a_wide + 1)     return rce;                                                                                <* 
+ *>    LOC_col_widen (CTAB, CCOL + a_col, a_wide + 1);                                                                             <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> process a column sizing request ----[ ------ [fe.A53.053.51]+/ /+-[02.0000.014.E]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_sizer      (void)                                                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char       *p           = NULL;                                                                                             <* 
+ *>    char       *s           = NULL;                                                                                             <* 
+ *>    int         x_len       =    0;                                                                                             <* 
+ *>    short       x_col       =    0;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_value   ("s_sizer"   , s_sizer);                                                                          <* 
+ *>    --rce;  if (s_sizer != 'a') {                                                                                               <* 
+ *>       DEBUG_REGS   yLOG_note    ("wrong type, only 'a' allowed");                                                              <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);                                                                           <* 
+ *>    --rce;  if ((s_style != 'C' && strncmp ("#<34", s_recd, 4) != 0) ||                                                         <* 
+ *>          (s_style == 'C' && strncmp ("\"#<34", s_recd, 5) != 0)) {                                                             <* 
+ *>       DEBUG_REGS   yLOG_note    ("not a sizing line");                                                                         <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(process)------------------------+/                                                                                    <* 
+ *>    p  = strtok_r (s_recd, s_q, &s);                                                                                            <* 
+ *>    while (p != NULL) {                                                                                                         <* 
+ *>       DEBUG_REGS   yLOG_value   ("x_col"     , x_col);                                                                         <* 
+ *>       x_len = strlen (p);                                                                                                      <* 
+ *>       if (s_style == 'C' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';                                                          <* 
+ *>       strltrim (p, ySTR_BOTH, LEN_RECD);                                                                                       <* 
+ *>       DEBUG_REGS   yLOG_info    ("p (field)" , p);                                                                             <* 
+ *>       x_len = strlen (p);                                                                                                      <* 
+ *>       DEBUG_REGS   yLOG_value   ("x_len"     , x_len);                                                                         <* 
+ *>       if (x_len == 0)  break;  /+ stop at unsized column +/                                                                    <* 
+ *>       LOC_col_widen (CTAB, CCOL + x_col, x_len + 1);                                                                           <* 
+ *>       ++x_col;                                                                                                                 <* 
+ *>       p  = strtok_r (NULL, s_q, &s);                                                                                           <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(update)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("mark sizer processed");                                                                         <* 
+ *>    s_sizer  = 's';                                                                                                             <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> place import data into a cell ------[ ------ [fz.310.301.21]+/ /+-[01.0000.025.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_place      (short a_col, short a_row, char *a_value)                                                                 <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    /+---(non-mapped)---------------------+/                                                                                    <* 
+ *>    if (s_mapper == '-') {                                                                                                      <* 
+ *>       CELL_change (NULL, CHG_INPUT, CTAB, CCOL + a_col, CROW + a_row, a_value);                                                <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(mapped)-------------------------+/                                                                                    <* 
+ *>    else {                                                                                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> complete data import ---------------[ ------ [fz.311.001.02]+/ /+-[00.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_done       (void)                                                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(close file)---------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("closing file");                                                                                 <* 
+ *>    fclose  (s_clip);                                                                                                           <* 
+ *>    /+---(screen)-------------------------+/                                                                                    <* 
+ *>    /+> CURS_screen_reset ();                                                          <+/                                      <* 
+ *>    /+---(calculate)----------------------+/                                                                                    <* 
+ *>    DEBUG_INPT  yLOG_note    ("recalc");                                                                                        <* 
+ *>    SEQ_calc_full ();                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> tbd --------------------------------[ ------ [fz.732.141.12]+/ /+-[01.0000.014.3]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_values     (short a_row)                                                                                             <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
+ *>    short       x_col       =    0;                                                                                             <* 
+ *>    int         w           =    0;                                                                                             <* 
+ *>    int         cw          =    0;                                                                                             <* 
+ *>    char        t           [LEN_RECD]  = "";                                                                                   <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(process cells)---------------+/                                                                                       <* 
+ *>    while (cw < s_max) {                                                                                                        <* 
+ *>       /+---(read import data)---------+/                                                                                       <* 
+ *>       w     = LOC_col_width (CTAB, CCOL + x_col);                                                                              <* 
+ *>       DEBUG_REGS  yLOG_value   ("w"         , w);                                                                              <* 
+ *>       strlcpy (t, s_recd + cw, w);                                                                                             <* 
+ *>       DEBUG_REGS  yLOG_info    ("t (orig)"  , t);                                                                              <* 
+ *>       /+---(process)------------------+/                                                                                       <* 
+ *>       strltrim (t, ySTR_BOTH, LEN_RECD);                                                                                       <* 
+ *>       DEBUG_REGS  yLOG_info    ("t (trim)"  , t);                                                                              <* 
+ *>       strlencode   (t, ySTR_NORM, LEN_RECD);                                                                                   <* 
+ *>       DEBUG_REGS  yLOG_info    ("t (new)"   , t);                                                                              <* 
+ *>       DEBUG_REGS  yLOG_value   ("x_col"     , x_col);                                                                          <* 
+ *>       /+---(change)-------------------+/                                                                                       <* 
+ *>       REG__inpt_place  (x_col, a_row, t);                                                                                      <* 
+ *>       /+---(next)---------------------+/                                                                                       <* 
+ *>       ++x_col;                                                                                                                 <* 
+ *>       cw += w;                                                                                                                 <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> tbd --------------------------------[ ------ [fz.842.141.32]+/ /+-[01.0000.014.9]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG__inpt_delims     (short a_row)                                                                                             <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
+ *>    short       x_col       =    0;                                                                                             <* 
+ *>    char       *p           = NULL;                                                                                             <* 
+ *>    char       *s           = NULL;                                                                                             <* 
+ *>    int         x_len       =    0;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(parse first)-----------------+/                                                                                       <* 
+ *>    p  = strtok_r (s_recd, s_q, &s);                                                                                            <* 
+ *>    /+---(process cells)---------------+/                                                                                       <* 
+ *>    while (p != NULL) {                                                                                                         <* 
+ *>       /+---(read import data)---------+/                                                                                       <* 
+ *>       DEBUG_REGS  yLOG_info    ("p (orig)"  , p);                                                                              <* 
+ *>       x_len = strlen (p);                                                                                                      <* 
+ *>       DEBUG_REGS  yLOG_value   ("x_len"     , x_len);                                                                          <* 
+ *>       /+---(process)------------------+/                                                                                       <* 
+ *>       if (s_style == 'c' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';                                                          <* 
+ *>       strltrim (p, ySTR_BOTH, LEN_RECD);                                                                                       <* 
+ *>       DEBUG_REGS  yLOG_info    ("p (trim)"  , p);                                                                              <* 
+ *>       x_len = strlen (p);                                                                                                      <* 
+ *>       DEBUG_REGS  yLOG_value   ("x_len"     , x_len);                                                                          <* 
+ *>       if (s_sizer == 'a')  REG__inpt_width (x_col, x_len);                                                                     <* 
+ *>       strlencode   (p, ySTR_NORM, LEN_RECD);                                                                                   <* 
+ *>       DEBUG_REGS  yLOG_info    ("p (new)"   , p);                                                                              <* 
+ *>       DEBUG_REGS  yLOG_value   ("x_col"     , x_col);                                                                          <* 
+ *>       REG__inpt_place  (x_col, a_row, p);                                                                                      <* 
+ *>       /+---(parse next)---------------+/                                                                                       <* 
+ *>       p  = strtok_r (NULL, s_q, &s);                                                                                           <* 
+ *>       ++x_col;                                                                                                                 <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> tbd --------------------------------[ ------ [ge.A42.132.77]+/ /+-[02.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_inpt_driver      (char a_style)                                                                                            <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    short       x_row       =    0;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    rc = REG__inpt_prep   (a_style);                                                                                            <* 
+ *>    DEBUG_REGS   yLOG_value   ("prep rc"   , rc);                                                                               <* 
+ *>    --rce;  if (rc < 0) {                                                                                                       <* 
+ *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    rc = REG__inpt_map ();                                                                                                      <* 
+ *>    /+---(process lines)------------------+/                                                                                    <* 
+ *>    while (1) {                                                                                                                 <* 
+ *>       /+---(read)------------------------+/                                                                                    <* 
+ *>       rc = REG__inpt_read ();                                                                                                  <* 
+ *>       if (rc >  0)  continue;                                                                                                  <* 
+ *>       if (rc <  0)  break;                                                                                                     <* 
+ *>       /+---(process cells)---------------+/                                                                                    <* 
+ *>       DEBUG_REGS  yLOG_value   ("x_row"     , x_row);                                                                          <* 
+ *>       /+---(check sizer)-----------------+/                                                                                    <* 
+ *>       if (strncmp (s_recd, "#<34"  , 4) == 0) {                                                                                <* 
+ *>          REG__inpt_sizer ();                                                                                                   <* 
+ *>          continue;                                                                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(handle values)---------------+/                                                                                    <* 
+ *>       if (strchr ("Vv", s_style) != NULL) {                                                                                    <* 
+ *>          REG__inpt_values  (x_row);                                                                                            <* 
+ *>       } else {                                                                                                                 <* 
+ *>          REG__inpt_delims  (x_row);                                                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(prepare for next)------------+/                                                                                    <* 
+ *>       ++x_row;                                                                                                                 <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(wrap up)------------------------+/                                                                                    <* 
+ *>    rc = REG__inpt_done ();                                                                                                     <* 
+ *>    DEBUG_REGS   yLOG_value   ("done rc"   , rc);                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char         /+-> tbd --------------------------------[ ------ [ge.RE5.1E2.D3]+/ /+-[05.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> REG_valuesout     (char a_style)                                                                                               <* 
  *> {                                                                                                                              <* 
  *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
- *>    char        rc          =   0;           /+ generic return code            +/                                               <* 
- *>    int         x_reg       = 0;                                                                                                <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    char        rc          = 0;                                                                                                <* 
+ *>    FILE       *f           = NULL;                                                                                             <* 
+ *>    tCELL      *curr        = NULL;                                                                                             <* 
+ *>    int         x_tab       = 0;                                                                                                <* 
  *>    int         x_col       = 0;                                                                                                <* 
  *>    int         x_row       = 0;                                                                                                <* 
+ *>    int         x_rowsave   = 0;                                                                                                <* 
+ *>    int         w           = 0;                                                                                                <* 
+ *>    char        x_print     [LEN_RECD]  = "";                                                                                   <* 
+ *>    char        x_trim      [LEN_RECD]  = "";                                                                                   <* 
+ *>    char        x_source    [LEN_RECD]  = "";                                                                                   <* 
+ *>    char        x_full      [LEN_RECD]  = "";                                                                                   <* 
+ *>    int         c           = 0;                                                                                                <* 
  *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    DEBUG_INPT   yLOG_char    ("a_reg"     , a_reg);                                                                            <* 
- *>    /+---(buffer number)------------------+/                                                                                    <* 
- *>    x_reg  = REG__reg2index  (a_reg);                                                                                           <* 
- *>    DEBUG_INPT   yLOG_value   ("x_reg"     , x_reg);                                                                            <* 
- *>    --rce;  if (x_reg < 0) {                                                                                                    <* 
- *>       DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                <* 
+ *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(open output file)---------------+/                                                                                    <* 
+ *>    f = fopen("/root/z_gehye/vi_clip.txt", "w");                                                                                <* 
+ *>    DEBUG_REGS   yLOG_point   ("f (file)"  , f);                                                                                <* 
+ *>    --rce;  if (f == NULL) {                                                                                                    <* 
+ *>       DEBUG_REGS   yLOG_note    ("can not open clip file");                                                                    <* 
+ *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
  *>       return rce;                                                                                                              <* 
  *>    }                                                                                                                           <* 
- *>    /+---(data)---------------------------+/                                                                                    <* 
- *>    strlcpy (s_textreg [x_reg].label, a_label , 10);                                                                            <* 
- *>    s_textreg [x_reg].bpos   = a_beg;                                                                                           <* 
- *>    s_textreg [x_reg].epos   = a_end;                                                                                           <* 
- *>    strlcpy (s_textreg [x_reg].data , a_source, LEN_RECD);                                                                      <* 
- *>    s_textreg [x_reg].len    = strllen (s_textreg [x_reg].data, LEN_RECD);                                                      <* 
- *>    s_textreg [x_reg].source = TREG_FILE;                                                                                       <* 
+ *>    /+---(process independent cells)------+/                                                                                    <* 
+ *>    rc    = yVIKEYS_first (&x_col, &x_row, &x_tab);                                                                             <* 
+ *>    curr  = LOC_cell_at_loc (x_tab, x_col, x_row);                                                                              <* 
+ *>    x_rowsave = x_row;                                                                                                          <* 
+ *>    while (rc >= 0) {                                                                                                           <* 
+ *>       DEBUG_REGS   yLOG_point   ("curr"      , curr);                                                                          <* 
+ *>       ++c;                                                                                                                     <* 
+ *>       /+---(look for line break)---------+/                                                                                    <* 
+ *>       if (strchr ("vVmMcCtTrR", a_style) != 0 && x_row != x_rowsave) {                                                         <* 
+ *>          DEBUG_REGS   yLOG_note    ("line break");                                                                             <* 
+ *>          fprintf (f, "\n");                                                                                                    <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(fill in blank cells)---------+/                                                                                    <* 
+ *>       if (curr == NULL) {                                                                                                      <* 
+ *>          DEBUG_REGS   yLOG_note    ("NULL cell");                                                                              <* 
+ *>          w = LOC_col_width (x_tab, x_col);                                                                                     <* 
+ *>          switch (a_style) {                                                                                                    <* 
+ *>          case 'v' : case 'r' : case 'R' :                                                                                      <* 
+ *>             fprintf (f, "%*.*s", w, w, g_empty);                                                                               <* 
+ *>             break;                                                                                                             <* 
+ *>          case 'c' : case 'C' :                                                                                                 <* 
+ *>             fprintf (f, "\"\",");                                                                                              <* 
+ *>             break;                                                                                                             <* 
+ *>          case 't' : case 'T' :                                                                                                 <* 
+ *>             fprintf (f, "\t");                                                                                                 <* 
+ *>             break;                                                                                                             <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       /+---(write filled cells)----------+/                                                                                    <* 
+ *>       else {                                                                                                                   <* 
+ *>          DEBUG_REGS   yLOG_info    ("cell"      , curr->label);                                                                <* 
+ *>          /+---(source)-------------------+/                                                                                    <* 
+ *>          if (curr->s != NULL) {                                                                                                <* 
+ *>             DEBUG_REGS   yLOG_note    ("convert source string");                                                               <* 
+ *>             strlcpy      (x_source, curr->s, LEN_RECD);                                                                        <* 
+ *>             strldecode   (x_source, LEN_RECD);                                                                                 <* 
+ *>          } else {                                                                                                              <* 
+ *>             DEBUG_REGS   yLOG_note    ("source is NULL");                                                                      <* 
+ *>          }                                                                                                                     <* 
+ *>          DEBUG_REGS   yLOG_info    ("source"    , x_source);                                                                   <* 
+ *>          /+---(full outcome)-------------+/                                                                                    <* 
+ *>          if (curr->v_str != NULL) {                                                                                            <* 
+ *>             DEBUG_REGS   yLOG_note    ("convert modified string");                                                             <* 
+ *>             strlcpy      (x_full  , curr->v_str, LEN_RECD);                                                                    <* 
+ *>             strldecode   (x_full, LEN_RECD);                                                                                   <* 
+ *>          } else {                                                                                                              <* 
+ *>             DEBUG_REGS   yLOG_note    ("modified is NULL");                                                                    <* 
+ *>          }                                                                                                                     <* 
+ *>          /+---(printable)----------------+/                                                                                    <* 
+ *>          if (curr->p != NULL) {                                                                                                <* 
+ *>             DEBUG_REGS   yLOG_note    ("convert printable");                                                                   <* 
+ *>             strlcpy  (x_print , curr->p, LEN_RECD);                                                                            <* 
+ *>             strldecode   (x_print, LEN_RECD);                                                                                  <* 
+ *>             strlcpy  (x_trim  , x_print, LEN_RECD);                                                                            <* 
+ *>          } else {                                                                                                              <* 
+ *>             DEBUG_REGS   yLOG_note    ("printable is NULL");                                                                   <* 
+ *>          }                                                                                                                     <* 
+ *>          /+---(trimmed printable)--------+/                                                                                    <* 
+ *>          strltrim (x_trim, ySTR_BOTH, LEN_RECD);                                                                               <* 
+ *>          DEBUG_REGS   yLOG_info    ("printable" , x_trim);                                                                     <* 
+ *>          DEBUG_REGS   yLOG_info    ("modified"  , x_full);                                                                     <* 
+ *>          DEBUG_REGS   yLOG_note    ("handle");                                                                                 <* 
+ *>          switch (a_style) {                                                                                                    <* 
+ *>          case 'v' : fprintf (f, "%s"                  , x_print);                                                              <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'r' : fprintf (f, "%s  "              , x_print);                                                               <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'V' : fprintf (f, "%s "                 , x_trim);                                                               <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'm' :                                                                                                            <* 
+ *>          case 'M' : fprintf (f, "%s"                  , x_full);                                                               <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'c' : fprintf (f, "\"%s\","             , x_trim);                                                               <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'C' : fprintf (f, "\"%s\","             , x_source);                                                             <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 't' : fprintf (f, "%s\t"                , x_trim);                                                               <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'T' : fprintf (f, "%s\t"                , x_source);                                                             <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 's' : fprintf (f, "%s\n"                , x_source);                                                             <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'S' : fprintf (f, "(%s) %s\n"           , curr->label, x_source);                                                <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'f' : fprintf (f, "%-10.10s  %s\n"    , curr->label, x_source);                                                 <* 
+ *>                     break;                                                                                                     <* 
+ *>          case 'F' : fprintf (f, "cell_reg    -D-                ");                                                         <* 
+ *>                     fprintf (f, "%5d  %-8.8s  "   , c, curr->label);                                                         <* 
+ *>                     fprintf (f, "%c %c %c %c %c  "  , curr->t, curr->f, curr->d, curr->a, curr->n);                           <* 
+ *>                     fprintf (f, "%s\n"                , x_source);                                                             <* 
+ *>                     break;                                                                                                     <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       x_rowsave = x_row;                                                                                                       <* 
+ *>       rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);                                                                        <* 
+ *>       curr  = LOC_cell_at_loc (x_tab, x_col, x_row);                                                                           <* 
+ *>    };                                                                                                                          <* 
+ *>    /+---(close file)---------------------+/                                                                                    <* 
+ *>    DEBUG_REGS   yLOG_note    ("closing file");                                                                                 <* 
+ *>    fprintf (f, "\n");                                                                                                          <* 
+ *>    fclose  (f);                                                                                                                <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
-/*> char         /+-> tbd --------------------------------[ ------ [ge.640.354.22]+/ /+-[02.0000.00#.!]-+/ /+-[--.---.---.--]-+/              <* 
- *> TREG_write         (FILE *a_file, int  *a_seq, char a_buf)                                                                                <* 
- *> {                                                                                                                                         <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                               <* 
- *>    char        rce         = -10;           /+ return code for errors         +/                                                          <* 
- *>    int         i           = 0;             /+ iterator -- buffer entry       +/                                                          <* 
- *>    int         x_buf       = 0;                                                                                                           <* 
- *>    char        x_regid     [20];                                                                                                          <* 
- *>    int         x_tab       = 0;                                                                                                           <* 
- *>    /+---(buffer number)------------------+/                                                                                               <* 
- *>    x_buf  = REG__reg2index  (a_buf);                                                                                                      <* 
- *>    --rce;  if (x_buf < 0 )                         return rce;                                                                            <* 
- *>    --rce;  if (s_textreg [x_buf].len  <= 0)        return rce;                                                                            <* 
- *>    /+---(register entry)-----------------+/                                                                                               <* 
- *>    LOC_parse (s_textreg [x_buf].label, &x_tab, NULL, NULL, NULL);                                                                         <* 
- *>    sprintf (x_regid, "%c", a_buf);                                                                                                        <* 
- *>    fprintf (a_file, "#---------  ver  ---lvl/reg--  -tab-  --beg---  --end---  --min---  --max---  t  ---data------------\n");   <* 
- *>    fprintf (a_file, "source_reg  -A-  %-12.12s    %1d    %-8.8s  %-8.8s  %-8d  %-8d  %c  %s\n",                                  <* 
- *>          x_regid                , x_tab                  ,                                                                                <* 
- *>          s_textreg [x_buf].label, "-"                    ,                                                                                <* 
- *>          s_textreg [x_buf].bpos , s_textreg [x_buf].epos ,                                                                                <* 
- *>          't'                    , s_textreg [x_buf].data );                                                                               <* 
- *>    ++(*a_seq);                                                                                                                            <* 
- *>    /+---(complete)-----------------------+/                                                                                               <* 
- *>    fflush (a_file);                                                                                                                       <* 
- *>    return 0;                                                                                                                              <* 
- *> }                                                                                                                                         <*/
+
+
+
 
 
 
@@ -2524,9 +1960,9 @@ REG__getter        (char *a_question, char a_reg)
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "s_reg            : question not understood");
    /*---(buffer number)------------------*/
-   if (a_reg != 0) {
-      x_reg = REG__reg2index  (a_reg);
-   }
+   /*> if (a_reg != 0) {                                                              <* 
+    *>    x_reg = REG__reg2index  (a_reg);                                            <* 
+    *> }                                                                              <*/
    /*---(defenses)-----------------------*/
    if      (x_reg < 0) {
       snprintf (unit_answer, LEN_UNIT, "s_reg error      : register reference (%c) is not valid", a_reg);
@@ -2539,24 +1975,24 @@ REG__getter        (char *a_question, char a_reg)
       snprintf (unit_answer, LEN_UNIT, "s_reg count      : %d", strlen (s_regnames));
    }
    /*---(register list)------------------*/
-   else if (strcmp (a_question, "reg_sort"     )  == 0) {
-      REG_list  (a_reg, x_list);
-      if (strlen (x_list) > 12)  DEP_disp_sort (x_list + 11);
-      snprintf (unit_answer, LEN_UNIT, "s_reg sort %-.45s", x_list);
-   }
-   else if (strcmp (a_question, "reg_list"     )  == 0) {
-      REG_list  (a_reg, x_list);
-      snprintf (unit_answer, LEN_UNIT, "s_reg list %-.45s", x_list);
-   }
-   else if (strcmp (a_question, "reg_range"    )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_reg range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].begc, s_reg[x_reg].begr, s_reg[x_reg].endc, s_reg[x_reg].endr);
-   }
-   else if (strcmp (a_question, "reg_reach"    )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_reg reach      : %c, ta=%4d, nc=%4d, nr=%4d, xc=%4d, xr=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].minc, s_reg[x_reg].minr, s_reg[x_reg].maxc, s_reg[x_reg].maxr);
-   }
-   else if (strcmp (a_question, "reg_buffer")     == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_reg buffer (%c) : (%02d) r=%3d, n=%3d, h=%10p, t=%10p", a_reg, x_reg, s_reg[x_reg].real, s_reg[x_reg].nbuf, s_reg[x_reg].buf[0], s_reg[x_reg].buf[s_reg[x_reg].nbuf - 1]);
-   }
+   /*> else if (strcmp (a_question, "reg_sort"     )  == 0) {                         <* 
+    *>    REG_list  (a_reg, x_list);                                                  <* 
+    *>    if (strlen (x_list) > 12)  DEP_disp_sort (x_list + 11);                     <* 
+    *>    snprintf (unit_answer, LEN_UNIT, "s_reg sort %-.45s", x_list);              <* 
+    *> }                                                                              <*/
+   /*> else if (strcmp (a_question, "reg_list"     )  == 0) {                         <* 
+    *>    REG_list  (a_reg, x_list);                                                  <* 
+    *>    snprintf (unit_answer, LEN_UNIT, "s_reg list %-.45s", x_list);              <* 
+    *> }                                                                              <*/
+   /*> else if (strcmp (a_question, "reg_range"    )  == 0) {                                                                                                                                                              <* 
+    *>    snprintf (unit_answer, LEN_UNIT, "s_reg range      : %c, ta=%4d, bc=%4d, br=%4d, ec=%4d, er=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].begc, s_reg[x_reg].begr, s_reg[x_reg].endc, s_reg[x_reg].endr);         <* 
+    *> }                                                                                                                                                                                                                   <* 
+    *> else if (strcmp (a_question, "reg_reach"    )  == 0) {                                                                                                                                                              <* 
+    *>    snprintf (unit_answer, LEN_UNIT, "s_reg reach      : %c, ta=%4d, nc=%4d, nr=%4d, xc=%4d, xr=%4d", a_reg, s_reg[x_reg].otab, s_reg[x_reg].minc, s_reg[x_reg].minr, s_reg[x_reg].maxc, s_reg[x_reg].maxr);         <* 
+    *> }                                                                                                                                                                                                                   <* 
+    *> else if (strcmp (a_question, "reg_buffer")     == 0) {                                                                                                                                                              <* 
+    *>    snprintf (unit_answer, LEN_UNIT, "s_reg buffer (%c) : (%02d) r=%3d, n=%3d, h=%10p, t=%10p", a_reg, x_reg, s_reg[x_reg].real, s_reg[x_reg].nbuf, s_reg[x_reg].buf[0], s_reg[x_reg].buf[s_reg[x_reg].nbuf - 1]);   <* 
+    *> }                                                                                                                                                                                                                   <*/
    /*---(complete)-----------------------*/
    return unit_answer;
 }
