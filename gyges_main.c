@@ -17,8 +17,8 @@ main (int argc, char *argv[])
    tTSPEC      x_dur;
    /*---(initialize)---------------------*/
    if (rc >= 0)  rc = yURG_logger  (argc, argv);
-   if (rc >= 0)  rc = PROG_init    (argc, argv);
    if (rc >= 0)  rc = yURG_urgs    (argc, argv);
+   if (rc >= 0)  rc = PROG_init    (argc, argv);
    if (rc >= 0)  rc = PROG_args    (argc, argv);
    if (rc >= 0)  rc = PROG_begin   ();
    if (rc >= 0)  rc = PROG_final   ();

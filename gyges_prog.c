@@ -90,6 +90,7 @@ PROG_version       (void)
 char         /*-> very first setup -------------------[ shoot  [gz.633.201.0A]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG_init          (int a_argc, char *a_argv[])
 {
+   char        rc          =    0;
    /*---(log header)---------------------*/
    DEBUG_TOPS   yLOG_info     ("purpose" , "light, clean, vim-ish, technical, and wicked spreadsheet");
    DEBUG_TOPS   yLOG_info     ("namesake", "ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant");
@@ -116,10 +117,16 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_src_config   (extern_vikeys_saver);
    yVIKEYS_regs_config  (CELL_killer, REG_copier, REG_clearer, REG_paster);
    /*---(globals)------------------------*/
+   CELL_init  ();
+   yCALC_init ('g');
+   if (rc == 0)  rc = yCALC_exist_config (extern_ycalc_enabler, extern_ycalc_pointer, extern_ycalc_reaper);
+   if (rc == 0)  rc = yCALC_label_config (extern_ycalc_named  , extern_ycalc_whos_at, extern_ycalc_labeler);
+   if (rc == 0)  rc = yCALC_value_config (extern_ycalc_valuer , extern_ycalc_address, extern_ycalc_special, extern_ycalc_printer);
+   /*---(globals)------------------------*/
    hist_active       = '-';
    nhist             =  0;
    chist             = -1;
-   CALC_init           ();
+   /*> CALC_init           ();                                                        <*/
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
    /*---(complete)-----------------------*/
@@ -178,7 +185,6 @@ PROG_begin         (void)
    int         i, j, k;
    char        tmp         [100];
    /*---(clear)--------------------------*/
-   CELL_init ();
    /*> MARK_init ();                                                                  <*/
    /*---(overall tab settings)-----------*/
    LOC_init  ();
@@ -194,7 +200,7 @@ PROG_begin         (void)
    /*---(repeat settings)----------------*/
    /*> yVIKEYS_repeat_init ();                                                        <*/
    /*---(prepare)------------------------*/
-   DEP_init  ();
+   /*> DEP_init  ();                                                                  <*/
    /*---(overall)------------------------*/
    yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
@@ -210,7 +216,7 @@ PROG_final         (void)
    DRAW_init  ();
    /*> INPT_main         ();                                                          <*/
    /*> CURS_screen_reset ();                                                          <*/
-   SEQ_calc_full     ();
+   yCALC_calculate   ();
    hist_active = 'y';
    /*---(process)------------------------*/
    /*> MOVE_vert ('r');                                                               <*/
@@ -438,10 +444,12 @@ PROG_end             (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_note    ("yCALC_wrap");
+   yCALC_wrap ();
    DEBUG_PROG   yLOG_note    ("CELL_wrap");
    CELL_wrap    ();
    DEBUG_PROG   yLOG_note    ("DEP_wrap");
-   DEP_wrap     ();   /* disconnect all cells */
+   /*> DEP_wrap     ();   /+ disconnect all cells +/                                  <*/
    DEBUG_PROG   yLOG_note    ("LOC_wrap");
    LOC_wrap     ();
    DEBUG_PROG   yLOG_note    ("yVIKEYS_wrap");
@@ -690,8 +698,8 @@ PROG__unitloud      (void)
 {
    char       *x_args [5]  = { "gyges_unit", "@@kitchen", "@@LOCS", "@@rpn", "@@yrpn"    };
    yURG_logger (5, x_args);
-   PROG_init   (5, x_args);
    yURG_urgs   (5, x_args);
+   PROG_init   (5, x_args);
    PROG_args   (5, x_args);
    PROG_begin  ();
    return 0;

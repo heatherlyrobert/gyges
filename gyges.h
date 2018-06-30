@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1a"
-#define     VER_TXT   "all yCALC api functions added, but not tested yet"
+#define     VER_NUM   "3.1b"
+#define     VER_TXT   "really basic working with yCALC.  yes, yes, yes."
 
 
 
@@ -244,6 +244,8 @@ struct cACCESSOR {
    /*---(files)----------------*/
    char        quiet;          /* bool : 0=normal, 1=quiet                    */
    int         logger;         /* log file so that we don't close it          */
+   /*---(cell root)------------*/
+   tCELL      *root;
    /*---(keyboard macro)-------*/
    char        macro_mode;                  /* keyboard, macro, silent        */
    char        macro_name;                  /* current macro name             */
@@ -1187,7 +1189,7 @@ char      ERROR_cleanse        (tCELL  *a_owner);
 /*> char      RPN_adjust_reg       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, int a_index);   <*/
 /*> char      RPN_adjust_ref       (tCELL *a_cell, char a_scope, int a_toff, int a_coff, int a_roff, char *a_source, char *a_label);   <*/
 /*---(conversion)---------------------*/
-char      RPN_convert          (tCELL *a_curr);
+/*> char      RPN_convert          (tCELL *a_curr);                                   <*/
 
 
 
@@ -1421,7 +1423,7 @@ char      CELL__purge          (void);
 
 char      CELL__numerics       (tCELL *a_cell);
 
-char      CELL__rpn            (tCELL *a_cell);
+/*> char      CELL__rpn            (tCELL *a_cell);                                   <*/
 char      CELL__build          (tCELL *a_cell);
 char      CELL__like           (tCELL *a_cell);
 char      CELL__point          (tCELL *a_cell);
@@ -1483,6 +1485,7 @@ char        TABS_writer_all         (void);
 char        COLS_writer_all         (void);
 char        ROWS_writer_all         (void);
 char        OUTP_cell               (char a_type, int a_seq, int a_level, tCELL *a_curr);
+char        OUTP_seq_cell           (void *a_owner, void *a_deproot, int a_seq, int a_level);
 char        OUTP_cell_dep           (void);
 char        OUTP_cell_free          (void);
 char        TABS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
@@ -1506,6 +1509,23 @@ char      OUTP_header          (FILE *a_file);
 char      FILE_write           (void);
 /*> char      FILE_writeas         (char *a_name);                                    <*/
 char      XML3_read            (char *a_name);
+
+
+
+
+char        extern_ycalc_enabler    (void *a_owner, void *a_deproot);
+char        extern_ycalc_pointer    (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string);
+char        extern_ycalc_reaper     (void **a_owner);
+
+char        extern_ycalc_named      (char *a_label, char a_force, void **a_owner, void **a_deproot);
+char        extern_ycalc_whos_at    (int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
+char*       extern_ycalc_labeler    (void *a_owner);
+
+char        extern_ycalc_valuer     (void *a_owner, char *a_type, double *a_value, char **a_string);
+char        extern_ycalc_address    (void *a_owner, int *x, int *y, int *z);
+char        extern_ycalc_special    (void *a_owner, char a_what, double *a_value, char **a_string);
+char        extern_ycalc_printer    (void *a_owner);
+
 
 
 /*===[ SCRP   ]===============================================================*/

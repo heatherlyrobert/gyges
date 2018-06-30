@@ -60,33 +60,33 @@
  *    v = value from another cell value field
  *    x = noop
  */
-struct cCALC {
-   char      t;               /* type of calculation element                  */
-   double    v;               /* numeric literal                              */
-   char     *s;               /* string literal                               */
-   tCELL    *r;               /* pointer to a cell                            */
-   void    (*f) (void);       /* function pointer                             */
-   tCELL    *owner;           /* pointer to the cell that owns this calc      */
-   tCALC    *next;            /* pointer to next calc                         */
-   tCALC    *prev;            /* pointer to next calc                         */
-};
+/*> struct cCALC {                                                                     <* 
+ *>    char      t;               /+ type of calculation element                  +/   <* 
+ *>    double    v;               /+ numeric literal                              +/   <* 
+ *>    char     *s;               /+ string literal                               +/   <* 
+ *>    tCELL    *r;               /+ pointer to a cell                            +/   <* 
+ *>    void    (*f) (void);       /+ function pointer                             +/   <* 
+ *>    tCELL    *owner;           /+ pointer to the cell that owns this calc      +/   <* 
+ *>    tCALC    *next;            /+ pointer to next calc                         +/   <* 
+ *>    tCALC    *prev;            /+ pointer to next calc                         +/   <* 
+ *> };                                                                                 <*/
 
-#define     MAX_TERM     20
-typedef     struct cTERMS   tTERMS;
-struct cTERMS {
-   char        type;
-   char       *abbr;
-   char       *desc;
-};
-tTERMS      s_terms [MAX_TERM] = {
-   { 'v' , "val"    , "numeric or cell address"        },
-   { 's' , "str"    , "string or cell address"         },
-   { '?' , "v/s"    , "string or numeric (runtime)"    },
-   { 'a' , "adr"    , "cell address or pointer"        },
-   { 'r' , "rng"    , "range of cells or pointer"      },
-   { 't' , "T/F"    , "true or false"                  },
-   { '-' , "---"    , "-----"                          },
-};
+/*> #define     MAX_TERM     20                                                       <* 
+ *> typedef     struct cTERMS   tTERMS;                                               <* 
+ *> struct cTERMS {                                                                   <* 
+ *>    char        type;                                                              <* 
+ *>    char       *abbr;                                                              <* 
+ *>    char       *desc;                                                              <* 
+ *> };                                                                                <* 
+ *> tTERMS      s_terms [MAX_TERM] = {                                                <* 
+ *>    { 'v' , "val"    , "numeric or cell address"        },                         <* 
+ *>    { 's' , "str"    , "string or cell address"         },                         <* 
+ *>    { '?' , "v/s"    , "string or numeric (runtime)"    },                         <* 
+ *>    { 'a' , "adr"    , "cell address or pointer"        },                         <* 
+ *>    { 'r' , "rng"    , "range of cells or pointer"      },                         <* 
+ *>    { 't' , "T/F"    , "true or false"                  },                         <* 
+ *>    { '-' , "---"    , "-----"                          },                         <* 
+ *> };                                                                                <*/
 
 
 long        time_zone  = 0;
@@ -404,16 +404,16 @@ PRIV void  o___STACK___________o () { return; }
  *
  */
 
-#define     MAX_STACK         1000
-typedef  struct cSTACK tSTACK;
-struct cSTACK {
-   char      typ;            /* type : r=ref, v=val, s=str                    */
-   tCELL    *ref;            /* cell reference                                */
-   double    num;            /* constant value                                */
-   char     *str;            /* literal string                                */
-};
-tSTACK      calc__stack   [MAX_STACK];
-int         calc__nstack  = 0;
+/*> #define     MAX_STACK         1000                                                 <* 
+ *> typedef  struct cSTACK tSTACK;                                                     <* 
+ *> struct cSTACK {                                                                    <* 
+ *>    char      typ;            /+ type : r=ref, v=val, s=str                    +/   <* 
+ *>    tCELL    *ref;            /+ cell reference                                +/   <* 
+ *>    double    num;            /+ constant value                                +/   <* 
+ *>    char     *str;            /+ literal string                                +/   <* 
+ *> };                                                                                 <* 
+ *> tSTACK      calc__stack   [MAX_STACK];                                             <* 
+ *> int         calc__nstack  = 0;                                                     <*/
 
 /*
  *   type is one of...

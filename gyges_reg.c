@@ -568,6 +568,12 @@ REG_copy_one       (tCELL *a_curr, long a_stamp)
    return 0;
 }
 
+char
+REG_copy_one_seq        (void *a_owner, void *a_deproot, int a_seq, int a_level)
+{
+   return  REG_copy_one (0, (tCELL *) a_owner);
+}
+
 /*> char         /+-> tbd --------------------------------[ ------ [ge.E73.2A4.32]+/ /+-[02.0000.104.!]-+/ /+-[--.---.---.--]-+/                   <* 
  *> REG_entry          (char a_reg, char *a_list)                                                                                                  <* 
  *> {                                                                                                                                              <* 
@@ -780,7 +786,8 @@ REG_copier           (char a_type, long a_stamp)
    DEBUG_REGS   yLOG_value   ("a_stamp"   , a_stamp);
    /*---(dependents)---------------------*/
    DEBUG_REGS   yLOG_note    ("DEPENDENT CELLS");
-   rc      = SEQ_reg_deps (a_stamp);
+   /*> rc      = SEQ_reg_deps (a_stamp);                                              <*/
+   rc      = yCALC_seq_downdown (a_stamp, REG_copy_one_seq);
    /*---(independents)-------------------*/
    DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
    rc      = yVIKEYS_first (&x_col, &x_row, &x_tab);
@@ -1327,7 +1334,7 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
    if (strchr (G_CELL_RPN, a_cell->t) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
       /*> rc = RPN_adjust_reg (a_cell, a_reqs, a_zoff, a_xoff, a_yoff, x_source, s_index);   <*/
-      rc = yRPN_adj_reqs (a_cell->s, a_reqs, a_xoff, a_yoff, a_zoff, LEN_RECD);
+      rc = yRPN_adjust_reqs (a_cell->s, a_reqs, a_xoff, a_yoff, a_zoff, LEN_RECD);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_REGS   yLOG_note    ("formula could not be parsed");
@@ -1349,7 +1356,7 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
       return 0;
    }
    DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");
-   DEP_disp_pros (LOC_cell_at_loc (x_stab, x_scol, x_srow), x_list);
+   yCALC_disp_pros (LOC_cell_at_loc (x_stab, x_scol, x_srow), x_list);
    DEBUG_REGS   yLOG_info    ("x_list"    , x_list);
    if (strchr ("-.", x_list [0]) != NULL) {
       DEBUG_REGS   yLOG_note    ("no providers identified");
@@ -1370,7 +1377,7 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->s);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
             /*> rc = RPN_adjust_ref (x_provider, a_pros, a_zoff, a_xoff, a_yoff, x_source, a_cell->label);   <*/
-            rc = yRPN_adj_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD);
+            rc = yRPN_adjust_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
             sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);

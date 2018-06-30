@@ -948,6 +948,12 @@ OUTP_cell          (char a_type, int a_seq, int a_level, tCELL *a_curr)
    return 0;
 }
 
+char
+OUTP_seq_cell           (void *a_owner, void *a_deproot, int a_seq, int a_level)
+{
+   OUTP_cell (FILE_DEPCEL, a_seq, a_level, (tCELL *) a_owner);
+}
+
 char         /*-> write file independent cells -------[ ------ [ge.9A0.86#.I4]*/ /*-[02.0000.01#.!]-*/ /*-[--.---.---.--]-*/
 OUTP_cell_free          (void)
 {
@@ -983,7 +989,8 @@ OUTP_cell_dep           (void)
 {
    char        rc          =    0;
    s_stamp   = rand ();
-   rc = SEQ_file_deps (s_stamp);
+   /*> rc = SEQ_file_deps (s_stamp);                                                  <*/
+   rc = yCALC_seq_downup (s_stamp, OUTP_cell);
    return 0;
 }
 

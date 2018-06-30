@@ -1310,9 +1310,9 @@ DRAW_main          (void)
    x_curr    = LOC_cell_at_curr ();
    if (x_curr != x_save) {
       if (x_curr != NULL) {
-         DEP_disp_reqs (x_curr, my.reqs_list);
-         DEP_disp_pros (x_curr, my.deps_list);
-         DEP_disp_like (x_curr, my.like_list);
+         yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
+         yCALC_disp_pros (x_curr->ycalc, my.deps_list);
+         yCALC_disp_like (x_curr->ycalc, my.like_list);
          /*> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <* 
           *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <*/
       } else {
