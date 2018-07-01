@@ -114,14 +114,14 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(setup other)--------------------*/
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
-   yVIKEYS_src_config   (extern_vikeys_saver);
+   yVIKEYS_src_config   (api_yvikeys_saver);
    yVIKEYS_regs_config  (CELL_killer, REG_copier, REG_clearer, REG_paster);
    /*---(globals)------------------------*/
    CELL_init  ();
    yCALC_init ('g');
-   if (rc == 0)  rc = yCALC_exist_config (extern_ycalc_enabler, extern_ycalc_pointer, extern_ycalc_reaper);
-   if (rc == 0)  rc = yCALC_label_config (extern_ycalc_named  , extern_ycalc_whos_at, extern_ycalc_labeler);
-   if (rc == 0)  rc = yCALC_value_config (extern_ycalc_valuer , extern_ycalc_address, extern_ycalc_special, extern_ycalc_printer);
+   if (rc == 0)  rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
+   if (rc == 0)  rc = yCALC_label_config (api_ycalc_named  , api_ycalc_whos_at, api_ycalc_labeler);
+   if (rc == 0)  rc = yCALC_value_config (api_ycalc_valuer , api_ycalc_address, api_ycalc_special, api_ycalc_printer);
    /*---(globals)------------------------*/
    hist_active       = '-';
    nhist             =  0;

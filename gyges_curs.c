@@ -1234,31 +1234,30 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
       /*---(trouble)---------------------*/
-      if      (a_curr->t == CTYPE_ERROR)                attron (S_COLOR_ERROR  );
-      else if (a_curr->t == CTYPE_WARN )                attron (S_COLOR_ERROR  );
+      if      (a_curr->t == YCALC_DATA_ERROR)           attron (S_COLOR_ERROR  );
       /*---(related)---------------------*/
       else if (strstr (my.reqs_list, label) != NULL)    attron (S_COLOR_REQS   );
       else if (strstr (my.deps_list, label) != NULL)    attron (S_COLOR_PROS   );
       else if (strstr (my.like_list, label) != NULL)    attron (S_COLOR_LIKE   );
       /*---(pointers)--------------------*/
-      else if (a_curr->t == CTYPE_RANGE)                attron (S_COLOR_POINTER);
-      else if (a_curr->t == CTYPE_ADDR )                attron (S_COLOR_POINTER);
+      else if (a_curr->t == YCALC_DATA_RANGE)           attron (S_COLOR_POINTER);
+      else if (a_curr->t == YCALC_DATA_ADDR )           attron (S_COLOR_POINTER);
       /*---(numbers)---------------------*/
-      else if (a_curr->t == CTYPE_NUM  )                attron (S_COLOR_NUMBER );
-      else if (a_curr->t == CTYPE_FORM ) {
+      else if (a_curr->t == YCALC_DATA_NUM  )           attron (S_COLOR_NUMBER );
+      else if (a_curr->t == YCALC_DATA_NFORM) {
          if   (yCALC_nreq (a_curr->ycalc)  < 5)         attron (S_COLOR_FSIMPLE);
          else                                           attron (S_COLOR_FDANGER);
       }
-      else if (a_curr->t == CTYPE_FLIKE)                attron (S_COLOR_FLIKE  );
+      else if (a_curr->t == YCALC_DATA_NLIKE)           attron (S_COLOR_FLIKE  );
       /*---(strings)---------------------*/
-      else if (a_curr->t == CTYPE_STR  )                attron (S_COLOR_STRING );
-      else if (a_curr->t == CTYPE_MOD  ) {
+      else if (a_curr->t == YCALC_DATA_STR  )           attron (S_COLOR_STRING );
+      else if (a_curr->t == YCALC_DATA_SFORM) {
          if   (yCALC_nreq (a_curr->ycalc)  < 5)         attron (S_COLOR_FSTRING);
          else                                           attron (S_COLOR_FSTRDAG);
       }
-      else if (a_curr->t == CTYPE_MLIKE)                attron (S_COLOR_MLIKE  );
+      else if (a_curr->t == YCALC_DATA_SLIKE)           attron (S_COLOR_MLIKE  );
       /*---(constants)-------------------*/
-      else if (a_curr->t == CTYPE_BLANK)                attron (S_COLOR_NULL   );
+      else if (a_curr->t == YCALC_DATA_BLANK)           attron (S_COLOR_NULL   );
       else                                              attron (S_COLOR_STRING );
    }
    /*---(complete)-----------------------*/

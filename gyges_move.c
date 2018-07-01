@@ -25,21 +25,21 @@ static  int   s_endr  = 0;
 /*===[[ local prototypes ]]=====================*/
 
 
-char         /*-> clear out recent editing -----------[ leaf   [gz.210.001.00]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-clear_input   (void)
-{
-   strncpy(g_saved   , g_contents, LEN_RECD);
-   strncpy(g_contents, ""      , LEN_RECD);
-   return 0;
-}
+/*> char         /+-> clear out recent editing -----------[ leaf   [gz.210.001.00]+/ /+-[00.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> clear_input   (void)                                                                                                           <* 
+ *> {                                                                                                                              <* 
+ *>    strncpy(g_saved   , g_contents, LEN_RECD);                                                                                  <* 
+ *>    strncpy(g_contents, ""      , LEN_RECD);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> place recent input into cell -------[ leaf   [gz.210.001.00]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-save_saved    (void)
-{
-   strncpy(g_contents, g_saved, LEN_RECD);
-   CELL_change (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);
-   return 0;
-}
+/*> char         /+-> place recent input into cell -------[ leaf   [gz.210.001.00]+/ /+-[00.0000.00#.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> save_saved    (void)                                                                                                           <* 
+ *> {                                                                                                                              <* 
+ *>    strncpy(g_contents, g_saved, LEN_RECD);                                                                                     <* 
+ *>    CELL_change (NULL, CHG_INPUT, CTAB, CCOL, CROW, g_contents);                                                                <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 

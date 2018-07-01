@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1b"
-#define     VER_TXT   "really basic working with yCALC.  yes, yes, yes."
+#define     VER_NUM   "3.1c"
+#define     VER_TXT   "fixed numeric formatting in api for printer"
 
 
 
@@ -529,35 +529,6 @@ int         acell;           /* count of all cells                            */
 
 #define     CELL_BUFFER  1
 #define     CELL_SHEET   0
-
-
-/*---(cell types)------------------------*/
-/*---(multiples)----------*/
-extern char G_CELL_ALL    [20];     /* list of all types                      */
-extern char G_CELL_RPN    [20];     /* types that require RPN conversion      */
-extern char G_CELL_CALC   [20];     /* calculated result types                */
-extern char G_CELL_DEPS   [20];     /* must follow the dependencies           */
-extern char G_CELL_NUM    [20];     /* numeric result types                   */
-extern char G_CELL_STR    [20];     /* string result types                    */
-extern char G_CELL_ERR    [20];     /* error cell types                       */
-extern char G_CELL_FPRE   [20];     /* formula prefixes                       */
-/*---(singles)------------*/
-#define     CTYPE_BLANK  '-'        /* blank                                  */
-#define     CTYPE_STR    's'        /* string literal                         */
-#define     CTYPE_NUM    'n'        /* numeric literal                        */
-#define     CTYPE_FORM   'f'        /* numeric formula                        */
-#define     CTYPE_MOD    'm'        /* modified string (calculated)           */
-#define     CTYPE_FLIKE  'l'        /* like another cell's formula            */
-#define     CTYPE_MLIKE  'L'        /* like another cell's modified string    */
-#define     CTYPE_RANGE  'p'        /* range pointer                          */
-#define     CTYPE_ADDR   'a'        /* address pointer                        */
-#define     CTYPE_SOURCE '>'        /* source of merged cells content         */
-#define     CTYPE_MERGE  '+'        /* merged cell (type of blank)            */
-#define     CTYPE_WARN   'w'        /* warning status                         */
-#define     CTYPE_ERROR  'E'        /* error status                           */
-
-
-
 
 
 
@@ -1414,7 +1385,8 @@ char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
-char      extern_vikeys_saver  (char *a_contents);
+char      api_yvikeys_saver    (char *a_contents);
+
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
 tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 
@@ -1459,7 +1431,7 @@ char      CELL_format_valid    (char   a_format);
 
 char      CELL_macro_get       (char   a_name, char  *a_keys);
 char      CELL_macro_set       (char   a_name, char  *a_keys);
-char      CELL_printable       (tCELL *a_cell);
+/*> char      CELL_printable       (tCELL *a_cell);                                   <*/
 
 char     *CELL__unit           (char  *a_question, tCELL *a_cell);
 char     *CELL__unitnew        (char  *a_question, char *a_label);
@@ -1513,18 +1485,19 @@ char      XML3_read            (char *a_name);
 
 
 
-char        extern_ycalc_enabler    (void *a_owner, void *a_deproot);
-char        extern_ycalc_pointer    (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string);
-char        extern_ycalc_reaper     (void **a_owner);
+char        api_ycalc_enabler       (void *a_owner, void *a_deproot);
+char        api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string);
+char        api_ycalc_reaper        (void **a_owner);
 
-char        extern_ycalc_named      (char *a_label, char a_force, void **a_owner, void **a_deproot);
-char        extern_ycalc_whos_at    (int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
-char*       extern_ycalc_labeler    (void *a_owner);
+char        api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_deproot);
+char        api_ycalc_whos_at       (int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
+char*       api_ycalc_labeler       (void *a_owner);
 
-char        extern_ycalc_valuer     (void *a_owner, char *a_type, double *a_value, char **a_string);
-char        extern_ycalc_address    (void *a_owner, int *x, int *y, int *z);
-char        extern_ycalc_special    (void *a_owner, char a_what, double *a_value, char **a_string);
-char        extern_ycalc_printer    (void *a_owner);
+char        api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_string);
+char        api_ycalc_address       (void *a_owner, int *x, int *y, int *z);
+char        api_ycalc_special       (void *a_owner, char a_what, double *a_value, char **a_string);
+
+char        api_ycalc_printer       (void *a_owner);
 
 
 

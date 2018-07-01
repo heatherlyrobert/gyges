@@ -431,7 +431,8 @@ LOC_move           (
    }
    /*---(update printable)---------------*/
    if (s_tabs[a_stab].cols[a_scol].w != s_tabs[a_ttab].cols[a_tcol].w) {
-      CELL_printable (source);
+      api_ycalc_printer (source);
+      /*> CELL_printable (source);                                                    <*/
    }
    /*---(complete)-----------------------*/
    return 0;

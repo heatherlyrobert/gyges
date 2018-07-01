@@ -12,7 +12,7 @@ static char s_nada       [5] = "";
 static void   o___EXIST___________o (void) { return; }
 
 char         /*-> save yCALC deproot to owner --------[ leaf   [ge.722.223.20]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-extern_ycalc_enabler    (void *a_owner, void *a_deproot)
+api_ycalc_enabler       (void *a_owner, void *a_deproot)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -44,7 +44,7 @@ extern_ycalc_enabler    (void *a_owner, void *a_deproot)
 }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.933.522.50]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-extern_ycalc_pointer    (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string)
+api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -87,7 +87,7 @@ extern_ycalc_pointer    (void *a_owner, char **a_source, char **a_type, double *
 }
 
 char
-extern_ycalc_reaper     (void **a_owner)
+api_ycalc_reaper        (void **a_owner)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -140,7 +140,7 @@ extern_ycalc_reaper     (void **a_owner)
 static void   o___LABEL___________o (void) { return; }
 
 char         /*-> tbd --------------------------------[ ------ [ge.I75.497.D1]*/ /*-[02.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-extern_ycalc_named      (char *a_label, char a_force, void **a_owner, void **a_deproot)
+api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_deproot)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -246,20 +246,20 @@ extern_ycalc_named      (char *a_label, char a_force, void **a_owner, void **a_d
 }
 
 char         /*-> tbd --------------------------------[ leaf   [gc.320.621.10]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-extern_ycalc_whos_at    (int x, int y, int z, char a_force, void **a_owner, void **a_deproot)
+api_ycalc_whos_at       (int x, int y, int z, char a_force, void **a_owner, void **a_deproot)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
    /*---(legal)--------------------------*/
    rc = str4gyges (x, y, z, 0, x_label);
-   if (rc == 0)  rc = extern_ycalc_named (x_label, YCALC_LOOK, a_owner, a_deproot);
+   if (rc == 0)  rc = api_ycalc_named (x_label, YCALC_LOOK, a_owner, a_deproot);
    /*---(complete)-----------------------*/
    return rc;
 }
 
 char*
-extern_ycalc_labeler    (void *a_owner)
+api_ycalc_labeler       (void *a_owner)
 {
    tCELL      *x_owner     = NULL;
    DEBUG_APIS   yLOG_senter  (__FUNCTION__);
@@ -282,7 +282,7 @@ extern_ycalc_labeler    (void *a_owner)
 static void   o___VALUE___________o (void) { return; }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.742.422.B0]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-extern_ycalc_valuer     (void *a_owner, char *a_type, double *a_value, char **a_string)
+api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_string)
 {
    char        rce         =  -10;
    tCELL     *x_owner      = NULL;
@@ -316,7 +316,7 @@ extern_ycalc_valuer     (void *a_owner, char *a_type, double *a_value, char **a_
 }
 
 char
-extern_ycalc_address    (void *a_owner, int *x, int *y, int *z)
+api_ycalc_address       (void *a_owner, int *x, int *y, int *z)
 {
    tCELL      *x_owner     = NULL;
    if (x != NULL)  *x   = 0;
@@ -329,7 +329,7 @@ extern_ycalc_address    (void *a_owner, int *x, int *y, int *z)
 }
 
 char
-extern_ycalc_special    (void *a_owner, char a_what, double *a_value, char **a_string)
+api_ycalc_special       (void *a_owner, char a_what, double *a_value, char **a_string)
 {
    char        rce         =  -10;
    tCELL      *x_owner     = NULL;
@@ -359,12 +359,19 @@ extern_ycalc_special    (void *a_owner, char a_what, double *a_value, char **a_s
    return 0;
 }
 
+
+
+/*====================------------------------------------====================*/
+/*===----                       yCALC_value_config                     ----===*/
+/*====================------------------------------------====================*/
+static void   o___PRINTING________o (void) { return; }
+
 static int     s_merges =    0;
 static tCELL  *s_owners [20];
 static int     s_widths [20];
 
 char         /*-> determine full print width ---------[ ------ [gz.530.321.23]*/ /*-[01.0000.015.!]-*/ /*-[--.---.---.--]-*/
-extern__ycalc_width     (void *a_owner, int *a_width, int *a_merge)
+api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
@@ -412,7 +419,7 @@ extern__ycalc_width     (void *a_owner, int *a_width, int *a_merge)
    for (i = x + 1; i < x + 20; ++i) {
       rc = str4gyges (i, y, z, 0, x_label);
       if (rc < 0)  break;
-      rc = extern_ycalc_whos_at (i, y, z, YCALC_LOOK, &x_owner, NULL);
+      rc = api_ycalc_whos_at (i, y, z, YCALC_LOOK, &x_owner, NULL);
       if (rc < 0)                              break;
       if (x_owner == NULL)                     break;
       if (x_owner->t != YCALC_DATA_MERGED)     break;
@@ -430,7 +437,7 @@ extern__ycalc_width     (void *a_owner, int *a_width, int *a_merge)
 }
 
 char         /*-> parse print into merged cells ------[ ------ [gz.641.351.22]*/ /*-[22.0000.015.!]-*/ /*-[--.---.---.--]-*/
-extern__ycalc_parse     (char *a_full, int a_merge)
+api__ycalc_parse        (char *a_full, int a_merge)
 {
    /*---(locals)-----------+-----+-----+-*/
    tCELL      *x_owner     = NULL;
@@ -468,7 +475,7 @@ extern__ycalc_parse     (char *a_full, int a_merge)
 }
 
 char
-extern_ycalc_printer    (void *a_owner)
+api_ycalc_printer       (void *a_owner)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -489,20 +496,43 @@ extern_ycalc_printer    (void *a_owner)
    }
    x_owner   = (tCELL     *) a_owner;
    /*---(contents)-----------------------*/
-   if (strchr ("=n", x_owner->t) != NULL) {
-      strl4main (x_owner->v_num, s, x_owner->d, x_owner->f, LEN_RECD);
-   } else {
-      if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
-      else                         strlcpy (s, x_owner->s    , LEN_RECD);
-   }
-   /*---(pad/trim)-----------------------*/
-   extern__ycalc_width (x_owner, &w, &c);
+   DEBUG_APIS   yLOG_char    ("type"      , x_owner->t);
+   DEBUG_APIS   yLOG_char    ("decs"      , x_owner->d);
+   DEBUG_APIS   yLOG_char    ("format"    , x_owner->f);
+   DEBUG_APIS   yLOG_char    ("align"     , x_owner->a);
+   /*---(get size)-----------------------*/
+   api__ycalc_width (x_owner, &w, &c);
    DEBUG_APIS   yLOG_value   ("w"         , w);
    DEBUG_APIS   yLOG_value   ("c"         , c);
-   strlpad (s, t, ' ', x_owner->a, w - 1);
-   sprintf (x_out, "%s ", t);
+   /*---(contents)-----------------------*/
+   if (strchr (YCALC_GROUP_NUM, x_owner->t) != NULL) {
+      DEBUG_APIS   yLOG_value   ("value"     , x_owner->v_num);
+      strl4main (x_owner->v_num, s, x_owner->d - '0', x_owner->f, LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("string"    , s);
+      strlpad (s, t, ' ', x_owner->a, w - 1);
+      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
+      sprintf (x_out, "%s ", t);
+      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+   } else if (strchr (YCALC_GROUP_STR, x_owner->t) != NULL) {
+      if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
+      else                         strlcpy (s, x_owner->s    , LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("string"    , s);
+      strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
+      sprintf (x_out, "%s ", t);
+      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+   } else if (x_owner->t == YCALC_DATA_BLANK) {
+      strlcpy (s, "-", LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("blank"     , s);
+      strlpad (s, t, ' ', x_owner->a, w - 1);
+      sprintf (x_out, "%s ", t);
+   } else {
+      DEBUG_APIS   yLOG_note    ("non-printing type");
+      DEBUG_APIS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(parse)--------------------------*/
-   extern__ycalc_parse (x_out, c);
+   api__ycalc_parse (x_out, c);
    /*---(complete)-----------------------*/
    DEBUG_APIS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -510,14 +540,3 @@ extern_ycalc_printer    (void *a_owner)
 
 
 
-/*====================------------------------------------====================*/
-/*===----                       yVIKEYS                                ----===*/
-/*====================------------------------------------====================*/
-static void   o___YVIKEYS_________o (void) { return; }
-
-char
-extern_vikeys_saver    (char *a_contents)
-{
-   CELL_change  (NULL, CHG_INPUT, CTAB, CCOL, CROW, a_contents);
-   return 0;
-}

@@ -974,7 +974,7 @@ OUTP_cell_free          (void)
             x_curr = LOC_cell_at_loc (z, x, y);
             if (x_curr    == NULL)                       continue;
             if (x_curr->s == NULL)                       continue;
-            if (x_curr->t == CTYPE_BLANK)                continue;
+            if (x_curr->t == YCALC_DATA_BLANK)                continue;
             /*> if (x_curr->u == s_stamp)                    continue;                <*/
             OUTP_cell (FILE_FREECEL, x_seq++, -1, x_curr);
          }
