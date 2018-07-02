@@ -1305,6 +1305,7 @@ DRAW_main          (void)
    short       y_pos       = 0;
    short       x_pos       = 0;
    int         w           = 0;
+   int         cw          = 0;
    /*---(update globals)-----------------*/
    x_curr    = LOC_cell_at_curr ();
    if (x_curr != x_save) {
@@ -1331,10 +1332,13 @@ DRAW_main          (void)
       /*---(prepare)---------------------*/
       y_pos = x_bott - x_tall + 1 + (y_cur - BROW);
       x_pos = x_left;
+      cw    = 0;
       /*---(cycle normal columns)--------*/
       for (x_cur = BCOL; x_cur <= ECOL; ++x_cur) {
          w  = LOC_col_width  (CTAB, x_cur);
+         if (cw + w > x_wide)  w = x_wide - cw;
          CURS_cell (x_cur, y_cur, y_pos, x_pos, w);
+         cw    += w;
          x_pos += w;
       }
       /*---(fill in at end)--------------*/
