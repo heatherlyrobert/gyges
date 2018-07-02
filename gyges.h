@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1c"
-#define     VER_TXT   "fixed numeric formatting in api for printer"
+#define     VER_NUM   "3.1d"
+#define     VER_TXT   "updated file entries for tab, col, and row to addresses"
 
 
 

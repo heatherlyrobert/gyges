@@ -611,8 +611,21 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(min)----------------------------*/
+   rc = str2gyges (c, &x_tab, &x_col, &x_row, NULL, 0);
+   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(max)----------------------------*/
+   rc = str2gyges (d, &x_tab, &x_col, &x_row, NULL, 0);
+   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(check tab)----------------------*/
-   x_tab   = atoi (a);
    DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
    rc = LOC_tab_valid (x_tab);
    DEBUG_INPT   yLOG_value   ("rc"        , rc);
@@ -621,13 +634,11 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       return rce;
    }
    /*---(resize)-------------------------*/
-   x_col   = atoi (d);
    if (x_col == 0)  x_col = LOC_col_max (x_tab);
    DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
-   x_row   = atoi (f);
    if (x_row == 0)  x_row = LOC_row_max (x_tab);
    DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
-   rc = LOC_legal  (x_tab, x_col - 1, x_row - 1, CELL_EXACT);
+   rc = LOC_legal  (x_tab, x_col, x_row, CELL_EXACT);
    DEBUG_INPT   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
@@ -647,9 +658,9 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT  yLOG_info    ("a_name"    , b);
    }
    /*---(default sizes)------------------*/
-   x_size  = atoi (g);
+   x_size  = atoi (d);
    if (x_size > 0)  LOC_col_defwidth  (x_tab, x_size);
-   x_size  = atoi (h);
+   x_size  = atoi (e);
    if (x_size > 0)  LOC_row_defheight (x_tab, x_size);
    /*---(complete)-----------------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
@@ -673,6 +684,8 @@ TABS_writer           (char  a_tab)
    int         x_zero      =    0;
    int         x_wide      =    0;
    int         x_tall      =    0;
+   char        x_min       [LEN_LABEL];
+   char        x_max       [LEN_LABEL];
    /*---(prepare tab)--------------------*/
    yVIKEYS_unit_reset ();
    if (a_tab == -1) {
@@ -687,12 +700,14 @@ TABS_writer           (char  a_tab)
    for (i = x_btab; i <= x_etab; ++i) {
       if (LOC_tab_used (i) <= 0)  continue;
       x_type = LOC_tab_type (i);
-      x_cols = LOC_col_max  (i);
-      x_rows = LOC_row_max  (i);
+      x_cols = LOC_col_max  (i) - 1;
+      x_rows = LOC_row_max  (i) - 1;
       x_wide = LOC_tab_colwide (i);
       x_tall = LOC_tab_rowtall (i);
       LOC_tab_name    (i, x_name);
-      yVIKEYS_file_write (FILE_TABS, &i, x_name, &x_zero, &x_cols, &x_zero, &x_rows, &x_wide, &x_tall, &x_type);
+      rc = str4gyges (0     , 0     , i, 0, x_min);
+      rc = str4gyges (x_cols, x_rows, i, 0, x_max);
+      yVIKEYS_file_write (FILE_TABS, x_name, x_min, x_max, &x_wide, &x_tall, &x_zero, &x_type, NULL, NULL);
       ++c;
    }
    /*---(complete)-----------------------*/
@@ -719,27 +734,34 @@ COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(check tab)----------------------*/
-   x_tab   = atoi (a);
-   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
-   rc = LOC_tab_valid (x_tab);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   /*---(tab and col)--------------------*/
+   rc = str2gyges (a, &x_col, NULL, &x_tab, NULL, 0);
+   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(check col)----------------------*/
-   x_col   = atoi (b);
-   DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
-   rc = LOC_legal  (x_tab, x_col, 0, CELL_GROW);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   /*> /+---(check tab)----------------------+/                                       <* 
+    *> x_tab   = atoi (a);                                                            <* 
+    *> DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);                               <* 
+    *> rc = LOC_tab_valid (x_tab);                                                    <* 
+    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <* 
+    *> /+---(check col)----------------------+/                                       <* 
+    *> x_col   = atoi (b);                                                            <* 
+    *> DEBUG_INPT   yLOG_value   ("x_col"     , x_col);                               <* 
+    *> rc = LOC_legal  (x_tab, x_col, 0, CELL_GROW);                                  <* 
+    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(update size)--------------*/
-   x_size   = atoi (c);
-   x_count  = atoi (d);
+   x_size   = atoi (b);
+   x_count  = atoi (c);
    if (x_count == 0)  x_count = 1;
    for (x_cols = 0; x_cols < x_count; ++x_cols) {
       rc = LOC_col_widen (x_tab, x_col + x_cols, x_size);
@@ -773,6 +795,7 @@ DETAIL_writer           (char a_type, char a_tab, short a_cur)
    int         x_def       =    0;
    int         x_size      =    0;
    int         x_prev      =    0;
+   char        x_label     [LEN_LABEL];
    /*---(header)-------------------------*/
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(clear output)-------------------*/
@@ -837,8 +860,14 @@ DETAIL_writer           (char a_type, char a_tab, short a_cur)
             ++n;
          }
          DEBUG_OUTP   yLOG_value   ("n"         , n);
-         if (a_type == 'c')  yVIKEYS_file_write (FILE_COLS, &i, &j, &x_size, &n, NULL, NULL, NULL, NULL, NULL);
-         else                yVIKEYS_file_write (FILE_ROWS, &i, &j, &x_size, &n, NULL, NULL, NULL, NULL, NULL);
+         if (a_type == 'c') {
+            rc = str4gyges (j, 0, i, 0, x_label);
+            yVIKEYS_file_write (FILE_COLS, x_label, &x_size, &n, NULL, NULL, NULL, NULL, NULL, NULL);
+         }
+         else {
+            rc = str4gyges (0, j, i, 0, x_label);
+            yVIKEYS_file_write (FILE_ROWS, x_label, &x_size, &n, NULL, NULL, NULL, NULL, NULL, NULL);
+         }
          c += n;
          j += n - 1;
       }
@@ -868,27 +897,34 @@ ROWS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(check tab)----------------------*/
-   x_tab   = atoi (a);
-   DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
-   rc = LOC_tab_valid (x_tab);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   /*---(tab and col)--------------------*/
+   rc = str2gyges (a, NULL, &x_row, &x_tab, NULL, 0);
+   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(check row)----------------------*/
-   x_row   = atoi (b);
-   DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
-   rc = LOC_legal  (x_tab, 0, x_row, CELL_GROW);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   /*> /+---(check tab)----------------------+/                                       <* 
+    *> x_tab   = atoi (a);                                                            <* 
+    *> DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);                               <* 
+    *> rc = LOC_tab_valid (x_tab);                                                    <* 
+    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <* 
+    *> /+---(check row)----------------------+/                                       <* 
+    *> x_row   = atoi (b);                                                            <* 
+    *> DEBUG_INPT   yLOG_value   ("x_row"     , x_row);                               <* 
+    *> rc = LOC_legal  (x_tab, 0, x_row, CELL_GROW);                                  <* 
+    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(update size)--------------*/
-   x_size   = atoi (c);
-   x_count  = atoi (d);
+   x_size   = atoi (b);
+   x_count  = atoi (c);
    if (x_count == 0)  x_count = 1;
    for (x_rows = 0; x_rows < x_count; ++x_rows) {
       rc = LOC_row_heighten (x_tab, x_row + x_rows, x_size);
