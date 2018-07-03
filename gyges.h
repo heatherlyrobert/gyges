@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1e"
-#define     VER_TXT   "fixed overprint for rows in ncurses logic"
+#define     VER_NUM   "3.1f"
+#define     VER_TXT   "fixed x-axis display of final partial column label"
 
 
 

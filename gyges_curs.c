@@ -516,20 +516,20 @@ DRAW_xaxis         (void)
       x_pos += w;
    }
    /*---(fill in right side)-------------*/
-   /*> if (x_pos < x_wide) {                                                                     <* 
-    *>    w     = x_wide - x_pos;                                                                <* 
-    *>    wa    = w - 4;                                                                         <* 
-    *>    LOC_col_label (CTAB, ECOL + 1, x_label);                                               <* 
-    *>    if (ECOL < NCOL - 1){                                                                  <* 
-    *>       if      (w == 1) snprintf (x_disp, 500, ">");                                       <* 
-    *>       else if (w == 2) snprintf (x_disp, 500, "\[>");                                     <* 
-    *>       else if (w == 3) snprintf (x_disp, 500, "\[->");                                    <* 
-    *>       else             snprintf (x_disp, 500, "\[%*.*s%s>", wa, wa, g_dashes, x_label);   <* 
-    *>    } else              snprintf (x_disp, 500, "%*.*s ", w, w, g_empty);                   <* 
-    *>    CURS_col_color  (ECOL + 1);                                                            <* 
-    *>    mvprintw (x_bott, x_pos, x_disp);                                                      <* 
-    *>    attrset (0);                                                                           <* 
-    *> }                                                                                         <*/
+   if (x_pos < x_wide) {
+      w     = x_wide - x_pos;
+      wa    = w - 4;
+      LOC_col_label (CTAB, ECOL + 1, x_label);
+      if (ECOL < NCOL - 1){
+         if      (w == 1) snprintf (x_disp, 500, ">");
+         else if (w == 2) snprintf (x_disp, 500, "\[>");
+         else if (w == 3) snprintf (x_disp, 500, "\[->");
+         else             snprintf (x_disp, 500, "\[%*.*s%s>", wa, wa, g_dashes, x_label);
+      } else              snprintf (x_disp, 500, "%*.*s ", w, w, g_empty);
+      CURS_col_color  (ECOL + 1);
+      mvprintw (x_bott, x_pos, x_disp);
+      attrset (0);
+   }
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
