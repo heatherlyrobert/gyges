@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1f"
-#define     VER_TXT   "fixed x-axis display of final partial column label"
+#define     VER_NUM   "3.1g"
+#define     VER_TXT   "fixed yCALC valuer function to grab string value properly"
 
 
 
@@ -1498,6 +1498,7 @@ char        api_ycalc_address       (void *a_owner, int *x, int *y, int *z);
 char        api_ycalc_special       (void *a_owner, char a_what, double *a_value, char **a_string);
 
 char        api_ycalc_printer       (void *a_owner);
+
 
 
 

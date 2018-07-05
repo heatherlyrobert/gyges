@@ -235,9 +235,9 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_map_refresh ();
    yVIKEYS_mode_formatter    (SMOD_format);
    yVIKEYS_cmds_direct (":read");
+   yVIKEYS_map_refresh ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

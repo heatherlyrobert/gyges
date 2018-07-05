@@ -305,10 +305,16 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
       DEBUG_APIS   yLOG_sdouble (*a_value);
    }
    if (a_string != NULL) {
-      if      (x_owner->t     == 'E')     *a_string   = s_nada;
-      else if (x_owner->t     == 's' && x_owner->s != NULL)  *a_string = x_owner->v_str;
-      else if (x_owner->v_str != NULL)  *a_string = x_owner->v_str;
-      else                               *a_string = s_nada;
+      if        (x_owner->t     == 'E') {
+         *a_string   = s_nada;
+      } else if (x_owner->t     == 's'){
+          if (x_owner->s != NULL)  *a_string = x_owner->s;
+          else                     *a_string = s_nada;
+      } else if (x_owner->v_str != NULL) {
+         *a_string = x_owner->v_str;
+      } else {
+         *a_string = s_nada;
+      }
       DEBUG_APIS   yLOG_snote   (*a_string);
    }
    DEBUG_APIS   yLOG_sexit   (__FUNCTION__);

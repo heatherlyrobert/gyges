@@ -1892,6 +1892,7 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
       api_ycalc_printer (x_cell);
    }
    /*---(reset headers)---------------*/
+   yVIKEYS_map_refresh ();
    /*> KEYS_bcol    (BCOL);                                                           <*/
    /*> CURS_col_head ();                                                              <*/
    /*---(complete)---------------------------*/

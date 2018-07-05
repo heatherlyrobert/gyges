@@ -288,56 +288,56 @@ PRIV void  o___SPECIFIC________o () { return; }
  *>    /+---(contents)-------------------------+/                                                                                                           <* 
  *>    w  = s_space - len;                                                                                                                                  <* 
  *>    if (w < 0) w = 0;                                                                                                                                    <* 
- *>    mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, g_empty);                                                                                 <* 
- *>    snprintf (msg, 500, "%s",    g_contents);                                                                                                            <* 
- *>    mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg + my.bpos);                                                                          <* 
- *>    /+---(highlight off)------------------+/                                                                                                             <* 
- *>    attrset (0);                                                                                                                                         <* 
- *>    /+---(show selection on top)------------+/                                                                                                           <* 
- *>    if ((yVIKEYS_mode_curr() == SMOD_SELECT || yVIKEYS_mode_curr() == SMOD_TEXTREG) && SELC_islive) {                                                    <* 
- *>       x_beg = SELC_from ();                                                                                                                             <* 
- *>       x_end = SELC_to   ();                                                                                                                             <* 
- *>       if (x_beg < my.epos || x_end > my.bpos) {                                                                                                         <* 
- *>          if (x_beg < my.bpos)  x_beg = my.bpos;                                                                                                         <* 
- *>          if (x_end > my.epos)  x_end = my.epos;                                                                                                         <* 
- *>          x_gap = x_beg - my.bpos;                                                                                                                       <* 
- *>          x_len = x_end - x_beg + 1;                                                                                                                     <* 
- *>          attron (S_COLOR_VISUAL);                                                                                                                       <* 
- *>          mvprintw (row_formula, s_start + x_gap, "%-*.*s", x_len, x_len, msg + x_beg);                                                                  <* 
- *>          attrset (0);                                                                                                                                   <* 
- *>       }                                                                                                                                                 <* 
- *>    }                                                                                                                                                    <* 
- *>    /+---(boundary markers)---------------+/                                                                                                             <* 
- *>    attron (S_COLOR_VISUAL );                                                                                                                            <* 
- *>    sprintf (msg, "%c", G_CHAR_NULL );                                                                                                                   <* 
- *>    /+---(beginning)---------+/                                                                                                                          <* 
- *>    if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);                                                                          <* 
- *>    else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");                                                                          <* 
- *>    else                              mvprintw (row_formula, s_start - 1, "<");                                                                          <* 
- *>    /+---(ending)------------+/                                                                                                                          <* 
- *>    if      (my.npos == 0)            mvprintw (row_formula, s_start + s_space, msg);                                                                    <* 
- *>    else if (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");                                                                    <* 
- *>    else                              mvprintw (row_formula, s_start + s_space, ">");                                                                    <* 
- *>    /+---(done)--------------+/                                                                                                                          <* 
- *>    attrset (0);                                                                                                                                         <* 
- *>    /+---(complete)-----------------------+/                                                                                                             <* 
- *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                             <* 
- *>    return 0;                                                                                                                                            <* 
- *> }                                                                                                                                                       <*/
+*>    mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, g_empty);                                                                                 <* 
+*>    snprintf (msg, 500, "%s",    g_contents);                                                                                                            <* 
+*>    mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg + my.bpos);                                                                          <* 
+*>    /+---(highlight off)------------------+/                                                                                                             <* 
+*>    attrset (0);                                                                                                                                         <* 
+*>    /+---(show selection on top)------------+/                                                                                                           <* 
+*>    if ((yVIKEYS_mode_curr() == SMOD_SELECT || yVIKEYS_mode_curr() == SMOD_TEXTREG) && SELC_islive) {                                                    <* 
+   *>       x_beg = SELC_from ();                                                                                                                             <* 
+      *>       x_end = SELC_to   ();                                                                                                                             <* 
+      *>       if (x_beg < my.epos || x_end > my.bpos) {                                                                                                         <* 
+         *>          if (x_beg < my.bpos)  x_beg = my.bpos;                                                                                                         <* 
+            *>          if (x_end > my.epos)  x_end = my.epos;                                                                                                         <* 
+            *>          x_gap = x_beg - my.bpos;                                                                                                                       <* 
+            *>          x_len = x_end - x_beg + 1;                                                                                                                     <* 
+            *>          attron (S_COLOR_VISUAL);                                                                                                                       <* 
+            *>          mvprintw (row_formula, s_start + x_gap, "%-*.*s", x_len, x_len, msg + x_beg);                                                                  <* 
+            *>          attrset (0);                                                                                                                                   <* 
+            *>       }                                                                                                                                                 <* 
+            *>    }                                                                                                                                                    <* 
+            *>    /+---(boundary markers)---------------+/                                                                                                             <* 
+            *>    attron (S_COLOR_VISUAL );                                                                                                                            <* 
+            *>    sprintf (msg, "%c", G_CHAR_NULL );                                                                                                                   <* 
+            *>    /+---(beginning)---------+/                                                                                                                          <* 
+            *>    if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);                                                                          <* 
+            *>    else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");                                                                          <* 
+            *>    else                              mvprintw (row_formula, s_start - 1, "<");                                                                          <* 
+            *>    /+---(ending)------------+/                                                                                                                          <* 
+            *>    if      (my.npos == 0)            mvprintw (row_formula, s_start + s_space, msg);                                                                    <* 
+            *>    else if (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");                                                                    <* 
+            *>    else                              mvprintw (row_formula, s_start + s_space, ">");                                                                    <* 
+            *>    /+---(done)--------------+/                                                                                                                          <* 
+            *>    attrset (0);                                                                                                                                         <* 
+            *>    /+---(complete)-----------------------+/                                                                                                             <* 
+            *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                             <* 
+            *>    return 0;                                                                                                                                            <* 
+            *> }                                                                                                                                                       <*/
 
-/*> char  DEP_reqs_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
- *> char  DEP_pros_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
- *> char  DEP_like_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <*/
-char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
-char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
-char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
-char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
-/*> char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }   <*/
-char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
-char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
-char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
-/*> char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_STR, "[ reg %-100.100s ]", my.reg_list); }   <*/
-char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_STR, "errors (%3d)", nerror); };
+            /*> char  DEP_reqs_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
+             *> char  DEP_pros_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
+             *> char  DEP_like_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <*/
+            char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
+            char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
+            char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
+            char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
+            /*> char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }   <*/
+            char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
+            char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
+            char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
+            /*> char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_STR, "[ reg %-100.100s ]", my.reg_list); }   <*/
+            char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_STR, "errors (%3d)", nerror); };
 char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act); }
 
 /*> char         /+-> tbd --------------------------------[ ------ [gc.HB1.152.98]+/ /+-[02.3000.013.!]-+/ /+-[--.---.---.--]-+/                                                   <* 
@@ -411,14 +411,14 @@ char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist 
  *>    mvprintw(s_status_row, 0, msg);                                                                                                                                             <* 
  *>    attrset    (0);                                                                                                                                                             <* 
  *>    IF_MACRO_ON {                                                                                                                                                               <* 
- *>       attron   (S_COLOR_CONTENT);                                                                                                                                              <* 
- *>       mvprintw (s_status_row, 23 + my.macro_pos, "%c", my.macro_keys [my.macro_pos]);                                                                                          <* 
- *>       attrset  (0);                                                                                                                                                            <* 
- *>    }                                                                                                                                                                           <* 
- *>    sta_error = '-';                                                                                                                                                            <* 
- *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                                                    <* 
- *>    return 0;                                                                                                                                                                   <* 
- *> }                                                                                                                                                                              <*/
+*>       attron   (S_COLOR_CONTENT);                                                                                                                                              <* 
+*>       mvprintw (s_status_row, 23 + my.macro_pos, "%c", my.macro_keys [my.macro_pos]);                                                                                          <* 
+*>       attrset  (0);                                                                                                                                                            <* 
+*>    }                                                                                                                                                                           <* 
+*>    sta_error = '-';                                                                                                                                                            <* 
+*>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                                                    <* 
+*>    return 0;                                                                                                                                                                   <* 
+*> }                                                                                                                                                                              <*/
 
 /*> char         /+-> tbd --------------------------------[ ------ [gc.321.002.11]+/ /+-[00.2000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> CURS_message       (void)                                                                                                      <* 
@@ -792,9 +792,9 @@ DRAW_xaxis         (void)
  *>    attron     (S_COLOR_TITLE);                                                                                                 <* 
  *>    mvprintw   ( i++, 10, x_title);                                                                                             <* 
  *>    attrset    (0);                                                                                                             <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
+*>    /+---(complete)-----------------------+/                                                                                    <* 
+*>    return 0;                                                                                                                   <* 
+*> }                                                                                                                              <*/
 
 /*> char         /+-> tbd --------------------------------[ ------ [gz.A70.061.41]+/ /+-[01.7000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> CURS_listbufs      (void)                                                                                                      <* 
@@ -1152,37 +1152,37 @@ PRIV void  o___SCREEN__________o () { return; }
  *>     *>    attron   (S_COLOR_KEYS);                                                           <*                                                                               <* 
  *>     *>    mvprintw (row_chead, 0, g_cmd);                                                    <*                                                                               <* 
  *>     *>    attroff  (S_COLOR_KEYS);                                                           <*                                                                               <* 
- *>     *> } else {                                                                              <*                                                                               <* 
- *>     *>    mvprintw (row_chead, 0, s_label + 1);                                              <*                                                                               <* 
- *>     *> }                                                                                     <+/                                                                              <* 
- *>    /+---(cursor pos)---------------------+/                                                                                                                                   <* 
- *>    /+> if (my.info_win != G_INFO_NONE)                                                                                                                                  <*    <* 
- *>     *>    move ( 4, 10);                                                                                                                                                <*    <* 
- *>     *> else if (my.menu     != MENU_NONE)                                                                                                                               <*    <* 
- *>     *>    move ( 2,  1);                                                                                                                                                <*    <* 
- *>     *> else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)   <*    <* 
- *>     *>    move (row_formula, s_start + my.cpos - my.bpos);                                                                                                              <*    <* 
- *>     *> else                                                                                                                                                             <*    <* 
- *>     *>    move (LOC_row_ypos (CTAB, CROW), LOC_col_xpos (CTAB, CCOL) + LOC_col_width (CTAB, CCOL) - 1);                                                                 <+/   <* 
- *>    /+---(refresh)------------------------+/                                                                                                                                   <* 
- *>    /+> my.info_win = G_INFO_NONE;                                                     <+/                                                                                     <* 
- *>    refresh ();                                                                                                                                                                <* 
- *>    /+> IF_MACRO_NOT_PLAYING {                                                         <*                                                                                      <* 
- *>     *>    ch = getch ();                                                              <*                                                                                      <* 
- *>     *>    DEBUG_GRAF  yLOG_value   ("key"       , ch);                                <*                                                                                      <* 
- *>     *> }                                                                              <+/                                                                                     <* 
- *>       ch = getch ();                                                                                                                                                          <* 
- *>       DEBUG_GRAF  yLOG_value   ("key"       , ch);                                                                                                                            <* 
- *>    /+---(check layout)-------------------+/                                                                                                                                   <* 
- *>    if (ch == KEY_RESIZE) {                                                                                                                                                    <* 
- *>       CURS_size ();                                                                                                                                                           <* 
- *>       MOVE_horz  ('r');                                                                                                                                                       <* 
- *>       MOVE_vert  ('r');                                                                                                                                                       <* 
- *>    }                                                                                                                                                                          <* 
- *>    /+---(complete)--------------------------+/                                                                                                                                <* 
- *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                                                   <* 
- *>    return ch;                                                                                                                                                                 <* 
- *> }                                                                                                                                                                             <*/
+*>     *> } else {                                                                              <*                                                                               <* 
+   *>     *>    mvprintw (row_chead, 0, s_label + 1);                                              <*                                                                               <* 
+      *>     *> }                                                                                     <+/                                                                              <* 
+      *>    /+---(cursor pos)---------------------+/                                                                                                                                   <* 
+      *>    /+> if (my.info_win != G_INFO_NONE)                                                                                                                                  <*    <* 
+      *>     *>    move ( 4, 10);                                                                                                                                                <*    <* 
+      *>     *> else if (my.menu     != MENU_NONE)                                                                                                                               <*    <* 
+      *>     *>    move ( 2,  1);                                                                                                                                                <*    <* 
+      *>     *> else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)   <*    <* 
+      *>     *>    move (row_formula, s_start + my.cpos - my.bpos);                                                                                                              <*    <* 
+      *>     *> else                                                                                                                                                             <*    <* 
+      *>     *>    move (LOC_row_ypos (CTAB, CROW), LOC_col_xpos (CTAB, CCOL) + LOC_col_width (CTAB, CCOL) - 1);                                                                 <+/   <* 
+      *>    /+---(refresh)------------------------+/                                                                                                                                   <* 
+      *>    /+> my.info_win = G_INFO_NONE;                                                     <+/                                                                                     <* 
+      *>    refresh ();                                                                                                                                                                <* 
+      *>    /+> IF_MACRO_NOT_PLAYING {                                                         <*                                                                                      <* 
+         *>     *>    ch = getch ();                                                              <*                                                                                      <* 
+            *>     *>    DEBUG_GRAF  yLOG_value   ("key"       , ch);                                <*                                                                                      <* 
+            *>     *> }                                                                              <+/                                                                                     <* 
+            *>       ch = getch ();                                                                                                                                                          <* 
+            *>       DEBUG_GRAF  yLOG_value   ("key"       , ch);                                                                                                                            <* 
+            *>    /+---(check layout)-------------------+/                                                                                                                                   <* 
+            *>    if (ch == KEY_RESIZE) {                                                                                                                                                    <* 
+               *>       CURS_size ();                                                                                                                                                           <* 
+                  *>       MOVE_horz  ('r');                                                                                                                                                       <* 
+                  *>       MOVE_vert  ('r');                                                                                                                                                       <* 
+                  *>    }                                                                                                                                                                          <* 
+                  *>    /+---(complete)--------------------------+/                                                                                                                                <* 
+                  *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                                                   <* 
+                  *>    return ch;                                                                                                                                                                 <* 
+                  *> }                                                                                                                                                                             <*/
 
 char         /*-> set color model --------------------[ ------ [gc.D70.532.S5]*/ /*-[02.2000.015.!]-*/ /*-[--.---.---.--]-*/
 DRAW_coloration      (char *a_opt)
@@ -1342,13 +1342,22 @@ DRAW_main          (void)
          x_pos += w;
       }
       /*---(fill in at end)--------------*/
-      /*> w = g_xmap.tend - x_pos;                                                    <* 
-       *> if (w > 0)  CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);                   <*/
+      if (x_pos < x_wide) {
+         w     = x_wide - x_pos;
+         if (ECOL < NCOL - 1) {
+            CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);
+         }
+      }
    }
+   /*> w = g_xmap.tend - x_pos;                                                       <* 
+    *> if (w > 0)  CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);                      <*/
    move (s_cursor_y, s_cursor_x);
    /*---(complete)-----------------------*/
    return 0;
 }
+
+
+
 
 
 

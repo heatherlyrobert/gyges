@@ -1250,14 +1250,18 @@ MAP_mapper           (char a_req)
       LOC__mapper   ('C');
       LOC__mapper   ('R');
       LOC__mapper   ('T');
+   } else {
+      LOC__mapper   ('c');
+      LOC__mapper   ('r');
+      LOC__mapper   ('t');
    }
    BCOL = g_xmap.gbeg;
    CCOL = g_xmap.gcur;
    ECOL = g_xmap.gend;
    BROW = g_ymap.gbeg;
-   CROW = g_ymap.cur;
+   CROW = g_ymap.gcur;
    EROW = g_ymap.gend;
-   CTAB = g_zmap.cur;
+   CTAB = g_zmap.gcur;
    x_curr = LOC_cell_at_curr ();
    if      (x_curr == NULL || x_curr->s == NULL) {
       LOC_ref (CTAB, CCOL, CROW, 0, t);
