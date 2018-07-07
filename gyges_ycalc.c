@@ -527,6 +527,21 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
+   } else if (strchr (YCALC_GROUP_POINT, x_owner->t) != NULL) {
+      strlcpy (s, x_owner->s, LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("pointer"   , s);
+      strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
+      sprintf (x_out, "%s ", t);
+      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+   } else if (YCALC_DATA_ERROR == x_owner->t) {
+      if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
+      else                         strlcpy (s, "#?/???"      , LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("pointer"   , s);
+      strlpad (s, t, ' ', '<', w - 1);
+      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
+      sprintf (x_out, "%s ", t);
+      DEBUG_APIS   yLOG_info    ("final"     , x_out);
    } else if (x_owner->t == YCALC_DATA_BLANK) {
       strlcpy (s, "-", LEN_RECD);
       DEBUG_APIS   yLOG_info    ("blank"     , s);

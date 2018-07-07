@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1g"
-#define     VER_TXT   "fixed yCALC valuer function to grab string value properly"
+#define     VER_NUM   "3.1h"
+#define     VER_TXT   "like formula logic loads, but no unit testing yet"
 
 
 
