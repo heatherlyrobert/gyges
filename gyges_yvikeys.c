@@ -418,7 +418,7 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
    if (strchr (YCALC_GROUP_RPN, a_cell->t) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
       /*> rc = RPN_adjust_reg (a_cell, a_reqs, a_zoff, a_xoff, a_yoff, x_source, s_index);   <*/
-      rc = yRPN_adjust_reqs (a_cell->s, a_reqs, a_xoff, a_yoff, a_zoff, LEN_RECD);
+      rc = yRPN_adjust_reqs (a_cell->s, a_reqs, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_REGS   yLOG_note    ("formula could not be parsed");
@@ -461,7 +461,7 @@ REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->s);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
             /*> rc = RPN_adjust_ref (x_provider, a_pros, a_zoff, a_xoff, a_yoff, x_source, a_cell->label);   <*/
-            rc = yRPN_adjust_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD);
+            rc = yRPN_adjust_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
             sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);

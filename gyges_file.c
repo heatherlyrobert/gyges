@@ -815,32 +815,35 @@ DETAIL_writer           (char a_type, char a_tab, short a_cur)
    }
    DEBUG_OUTP   yLOG_value   ("x_btab"    , x_btab);
    DEBUG_OUTP   yLOG_value   ("x_etab"    , x_etab);
-   /*---(prepare col)--------------------*/
-   DEBUG_OUTP   yLOG_value   ("a_cur"     , a_cur);
-   --rce;  if (a_cur == -1) {
-      x_beg = 0;
-      if (a_type == 'c')  x_end = MAX_COLS - 1;
-      else                x_end = MAX_ROWS - 1;
-   } else {
-      if (a_type == 'c')  rc = LOC_col_valid (a_tab, a_cur);
-      else                rc = LOC_row_valid (a_tab, a_cur);
-      if (rc < 0) {
-         DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-      x_beg = x_end = a_cur;
-   }
-   DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);
-   DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);
    /*---(find marked entries)------------*/
    for (i = x_btab; i <= x_etab; ++i) {
-      DEBUG_OUTP   yLOG_value   ("tab (i)"   , i);
       if (LOC_tab_used (i) <= 0)  continue;
+      DEBUG_OUTP   yLOG_value   ("tab (i)"   , i);
+      /*---(prepare range)------------------*/
+      DEBUG_OUTP   yLOG_value   ("a_cur"     , a_cur);
+      --rce;  if (a_cur == -1) {
+         x_beg = 0;
+         if (a_type == 'c')  x_end = LOC_col_max  (i) - 1;
+         else                x_end = LOC_row_max  (i) - 1;
+      } else {
+         if (a_type == 'c')  rc = LOC_col_valid (a_tab, a_cur);
+         else                rc = LOC_row_valid (a_tab, a_cur);
+         if (rc < 0) {
+            DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         x_beg = x_end = a_cur;
+      }
+      DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);
+      DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);
+      /*---(prepare default)----------------*/
       if (a_type == 'c')  x_def  = LOC_tab_colwide (i);
       else                x_def  = LOC_tab_rowtall (i);
       DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
+      /*---(run range)----------------------*/
       for (j = x_beg; j <= x_end; ++j) {
-         DEBUG_OUTP   yLOG_value   ("col (j)"   , j);
+         if (a_type == 'c')  DEBUG_OUTP   yLOG_value   ("col (j)"   , j);
+         if (a_type == 'r')  DEBUG_OUTP   yLOG_value   ("row (j)"   , j);
          if (LOC_col_valid (i, j) < 0)  continue;
          if      (a_type == 'c' && j > 0)  x_prev = LOC_col_width  (i, j - 1);
          else if (a_type == 'r' && j > 0)  x_prev = LOC_row_height (i, j - 1);
@@ -969,11 +972,33 @@ OUTP_cell          (char a_type, int a_seq, int a_level, tCELL *a_curr)
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_OUTP   yLOG_point   ("label"     , a_curr->label);
+   --rce;  if (a_curr->label  == NULL) {
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_OUTP   yLOG_info    ("label"     , a_curr->label);
+   DEBUG_OUTP   yLOG_complex ("type"      , "%-3d (%c)", a_curr->t, a_curr->t);
+   if (a_curr->t == '-') {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   DEBUG_OUTP   yLOG_point   ("source"    , a_curr->s);
+   if (a_curr->s == NULL) {      
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_OUTP   yLOG_info    ("source"    , a_curr->s);
    /*---(level)--------------------------*/
-   if      (a_level <   0)   sprintf (x_level, "             ");
-   else if (a_level <  10)   sprintf (x_level, "%-*.*s%d%-15.15s", a_level, a_level, "------------", a_level, " ");
-   else                      sprintf (x_level, "          +++");
+   DEBUG_OUTP   yLOG_value   ("a_level"   , a_level);
+   if      (a_level <=  0)   sprintf (x_level, ".         ");
+   else if (a_level <  10)   sprintf (x_level, "%-*.*s%d%-10.10s", a_level, a_level, "------------------------", a_level, " ");
+   else                      sprintf (x_level, "     +++%-2d", a_level);
    /*---(format)-------------------------*/
+   DEBUG_OUTP   yLOG_complex ("format"    , "%-3d (%c)", a_curr->f, a_curr->f);
+   DEBUG_OUTP   yLOG_complex ("decs"      , "%-3d (%c)", a_curr->d, a_curr->d);
+   DEBUG_OUTP   yLOG_complex ("align"     , "%-3d (%c)", a_curr->a, a_curr->a);
+   DEBUG_OUTP   yLOG_complex ("note"      , "%-3d (%c)", a_curr->n, a_curr->n);
    sprintf (x_format, "%c %c %c %c %c", a_curr->t, a_curr->f, a_curr->d, a_curr->a, a_curr->n);
    /*---(call writer)--------------------*/
    strlcpy  (t, a_curr->s, LEN_RECD);
@@ -1008,10 +1033,10 @@ OUTP_cell_free          (void)
       for (x = 0; x <= x_end; ++x) {
          for (y = 0; y <= y_end; ++y) {
             x_curr = LOC_cell_at_loc (z, x, y);
-            if (x_curr    == NULL)                       continue;
-            if (x_curr->s == NULL)                       continue;
-            if (x_curr->t == YCALC_DATA_BLANK)                continue;
-            /*> if (x_curr->u == s_stamp)                    continue;                <*/
+            if (x_curr    == NULL)                         continue;
+            if (x_curr->s == NULL)                         continue;
+            if (x_curr->t == YCALC_DATA_BLANK)             continue;
+            if (yCALC_getstamp (x_curr->ycalc) == s_stamp) continue;
             OUTP_cell (FILE_FREECEL, x_seq++, -1, x_curr);
          }
       }
@@ -1024,9 +1049,11 @@ char
 OUTP_cell_dep           (void)
 {
    char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    s_stamp   = rand ();
-   /*> rc = SEQ_file_deps (s_stamp);                                                  <*/
-   rc = yCALC_seq_downup (s_stamp, OUTP_cell);
+   rc = yCALC_seq_downup (s_stamp, OUTP_seq_cell);
+   DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
