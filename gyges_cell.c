@@ -447,32 +447,17 @@ CELL__new          (tCELL **a_cell, char a_linked)
    (*a_cell)->s         = NULL;
    (*a_cell)->l         = 0;
    /*---(results)-----------------------*/
-   (*a_cell)->t         = '-';
-   (*a_cell)->v_num     = 0.0;
+   (*a_cell)->t         = YCALC_DATA_BLANK;
+   (*a_cell)->v_num     =  0.0;
    (*a_cell)->v_str     = NULL;
    /*---(formatting)--------------------*/
-   (*a_cell)->a         = '?';
-   (*a_cell)->d         = '0';
-   (*a_cell)->f         = '?';
+   (*a_cell)->a         =  '?';
+   (*a_cell)->d         =  '0';
+   (*a_cell)->f         =  '?';
+   (*a_cell)->n         =  '-';
    (*a_cell)->p         = NULL;
-   (*a_cell)->n         = '-';
    /*---(calculations)-------------------*/
    (*a_cell)->ycalc     = NULL;
-   /*> (*a_cell)->rpn       = NULL;                                                   <* 
-    *> (*a_cell)->nrpn      = 0;                                                      <* 
-    *> (*a_cell)->calc      = NULL;                                                   <* 
-    *> (*a_cell)->clevel    = -1;                                                     <* 
-    *> (*a_cell)->cprev     = NULL;                                                   <* 
-    *> (*a_cell)->cnext     = NULL;                                                   <*/
-   /*---(dependencies)-------------------*/
-   /*> (*a_cell)->requires  = NULL;                                                   <* 
-    *> (*a_cell)->nrequire  = 0;                                                      <* 
-    *> (*a_cell)->provides  = NULL;                                                   <* 
-    *> (*a_cell)->nprovide  = 0;                                                      <* 
-    *> (*a_cell)->u         = 0;                                                      <*/
-   /*---(errors)-------------------------*/
-   /*> (*a_cell)->nerror    = 0;                                                      <* 
-    *> (*a_cell)->errors    = NULL;                                                   <*/
    DEBUG_CELL   yLOG_note    ("successful");
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1040,10 +1025,6 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    DEBUG_CELL   yLOG_note    ("interpret new contents");
    rc = yCALC_handle (x_curr->label);
    DEBUG_CELL   yLOG_value   ("handle"    , rc);
-   /*---(printable)----------------------*/
-   /*> DEBUG_CELL   yLOG_note    ("create printable version");                        <*/
-   /*> rc = CELL_printable (x_curr);                                                  <*/
-   /*> DEBUG_CELL   yLOG_value   ("printable" , rc);                                  <*/
    /*---(return)-------------------------*/
    if (a_cell != NULL)  *a_cell = x_curr;
    /*---(complete)-----------------------*/
@@ -1756,8 +1737,8 @@ PRIV void  o___FORMATTING______o () { return; }
 char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.106.!]-*/ /*-[--.---.---.--]-*/
 CELL_erase         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 {
-   if (a_head == a_curr) CELL_delete (CHG_INPUT   , a_curr->tab, a_curr->col, a_curr->row);
-   else                  CELL_delete (CHG_INPUTAND, a_curr->tab, a_curr->col, a_curr->row);
+   if (a_head == a_curr) CELL_change (NULL, CHG_INPUT   , a_curr->tab, a_curr->col, a_curr->row, "");
+   else                  CELL_change (NULL, CHG_INPUTAND, a_curr->tab, a_curr->col, a_curr->row, "");
    return 0;
 }
 
@@ -2021,8 +2002,8 @@ CELL_macro_set       (char a_name, char *a_keys)
    x_row = a_name - 'a';
    x_len = strlen (a_keys);
    if (x_len == 0) {
-      CELL_delete (CHG_NOHIST  , 35, 0, x_row);
-      CELL_delete (CHG_NOHIST  , 35, 1, x_row);
+      CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, "");
+      CELL_change (NULL, CHG_NOHIST, 35, 1, x_row, "");
    } else {
       sprintf (t, "%c", a_name);
       CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, t     );

@@ -315,6 +315,8 @@ LOC_hook           (
    ++s_tabs[a_tab].cols[a_col].c;
    ++s_tabs[a_tab].rows[a_row].c;
    ++s_tabs[a_tab].c;
+   /*---(default printable)-------------*/
+   api_ycalc_printer (a_cell);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -422,7 +424,7 @@ LOC_move           (
    target      = s_tabs[a_ttab].sheet[a_tcol][a_trow];
    /*---(overwrite as necessary)---------*/
    if (target  != NULL) {
-      CELL_delete (CHG_NOHIST, a_ttab, a_tcol, a_trow);
+      CELL_change (NULL, CHG_NOHIST, a_ttab, a_tcol, a_trow, "");
    }
    /*---(set location)-------------------*/
    if (source != NULL) {

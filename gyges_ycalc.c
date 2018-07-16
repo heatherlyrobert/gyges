@@ -213,7 +213,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
       /*---(new cell)-----------------------*/
       --rce;  if (x_owner == NULL) {
          DEBUG_APIS   yLOG_note    ("create a new one");
-         rc = CELL_change (&x_owner, CHG_INPUT, x_tab, x_col, x_row, "");
+         rc = CELL__create (&x_owner, x_tab, x_col, x_row);
          if (rc < 0) {
             DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
             return rce;
@@ -452,21 +452,23 @@ api__ycalc_parse        (char *a_full, int a_merge)
    int         wa          = 0;             /* adjusted width                 */
    char       *p           = NULL;
    /*---(header)-------------------------*/
-   DEBUG_APIS   yLOG_senter  (__FUNCTION__);
-   DEBUG_APIS   yLOG_spoint  (a_full);
+   DEBUG_APIS   yLOG_enter   (__FUNCTION__);
+   DEBUG_APIS   yLOG_point   ("a_full"    , a_full);
    if (a_full == NULL) {
-      DEBUG_APIS   yLOG_sexit   (__FUNCTION__);
+      DEBUG_APIS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   DEBUG_APIS   yLOG_sint    (a_merge);
+   DEBUG_APIS   yLOG_value   ("a_merge"   , a_merge);
    for (i = 0; i <= a_merge; ++i) {
       x_owner = s_owners [i];
+      DEBUG_APIS  yLOG_point   ("x_owner"   , x_owner);
       if (x_owner == NULL)  break;
       w       = s_widths [i];
-      DEBUG_APIS  yLOG_sint    (w);
+      DEBUG_APIS  yLOG_value   ("w"         , w);
       while (p == NULL)  p = (char*) malloc (w + 1);
+      DEBUG_APIS  yLOG_point   ("p"         , p);
       sprintf (p, "%-*.*s", w, w, a_full + wa);
-      DEBUG_APIS  yLOG_snote   (p);
+      DEBUG_APIS  yLOG_point   ("x_owner->p", x_owner->p);
       if (x_owner->p != NULL) {
          free (x_owner->p);
          x_owner->p = NULL;
@@ -476,7 +478,7 @@ api__ycalc_parse        (char *a_full, int a_merge)
       wa   += w;
    }
    /*---(complete)-----------------------*/
-   DEBUG_APIS   yLOG_sexit   (__FUNCTION__);
+   DEBUG_APIS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -545,8 +547,10 @@ api_ycalc_printer       (void *a_owner)
    } else if (x_owner->t == YCALC_DATA_BLANK) {
       strlcpy (s, "-", LEN_RECD);
       DEBUG_APIS   yLOG_info    ("blank"     , s);
-      strlpad (s, t, ' ', x_owner->a, w - 1);
+      strlpad (s, t, ' ', '>', w - 1);
+      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
+      DEBUG_APIS   yLOG_info    ("final"     , x_out);
    } else {
       DEBUG_APIS   yLOG_note    ("non-printing type");
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);

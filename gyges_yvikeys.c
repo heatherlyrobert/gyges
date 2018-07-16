@@ -341,8 +341,8 @@ REG_clearer          (char a_1st, int x, int y, int z)
    }
    /*---(delete)-------------------------*/
    DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
-   if (a_1st == 'y')  rc = CELL_delete (CHG_INPUT   , z, x, y);
-   else               rc = CELL_delete (CHG_INPUTAND, z, x, y);
+   if (a_1st == 'y')  rc = CELL_change (NULL, CHG_INPUT   , z, x, y, "");
+   else               rc = CELL_change (NULL, CHG_INPUTAND, z, x, y, "");
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);

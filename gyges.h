@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1i"
-#define     VER_TXT   "file read and write is working again"
+#define     VER_NUM   "3.1j"
+#define     VER_TXT   "blank cell creation and calculation sequencing fixes"
 
 
 
@@ -1376,8 +1376,8 @@ char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
 char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
 char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
 
-char        CELL_delete          /* ------ */  (char a_mode, int  a_tab, int  a_col, int  a_row);
 
+char        CELL_delete        (char a_mode, int a_tab, int a_col, int a_row);
 
 #define   CHG_INPUT          'i'
 #define   CHG_INPUTAND       'A'
