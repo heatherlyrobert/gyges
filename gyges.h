@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1j"
-#define     VER_TXT   "blank cell creation and calculation sequencing fixes"
+#define     VER_NUM   "3.1k"
+#define     VER_TXT   "fixed basic cell creation and destruction issues"
 
 
 
@@ -973,9 +973,10 @@ char      REG_list           (char a_buf, char *a_list);
 
 char      REG_killer              (tCELL *a_curr);
 char      REG_copy_one            (tCELL *a_curr, long a_stamp);
-char      REG_copier              (char a_type, long a_stamp);
-char      REG_clearer             (char a_1st, int x, int y, int z);
-char      REG_paster              (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
+char      api_yvikeys_killer      (tCELL *a_curr);
+char      api_yvikeys_copier      (char a_type, long a_stamp);
+char      api_yvikeys_clearer     (char a_1st, int x, int y, int z);
+char      api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 
 char      REG_save             (void);
 char      REG_delorig          (void);
@@ -1244,7 +1245,6 @@ char      DEP_writescreen    (void);
 char     *DEP_unit           (char *a_question, char *a_label);
 
 
-char        CELL_killer        (tCELL *a_curr);
 
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(merge-specific)-----------------*/
@@ -1374,10 +1374,8 @@ char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
 char        CELL__new            /* ------ */  (tCELL **a_cell, char a_linked);
 char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
 char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
+char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
 char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
-
-
-char        CELL_delete        (char a_mode, int a_tab, int a_col, int a_row);
 
 #define   CHG_INPUT          'i'
 #define   CHG_INPUTAND       'A'

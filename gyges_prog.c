@@ -115,7 +115,7 @@ PROG_init          (int a_argc, char *a_argv[])
    yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
    yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
    yVIKEYS_src_config   (api_yvikeys_saver);
-   yVIKEYS_regs_config  (CELL_killer, REG_copier, REG_clearer, REG_paster);
+   yVIKEYS_regs_config  (api_yvikeys_killer, api_yvikeys_copier, api_yvikeys_clearer, api_yvikeys_paster);
    /*---(globals)------------------------*/
    CELL_init  ();
    yCALC_init ('g');

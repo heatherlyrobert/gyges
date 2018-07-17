@@ -211,6 +211,19 @@ SRCH_searcher_OLD  (char *a_search)
 
 
 
+/*====================------------------------------------====================*/
+/*===----                       setup and teardown                     ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___SETUP___________o () { return; }
+
+char         /*-> delete a register cell -------------[ ------ [gz.210.101.01]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/
+api_yvikeys_killer      (tCELL *a_curr)
+{
+   CELL__free (&a_curr, LINKED);
+   return 0;
+}
+
+
 
 char         /*-> tail recursion function for copy ---[ ------ [ge.D55.237.63]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 REG_copy_one       (tCELL *a_curr, long a_stamp)
@@ -288,7 +301,7 @@ REG_copy_one_seq        (void *a_owner, void *a_deproot, int a_seq, int a_level)
 }
 
 char
-REG_copier           (char a_type, long a_stamp)
+api_yvikeys_copier      (char a_type, long a_stamp)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -319,7 +332,7 @@ REG_copier           (char a_type, long a_stamp)
 }
 
 char
-REG_clearer          (char a_1st, int x, int y, int z)
+api_yvikeys_clearer     (char a_1st, int x, int y, int z)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -357,7 +370,7 @@ REG_clearer          (char a_1st, int x, int y, int z)
 }
 
 char
-REG_paster               (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
+api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
