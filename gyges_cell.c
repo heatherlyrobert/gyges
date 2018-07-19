@@ -677,7 +677,7 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
    /*---(defenses)-----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = LOC_legal (a_tab, a_col, a_row, CELL_GROW);
+   rc = LOC_legal (a_col, a_row, a_tab, CELL_GROW);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -716,7 +716,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
    DEBUG_CELL   yLOG_value   ("a_col"     , a_col);
    DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
-   rc          = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
+   rc          = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
    DEBUG_CELL   yLOG_value   ("LOC_legal" , rc);
    --rce;  if (rc < 0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -822,113 +822,6 @@ char      xlabel    [200] = "";
 char      s_bsource [200] = "";
 char      s_bformat [200] = "";
 
-/*> char         /+-> change te contents of a cell -------[ leaf   [ge.M96.647.HB]+/ /+-[02.0000.953.#]-+/ /+-[--.---.---.--]-+/   <* 
- *> CELL_change_OLD    (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row, char *a_source)                              <* 
- *> {                                                                                                                              <* 
- *>    /+---(design notes)-------------------+/                                                                                    <* 
- *>    /+                                                                                                                          <* 
- *>     *   this function changes the source string of a cell and then                                                             <* 
- *>     *   updates all other content as required.  if the cell already exists                                                     <* 
- *>     *   it wipes it clean, if not, it creates a new one.                                                                       <* 
- *>     +/                                                                                                                         <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         =  -10;                                                                                             <* 
- *>    char        rc          =    0;                                                                                             <* 
- *>    tCELL      *x_curr      = NULL;                                                                                             <* 
- *>    tCELL      *x_other     = NULL;                                                                                             <* 
- *>    /+---(beginning)----------------------+/                                                                                    <* 
- *>    DEBUG_CELL   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    DEBUG_CELL   yLOG_complex ("location"  , "tab %4d, col %4d, row %4d", a_tab, a_col, a_row);                                 <* 
- *>    DEBUG_CELL   yLOG_point   ("contents"  , a_source);                                                                         <* 
- *>    --rce;  if (a_source == NULL) {                                                                                             <* 
- *>       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
- *>       return rce;                                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    DEBUG_CELL   yLOG_info    ("contents"  , a_source);                                                                         <* 
- *>    /+---(legal location)-----------------+/                                                                                    <* 
- *>    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);                                                                           <* 
- *>    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );                                                        <* 
- *>    --rce;  if (rc <  0) {                                                                                                      <* 
- *>       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
- *>       return rce;                                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    /+---(cell present)-------------------+/                                                                                    <* 
- *>    x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);                                                                        <* 
- *>    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);                                                                           <* 
- *>    /+---(check merge)--------------------+/                                                                                    <* 
- *>    if (x_curr != NULL) {                                                                                                       <* 
- *>       if (x_curr->t == CTYPE_MERGE) {                                                                                          <* 
- *>          x_other = DEP_delmerge (x_curr);                                                                                      <* 
- *>          x_curr->a = '<';                                                                                                      <* 
- *>          x_curr->f = '?';                                                                                                      <* 
- *>       } else if (a_source == NULL || strlen (a_source) == 0) {                                                                 <* 
- *>          DEP_delmergeroot (x_curr);                                                                                            <* 
- *>       }                                                                                                                        <* 
- *>    }                                                                                                                           <* 
- *>    /+---(wipe or create)-----------------+/                                                                                    <* 
- *>    strcpy (s_bsource, "[<{(null)}>]");                                                                                         <* 
- *>    strcpy (s_bformat, "???");                                                                                                  <* 
- *>    if (x_curr != NULL) {                                                                                                       <* 
- *>       DEBUG_CELL   yLOG_note    ("save existing data");                                                                        <* 
- *>       if (x_curr->s != NULL)  strcpy (s_bsource, x_curr->s);                                                                   <* 
- *>       sprintf (s_bformat, "%c%c%c", x_curr->f, x_curr->a, x_curr->d);                                                          <* 
- *>       DEBUG_CELL   yLOG_note    ("wipe existing cell");                                                                        <* 
- *>       rc   = CELL__wipe (x_curr);                                                                                              <* 
- *>       DEBUG_CELL   yLOG_value   ("rc"        , rc);                                                                            <* 
- *>       x_curr        = LOC_cell_at_loc (a_tab, a_col, a_row);                                                                   <* 
- *>       DEBUG_CELL   yLOG_point   ("x_curr now"  , x_curr);                                                                      <* 
- *>    }                                                                                                                           <* 
- *>    --rce;  if (x_curr == NULL) {                                                                                               <* 
- *>       rc = CELL__create (&x_curr, a_tab, a_col, a_row);                                                                        <* 
- *>       DEBUG_CELL   yLOG_point   ("new cell"  , x_curr);                                                                        <* 
- *>       if (x_curr == NULL) {                                                                                                    <* 
- *>          DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);                                                                        <* 
- *>          return rce;                                                                                                           <* 
- *>       }                                                                                                                        <* 
- *>    }                                                                                                                           <* 
- *>    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);                                                                    <* 
- *>    /+---(history)------------------------+/                                                                                    <* 
- *>    if (a_mode == CHG_INPUT   )  HIST_change ("change", a_tab, a_col, a_row, s_bsource, a_source);                              <* 
- *>    if (a_mode == CHG_INPUTAND)  HIST_change ("CHANGE", a_tab, a_col, a_row, s_bsource, a_source);                              <* 
- *>    /+---(update)-------------------------+/                                                                                    <* 
- *>    DEBUG_CELL   yLOG_note    ("change source and length values");                                                              <* 
- *>    x_curr->s = strndup (a_source, LEN_RECD);                                                                                   <* 
-*>    x_curr->l = strlen  (x_curr->s);                                                                                            <* 
-*>    /+---(interpret)----------------------+/                                                                                    <* 
-*>    DEBUG_CELL   yLOG_note    ("interpret new contents");                                                                       <* 
-*>    rc = CELL__interpret (x_curr);                                                                                              <* 
-*>    DEBUG_CELL   yLOG_value   ("rc"        , rc);                                                                               <* 
-*>    --rce;  if (rc < 0) {                                                                                                       <* 
-   *>       rc = CELL_printable (x_curr);      /+ show as error +/                                                                   <* 
-      *>       DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                                                                <* 
-      *>       return rce;                                                                                                              <* 
-      *>    }                                                                                                                           <* 
-      *>    --rce;  if (a_mode != CHG_OVER && a_mode != CHG_OVERAND) {                                                                  <* 
-         *>       DEBUG_CELL   yLOG_note    ("create printable version");                                                                  <* 
-            *>       rc = CELL_printable (x_curr);                                                                                            <* 
-            *>       DEBUG_CELL   yLOG_value   ("rc"        , rc);                                                                            <* 
-            *>       if (rc < 0) {                                                                                                            <* 
-               *>          DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);                                                                        <* 
-                  *>          return rce;                                                                                                           <* 
-                  *>       }                                                                                                                        <* 
-                  *>       DEBUG_CELL   yLOG_note    ("review dependency tree calculation");                                                        <* 
-                  *>       rc = SEQ_calc_up    (x_curr);                                                                                            <* 
-                  *>       DEBUG_CELL   yLOG_value   ("rc"        , rc);                                                                            <* 
-                  *>       if (rc < 0) {                                                                                                            <* 
-                     *>          DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);                                                                        <* 
-                        *>          return rce;                                                                                                           <* 
-                        *>       }                                                                                                                        <* 
-                        *>    }                                                                                                                           <* 
-                        *>    /+---(process likes)------------------+/                                                                                    <* 
-                        *>    DEP_updatelikes (x_curr);                                                                                                   <* 
-                        *>    /+---(update former merges)-----------+/                                                                                    <* 
-                        *>    if (x_other != NULL)  CELL_printable (x_other);                                                                             <* 
-                        *>    /+---(return)-------------------------+/                                                                                    <* 
-                        *>    if (a_cell != NULL)  *a_cell = x_curr;                                                                                      <* 
-                        *>    /+---(complete)-----------------------+/                                                                                    <* 
-                        *>    DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                                                                   <* 
-                        *>    return 0;                                                                                                                   <* 
-                        *> }                                                                                                                              <*/
 
 char         /*-> change te contents of a cell -------[ leaf   [ge.M96.647.HB]*/ /*-[02.0000.953.#]-*/ /*-[--.---.---.--]-*/
 CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row, char *a_source)
@@ -954,7 +847,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("contents"  , a_source);
    /*---(legal location)-----------------*/
-   rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
+   rc = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -1807,12 +1700,12 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    /*---(stop early)-------------------------*/
    if (a_head->row != a_curr->row)  return 1;
    /*---(process range)----------------------*/
-   x_last = LOC_row_max (a_curr->tab);
+   x_last = ROW_max (a_curr->tab);
    /*---(adjust)----------------------*/
    if (a_num <   0) {
       x_width                = -(a_num);
    } else {
-      x_width = LOC_col_width (a_curr->tab, a_curr->col);
+      x_width = COL_width (a_curr->tab, a_curr->col);
       switch (a_num) {
       case  'm' : x_width    = 0;                           break;
       case  'n' : x_width    = 8;                           break;
@@ -1826,7 +1719,7 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
       }
    }
    /*---(set width)--------------------*/
-   LOC_col_widen  (a_curr->tab, a_curr->col, x_width);
+   COL_widen  (a_curr->tab, a_curr->col, x_width);
    /*---(update column printables)----*/
    for (x_row = 0; x_row < x_last; ++x_row) {
       x_cell = LOC_cell_at_loc (a_curr->tab, a_curr->col, x_row);
@@ -1977,162 +1870,12 @@ CELL_macro_set       (char a_name, char *a_keys)
    return 0;
 }
 
-/*> char         /+-> determine full print width ---------[ ------ [gz.530.321.23]+/ /+-[01.0000.015.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> CELL_print_width     (tCELL *a_curr, int *a_width, int *a_merge)                                                               <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-------------------------+/                                                                                    <* 
- *>    tCELL      *x_curr      = NULL;                                                                                             <* 
- *>    int         i           = 0;                                                                                                <* 
- *>    /+---(initialize)---------------------+/                                                                                    <* 
- *>    *a_merge = 0;                                                                                                               <* 
- *>    *a_width = LOC_col_width (a_curr->tab, a_curr->col);                                                                        <* 
- *>    /+---(look for mergse)----------------+/                                                                                    <* 
- *>    for (i = a_curr->col + 1; i < LOC_col_max (a_curr->tab); ++i) {                                                             <* 
- *>       x_curr = LOC_cell_at_loc (a_curr->tab, i, a_curr->row);                                                                  <* 
- *>       if (x_curr    == NULL)         break;                                                                                    <* 
- *>       if (x_curr->t != CTYPE_MERGE)  break;                                                                                    <* 
- *>       *a_width += LOC_col_width (a_curr->tab, i);                                                                              <* 
- *>       ++(*a_merge);                                                                                                            <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> parse print into merged cells ------[ ------ [gz.641.351.22]+/ /+-[22.0000.015.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> CELL_print_parse     (tCELL *a_curr, char *p, int a_merge)                                                                     <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-------------------------+/                                                                                    <* 
- *>    tCELL      *x_curr      = NULL;                                                                                             <* 
- *>    int         w           = 0;             /+ available printing width       +/                                               <* 
- *>    int         wa          = 0;             /+ adjusted width                 +/                                               <* 
- *>    int         i           = 0;                                                                                                <* 
- *>    char       *pp          = NULL;                                                                                             <* 
- *>    for (i = 0; i <= a_merge; ++i) {                                                                                            <* 
- *>       w     = LOC_col_width (a_curr->tab, a_curr->col + i);                                                                    <* 
- *>       DEBUG_CELL  yLOG_value ("#w", w);                                                                                        <* 
- *>       while (pp == NULL)  pp = (char*) malloc(w + 1);                                                                          <* 
- *>       sprintf (pp, "%-*.*s", w, w, p + wa);                                                                                    <* 
- *>       DEBUG_CELL  yLOG_info  ("#1p", pp);                                                                                      <* 
- *>       x_curr = LOC_cell_at_loc (a_curr->tab, a_curr->col + i, a_curr->row);                                                    <* 
- *>       if (x_curr->p != NULL) {                                                                                                 <* 
- *>          free (x_curr->p);                                                                                                     <* 
- *>          x_curr->p = NULL;                                                                                                     <* 
- *>       }                                                                                                                        <* 
- *>       x_curr->p = pp;                                                                                                          <* 
- *>       pp    = NULL;                                                                                                            <* 
- *>       wa   += w;                                                                                                               <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> create a curses printable image ----[ ------ [ge.L94.1D4.I2]+/ /+-[31.0000.3A4.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> CELL_printable     (tCELL *a_curr) {                                                                                           <* 
- *>    /+---(locals)-------------------------+/                                                                                    <* 
- *>    char        rce         =  -10;                                                                                             <* 
- *>    char        rc          =    0;                                                                                             <* 
- *>    int         len         = 0;             /+ string length                  +/                                               <* 
- *>    int         w           = 0;             /+ available printing width       +/                                               <* 
- *>    int         wa          = 0;             /+ adjusted width                 +/                                               <* 
- *>    char        x_temp      [LEN_RECD] = "";  /+ temp working string            +/                                              <* 
- *>    char        x_work      [LEN_RECD] = "";  /+ temp working string            +/                                              <* 
- *>    char       *p           = NULL;          /+ final printable string         +/                                               <* 
- *>    int         x_merge     = 0;             /+ merged cells to right          +/                                               <* 
- *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    --rce;  if (a_curr    == NULL) return rce;     /+ cell does not exist                +/                                     <* 
- *>    --rce;  if (a_curr->s == NULL) return rce;     /+ nothing to do without source       +/                                     <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_CELL  yLOG_enter (__FUNCTION__);                                                                                      <* 
- *>    /+---(prepare)------------------------+/                                                                                    <* 
- *>    char x_type   = a_curr->t;                                                                                                  <* 
- *>    char x_format = a_curr->f;                                                                                                  <* 
- *>    char x_align  = a_curr->a;                                                                                                  <* 
- *>    char x_decs   = a_curr->d - '0';                                                                                            <* 
- *>    DEBUG_CELL  yLOG_info  ("label"     , a_curr->label);                                                                       <* 
- *>    DEBUG_CELL  yLOG_char  ("type"      , x_type);                                                                              <* 
- *>    DEBUG_CELL  yLOG_char  ("format"    , x_format);                                                                            <* 
- *>    DEBUG_CELL  yLOG_char  ("align"     , x_align);                                                                             <* 
- *>    DEBUG_CELL  yLOG_value ("decs"      , x_decs);                                                                              <* 
- *>    /+---(check for hidden)---------------+/                                                                                    <* 
- *>    if (x_type == CTYPE_MERGE) {                                                                                                <* 
- *>       DEBUG_CELL  yLOG_note  ("merged cell");                                                                                  <* 
- *>       DEBUG_CELL  yLOG_exit  (__FUNCTION__);                                                                                   <* 
- *>       return 0;                                                                                                                <* 
- *>    }                                                                                                                           <* 
- *>    /+---(numbers)------------------------+/                                                                                    <* 
- *>    --rce;                                                                                                                      <* 
- *>    if (strchr (G_CELL_NUM, x_type) != 0) {                                                                                     <* 
- *>       DEBUG_CELL  yLOG_note  ("number");                                                                                       <* 
- *>       rc = strl4main   (a_curr->v_num, x_temp, x_decs, x_format, LEN_RECD);                                                    <* 
- *>    }                                                                                                                           <* 
- *>    /+---(calced tsrings------------------+/                                                                                    <* 
- *>    else if (strchr (YCALC_GROUP_STR, x_type) != 0) {                                                                                <* 
- *>       DEBUG_CELL  yLOG_note  ("string");                                                                                       <* 
- *>       if      (x_type == CTYPE_STR)   strcat (x_temp, a_curr->s);                                                              <* 
- *>       else if (x_type == CTYPE_MOD)   strcat (x_temp, a_curr->v_str);                                                          <* 
- *>       else if (x_type == CTYPE_MLIKE) strcat (x_temp, a_curr->v_str);                                                          <* 
- *>       else                            strcat (x_temp, "");                                                                     <* 
- *>    }                                                                                                                           <* 
- *>    /+---(empty)--------------------------+/                                                                                    <* 
- *>    else if (x_type == CTYPE_BLANK) {                                                                                           <* 
- *>       DEBUG_CELL  yLOG_note  ("empty");                                                                                        <* 
- *>       strcat (x_temp, "-");                                                                                                    <* 
- *>    }                                                                                                                           <* 
- *>    /+---(troubles)-----------------------+/                                                                                    <* 
- *>    else if (strchr(G_CELL_ERR, x_type) != 0) {                                                                                 <* 
- *>       DEBUG_CELL  yLOG_note  ("error");                                                                                        <* 
- *>       /+> strcat (x_temp, a_curr->s);                                                 <+/                                      <* 
- *>       strcat (x_temp, a_curr->v_str);                                                                                          <* 
- *>       x_align = '<';                                                                                                           <* 
- *>    }                                                                                                                           <* 
- *>    /+---(detault)-----------------------+/                                                                                     <* 
- *>    else {                                                                                                                      <* 
- *>       DEBUG_CELL  yLOG_note  ("other");                                                                                        <* 
- *>       strcat (x_temp, a_curr->s);                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    /+---(formatting errors)--------------+/                                                                                    <* 
- *>    if (strncmp (x_temp, "#.", 2) == 0) {                                                                                       <* 
- *>       x_type  = 'w';                                                                                                           <* 
- *>       x_align = '<';                                                                                                           <* 
- *>    }                                                                                                                           <* 
- *>    /+---(indented formats)---------------+/                                                                                    <* 
- *>    DEBUG_CELL  yLOG_info  ("x", x_temp);                                                                                       <* 
-*>    /+---(get width)----------------------+/                                                                                    <* 
-*>    CELL_print_width (a_curr, &w, &x_merge);                                                                                    <* 
-*>    DEBUG_CELL  yLOG_value ("w", w);                                                                                            <* 
-*>    wa    = w - 1;                                                                                                              <* 
-*>    if (strchr (G_CELL_NUM, x_type) != 0)                                                                                       <* 
-*>       strlpad (x_temp, x_work, ' '      , x_align, wa);                                                                        <* 
-*>    else                                                                                                                        <* 
-*>       strlpad (x_temp, x_work, x_format, x_align, wa);                                                                         <* 
-*>    /+---(prepare)------+/                                                                                                      <* 
-*>    if (a_curr->p != NULL) {                                                                                                    <* 
-   *>       free (a_curr->p);                                                                                                        <* 
-      *>       a_curr->p = NULL;                                                                                                        <* 
-      *>    }                                                                                                                           <* 
-      *>    while (p == NULL)  p = (char*) malloc(w + 1);                                                                               <* 
-      *>    sprintf (p, "%s ", x_work);                                                                                                 <* 
-      *>    DEBUG_CELL  yLOG_value ("x_merge", x_merge);                                                                                <* 
-      *>    DEBUG_CELL  yLOG_info  ("p"      , p);                                                                                      <* 
-      *>    if (x_merge == 0) {                                                                                                         <* 
-         *>       a_curr->p = p;                                                                                                           <* 
-            *>    } else {                                                                                                                    <* 
-               *>       CELL_print_parse (a_curr, p, x_merge);                                                                                   <* 
-                  *>       free (p);                                                                                                                <* 
-                  *>       p = NULL;                                                                                                                <* 
-                  *>    }                                                                                                                           <* 
-                  *>    /+---(ending)-------------------------+/                                                                                    <* 
-                  *>    DEBUG_CELL   yLOG_exit   (__FUNCTION__);                                                                                    <* 
-                  *>    /+---(complete)-----------------------+/                                                                                    <* 
-                  *>    return 0;                                                                                                                   <* 
-                  *> }                                                                                                                              <*/
 
 
-
-                  /*====================------------------------------------====================*/
-                  /*===----                         unit testing                         ----===*/
-                  /*====================------------------------------------====================*/
-                  PRIV void  o___UNIT_TEST_______o () { return; }
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+PRIV void  o___UNIT_TEST_______o () { return; }
 
 char*        /*-> unit test accessor -----------------[ light  [us.960.251.A0]*/ /*-[02.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 CELL__unit         (char *a_question, tCELL *a_cell)
@@ -2209,7 +1952,7 @@ CELL__unitnew      (char *a_question, char *a_label)
          sprintf (unit_answer, "s_celln error    : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc     = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
+      rc     = LOC_legal (x_col, x_row, x_tab, CELL_FIXED);
       if (rc < 0) {
          sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;

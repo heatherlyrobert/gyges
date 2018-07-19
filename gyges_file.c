@@ -440,7 +440,7 @@ HIST_undo          (void)
    DEBUG_HIST  yLOG_note    ("clear any existing selection");
    /*> VISU_clear ();                                                                 <*/
    DEBUG_HIST  yLOG_complex ("jump to"   , "t=%4d, c=%4d, r=%4d", hist[chist].btab, hist[chist].bcol, hist[chist].brow);
-   LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+   LOC_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
    /*---(handle request)-----------------*/
    DEBUG_HIST  yLOG_info    ("before"    , hist[chist].before);
    if        (strcmp ("change", x_lower) == 0) {
@@ -518,7 +518,7 @@ HIST_redo          (void)
    strcpy (x_upper, hist[chist].act);
    for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
    /*---(get to right location)----------*/
-   LOC_jump  (hist[chist].btab, hist[chist].bcol, hist[chist].brow);
+   LOC_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
    /*> VISU_clear ();                                                                 <*/
    /*---(handle request)-----------------*/
    if        (strcmp ("change"  , x_lower) == 0) {
@@ -627,29 +627,29 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
    }
    /*---(check tab)----------------------*/
    DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);
-   rc = LOC_tab_valid (x_tab);
+   rc = TAB_valid (x_tab);
    DEBUG_INPT   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(resize)-------------------------*/
-   if (x_col == 0)  x_col = LOC_col_max (x_tab);
+   if (x_col == 0)  x_col = COL_max (x_tab);
    DEBUG_INPT   yLOG_value   ("x_col"     , x_col);
-   if (x_row == 0)  x_row = LOC_row_max (x_tab);
+   if (x_row == 0)  x_row = ROW_max (x_tab);
    DEBUG_INPT   yLOG_value   ("x_row"     , x_row);
-   rc = LOC_legal  (x_tab, x_col, x_row, CELL_EXACT);
+   rc = LOC_legal  (x_col, x_row, x_tab, CELL_EXACT);
    DEBUG_INPT   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_INPT  yLOG_value   ("col_max"   , LOC_col_max (x_tab));
-   DEBUG_INPT  yLOG_value   ("row_max"   , LOC_row_max (x_tab));
+   DEBUG_INPT  yLOG_value   ("col_max"   , COL_max (x_tab));
+   DEBUG_INPT  yLOG_value   ("row_max"   , ROW_max (x_tab));
    /*---(check name)---------------------*/
    DEBUG_INPT  yLOG_point   ("name"      , b);
    if (b != NULL && strllen (b, LEN_LABEL) > 0) {
-      rc = LOC_tab_rename     (x_tab, b);
+      rc = TAB_rename     (x_tab, b);
       DEBUG_INPT  yLOG_value   ("rename"    , rc);
       --rce;  if (rc < 0)  {
          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -659,9 +659,9 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
    }
    /*---(default sizes)------------------*/
    x_size  = atoi (d);
-   if (x_size > 0)  LOC_col_defwidth  (x_tab, x_size);
+   if (x_size > 0)  COL_defwidth  (x_tab, x_size);
    x_size  = atoi (e);
-   if (x_size > 0)  LOC_row_defheight (x_tab, x_size);
+   if (x_size > 0)  ROW_defheight (x_tab, x_size);
    /*---(complete)-----------------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -692,19 +692,19 @@ TABS_writer           (char  a_tab)
       x_btab = 0;
       x_etab = MAX_TABS - 1;
    } else {
-      rc = LOC_tab_valid (a_tab);
+      rc = TAB_valid (a_tab);
       if (rc < 0)  return rce;
       x_btab = x_etab = a_tab;
    }
    /*---(find marked entries)------------*/
    for (i = x_btab; i <= x_etab; ++i) {
-      if (LOC_tab_used (i) <= 0)  continue;
-      x_type = LOC_tab_type (i);
-      x_cols = LOC_col_max  (i) - 1;
-      x_rows = LOC_row_max  (i) - 1;
-      x_wide = LOC_tab_colwide (i);
-      x_tall = LOC_tab_rowtall (i);
-      LOC_tab_name    (i, x_name);
+      if (TAB_used (i) <= 0)  continue;
+      x_type = TAB_type (i);
+      x_cols = COL_max  (i) - 1;
+      x_rows = ROW_max  (i) - 1;
+      x_wide = TAB_colwide (i);
+      x_tall = TAB_rowtall (i);
+      TAB_name    (i, x_name);
       rc = str4gyges (0     , 0     , i, 0, x_min);
       rc = str4gyges (x_cols, x_rows, i, 0, x_max);
       yVIKEYS_file_write (FILE_TABS, x_name, x_min, x_max, &x_wide, &x_tall, &x_zero, &x_type, NULL, NULL);
@@ -741,30 +741,12 @@ COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*> /+---(check tab)----------------------+/                                       <* 
-    *> x_tab   = atoi (a);                                                            <* 
-    *> DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);                               <* 
-    *> rc = LOC_tab_valid (x_tab);                                                    <* 
-    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> /+---(check col)----------------------+/                                       <* 
-    *> x_col   = atoi (b);                                                            <* 
-    *> DEBUG_INPT   yLOG_value   ("x_col"     , x_col);                               <* 
-    *> rc = LOC_legal  (x_tab, x_col, 0, CELL_GROW);                                  <* 
-    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
    /*---(update size)--------------*/
    x_size   = atoi (b);
    x_count  = atoi (c);
    if (x_count == 0)  x_count = 1;
    for (x_cols = 0; x_cols < x_count; ++x_cols) {
-      rc = LOC_col_widen (x_tab, x_col + x_cols, x_size);
+      rc = COL_widen (x_tab, x_col + x_cols, x_size);
       DEBUG_INPT  yLOG_value   ("widen"     , rc);
       --rce;  if (rc < 0) {
          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -777,7 +759,7 @@ COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-DETAIL_writer           (char a_type, char a_tab, short a_cur)
+DETAIL_writer           (char a_type, char a_tab, int a_cur)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
@@ -806,7 +788,7 @@ DETAIL_writer           (char a_type, char a_tab, short a_cur)
       x_btab = 0;
       x_etab = MAX_TABS - 1;
    } else {
-      rc = LOC_tab_valid (a_tab);
+      rc = TAB_valid (a_tab);
       if (rc < 0) { 
          DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -817,17 +799,17 @@ DETAIL_writer           (char a_type, char a_tab, short a_cur)
    DEBUG_OUTP   yLOG_value   ("x_etab"    , x_etab);
    /*---(find marked entries)------------*/
    for (i = x_btab; i <= x_etab; ++i) {
-      if (LOC_tab_used (i) <= 0)  continue;
+      if (TAB_used (i) <= 0)  continue;
       DEBUG_OUTP   yLOG_value   ("tab (i)"   , i);
       /*---(prepare range)------------------*/
       DEBUG_OUTP   yLOG_value   ("a_cur"     , a_cur);
       --rce;  if (a_cur == -1) {
          x_beg = 0;
-         if (a_type == 'c')  x_end = LOC_col_max  (i) - 1;
-         else                x_end = LOC_row_max  (i) - 1;
+         if (a_type == 'c')  x_end = COL_max  (i) - 1;
+         else                x_end = ROW_max  (i) - 1;
       } else {
-         if (a_type == 'c')  rc = LOC_col_valid (a_tab, a_cur);
-         else                rc = LOC_row_valid (a_tab, a_cur);
+         if (a_type == 'c')  rc = COL_valid (a_tab, a_cur);
+         else                rc = ROW_valid (a_tab, a_cur);
          if (rc < 0) {
             DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
             return rce;
@@ -837,29 +819,29 @@ DETAIL_writer           (char a_type, char a_tab, short a_cur)
       DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);
       DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);
       /*---(prepare default)----------------*/
-      if (a_type == 'c')  x_def  = LOC_tab_colwide (i);
-      else                x_def  = LOC_tab_rowtall (i);
+      if (a_type == 'c')  x_def  = TAB_colwide (i);
+      else                x_def  = TAB_rowtall (i);
       DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
       /*---(run range)----------------------*/
       for (j = x_beg; j <= x_end; ++j) {
          if (a_type == 'c')  DEBUG_OUTP   yLOG_value   ("col (j)"   , j);
          if (a_type == 'r')  DEBUG_OUTP   yLOG_value   ("row (j)"   , j);
-         if (LOC_col_valid (i, j) < 0)  continue;
-         if      (a_type == 'c' && j > 0)  x_prev = LOC_col_width  (i, j - 1);
-         else if (a_type == 'r' && j > 0)  x_prev = LOC_row_height (i, j - 1);
+         if (COL_valid (i, j) < 0)  continue;
+         if      (a_type == 'c' && j > 0)  x_prev = COL_width  (i, j - 1);
+         else if (a_type == 'r' && j > 0)  x_prev = ROW_height (i, j - 1);
          else                              x_prev = -1;
          DEBUG_OUTP   yLOG_value   ("x_prev"    , x_prev);
-         if (a_type == 'c')  x_size = LOC_col_width  (i, j);
-         else                x_size = LOC_row_height (i, j);
+         if (a_type == 'c')  x_size = COL_width  (i, j);
+         else                x_size = ROW_height (i, j);
          DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
          if (x_size == x_prev)  continue;
          if (x_size == x_def )  continue;
          n = 1;
-         if (a_type == 'c')  x_max = LOC_col_max (i) - 1;
-         else                x_max = LOC_row_max (i) - 1;
+         if (a_type == 'c')  x_max = COL_max (i) - 1;
+         else                x_max = ROW_max (i) - 1;
          for (k = j + 1; k <= x_max; ++k) {
-            if (a_type == 'c' && x_size != LOC_col_width  (i, k))  break;
-            if (a_type == 'r' && x_size != LOC_row_height (i, k))  break;
+            if (a_type == 'c' && x_size != COL_width  (i, k))  break;
+            if (a_type == 'r' && x_size != ROW_height (i, k))  break;
             ++n;
          }
          DEBUG_OUTP   yLOG_value   ("n"         , n);
@@ -907,30 +889,12 @@ ROWS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*> /+---(check tab)----------------------+/                                       <* 
-    *> x_tab   = atoi (a);                                                            <* 
-    *> DEBUG_INPT   yLOG_value   ("x_tab"     , x_tab);                               <* 
-    *> rc = LOC_tab_valid (x_tab);                                                    <* 
-    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> /+---(check row)----------------------+/                                       <* 
-    *> x_row   = atoi (b);                                                            <* 
-    *> DEBUG_INPT   yLOG_value   ("x_row"     , x_row);                               <* 
-    *> rc = LOC_legal  (x_tab, 0, x_row, CELL_GROW);                                  <* 
-    *> DEBUG_INPT   yLOG_value   ("rc"        , rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
    /*---(update size)--------------*/
    x_size   = atoi (b);
    x_count  = atoi (c);
    if (x_count == 0)  x_count = 1;
    for (x_rows = 0; x_rows < x_count; ++x_rows) {
-      rc = LOC_row_heighten (x_tab, x_row + x_rows, x_size);
+      rc = ROW_heighten (x_tab, x_row + x_rows, x_size);
       DEBUG_INPT  yLOG_value   ("heigten"   , rc);
       --rce;  if (rc < 0) {
          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -1028,8 +992,8 @@ OUTP_cell_free          (void)
    int         x_seq       =    0;
    /*---(cells)--------------------------*/
    for (z = 0; z < NTAB; ++z) {
-      x_end = LOC_col_max (z) - 1;
-      y_end = LOC_row_max (z) - 1;
+      x_end = COL_max (z) - 1;
+      y_end = ROW_max (z) - 1;
       for (x = 0; x <= x_end; ++x) {
          for (y = 0; y <= y_end; ++y) {
             x_curr = LOC_cell_at_loc (z, x, y);
@@ -1096,11 +1060,11 @@ INPT_cell            (char n, char *a, char *b, char *c, char *d, char *e, char 
    }
    DEBUG_INPT  yLOG_info    ("label"     , c);
    /*---(get position)-------------------*/
-   DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
    DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
    DEBUG_INPT  yLOG_value   ("x_row"     , x_row);
+   DEBUG_INPT  yLOG_value   ("x_tab"     , x_tab);
    /*---(expand everything as needed)----*/
-   rc = LOC_legal (x_tab, x_col, x_row, CELL_GROW);
+   rc = LOC_legal (x_col, x_row, x_tab, CELL_GROW);
    DEBUG_INPT  yLOG_value   ("legal"     , rc);
    --rce;  if (rc < 0)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -1175,7 +1139,7 @@ FILE_unit          (char *a_question, int a_ref)
       snprintf (unit_answer, LEN_UNIT, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)",
             FR_COL, FR_BCOL, FR_ECOL, FR_ROW, FR_BROW, FR_EROW);
    } else if (strcmp (a_question, "tab_name"  )    == 0) {
-      LOC_tab_name (a_ref, x_name);
+      TAB_name (a_ref, x_name);
       snprintf (unit_answer, LEN_UNIT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, 'y', x_name);
    } else if (strcmp (a_question, "tab_count" )    == 0) {
       snprintf (unit_answer, LEN_UNIT, "s_file tab count : ntab=%4d", MAX_TABS);

@@ -146,9 +146,9 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    char        rce         =  -10;
    char        rc          =    0;
    tCELL      *x_owner     = NULL;
-   short       x_col       =   0;           /* working col value              */
-   short       x_row       =   0;           /* working row value              */
-   short       x_tab       =   0;           /* working tab value              */
+   int         x_col       =   0;           /* working col value              */
+   int         x_row       =   0;           /* working row value              */
+   int         x_tab       =   0;           /* working tab value              */
    static char    x_sforce =  '?';
    static char   *x_label  [LEN_LABEL];
    static tCELL  *x_saved  = NULL;
@@ -203,6 +203,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
          DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
+      DEBUG_APIS   yLOG_complex ("loc"        , "%3dx, %3dy, %3dz", x_col, x_row, x_tab);
       x_owner = LOC_cell_at_loc  (x_tab, x_col, x_row);
       DEBUG_APIS   yLOG_point   ("x_owner"    , x_owner);
       --rce;  if (x_owner == NULL && a_force == YCALC_LOOK) {
@@ -226,6 +227,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
       }
    }
    /*---(save)---------------------------*/
+   DEBUG_APIS   yLOG_complex ("loc_final"  , "%3dx, %3dy, %3dz", x_owner->col, x_owner->row, x_owner->tab);
    x_sforce = a_force;
    x_saved  = x_owner;
    strlcpy (x_label, a_label, LEN_LABEL);
@@ -408,7 +410,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    x_owner  = (tCELL *) a_owner;
    DEBUG_APIS   yLOG_value   ("tab"       , x_owner->tab);
    DEBUG_APIS   yLOG_value   ("col"       , x_owner->col);
-   w        = LOC_col_width (x_owner->tab, x_owner->col);
+   w        = COL_width (x_owner->tab, x_owner->col);
    DEBUG_APIS   yLOG_value   ("w"         , w);
    *a_width = w;
    *a_merge = 0;
@@ -429,7 +431,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
       if (rc < 0)                              break;
       if (x_owner == NULL)                     break;
       if (x_owner->t != YCALC_DATA_MERGED)     break;
-      w         = LOC_col_width (x_owner->tab, x_owner->col);
+      w         = COL_width (x_owner->tab, x_owner->col);
       DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3dx, %3dy, %3dz, %3dw", x_owner, x_label, i, y, z, w);
       *a_width += w;
       ++(*a_merge);

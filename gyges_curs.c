@@ -248,8 +248,8 @@ PRIV void  o___SPECIFIC________o () { return; }
  *>       /+---(1st 12 chars)---+/                                                                                                                          <* 
  *>       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);                            <* 
  *>       /+---(2nd 13 chars)---+/                                                                                                                          <* 
- *>       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  ", LOC_col_width (CTAB, CCOL), a_curr->t, a_curr->f, a_curr->d, a_curr->a);   <* 
- *>       else                 mvprintw (row_formula, 12, " %02d - - - -  "    , LOC_col_width (CTAB, CCOL));                                               <* 
+ *>       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  ", COL_width (CTAB, CCOL), a_curr->t, a_curr->f, a_curr->d, a_curr->a);   <* 
+ *>       else                 mvprintw (row_formula, 12, " %02d - - - -  "    , COL_width (CTAB, CCOL));                                               <* 
  *>       /+---(3rd  5 chars)---+/                                                                                                                          <* 
  *>       mvprintw (row_formula, 25, "%4d", len);                                                                                                           <* 
  *>       /+---(4th 14 chars)---+/                                                                                                                          <* 
@@ -331,11 +331,11 @@ PRIV void  o___SPECIFIC________o () { return; }
             char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
             char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
             char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
-            char  CURS_status_buffer   (char *a_list) { LOC_tab_status (CTAB, a_list); }
+            char  CURS_status_buffer   (char *a_list) { TAB_status (CTAB, a_list); }
             /*> char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }   <*/
             char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
             char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }
-            char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; LOC_tab_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
+            char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_STR, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
             /*> char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_STR, "[ reg %-100.100s ]", my.reg_list); }   <*/
             char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_STR, "errors (%3d)", nerror); };
 char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act); }
@@ -364,7 +364,7 @@ char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist 
  *>     *>    }                                                                                           <*                                                                       <* 
  *>     *>    break;                                                                                      <+/                                                                      <* 
  *>    /+> case G_STATUS_BUFFER   : /+ buffer contents +/                                 <*                                                                                       <* 
- *>     *>    LOC_tab_status (CTAB, msg);                                                 <*                                                                                       <* 
+ *>     *>    TAB_status (CTAB, msg);                                                 <*                                                                                       <* 
  *>     *>    break;                                                                      <+/                                                                                      <* 
  *>    /+> case G_STATUS_RPN      : /+ rpn contents +/                                           <*                                                                                <* 
  *>     *>    if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, LEN_RECD);   <*                                                                                <* 
@@ -394,7 +394,7 @@ char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ nhist 
  *>     *>    snprintf (msg, 500, "errors (%3d)", nerror);                                <*                                                                                       <* 
  *>     *>    break;                                                                      <+/                                                                                      <* 
  *>    /+> case G_STATUS_TAB      :                                                        <*                                                                                      <* 
- *>     *>    LOC_tab_name (CTAB, t);                                                      <*                                                                                      <* 
+ *>     *>    TAB_name (CTAB, t);                                                      <*                                                                                      <* 
  *>     *>    snprintf (msg, 500, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW);   <+/                                                                                     <* 
  *>    /+> case G_STATUS_FILE     :                                                                                                         <*                                     <* 
  *>     *> default  :                                                                                                                       <*                                     <* 
@@ -438,7 +438,7 @@ CURS_col_color     (short a_col)
 {
    if      (a_col == CCOL)                       attron  (S_COLOR_HCURR   );
    else if (FR_COL == 'y' && a_col <= FR_ECOL)   attron  (S_COLOR_HLOCK   );
-   else if (LOC_col_used (CTAB, a_col) >  0)     attron  (S_COLOR_HUSED   );
+   else if (COL_used (CTAB, a_col) >  0)         attron  (S_COLOR_HUSED   );
    else                                          attron  (S_COLOR_HNORM   );
    return 0;
 }
@@ -448,7 +448,7 @@ CURS_row_color       (short a_row)
 {
    if      (a_row == CROW)                       attron  (S_COLOR_HCURR   );
    else if (FR_ROW == 'y' && a_row <= FR_EROW)   attron  (S_COLOR_HLOCK   );
-   else if (LOC_row_used (CTAB, a_row) >  0)     attron  (S_COLOR_HUSED   );
+   else if (ROW_used (CTAB, a_row) >  0)         attron  (S_COLOR_HUSED   );
    else                                          attron  (S_COLOR_HNORM   );
    return 0;
 }
@@ -502,9 +502,9 @@ DRAW_xaxis         (void)
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/
-      w     = LOC_col_width (CTAB, i);
+      w     = COL_width (CTAB, i);
       wa    = w - 4;
-      LOC_col_label (CTAB, i, x_label);
+      COL_label (CTAB, i, x_label);
       DEBUG_GRAF  yLOG_value   (x_label     , w);
       DEBUG_GRAF  yLOG_value   ("x_pos"       , x_pos);
       /*---(output)----------------------*/
@@ -519,7 +519,7 @@ DRAW_xaxis         (void)
    if (x_pos < x_wide) {
       w     = x_wide - x_pos;
       wa    = w - 4;
-      LOC_col_label (CTAB, ECOL + 1, x_label);
+      COL_label (CTAB, ECOL + 1, x_label);
       if (ECOL < NCOL - 1){
          if      (w == 1) snprintf (x_disp, 500, ">");
          else if (w == 2) snprintf (x_disp, 500, "\[>");
@@ -552,14 +552,14 @@ DRAW_xaxis         (void)
  *>       for (i = FR_BCOL; i <=  FR_ECOL; ++i) {                                                                                  <* 
  *>          if (i >= NCOL) break;                                                                                                 <* 
  *>          /+---(prepare)---------------------+/                                                                                 <* 
- *>          w     = LOC_col_width (CTAB, i);                                                                                      <* 
+ *>          w     = COL_width (CTAB, i);                                                                                      <* 
  *>          wa    = w - 4;                                                                                                        <* 
- *>          cw    = LOC_col_xpos  (CTAB, i) + w;                                                                                  <* 
- *>          LOC_col_label (CTAB, i, label);                                                                                       <* 
+ *>          cw    = COL_xpos  (CTAB, i) + w;                                                                                  <* 
+ *>          COL_label (CTAB, i, label);                                                                                       <* 
  *>          /+---(output)----------------------+/                                                                                 <* 
  *>          snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);                                                           <* 
  *>          CURS_col_color  (i);                                                                                                  <* 
- *>          mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);                                                                   <* 
+ *>          mvprintw (row_chead, COL_xpos  (CTAB, i), msg);                                                                   <* 
  *>          attrset (0);                                                                                                          <* 
  *>       }                                                                                                                        <* 
  *>    }                                                                                                                           <* 
@@ -568,21 +568,21 @@ DRAW_xaxis         (void)
  *>    for (i = BCOL; i <=  ECOL; ++i) {                                                                                           <* 
  *>       if (i >= NCOL) break;                                                                                                    <* 
  *>       /+---(prepare)---------------------+/                                                                                    <* 
- *>       w     = LOC_col_width (CTAB, i);                                                                                         <* 
+ *>       w     = COL_width (CTAB, i);                                                                                         <* 
  *>       wa    = w - 4;                                                                                                           <* 
- *>       cw    = LOC_col_xpos  (CTAB, i) + w;                                                                                     <* 
- *>       LOC_col_label (CTAB, i, label);                                                                                          <* 
+ *>       cw    = COL_xpos  (CTAB, i) + w;                                                                                     <* 
+ *>       COL_label (CTAB, i, label);                                                                                          <* 
  *>       /+---(output)----------------------+/                                                                                    <* 
  *>       snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);                                                              <* 
  *>       CURS_col_color  (i);                                                                                                     <* 
- *>       mvprintw (row_chead, LOC_col_xpos  (CTAB, i), msg);                                                                      <* 
+ *>       mvprintw (row_chead, COL_xpos  (CTAB, i), msg);                                                                      <* 
  *>       attrset (0);                                                                                                             <* 
  *>    }                                                                                                                           <* 
  *>    /+---(fill in right side)-------------+/                                                                                    <* 
  *>    if (cw < (my.x_full - my.x_right)) {                                                                                        <* 
  *>       w     = my.x_full - cw;                                                                                                  <* 
  *>       wa    = w - 4;                                                                                                           <* 
- *>       LOC_col_label (CTAB, ECOL + 1, label);                                                                                   <* 
+ *>       COL_labe (CTAB, ECOL + 1, label);                                                                                   <* 
  *>       if (ECOL < NCOL - 1){                                                                                                    <* 
  *>          if      (w == 1) snprintf(msg, 500, ">");                                                                             <* 
  *>          else if (w == 2) snprintf(msg, 500, "\[>");                                                                           <* 
@@ -614,7 +614,7 @@ DRAW_xaxis         (void)
  *>          if (i >= NROW)  break;                                                                                                <* 
  *>          /+---(prepare)----------------------------+/                                                                          <* 
  *>          CURS_row_color  (i);                                                                                                  <* 
- *>          mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);                                                                  <* 
+ *>          mvprintw (ROW_ypos (CTAB, i), 0, "%4d ", i + 1);                                                                  <* 
  *>          attrset (0);                                                                                                          <* 
  *>       }                                                                                                                        <* 
  *>    }                                                                                                                           <* 
@@ -624,7 +624,7 @@ DRAW_xaxis         (void)
  *>       if (i >= NROW)  break;                                                                                                   <* 
  *>       /+---(prepare)----------------------------+/                                                                             <* 
  *>       CURS_row_color  (i);                                                                                                     <* 
- *>       mvprintw (LOC_row_ypos (CTAB, i), 0, "%4d ", i + 1);                                                                     <* 
+ *>       mvprintw (ROW_ypos (CTAB, i), 0, "%4d ", i + 1);                                                                     <* 
  *>       attrset (0);                                                                                                             <* 
  *>    }                                                                                                                           <* 
  *>    /+---(complete)---------------------------+/                                                                                <* 
@@ -816,7 +816,7 @@ DRAW_xaxis         (void)
  *>    /+---(show marks)---------------------+/                                                                                    <* 
  *>    for (i = 0; i < 18; ++i) {                                                                                                  <* 
  *>       /+---(left)------------------------+/                                                                                    <* 
- *>       LOC_tab_line (i, x_line);                                                                                                <* 
+ *>       TAB_line (i, x_line);                                                                                                <* 
  *>       if (i == CTAB     )  attron (S_COLOR_CURRENT);                                                                           <* 
  *>       else                 attron (S_COLOR_VISUAL);                                                                            <* 
  *>       mvprintw   (x_row  , x_col, x_line);                                                                                     <* 
@@ -826,7 +826,7 @@ DRAW_xaxis         (void)
  *>       mvprintw   (x_row  , x_col + 34, "   ");                                                                                 <* 
  *>       attrset (0);                                                                                                             <* 
  *>       /+---(upper case)------------------+/                                                                                    <* 
- *>       LOC_tab_line (i + 18, x_line);                                                                                           <* 
+ *>       TAB_line (i + 18, x_line);                                                                                           <* 
  *>       if (i + 18 == CTAB)  attron (S_COLOR_CURRENT);                                                                           <* 
  *>       else                 attron (S_COLOR_VISUAL);                                                                            <* 
  *>       mvprintw   (x_row++, x_col + 37, x_line);                                                                                <* 
@@ -1163,7 +1163,7 @@ PRIV void  o___SCREEN__________o () { return; }
       *>     *> else if (yVIKEYS_mode_curr() == MODE_SOURCE || yVIKEYS_mode_curr() == MODE_INPUT || yVIKEYS_mode_curr() == SMOD_REPLACE || yVIKEYS_mode_curr() == SMOD_SELECT)   <*    <* 
       *>     *>    move (row_formula, s_start + my.cpos - my.bpos);                                                                                                              <*    <* 
       *>     *> else                                                                                                                                                             <*    <* 
-      *>     *>    move (LOC_row_ypos (CTAB, CROW), LOC_col_xpos (CTAB, CCOL) + LOC_col_width (CTAB, CCOL) - 1);                                                                 <+/   <* 
+      *>     *>    move (ROW_ypos (CTAB, CROW), COL_xpos (CTAB, CCOL) + COL_width (CTAB, CCOL) - 1);                                                                 <+/   <* 
       *>    /+---(refresh)------------------------+/                                                                                                                                   <* 
       *>    /+> my.info_win = G_INFO_NONE;                                                     <+/                                                                                     <* 
       *>    refresh ();                                                                                                                                                                <* 
@@ -1335,7 +1335,7 @@ DRAW_main          (void)
       cw    = 0;
       /*---(cycle normal columns)--------*/
       for (x_cur = BCOL; x_cur <= ECOL; ++x_cur) {
-         w  = LOC_col_width  (CTAB, x_cur);
+         w  = COL_width  (CTAB, x_cur);
          if (cw + w > x_wide)  w = x_wide - cw;
          CURS_cell (x_cur, y_cur, y_pos, x_pos, w);
          cw    += w;
@@ -1378,24 +1378,24 @@ DRAW_main          (void)
  *>    int         x_wide      = 0;                                                                                                <* 
  *>    for (y_cur = a_brow; y_cur <= a_erow; ++y_cur) {                                                                            <* 
  *>       /+---(prepare)---------------------+/                                                                                    <* 
- *>       a_ch   += LOC_row_height (CTAB, y_cur);                                                                                  <* 
- *>       x_ypos  = LOC_row_ypos   (CTAB, y_cur);                                                                                  <* 
+ *>       a_ch   += ROW_height (CTAB, y_cur);                                                                                  <* 
+ *>       x_ypos  = ROW_ypos   (CTAB, y_cur);                                                                                  <* 
  *>       /+---(cycle normal columns)--------+/                                                                                    <* 
  *>       for (x_cur = ECOL; x_cur >= BCOL; --x_cur) {                                                                             <* 
- *>          x_xpos  = LOC_col_xpos   (CTAB, x_cur);                                                                               <* 
- *>          x_wide  = LOC_col_width  (CTAB, x_cur);                                                                               <* 
+ *>          x_xpos  = COL_xpos   (CTAB, x_cur);                                                                               <* 
+ *>          x_wide  = COL_width  (CTAB, x_cur);                                                                               <* 
  *>          CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);                                                                     <* 
  *>       }                                                                                                                        <* 
  *>       /+---(cycle locked columns)--------+/                                                                                    <* 
  *>       if (FR_COL == 'y') {                                                                                                     <* 
  *>          for (x_cur = FR_ECOL; x_cur >= FR_BCOL; --x_cur) {                                                                    <* 
- *>             x_xpos  = LOC_col_xpos   (CTAB, x_cur);                                                                            <* 
- *>             x_wide  = LOC_col_width  (CTAB, x_cur);                                                                            <* 
+ *>             x_xpos  = COL_xpos   (CTAB, x_cur);                                                                            <* 
+ *>             x_wide  = COL_width  (CTAB, x_cur);                                                                            <* 
  *>             CURS_cell (x_cur, y_cur, x_ypos, x_xpos, x_wide);                                                                  <* 
  *>          }                                                                                                                     <* 
  *>       }                                                                                                                        <* 
  *>       /+---(fill in at end)--------------+/                                                                                    <* 
- *>       x_xpos  = LOC_col_xpos (CTAB, ECOL) + LOC_col_width (CTAB, ECOL);                                                        <* 
+ *>       x_xpos  = COL_xpos (CTAB, ECOL) + COL_width (CTAB, ECOL);                                                        <* 
  *>       x_wide = x_avail - x_xpos + 1;                                                                                           <* 
  *>       if (x_wide > 0)  CURS_cell (ECOL + 1, y_cur, x_ypos, x_xpos, x_wide);                                                    <* 
  *>    }                                                                                                                           <* 
@@ -1423,7 +1423,7 @@ DRAW_main          (void)
  *>    ch = CURS_line (ch, BROW, EROW);                                                                                            <* 
  *>    /+---(fill in bottom)-----------------+/                                                                                    <* 
  *>    /+> for (y_cur = ch; y_cur < my.y_avail; ++y_cur) {                                          <*                             <* 
- *>     *>    mvprintw (LOC_row_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);   <*                             <* 
+ *>     *>    mvprintw (ROW_ypos (CTAB, y_cur), 5, "%*.*s", my.x_avail, my.x_avail, g_empty);   <*                             <* 
  *>     *> }                                                                                        <+/                            <* 
  *>    /+---(complete)------------------------------+/                                                                             <* 
  *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                    <* 
