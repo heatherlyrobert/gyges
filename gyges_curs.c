@@ -1268,7 +1268,7 @@ char         /*-> display an individual cell ---------[ ------ [gc.D70.532.S5]*/
 CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wide)
 {
    /*---(locals)-------------------------*/
-   tCELL      *x_curr      = LOC_cell_at_loc (CTAB, a_col, a_row);
+   tCELL      *x_curr      = LOC_cell_at_loc (a_col, a_row, CTAB);
    /*---(save cursor position)-----------*/
    if (a_col == CCOL && a_row == CROW) {
       s_cursor_x = a_xpos + a_wide - 1;

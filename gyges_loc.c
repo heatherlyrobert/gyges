@@ -479,7 +479,7 @@ LOC_cell_at_curr     (void)
 }
 
 tCELL*       /*-> return the cell at a location ------[ ------ [gp.522.323.11]*/ /*-[01.0000.#14.#]-*/ /*-[--.---.---.--]-*/
-LOC_cell_at_loc      (short a_tab, short a_col, short a_row)
+LOC_cell_at_loc      (int a_col, int a_row, int a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
@@ -505,9 +505,9 @@ LOC_cell_labeled   (char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
-   short       x_tab       =   0;           /* working tab value              */
-   short       x_col       =   0;           /* working col value              */
-   short       x_row       =   0;           /* working row value              */
+   int         x_tab       =   0;           /* working tab value              */
+   int         x_col       =   0;           /* working col value              */
+   int         x_row       =   0;           /* working row value              */
    tCELL      *x_curr      = NULL;
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
@@ -518,7 +518,7 @@ LOC_cell_labeled   (char *a_label)
       DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
-   x_curr = LOC_cell_at_loc  (x_tab, x_col, x_row);
+   x_curr = LOC_cell_at_loc  (x_col, x_row, x_tab);
    DEBUG_LOCS_M   yLOG_point   ("cell"      , x_curr);
    if (x_curr == NULL) {
       DEBUG_LOCS_M   yLOG_note    ("nothing found");
@@ -942,219 +942,6 @@ LOC_parse         (
    return  0;
 }
 
-
-
-/*====================------------------------------------====================*/
-/*===----                     mapping for map mode                     ----===*/
-/*====================------------------------------------====================*/
-static void  o___MAPPER__________o () { return; }
-
-char
-MAP__clear            (tMAPPED *a_map)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           =    0;
-   /*---(lefts)--------------------------*/
-   a_map->gmin = a_map->amin = a_map->lmin = a_map->prev = -1;
-   /*---(map)----------------------------*/
-   for (i= 0; i < LEN_MAP; ++i)  a_map->map [i] =  YVIKEYS_EMPTY;
-   /*---(rights)-------------------------*/
-   a_map->gmax = a_map->amax = a_map->lmax = a_map->next = -1;
-   /*---(screen)-------------------------*/
-   a_map->beg  = a_map->cur  = a_map->end  = a_map->len  = a_map->tend = 0;
-   /*---(grids)--------------------------*/
-   a_map->gbeg = a_map->gcur = a_map->gend = 0;
-   /*---(complete)-----------------------*/
-   return  0;
-}
-
-char
-LOC__mapper                (char a_dir)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   int         i           =    0;
-   int         x_max       =    0;
-   tMAPPED    *x_map       = NULL;
-   int         x_size      =    0;
-   int         x_count     =    0;
-   int         x_cell      =    0;
-   tCELL      *x_curr      = NULL;
-   tCELL      *x_prev      = NULL;
-   int         x_unit      =    0;
-   int         x_save      =    0;
-   int         x_mark      =    0;
-   /*---(prepare)------------------------*/
-   switch (a_dir) {
-   case 'C' : case 'c' :
-      x_map  = &g_xmap;
-      x_max  = NCOL - 1;
-      break;
-   case 'R' : case 'r' :
-      x_map  = &g_ymap;
-      x_max  = NROW - 1;
-      break;
-   case 'T' : case 't' :
-      x_map  = &g_zmap;
-      x_max  = NTAB - 1;
-      break;
-   }
-   x_mark = x_map->gcur;
-   /*---(clear)--------------------------*/
-   for (i= 0; i < LEN_MAP; ++i)  x_map->map [i] =  YVIKEYS_EMPTY;
-   x_map->gmin = x_map->amin = x_map->lmin = x_map->prev = -1;
-   x_map->gmax = x_map->amax = x_map->lmax = x_map->next = -1;
-   /*---(do columns)---------------------*/
-   for (x_cell = 0; x_cell <= x_max; ++x_cell) {
-      /*---(get base data)---------------*/
-      switch (a_dir) {
-      case 'C' : case 'c' :
-         x_size  = s_tabs [CTAB].cols [x_cell].w;
-         x_curr  = LOC_cell_at_loc (CTAB, x_cell, CROW);
-         x_count = s_tabs [CTAB].cols [x_cell].c;
-         break;
-      case 'R' : case 'r' :
-         x_size  = s_tabs [CTAB].rows [x_cell].h;
-         x_curr  = LOC_cell_at_loc (CTAB, CCOL, x_cell);
-         x_count = s_tabs [CTAB].rows [x_cell].c;
-         break;
-      case 'T' : case 't' :
-         x_size  = 1;
-         x_curr  = LOC_cell_at_loc (x_cell, CCOL, CROW);
-         x_count = 1;
-         break;
-      }
-      /*---(mins)------------------------*/
-      x_map->gmin = 0;
-      if (x_map->amin < 0 && x_count > 0)      x_map->amin = x_unit;
-      if (x_map->lmin < 0 && x_curr != NULL)   x_map->lmin = x_unit;
-      if (x_cell <  x_mark) {
-         if (x_prev == NULL && x_curr != NULL) x_map->prev = x_unit;
-         if (x_prev != NULL && x_curr == NULL) x_map->prev = x_save;
-      }
-      /*---(update map)------------------*/
-      for (i = 0; i < x_size; ++i) {
-         x_map->map [x_unit++] = x_cell;
-      }
-      /*---(maxes)-----------------------*/
-      if (x_curr != NULL)                      x_map->lmax = x_unit - 1;
-      if (x_count > 0)                         x_map->amax = x_unit - 1;
-      x_map->gmax = x_unit - 1;
-      if (x_cell > x_mark) {
-         if (x_prev == NULL && x_curr != NULL) x_map->next = x_unit;
-         if (x_prev != NULL && x_curr == NULL) x_map->next = x_save;
-      }
-      /*---(done)------------------------*/
-      x_save = x_unit;
-      x_prev = x_curr;
-   }
-   /*---(update lefts)-------------------*/
-   if (x_map->amin < 0)  x_map->amin = x_map->gmin;
-   if (x_map->lmin < 0)  x_map->lmin = x_map->gmin;
-   if (x_map->prev < 0)  x_map->prev = x_map->gmin;
-   /*---(update rights)------------------*/
-   if (x_map->amax < 0)  x_map->amax = x_map->gmin;
-   if (x_map->lmax < 0)  x_map->lmax = x_map->gmin;
-   if (x_map->next < 0)  x_map->next = x_map->gmax;
-   /*---(other)--------------------------*/
-   if (a_dir != tolower (a_dir)) {
-      x_map->beg   = 0;
-      x_map->cur   = 0;
-      x_map->end   = 0;
-      x_map->len   = 0;
-      x_map->tend  = 0;
-      x_map->gbeg  = 0;
-      x_map->gcur  = 0;
-      x_map->gend  = 0;
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-LOC__mapprint    (char a_dir)
-{
-   /*---(locals)-----------+-----------+-*/
-   FILE       *f           = NULL;
-   char        x_name      [LEN_LABEL] = "";
-   tMAPPED    *x_map       = NULL;
-   int         i           =    0;
-   /*---(prepare)------------------------*/
-   switch (a_dir) {
-   case 'c' :
-      x_map = &g_xmap;
-      strlcpy (x_name, "gyges.cmap", LEN_LABEL);
-      break;
-   case 'r' :
-      x_map = &g_ymap;
-      strlcpy (x_name, "gyges.rmap", LEN_LABEL);
-      break;
-   case 't' :
-      x_map = &g_zmap;
-      strlcpy (x_name, "gyges.tmap", LEN_LABEL);
-      break;
-   }
-   /*---(write it out)-------------------*/
-   f = fopen (x_name, "w");
-   if (f == NULL)  return -1;
-   /*---(headers)------------------------*/
-   fprintf (f, "gmin amin lmin prev    ");
-   for (i = 0; i < LEN_MAP; ++i) {
-      if (x_map->map [i] < 0)  break;
-      fprintf (f, "%4d "  , i);
-   }
-   fprintf (f, "   next lmax amax gmax\n");
-   /*---(content)------------------------*/
-   fprintf (f, "%4d %4d %4d %4d    "  , x_map->gmin, x_map->amin, x_map->lmin, x_map->prev);
-   for (i = 0; i < LEN_MAP; ++i) {
-      if (x_map->map [i] < 0)  break;
-      fprintf (f, "%4d "  , x_map->map [i]);
-   }
-   fprintf (f, "   %4d %4d %4d %4d\n", x_map->next, x_map->lmax, x_map->amax, x_map->gmax);
-   fclose (f);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-MAP_mapper           (char a_req)
-{
-   tCELL      *x_curr      = NULL;
-   char        t           [LEN_RECD];
-   yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.avail, NULL, &g_ymap.avail, NULL);
-   if (a_req == YVIKEYS_INIT) {
-      LOC__mapper   ('C');
-      LOC__mapper   ('R');
-      LOC__mapper   ('T');
-   } else {
-      LOC__mapper   ('c');
-      LOC__mapper   ('r');
-      LOC__mapper   ('t');
-   }
-   BCOL = g_xmap.gbeg;
-   CCOL = g_xmap.gcur;
-   ECOL = g_xmap.gend;
-   BROW = g_ymap.gbeg;
-   CROW = g_ymap.gcur;
-   EROW = g_ymap.gend;
-   CTAB = g_zmap.gcur;
-   x_curr = LOC_cell_at_curr ();
-   if      (x_curr == NULL || x_curr->s == NULL) {
-      LOC_ref (CTAB, CCOL, CROW, 0, t);
-      yVIKEYS_source (t, "");
-   } else {
-      yVIKEYS_source (x_curr->label, x_curr->s);
-   }
-   return 0;
-}
-
-/*> char                                                                              <* 
- *> LOC_row_map          (char a_type)                                                <* 
- *> {                                                                                 <* 
- *>    if (a_type == YVIKEYS_INIT)  LOC_mapper   ('R');                               <* 
- *>    else                         LOC_mapper   ('r');                               <* 
- *>    LOC__mapprint ('r');                                                            <* 
- *>    return 0;                                                                      <* 
- *> }                                                                                 <*/
 
 
 /*====================------------------------------------====================*/

@@ -100,28 +100,38 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOG_version    ());
    DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version    ());
    DEBUG_TOPS   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
+   DEBUG_TOPS   yLOG_info     ("yCALC"   , yCALC_version   ());
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
-   /*---(initialize)---------------------*/
+   /*---(yvikeys config)-----------------*/
    yVIKEYS_init         ();
-   /*---(setup file)---------------------*/
-   yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
-   yVIKEYS_file_add     (FILE_DEPCEL , OUTP_cell_dep  , INPT_cell);
-   yVIKEYS_file_add     (FILE_FREECEL, OUTP_cell_free , INPT_cell);
-   yVIKEYS_file_add     (FILE_TABS   , TABS_writer_all, TABS_reader);
-   yVIKEYS_file_add     (FILE_COLS   , COLS_writer_all, COLS_reader);
-   yVIKEYS_file_add     (FILE_ROWS   , ROWS_writer_all, ROWS_reader);
-   /*---(setup other)--------------------*/
-   yVIKEYS_macro_config (CELL_macro_get, CELL_macro_set);
-   yVIKEYS_srch_config  (SRCH_searcher , SRCH_clearer);
-   yVIKEYS_src_config   (api_yvikeys_saver);
-   yVIKEYS_regs_config  (api_yvikeys_killer, api_yvikeys_copier, api_yvikeys_clearer, api_yvikeys_paster);
+   if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
+   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_DEPCEL , OUTP_cell_dep  , INPT_cell);
+   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_FREECEL, OUTP_cell_free , INPT_cell);
+   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_TABS   , TABS_writer_all, TABS_reader);
+   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_COLS   , COLS_writer_all, COLS_reader);
+   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_ROWS   , ROWS_writer_all, ROWS_reader);
+   if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
+   if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
+   if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
+   if (rc == 0)  rc = yVIKEYS_regs_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller);
+   DEBUG_TOPS   yLOG_value    ("yvikeys"   , rc);
+   if (rc <  0) {
+      DEBUG_TOPS   yLOG_exitr    (__FUNCTION__, rc);
+      return rc;
+   }
    /*---(globals)------------------------*/
    CELL_init  ();
+   /*---(ycalc config)-------------------*/
    yCALC_init ('g');
    if (rc == 0)  rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
    if (rc == 0)  rc = yCALC_label_config (api_ycalc_named  , api_ycalc_whos_at, api_ycalc_labeler);
    if (rc == 0)  rc = yCALC_value_config (api_ycalc_valuer , api_ycalc_address, api_ycalc_special, api_ycalc_printer);
+   DEBUG_TOPS   yLOG_value    ("ycalc"     , rc);
+   if (rc <  0) {
+      DEBUG_TOPS   yLOG_exitr    (__FUNCTION__, rc);
+      return rc;
+   }
    /*---(globals)------------------------*/
    hist_active       = '-';
    nhist             =  0;
@@ -235,7 +245,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_mode_formatter    (SMOD_format);
+   yVIKEYS_mode_formatter (api_yvikeys_format);
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
    /*---(complete)-----------------------*/

@@ -197,7 +197,7 @@ MOVE_edges         (
       /*---(top)-------------------------*/
       for (y_fin = 0; y_fin < NROW; ++y_fin) {
          if (a_dir == 't' && ROW_used    (CTAB, y_fin) == 0)            continue;
-         if (a_dir == 'K' && LOC_cell_at_loc (CTAB, CCOL, y_fin) == NULL)   continue;
+         if (a_dir == 'K' && LOC_cell_at_loc (CCOL, y_fin, CTAB) == NULL)   continue;
          break;
       }
       if (y_fin == NROW)  y_fin = y_beg;
@@ -206,7 +206,7 @@ MOVE_edges         (
       /*---(bottom)----------------------*/
       for (y_fin = NROW - 1; y_fin >= 0; --y_fin) {
          if (a_dir == 'b' && ROW_used    (CTAB, y_fin) == 0)            continue;
-         if (a_dir == 'J' && LOC_cell_at_loc (CTAB, CCOL, y_fin) == NULL)   continue;
+         if (a_dir == 'J' && LOC_cell_at_loc (CCOL, y_fin, CTAB) == NULL)   continue;
          break;
       }
       if (y_fin <  0   )  y_fin = y_beg;
@@ -215,7 +215,7 @@ MOVE_edges         (
       /*---(left)------------------------*/
       for (x_fin = 0; x_fin < NCOL; ++x_fin) {
          if (a_dir == 's' && COL_used    (CTAB, x_fin) == 0)            continue;
-         if (a_dir == 'H' && LOC_cell_at_loc (CTAB, x_fin, CROW) == NULL)   continue;
+         if (a_dir == 'H' && LOC_cell_at_loc (x_fin, CROW, CTAB) == NULL)   continue;
          break;
       }
       if (x_fin == NCOL)  x_fin = x_beg;
@@ -224,7 +224,7 @@ MOVE_edges         (
       /*---(right)-----------------------*/
       for (x_fin = NCOL - 1; x_fin >= 0; --x_fin) {
          if (a_dir == 'e' && COL_used    (CTAB, x_fin) == 0)            continue;
-         if (a_dir == 'L' && LOC_cell_at_loc (CTAB, x_fin, CROW) == NULL)   continue;
+         if (a_dir == 'L' && LOC_cell_at_loc (x_fin, CROW, CTAB) == NULL)   continue;
          break;
       }
       if (x_fin <  0   )  x_fin = x_beg;
@@ -280,9 +280,9 @@ MOVE_ends          (char a_dir)
    DEBUG_USER  yLOG_value   ("x_cur"     , x_cur);
    DEBUG_USER  yLOG_value   ("y_cur"     , y_cur);
    /*---(check current)------------------*/
-   if (LOC_cell_at_loc (CTAB, x_cur, y_cur) != NULL) {
+   if (LOC_cell_at_loc (x_cur, y_cur, CTAB) != NULL) {
       x_type = 'f';
-      if (LOC_cell_at_loc (CTAB, x_cur + x_inc, y_cur + y_inc) == NULL)  x_type = '-';
+      if (LOC_cell_at_loc (x_cur + x_inc, y_cur + y_inc, CTAB) == NULL)  x_type = '-';
    }
    DEBUG_USER  yLOG_char    ("x_type"    , x_type);
    /*---(process cells)------------------*/
@@ -300,7 +300,7 @@ MOVE_ends          (char a_dir)
       /*---(test)------------------------*/
       switch (x_type) {
       case  '-' :
-         if (LOC_cell_at_loc (CTAB, x_cur, y_cur) != NULL) {
+         if (LOC_cell_at_loc (x_cur, y_cur, CTAB) != NULL) {
             DEBUG_USER  yLOG_note    ("found a occupied cell");
             x_fin  = x_cur;
             y_fin  = y_cur;
@@ -308,7 +308,7 @@ MOVE_ends          (char a_dir)
          }
          break;
       case  'f' :
-         if (LOC_cell_at_loc (CTAB, x_cur, y_cur) == NULL) {
+         if (LOC_cell_at_loc (x_cur, y_cur, CTAB) == NULL) {
             DEBUG_USER  yLOG_note    ("found a null cell");
             x_fin  = x_cur - x_inc;
             y_fin  = y_cur - y_inc;

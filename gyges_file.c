@@ -996,7 +996,7 @@ OUTP_cell_free          (void)
       y_end = ROW_max (z) - 1;
       for (x = 0; x <= x_end; ++x) {
          for (y = 0; y <= y_end; ++y) {
-            x_curr = LOC_cell_at_loc (z, x, y);
+            x_curr = LOC_cell_at_loc (x, y, z);
             if (x_curr    == NULL)                         continue;
             if (x_curr->s == NULL)                         continue;
             if (x_curr->t == YCALC_DATA_BLANK)             continue;

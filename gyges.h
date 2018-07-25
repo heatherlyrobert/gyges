@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1l"
-#define     VER_TXT   "fixed summary cell placement and broke out tab, col, and row logic"
+#define     VER_NUM   "3.1m"
+#define     VER_TXT   "mapper updating properly now"
 
 
 
@@ -979,8 +979,6 @@ char      PROG__unitend       (void);
 char      save_saved         (void);
 char      clear_input        (void);
 
-char        SRCH_searcher        (char *a_search);
-char        SRCH_clearer         (int a_x, int a_y, int a_z);
 
 
 /*---(screen formatting)------------------------*/
@@ -1102,10 +1100,6 @@ char      REG_list           (char a_buf, char *a_list);
 
 char      REG_killer              (tCELL *a_curr);
 char      REG_copy_one            (tCELL *a_curr, long a_stamp);
-char      api_yvikeys_killer      (tCELL *a_curr);
-char      api_yvikeys_copier      (char a_type, long a_stamp);
-char      api_yvikeys_clearer     (char a_1st, int x, int y, int z);
-char      api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 
 char      REG_save             (void);
 char      REG_delorig          (void);
@@ -1157,15 +1151,9 @@ char      REG__setter        (char *a_request, char *a_data);
 char*     REG__getter        (char *a_question, char a_reg);
 
 
-/*---(major modes)----------*/
-char      MODE_god             (char  a_major, char  a_minor);
-char      MODE_map             (char  a_major, char  a_minor);
-char      MODE_source          (char  a_major, char  a_minor);
-char      MODE_input           (char  a_major, char  a_minor);
 /*---(sub-modes)------------*/
 char      SMOD_buffer          (char  a_major, char  a_minor);
-char      SMOD_replace         (char  a_major, char  a_minor);
-char      SMOD_format          (int   a_major, int   a_minor);
+char      api_yvikeys_format      (int a_major, int a_minor);
 char      SMOD_wander          (char  a_major, char  a_minor);
 char      SMOD_error           (char  a_major, char  a_minor);
 char      SMOD_menus           (char  a_major, char  a_minor);
@@ -1413,7 +1401,7 @@ char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
 char        LOC_move             /* stigma 6----- */  (short  a_tab1, short a_col1, short a_row1, short a_tab2, short a_col2, short a_row2);
 
 tCELL      *LOC_cell_at_curr     /* petal  0----- */  (void);
-tCELL      *LOC_cell_at_loc      /* petal  3----- */  (short  a_tab, short  a_col, short a_row);
+tCELL      *LOC_cell_at_loc      /* petal  3----- */  (int  a_col, int  a_row, int a_tab);
 tCELL      *LOC_cell_labeled     /* petal  1----- */  (char  *a_label);
 
 char        LOC_coords           /* petal  4----- */  (tCELL *a_cell, short *a_tab, short *a_col, short *a_row);
@@ -1521,7 +1509,6 @@ char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
 #define   CHG_OVERAND        '&'
 #define   CHG_NOHIST         'x'
 
-char      api_yvikeys_saver    (char *a_contents);
 
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
 tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
@@ -1565,9 +1552,6 @@ char      CELL_format_valid    (char   a_format);
 #define   CHANGE_UNMERGE  'u'
 
 
-char      CELL_macro_get       (char   a_name, char  *a_keys);
-char      CELL_macro_set       (char   a_name, char  *a_keys);
-/*> char      CELL_printable       (tCELL *a_cell);                                   <*/
 
 char     *CELL__unit           (char  *a_question, tCELL *a_cell);
 char     *CELL__unitnew        (char  *a_question, char *a_label);
@@ -1620,6 +1604,7 @@ char      XML3_read            (char *a_name);
 
 
 
+/*===[[ gyges_calc.c ]]=======================================================*/
 
 char        api_ycalc_enabler       (void *a_owner, void *a_deproot);
 char        api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string);
@@ -1635,6 +1620,22 @@ char        api_ycalc_special       (void *a_owner, char a_what, double *a_value
 
 char        api_ycalc_printer       (void *a_owner);
 
+
+
+/*===[[ gyges_yvikeys.c ]]====================================================*/
+
+char        api_yvikeys_saver       (char *a_contents);
+
+char        api_yvikeys_macro_get   (char   a_name, char  *a_keys);
+char        api_yvikeys_macro_set   (char   a_name, char  *a_keys);
+
+char        api_yvikeys_searcher    (char *a_search);
+char        api_yvikeys_unsearcher  (int a_x, int a_y, int a_z);
+
+char        api_yvikeys_clearer     (char a_1st, int x, int y, int z);
+char        api_yvikeys_copier      (char a_type, long a_stamp);
+char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
+char        api_yvikeys_regkiller   (tCELL *a_curr);
 
 
 

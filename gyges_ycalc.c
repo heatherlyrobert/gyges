@@ -204,7 +204,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
          return rce;
       }
       DEBUG_APIS   yLOG_complex ("loc"        , "%3dx, %3dy, %3dz", x_col, x_row, x_tab);
-      x_owner = LOC_cell_at_loc  (x_tab, x_col, x_row);
+      x_owner = LOC_cell_at_loc  (x_col, x_row, x_tab);
       DEBUG_APIS   yLOG_point   ("x_owner"    , x_owner);
       --rce;  if (x_owner == NULL && a_force == YCALC_LOOK) {
          DEBUG_APIS   yLOG_note    ("owner does not exist and only in look mode");
