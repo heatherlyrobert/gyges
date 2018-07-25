@@ -625,11 +625,11 @@ MAP__clear            (tMAPPED *a_map)
    /*---(locals)-----------+-----------+-*/
    int         i           =    0;
    /*---(lefts)--------------------------*/
-   a_map->gmin = a_map->amin = a_map->lmin = a_map->prev = -1;
+   a_map->umin = a_map->gmin = a_map->gamin = a_map->glmin = a_map->gprev = -1;
    /*---(map)----------------------------*/
    for (i= 0; i < LEN_MAP; ++i)  a_map->map [i] =  YVIKEYS_EMPTY;
    /*---(rights)-------------------------*/
-   a_map->gmax = a_map->amax = a_map->lmax = a_map->next = -1;
+   a_map->umax = a_map->gmax = a_map->gamax = a_map->glmax = a_map->gnext = -1;
    /*---(screen)-------------------------*/
    a_map->beg  = a_map->cur  = a_map->end  = a_map->len  = a_map->tend = 0;
    /*---(grids)--------------------------*/
@@ -647,6 +647,7 @@ LOC__mapper                (char a_dir)
    tMAPPED    *x_map       = NULL;
    int         x_size      =    0;
    int         x_count     =    0;
+   int         x_total     =    0;
    int         x_cell      =    0;
    tCELL      *x_curr      = NULL;
    tCELL      *x_prev      = NULL;
@@ -661,13 +662,15 @@ LOC__mapper                (char a_dir)
    switch (a_dir) {
    case 'C' : case 'c' :
       DEBUG_MAP    yLOG_note    ("COLS (x)");
-      x_map  = &g_xmap;
-      x_max  = NCOL - 1;
+      x_map   = &g_xmap;
+      x_max   = NCOL - 1;
+      x_total = s_tabs [g_zmap.gcur].rows [g_ymap.gcur].c;
       break;
    case 'R' : case 'r' :
       DEBUG_MAP    yLOG_note    ("ROWS (y)");
-      x_map  = &g_ymap;
-      x_max  = NROW - 1;
+      x_map   = &g_ymap;
+      x_max   = NROW - 1;
+      x_total = s_tabs [g_zmap.gcur].cols [g_xmap.gcur].c;
       break;
    case 'T' : case 't' :
       DEBUG_MAP    yLOG_note    ("TABS (z)");
@@ -678,12 +681,10 @@ LOC__mapper                (char a_dir)
    x_mark = x_map->gcur;
    /*---(clear)--------------------------*/
    for (i= 0; i < LEN_MAP; ++i)  x_map->map [i] =  YVIKEYS_EMPTY;
-   x_map->gmin = x_map->amin = x_map->lmin = x_map->prev = -1;
-   x_map->gmax = x_map->amax = x_map->lmax = x_map->next = -1;
+   x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;
+   x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;
    /*---(do columns)---------------------*/
    for (x_cell = 0; x_cell <= x_max; ++x_cell) {
-      DEBUG_MAP    yLOG_value   ("X_CELL"    , x_cell);
-      DEBUG_MAP    yLOG_value   ("x_unit"    , x_unit);
       /*---(get base data)---------------*/
       switch (a_dir) {
       case 'C' : case 'c' :
@@ -702,46 +703,48 @@ LOC__mapper                (char a_dir)
          x_count = 1;
          break;
       }
-      DEBUG_MAP    yLOG_value   ("x_size"    , x_size);
-      DEBUG_MAP    yLOG_point   ("x_curr"    , x_curr);
-      DEBUG_MAP    yLOG_value   ("x_count"   , x_count);
-      DEBUG_MAP    yLOG_note    ("minimums");
+      DEBUG_MAP    yLOG_complex ("LOOP"      , "%3dn, %3du, %3ds, %-10p, %3dc", x_cell, x_unit, x_size, x_curr, x_count);
       /*---(big mins)--------------------*/
+      x_map->umin = 0;
       x_map->gmin = 0;
-      if (x_map->amin < 0 && x_count > 0)      x_map->amin = x_unit;
-      if (x_map->lmin < 0 && x_curr != NULL)   x_map->lmin = x_unit;
+      if (x_map->gamin < 0 && x_count > 0)      x_map->gamin = x_cell;
+      if (x_map->glmin < 0 && x_curr != NULL)   x_map->glmin = x_cell;
       /*---(little mins)-----------------*/
       if (x_cell <  x_mark) {
-         if (x_prev == NULL && x_curr != NULL) x_map->prev = x_unit;
-         if (x_prev != NULL && x_curr == NULL) x_map->prev = x_save;
+         if (x_prev == NULL && x_curr != NULL) x_map->gprev = x_cell;
+         if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;
       }
+      DEBUG_MAP    yLOG_complex ("mins"    , "%3dg, %3da, %3dl, %3dp", x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);
       /*---(update map)------------------*/
       for (i = 0; i < x_size; ++i) {
-         x_map->map [x_unit++] = x_cell;
+         x_map->map  [x_unit++] = x_cell;
+         if (x_curr == NULL)  x_map->used [x_cell] = '-';
+         else                 x_map->used [x_cell] = 'y';
       }
-      DEBUG_MAP    yLOG_value   ("x_unit"    , x_unit);
-      DEBUG_MAP    yLOG_note    ("maximums");
       /*---(big maxs)--------------------*/
-      if (x_curr != NULL)                      x_map->lmax = x_unit - 1;
-      if (x_count > 0)                         x_map->amax = x_unit - 1;
-      x_map->gmax = x_unit - 1;
+      if (x_curr != NULL)                      x_map->glmax = x_cell;
+      if (x_count > 0)                         x_map->gamax = x_cell;
+      x_map->gmax = x_cell;
+      x_map->umax = x_unit - 1;
       /*---(little maxes)----------------*/
-      if (x_cell > x_mark) {
-         if (x_prev == NULL && x_curr != NULL) x_map->next = x_unit;
-         if (x_prev != NULL && x_curr == NULL) x_map->next = x_save;
+      if (x_cell > x_mark + 1 && x_map->gnext < 0) {
+         if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;
+         if (x_prev != NULL && x_curr == NULL) x_map->gnext = x_save;
       }
+      DEBUG_MAP    yLOG_complex ("maxs"    , "%3dn, %3dl, %3da, %3dg", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);
       /*---(done)------------------------*/
-      x_save = x_unit;
+      x_save = x_cell;
       x_prev = x_curr;
    }
-   /*---(update lefts)-------------------*/
-   if (x_map->amin < 0)  x_map->amin = x_map->gmin;
-   if (x_map->lmin < 0)  x_map->lmin = x_map->gmin;
-   if (x_map->prev < 0)  x_map->prev = x_map->gmin;
-   /*---(update rights)------------------*/
-   if (x_map->amax < 0)  x_map->amax = x_map->gmin;
-   if (x_map->lmax < 0)  x_map->lmax = x_map->gmin;
-   if (x_map->next < 0)  x_map->next = x_map->gmax;
+   /*---(update mins and maxes)----------*/
+   if (x_total > 0) {
+      if (x_map->gamin < 0)  x_map->gamin = x_map->gmin;
+      if (x_map->glmin < 0)  x_map->glmin = x_map->gmin;
+      if (x_map->gprev < 0)  x_map->gprev = x_map->gmin;
+      if (x_map->gamax < 0)  x_map->gamax = x_map->gmin;
+      if (x_map->glmax < 0)  x_map->glmax = x_map->gmin;
+      if (x_map->gnext < 0)  x_map->gnext = x_map->gmax;
+   }
    /*---(other)--------------------------*/
    if (a_dir != tolower (a_dir)) {
       x_map->beg   = 0;
@@ -792,12 +795,12 @@ LOC__mapprint    (char a_dir)
    }
    fprintf (f, "   next lmax amax gmax\n");
    /*---(content)------------------------*/
-   fprintf (f, "%4d %4d %4d %4d    "  , x_map->gmin, x_map->amin, x_map->lmin, x_map->prev);
+   fprintf (f, "%4d %4d %4d %4d    "  , x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);
    for (i = 0; i < LEN_MAP; ++i) {
       if (x_map->map [i] < 0)  break;
       fprintf (f, "%4d "  , x_map->map [i]);
    }
-   fprintf (f, "   %4d %4d %4d %4d\n", x_map->next, x_map->lmax, x_map->amax, x_map->gmax);
+   fprintf (f, "   %4d %4d %4d %4d\n", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);
    fclose (f);
    /*---(complete)-----------------------*/
    return 0;
