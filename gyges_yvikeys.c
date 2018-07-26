@@ -710,6 +710,9 @@ LOC__mapper                (char a_dir)
       if (x_map->gamin < 0 && x_count > 0)      x_map->gamin = x_cell;
       if (x_map->glmin < 0 && x_curr != NULL)   x_map->glmin = x_cell;
       /*---(little mins)-----------------*/
+      if (x_cell == x_mark) {
+         if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;
+      }
       if (x_cell <  x_mark) {
          if (x_prev == NULL && x_curr != NULL) x_map->gprev = x_cell;
          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;
@@ -727,6 +730,9 @@ LOC__mapper                (char a_dir)
       x_map->gmax = x_cell;
       x_map->umax = x_unit - 1;
       /*---(little maxes)----------------*/
+      if (x_cell > x_mark && x_map->gnext < 0) {
+         if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;
+      }
       if (x_cell > x_mark + 1 && x_map->gnext < 0) {
          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;
          if (x_prev != NULL && x_curr == NULL) x_map->gnext = x_save;

@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1n"
-#define     VER_TXT   "ends and edges implemented and unit tested"
+#define     VER_NUM   "3.1o"
+#define     VER_TXT   "fix ends and edges issue close to transition points (unit test)"
 
 
 
