@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1o"
-#define     VER_TXT   "fix ends and edges issue close to transition points (unit test)"
+#define     VER_NUM   "3.1p"
+#define     VER_TXT   "added tab number display above row numbers"
 
 
 
@@ -1414,6 +1414,7 @@ char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col,
 
 /*===[[ gyges_tab.c ]]========================================================*/
 char        TAB_valid            /* petal  1----- */  (int a_tab);
+char        TAB_label            (int a_tab);
 char        TAB_index            (char  a_abbr);
 int         TAB_used             (int a_tab);
 char        TAB_type             (int a_tab);

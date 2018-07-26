@@ -498,7 +498,8 @@ DRAW_xaxis         (void)
    DEBUG_GRAF  yLOG_value   ("x_wide"    , x_wide);
    DEBUG_GRAF  yLOG_value   ("x_bott"    , x_bott);
    x_pos = x_pref;
-   mvprintw (x_bott, x_left, "%*.*s", x_pos, x_pos, "       ");
+   sprintf (x_disp, "¹¹%c¹¹     ", TAB_label (CTAB));
+   mvprintw (x_bott, x_left, "%*.*s", x_pos, x_pos, x_disp);
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/

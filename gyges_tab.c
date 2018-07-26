@@ -21,6 +21,22 @@ TAB_valid            (int a_tab)
 }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.320.113.20]*/ /*-[00.0000.184.I]-*/ /*-[--.---.---.--]-*/
+TAB_label            (int  a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ­®";
+   char        x_label     =  '-';
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab <  0   )  return rce;
+   --rce;  if (a_tab > 27   )  return rce;
+   /*---(convert to index)---------------*/
+   x_label = x_valid [a_tab];
+   /*---(complete)-----------------------*/
+   return x_label;
+}
+
+char         /*-> tbd --------------------------------[ leaf   [ge.320.113.20]*/ /*-[00.0000.184.I]-*/ /*-[--.---.---.--]-*/
 TAB_index            (char  a_abbr)
 {
    /*---(locals)-----------+-----------+-*/
