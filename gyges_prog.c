@@ -218,6 +218,7 @@ PROG_begin         (void)
    /*---(overall)------------------------*/
    yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
+   yVIKEYS_bufs_config   (TAB_switch_char);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

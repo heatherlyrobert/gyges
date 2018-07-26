@@ -29,7 +29,7 @@ TAB_label            (int  a_tab)
    char        x_label     =  '-';
    /*---(defense)------------------------*/
    --rce;  if (a_tab <  0   )  return rce;
-   --rce;  if (a_tab > 27   )  return rce;
+   --rce;  if (a_tab > 37   )  return rce;
    /*---(convert to index)---------------*/
    x_label = x_valid [a_tab];
    /*---(complete)-----------------------*/
@@ -41,7 +41,7 @@ TAB_index            (char  a_abbr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ­®";
    char       *p           = NULL;
    int         x_index     =    0;
    /*---(defense)------------------------*/
@@ -208,15 +208,26 @@ TAB_switch             (int a_tab)
    FR_EROW   = s_tabs [CTAB].froz_erow;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return CTAB;
 }
 
 char         /*-> tbd --------------------------------[ ------ [gc.220.112.31]*/ /*-[00.0000.103.!]-*/ /*-[--.---.---.--]-*/
 TAB_switch_char        (char a_tab)
 {
    int         x_tab       = 0;
-   if      (a_tab >= '0' && a_tab <= '9')   x_tab = a_tab - '0';
+   /*---(relative tabs)------------------*/
+   if (strchr ("[<>]", a_tab) != NULL) {
+      switch (a_tab) {
+      case '[' :  a_tab = 0;             break;
+      case '<' :  a_tab = CTAB - 1;      break;
+      case '>' :  a_tab = CTAB + 1;      break;
+      case ']' :  a_tab = MAX_TABS - 1;  break;
+      }
+   }
+   else if (a_tab >= '0' && a_tab <= '9')   x_tab = a_tab - '0';
    else if (a_tab >= 'A' && a_tab <= 'Z')   x_tab = a_tab - 'A' + 10;
+   else if (a_tab == '­')                   x_tab = 36;
+   else if (a_tab == '®')                   x_tab = 37;
    else    return -1;
    return TAB_switch (x_tab);
 }
