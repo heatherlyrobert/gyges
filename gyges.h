@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1q"
-#define     VER_TXT   "basic tab switching with , working"
+#define     VER_NUM   "3.1r"
+#define     VER_TXT   "internal ranges display with labels"
 
 
 

@@ -206,6 +206,12 @@ TAB_switch             (int a_tab)
    FR_ROW    = s_tabs [CTAB].froz_row;
    FR_BROW   = s_tabs [CTAB].froz_brow;
    FR_EROW   = s_tabs [CTAB].froz_erow;
+   /*---(reposition)---------------------*/
+   g_xmap.gcur = CCOL;
+   g_ymap.gcur = CROW;
+   g_zmap.gcur = CTAB;
+   MAP_mapper (YVIKEYS_UPDATE);
+   yVIKEYS_jump (CCOL, CROW, CTAB);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return CTAB;
@@ -218,10 +224,10 @@ TAB_switch_char        (char a_tab)
    /*---(relative tabs)------------------*/
    if (strchr ("[<>]", a_tab) != NULL) {
       switch (a_tab) {
-      case '[' :  a_tab = 0;             break;
-      case '<' :  a_tab = CTAB - 1;      break;
-      case '>' :  a_tab = CTAB + 1;      break;
-      case ']' :  a_tab = MAX_TABS - 1;  break;
+      case '[' :  x_tab = 0;             break;
+      case '<' :  x_tab = CTAB - 1;      break;
+      case '>' :  x_tab = CTAB + 1;      break;
+      case ']' :  x_tab = MAX_TABS - 1;  break;
       }
    }
    else if (a_tab >= '0' && a_tab <= '9')   x_tab = a_tab - '0';

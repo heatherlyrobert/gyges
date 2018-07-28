@@ -553,6 +553,13 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
+   } else if (x_owner->t == YCALC_DATA_INTERN) {
+      strlcpy (s, x_owner->s, LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("range"     , s);
+      strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
+      sprintf (x_out, "%s ", t);
+      DEBUG_APIS   yLOG_info    ("final"     , x_out);
    } else {
       DEBUG_APIS   yLOG_note    ("non-printing type");
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);
