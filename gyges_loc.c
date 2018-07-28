@@ -646,8 +646,10 @@ LOC_ref           (
    --rce;  if (a_abs < 0)                        return rce;
    --rce;  if (a_abs > 7)                        return rce;
    /*---(figure out tab name)------------*/
-   if (a_tab <= 9)     x_tab = a_tab + '0';
-   else                x_tab = a_tab - 10 + 'A';
+   if      (a_tab <=  9)  x_tab = a_tab + '0';
+   else if (a_tab <= 35)  x_tab = a_tab - 10 + 'A';
+   else if (a_tab == 36)  x_tab = '­';
+   else if (a_tab == 37)  x_tab = '®';
    /*---(figure out column name)---------*/
    if        (a_col < 26)  {
       x_cname[0] = a_col + 'a';
