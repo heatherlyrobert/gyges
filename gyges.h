@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1s"
-#define     VER_TXT   "updated LOC functions to handle system tabs"
+#define     VER_NUM   "3.1t"
+#define     VER_TXT   "main loop moved to yVIKEYS"
 
 
 

@@ -575,7 +575,7 @@ api_yvikeys_macro_get       (char a_name, char *a_macro)
    --rce;  if (a_macro   == NULL     )                      return rce;
    --rce;  if (a_name < 'a' || a_name > 'z')  return rce;
    x_row = a_name - 'a';
-   x_curr = LOC_cell_at_loc (1, x_row, 35);
+   x_curr = LOC_cell_at_loc (1, x_row, 37);
    --rce;  if (x_curr    == NULL)                           return rce;
    if (x_curr->t == YCALC_DATA_STR) {
       strlcpy (a_macro, x_curr->s    , LEN_RECD);
@@ -602,12 +602,12 @@ api_yvikeys_macro_set       (char a_name, char *a_keys)
    x_row = a_name - 'a';
    x_len = strlen (a_keys);
    if (x_len == 0) {
-      CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, "");
-      CELL_change (NULL, CHG_NOHIST, 35, 1, x_row, "");
+      CELL_change (NULL, CHG_NOHIST, 37, 0, x_row, "");
+      CELL_change (NULL, CHG_NOHIST, 37, 1, x_row, "");
    } else {
       sprintf (t, "%c", a_name);
-      CELL_change (NULL, CHG_NOHIST, 35, 0, x_row, t     );
-      CELL_change (NULL, CHG_NOHIST, 35, 1, x_row, a_keys);
+      CELL_change (NULL, CHG_NOHIST, 37, 0, x_row, t     );
+      CELL_change (NULL, CHG_NOHIST, 37, 1, x_row, a_keys);
    }
    return 0;
 }
