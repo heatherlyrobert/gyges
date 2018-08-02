@@ -676,6 +676,7 @@ LOC__mapper                (char a_dir)
       DEBUG_MAP    yLOG_note    ("TABS (z)");
       x_map  = &g_zmap;
       x_max  = NTAB - 1;
+      x_total = 1;
       break;
    }
    x_mark = x_map->gcur;

@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.1t"
-#define     VER_TXT   "main loop moved to yVIKEYS"
+#define     VER_NUM   "3.2a"
+#define     VER_TXT   "history in mapping mode (undo/redo) is unit tested for source changes"
 
 
 
@@ -1376,12 +1376,14 @@ char        CELL__unitchange     (tCELL *a_cell, char *a_source);
 
 
 
-char      HIST_change        (char *a_type, int a_tab, int a_col, int a_row, char *a_before, char *a_after);
-char      HIST_format        (char *a_type, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
-char      HIST_size          (char *a_type, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
-char      HIST_list          (void);
-char      HIST_undo          (void);
-char      HIST_redo          (void);
+char        HIST_init          (void);
+char        HIST_change        (char *a_type, int a_tab, int a_col, int a_row, char *a_before, char *a_after);
+char        HIST_format        (char *a_type, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
+char        HIST_size          (char *a_type, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
+char        HIST_list          (void);
+char        HIST_undo          (void);
+char        HIST_redo          (void);
+char*       HIST__unit         (char *a_question, int a_ref);
 
 
 /*345678901-12345678901234567890->--------------------------------------------*/

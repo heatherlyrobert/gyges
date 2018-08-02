@@ -989,6 +989,7 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    /*  update all cells to new width, either a standard size, or a specific   */
    /*  value communicated as a negative number.                               */
    /*---(locals)-----------+-----------+-*/
+   int         x_prev      = 0;
    int         x_width     = 0;
    int         x_row       = 0;
    int         x_last      = 0;
@@ -1001,7 +1002,7 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    if (a_num <   0) {
       x_width                = -(a_num);
    } else {
-      x_width = COL_width (a_curr->tab, a_curr->col);
+      x_width = x_prev = COL_width (a_curr->tab, a_curr->col);
       switch (a_num) {
       case  'm' : x_width    = 0;                           break;
       case  'n' : x_width    = 8;                           break;
@@ -1013,6 +1014,11 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
       case  'H' : x_width    = ((x_width / 5) * 5);         break;
       case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
       }
+   }
+   /*---(history)----------------------*/
+   if (a_mode == CHG_INPUT) {
+      if (a_head == a_curr)  HIST_format ("width"   , a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
+      else                   HIST_format ("WIDTH"   , a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
    }
    /*---(set width)--------------------*/
    COL_widen  (a_curr->tab, a_curr->col, x_width);
@@ -1215,8 +1221,8 @@ CELL__unitnew      (char *a_question, char *a_label)
    }
    /*---(cell contents)------------------*/
    if (strcmp(a_question, "cell_info")      == 0) {
-      /*> if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln info     : --- --- --- --- ----- ----- -----");                                                                                                     <* 
-       *> else                             snprintf(unit_answer, LEN_UNIT, "s_celln info     : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, x_cell->nrpn, x_cell->nrequire, x_cell->nprovide);   <*/
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln info     : --- --- --- --- ----- -----");
+      else                             snprintf(unit_answer, LEN_UNIT, "s_celln info     : t=%c f=%c d=%c a=%c w=%3d h=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, COL_width (x_cell->tab, x_cell->col), ROW_height (x_cell->tab, x_cell->row));
    }
    else if   (strcmp(a_question, "cell_source")    == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (----) ::");

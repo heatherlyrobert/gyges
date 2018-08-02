@@ -133,10 +133,8 @@ PROG_init          (int a_argc, char *a_argv[])
       return rc;
    }
    /*---(globals)------------------------*/
-   hist_active       = '-';
-   nhist             =  0;
-   chist             = -1;
-   /*> CALC_init           ();                                                        <*/
+   HIST_init ();
+   if (rc == 0)  rc = yVIKEYS_hist_config (HIST_undo, HIST_redo);
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
    /*---(complete)-----------------------*/
@@ -219,6 +217,7 @@ PROG_begin         (void)
    yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
    yVIKEYS_bufs_config   (TAB_switch_char);
+   yVIKEYS_hist_config   (HIST_undo, HIST_redo);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
