@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2b"
-#define     VER_TXT   "history in mapping mode (format undo/redo) is unit tested"
+#define     VER_NUM   "3.2c"
+#define     VER_TXT   "history in mapping mode (visual mode undo/redo) is unit tested"
 
 
 
@@ -1394,7 +1394,6 @@ char        LOC__purge           /* stem   0----- */  (void);
 char        LOC_wrap             /* shoot  0----- */  (void);
 
 char        LOC_legal            /* stigma 4----- */  (int a_col, int a_row, int a_tab, char a_adapt);
-char        LOC_jump             /* stigma 3----- */  (int a_col, int a_row, int a_tab);
 char        LOC_locator          (char *a_label, int *a_x, int *a_y, int *a_z);
 char        LOC_addressor        (char *a_label, int a_x, int a_y, int a_z);
 

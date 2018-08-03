@@ -1087,7 +1087,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
                                /*> case CHANGE_MERGE   : rc = CELL_merge_visu   (x_first, x_next, a_mode, a_how); break;   <*/
                                /*> case CHANGE_UNMERGE : rc = CELL_unmerge_visu (x_first, x_next, a_mode, a_how); break;   <*/
          }
-         DEBUG_CELL   yLOG_value  ("rc"        , rc);
+         DEBUG_CELL   yLOG_value  ("handle_rc" , rc);
          /*---(trouble)---------------------*/
          if (rc < 0) {
             DEBUG_CELL    yLOG_note   ("detailed function indicated trouble");
@@ -1105,7 +1105,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
       }
       /*---(get next)--------------------*/
       rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
-      DEBUG_CELL   yLOG_value  ("rc"        , rc);
+      DEBUG_CELL   yLOG_value  ("next_rc"   , rc);
       x_next  = LOC_cell_at_loc (x_col, x_row, x_tab);
       DEBUG_CELL   yLOG_point  ("x_next"    , x_next);
       /*---(done)------------------------*/

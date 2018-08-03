@@ -530,34 +530,6 @@ LOC_cell_labeled   (char *a_label)
    return x_curr;
 }
 
-char         /*-> go directly to a specific cell -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
-LOC_jump           (int a_col, int a_row, int a_tab)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          = 0;
-   /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
-   DEBUG_LOCS   yLOG_value   ("a_col"     , a_col);
-   DEBUG_LOCS   yLOG_value   ("a_row"     , a_row);
-   /*---(defenses)-----------------------*/
-   rc = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
-   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
-   if (rc < 0)  {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
-      return rc;
-   }
-   /*---(update globals)-----------------*/
-   TAB_switch     (a_tab);
-   CCOL          = a_col;
-   CROW          = a_row;
-   /*---(selection)----------------------*/
-   /*> VISU_update (a_tab, a_col, a_row);                                             <*/
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 char         /*-> return coordinates for address -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
 LOC_locator        (char *a_label, int *a_x, int *a_y, int *a_z)
 {

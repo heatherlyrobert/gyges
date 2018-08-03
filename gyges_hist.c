@@ -31,6 +31,18 @@ HIST_init          (void)
 }
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
+HIST_debug         (void)
+{
+   char        x_recd      [LEN_RECD ];
+   sprintf (x_recd, "#%d, c=%d, r=%d, t=%d, %s", chist,
+         hist [chist].bcol, hist [chist].brow, hist [chist].btab,
+         hist [chist].act);
+   DEBUG_HIST  
+      DEBUG_HIST  yLOG_info    ("record"    , x_recd);
+   return 0;
+}
+
+char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
 HIST_change        (
       /*----------+-----------+-----------------------------------------------*/
       char       *a_type,     /* type of formatting                           */
@@ -52,6 +64,7 @@ HIST_change        (
    hist [chist].brow  = a_row;
    strcpy (hist [chist].before, a_before);
    strcpy (hist [chist].after , a_after );
+   HIST_debug ();
    /*---(complete)--------------------*/
    return 0;
 }
@@ -80,6 +93,7 @@ HIST_overwrite     (
    hist [chist].brow  = a_row;
    sprintf (hist [chist].before, "%s::%s", a_beforeF, a_before);
    sprintf (hist [chist].after , "%s::%s", a_afterF , a_after );
+   HIST_debug ();
    /*---(complete)--------------------*/
    return 0;
 }
@@ -106,6 +120,7 @@ HIST_format        (
    hist [chist].brow  = a_row;
    sprintf (hist [chist].before, "%c", a_before);
    sprintf (hist [chist].after , "%c", a_after );
+   HIST_debug ();
    /*---(complete)--------------------*/
    return 0;
 }
@@ -132,6 +147,7 @@ HIST_size          (
    hist [chist].brow  = a_row;
    sprintf (hist [chist].before, "%d", a_before);
    sprintf (hist [chist].after , "%d", a_after );
+   HIST_debug ();
    /*---(complete)--------------------*/
    return 0;
 }
@@ -162,18 +178,14 @@ HIST_undo          (void)
    /*---(internal)-----------------------*/
    hist_active = '-';
    /*---(prepare)------------------------*/
-   DEBUG_HIST  yLOG_info    ("action"    , hist[chist].act);
-   strcpy (x_lower, hist[chist].act);
-   for (i = 0; i < 15; ++i)   x_lower[i] = tolower (x_lower[i]);
+   DEBUG_HIST  yLOG_info    ("action"    , hist [chist].act);
+   for (i = 0; i < 15; ++i)   x_lower[i] = tolower (hist [chist].act [i]);
    DEBUG_HIST  yLOG_info    ("lower"     , x_lower);
-   strcpy (x_upper, hist[chist].act);
-   for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
+   for (i = 0; i < 15; ++i)   x_upper[i] = toupper (hist [chist].act [i]);
    DEBUG_HIST  yLOG_info    ("upper"     , x_upper);
    /*---(get to right location)----------*/
-   DEBUG_HIST  yLOG_note    ("clear any existing selection");
-   /*> VISU_clear ();                                                                 <*/
-   DEBUG_HIST  yLOG_complex ("jump to"   , "t=%4d, c=%4d, r=%4d", hist[chist].btab, hist[chist].bcol, hist[chist].brow);
-   LOC_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
+   DEBUG_HIST  yLOG_complex ("jump to"   , "c=%4d, r=%4d, t=%4d", hist[chist].bcol, hist[chist].brow, hist[chist].btab);
+   yVIKEYS_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
    /*---(handle request)-----------------*/
    DEBUG_HIST  yLOG_info    ("before"    , hist[chist].before);
    if        (strcmp ("change", x_lower) == 0) {
@@ -211,15 +223,33 @@ HIST_undo          (void)
    --chist;
    DEBUG_HIST  yLOG_value   ("chist"     , chist);
    /*---(tail recursion)-----------------*/
+   /*> if (chist >= 0) {                                                              <* 
+    *>    DEBUG_HIST  yLOG_info    ("action"    , hist[chist + 1].act);               <* 
+    *>    if (strcmp (hist[chist + 1].act, x_upper) == 0) {                           <* 
+    *>       DEBUG_HIST  yLOG_note    ("check previous action");                      <* 
+    *>       if      (strcmp (hist[chist].act, x_lower) == 0) {                       <* 
+    *>          DEBUG_HIST  yLOG_note    ("final recursive call");                    <* 
+    *>          HIST_undo ();                                                         <* 
+    *>       }                                                                        <* 
+    *>       else if (strcmp (hist[chist].act, x_upper) == 0) {                       <* 
+    *>          DEBUG_HIST  yLOG_note    ("another in series");                       <* 
+    *>          HIST_undo ();                                                         <* 
+    *>       }                                                                        <* 
+    *>       else {                                                                   <* 
+    *>          DEBUG_HIST  yLOG_note    ("does not match, don't recurse");           <* 
+    *>       }                                                                        <* 
+    *>    }                                                                           <* 
+    *> }                                                                              <*/
+   /*---(tail recursion)-----------------*/
    if (chist >= 0) {
-      DEBUG_HIST  yLOG_info    ("action"    , hist[chist + 1].act);
-      if (strcmp (hist[chist + 1].act, x_upper) == 0) {
-         DEBUG_HIST  yLOG_note    ("check previous action");
-         if      (strcmp (hist[chist].act, x_lower) == 0) {
+      DEBUG_HIST  yLOG_info    ("current"   , hist [chist + 1].act);
+      DEBUG_HIST  yLOG_info    ("previous"  , hist [chist    ].act);
+      if (strcmp (hist [chist + 1].act, x_upper) == 0) {
+         if      (strcmp (hist [chist].act, x_lower) == 0) {
             DEBUG_HIST  yLOG_note    ("final recursive call");
             HIST_undo ();
          }
-         else if (strcmp (hist[chist].act, x_upper) == 0) {
+         else if (strcmp (hist [chist].act, x_upper) == 0) {
             DEBUG_HIST  yLOG_note    ("another in series");
             HIST_undo ();
          }
@@ -255,7 +285,7 @@ HIST_redo          (void)
    strcpy (x_upper, hist[chist].act);
    for (i = 0; i < 15; ++i)   x_upper[i] = toupper (x_upper[i]);
    /*---(get to right location)----------*/
-   LOC_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
+   yVIKEYS_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
    /*> VISU_clear ();                                                                 <*/
    /*---(handle request)-----------------*/
    if        (strcmp ("change"  , x_lower) == 0) {
@@ -284,8 +314,20 @@ HIST_redo          (void)
       CELL_visual   (CHANGE_WIDTH  , CHG_NOHIST, -(atoi (hist[chist].after)));
    }
    /*---(tail recursion)-----------------*/
-   if (chist <  nhist - 1) {
-      if (strcmp (hist[chist + 1].act, x_upper) == 0)  HIST_redo ();
+   /*> if (chist <  nhist - 1) {                                                      <* 
+    *>    if (strcmp (hist[chist + 1].act, x_upper) == 0)  HIST_redo ();              <* 
+    *> }                                                                              <*/
+   /*---(tail recursion)-----------------*/
+   if (chist < nhist) {
+      DEBUG_HIST  yLOG_info    ("current"   , hist [chist    ].act);
+      DEBUG_HIST  yLOG_info    ("next"      , hist [chist + 1].act);
+      if      (strcmp (hist [chist + 1].act, x_upper) == 0) {
+         DEBUG_HIST  yLOG_note    ("another in series");
+         HIST_redo ();
+      }
+      else {
+         DEBUG_HIST  yLOG_note    ("does not match, don't recurse");
+      }
    }
    /*---(internal)-----------------------*/
    hist_active = 'y';

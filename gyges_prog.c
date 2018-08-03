@@ -133,7 +133,6 @@ PROG_init          (int a_argc, char *a_argv[])
       return rc;
    }
    /*---(globals)------------------------*/
-   HIST_init ();
    if (rc == 0)  rc = yVIKEYS_hist_config (HIST_undo, HIST_redo);
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
@@ -248,6 +247,7 @@ PROG_final         (void)
    yVIKEYS_mode_formatter (api_yvikeys_format);
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
+   HIST_init ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
