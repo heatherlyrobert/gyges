@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2a"
-#define     VER_TXT   "history in mapping mode (undo/redo) is unit tested for source changes"
+#define     VER_NUM   "3.2b"
+#define     VER_TXT   "history in mapping mode (format undo/redo) is unit tested"
 
 
 

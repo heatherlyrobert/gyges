@@ -1017,8 +1017,8 @@ CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    }
    /*---(history)----------------------*/
    if (a_mode == CHG_INPUT) {
-      if (a_head == a_curr)  HIST_format ("width"   , a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
-      else                   HIST_format ("WIDTH"   , a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
+      if (a_head == a_curr)  HIST_size   ("width"   , a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
+      else                   HIST_size   ("WIDTH"   , a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
    }
    /*---(set width)--------------------*/
    COL_widen  (a_curr->tab, a_curr->col, x_width);
