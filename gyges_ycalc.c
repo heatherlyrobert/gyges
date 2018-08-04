@@ -120,7 +120,8 @@ api_ycalc_reaper        (void **a_owner)
       return rce;
    }
    /*---(delete)-------------------------*/
-   rc = CELL__delete (CHG_INPUT, x_owner->tab, x_owner->col, x_owner->row);
+   /*> rc = CELL__delete (CHG_INPUT, x_owner->tab, x_owner->col, x_owner->row);       <*/
+   rc = CELL__delete (CHG_NOHIST, x_owner->tab, x_owner->col, x_owner->row);
    --rce;  if (rc < 0) {
       DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;

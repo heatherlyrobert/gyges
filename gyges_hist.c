@@ -188,15 +188,15 @@ HIST_undo          (void)
    yVIKEYS_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
    /*---(handle request)-----------------*/
    DEBUG_HIST  yLOG_info    ("before"    , hist[chist].before);
-   if        (strcmp ("change", x_lower) == 0) {
+   if (strcmp ("change", x_lower) == 0) {
       DEBUG_HIST  yLOG_note    ("call CELL_change");
       if (strcmp (hist[chist].before, "[<{(null)}>]") == 0) {
          CELL_change  (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, "");
       } else {
          CELL_change  (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].before);
       }
-   } else if (strcmp ("overwrite", x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_overwrite");
+   } else if (strcmp ("overwrite", x_lower) == 0 || strcmp ("clear", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_overwrite/clear");
       if (strcmp (hist[chist].before, "???::[<{(null)}>]") == 0) {
          CELL_change    (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, "");
       } else {
@@ -288,14 +288,14 @@ HIST_redo          (void)
    yVIKEYS_jump  (hist[chist].bcol, hist[chist].brow, hist[chist].btab);
    /*> VISU_clear ();                                                                 <*/
    /*---(handle request)-----------------*/
-   if        (strcmp ("change"  , x_lower) == 0) {
+   if (strcmp ("change", x_lower) == 0) {
       if (strcmp (hist[chist].after , "[<{(null)}>]") == 0) {
          CELL_change (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, "");
       } else {
          CELL_change (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, hist[chist].after);
       }
-   } else if (strcmp ("overwrite", x_lower) == 0) {
-      DEBUG_HIST  yLOG_note    ("call CELL_overwrite");
+   } else if (strcmp ("overwrite", x_lower) == 0 || strcmp ("clear", x_lower) == 0) {
+      DEBUG_HIST  yLOG_note    ("call CELL_overwrite/clear");
       if (strcmp (hist[chist].after , "???::[<{(null)}>]") == 0) {
          CELL_change    (NULL, CHG_NOHIST, hist[chist].btab, hist[chist].bcol, hist[chist].brow, "");
       } else {

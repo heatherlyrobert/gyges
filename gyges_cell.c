@@ -810,8 +810,14 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
    /*---(history)------------------------*/
-   if (a_mode == CHG_INPUT   )  HIST_change ("change", a_tab, a_col, a_row, s_bsource, a_source);
-   if (a_mode == CHG_INPUTAND)  HIST_change ("CHANGE", a_tab, a_col, a_row, s_bsource, a_source);
+   if (a_mode == CHG_INPUT   ) {
+      if (a_source [0] != '\0')  HIST_change    ("change", a_tab, a_col, a_row, s_bsource, a_source);
+      else                       HIST_overwrite ("clear" , a_tab, a_col, a_row, s_bsource, s_bformat, a_source, s_bformat);
+   }
+   if (a_mode == CHG_INPUTAND) {
+      if (a_source [0] != '\0')  HIST_change    ("CHANGE", a_tab, a_col, a_row, s_bsource, a_source);
+      else                       HIST_overwrite ("CLEAR" , a_tab, a_col, a_row, s_bsource, s_bformat, a_source, s_bformat);
+   }
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("change source and length values");
    x_curr->s = strndup (a_source, LEN_RECD);

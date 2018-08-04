@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2c"
-#define     VER_TXT   "history in mapping mode (visual mode undo/redo) is unit tested"
+#define     VER_NUM   "3.2d"
+#define     VER_TXT   "history handles formulas and clears in unit testing"
 
 
 
@@ -703,7 +703,6 @@ tHIST       hist        [MAX_HIST];
 int         nhist;
 int         chist;
 char        hist_active;
-#define     HISTORY     if (hist_active == 'y')
 
 
 
