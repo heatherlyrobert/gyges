@@ -114,7 +114,7 @@ PROG_init          (int a_argc, char *a_argv[])
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
    if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
-   if (rc == 0)  rc = yVIKEYS_regs_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller);
+   if (rc == 0)  rc = yVIKEYS_regs_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_TOPS   yLOG_value    ("yvikeys"   , rc);
    if (rc <  0) {
       DEBUG_TOPS   yLOG_exitr    (__FUNCTION__, rc);

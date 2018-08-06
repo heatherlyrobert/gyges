@@ -21,6 +21,27 @@ api_yvikeys_saver       (char *a_contents)
 
 
 /*====================------------------------------------====================*/
+/*===----                     data export/import                       ----===*/
+/*====================------------------------------------====================*/
+static void   o___EXIM____________o (void) { return; }
+
+char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
+api_yvikeys_exim        (char a_dir, char a_style)
+{
+   char        rc          =    0;
+   /*---(header)--------------------s----*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_dir"     , a_dir);
+   DEBUG_REGS   yLOG_char    ("a_style"   , a_style);
+   if (a_dir == '-')  rc = EXIM_export (a_style);
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                      map mode formatting                     ----===*/
 /*====================------------------------------------====================*/
 static void   o___FORMAT__________o (void) { return; }

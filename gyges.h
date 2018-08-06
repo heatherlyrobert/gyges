@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2d"
-#define     VER_TXT   "history handles formulas and clears in unit testing"
+#define     VER_NUM   "3.2e"
+#define     VER_TXT   "basic export-import working, but not checked and unit tested"
 
 
 
@@ -1152,7 +1152,9 @@ char*     REG__getter        (char *a_question, char a_reg);
 
 /*---(sub-modes)------------*/
 char      SMOD_buffer          (char  a_major, char  a_minor);
-char      api_yvikeys_format      (int a_major, int a_minor);
+char      api_yvikeys_format   (int   a_major, int   a_minor);
+char      api_yvikeys_exim     (char  a_dir  , char  a_style);
+char      EXIM_export          (char a_style);
 char      SMOD_wander          (char  a_major, char  a_minor);
 char      SMOD_error           (char  a_major, char  a_minor);
 char      SMOD_menus           (char  a_major, char  a_minor);
