@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2e"
-#define     VER_TXT   "basic export-import working, but not checked and unit tested"
+#define     VER_NUM   "3.2f"
+#define     VER_TXT   "uses new delay/update version of yVIKEYS main loop.  success."
 
 
 
@@ -179,11 +179,13 @@ typedef struct timespec  tTSPEC;
 #define     DEF_TABS    38
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
-#define     MAX_COLS    130
+/*> #define     MAX_COLS    130                                                       <*/
+#define     MAX_COLS    26
 #define     DEF_COLS    26
 #define     MIN_COLS    1
 /*---(rows)---------------------------*/
-#define     MAX_ROWS    9999 
+/*> #define     MAX_ROWS    9999                                                      <*/
+#define     MAX_ROWS    100 
 #define     DEF_ROWS    100
 #define     MIN_ROWS    1
 /*---(cell width)---------------------*/

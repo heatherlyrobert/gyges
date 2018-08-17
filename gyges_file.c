@@ -1017,10 +1017,10 @@ EXIM_export             (char a_style)
    int         x_row       = 0;
    int         x_rowsave   = 0;
    int         w           = 0;
+   char        x_source    [LEN_RECD]  = "";
+   char        x_modded    [LEN_RECD]  = "";
    char        x_print     [LEN_RECD]  = "";
    char        x_trim      [LEN_RECD]  = "";
-   char        x_source    [LEN_RECD]  = "";
-   char        x_full      [LEN_RECD]  = "";
    int         c           = 0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -1072,11 +1072,11 @@ EXIM_export             (char a_style)
             DEBUG_REGS   yLOG_note    ("source is NULL");
          }
          DEBUG_REGS   yLOG_info    ("source"    , x_source);
-         /*---(full outcome)-------------*/
+         /*---(modded string)------------*/
          if (curr->v_str != NULL) {
             DEBUG_REGS   yLOG_note    ("convert modified string");
-            strlcpy      (x_full  , curr->v_str, LEN_RECD);
-            strldecode   (x_full, LEN_RECD);
+            strlcpy      (x_modded, curr->v_str, LEN_RECD);
+            strldecode   (x_modded, LEN_RECD);
          } else {
             DEBUG_REGS   yLOG_note    ("modified is NULL");
          }
@@ -1092,7 +1092,7 @@ EXIM_export             (char a_style)
          /*---(trimmed printable)--------*/
          strltrim (x_trim, ySTR_BOTH, LEN_RECD);
          DEBUG_REGS   yLOG_info    ("printable" , x_trim);
-         DEBUG_REGS   yLOG_info    ("modified"  , x_full);
+         DEBUG_REGS   yLOG_info    ("modified"  , x_modded);
          DEBUG_REGS   yLOG_note    ("handle");
          switch (a_style) {
          case 'v' : fprintf (f, "%s"                  , x_print);
@@ -1102,7 +1102,7 @@ EXIM_export             (char a_style)
          case 'V' : fprintf (f, "%s "                 , x_trim);
                     break;
          case 'm' :
-         case 'M' : fprintf (f, "%s"                  , x_full);
+         case 'M' : fprintf (f, "%s"                  , x_modded);
                     break;
          case 'c' : fprintf (f, "\"%s\","             , x_trim);
                     break;

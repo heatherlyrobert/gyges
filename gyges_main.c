@@ -30,7 +30,7 @@ main (int argc, char *argv[])
    /*> x_dur.tv_sec    = 0;                                                           <* 
     *> x_dur.tv_nsec   = 0.5 * 1000000;                                               <*/
    /*---(main-loop)----------------------*/
-   yVIKEYS_main (0.5);
+   yVIKEYS_main_curses ("10ms", "10cs");
    /*> DEBUG_TOPS   yLOG_note    ("entering main processing loop");                   <*/
    /*> DEBUG_TOPS   yLOG_break   ();                                                  <*/
    /*> while (g_done) {                                                               <* 
