@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2f"
-#define     VER_TXT   "uses new delay/update version of yVIKEYS main loop.  success."
+#define     VER_NUM   "3.2g"
+#define     VER_TXT   "cleaned up main and put into keyboard-activation looping"
 
 
 
