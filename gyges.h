@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2g"
-#define     VER_TXT   "cleaned up main and put into keyboard-activation looping"
+#define     VER_NUM   "3.2h"
+#define     VER_TXT   "updated to handle new shrike font properly"
 
 
 
@@ -855,6 +855,7 @@ extern char    sta_error;
 extern char    special;
 
 extern char      g_empty    [200];
+extern char      g_spaces   [200];
 extern char      g_dashes   [200];
 
 extern char      ver_ctrl;
@@ -869,19 +870,6 @@ int     col_header;
 int     col_far;
 
 
-/*> #define     G_KEY_RETURN      10                                                  <*/
-/*> #define     G_KEY_ESCAPE      27                                                  <*/
-/*> #define     G_KEY_TAB          9                                                  <*/
-/*> #define     G_KEY_BS         127                                                  <*/
-/*> #define     G_KEY_SPACE       32                                                  <*/
-/*> #define     G_KEY_DEL          8                                                  <*/
-/*> #define     K_NULL         0                                                      <*/
-/*> #define     K_SQUOTE      39                                                      <*/
-/*> #define     G_KEY_DQUOTE      34                                                  <*/
-/*> #define     G_KEY_BSLASH      92                                                  <*/
-
-/*> #define     G_KEY_GROUP       29                                                  <*/
-/*> #define     G_KEY_FIELD       31                                                  <*/
 
 #define     K_DONE        -1
 
@@ -895,54 +883,6 @@ int     col_far;
 extern      char          unit_answer [LEN_UNIT];
 
 
-
-/*---(character constants)------------*/
-/*---(convert)---------*/
-/*> #define   G_CHAR_RETURN     182   /+ ¶  return/newline   ( 10)   +/               <* 
- *> #define   G_CHAR_ESCAPE     165   /+ ¥  staff            (  -)   +/               <* 
- *> #define   G_CHAR_TAB        187   /+ »  tab              (  9)   +/               <* 
- *> #define   G_CHAR_BS         171   /+ «  backspace        (127)   +/               <* 
- *> #define   G_CHAR_SPACE      183   /+ ·  dot              (  -)   +/               <*/
-/*---(special)---------*/
-/*> #define   G_CHAR_GROUP      185   /+ ¦  double bar       ( 29)   +/               <* 
- *> #define   G_CHAR_FIELD      167   /+ §  field separator  ( 31)   +/               <*/
-/*---(control)---------*/
-/*> #define   G_CHAR_ALT        194   /+ Â  up               (  -)   +/               <* 
- *> #define   G_CHAR_CONTROL    195   /+ Ã  down             (  -)   +/               <* 
- *> #define   G_CHAR_WAIT       186   /+ º  funky mark       (  -)   +/               <* 
- *> #define   G_CHAR_BREAK      191   /+ ¿  lead question    (  -)   +/               <* 
- *> #define   G_CHAR_HALT       177   /+ ±  plus-minus       (  -)   +/               <* 
- *> #define   G_CHAR_DISPLAY    162   /+ ¢  weird d          (  -)   +/               <*/
-/*---(other)-----------*/
-/*> #define   G_CHAR_NULL       188   /+ ¼  null             (  0)   +/               <* 
- *> #define   G_CHAR_PLACE      164   /+ ¤  placeholder      (  -)   +/               <* 
- *> #define   G_CHAR_MARK       174   /+ ®  mark             (  -)   +/               <* 
- *> #define   G_CHAR_DEGREE     176   /+ °  degree mark      (  -)   +/               <*/
-/*---(greek)-----------*/
-/*> #define   G_CHAR_ALPHA      232   /+ è  alpha      A     (  -)   +/               <* 
- *> #define   G_CHAR_BETA       233   /+ é  beta       B     (  -)   +/               <* 
- *> #define   G_CHAR_GAMMA      234   /+ ê  gamma      G     (  -)   +/               <* 
- *> #define   G_CHAR_DELTA      235   /+ ë  delta      D     (  -)   +/               <* 
- *> #define   G_CHAR_EPSILON    236   /+ ì  epsilon    E     (  -)   +/               <* 
- *> #define   G_CHAR_ZETA       237   /+ í  zeta       Z     (  -)   +/               <* 
- *> #define   G_CHAR_ETA        238   /+ î  eta        H     (  -)   +/               <* 
- *> #define   G_CHAR_THETA      239   /+ ï  theta      Y     (  -)   +/               <* 
- *> #define   G_CHAR_IOTA       240   /+ ð  iota       I     (  -)   +/               <* 
- *> #define   G_CHAR_KAPPA      241   /+ ñ  kappa      K     (  -)   +/               <* 
- *> #define   G_CHAR_LAMBDA     242   /+ ò  lambda     L     (  -)   +/               <* 
- *> #define   G_CHAR_MU         243   /+ ó  mu         M     (  -)   +/               <* 
- *> #define   G_CHAR_NU         244   /+ ô  nu         N     (  -)   +/               <* 
- *> #define   G_CHAR_XI         245   /+ õ  xi         X     (  -)   +/               <* 
- *> #define   G_CHAR_OMICRON    246   /+ ö  omicron    O     (  -)   +/               <* 
- *> #define   G_CHAR_PI         247   /+ ÷  pi         P     (  -)   +/               <* 
- *> #define   G_CHAR_RHO        248   /+ ø  rho        R     (  -)   +/               <* 
- *> #define   G_CHAR_SIGMA      249   /+ ù  sigma      S     (  -)   +/               <* 
- *> #define   G_CHAR_TAU        250   /+ ú  tau        T     (  -)   +/               <* 
- *> #define   G_CHAR_UPSILON    251   /+ û  upsilon    U     (  -)   +/               <* 
- *> #define   G_CHAR_PHI        252   /+ ü  phi        H     (  -)   +/               <* 
- *> #define   G_CHAR_CHI        253   /+ ý  chi        C     (  -)   +/               <* 
- *> #define   G_CHAR_PSI        254   /+ þ  psi        Q     (  -)   +/               <* 
- *> #define   G_CHAR_OMEGA      255   /+ ÿ  omega      W     (  -)   +/               <*/
 
 
 /*===[[ PROTOTYPES ]]=====================================*/

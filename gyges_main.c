@@ -23,7 +23,7 @@ main (int argc, char *argv[])
       return -1;
    }
    /*---(main-loop)----------------------*/
-   rc = yVIKEYS_main  ("keys", "every");
+   rc = yVIKEYS_main  ("keys", "every", NULL);
    /*---(wrap-up)------------------------*/
    DRAW_wrap    ();
    PROG_end     ();

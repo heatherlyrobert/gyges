@@ -484,7 +484,7 @@ DRAW_xaxis         (void)
    int         i           = 0;                  /* iterator -- columns       */
    int         w           = 0;                  /* column width              */
    int         wa          = 0;                  /* adjusted column width     */
-   char        x_label     [3]         = "";     /* column lable              */
+   char        x_label     [LEN_LABEL] = "";     /* column label              */
    int         x_pos       = 0;                  /* adjusted column width     */
    char        x_disp      [500]       = "";     /* temporary display message */
    /*---(begin)--------------------------*/
@@ -492,24 +492,22 @@ DRAW_xaxis         (void)
    /*---(begin)--------------------------*/
    yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &x_pref, NULL   , NULL, NULL);
    yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
-   DEBUG_GRAF  yLOG_value   ("x_pref"    , x_pref);
-   DEBUG_GRAF  yLOG_value   ("x_left"    , x_left);
-   DEBUG_GRAF  yLOG_value   ("x_wide"    , x_wide);
-   DEBUG_GRAF  yLOG_value   ("x_bott"    , x_bott);
+   DEBUG_GRAF  yLOG_complex ("yaxis"     , "%3d wide", x_pref);
+   DEBUG_GRAF  yLOG_complex ("xaxis"     , "%3d left, %3d wide, %3d bott", x_left, x_wide, x_bott);
    x_pos = x_pref;
-   sprintf (x_disp, "¹¹%c¹¹     ", TAB_label (CTAB));
+   sprintf (x_disp, "··%c··     ", TAB_label (CTAB));
    mvprintw (x_bott, x_left, "%*.*s", x_pos, x_pos, x_disp);
+   DEBUG_GRAF  yLOG_complex ("pos"       , "%3d ncol, %3d bcol, %3d ecol", NCOL, BCOL, ECOL);
    for (i = BCOL; i <=  ECOL; ++i) {
       if (i >= NCOL) break;
       /*---(prepare)---------------------*/
       w     = COL_width (CTAB, i);
       wa    = w - 4;
       COL_label (CTAB, i, x_label);
-      DEBUG_GRAF  yLOG_value   (x_label     , w);
-      DEBUG_GRAF  yLOG_value   ("x_pos"       , x_pos);
       /*---(output)----------------------*/
       snprintf (x_disp, 500, "\[%*.*s%s\]", wa, wa, g_dashes, x_label);
-      DEBUG_GRAF  yLOG_info    ("x_disp"      , x_disp);
+      if (x_disp [5] == '-')  x_disp [5] = G_CHAR_SPACE; 
+      DEBUG_GRAF  yLOG_complex (x_label     , "%3d wide, %3d adjd, %3d xpos, %s", w, wa, x_pos, x_disp);
       CURS_col_color  (i);
       mvprintw (x_bott, x_pos, x_disp);
       attrset (0);
@@ -526,6 +524,7 @@ DRAW_xaxis         (void)
          else if (w == 3) snprintf (x_disp, 500, "\[->");
          else             snprintf (x_disp, 500, "\[%*.*s%s>", wa, wa, g_dashes, x_label);
       } else              snprintf (x_disp, 500, "%*.*s ", w, w, g_empty);
+      DEBUG_GRAF  yLOG_complex (x_label     , "%3d wide, %3d adjd, %3d xpos, %s", w, wa, x_pos, x_disp);
       CURS_col_color  (ECOL + 1);
       mvprintw (x_bott, x_pos, x_disp);
       attrset (0);
@@ -1480,7 +1479,7 @@ DRAW_init          (void)
 {
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
-   yVIKEYS_view_moderate (YVIKEYS_MAIN     , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
+   yVIKEYS_view_basic    (YVIKEYS_MAIN     , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
    yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
    yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0             , DRAW_xaxis  );
    yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0             , DRAW_yaxis  );
