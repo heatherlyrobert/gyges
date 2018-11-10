@@ -143,9 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2h"
-#define     VER_TXT   "updated to handle new shrike font properly"
-
+#define     VER_NUM   "3.2i"
+#define     VER_TXT   "fixed all basic copy/paste (y, Y, p) unit tests"
 
 
 
@@ -1565,6 +1564,8 @@ char        api_ycalc_special       (void *a_owner, char a_what, double *a_value
 
 char        api_ycalc_printer       (void *a_owner);
 
+/*345678901 12345678901 12345678901 12345678901 12345678901 12345678901 123456*/
+char*       api_ycalc__unit         (char *a_question, char *a_label);
 
 
 /*===[[ gyges_yvikeys.c ]]====================================================*/

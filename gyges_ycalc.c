@@ -114,6 +114,7 @@ api_ycalc_reaper        (void **a_owner)
       return rce;
    }
    /*---(check type)---------------------*/
+   DEBUG_APIS   yLOG_info    ("label"     , x_owner->label);
    DEBUG_APIS   yLOG_char    ("type"      , x_owner->t);
    --rce;  if (x_owner->t != YCALC_DATA_BLANK) {
       DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
@@ -311,8 +312,8 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
       if        (x_owner->t     == 'E') {
          *a_string   = s_nada;
       } else if (x_owner->t     == 's'){
-          if (x_owner->s != NULL)  *a_string = x_owner->s;
-          else                     *a_string = s_nada;
+         if (x_owner->s != NULL)  *a_string = x_owner->s;
+         else                     *a_string = s_nada;
       } else if (x_owner->v_str != NULL) {
          *a_string = x_owner->v_str;
       } else {
@@ -514,6 +515,10 @@ api_ycalc_printer       (void *a_owner)
    /*---(get size)-----------------------*/
    api__ycalc_width (x_owner, &w, &c);
    DEBUG_APIS   yLOG_value   ("w"         , w);
+   --rce;  if (w <= 0) {
+      DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    DEBUG_APIS   yLOG_value   ("c"         , c);
    /*---(contents)-----------------------*/
    if (strchr (YCALC_GROUP_NUM, x_owner->t) != NULL) {
@@ -571,6 +576,80 @@ api_ycalc_printer       (void *a_owner)
    /*---(complete)-----------------------*/
    DEBUG_APIS   yLOG_exit    (__FUNCTION__);
    return 0;
+}
+
+char*        /*-> unit testing accessor --------------[ light  [us.IA0.2A5.X3]*/ /*-[02.0000.00#.#]-*/ /*-[--.---.---.--]-*/
+api_ycalc__unit    (char *a_question, char *a_label)
+{  /*---(design notes)--------------------------------------------------------*/
+   /*
+    *  i formerly used cell pointers as the second argument, but it was hugely
+    *  problematic when testing cells that are created and destroyed regularly.
+    *  switching to labels adds an enormous safety factor and takes complexity
+    *  out of the unit testing script.  more safety, more resilience, all good.
+    */
+   /*---(locals)-----------+-----+-----+-*/
+   int         len         = 0;
+   tCELL      *x_cell      = NULL;
+   char        rc          = 0;
+   int         x_tab       = 0;
+   int         x_col       = 0;
+   int         x_row       = 0;
+   int         x_count     =    0;
+   char        x_list      [LEN_RECD];
+   /*---(preprare)-----------------------*/
+   strcpy  (unit_answer, "ycalc error      : question not understood");
+   /*---(identify the cell pointer)------*/
+   if (a_label == NULL || strcmp ("root", a_label) == 0) {
+      /*> x_cell = s_root;                                                            <*/
+      sprintf (unit_answer, "ycalc error      : can not call on dependency s_root");
+      return unit_answer;
+   } else {
+      rc     = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+      if (rc < 0) {
+         sprintf (unit_answer, "ycalc error      : label <%s> not legal", a_label);
+         return unit_answer;
+      }
+      rc     = LOC_legal (x_col, x_row, x_tab, CELL_FIXED);
+      if (rc < 0) {
+         sprintf (unit_answer, "ycalc error      : label <%s> not in-range", a_label);
+         return unit_answer;
+      }
+      x_cell = LOC_cell_at_loc  (x_col, x_row, x_tab);
+      /*> if (x_cell == NULL) {                                                         <* 
+       *>    sprintf (unit_answer, "s_celln          : label <%s> is NULL", a_label);   <* 
+       *>    return unit_answer;                                                        <* 
+       *> }                                                                             <*/
+   }
+   /*---(ycalc information)--------------*/
+   if (strcmp(a_question, "ycalc_rpn"    )  == 0) {
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (----) - -");
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (----) %c -", x_cell->t);
+      else {
+         yCALC_show_rpn  (x_cell->ycalc, &x_count, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (%4d) %c ."     , 0, x_cell->t);
+         else                          snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (%4d) %c %s"    , x_count, x_cell->t, x_list);
+      }
+   }
+   if (strcmp(a_question, "ycalc_reqs"   )  == 0) {
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (----) -");
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (----) -");
+      else {
+         yCALC_show_reqs (x_cell->ycalc, &x_count, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (%4d) ."     , 0);
+         else                          snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (%4d) %s"    , x_count, x_list);
+      }
+   }
+   if (strcmp(a_question, "ycalc_pros"   )  == 0) {
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (----) -");
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (----) -");
+      else {
+         yCALC_show_pros (x_cell->ycalc, &x_count, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (%4d) ."     , 0);
+         else                          snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (%4d) %s"    , x_count, x_list);
+      }
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
 }
 
 
