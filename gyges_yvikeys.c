@@ -454,11 +454,14 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    char        x_source    [LEN_RECD]   = "";
    char        x_bformat   [LEN_RECD]   = "";
    tCELL      *x_copy      = NULL;
+   char        x_label     [LEN_LABEL]  = "";
    char        x_list      [LEN_RECD]   = "";
    char       *p           = NULL;               /* pointer for providers     */
    char       *q           = ",";                /* delimiter for providers   */
    char       *s           = NULL;               /* context for providers     */
    tCELL      *x_provider  = NULL;               /* provider cell to adjust   */
+   tCELL      *x_original  = NULL;
+   int         x_nreq, x_npro;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_reqs"    , a_reqs);
@@ -504,7 +507,6 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    strcpy (x_source, "");
    if (strchr (YCALC_GROUP_RPN, a_cell->t) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-      /*> rc = RPN_adjust_reg (a_cell, a_reqs, a_zoff, a_xoff, a_yoff, x_source, s_index);   <*/
       rc = yRPN_adjust_reqs (a_cell->s, a_reqs, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
@@ -521,14 +523,29 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    if (a_1st == 'y')  x_copy = CELL_overwrite (CHG_OVER   , x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (CHG_OVERAND, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    /*---(providers)----------------------*/
+   DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");
+   DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
    if (a_pros == G_RPN_IGNORE || a_pros == G_RPN_PNONE) {
       DEBUG_REGS   yLOG_note    ("provider updates not requested");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");
-   yCALC_disp_pros (LOC_cell_at_loc (x_scol, x_srow, x_stab), x_list);
+   DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
+   x_original = LOC_cell_at_loc (x_scol, x_srow, x_stab);
+   DEBUG_REGS   yLOG_point   ("x_original", x_original);
+   if (x_original == NULL) {
+      DEBUG_REGS   yLOG_note    ("no cell at original location");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   strlcpy (x_label, x_original->label, LEN_LABEL);
+   DEBUG_REGS   yLOG_info    ("label"     , x_label);
+   yCALC_show_reqs (x_original->ycalc, &x_nreq, NULL);
+   DEBUG_REGS   yLOG_value   ("nreq"      , x_nreq);
+   yCALC_show_pros (x_original->ycalc, &x_npro, x_list);
+   DEBUG_REGS   yLOG_value   ("npro"      , x_npro);
    DEBUG_REGS   yLOG_info    ("x_list"    , x_list);
+   DEBUG_REGS   yLOG_complex ("x_original", "%s, nreq=%d, npro=%d", x_label, x_nreq, x_npro);
    if (strchr ("-.", x_list [0]) != NULL) {
       DEBUG_REGS   yLOG_note    ("no providers identified");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -547,7 +564,6 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
          if (rc == 0) {
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->s);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            /*> rc = RPN_adjust_ref (x_provider, a_pros, a_zoff, a_xoff, a_yoff, x_source, a_cell->label);   <*/
             rc = yRPN_adjust_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);

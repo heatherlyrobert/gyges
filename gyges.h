@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2j"
-#define     VER_TXT   "reworked all basic copy/paste (y, Y, p) unit tests into better format"
+#define     VER_NUM   "3.2k"
+#define     VER_TXT   "fixed cut/paste (move/force) provider changes bug"
 
 
 
