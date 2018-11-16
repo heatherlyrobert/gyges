@@ -1169,22 +1169,22 @@ FILE_unit          (char *a_question, int a_ref)
       snprintf (unit_answer, LEN_UNIT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, 'y', x_name);
    } else if (strcmp (a_question, "tab_count" )    == 0) {
       snprintf (unit_answer, LEN_UNIT, "s_file tab count : ntab=%4d", MAX_TABS);
-   } else if (strcmp (a_question, "history"   )    == 0) {
-      if      (nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", nhist, chist);
-      if      (chist <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", nhist, chist);
-      else                      snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, %s" , nhist, chist, hist[chist].act);
-   } else if (strcmp (a_question, "entry"     )    == 0) {
-      if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too small", a_ref);
-      else if (a_ref >= nhist)  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too large", a_ref);
-      else                      snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d, t=%4d, c=%4d, r=%4d, %s", a_ref, hist[a_ref].btab, hist[a_ref].bcol, hist[a_ref].brow, hist[a_ref].act);
-   } else if (strcmp (a_question, "before"    )    == 0) {
-      if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d too small", a_ref);
-      else if (a_ref >= nhist)  snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d too large", a_ref);
-      else                      snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d :%s:", a_ref, hist[a_ref].before);
-   } else if (strcmp (a_question, "after"     )    == 0) {
-      if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too small", a_ref);
-      else if (a_ref >= nhist)  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too large", a_ref);
-      else                      snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d :%s:", a_ref, hist[a_ref].after);
+   /*> } else if (strcmp (a_question, "history"   )    == 0) {                                                                                   <* 
+    *>    if      (s_nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
+    *>    if      (s_chist <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
+    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, %s" , s_nhist, s_chist, s_hist[s_chist].act);   <*/
+   /*> } else if (strcmp (a_question, "entry"     )    == 0) {                                                                                                                                                   <* 
+    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too small", a_ref);                                                                                                 <* 
+    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too large", a_ref);                                                                                                 <* 
+    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d, t=%4d, c=%4d, r=%4d, %s", a_ref, s_hist[a_ref].btab, s_hist[a_ref].bcol, s_hist[a_ref].brow, s_hist[a_ref].act);   <*/
+   /*> } else if (strcmp (a_question, "before"    )    == 0) {                                                                      <* 
+    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d too small", a_ref);                    <* 
+    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d too large", a_ref);                    <* 
+    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d :%s:", a_ref, s_hist[a_ref].before);   <*/
+   /*> } else if (strcmp (a_question, "after"     )    == 0) {                                                                     <* 
+    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too small", a_ref);                   <* 
+    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too large", a_ref);                   <* 
+    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d :%s:", a_ref, s_hist[a_ref].after);   <*/
    }
    /*---(complete)-----------------------*/
    return unit_answer;

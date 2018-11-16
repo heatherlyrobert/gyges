@@ -2504,6 +2504,12 @@ SHARED        v21  (A) common setup and verification for cut/copy testing     
      exec     v21  add top-right requires relative      CELL_change           NULL, CHG_INPUT, 0,  4,  1, "=d3-16"                                    i_pass      0                                                                                                    
      exec     v21  add bottom-right requires absolute   CELL_change           NULL, CHG_INPUT, 0,  4,  3, "=$d$3+4"                                   i_pass      0                                                                                                    
 
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
+SHARED        v21  (B) common initial state verification for cut/paste testing  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  check the secondary group                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  core cell                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -2605,25 +2611,25 @@ SHARED        v21  (A) common setup and verification for cut/copy testing     
    GROUP      v21  check the future inner group                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  provides relative value to 0d6                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c5  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0c5"                                                s_equal     ycalc reqs       : (----) -                                                                      
+     get      v21  0c5  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0c5"                                                s_equal     ycalc rpn        : (----) - -                                                                    
      get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c5"                                                s_equal     ycalc reqs       : (----) -                                                                      
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c5"                                                s_equal     ycalc pros       : (----) -                                                                      
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c5"                                                s_equal     s_celln value    :         ---.------                                                                
 
    COND       v21  provides absolute value to 0d6                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c7  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0c7"                                                s_equal     ycalc reqs       : (----) -                                                                      
+     get      v21  0c7  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0c7"                                                s_equal     ycalc rpn        : (----) - -                                                                    
      get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c7"                                                s_equal     ycalc reqs       : (----) -                                                                      
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c7"                                                s_equal     ycalc pros       : (----) -                                                                      
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c7"                                                s_equal     s_celln value    :         ---.------                                                                
 
    COND       v21  requires relative value from 0d6                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0e5  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0e5"                                                s_equal     ycalc reqs       : (----) -                                                                      
+     get      v21  0e5  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0e5"                                                s_equal     ycalc rpn        : (----) - -                                                                    
      get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e5"                                                s_equal     ycalc reqs       : (----) -                                                                      
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e5"                                                s_equal     ycalc pros       : (----) -                                                                      
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e5"                                                s_equal     s_celln value    :         ---.------                                                                
 
    COND       v21  requires absolute value from 0d3                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0e7  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0e7"                                                s_equal     ycalc reqs       : (----) -                                                                      
+     get      v21  0e7  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0e7"                                                s_equal     ycalc rpn        : (----) - -                                                                    
      get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e7"                                                s_equal     ycalc reqs       : (----) -                                                                      
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (----) -                                                                      
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :         ---.------                                                                
@@ -2632,168 +2638,7 @@ SHARED        v21  (A) common setup and verification for cut/copy testing     
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
-SCRP          v21  (REG   ) verify complex move [34] copy action (no paste)     REG_copy                                                                ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
-
-   USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   GROUP      v21  conduct copy action                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··y"                                               i_equal     0                                                                                                    
-
-   GROUP      v21  check the secondary group           (NO IMPACT)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  core cell                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0d7  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0d7"                                                s_equal     ycalc rpn        : (   3) = 0g8,5,*                                                                  
-     get      v21  .... requires                        api_ycalc__unit       "ycalc_reqs"     , "0d7"                                                s_equal     ycalc reqs       : (   1) ,0g8,                                                                  
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0d7"                                                s_equal     ycalc pros       : (   2) ,0a6,0d3,                                                              
-     get      v21  .... value                           CELL__unitnew         "cell_value"     , "0d7"                                                s_equal     s_celln value    :         -15.000000                                                                
-
-   COND       v21  provides relative value to 0d7                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0g8  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0g8"                                                s_equal     ycalc rpn        : (   0) n .                                                                        
-     get      v21  .... requires                        api_ycalc__unit       "ycalc_reqs"     , "0g8"                                                s_equal     ycalc reqs       : (   0) .                                                                      
-     get      v21  .... provides                        api_ycalc__unit       "ycalc_pros"     , "0g8"                                                s_equal     ycalc pros       : (   1) ,0d7,                                                                  
-     get      v21  .... value                           CELL__unitnew         "cell_value"     , "0g8"                                                s_equal     s_celln value    :          -3.000000                                                                
-
-   COND       v21  requires relative value from 0d7                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0a6  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0a6"                                                s_equal     ycalc rpn        : (   3) = 0d7,10,-                                                                 
-     get      v21  .... requires                        api_ycalc__unit       "ycalc_reqs"     , "0a6"                                                s_equal     ycalc reqs       : (   1) ,0d7,                                                                  
-     get      v21  .... provides                        api_ycalc__unit       "ycalc_pros"     , "0a6"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
-     get      v21  .... value                           CELL__unitnew         "cell_value"     , "0a6"                                                s_equal     s_celln value    :         -25.000000                                                                
-
-   GROUP      v21  check the primary group             (NO IMPACT)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  core formula cell                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0d3  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0d3"                                                s_equal     ycalc rpn        : (   9) = 0$g$5,0g3,*,0d7,+,0c2,+,0$c$4,+                                          
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0d3"                                                s_equal     ycalc reqs       : (   5) ,0c2,0c4,0d7,0g3,0g5,                                                  
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0d3"                                                s_equal     ycalc pros       : (   4) ,0a3,0c1,0e2,0e4,                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0d3"                                                s_equal     s_celln value    :        -199.000000                                                                
-
-   COND       v21  provides relative value to 0d3                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0g3  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0g3"                                                s_equal     ycalc rpn        : (   0) n .                                                                          
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0g3"                                                s_equal     ycalc reqs       : (   0) .                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0g3"                                                s_equal     ycalc pros       : (   1) ,0d3,                                                                  
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0g3"                                                s_equal     s_celln value    :          92.000000                                                                
-
-   COND       v21  provides absolute value to 0d3                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0g5  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0g5"                                                s_equal     ycalc rpn        : (   0) n .                                                                        
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0g5"                                                s_equal     ycalc reqs       : (   0) .                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0g5"                                                s_equal     ycalc pros       : (   1) ,0d3,                                                                  
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0g5"                                                s_equal     s_celln value    :          -2.000000                                                                
-
-   COND       v21  requires relative value from 0d3                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0a3  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0a3"                                                s_equal     ycalc rpn        : (   3) = 0d3,5,+                                                                  
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0a3"                                                s_equal     ycalc reqs       : (   1) ,0d3,                                                                  
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0a3"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0a3"                                                s_equal     s_celln value    :        -194.000000                                                                
-
-   COND       v21  requires absolute value from 0d3                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c1  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0c1"                                                s_equal     ycalc rpn        : (   3) = 0$d$3,2,*                                                                
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c1"                                                s_equal     ycalc reqs       : (   1) ,0d3,                                                                  
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c1"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c1"                                                s_equal     s_celln value    :        -398.000000                                                                
-
-   GROUP      v21  check the inner group               (NO IMPACT)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  provides relative value to 0d3                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c2  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0c2"                                                s_equal     ycalc rpn        : (   0) n .                                                                        
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c2"                                                s_equal     ycalc reqs       : (   0) .                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c2"                                                s_equal     ycalc pros       : (   1) ,0d3,                                                                  
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c2"                                                s_equal     s_celln value    :          10.000000                                                                
-
-   COND       v21  provides absolute value to 0d3                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c4  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0c4"                                                s_equal     ycalc rpn        : (   0) n .                                                                        
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c4"                                                s_equal     ycalc reqs       : (   0) .                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c4"                                                s_equal     ycalc pros       : (   1) ,0d3,                                                                  
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c4"                                                s_equal     s_celln value    :         -10.000000                                                                
-
-   COND       v21  requires relative value from 0d3                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0e2  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0e2"                                                s_equal     ycalc rpn        : (   3) = 0d3,16,-                                                                 
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e2"                                                s_equal     ycalc reqs       : (   1) ,0d3,                                                                  
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e2"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e4"                                                s_equal     s_celln value    :        -195.000000                                                                
-
-   COND       v21  requires absolute value from 0d3                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0e4  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0e4"                                                s_equal     ycalc rpn        : (   3) = 0$d$3,4,+                                                                
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e4"                                                s_equal     ycalc reqs       : (   1) ,0d3,                                                                  
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e4"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e2"                                                s_equal     s_celln value    :        -215.000000                                                                
-
-   GROUP      v21  check the future group              (NO IMPACT)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  new core formula cell                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0d6  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0d6"                                                s_equal     ycalc rpn        : (----) n -                                                                        
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0d6"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0d6"                                                s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0d6"                                                s_equal     s_celln value    :           0.000000                                                                
-
-   COND       v21  provides relative value to 0d6                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0g6  rpn                             api_ycalc__unit       "ycalc_rpn"      , "0g6"                                                s_equal     ycalc rpn        : (----) n -                                                                        
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0g6"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0g6"                                                s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0g6"                                                s_equal     s_celln value    :          46.000000                                                                
-
-   COND       v21  provides relative value to 0d6                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0d10 rpn                             api_ycalc__unit       "ycalc_rpn"      , "0d10"                                               s_equal     ycalc rpn        : (----) n -                                                                        
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0d10"                                               s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0d10"                                               s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0d10"                                               s_equal     s_celln value    :         -12.000000                                                                
-
-   GROUP      v21  check the future inner group        (NO IMPACT)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  provides relative value to 0d6                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c5  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0c5"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c5"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c5"                                                s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c5"                                                s_equal     s_celln value    :         ---.------                                                                
-
-   COND       v21  provides absolute value to 0d6                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0c7  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0c7"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0c7"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0c7"                                                s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0c7"                                                s_equal     s_celln value    :         ---.------                                                                
-
-   COND       v21  requires relative value from 0d6                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0e5  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0e5"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e5"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e5"                                                s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e5"                                                s_equal     s_celln value    :         ---.------                                                                
-
-   COND       v21  requires absolute value from 0d3                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     get      v21  0e7  rpn                             api_ycalc__unit       "ycalc_reqs"     , "0e7"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e7"                                                s_equal     ycalc reqs       : (----) -                                                                      
-     get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (----) -                                                                      
-     get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :         ---.------                                                                
-
-   GROUP      v21  test complete                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
-
-
-
-#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
-#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
-SCRP          v21  (REG   ) verify complex move [00] cut action (no paste)      REG_cut                                                                 ((09.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
-
-   USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   GROUP      v21  conduct cut/delete actions                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  select the inner range and cut                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··Y"                                               i_equal     0                                                                                                    
+SHARED        v21  (C) common checking after yank operation for cut/paste       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    GROUP      v21  check the secondary group                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -2919,34 +2764,11 @@ SCRP          v21  (REG   ) verify complex move [00] cut action (no paste)    
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (----) -                                                                      
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :         ---.------                                                                
 
-   GROUP      v21  test complete                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
-
 
 
 #23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
 #==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
-SCRP          v21  (REG   ) verify complex move [28] copy/paste merge NORMAL    REG_copy, REG_paste                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
-     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
-     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
-     get      v21  verify position                      yVIKEYS__unit         "map_curr"       , 0                                                    s_equal     yVIKEYS map curr :   0x,   0y,   0z                                                               
-
-   USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   GROUP      v21  conduct copy/paste actions                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··y"                                               i_equal     0                                                                                                    
-
-   COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  handle the keys                      yVIKEYS_main_string         "3j··p"                                                           i_equal     0                                                                                                    
+SHARED        v21  (D) end of copy and paste/normal action                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((AA.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    GROUP      v21  check the secondary group                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -3072,6 +2894,117 @@ SCRP          v21  (REG   ) verify complex move [28] copy/paste merge NORMAL  
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :        -195.000000                                                                
 
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
+SCRP          v21  (REG   ) verify complex move [34] copy action (no paste)     REG_copy                                                                ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
+
+   USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  conduct copy action                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··y"                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  test complete                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
+SCRP          v21  (REG   ) verify complex move [00] cut action (no paste)      REG_cut                                                                 ((09.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
+
+   USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  conduct cut/delete actions                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  select the inner range and cut                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··Y"                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request unto                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  test complete                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((09.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                                                    
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
+
+
+
+#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
+#==(verb)===  ver  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
+SCRP          v21  (REG   ) verify complex move [28] copy/paste merge NORMAL    REG_copy, REG_paste                                                     ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                                                    
+     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
+     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
+     get      v21  verify position                      yVIKEYS__unit         "map_curr"       , 0                                                    s_equal     yVIKEYS map curr :   0x,   0y,   0z                                                               
+
+   USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  conduct copy/paste actions                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··y"                                               i_equal     0                                                                                                    
+
+   COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "3j··p"                                                           i_equal     0                                                                                                    
+
+   USE_SHARE  v21  D  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+#   COND       v21  try to undo again                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_lesser    0                                                                                                    
+
+   GROUP      v21  verify redo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request redo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "U"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  D  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+#   COND       v21  try to redo again                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#     exec     v21  handle the keys                      yVIKEYS_main_string         "U"                                                               i_lesser    0                                                                                                    
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3092,6 +3025,8 @@ SCRP          v21  (REG   ) verify complex move [20] copy/paste REPLACE       
 
    USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  conduct copy/paste actions                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3099,10 +3034,6 @@ SCRP          v21  (REG   ) verify complex move [20] copy/paste REPLACE       
 
    COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "3j··Pr"                                                          i_equal     0                                                                                                    
-
-
-
-
 
    GROUP      v21  check the secondary group                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -3228,6 +3159,13 @@ SCRP          v21  (REG   ) verify complex move [20] copy/paste REPLACE       
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :        -180.000000                                                                
 
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3248,10 +3186,14 @@ SCRP          v21  (REG   ) verify complex move [12] cut/paste merge action   
 
    USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  conduct cut/paste actions                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··Y"                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "3j··p"                                                           i_equal     0                                                                                                    
@@ -3380,6 +3322,18 @@ SCRP          v21  (REG   ) verify complex move [12] cut/paste merge action   
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :           4.000000                                                                
 
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                                i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo yank                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                                i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3400,10 +3354,14 @@ SCRP          v21  (REG   ) verify complex move [04] cut/paste replace action 
 
    USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  conduct copy/paste actions                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··Y"                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "3j··Pr"                                                          i_equal     0                                                                                                    
@@ -3532,6 +3490,18 @@ SCRP          v21  (REG   ) verify complex move [04] cut/paste replace action 
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :           4.000000                                                                
 
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                                i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo yank                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                                i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3551,6 +3521,8 @@ SCRP          v21  (REG   ) verify complex move [32] copy/paste DUPLICATE     
      get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
    USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    GROUP      v21  conduct copy/paste test                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -3684,6 +3656,13 @@ SCRP          v21  (REG   ) verify complex move [32] copy/paste DUPLICATE     
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :        -180.000000                                                                
 
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((14.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3704,10 +3683,14 @@ SCRP          v21  (REG   ) verify complex move [03] cut/move replace MOVE    
 
    USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  conduct copy/paste test                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··Y"                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "3j··Pm"                                                          i_equal     0                                                                                                    
@@ -3836,6 +3819,18 @@ SCRP          v21  (REG   ) verify complex move [03] cut/move replace MOVE    
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :        -100.000000                                                                
 
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo yank                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((13.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -3856,13 +3851,19 @@ SCRP          v21  (REG   ) verify complex move [02] cut/move replace FORCE   
 
    USE_SHARE  v21  A  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    GROUP      v21  conduct copy/paste test                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  select the inner range and copy                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "¥¥0_··2ljv2j2l··Y"                                               i_equal     0                                                                                                    
 
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
    COND       v21  paste to the new location                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  handle the keys                      yVIKEYS_main_string         "3j··Pf"                                                          i_equal     0                                                                                                    
+
+   REPEATER   v21  check the secondary group                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    GROUP      v21  check the secondary group                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -3987,6 +3988,18 @@ SCRP          v21  (REG   ) verify complex move [02] cut/move replace FORCE   
      get      v21  ...  requires                        api_ycalc__unit       "ycalc_reqs"     , "0e7"                                                s_equal     ycalc reqs       : (   1) ,0d6,                                                                  
      get      v21  ...  provides                        api_ycalc__unit       "ycalc_pros"     , "0e7"                                                s_equal     ycalc pros       : (   1) ,ROOT,                                                                 
      get      v21  ...  value                           CELL__unitnew         "cell_value"     , "0e7"                                                s_equal     s_celln value    :        -100.000000                                                                
+
+   GROUP      v21  verify undo working properly                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo paste                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  C  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+
+   COND       v21  request undo yank                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     v21  handle the keys                      yVIKEYS_main_string         "u"                                                               i_equal     0                                                                                                    
+
+   USE_SHARE  v21  B  - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 

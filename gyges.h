@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2k"
-#define     VER_TXT   "fixed cut/paste (move/force) provider changes bug"
+#define     VER_NUM   "3.2l"
+#define     VER_TXT   "improved map history and got undo/redo working on cut/copies"
 
 
 
@@ -689,21 +689,6 @@ tTAB    *p_tab;                        /* current tab pointer                 */
 
 
 
-
-
-#define     MAX_HIST    100000
-struct cHIST {
-   char        act         [15];
-   int         btab;
-   int         bcol;
-   int         brow;
-   char        before      [LEN_RECD];
-   char        after       [LEN_RECD];
-};
-tHIST       hist        [MAX_HIST];
-int         nhist;
-int         chist;
-char        hist_active;
 
 
 
@@ -1319,9 +1304,17 @@ char        CELL__unitchange     (tCELL *a_cell, char *a_source);
 
 
 char        HIST_init          (void);
-char        HIST_change        (char *a_type, int a_tab, int a_col, int a_row, char *a_before, char *a_after);
-char        HIST_format        (char *a_type, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
-char        HIST_size          (char *a_type, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
+
+char        HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF, char *a_after);
+char        HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF);
+char        HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
+char        HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
+
+char        HIST_decimals      (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
+char        HIST_align         (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
+char        HIST_format        (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
+char        HIST_width         (char a_mode, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
+
 char        HIST_list          (void);
 char        HIST_undo          (void);
 char        HIST_redo          (void);
@@ -1447,11 +1440,16 @@ char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int 
 char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
 char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
 
-#define   CHG_INPUT          'i'
-#define   CHG_INPUTAND       'A'
-#define   CHG_OVER           '#'
-#define   CHG_OVERAND        '&'
-#define   CHG_NOHIST         'x'
+
+#define     HIST_BEG           'y'
+#define     HIST_ADD           '-'
+#define     HIST_NONE          'x'
+
+#define     CHG_INPUT          'i'
+#define     CHG_INPUTAND       'A'
+#define     CHG_OVER           '#'
+#define     CHG_OVERAND        '&'
+#define     CHG_NOHIST         'x'
 
 
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);

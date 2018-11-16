@@ -230,7 +230,7 @@ PROG_final         (void)
    /*> INPT_main         ();                                                          <*/
    /*> CURS_screen_reset ();                                                          <*/
    yCALC_calculate   ();
-   hist_active = 'y';
+   HIST_init ();
    /*---(status options)-----------------*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
    yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );
@@ -247,7 +247,7 @@ PROG_final         (void)
    yVIKEYS_mode_formatter (api_yvikeys_format);
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
-   HIST_init ();
+   yVIKEYS_cmds_add      ('a', "hist"        , ""    , ""     , HIST_list                  , "" );
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

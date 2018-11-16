@@ -381,7 +381,7 @@ PRIV void  o___SPECIFIC________o () { return; }
  *>     *>    MARK_status (msg);                                                          <*                                                                                       <* 
  *>     *>    break;                                                                      <+/                                                                                      <* 
  *>    case G_STATUS_HISTORY  :                                                                                                                                                    <* 
- *>       snprintf (msg, 500, "[ nhist : %4d, chist : %4d, top : %s ]", nhist, chist, hist [chist].act);                                                                           <* 
+ *>       snprintf (msg, 500, "[ s_nhist : %4d, s_chist : %4d, top : %s ]", s_nhist, s_chist, s_hist [s_chist].act);                                                                           <* 
  *>       break;                                                                                                                                                                   <* 
  *>    /+> case G_STATUS_MODELIST :                                                       <*                                                                                       <* 
  *>     *>    yVIKEYS_mode_list (msg);                                                    <*                                                                                       <* 
