@@ -505,21 +505,21 @@ HIST_redo          (void)
          return rc;
       }
       /*---(update position)-------------*/
-      ++s_chist;
       DEBUG_HIST  yLOG_value   ("s_chist"     , s_chist);
-      if (s_chist >= s_nhist) {
+      if (s_chist >= s_nhist - 1) {
          DEBUG_HIST  yLOG_note    ("hit end of of history, done");
          s_chist = s_nhist - 1;
          break;
       }
       /*---(check for breakpoint)--------*/
-      x_mode = s_hist [s_chist].mode;
+      x_mode = s_hist [s_chist + 1].mode;
       DEBUG_HIST  yLOG_char    ("curr mode" , x_mode);
       if (x_mode == HIST_BEG) {
          DEBUG_HIST  yLOG_note    ("hit end of undo chain, done");
          break;
       }
       /*---(next)------------------------*/
+      ++s_chist;
    }
    /*---(reset)--------------------------*/
    hist_active = 'y';

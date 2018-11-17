@@ -143,8 +143,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2l"
-#define     VER_TXT   "improved map history and got undo/redo working on cut/copies"
+#define     VER_NUM   "3.2m"
+#define     VER_TXT   "all unit tests on map-mode copy/cut/paste with undo/redo are successful"
 
 
 
