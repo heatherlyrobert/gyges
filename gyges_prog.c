@@ -101,16 +101,13 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version    ());
    DEBUG_TOPS   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
    DEBUG_TOPS   yLOG_info     ("yCALC"   , yCALC_version   ());
+   DEBUG_TOPS   yLOG_info     ("yPARSE"  , yPARSE_version  ());
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    yVIKEYS_init         ();
    if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
-   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_DEPCEL , OUTP_cell_dep  , INPT_cell);
-   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_FREECEL, OUTP_cell_free , INPT_cell);
-   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_TABS   , TABS_writer_all, TABS_reader);
-   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_COLS   , COLS_writer_all, COLS_reader);
-   if (rc == 0)  rc = yVIKEYS_file_add     (FILE_ROWS   , ROWS_writer_all, ROWS_reader);
+   FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
    if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
@@ -510,11 +507,11 @@ PROG__unitquiet     (void)
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unitloud      (void)
 {
-   char       *x_args [5]  = { "gyges_unit", "@@kitchen", "@@LOCS", "@@rpn", "@@yrpn"    };
-   yURG_logger (5, x_args);
-   yURG_urgs   (5, x_args);
-   PROG_init   (5, x_args);
-   PROG_args   (5, x_args);
+   char       *x_args [6]  = { "gyges_unit", "@@kitchen", "@@LOCS", "@@rpn", "@@yrpn", "@@yparse"    };
+   yURG_logger (6, x_args);
+   yURG_urgs   (6, x_args);
+   PROG_init   (6, x_args);
+   PROG_args   (6, x_args);
    PROG_begin  ();
    return 0;
 }

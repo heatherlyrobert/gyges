@@ -820,10 +820,12 @@ LOC_parse         (
    }
    /*> printf ("x_tab = %d\n", x_tab);                                                <*/
    --rce;  if (x_tab + 1 <  MIN_TABS) {
+      DEBUG_LOCS_M   yLOG_note    ("tab less than min");
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_tab + 1 >  MAX_TABS) {
+      DEBUG_LOCS_M   yLOG_note    ("tab greater than max");
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -857,10 +859,12 @@ LOC_parse         (
    --x_col;
    /*> printf ("x_col = %d\n", x_col);                                                <*/
    --rce;  if (x_col + 1 <  MIN_COLS) {
+      DEBUG_LOCS_M   yLOG_note    ("col less than min");
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_col + 1 >  MAX_COLS) {
+      DEBUG_LOCS_M   yLOG_note    ("col greater than max");
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -893,10 +897,12 @@ LOC_parse         (
    --x_row;
    /*> printf ("x_row = %d\n", x_row);                                                <*/
    --rce;  if (x_row + 1 <  MIN_ROWS) {
+      DEBUG_LOCS_M   yLOG_note    ("row less than min");
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_row + 1 >  MAX_ROWS) {
+      DEBUG_LOCS_M   yLOG_note    ("row greater than max");
       DEBUG_LOCS_M   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }

@@ -77,6 +77,36 @@ static FILE    *s_file;                      /* file pointer                   *
 
 
 
+
+char
+FILE_init               (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(handlers)-----------------------*/
+   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );
+   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", COLS_writer_all , COLS_reader     , "------------" , "label,size,count"                     , "gyges cols (x-axis)"      );
+   rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", ROWS_writer_all , ROWS_reader     , "------------" , "label,size,count"                     , "gyges rows (y-axis)"      );
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "TiLTO-------", OUTP_cell_dep   , INPT_cell       , "------------" , "lvl/reg,seq,label,t-f-d-a-m,contents" , "gyges dependent cells"    );
+   rc = yPARSE_handler (FILE_FREECEL , "cell_free" , 5.2, "TiLTO-------", OUTP_cell_free  , INPT_cell       , "------------" , "lvl/reg,seq,label,t-f-d-a-m,contents" , "gyges independent cells"  );
+
+   /*> if (rc == 0)  rc = yVIKEYS_file_add     (FILE_DEPCEL , OUTP_cell_dep  , INPT_cell);     <* 
+    *> if (rc == 0)  rc = yVIKEYS_file_add     (FILE_FREECEL, OUTP_cell_free , INPT_cell);     <* 
+    *> if (rc == 0)  rc = yVIKEYS_file_add     (FILE_TABS   , TABS_writer_all, TABS_reader);   <* 
+    *> if (rc == 0)  rc = yVIKEYS_file_add     (FILE_COLS   , COLS_writer_all, COLS_reader);   <* 
+    *> if (rc == 0)  rc = yVIKEYS_file_add     (FILE_ROWS   , ROWS_writer_all, ROWS_reader);   <*/
+
+   /*> { 'e', FILE_DEPCEL , "dependent cells"    , "cell_dep"  , 'D', "TiaTO-----", "lvl/reg"   , "seq"       , "label"     , "t-f-d-a-m" , "contents"  , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
+    *> { 'e', FILE_FREECEL, "independent cells"  , "cell_free" , 'D', "TiaTO-----", "lvl/reg"   , "seq"       , "label"     , "t-f-d-a-m" , "contents"  , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
+    *> { 'e', FILE_TABS   , "tab (v-axis)"       , "tab"       , 'I', "Naaiiic---", "name"      , "min"       , "max"       , "x_size"    , "y_size"    , "z_size"    , "type"      , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
+    *> { 'e', FILE_COLS   , "columns (x-axis)"   , "width"     , 'D', "aii-------", "label"     , "size"      , "count"     , ""          , ""          , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
+    *> { 'e', FILE_ROWS   , "rows (y-axis)"      , "height"    , 'D', "aii-------", "label"     , "size"      , "count"     , ""          , ""          , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <*/
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
 /*====================------------------------------------====================*/
 /*===----                    reading and writing tabs                  ----===*/
 /*====================------------------------------------====================*/
@@ -157,8 +187,61 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
    return 0;
 }
 
+char
+TABS_writer           (char a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   char        x_type      =  '-';
+   int         x_cols      =    0;
+   int         x_rows      =    0;
+   int         x_wide      =    0;
+   int         x_tall      =    0;
+   char        x_name      [LEN_LABEL];
+   char        x_min       [LEN_LABEL];
+   char        x_max       [LEN_LABEL];
+   /*---(prepare)------------------------*/
+   yPARSE_outclear  ();
+   /*---(defense)------------------------*/
+   if (TAB_valid (a_tab) <  0)  return -1;
+   if (TAB_used  (a_tab) <= 0)  return 0;
+   /*---(prepare)------------------------*/
+   TAB_name    (a_tab, x_name);
+   x_cols = COL_max  (a_tab) - 1;
+   x_rows = ROW_max  (a_tab) - 1;
+   x_wide = TAB_colwide (a_tab);
+   x_tall = TAB_rowtall (a_tab);
+   x_type = TAB_type (a_tab);
+   str4gyges (0     , 0     , a_tab, 0, x_min);
+   str4gyges (x_cols, x_rows, a_tab, 0, x_max);
+   /*---(write)--------------------------*/
+   rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);
+   if (rc < 0)   return rc;
+   /*---(complete)-----------------------*/
+   return 1;
+}
+
+char
+TABS_writer_all         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   int         i           =    0;
+   char        c           =    0;
+   /*---(walk)---------------------------*/
+   yPARSE_verb_begin ("tabs");
+   for (i = 0; i < MAX_TABS; ++i) {
+      rc = TABS_writer          (i);
+      if (rc == 1) ++c;
+      yPARSE_verb_break (c);
+   }
+   yPARSE_verb_end   (c);
+   /*---(complete)-----------------------*/
+   return c;
+}
+
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-TABS_writer           (char  a_tab)
+TABS_writer_OLD       (char  a_tab)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
@@ -197,12 +280,14 @@ TABS_writer           (char  a_tab)
       TAB_name    (i, x_name);
       rc = str4gyges (0     , 0     , i, 0, x_min);
       rc = str4gyges (x_cols, x_rows, i, 0, x_max);
-      yVIKEYS_file_write (FILE_TABS, x_name, x_min, x_max, &x_wide, &x_tall, &x_zero, &x_type, NULL, NULL);
+      /*> yVIKEYS_file_write (FILE_TABS, x_name, x_min, x_max, &x_wide, &x_tall, &x_zero, &x_type, NULL, NULL);   <*/
+      yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, x_zero, x_type);
       ++c;
    }
    /*---(complete)-----------------------*/
    return c;
 }
+
 
 char
 COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
@@ -396,7 +481,7 @@ ROWS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
    return 0;
 }
 
-char TABS_writer_all (void) { return TABS_writer    (-1);          }
+/*> char TABS_writer_all (void) { return TABS_writer    (-1);          }              <*/
 char COLS_writer_all (void) { return DETAIL_writer  ('c', -1, -1); }
 char ROWS_writer_all (void) { return DETAIL_writer  ('r', -1, -1); }
 
@@ -696,8 +781,8 @@ static short   s_crow     =    0;
  *>    }                                                                                                                           <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
  *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
+*>    return 0;                                                                                                                   <* 
+*> }                                                                                                                              <*/
 
 /*> char         /+-> process a mapping request ----------[ ------ [fe.943.044.31]+/ /+-[02.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> REG__inpt_map        (void)                                                                                                    <* 
@@ -1169,10 +1254,10 @@ FILE_unit          (char *a_question, int a_ref)
       snprintf (unit_answer, LEN_UNIT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, 'y', x_name);
    } else if (strcmp (a_question, "tab_count" )    == 0) {
       snprintf (unit_answer, LEN_UNIT, "s_file tab count : ntab=%4d", MAX_TABS);
-   /*> } else if (strcmp (a_question, "history"   )    == 0) {                                                                                   <* 
-    *>    if      (s_nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
-    *>    if      (s_chist <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
-    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, %s" , s_nhist, s_chist, s_hist[s_chist].act);   <*/
+      /*> } else if (strcmp (a_question, "history"   )    == 0) {                                                                                   <* 
+       *>    if      (s_nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
+       *>    if      (s_chist <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
+       *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, %s" , s_nhist, s_chist, s_hist[s_chist].act);   <*/
    /*> } else if (strcmp (a_question, "entry"     )    == 0) {                                                                                                                                                   <* 
     *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too small", a_ref);                                                                                                 <* 
     *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too large", a_ref);                                                                                                 <* 
@@ -1185,9 +1270,9 @@ FILE_unit          (char *a_question, int a_ref)
     *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too small", a_ref);                   <* 
     *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too large", a_ref);                   <* 
     *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d :%s:", a_ref, s_hist[a_ref].after);   <*/
-   }
-   /*---(complete)-----------------------*/
-   return unit_answer;
+}
+/*---(complete)-----------------------*/
+return unit_answer;
 }
 
 

@@ -136,6 +136,7 @@
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
 #include    <yCOLOR.h>             /* heatherly color library                 */
 #include    <yCALC.h>        /* CUSTOM : heatherly interactive calculation    */
+#include    <yPARSE.h>             /* heatherly file reading and writing      */
 
 
 
@@ -143,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.2m"
-#define     VER_TXT   "all unit tests on map-mode copy/cut/paste with undo/redo are successful"
+#define     VER_NUM   "3.3a"
+#define     VER_TXT   "tab writing uses yPARSE now, and unit testing passed"
 
 
 
@@ -178,13 +179,11 @@ typedef struct timespec  tTSPEC;
 #define     DEF_TABS    38
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
-/*> #define     MAX_COLS    130                                                       <*/
-#define     MAX_COLS    26
+#define     MAX_COLS    130
 #define     DEF_COLS    26
 #define     MIN_COLS    1
 /*---(rows)---------------------------*/
-/*> #define     MAX_ROWS    9999                                                      <*/
-#define     MAX_ROWS    100 
+#define     MAX_ROWS    9999
 #define     DEF_ROWS    100
 #define     MIN_ROWS    1
 /*---(cell width)---------------------*/
@@ -1500,6 +1499,7 @@ char     *CELL__unitnew        (char  *a_question, char *a_label);
 
 char      SYLK_read            (char  *a_name);
 char      SYLK_write           (char  *a_name, char a_variation);
+char      FILE_init               (void);
 char      FILE_controlled      (char  *a_yes);
 char      FILE_control         (void);
 char      FILE_nocontrol       (void);

@@ -2,11 +2,40 @@
 #include   "gyges.h"
 
 
+/*
+ *  future...
+ *     -- tab models such as mini (one) "0®¯", small (five) "01234®¯", etc
+ *
+ *
+ *
+ */
+
+
+static  char  *s_valids = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ®¯"; 
+static  int    s_nvalid = 38;
+
+
+
+
 
 /*====================------------------------------------====================*/
-/*===----                           tab related                        ----===*/
+/*===----                         program level                        ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___TABS____________o () { return; }
+static void  o___PROGRAM_________o () { return; }
+
+char
+TAB_init                (void)
+{
+   s_nvalid = strlen (s_valids);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         support functions                    ----===*/
+/*====================------------------------------------====================*/
+static void  o___SUPPORT_________o () { return; }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.320.113.20]*/ /*-[00.0000.184.I]-*/ /*-[--.---.---.--]-*/
 TAB_valid            (int a_tab)
@@ -25,13 +54,12 @@ TAB_label            (int  a_tab)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ­®";
    char        x_label     =  '-';
    /*---(defense)------------------------*/
    --rce;  if (a_tab <  0   )  return rce;
    --rce;  if (a_tab > 37   )  return rce;
    /*---(convert to index)---------------*/
-   x_label = x_valid [a_tab];
+   x_label = s_valids [a_tab];
    /*---(complete)-----------------------*/
    return x_label;
 }
@@ -41,47 +69,24 @@ TAB_index            (char  a_abbr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
-   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ­®";
    char       *p           = NULL;
    int         x_index     =    0;
    /*---(defense)------------------------*/
    --rce;  if (a_abbr == 0   )  return rce;
-   p = strchr (x_valid, a_abbr);
+   p = strchr (s_valids, a_abbr);
    --rce;  if (p      == NULL)  return rce;
    /*---(convert to index)---------------*/
-   x_index = (int) (p - x_valid);
+   x_index = (int) (p - s_valids);
    /*---(complete)-----------------------*/
    return x_index;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.220.122.11]*/ /*-[00.0000.10#.!]-*/ /*-[--.---.---.--]-*/
-TAB_type             (int a_tab)
-{
-   char        rce         =  -20;
-   char        rc          =    0;
-   rc = TAB_valid (a_tab);
-   if (rc < 0) return rc;
-   return s_tabs [a_tab].type;
-}
 
-int          /*-> indicate if tab is used ------------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
-TAB_used             (int a_tab)
-{
-   char rc = TAB_valid (a_tab);
-   if (rc < 0) return rc;
-   return s_tabs [a_tab].c;
-}
 
-char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-TAB_retype           (int a_tab, char a_type)
-{
-   char        rce         =  -20;
-   char        rc          =    0;
-   rc = TAB_valid (a_tab);
-   if (rc < 0) return rc;
-   s_tabs [a_tab].type = a_type;
-   return 0;
-}
+/*====================------------------------------------====================*/
+/*===----                          tab naming                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___NAMES___________o () { return; }
 
 char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/ /*-[00.0000.10#.4]-*/ /*-[--.---.---.--]-*/
 TAB_defname          (int a_tab, char *a_name)
@@ -132,16 +137,12 @@ TAB_rename           (int a_tab, char *a_name)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.320.223.22]*/ /*-[00.0000.00#.D]-*/ /*-[--.---.---.--]-*/
-TAB_size             (int a_tab, char *a_max)
-{
-   char        rce         =  -20;
-   char rc = TAB_valid (a_tab);
-   if (rc < 0) return rc;
-   --rce;  if (a_max   == NULL)                       return rce;
-   LOC_ref (a_tab, s_tabs[a_tab].ncol - 1, s_tabs[a_tab].nrow - 1, 0, a_max);
-   return 0;
-}
+
+
+/*====================------------------------------------====================*/
+/*===----                          switching                           ----===*/
+/*====================------------------------------------====================*/
+static void  o___SWITCHING_______o () { return; }
 
 char         /*-> tbd --------------------------------[ ------ [gc.E82.112.31]*/ /*-[02.0000.073.!]-*/ /*-[--.---.---.--]-*/
 TAB_switch             (int a_tab)
@@ -238,6 +239,29 @@ TAB_switch_char        (char a_tab)
    return TAB_switch (x_tab);
 }
 
+char        TAB_first            (void)  { return TAB_switch (0); }
+char        TAB_prev             (void)  { return TAB_switch (CTAB - 1); }
+char        TAB_next             (void)  { return TAB_switch (CTAB + 1); }
+char        TAB_last             (void)  { return TAB_switch (MAX_TABS - 1); }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        updating sizing                       ----===*/
+/*====================------------------------------------====================*/
+static void  o___SIZING__________o () { return; }
+
+char         /*-> tbd --------------------------------[ ------ [ge.320.223.22]*/ /*-[00.0000.00#.D]-*/ /*-[--.---.---.--]-*/
+TAB_size             (int a_tab, char *a_max)
+{
+   char        rce         =  -20;
+   char rc = TAB_valid (a_tab);
+   if (rc < 0) return rc;
+   --rce;  if (a_max   == NULL)                       return rce;
+   LOC_ref (a_tab, s_tabs[a_tab].ncol - 1, s_tabs[a_tab].nrow - 1, 0, a_max);
+   return 0;
+}
+
 char         /*-> tbd --------------------------------[ ------ [ge.532.143.22]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 TAB_resize_curr      (char *a_max)
 {
@@ -291,6 +315,49 @@ TAB_resize           (char *a_max)
 
 char  TAB_colwide      (int a_tab) { return s_tabs [a_tab].defwide; }
 char  TAB_rowtall      (int a_tab) { return s_tabs [a_tab].deftall; }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         other characteristics                ----===*/
+/*====================------------------------------------====================*/
+static void  o___CHARS___________o () { return; }
+
+char         /*-> tbd --------------------------------[ ------ [ge.220.122.11]*/ /*-[00.0000.10#.!]-*/ /*-[--.---.---.--]-*/
+TAB_type             (int a_tab)
+{
+   char        rce         =  -20;
+   char        rc          =    0;
+   rc = TAB_valid (a_tab);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].type;
+}
+
+int          /*-> indicate if tab is used ------------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
+TAB_used             (int a_tab)
+{
+   char rc = TAB_valid (a_tab);
+   if (rc < 0) return rc;
+   return s_tabs [a_tab].c;
+}
+
+char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
+TAB_retype           (int a_tab, char a_type)
+{
+   char        rce         =  -20;
+   char        rc          =    0;
+   rc = TAB_valid (a_tab);
+   if (rc < 0) return rc;
+   s_tabs [a_tab].type = a_type;
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        status information                    ----===*/
+/*====================------------------------------------====================*/
+static void  o___STATUS__________o () { return; }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 TAB_line           (char a_tab, char *a_list)
@@ -348,8 +415,4 @@ TAB_status         (char a_tab, char *a_list)
    return 0;
 }
 
-char        TAB_first            (void)  { return TAB_switch (0); }
-char        TAB_prev             (void)  { return TAB_switch (CTAB - 1); }
-char        TAB_next             (void)  { return TAB_switch (CTAB + 1); }
-char        TAB_last             (void)  { return TAB_switch (MAX_TABS - 1); }
 
