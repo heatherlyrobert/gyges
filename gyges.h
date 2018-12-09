@@ -144,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3b"
-#define     VER_TXT   "tab switching and validation is clean and unit tested well"
+#define     VER_NUM   "3.3c"
+#define     VER_TXT   "tab resizing is clean and unit tested well"
 
 
 
@@ -1361,7 +1361,6 @@ char        TAB_rename           /* stigma 2----- */  (int a_tab, char *a_name);
 char        TAB_rename_curr      /* stigma 1----- */  (char *a_name);
 char        TAB_size             /* petal  2----- */  (int a_tab, char *a_max);
 char        TAB_resize           /* stigma 1----- */  (char *a_max);
-char        TAB_resize_curr      /* stigma 1----- */  (char *a_max);
 char        TAB_colwide          (int a_tab);
 char        TAB_rowtall          (int a_tab);
 char        TAB_first            (void);

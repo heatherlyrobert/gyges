@@ -29,13 +29,13 @@ TAB_init                (void)
    /*---(count buffer labels)------------*/
    s_nvalid = strlen (s_valids);
    /*---(add buffer commands)------------*/
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "switch"      , ""    , "c"    , TAB_switch_char            , "switch buffer"                        );
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "name"        , ""    , "is"   , TAB_name                   , "rename a buffer"                      );
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "rename"      , ""    , "s"    , TAB_rename                 , "rename current buffer"                );
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "first"       , ""    , ""     , TAB_first                  , "goto the first buffer in list"        );
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "next"        , ""    , ""     , TAB_next                   , "goto the next sequential buffer"      );
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "prev"        , ""    , ""     , TAB_prev                   , "goto the previous sequential buffer"  );
-   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "last"        , ""    , ""     , TAB_last                   , "goto the last buffer in list"         );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "buf"         , "bu"  , "c"    , TAB_switch_char            , "switch buffer"                        );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "btitle"      , "bt"  , "s"    , TAB_rename_curr            , "rename current buffer"                );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bfirst"      , "bf"  , ""     , TAB_first                  , "goto the first buffer in list"        );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bnext"       , "bn"  , ""     , TAB_next                   , "goto the next sequential buffer"      );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bprev"       , "bp"  , ""     , TAB_prev                   , "goto the previous sequential buffer"  );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "blast"       , "bl"  , ""     , TAB_last                   , "goto the last buffer in list"         );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bsize"       , "bs"  , "s"    , TAB_resize                 , "change a buffer size"                 );
    /*---(complete)-----------------------*/
    return rc;
 }
@@ -121,19 +121,6 @@ TAB_name             (int a_tab, char *a_name)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.330.125.41]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-TAB_rename_curr      (char *a_name)
-{
-   char        rce         =  -20;
-   char rc = TAB_valid (CTAB);
-   if (rc < 0) return rc;
-   --rce;  if (a_name  == NULL)                       return rce;
-   --rce;  if (a_name [0] == '\0')                    return rce;
-   --rce;  if (strlen (a_name) >= LEN_ABBR)           return rce;
-   strlcpy (s_tabs [CTAB].name, a_name, LEN_ABBR);
-   return 0;
-}
-
 char         /*-> tbd --------------------------------[ ------ [ge.330.225.41]*/ /*-[00.0000.104.C]-*/ /*-[--.---.---.--]-*/
 TAB_rename           (int a_tab, char *a_name)
 {
@@ -146,6 +133,8 @@ TAB_rename           (int a_tab, char *a_name)
    strlcpy (s_tabs [a_tab].name, a_name, LEN_ABBR);
    return 0;
 }
+
+char  TAB_rename_curr      (char *a_name) { return TAB_rename (CTAB, a_name); }
 
 
 
@@ -227,9 +216,13 @@ TAB_switch             (int a_tab)
 char         /*-> tbd --------------------------------[ ------ [gc.220.112.31]*/ /*-[00.0000.103.!]-*/ /*-[--.---.---.--]-*/
 TAB_switch_char        (char a_tab)
 {
-   int         x_tab       = 0;
+   /*---(locals)-----------+-----+-----+-*/
+   int         x_tab       =    0;
    /*---(relative tabs)------------------*/
-   if (strchr ("[<>]", a_tab) != NULL) {
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_char    ("a_tab"     , a_tab);
+   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   if (a_tab > 0 && strchr ("[<>]", a_tab) != NULL) {
       switch (a_tab) {
       case '[' :  x_tab = 0;             break;
       case '<' :  x_tab = CTAB - 1;      break;
@@ -237,11 +230,16 @@ TAB_switch_char        (char a_tab)
       case ']' :  x_tab = s_nvalid - 3;  break;
       }
    }
-   else if (a_tab >= '0' && a_tab <= '9')   x_tab = a_tab - '0';
-   else if (a_tab >= 'A' && a_tab <= 'Z')   x_tab = a_tab - 'A' + 10;
-   else if (a_tab == '®')                   x_tab = 36;
-   else if (a_tab == '¯')                   x_tab = 37;
-   else    return -1;
+   /*---(absolute tabs)------------------*/
+   else {
+      x_tab = TAB_index (a_tab);
+      if (x_tab < 0) {
+         DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+         return x_tab;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return TAB_switch (x_tab);
 }
 
@@ -268,31 +266,6 @@ TAB_size             (int a_tab, char *a_max)
    return 0;
 }
 
-char         /*-> tbd --------------------------------[ ------ [ge.532.143.22]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-TAB_resize_curr      (char *a_max)
-{
-   char        rce         = -10;
-   char        rc          =   0;
-   int         x_col       =   0;
-   int         x_row       =   0;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   rc = LOC_parse  (a_max, NULL  , &x_col, &x_row, NULL);
-   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   rc = LOC_legal  (x_col, x_row, CTAB , CELL_EXACT);
-   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 char         /*-> tbd --------------------------------[ ------ [ge.632.153.22]*/ /*-[01.0000.104.U]-*/ /*-[--.---.---.--]-*/
 TAB_resize           (char *a_max)
 {
@@ -303,18 +276,32 @@ TAB_resize           (char *a_max)
    int         x_row       =   0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   rc = LOC_parse  (a_max, &x_tab, &x_col, &x_row, NULL);
+   /*---(handle default sizing)----------*/
+   if (a_max != NULL && strlen (a_max) == 1) {
+      rc = x_tab  = TAB_index (a_max [0]);
+      if (rc >= 0) {
+         x_col = DEF_COLS - 1;
+         x_row = DEF_ROWS - 1;
+      }
+   }
+   /*---(handle full)--------------------*/
+   else {
+      rc = LOC_parse  (a_max, &x_tab, &x_col, &x_row, NULL);
+   }
+   /*---(check error)--------------------*/
    DEBUG_LOCS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(adjust tab)---------------------*/
    rc = LOC_legal  (x_col, x_row, x_tab, CELL_EXACT);
    DEBUG_LOCS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }

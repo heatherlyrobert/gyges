@@ -196,6 +196,7 @@ PROG_begin         (void)
    /*> MARK_init ();                                                                  <*/
    /*---(overall tab settings)-----------*/
    LOC_init  ();
+   TAB_init  ();
    /*---(locals)-------------------------*/
    VISU_init ();
    /*> REG_init  ();                                                                  <*/
@@ -245,7 +246,6 @@ PROG_final         (void)
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
    yVIKEYS_cmds_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );
-   TAB_init  ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
