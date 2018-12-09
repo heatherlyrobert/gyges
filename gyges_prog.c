@@ -244,7 +244,8 @@ PROG_final         (void)
    yVIKEYS_mode_formatter (api_yvikeys_format);
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
-   yVIKEYS_cmds_add      ('a', "hist"        , ""    , ""     , HIST_list                  , "" );
+   yVIKEYS_cmds_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );
+   TAB_init  ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

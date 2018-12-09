@@ -5,6 +5,7 @@
 static char    s_label     [LEN_RECD]   = "";
 
 
+
 /*====================------------------------------------====================*/
 /*===----                        program level                         ----===*/
 /*====================------------------------------------====================*/
@@ -20,7 +21,7 @@ LOC_init             (void)
    /*---(set defaults)-------------------*/
    NTAB      = MAX_TABS;
    /*---(update tab)---------------------*/
-   TAB_switch     (-1);
+   TAB_switch     (0);
    CCOL      = 0;
    CROW      = 0;
    /*---(complete)-----------------------*/
@@ -620,8 +621,8 @@ LOC_ref           (
    /*---(figure out tab name)------------*/
    if      (a_tab <=  9)  x_tab = a_tab + '0';
    else if (a_tab <= 35)  x_tab = a_tab - 10 + 'A';
-   else if (a_tab == 36)  x_tab = '­';
-   else if (a_tab == 37)  x_tab = '®';
+   else if (a_tab == 36)  x_tab = '®';
+   else if (a_tab == 37)  x_tab = '¯';
    /*---(figure out column name)---------*/
    if        (a_col < 26)  {
       x_cname[0] = a_col + 'a';
@@ -933,19 +934,29 @@ char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/
 LOC__unit          (char *a_question, char *a_label)
 {
    /*---(locals)-------------------------*/
-   char        rc          =  0;
-   int         i           =  0;
-   int         x_tab       =  0;
-   int         x_col       =  0;
-   int         x_row       =  0;
-   char        x_abs       =  0;
+   char        rc          =    0;
+   int         i           =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   char        x_abs       =    0;
+   char        x_label     =  '-';
    char        x_beg       [LEN_LABEL]   = "";
    char        x_end       [LEN_LABEL]   = "";
    char        x_cur       [LEN_LABEL]   = "";
    char        x_max       [LEN_LABEL]   = "";
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "LOC              : label could not be parsed");
-   if (rc >= 0)  rc = LOC_parse  (a_label, &x_tab, &x_col, &x_row, &x_abs);
+   if (a_label != NULL && strcmp (a_label, "") != 0) {
+      x_label = a_label [0];
+      if (rc >= 0)  rc = LOC_parse  (a_label, &x_tab, &x_col, &x_row, &x_abs);
+   } else {
+      x_tab   = CTAB;
+      x_label = TAB_label (x_tab);
+      x_col   = CCOL;
+      x_row   = CROW;
+      x_abs   = 0;
+   }
    if (rc <  0)  return unit_answer;
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "LOC              : locations could not be prepared");
@@ -957,7 +968,7 @@ LOC__unit          (char *a_question, char *a_label)
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "LOC              : question not understood");
    if      (strcmp(a_question, "tab_info"      ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", a_label [0], s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
+      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
    }
    else if (strcmp(a_question, "cell_size"     ) == 0) {
       snprintf(unit_answer, LEN_UNIT, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);

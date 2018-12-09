@@ -144,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3a"
-#define     VER_TXT   "tab writing uses yPARSE now, and unit testing passed"
+#define     VER_NUM   "3.3b"
+#define     VER_TXT   "tab switching and validation is clean and unit tested well"
 
 
 
@@ -1348,6 +1348,7 @@ char        LOC_ref              /* petal  5----- */  (short a_tab, short a_col,
 
 
 /*===[[ gyges_tab.c ]]========================================================*/
+char        TAB_init             (void);
 char        TAB_valid            /* petal  1----- */  (int a_tab);
 char        TAB_label            (int a_tab);
 char        TAB_index            (char  a_abbr);

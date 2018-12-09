@@ -16,8 +16,6 @@ static  int    s_nvalid = 38;
 
 
 
-
-
 /*====================------------------------------------====================*/
 /*===----                         program level                        ----===*/
 /*====================------------------------------------====================*/
@@ -26,8 +24,20 @@ static void  o___PROGRAM_________o () { return; }
 char
 TAB_init                (void)
 {
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(count buffer labels)------------*/
    s_nvalid = strlen (s_valids);
-   return 0;
+   /*---(add buffer commands)------------*/
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "switch"      , ""    , "c"    , TAB_switch_char            , "switch buffer"                        );
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "name"        , ""    , "is"   , TAB_name                   , "rename a buffer"                      );
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "rename"      , ""    , "s"    , TAB_rename                 , "rename current buffer"                );
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "first"       , ""    , ""     , TAB_first                  , "goto the first buffer in list"        );
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "next"        , ""    , ""     , TAB_next                   , "goto the next sequential buffer"      );
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "prev"        , ""    , ""     , TAB_prev                   , "goto the previous sequential buffer"  );
+   if (rc == 0)  rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "last"        , ""    , ""     , TAB_last                   , "goto the last buffer in list"         );
+   /*---(complete)-----------------------*/
+   return rc;
 }
 
 
@@ -56,8 +66,8 @@ TAB_label            (int  a_tab)
    char        rce         =  -10;
    char        x_label     =  '-';
    /*---(defense)------------------------*/
-   --rce;  if (a_tab <  0   )  return rce;
-   --rce;  if (a_tab > 37   )  return rce;
+   --rce;  if (a_tab <  0       )  return rce;
+   --rce;  if (a_tab >= s_nvalid)  return rce;
    /*---(convert to index)---------------*/
    x_label = s_valids [a_tab];
    /*---(complete)-----------------------*/
@@ -152,15 +162,15 @@ TAB_switch             (int a_tab)
    /*---(begin)--------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   /*---(defense)---------------------*/
+   rc = TAB_valid (a_tab);
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
+      return rc;
+   }
    /*---(non-init run)-------------------*/
-   if (a_tab >=  0) {
-      /*---(defense)---------------------*/
-      rc = TAB_valid (a_tab);
-      DEBUG_LOCS   yLOG_value   ("rc"        , rc);
-      if (rc < 0) {
-         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
-         return rc;
-      }
+   if (a_tab != CTAB) {
       /*---(save values)-----------------*/
       DEBUG_LOCS   yLOG_note    ("save existing tab values");
       /*---(cols)---------*/
@@ -181,10 +191,6 @@ TAB_switch             (int a_tab)
       s_tabs [CTAB].froz_erow = FR_EROW;
       /*---(update tab)------------------*/
       CTAB      = a_tab;
-   }
-   /*---(init run)-----------------------*/
-   else {
-      CTAB      = 0;
    }
    DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
    /*---(switch tab)---------------------*/
@@ -228,21 +234,21 @@ TAB_switch_char        (char a_tab)
       case '[' :  x_tab = 0;             break;
       case '<' :  x_tab = CTAB - 1;      break;
       case '>' :  x_tab = CTAB + 1;      break;
-      case ']' :  x_tab = MAX_TABS - 1;  break;
+      case ']' :  x_tab = s_nvalid - 3;  break;
       }
    }
    else if (a_tab >= '0' && a_tab <= '9')   x_tab = a_tab - '0';
    else if (a_tab >= 'A' && a_tab <= 'Z')   x_tab = a_tab - 'A' + 10;
-   else if (a_tab == '­')                   x_tab = 36;
-   else if (a_tab == '®')                   x_tab = 37;
+   else if (a_tab == '®')                   x_tab = 36;
+   else if (a_tab == '¯')                   x_tab = 37;
    else    return -1;
    return TAB_switch (x_tab);
 }
 
-char        TAB_first            (void)  { return TAB_switch (0); }
-char        TAB_prev             (void)  { return TAB_switch (CTAB - 1); }
-char        TAB_next             (void)  { return TAB_switch (CTAB + 1); }
-char        TAB_last             (void)  { return TAB_switch (MAX_TABS - 1); }
+char        TAB_first            (void)  { return TAB_switch_char ('['); }
+char        TAB_prev             (void)  { return TAB_switch_char ('<'); }
+char        TAB_next             (void)  { return TAB_switch_char ('>'); }
+char        TAB_last             (void)  { return TAB_switch_char (']'); }
 
 
 

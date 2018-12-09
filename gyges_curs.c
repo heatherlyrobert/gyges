@@ -1489,7 +1489,7 @@ DRAW_init          (void)
    yVIKEYS_cmds_direct   (":formula show");
    yVIKEYS_cmds_direct   (":xaxis show");
    yVIKEYS_cmds_direct   (":yaxis show");
-   yVIKEYS_cmds_add      ('v', "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
+   yVIKEYS_cmds_add      (YVIKEYS_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
    /*---(get window size)-------------*/
    /*> CURS_size   ();                                                                <*/
    /*---(colors)----------------------*/
