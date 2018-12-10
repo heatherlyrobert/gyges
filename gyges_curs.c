@@ -331,7 +331,7 @@ PRIV void  o___SPECIFIC________o () { return; }
             char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
             char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_STR, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
             char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_STR, "[ rpn =%-80.80s ]", my.rpn_list); }
-            char  CURS_status_buffer   (char *a_list) { TAB_status (CTAB, a_list); }
+            /*> char  CURS_status_buffer   (char *a_list) { TAB_status (CTAB, a_list); }   <*/
             /*> char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }   <*/
             char  CURS_status_mark     (char *a_list) { MARK_status    (a_list); }
             char  CURS_status_visual   (char *a_list) { VISU_status    (a_list); }

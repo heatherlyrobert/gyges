@@ -21,9 +21,8 @@ LOC_init             (void)
    /*---(set defaults)-------------------*/
    NTAB      = MAX_TABS;
    /*---(update tab)---------------------*/
-   TAB_switch     (0);
-   CCOL      = 0;
-   CROW      = 0;
+   CTAB      = 0;
+   yvikeys_tab_retrieve ();
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -958,12 +957,15 @@ LOC__unit          (char *a_question, char *a_label)
       x_abs   = 0;
    }
    if (rc <  0)  return unit_answer;
+   /*> DEBUG_LOCS   yLOG_complex  ("address"   , "%2dt, %3dc, %3dr", CTAB, CCOL, CROW);   <*/
+   /*> DEBUG_LOCS   yLOG_complex  ("column"    , "%3db, %3de, %3dc, %3dn", s_tabs [x_tab].bcol, s_tabs [x_tab].ecol, s_tabs [x_tab].ccol, s_tabs [x_tab].ncol - 1);   <*/
+   /*> DEBUG_LOCS   yLOG_complex  ("row"       , "%3db, %3de, %3dc, %3dn", s_tabs [x_tab].brow, s_tabs [x_tab].erow, s_tabs [x_tab].crow, s_tabs [x_tab].nrow - 1);   <*/
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "LOC              : locations could not be prepared");
-   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, x_beg);
-   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, x_end);
-   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, x_cur);
-   if (rc >= 0)  rc = LOC_ref    (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, x_max);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, x_beg);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, x_end);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, x_cur);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, x_max);
    if (rc <  0)  return unit_answer;
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "LOC              : question not understood");

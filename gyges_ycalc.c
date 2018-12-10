@@ -198,7 +198,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    /*---(search)-------------------------*/
    else {
-      rc      = str2gyges (a_label, &x_col, &x_row, &x_tab, NULL, 0);
+      rc      = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
       DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
       --rce;  if (rc < 0) {
          DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
@@ -255,7 +255,7 @@ api_ycalc_whos_at       (int x, int y, int z, char a_force, void **a_owner, void
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
    /*---(legal)--------------------------*/
-   rc = str4gyges (x, y, z, 0, x_label);
+   rc = str4gyges (z, x, y, 0, x_label);
    if (rc == 0)  rc = api_ycalc_named (x_label, YCALC_LOOK, a_owner, a_deproot);
    /*---(complete)-----------------------*/
    return rc;
@@ -333,7 +333,7 @@ api_ycalc_address       (void *a_owner, int *x, int *y, int *z)
    if (z != NULL)  *z   = 0;
    if (a_owner == NULL)  return -1;
    x_owner    = (tCELL     *) a_owner;
-   str2gyges (x_owner->label, x, y, z, NULL, 0);
+   str2gyges (x_owner->label, z, x, y, NULL, 0);
    return 0;
 }
 
@@ -418,7 +418,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    s_owners [*a_merge] = x_owner;
    s_widths [*a_merge] = w;
    /*---(look for mergse)----------------*/
-   rc = str2gyges (x_owner->label, &x, &y, &z, 0, 0);
+   rc = str2gyges (x_owner->label, &z, &x, &y, 0, 0);
    DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
    if (rc < 0)  {
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);
@@ -426,7 +426,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    }
    DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->label, x, y, z, w);
    for (i = x + 1; i < x + 20; ++i) {
-      rc = str4gyges (i, y, z, 0, x_label);
+      rc = str4gyges (z, i, y, 0, x_label);
       if (rc < 0)  break;
       rc = api_ycalc_whos_at (i, y, z, YCALC_LOOK, &x_owner, NULL);
       if (rc < 0)                              break;

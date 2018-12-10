@@ -231,7 +231,7 @@ PROG_final         (void)
    HIST_init ();
    /*---(status options)-----------------*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );
+   /*> yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );   <*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "visual" , CURS_status_visual  , "details of visual selection"                );
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );   <*/
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );   <*/

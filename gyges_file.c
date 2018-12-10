@@ -212,8 +212,8 @@ TABS_writer           (char a_tab)
    x_wide = TAB_colwide (a_tab);
    x_tall = TAB_rowtall (a_tab);
    x_type = TAB_type (a_tab);
-   str4gyges (0     , 0     , a_tab, 0, x_min);
-   str4gyges (x_cols, x_rows, a_tab, 0, x_max);
+   str4gyges (a_tab , 0     , 0    , 0, x_min);
+   str4gyges (a_tab, x_cols, x_rows, 0, x_max);
    /*---(write)--------------------------*/
    rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);
    if (rc < 0)   return rc;
@@ -278,8 +278,8 @@ TABS_writer_OLD       (char  a_tab)
       x_wide = TAB_colwide (i);
       x_tall = TAB_rowtall (i);
       TAB_name    (i, x_name);
-      rc = str4gyges (0     , 0     , i, 0, x_min);
-      rc = str4gyges (x_cols, x_rows, i, 0, x_max);
+      rc = str4gyges (i, 0     , 0     , 0, x_min);
+      rc = str4gyges (i, x_cols, x_rows, 0, x_max);
       /*> yVIKEYS_file_write (FILE_TABS, x_name, x_min, x_max, &x_wide, &x_tall, &x_zero, &x_type, NULL, NULL);   <*/
       yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, x_zero, x_type);
       ++c;
@@ -310,7 +310,7 @@ COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       return rce;
    }
    /*---(tab and col)--------------------*/
-   rc = str2gyges (a, &x_col, NULL, &x_tab, NULL, 0);
+   rc = str2gyges (a, &x_tab, &x_col, NULL, NULL, 0);
    DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
@@ -421,11 +421,11 @@ DETAIL_writer           (char a_type, char a_tab, int a_cur)
          }
          DEBUG_OUTP   yLOG_value   ("n"         , n);
          if (a_type == 'c') {
-            rc = str4gyges (j, 0, i, 0, x_label);
+            rc = str4gyges (i, j, 0, 0, x_label);
             yVIKEYS_file_write (FILE_COLS, x_label, &x_size, &n, NULL, NULL, NULL, NULL, NULL, NULL);
          }
          else {
-            rc = str4gyges (0, j, i, 0, x_label);
+            rc = str4gyges (i, 0, j, 0, x_label);
             yVIKEYS_file_write (FILE_ROWS, x_label, &x_size, &n, NULL, NULL, NULL, NULL, NULL, NULL);
          }
          c += n;
@@ -458,7 +458,7 @@ ROWS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
       return rce;
    }
    /*---(tab and col)--------------------*/
-   rc = str2gyges (a, NULL, &x_row, &x_tab, NULL, 0);
+   rc = str2gyges (a, &x_tab, NULL, &x_row, NULL, 0);
    DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);

@@ -144,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3c"
-#define     VER_TXT   "tab resizing is clean and unit tested well"
+#define     VER_NUM   "3.3d"
+#define     VER_TXT   "tab status, info win, and unit testing updated"
 
 
 
@@ -638,7 +638,7 @@ struct cTAB {
    /* tabs are pre-allocated and can put into and taken out of use simply by  */
    /* starting to use them.                                                   */
    short       tab;                         /* number of tab                  */
-   char        name  [LEN_ABBR];            /* tab name for user reference    */
+   char        name  [LEN_LABEL];           /* tab name for user reference    */
    char        type;                        /* tab type                       */
    /*---(contents)-----------------------*/
    /* tabs pull three other data structures together in a package: column     */
@@ -1132,7 +1132,7 @@ char        CURS_status_cell     (char *a_list);
 char        CURS_status_deps     (char *a_list);
 char        CURS_status_rpn      (char *a_list);
 char        CURS_status_file     (char *a_list);
-char        CURS_status_buffer   (char *a_list);
+/*> char        CURS_status_buffer   (char *a_list);                                  <*/
 /*> char        CURS_status_textreg  (char *a_list);                                  <*/
 char        CURS_status_mark     (char *a_list);
 char        CURS_status_tab      (char *a_list);
@@ -1363,14 +1363,19 @@ char        TAB_size             /* petal  2----- */  (int a_tab, char *a_max);
 char        TAB_resize           /* stigma 1----- */  (char *a_max);
 char        TAB_colwide          (int a_tab);
 char        TAB_rowtall          (int a_tab);
+char        TAB_defwide          (int a_size);
+char        TAB_deftall          (int a_size);
 char        TAB_first            (void);
 char        TAB_prev             (void);
 char        TAB_next             (void);
 char        TAB_last             (void);
+char        yvikeys_tab_save       (void);
+char        yvikeys_tab_retrieve   (void);
 char        TAB_switch           (int a_tab);
 char        TAB_switch_char      (char  a_tab);
-char        TAB_status           (char  a_tab, char *a_list);
 char        TAB_line             (char  a_tab, char *a_list);
+char        TAB_status           (char  a_tab, char *a_list);
+char        TAB_status_curr      (char *a_list);
 
 
 

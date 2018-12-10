@@ -36,6 +36,10 @@ TAB_init                (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bprev"       , "bp"  , ""     , TAB_prev                   , "goto the previous sequential buffer"  );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "blast"       , "bl"  , ""     , TAB_last                   , "goto the last buffer in list"         );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bsize"       , "bs"  , "s"    , TAB_resize                 , "change a buffer size"                 );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "defwide"     , ""    , "i"    , TAB_defwide                , "change default column width"          );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "deftall"     , ""    , "i"    , TAB_deftall                , "change default row height"            );
+   /*---(add status options)-------------*/
+   rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
    /*---(complete)-----------------------*/
    return rc;
 }
@@ -143,45 +147,9 @@ char  TAB_rename_curr      (char *a_name) { return TAB_rename (CTAB, a_name); }
 /*====================------------------------------------====================*/
 static void  o___SWITCHING_______o () { return; }
 
-char         /*-> tbd --------------------------------[ ------ [gc.E82.112.31]*/ /*-[02.0000.073.!]-*/ /*-[--.---.---.--]-*/
-TAB_switch             (int a_tab)
+char
+yvikeys_tab_retrieve   (void)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;
-   /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
-   /*---(defense)---------------------*/
-   rc = TAB_valid (a_tab);
-   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
-   if (rc < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
-      return rc;
-   }
-   /*---(non-init run)-------------------*/
-   if (a_tab != CTAB) {
-      /*---(save values)-----------------*/
-      DEBUG_LOCS   yLOG_note    ("save existing tab values");
-      /*---(cols)---------*/
-      s_tabs [CTAB].ncol      = NCOL;
-      s_tabs [CTAB].ccol      = CCOL;
-      s_tabs [CTAB].bcol      = BCOL;
-      s_tabs [CTAB].ecol      = ECOL;
-      s_tabs [CTAB].froz_col  = FR_COL;
-      s_tabs [CTAB].froz_bcol = FR_BCOL;
-      s_tabs [CTAB].froz_ecol = FR_ECOL;
-      /*---(rows)---------*/
-      s_tabs [CTAB].nrow      = NROW;
-      s_tabs [CTAB].crow      = CROW;
-      s_tabs [CTAB].brow      = BROW;
-      s_tabs [CTAB].erow      = EROW;
-      s_tabs [CTAB].froz_row  = FR_ROW;
-      s_tabs [CTAB].froz_brow = FR_BROW;
-      s_tabs [CTAB].froz_erow = FR_EROW;
-      /*---(update tab)------------------*/
-      CTAB      = a_tab;
-   }
-   DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
    /*---(switch tab)---------------------*/
    p_tab     = &s_tabs[CTAB];
    /*---(restore values)-----------------*/
@@ -208,6 +176,58 @@ TAB_switch             (int a_tab)
    g_zmap.gcur = CTAB;
    MAP_mapper (YVIKEYS_UPDATE);
    yVIKEYS_jump (CCOL, CROW, CTAB);
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return CTAB;
+}
+
+char
+yvikeys_tab_save       (void)
+{
+   /*---(restore values)-----------------*/
+   DEBUG_LOCS   yLOG_note    ("save existing tab values");
+   /*---(cols)---------*/
+   s_tabs [CTAB].ncol      = NCOL;
+   s_tabs [CTAB].ccol      = CCOL;
+   s_tabs [CTAB].bcol      = BCOL;
+   s_tabs [CTAB].ecol      = ECOL;
+   s_tabs [CTAB].froz_col  = FR_COL;
+   s_tabs [CTAB].froz_bcol = FR_BCOL;
+   s_tabs [CTAB].froz_ecol = FR_ECOL;
+   /*---(rows)---------*/
+   s_tabs [CTAB].nrow      = NROW;
+   s_tabs [CTAB].crow      = CROW;
+   s_tabs [CTAB].brow      = BROW;
+   s_tabs [CTAB].erow      = EROW;
+   s_tabs [CTAB].froz_row  = FR_ROW;
+   s_tabs [CTAB].froz_brow = FR_BROW;
+   s_tabs [CTAB].froz_erow = FR_EROW;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return CTAB;
+}
+
+char         /*-> tbd --------------------------------[ ------ [gc.E82.112.31]*/ /*-[02.0000.073.!]-*/ /*-[--.---.---.--]-*/
+TAB_switch             (int a_tab)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(begin)--------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
+   /*---(defense)---------------------*/
+   rc = TAB_valid (a_tab);
+   DEBUG_LOCS   yLOG_value   ("rc"        , rc);
+   if (rc < 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
+      return rc;
+   }
+   /*---(save values)-----------------*/
+   yvikeys_tab_save ();
+   /*---(update tab)------------------*/
+   CTAB      = a_tab;
+   /*---(retrieve tab)-------------------*/
+   yvikeys_tab_retrieve ();
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return CTAB;
@@ -309,6 +329,8 @@ TAB_resize           (char *a_max)
 char  TAB_colwide      (int a_tab) { return s_tabs [a_tab].defwide; }
 char  TAB_rowtall      (int a_tab) { return s_tabs [a_tab].deftall; }
 
+char  TAB_defwide      (int a_size) { return COL_defwidth  (CTAB, a_size); }
+char  TAB_deftall      (int a_size) { return ROW_defheight (CTAB, a_size); }
 
 
 /*====================------------------------------------====================*/
@@ -355,9 +377,13 @@ static void  o___STATUS__________o () { return; }
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 TAB_line           (char a_tab, char *a_list)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_tab       = '0';
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_tab       =  '0';
+   char        x_size      [LEN_LABEL] = "";
+   char        x_cur       [LEN_LABEL] = "";
+   char        x_max       [LEN_LABEL] = "";
    char        x_count     [LEN_LABEL] = "";
    /*---(beginning)----------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -368,14 +394,24 @@ TAB_line           (char a_tab, char *a_list)
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return -1;     /* then no point                       */
    }
-   /*---(walk the list)---------------*/
-   if      (a_tab >= 0  && a_tab <= 9 )   x_tab = a_tab + '0';
-   else if (a_tab >= 10 && a_tab <= 36)   x_tab = a_tab - 10 + 'A';
-   else                                   return -2;
+   /*---(convert tab)-----------------*/
+   x_tab = TAB_label (a_tab);
+   --rce;  if (x_tab < 0 && x_tab > -20) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(generate stats)--------------*/
+   sprintf (x_size, "%dx%d", s_tabs [a_tab].ncol, s_tabs [a_tab].nrow);
+   rc = str3gyges  (a_tab, s_tabs [a_tab].ccol, s_tabs [a_tab].crow, 0, x_cur);
+   rc = str3gyges  (a_tab, s_tabs [a_tab].ncol - 1, s_tabs [a_tab].nrow - 1, 0, x_max);
    if      (s_tabs [a_tab].c ==   0)  sprintf (x_count, "  -");
    else if (s_tabs [a_tab].c <  999)  sprintf (x_count, "%3d", s_tabs [a_tab].c);
    else                               sprintf (x_count, "+++");
-   sprintf (a_list, " %c %-15.15s %3d %4d %3s %c ", x_tab, s_tabs [a_tab].name, s_tabs [a_tab].ncol, s_tabs [a_tab].nrow, x_count, s_tabs [a_tab].type);
+   /*---(finish)----------------------*/
+   snprintf (a_list, LEN_STR, "%c %-12.12s %-10.10s %3s %c %-8.8s %-8.8s %2d %2d",
+         x_tab, s_tabs [a_tab].name, x_size, x_count,
+         s_tabs [a_tab].type, x_cur, x_max,
+         TAB_colwide (a_tab), TAB_rowtall (a_tab));
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -384,28 +420,24 @@ TAB_line           (char a_tab, char *a_list)
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.40]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 TAB_status         (char a_tab, char *a_list)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        x_tab       = '0';
-   char        x_size      [LEN_LABEL] = "";
-   /*---(beginning)----------------------*/
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   char        t           [LEN_STR]   = "";
+   /*---(beginning)---------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_value   ("a_tab"     , a_tab);
-   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
-   /*---(defenses)--------------------*/
-   if (a_list  == NULL) {
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return -1;     /* then no point                       */
+   /*---(get info)--------------------*/
+   rc = TAB_line (a_tab, t);
+   if (rc < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rc);
+      return rc;
    }
-   /*---(walk the list)---------------*/
-   if      (a_tab >= 0  && a_tab <= 9 )   x_tab = a_tab + '0';
-   else if (a_tab >= 10 && a_tab <= 36)   x_tab = a_tab - 10 + 'A';
-   else                                   return -2;
-   sprintf (x_size, "%dx%d", NCOL, NROW);
-   snprintf (a_list, LEN_STR, "[ buffer %d %c %s %-30.30s ]", a_tab, x_tab, x_size, s_tabs [a_tab].name);
+   /*---(generate stats)--------------*/
+   sprintf (a_list, "[ buffer %s ]", t);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char  TAB_status_curr    (char *a_list) { return TAB_status (CTAB, a_list); }
 
 

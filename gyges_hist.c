@@ -124,7 +124,7 @@ HIST_single        (char a_mode, char a_type, int a_tab, int a_col, int a_row, c
    s_hist [s_chist].act   = a_type;
    s_hist [s_chist].nkey  = yVIKEYS_keys_nkey ();
    /*---(address)------------------------*/
-   rc = str4gyges (a_col, a_row, a_tab, 0, x_label);
+   rc = str4gyges (a_tab, a_col, a_row, 0, x_label);
    strlcpy (s_hist [s_chist].addr  , x_label, LEN_LABEL);
    /*---(before)-------------------------*/
    strlcpy  (t, a_before, LEN_RECD);
@@ -149,7 +149,7 @@ HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF
    char        x           [LEN_RECD];
    int         i           =    0;
    /*---(make label)---------------------*/
-   rc = str4gyges (a_col, a_row, a_tab, 0, x_label);
+   rc = str4gyges (a_tab, a_col, a_row, 0, x_label);
    if (rc < 0)  return rc;
    if (a_afterF  != NULL)  sprintf (x, "%s", a_afterF);
    else                    sprintf (x, "´´´");
@@ -298,7 +298,7 @@ HIST__undo_single       (void)
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
    DEBUG_HIST  yLOG_info    ("label"     , s_hist [s_chist].addr);
-   rc = str2gyges (s_hist [s_chist].addr, &x_col, &x_row, &x_tab, NULL, 0);
+   rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, 0);
    DEBUG_HIST  yLOG_value   ("str2gyges"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
@@ -419,7 +419,7 @@ HIST__redo_single       (void)
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
    DEBUG_HIST  yLOG_info    ("label"     , s_hist [s_chist].addr);
-   rc = str2gyges (s_hist [s_chist].addr, &x_col, &x_row, &x_tab, NULL, 0);
+   rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, 0);
    DEBUG_HIST  yLOG_value   ("str2gyges"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
@@ -581,7 +581,7 @@ HIST__unit         (char *a_question, int a_ref)
       if      (a_ref <  0    )    snprintf (unit_answer, LEN_UNIT, "HIST entry       : %4d too small", a_ref);
       else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "HIST entry       : %4d too large", a_ref);
       else {
-         rc = str2gyges (s_hist [s_chist].addr, &x_col, &x_row, &x_tab, NULL, 0);
+         rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, 0);
          snprintf (unit_answer, LEN_UNIT, "HIST entry       : %4d, t=%4d, c=%4d, r=%4d, %c", a_ref, x_tab, x_col, x_row, s_hist[a_ref].act);
       }
    } else if (strcmp (a_question, "before"    )    == 0) {
