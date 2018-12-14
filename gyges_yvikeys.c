@@ -489,7 +489,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    }
    /*---(get original location)----------*/
    DEBUG_REGS   yLOG_info    ("a_label"   , a_cell->label);
-   rc = LOC_parse (a_cell->label, &x_stab, &x_scol, &x_srow, NULL);
+   rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, 0);
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0)  {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -874,7 +874,7 @@ MAP_mapper           (char a_req)
    CTAB = g_zmap.gcur;
    x_curr = LOC_cell_at_curr ();
    if      (x_curr == NULL || x_curr->s == NULL) {
-      LOC_ref (CTAB, CCOL, CROW, 0, t);
+      str3gyges (CTAB, CCOL, CROW, 0, t);
       yVIKEYS_source (t, "");
    } else {
       yVIKEYS_source (x_curr->label, x_curr->s);

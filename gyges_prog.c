@@ -197,6 +197,7 @@ PROG_begin         (void)
    /*---(overall tab settings)-----------*/
    LOC_init  ();
    TAB_init  ();
+   COL_init  ();
    /*---(locals)-------------------------*/
    VISU_init ();
    /*> REG_init  ();                                                                  <*/
@@ -510,8 +511,8 @@ PROG__unitloud      (void)
 {
    char       *x_args [6]  = { "gyges_unit", "@@kitchen", "@@LOCS", "@@rpn", "@@yrpn", "@@yparse"    };
    yURG_logger (6, x_args);
-   yURG_urgs   (6, x_args);
    PROG_init   (6, x_args);
+   yURG_urgs   (6, x_args);
    PROG_args   (6, x_args);
    PROG_begin  ();
    return 0;

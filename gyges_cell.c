@@ -978,61 +978,61 @@ CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    return 0;
 }
 
-char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
-CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
-{  /*---(design notes)-------------------*/
-   /*  update all cells to new width, either a standard size, or a specific   */
-   /*  value communicated as a negative number.                               */
-   /*---(locals)-----------+-----------+-*/
-   int         x_prev      = 0;
-   int         x_width     = 0;
-   int         x_row       = 0;
-   int         x_last      = 0;
-   tCELL      *x_cell      = NULL;
-   /*---(stop early)-------------------------*/
-   if (a_head->row != a_curr->row)  return 1;
-   /*---(process range)----------------------*/
-   x_last = ROW_max (a_curr->tab);
-   /*---(adjust)----------------------*/
-   if (a_num <   0) {
-      x_width                = -(a_num);
-   } else {
-      x_width = x_prev = COL_width (a_curr->tab, a_curr->col);
-      switch (a_num) {
-      case  'm' : x_width    = 0;                           break;
-      case  'n' : x_width    = 8;                           break;
-      case  'N' : x_width    = 12;                          break;
-      case  'w' : x_width    = 20;                          break;
-      case  'W' : x_width    = 50;                          break;
-      case  'h' : x_width   -= 1;                           break;
-      case  'l' : x_width   += 1;                           break;
-      case  'H' : x_width    = ((x_width / 5) * 5);         break;
-      case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;
-      }
-   }
-   /*---(history)----------------------*/
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
-   HIST_width  (a_mode, a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);
-   /*---(set width)--------------------*/
-   COL_widen  (a_curr->tab, a_curr->col, x_width);
-   /*---(update column printables)----*/
-   for (x_row = 0; x_row < x_last; ++x_row) {
-      x_cell = LOC_cell_at_loc (a_curr->col, x_row, a_curr->tab);
-      if (x_cell == NULL) continue;
-      /*---(update merged cells)----------*/
-      if (x_cell->t == YCALC_DATA_MERGED)  yCALC_calc_from (x_cell->ycalc);
-      /*---(update printable)-------------*/
-      /*> CELL_printable (x_cell);                                                    <*/
-      api_ycalc_printer (x_cell);
-   }
-   /*---(reset headers)---------------*/
-   yVIKEYS_map_refresh ();
-   /*> KEYS_bcol    (BCOL);                                                           <*/
-   /*> CURS_col_head ();                                                              <*/
-   /*---(complete)---------------------------*/
-   DEBUG_CELL  yLOG_exit   (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> change cell column width -----------[ ------ [gc.E91.292.69]+/ /+-[02.0000.303.Y]-+/ /+-[--.---.---.--]-+/   <* 
+ *> CELL_width         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)                                                     <* 
+ *> {  /+---(design notes)-------------------+/                                                                                    <* 
+ *>    /+  update all cells to new width, either a standard size, or a specific   +/                                               <* 
+ *>    /+  value communicated as a negative number.                               +/                                               <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_prev      = 0;                                                                                                <* 
+ *>    int         x_width     = 0;                                                                                                <* 
+ *>    int         x_row       = 0;                                                                                                <* 
+ *>    int         x_last      = 0;                                                                                                <* 
+ *>    tCELL      *x_cell      = NULL;                                                                                             <* 
+ *>    /+---(stop early)-------------------------+/                                                                                <* 
+ *>    if (a_head->row != a_curr->row)  return 1;                                                                                  <* 
+ *>    /+---(process range)----------------------+/                                                                                <* 
+ *>    x_last = ROW_max (a_curr->tab);                                                                                             <* 
+ *>    /+---(adjust)----------------------+/                                                                                       <* 
+ *>    if (a_num <   0) {                                                                                                          <* 
+ *>       x_width                = -(a_num);                                                                                       <* 
+ *>    } else {                                                                                                                    <* 
+ *>       x_width = x_prev = COL_width (a_curr->tab, a_curr->col);                                                                 <* 
+ *>       switch (a_num) {                                                                                                         <* 
+ *>       case  'm' : x_width    = 0;                           break;                                                             <* 
+ *>       case  'n' : x_width    = 8;                           break;                                                             <* 
+ *>       case  'N' : x_width    = 12;                          break;                                                             <* 
+ *>       case  'w' : x_width    = 20;                          break;                                                             <* 
+ *>       case  'W' : x_width    = 50;                          break;                                                             <* 
+ *>       case  'h' : x_width   -= 1;                           break;                                                             <* 
+ *>       case  'l' : x_width   += 1;                           break;                                                             <* 
+ *>       case  'H' : x_width    = ((x_width / 5) * 5);         break;                                                             <* 
+ *>       case  'L' : x_width    = (((x_width / 5) + 1) * 5);   break;                                                             <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(history)----------------------+/                                                                                      <* 
+ *>    if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;                                                            <* 
+ *>    HIST_width  (a_mode, a_curr->tab, a_curr->col, a_curr->row, x_prev, x_width);                                               <* 
+ *>    /+---(set width)--------------------+/                                                                                      <* 
+ *>    COL_widen  (a_curr->tab, a_curr->col, x_width);                                                                             <* 
+ *>    /+---(update column printables)----+/                                                                                       <* 
+ *>    for (x_row = 0; x_row < x_last; ++x_row) {                                                                                  <* 
+ *>       x_cell = LOC_cell_at_loc (a_curr->col, x_row, a_curr->tab);                                                              <* 
+ *>       if (x_cell == NULL) continue;                                                                                            <* 
+ *>       /+---(update merged cells)----------+/                                                                                   <* 
+ *>       if (x_cell->t == YCALC_DATA_MERGED)  yCALC_calc_from (x_cell->ycalc);                                                    <* 
+ *>       /+---(update printable)-------------+/                                                                                   <* 
+ *>       /+> CELL_printable (x_cell);                                                    <+/                                      <* 
+ *>       api_ycalc_printer (x_cell);                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(reset headers)---------------+/                                                                                       <* 
+ *>    yVIKEYS_map_refresh ();                                                                                                     <* 
+ *>    /+> KEYS_bcol    (BCOL);                                                           <+/                                      <* 
+ *>    /+> CURS_col_head ();                                                              <+/                                      <* 
+ *>    /+---(complete)---------------------------+/                                                                                <* 
+ *>    DEBUG_CELL  yLOG_exit   (__FUNCTION__);                                                                                     <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char
 CELL_visual        (char a_what, char a_mode, char a_how)
@@ -1072,7 +1072,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
          ++x_handle;
          DEBUG_CELL   yLOG_note   ("handlers");
          switch (a_what) {
-         case CHANGE_WIDTH   : rc = CELL_width        (x_first, x_next, a_mode, a_how); break;
+         case CHANGE_WIDTH   : rc = COL_visual        (x_first, x_next, a_mode, a_how); break;
          case CHANGE_DECIMAL : rc = CELL_decimals     (x_first, x_next, a_mode, a_how); break;
          case CHANGE_ALIGN   : rc = CELL_align        (x_first, x_next, a_mode, a_how); break;
          case CHANGE_FORMAT  : rc = CELL_format       (x_first, x_next, a_mode, a_how); break;
@@ -1196,7 +1196,7 @@ CELL__unitnew      (char *a_question, char *a_label)
       sprintf (unit_answer, "s_celln error    : can not call on dependency s_root");
       return unit_answer;
    } else {
-      rc     = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
       if (rc < 0) {
          sprintf (unit_answer, "s_celln error    : label <%s> not legal", a_label);
          return unit_answer;

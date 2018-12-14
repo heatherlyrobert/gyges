@@ -418,7 +418,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    s_owners [*a_merge] = x_owner;
    s_widths [*a_merge] = w;
    /*---(look for mergse)----------------*/
-   rc = str2gyges (x_owner->label, &z, &x, &y, 0, 0);
+   rc = str2gyges (x_owner->label, &z, &x, &y, NULL, 0);
    DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
    if (rc < 0)  {
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);
@@ -603,7 +603,7 @@ api_ycalc__unit    (char *a_question, char *a_label)
       sprintf (unit_answer, "ycalc error      : can not call on dependency s_root");
       return unit_answer;
    } else {
-      rc     = LOC_parse (a_label, &x_tab, &x_col, &x_row, NULL);
+      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
       if (rc < 0) {
          sprintf (unit_answer, "ycalc error      : label <%s> not legal", a_label);
          return unit_answer;

@@ -503,7 +503,7 @@ DRAW_xaxis         (void)
       /*---(prepare)---------------------*/
       w     = COL_width (CTAB, i);
       wa    = w - 4;
-      COL_label (CTAB, i, x_label);
+      COL_name (CTAB, i, x_label);
       /*---(output)----------------------*/
       snprintf (x_disp, 500, "\[%*.*s%s\]", wa, wa, g_dashes, x_label);
       if (x_disp [5] == '-')  x_disp [5] = G_CHAR_SPACE; 
@@ -517,7 +517,7 @@ DRAW_xaxis         (void)
    if (x_pos < x_wide) {
       w     = x_wide - x_pos;
       wa    = w - 4;
-      COL_label (CTAB, ECOL + 1, x_label);
+      COL_name (CTAB, ECOL + 1, x_label);
       if (ECOL < NCOL - 1){
          if      (w == 1) snprintf (x_disp, 500, ">");
          else if (w == 2) snprintf (x_disp, 500, "\[>");
@@ -554,7 +554,7 @@ DRAW_xaxis         (void)
  *>          w     = COL_width (CTAB, i);                                                                                      <* 
  *>          wa    = w - 4;                                                                                                        <* 
  *>          cw    = COL_xpos  (CTAB, i) + w;                                                                                  <* 
- *>          COL_label (CTAB, i, label);                                                                                       <* 
+ *>          COL_name (CTAB, i, label);                                                                                       <* 
  *>          /+---(output)----------------------+/                                                                                 <* 
  *>          snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);                                                           <* 
  *>          CURS_col_color  (i);                                                                                                  <* 
@@ -570,7 +570,7 @@ DRAW_xaxis         (void)
  *>       w     = COL_width (CTAB, i);                                                                                         <* 
  *>       wa    = w - 4;                                                                                                           <* 
  *>       cw    = COL_xpos  (CTAB, i) + w;                                                                                     <* 
- *>       COL_label (CTAB, i, label);                                                                                          <* 
+ *>       COL_name (CTAB, i, label);                                                                                          <* 
  *>       /+---(output)----------------------+/                                                                                    <* 
  *>       snprintf(msg, 500, "\[%*.*s%s\]", wa, wa, g_dashes, label);                                                              <* 
  *>       CURS_col_color  (i);                                                                                                     <* 
@@ -1218,7 +1218,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       LOC_label  (a_curr, l);
       sprintf    (label, ",%s,", l);
    } else {
-      LOC_ref    (CTAB, a_col, a_row, 0, l);
+      str3gyges  (CTAB, a_col, a_row, 0, l);
       sprintf    (label, ",%s,", l);
    }
    /*---(current)------------------------*/

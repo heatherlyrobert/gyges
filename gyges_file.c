@@ -84,8 +84,7 @@ FILE_init               (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );
-   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", COLS_writer_all , COLS_reader     , "------------" , "label,size,count"                     , "gyges cols (x-axis)"      );
+   /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );   <*/
    rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", ROWS_writer_all , ROWS_reader     , "------------" , "label,size,count"                     , "gyges rows (y-axis)"      );
    rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "TiLTO-------", OUTP_cell_dep   , INPT_cell       , "------------" , "lvl/reg,seq,label,t-f-d-a-m,contents" , "gyges dependent cells"    );
    rc = yPARSE_handler (FILE_FREECEL , "cell_free" , 5.2, "TiLTO-------", OUTP_cell_free  , INPT_cell       , "------------" , "lvl/reg,seq,label,t-f-d-a-m,contents" , "gyges independent cells"  );
@@ -113,7 +112,7 @@ FILE_init               (void)
 static void   o___TABS____________o (void) { return; }
 
 char
-TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
+TABS_reader_OLD      (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -11;
@@ -187,59 +186,6 @@ TABS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char 
    return 0;
 }
 
-char
-TABS_writer           (char a_tab)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          =    0;
-   char        x_type      =  '-';
-   int         x_cols      =    0;
-   int         x_rows      =    0;
-   int         x_wide      =    0;
-   int         x_tall      =    0;
-   char        x_name      [LEN_LABEL];
-   char        x_min       [LEN_LABEL];
-   char        x_max       [LEN_LABEL];
-   /*---(prepare)------------------------*/
-   yPARSE_outclear  ();
-   /*---(defense)------------------------*/
-   if (TAB_valid (a_tab) <  0)  return -1;
-   if (TAB_used  (a_tab) <= 0)  return 0;
-   /*---(prepare)------------------------*/
-   TAB_name    (a_tab, x_name);
-   x_cols = COL_max  (a_tab) - 1;
-   x_rows = ROW_max  (a_tab) - 1;
-   x_wide = TAB_colwide (a_tab);
-   x_tall = TAB_rowtall (a_tab);
-   x_type = TAB_type (a_tab);
-   str4gyges (a_tab , 0     , 0    , 0, x_min);
-   str4gyges (a_tab, x_cols, x_rows, 0, x_max);
-   /*---(write)--------------------------*/
-   rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);
-   if (rc < 0)   return rc;
-   /*---(complete)-----------------------*/
-   return 1;
-}
-
-char
-TABS_writer_all         (void)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rc          =    0;
-   int         i           =    0;
-   char        c           =    0;
-   /*---(walk)---------------------------*/
-   yPARSE_verb_begin ("tabs");
-   for (i = 0; i < MAX_TABS; ++i) {
-      rc = TABS_writer          (i);
-      if (rc == 1) ++c;
-      yPARSE_verb_break (c);
-   }
-   yPARSE_verb_end   (c);
-   /*---(complete)-----------------------*/
-   return c;
-}
-
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
 TABS_writer_OLD       (char  a_tab)
 {
@@ -287,7 +233,6 @@ TABS_writer_OLD       (char  a_tab)
    /*---(complete)-----------------------*/
    return c;
 }
-
 
 char
 COLS_reader          (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i)
@@ -627,7 +572,7 @@ INPT_cell            (char n, char *a, char *b, char *c, char *d, char *e, char 
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = LOC_parse (c, &x_tab, &x_col, &x_row, NULL);
+   rc = str2gyges (c, &x_tab, &x_col, &x_row, NULL, 0);
    DEBUG_INPT  yLOG_value   ("parse"     , rc);
    --rce;  if (rc < 0)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);

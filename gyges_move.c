@@ -765,7 +765,7 @@ KEYS_pcol          (void)
    fprintf (x_file, "ccol  = %3d\n", CCOL);
    for (i = 0; i < NCOL; ++i) {
       if (i % 5 == 0)  fprintf (x_file, "\ncol   label---   -c-   -w-   -x-\n");
-      COL_label (CTAB, i, x_label);
+      COL_name (CTAB, i, x_label);
       fprintf (x_file, "%3d   %-8s   %3d   %3d   %3d\n", i, x_label, COL_used (CTAB, i), COL_width (CTAB, i), COL_xpos (CTAB, i));
    }
    fprintf (x_file, "\ndone\n");

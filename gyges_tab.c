@@ -28,6 +28,7 @@ TAB_init                (void)
    char        rc          =    0;
    /*---(count buffer labels)------------*/
    s_nvalid = strlen (s_valids);
+   TAB_purge ();
    /*---(add buffer commands)------------*/
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "buf"         , "bu"  , "c"    , TAB_switch_char            , "switch buffer"                        );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "btitle"      , "bt"  , "s"    , TAB_rename_curr            , "rename current buffer"                );
@@ -40,8 +41,62 @@ TAB_init                (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "deftall"     , ""    , "i"    , TAB_deftall                , "change default row height"            );
    /*---(add status options)-------------*/
    rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
+   /*---(add yparse specification)-------*/
+   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TAB_writer_all  , TAB_reader      , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
    /*---(complete)-----------------------*/
    return rc;
+}
+
+char         /*-> clean all tabs ---------------------[ ------ [fz.A52.021.03]*/ /*-[01.0000.023.!]-*/ /*-[--.---.---.--]-*/
+TAB_purge            (void)
+{  /*---(design notes)--------------------------------------------------------*/
+   /* run CELL_wrap/purge before LOC_wrap/purge so all cells are unhooked     */
+   /*---(locals)-----------+-----------+-*/
+   int         x_tab       = 0;
+   char        x_label     [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   /*---(initialize s_tabs)----------------*/
+   for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
+      DEBUG_PROG   yLOG_value   ("x_tab"     , x_tab);
+      /*---(main config)-----------------*/
+      DEBUG_PROG   yLOG_note    ("reset naming");
+      s_tabs [x_tab].tab     = x_tab;
+      s_tabs [x_tab].type    = G_TAB_NORMAL;
+      TAB_defname (x_tab, s_tabs [x_tab].name);
+      /*---(size limits)-----------------*/
+      DEBUG_PROG   yLOG_note    ("reset default size");
+      DEBUG_PROG   yLOG_value   ("DEF_COLS"  , DEF_COLS);
+      DEBUG_PROG   yLOG_value   ("DEF_ROWS"  , DEF_ROWS);
+      str3gyges (x_tab, DEF_COLS - 1, DEF_ROWS - 1, 0, x_label);
+      TAB_resize (x_label);
+      /*---(current position)------------*/
+      DEBUG_PROG   yLOG_note    ("reset current position");
+      s_tabs [x_tab].ccol    =    0;
+      s_tabs [x_tab].crow    =    0;
+      /*---(screen position)-------------*/
+      DEBUG_PROG   yLOG_note    ("reset beginning and ending cells");
+      s_tabs [x_tab].bcol    =    0;
+      s_tabs [x_tab].brow    =    0;
+      s_tabs [x_tab].ecol    =    0;
+      s_tabs [x_tab].erow    =    0;
+      /*---(col/row)---------------------*/
+      s_tabs [x_tab].defwide = DEF_WIDTH;
+      s_tabs [x_tab].deftall = DEF_HEIGHT;
+      COL_clear         (x_tab);
+      ROW_clear         (x_tab);
+      /*---(frozen)----------------------*/
+      s_tabs [x_tab].froz_col      = '-';
+      s_tabs [x_tab].froz_bcol     =   0;
+      s_tabs [x_tab].froz_ecol     =   0;
+      s_tabs [x_tab].froz_row      = '-';
+      s_tabs [x_tab].froz_brow     =   0;
+      s_tabs [x_tab].froz_erow     =   0;
+      /*---(done)------------------------*/
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 
@@ -148,7 +203,7 @@ char  TAB_rename_curr      (char *a_name) { return TAB_rename (CTAB, a_name); }
 static void  o___SWITCHING_______o () { return; }
 
 char
-yvikeys_tab_retrieve   (void)
+TAB_retrieve            (void)
 {
    /*---(switch tab)---------------------*/
    p_tab     = &s_tabs[CTAB];
@@ -182,7 +237,7 @@ yvikeys_tab_retrieve   (void)
 }
 
 char
-yvikeys_tab_save       (void)
+TAB_save               (void)
 {
    /*---(restore values)-----------------*/
    DEBUG_LOCS   yLOG_note    ("save existing tab values");
@@ -223,11 +278,11 @@ TAB_switch             (int a_tab)
       return rc;
    }
    /*---(save values)-----------------*/
-   yvikeys_tab_save ();
+   TAB_save     ();
    /*---(update tab)------------------*/
    CTAB      = a_tab;
    /*---(retrieve tab)-------------------*/
-   yvikeys_tab_retrieve ();
+   TAB_retrieve ();
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return CTAB;
@@ -282,7 +337,7 @@ TAB_size             (int a_tab, char *a_max)
    char rc = TAB_valid (a_tab);
    if (rc < 0) return rc;
    --rce;  if (a_max   == NULL)                       return rce;
-   LOC_ref (a_tab, s_tabs[a_tab].ncol - 1, s_tabs[a_tab].nrow - 1, 0, a_max);
+   str3gyges (a_tab, s_tabs[a_tab].ncol - 1, s_tabs[a_tab].nrow - 1, 0, a_max);
    return 0;
 }
 
@@ -306,7 +361,7 @@ TAB_resize           (char *a_max)
    }
    /*---(handle full)--------------------*/
    else {
-      rc = LOC_parse  (a_max, &x_tab, &x_col, &x_row, NULL);
+      rc = str2gyges  (a_max, &x_tab, &x_col, &x_row, NULL, 0);
    }
    /*---(check error)--------------------*/
    DEBUG_LOCS   yLOG_value   ("rc"        , rc);
@@ -441,3 +496,214 @@ TAB_status         (char a_tab, char *a_list)
 char  TAB_status_curr    (char *a_list) { return TAB_status (CTAB, a_list); }
 
 
+
+/*====================------------------------------------====================*/
+/*===----                    yparse record handling                    ----===*/
+/*====================------------------------------------====================*/
+static void  o___YPARSE__________o () { return; }
+
+char
+TAB_reader           (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -11;
+   char        rc          =    0;
+   char        x_verb      [LEN_LABEL];
+   char        x_name      [LEN_LABEL];
+   char        x_label     [LEN_LABEL];
+   int         x_len       =    0;
+   int         x_tab       =    0;
+   int         x_size      =    0;
+   char        x_type      =  '-';
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(get verb)-----------------------*/
+   rc = yPARSE_popstr (x_verb);
+   DEBUG_INPT   yLOG_value   ("pop verb"  , rc);
+   DEBUG_INPT   yLOG_info    ("x_verb"    , x_verb);
+   --rce;  if (strcmp ("tab", x_verb) != 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get name)-----------------------*/
+   rc = yPARSE_popstr (x_name);
+   DEBUG_INPT   yLOG_value   ("pop name"  , rc);
+   DEBUG_INPT   yLOG_info    ("x_name"    , x_name);
+   x_len = strlen (x_name);
+   DEBUG_INPT   yLOG_value   ("x_len"     , x_len);
+   --rce;  if (x_len <= 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(min)----------------------------*/
+   rc = yPARSE_popstr (x_label);
+   DEBUG_INPT   yLOG_value   ("pop min"   , rc);
+   DEBUG_INPT   yLOG_info    ("min"       , x_label);
+   rc = str2gyges (x_label, NULL, NULL, NULL, NULL, 0);
+   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(max)----------------------------*/
+   rc = yPARSE_popstr (x_label);
+   DEBUG_INPT   yLOG_value   ("pop max"   , rc);
+   DEBUG_INPT   yLOG_info    ("max"       , x_label);
+   rc = str2gyges (x_label, &x_tab, NULL, NULL, NULL, 0);
+   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT   yLOG_value   ("tab"       , x_tab);
+   /*---(switch to tab)------------------*/
+   rc = TAB_switch (x_tab);
+   DEBUG_INPT   yLOG_value   ("TAB_switch", rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update tab)---------------------*/
+   rc = TAB_rename (x_tab, x_name);
+   DEBUG_INPT   yLOG_value   ("TAB_rename", rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = TAB_resize (x_label);
+   DEBUG_INPT   yLOG_value   ("TAB_resize", rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(default sizes)------------------*/
+   rc = yPARSE_popint  (&x_size);
+   DEBUG_INPT   yLOG_value   ("pop col"   , rc);
+   if (x_size > 0)  COL_defwidth  (x_tab, x_size);
+   rc = yPARSE_popint  (&x_size);
+   DEBUG_INPT   yLOG_value   ("pop row"   , rc);
+   if (x_size > 0)  ROW_defheight (x_tab, x_size);
+   rc = yPARSE_popint  (&x_size);
+   DEBUG_INPT   yLOG_value   ("pop depth" , rc);
+   /*---(type)---------------------------*/
+   rc = yPARSE_popchar (&x_type);
+   DEBUG_INPT   yLOG_value   ("pop type"  , rc);
+   DEBUG_INPT   yLOG_char    ("x_type"    , x_type);
+   rc = TAB_retype (x_tab, x_type);
+   DEBUG_INPT   yLOG_value   ("TAB_retype", rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
+char
+TAB_writer            (char a_tab)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   char        x_type      =  '-';
+   int         x_cols      =    0;
+   int         x_rows      =    0;
+   int         x_wide      =    0;
+   int         x_tall      =    0;
+   char        x_name      [LEN_LABEL];
+   char        x_min       [LEN_LABEL];
+   char        x_max       [LEN_LABEL];
+   /*---(prepare)------------------------*/
+   yPARSE_outclear  ();
+   /*---(defense)------------------------*/
+   if (TAB_valid (a_tab) <  0)  return -1;
+   if (TAB_used  (a_tab) <= 0)  return 0;
+   /*---(prepare)------------------------*/
+   TAB_name    (a_tab, x_name);
+   x_cols = COL_max  (a_tab) - 1;
+   x_rows = ROW_max  (a_tab) - 1;
+   x_wide = TAB_colwide (a_tab);
+   x_tall = TAB_rowtall (a_tab);
+   x_type = TAB_type (a_tab);
+   str4gyges (a_tab , 0     , 0    , 0, x_min);
+   str4gyges (a_tab, x_cols, x_rows, 0, x_max);
+   /*---(write)--------------------------*/
+   rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);
+   if (rc < 0)   return rc;
+   /*---(complete)-----------------------*/
+   return 1;
+}
+
+char
+TAB_writer_all          (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   int         i           =    0;
+   char        c           =    0;
+   /*---(walk)---------------------------*/
+   yPARSE_verb_begin ("tab");
+   for (i = 0; i < MAX_TABS; ++i) {
+      yPARSE_verb_break (c);
+      rc = TAB_writer   (i);
+      if (rc == 1) ++c;
+   }
+   yPARSE_verb_end   (c);
+   /*---(complete)-----------------------*/
+   return c;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      unit testing                            ----===*/
+/*====================------------------------------------====================*/
+static void  o___UNITTEST________o () { return; }
+
+
+char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
+TAB__unit          (char *a_question, char *a_label)
+{
+   /*---(locals)-------------------------*/
+   char        rc          =    0;
+   int         i           =    0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
+   char        x_abs       =    0;
+   char        x_label     =  '-';
+   char        x_beg       [LEN_LABEL]   = "";
+   char        x_end       [LEN_LABEL]   = "";
+   char        x_cur       [LEN_LABEL]   = "";
+   char        x_max       [LEN_LABEL]   = "";
+   /*---(parse location)-----------------*/
+   strcpy  (unit_answer, "LOC              : label could not be parsed");
+   if (a_label != NULL && strcmp (a_label, "") != 0) {
+      x_label = a_label [0];
+      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, &x_abs, 0);
+   } else {
+      x_tab   = CTAB;
+      x_label = TAB_label (x_tab);
+      x_col   = CCOL;
+      x_row   = CROW;
+      x_abs   = 0;
+   }
+   if (rc <  0)  return unit_answer;
+   /*---(prepare data)-------------------*/
+   strcpy  (unit_answer, "LOC              : locations could not be prepared");
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, x_beg);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, x_end);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, x_cur);
+   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, x_max);
+   if (rc <  0)  return unit_answer;
+   /*---(overall)------------------------*/
+   strcpy  (unit_answer, "LOC              : question not understood");
+   if      (strcmp(a_question, "tab_info"      ) == 0) {
+      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
+   }
+   else if (strcmp(a_question, "tab_def"       )  == 0) {
+      snprintf (unit_answer, LEN_UNIT, "LOC tab defaults : col=%2d, row=%2d", s_tabs[x_tab].defwide, s_tabs[x_tab].deftall);
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
