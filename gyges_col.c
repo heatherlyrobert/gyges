@@ -454,8 +454,6 @@ COL_reader           (void)
    return 1;
 }
 
-
-
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
 COL_writer              (int a_tab, int a_col)
 {
@@ -584,7 +582,7 @@ COL__unit          (char *a_question, char *a_label)
    strcpy  (unit_answer, "COL              : question not understood");
    if      (strcmp(a_question, "col_info"      ) == 0) {
       if (COL_legal (x_tab, x_col) < 0) {
-         snprintf(unit_answer, LEN_UNIT, "COL info         : --, --,   -,   -,   -,   -");
+         snprintf(unit_answer, LEN_UNIT, "COL info         : -t, --,   -#,   -w,   -x,   -c");
       } else {
          snprintf(unit_answer, LEN_UNIT, "COL info         : %ct, %-2.2s, %3d#, %3dw, %3dx, %3dc", x_abbr, s_tabs [x_tab].cols [x_col].l, x_col, s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].cols [x_col].x, s_tabs [x_tab].cols [x_col].c);
       }

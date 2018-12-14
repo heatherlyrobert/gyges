@@ -85,7 +85,7 @@ FILE_init               (void)
    char        rc          =    0;
    /*---(handlers)-----------------------*/
    /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );   <*/
-   rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", ROWS_writer_all , ROWS_reader     , "------------" , "label,size,count"                     , "gyges rows (y-axis)"      );
+   /*> rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", ROWS_writer_all , ROWS_reader     , "------------" , "label,size,count"                     , "gyges rows (y-axis)"      );   <*/
    rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "TiLTO-------", OUTP_cell_dep   , INPT_cell       , "------------" , "lvl/reg,seq,label,t-f-d-a-m,contents" , "gyges dependent cells"    );
    rc = yPARSE_handler (FILE_FREECEL , "cell_free" , 5.2, "TiLTO-------", OUTP_cell_free  , INPT_cell       , "------------" , "lvl/reg,seq,label,t-f-d-a-m,contents" , "gyges independent cells"  );
 

@@ -285,6 +285,21 @@ HIST_width         (char a_mode, int a_tab, int a_col, int a_row, int a_before, 
    return rc;
 }
 
+char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
+HIST_height        (char a_mode, int a_tab, int a_col, int a_row, int a_before, int a_after)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   char        s           [LEN_RECD];
+   char        t           [LEN_RECD];
+   /*---(add record)------------------*/
+   sprintf (s, "%d", a_before);
+   sprintf (t, "%d", a_after );
+   rc = HIST_single (a_mode, HIST_HEIGHT, a_tab, a_col, a_row, s, t);
+   /*---(complete)--------------------*/
+   return rc;
+}
+
 char         /*-> take a change away -----------------[ leaf   [gc.J76.043.IA]*/ /*-[03.0000.113.!]-*/ /*-[--.---.---.--]-*/
 HIST__undo_single       (void)
 {

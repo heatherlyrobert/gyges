@@ -198,6 +198,7 @@ PROG_begin         (void)
    LOC_init  ();
    TAB_init  ();
    COL_init  ();
+   ROW_init  ();
    /*---(locals)-------------------------*/
    VISU_init ();
    /*> REG_init  ();                                                                  <*/

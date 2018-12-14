@@ -144,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3f"
-#define     VER_TXT   "col actions, reading, and writing unit tested"
+#define     VER_NUM   "3.3g"
+#define     VER_TXT   "row actions, reading, and writing unit tested"
 
 
 
@@ -1313,6 +1313,7 @@ char        HIST_decimals      (char a_mode, int a_tab, int a_col, int a_row, ch
 char        HIST_align         (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
 char        HIST_format        (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
 char        HIST_width         (char a_mode, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
+char        HIST_height        (char a_mode, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
 
 char        HIST_list          (void);
 char        HIST_undo          (void);
@@ -1403,19 +1404,38 @@ char*       COL__unit            (char *a_question, char *a_label);
 
 
 /*===[[ gyges_row.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ROW_init                (void);
 char        ROW_clear            /* septal 1----- */  (int a_tab);
 char        ROW_valid            /* petal  2----- */  (int a_tab, int a_row);
+char        ROW_legal            /* petal  2----- */  (int a_tab, int a_row);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         ROW_defmax           /* petal  0----- */  (void);
 int         ROW_max              /* petal  1----- */  (int a_tab);
 int         ROW_used             /* petal  2----- */  (int a_tab, int a_row);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         ROW_ypos             /* petal  2----- */  (int a_tab, int a_row);
 char        ROW_yset             /* sigma  3----- */  (int a_tab, int a_row, int a_pos);
-char        ROW_label            /* petal  3----- */  (int a_tab, int a_row, char *a_label);
-char        ROW_defheight        (int a_tab, int a_size);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ROW_defname          (int a_tab, int a_row, char *a_name);
+char        ROW_name             (int a_tab, int a_row, char *a_name);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ROW_heighten            (int a_tab, int a_row, int a_size);
+char        ROW_resize              (char *a_name, int a_size, int a_count);
+char        ROW_reset               (void);
+char        ROW_visual              (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char        ROW_defheight           (int a_tab, int a_size);
 char        ROW_height           /* petal  2----- */  (int a_tab, int a_row);
-char        ROW_heighten         /* sigma  3----- */  (int a_tab, int a_row, int a_size);
-char        ROW_freeze           (int a_tab, int a_brow, int a_erow);
-char        ROW_unfreeze         (int a_tab);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ROW_reader              (void);
+char        ROW_writer              (int a_tab, int a_row);
+char        ROW_writer_all          (void);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ROW_freeze              (int a_tab, int a_brow, int a_erow);
+char        ROW_unfreeze            (int a_tab);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char*       ROW__unit               (char *a_question, char *a_label);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 
 
 
