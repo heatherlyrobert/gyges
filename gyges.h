@@ -144,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3g"
-#define     VER_TXT   "row actions, reading, and writing unit tested"
+#define     VER_NUM   "3.3h"
+#define     VER_TXT   "unit tested string printables using ySTR helpers"
 
 
 
@@ -838,7 +838,6 @@ extern char    sta_error;
 extern char    special;
 
 extern char      g_empty    [200];
-extern char      g_spaces   [200];
 extern char      g_dashes   [200];
 
 extern char      ver_ctrl;
@@ -1347,9 +1346,12 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 
 
 /*===[[ gyges_tab.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        TAB_init             (void);
 char        TAB_purge            (void);
 char        TAB_valid            /* petal  1----- */  (int a_tab);
+char        TAB_legal            (int a_tab);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        TAB_label            (int a_tab);
 char        TAB_index            (char  a_abbr);
 int         TAB_used             (int a_tab);
@@ -1381,24 +1383,35 @@ char*       TAB__unit            (char *a_question, char *a_label);
 
 
 /*===[[ gyges_col.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_init             (void);
 char        COL_clear            /* septal 1----- */  (int a_tab);
 char        COL_valid            /* petal  2----- */  (int a_tab, int a_col);
 char        COL_legal            /* petal  2----- */  (int a_tab, int a_col);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         COL_defmax           /* petal  0----- */  (void);
 int         COL_max              /* petal  1----- */  (int a_tab);
 int         COL_used             /* petal  2----- */  (int a_tab, int a_col);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         COL_xpos             /* petal  2----- */  (int a_tab, int a_col);
 char        COL_xset             /* stigma 3----- */  (int a_tab, int a_col, int a_pos);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_defname          /* petal  3----- */  (int a_tab, int a_col, char *a_name);
 char        COL_name             /* petal  3----- */  (int a_tab, int a_col, char *a_name);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_defwidth         (int a_tab, int a_size);
 char        COL_width            /* petal  2----- */  (int a_tab, int a_col);
 char        COL_widen            /* stigma 3----- */  (int a_tab, int a_col, int a_size);
 char        COL_reset            (void);
 char        COL_resize           (char *a_name, int a_size, int a_count);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_freeze           (int a_tab, int a_bcol, int a_ecol);
 char        COL_unfreeze         (int a_tab);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        COL_reader              (void);
+char        COL_writer              (int  a_tab, int a_col);
+char        COL_writer_all          (void);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char*       COL__unit            (char *a_question, char *a_label);
 
 
@@ -1511,10 +1524,8 @@ char      CELL_merge_visu      (tCELL *a_head, tCELL *a_curr, char a_mode, char 
 char      CELL_unmerge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_visual          (char   a_what, char a_mode, char a_how);
 
-char      CELL_align_valid     (char   a_align);
-char      CELL_decimals_valid  (char   a_decs);
-char      CELL_format_valid    (char   a_format);
 #define   CHANGE_WIDTH    'w'
+#define   CHANGE_HEIGHT   'h'
 #define   CHANGE_FORMAT   'f'
 #define   CHANGE_ERASE    'e'
 #define   CHANGE_ALIGN    'a'
@@ -1543,16 +1554,7 @@ char      FILE_rename          (char  *a_name);
 
 
 /*---(file)------------------*/
-char        DETAIL_writer           (char a_type, char a_tab, int a_cur);
-char        COLS_writer_all         (void);
-char        ROWS_writer_all         (void);
-char        OUTP_cell               (char a_type, int a_seq, int a_level, tCELL *a_curr);
-char        OUTP_seq_cell           (void *a_owner, void *a_deproot, int a_seq, int a_level);
-char        OUTP_cell_dep           (void);
-char        OUTP_cell_free          (void);
-char        COLS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
-char        ROWS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
-char        INPT_cell               (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
+
 
 char        TABS_reader             (char n, char *a, char *b, char *c, char *d, char *e, char *f, char *g, char *h, char *i);
 char        TABS_writer             (char  a_tab);
@@ -1562,9 +1564,9 @@ char        TAB_reader              (void);
 char        TAB_writer              (char  a_tab);
 char        TAB_writer_all          (void);
 
-char        COL_reader              (void);
-char        COL_writer              (int  a_tab, int a_col);
-char        COL_writer_all          (void);
+char        CELL_reader             (void);
+char        CELL_writer             (tCELL *a_curr);
+char        CELL_writer_all         (void);
 
 
 

@@ -114,16 +114,24 @@ COL_defmax           (void)
 int          /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
 COL_max              (int a_tab)
 {
-   char rc = COL_valid (a_tab, 0);
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   /*---(defense)------------------------*/
+   rc = TAB_legal (a_tab);
    if (rc < 0) return rc;
+   /*---(complete)-----------------------*/
    return s_tabs [a_tab].ncol;
 }
 
 int          /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 COL_used             (int a_tab, int a_col)
 {
-   char rc = COL_valid (a_tab, a_col);
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   /*---(defense)------------------------*/
+   rc = COL_legal (a_tab, a_col);
    if (rc < 0) return rc;
+   /*---(complete)-----------------------*/
    return s_tabs [a_tab].cols [a_col].c;
 }
 
@@ -461,17 +469,12 @@ COL_writer              (int a_tab, int a_col)
    char        rce         =  -10;
    char        rc          =    0;
    char        c           =    0;
-   int         n           =    0;
-   int         j           =    0;
-   int         x_beg       =    0;
-   int         x_end       =    0;
    int         x_max       =    0;
-   int         k           =    0;
+   int         i           =    0;
    int         x_def       =    0;
    int         x_size      =    0;
    int         x_prev      =    0;
    char        x_label     [LEN_LABEL];
-   int         x_used      =    0;
    /*---(header)-------------------------*/
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(clear output)-------------------*/
@@ -483,46 +486,38 @@ COL_writer              (int a_tab, int a_col)
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(prepare range)------------------*/
-   if (a_col < 0) {
-      x_beg = 0;
-      x_end = COL_max (a_tab) - 1;
-   } else {
-      x_beg = x_end = a_col;
+   --rce;  if (COL_legal (a_tab, a_col) < 0) {
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);
-   DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);
-   x_max = COL_max (a_tab) - 1;
-   DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);
-   /*---(prepare default)----------------*/
+   /*---(filter)----------------------*/
+   x_size = COL_width  (a_tab, a_col);
+   DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
+   /*---(check default)------------------*/
    x_def  = TAB_colwide (a_tab);
    DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
-   if (x_beg > 0)  x_prev = COL_width  (a_tab, x_beg - 1);
-   /*---(run range)----------------------*/
-   for (j = x_beg; j <= x_end; ++j) {
-      /*---(filter)----------------------*/
-      if (COL_legal (a_tab, j) < 0)  continue;
-      x_size = COL_width  (a_tab, j);
-      DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
-      if (x_size == x_def )  continue;
-      if (x_size == x_prev)  continue;
-      /*---(check repeats)---------------*/
-      n = 1;
-      for (k = j + 1; k <= x_max; ++k) {
-         if (x_size != COL_width  (a_tab, k))  break;
-         ++n;
-      }
-      DEBUG_OUTP   yLOG_value   ("n"         , n);
-      /*---(write)-----------------------*/
-      rc = str4gyges (a_tab, j, 0, 0, x_label);
-      yPARSE_fullwrite ("width", x_label, x_size, n);
-      /*---(clear)-----------------------*/
-      if (x_beg != x_end)  yPARSE_outclear  ();
-      /*---(next)------------------------*/
-      c += n;
-      j += n - 1;
-      /*---(done)------------------------*/
+   if (a_col > 0)  x_prev = COL_width  (a_tab, a_col - 1);
+   --rce;  if (x_size == x_def ) {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
    }
+   /*---(check prev)---------------------*/
+   x_max = COL_max (a_tab) - 1;
+   DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);
+   --rce;  if (x_size == x_prev) {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check repeats)---------------*/
+   c = 1;
+   for (i = a_col + 1; i <= x_max; ++i) {
+      if (x_size != COL_width  (a_tab, i))  break;
+      ++c;
+   }
+   DEBUG_OUTP   yLOG_value   ("c"         , c);
+   /*---(write)-----------------------*/
+   rc = str4gyges (a_tab, a_col, 0, 0, x_label);
+   yPARSE_fullwrite ("width", x_label, x_size, c);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
    return c;
@@ -538,7 +533,6 @@ COL_writer_all          (void)
    int         c           =    0;
    /*---(walk)---------------------------*/
    yPARSE_verb_begin ("width");
-   yPARSE_verb_break (c);
    for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
       for (x_col = 0; x_col < MAX_COLS; ++x_col) {
          rc = COL_writer   (x_tab, x_col);

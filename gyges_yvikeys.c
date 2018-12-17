@@ -61,6 +61,13 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  'w' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'w');  break;  /* wide        */
    case  'W' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'W');  break;  /* largest     */
    }
+   /*---(row heights)--------------------*/
+   switch (a_minor) {
+   case  'J' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'J');  break;  /* smallest    */
+   case  'j' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'j');  break;  /* less by 1   */
+   case  'k' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'k');  break;  /* more by 1   */
+   case  'K' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'K');  break;  /* largest     */
+   }
    /*---(decimal places)-----------------*/
    switch (a_minor) {
    case  '0' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '0');  break;  /* none        */
@@ -93,10 +100,10 @@ api_yvikeys_format      (int a_major, int a_minor)
    /*---(integer formats)----------------*/
    switch (a_minor) {
    case  'i' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'i');  break;  /* integer         */
-   case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  CELL_visual   (CHANGE_DECIMAL, HIST_ADD, '3'); break;  /* real/float      */
-   case  'g' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  CELL_visual   (CHANGE_DECIMAL, HIST_ADD, '6'); break;  /* real/float      */
-   case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  CELL_visual   (CHANGE_DECIMAL, HIST_ADD, '3'); break;  /* exponencial     */
-   case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  CELL_visual   (CHANGE_DECIMAL, HIST_ADD, '3'); break;  /* spaced exponent */
+   case  'I' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'I');  break;  /* indented integer         */
+   case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  break;  /* real/float      */
+   case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  break;  /* exponencial     */
+   case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  break;  /* spaced exponencial     */
    }
    /*---(comma formats)------------------*/
    switch (a_minor) {
@@ -107,7 +114,7 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  '$' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '$');  break;  /* dollar          */
    case  's' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 's');  break;  /* signed          */
    case  'S' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'S');  break;  /* signed          */
-   case  '#' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '#');  CELL_visual   (CHANGE_DECIMAL, HIST_ADD, '6'); break;  /* technical       */
+   case  ';' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, ';');  break;  /* technical       */
    case  'p' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'p');  break;  /* bullet point    */
    case  'P' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'P');  break;  /* bullet point    */
    }
@@ -141,10 +148,14 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  '_' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '_');  break;  /* filled under    */
    case  '.' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '.');  break;  /* filled period   */
    case  '+' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '+');  break;  /* filled plus     */
+   case  '!' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '!');  break;  /* filled empty    */
    case  '/' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '/');  break;  /* filled divs     */
+   case  '@' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '@');  break;  /* filled divs     */
    case  '"' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '"');  break;  /* filled euro quot*/
-   case  '!' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, ' ');  break;  /* filled empty    */
+   case  ':' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, ':');  break;  /* filled ruler    */
+   case  '#' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '#');  break;  /* filled numbers  */
    }
+   /*---(complete)-----------------------*/
    return 0;
 }
 
@@ -518,7 +529,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       strcpy (x_source, a_cell->s);
    }
    DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-   sprintf (x_bformat, "%c%c%c", a_cell->f, a_cell->a, a_cell->d);
+   sprintf (x_bformat, "%c%c%c", a_cell->f, a_cell->d, a_cell->a);
    DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
    if (a_1st == 'y')  x_copy = CELL_overwrite (HIST_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (HIST_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
@@ -567,7 +578,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
             rc = yRPN_adjust_pros (x_provider->s, a_pros, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-            sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->a, x_provider->d);
+            sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->d, x_provider->a);
             DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
             CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
          }

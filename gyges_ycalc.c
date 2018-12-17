@@ -524,7 +524,8 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_APIS   yLOG_value   ("value"     , x_owner->v_num);
       strl4main (x_owner->v_num, s, x_owner->d - '0', x_owner->f, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
-      strlpad (s, t, ' ', x_owner->a, w - 1);
+      if (x_owner->a == '?')  strlpad (s, t, '!', '>'       , w - 1);
+      else                    strlpad (s, t, '!', x_owner->a, w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
@@ -532,7 +533,8 @@ api_ycalc_printer       (void *a_owner)
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
       else                         strlcpy (s, x_owner->s    , LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
-      strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      if (x_owner->a == '?')  strlpad (s, t, x_owner->f, '<'       , w - 1);
+      else                    strlpad (s, t, x_owner->f, x_owner->a, w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
@@ -547,14 +549,14 @@ api_ycalc_printer       (void *a_owner)
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
       else                         strlcpy (s, "#?/???"      , LEN_RECD);
       DEBUG_APIS   yLOG_info    ("pointer"   , s);
-      strlpad (s, t, ' ', '<', w - 1);
+      strlpad (s, t, '!', '<', w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
    } else if (x_owner->t == YCALC_DATA_BLANK) {
       strlcpy (s, "-", LEN_RECD);
       DEBUG_APIS   yLOG_info    ("blank"     , s);
-      strlpad (s, t, ' ', '>', w - 1);
+      strlpad (s, t, '!', '>', w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);

@@ -453,7 +453,6 @@ ROW_writer              (int a_tab, int a_row)
    int         x_size      =    0;
    int         x_prev      =    0;
    char        x_label     [LEN_LABEL];
-   int         x_used      =    0;
    /*---(header)-------------------------*/
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(clear output)-------------------*/
@@ -520,7 +519,6 @@ ROW_writer_all          (void)
    int         c           =    0;
    /*---(walk)---------------------------*/
    yPARSE_verb_begin ("height");
-   yPARSE_verb_break (c);
    for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
       for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
          rc = ROW_writer   (x_tab, x_row);
