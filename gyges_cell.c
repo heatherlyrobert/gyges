@@ -141,8 +141,8 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LSO---------", CELL_writer_all , CELL_reader     , "------------" , "label,fda,contents"                  , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LSO---------", CELL_writer_all , CELL_reader     , "------------" , "label,fda,contents"                  , "gyges free cells"       );
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LSO---------", CELL_reader     , CELL_writer_all , "------------" , "label,fda,contents-----------------" , "gyges dependent cells"  );
+   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LSO---------", CELL_reader     , NULL            , "------------" , "label,fda,contents-----------------" , "gyges free cells"       );
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;

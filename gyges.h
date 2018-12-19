@@ -144,8 +144,8 @@
 #define     PRIV      static
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3i"
-#define     VER_TXT   "unit tested numeric printables using ySTR helpers"
+#define     VER_NUM   "3.3j"
+#define     VER_TXT   "first full output (not input) from gyges using yPARSE, no unit testing"
 
 
 

@@ -20,7 +20,7 @@ COL_init             (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "colwide"     , ""    , "sii"  , COL_resize                 , "change a column size using address"   );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "colreset"    , ""    , ""     , COL_reset                  , "reset all columns to default width"   );
    /*---(add yparse specification)-------*/
-   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", COL_writer_all  , COL_reader      , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
+   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return rc;
