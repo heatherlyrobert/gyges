@@ -141,8 +141,8 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LSO---------", CELL_reader     , CELL_writer_all , "------------" , "label,fda,contents-----------------" , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LSO---------", CELL_reader     , NULL            , "------------" , "label,fda,contents-----------------" , "gyges free cells"       );
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LSO---------", CELL_reader     , CELL_writer_all , "------------" , "label,fda--,contents-----------------" , "gyges dependent cells"  );
+   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LSO---------", CELL_reader     , NULL            , "------------" , "label,fda--,contents-----------------" , "gyges free cells"       );
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -299,10 +299,14 @@ CELL__wipe         (tCELL *a_curr)
     */
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
-   /*---(defenses)-----------------------*/
-   if (a_curr            == NULL)  return 0;   /* no harm, no foul, nothing to do    */
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   DEBUG_CELL   yLOG_point   ("a_curr"    , a_curr);
+   if (a_curr            == NULL) {
+      DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+      return 0;   /* no harm, no foul, nothing to do    */
+   }
    /*---(source)-------------------------*/
    DEBUG_CELL   yLOG_note    ("clear source string");
    if (a_curr->s         != NULL)  free (a_curr->s);
@@ -498,7 +502,7 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
    /*---(defenses)-----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = LOC_legal (a_col, a_row, a_tab, CELL_GROW);
+   rc = LOC_legal (a_tab, a_col, a_row, CELL_GROW);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -538,7 +542,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
    DEBUG_CELL   yLOG_value   ("a_col"     , a_col);
    DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
-   rc          = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
+   rc          = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    DEBUG_CELL   yLOG_value   ("LOC_legal" , rc);
    --rce;  if (rc < 0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -668,7 +672,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("contents"  , a_source);
    /*---(legal location)-----------------*/
-   rc = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
+   rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -721,14 +725,14 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(defense)------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    if (strlen (a_format) != 3) {
-      DEBUG_CELL   yLOG_warn    ("format"    , "not valid length");
+      DEBUG_CELL   yLOG_warn    ("format not valid length");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
    /*---(start)--------------------------*/
    CELL_change (&x_new, a_mode, a_tab, a_col, a_row, a_source);
    if (x_new == NULL)  {
-      DEBUG_CELL   yLOG_warn    ("x_new"     , "change returned a null pointer");
+      DEBUG_CELL   yLOG_warn    ("x_new change returned a null pointer");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
@@ -748,14 +752,14 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*> rc = CELL_printable (x_new);                                                   <*/
    rc = api_ycalc_printer (x_new);
    if (rc < 0) {
-      DEBUG_CELL   yLOG_warn    ("printable" , "returned a bad return code");
+      DEBUG_CELL   yLOG_warn    ("printable returned a bad return code");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return NULL;
    }
    DEBUG_CELL   yLOG_note    ("call calc");
    /*> rc = SEQ_calc_up    (x_new);                                                   <* 
     *> if (rc < 0) {                                                                  <* 
-    *>    DEBUG_CELL   yLOG_warn    ("calc"      , "returned a bad return code");     <* 
+    *>    DEBUG_CELL   yLOG_warn    ("calc returned a bad return code");     <* 
     *>    DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                   <* 
     *>    return NULL;                                                                <* 
     *> }                                                                              <*/
@@ -869,7 +873,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
    DEBUG_CELL    yLOG_char   ("a_mode"    , a_mode);
    DEBUG_CELL    yLOG_char   ("a_how"     , a_how);
    /*---(get first)----------------------*/
-   rc       = yVIKEYS_first (&x_col, &x_row, &x_tab);
+   rc       = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
    DEBUG_CELL    yLOG_value  ("rc"        , rc);
    x_first  = LOC_cell_at_loc (x_col, x_row, x_tab);
    DEBUG_CELL    yLOG_point  ("x_first"   , x_first);
@@ -906,7 +910,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
          api_ycalc_printer (x_next);
       }
       /*---(get next)--------------------*/
-      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+      rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
       DEBUG_CELL   yLOG_value  ("next_rc"   , rc);
       x_next  = LOC_cell_at_loc (x_col, x_row, x_tab);
       DEBUG_CELL   yLOG_point  ("x_next"    , x_next);
@@ -954,14 +958,14 @@ CELL_reader          (void)
    rc = yPARSE_popstr (x_label);
    DEBUG_INPT   yLOG_value   ("pop label" , rc);
    DEBUG_INPT   yLOG_info    ("label"     , x_label);
-   rc = str2gyges (x_label, &x_tab, &x_col, &x_row, NULL, 0);
+   rc = str2gyges (x_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_ADAPT);
    DEBUG_INPT  yLOG_value   ("parse"     , rc);
    --rce;  if (rc < 0)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_INPT   yLOG_complex ("location"  , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
-   rc = LOC_legal (x_col, x_row, x_tab, CELL_GROW);
+   rc = LOC_legal (x_tab, x_col, x_row, CELL_GROW);
    DEBUG_INPT  yLOG_value   ("legal"     , rc);
    --rce;  if (rc < 0)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -1138,20 +1142,20 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    }
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "cell_where")    == 0) {
-      if (x_found == 'y')  snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
-      else                 snprintf (unit_answer, LEN_UNIT, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, -10        , -10        , -10        );
+      if (x_found == 'y')  snprintf (unit_answer, LEN_FULL, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      else                 snprintf (unit_answer, LEN_FULL, "s_cell location  : ptr=%10p, tab=%4d, col=%4d, row=%4d", x_curr, -10        , -10        , -10        );
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);
+      snprintf(unit_answer, LEN_FULL, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);
    }
    else if (strcmp(a_question, "cell_count")     == 0) {
       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
-      snprintf(unit_answer, LEN_UNIT, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
+      snprintf(unit_answer, LEN_FULL, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
    }
    /*---(printing)-----------------------*/
    /*> else if (strcmp(a_question, "cell_print")     == 0) {                          <* 
-    *>    snprintf (unit_answer, LEN_UNIT, "s_cell print     : <<%s>>", s_print);     <* 
+    *>    snprintf (unit_answer, LEN_FULL, "s_cell print     : <<%s>>", s_print);     <* 
     *> }                                                                              <*/
    /*---(complete)-----------------------*/
    return unit_answer;
@@ -1185,12 +1189,12 @@ CELL__unitnew      (char *a_question, char *a_label)
       sprintf (unit_answer, "s_celln error    : can not call on dependency s_root");
       return unit_answer;
    } else {
-      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
+      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_CHECK);
       if (rc < 0) {
          sprintf (unit_answer, "s_celln error    : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc     = LOC_legal (x_col, x_row, x_tab, CELL_FIXED);
+      rc     = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
       if (rc < 0) {
          sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;
@@ -1203,43 +1207,43 @@ CELL__unitnew      (char *a_question, char *a_label)
    }
    /*---(cell contents)------------------*/
    if (strcmp(a_question, "info"     )      == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln info     : --- --- --- --- ----- -----");
-      else                             snprintf(unit_answer, LEN_UNIT, "s_celln info     : t=%c f=%c d=%c a=%c w=%3d h=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, COL_width (x_cell->tab, x_cell->col), ROW_height (x_cell->tab, x_cell->row));
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln info     : --- --- --- --- ----- -----");
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln info     : t=%c f=%c d=%c a=%c w=%3d h=%3d", x_cell->t, x_cell->f, x_cell->d, x_cell->a, COL_width (x_cell->tab, x_cell->col), ROW_height (x_cell->tab, x_cell->row));
    }
    else if   (strcmp(a_question, "source"     )    == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (----) ::");
-      else if (x_cell->s     == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln source   : (null) ::");
-      else                             snprintf(unit_answer, LEN_UNIT, "s_celln source   : (%4d) :%-.40s:", x_cell->l, x_cell->s);
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln source   : (----) ::");
+      else if (x_cell->s     == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln source   : (null) ::");
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln source   : (%4d) :%-.40s:", x_cell->l, x_cell->s);
    }
    else if (strcmp(a_question, "value"     )     == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln value    :         ---.------");
-      else                             snprintf(unit_answer, LEN_UNIT, "s_celln value    : %18.6F", x_cell->v_num);
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln value    :         ---.------");
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln value    : %18.6F", x_cell->v_num);
    }
    else if (strcmp(a_question, "modified")  == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (----) ::");
-      else if (x_cell->v_str == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (null) ::");
-      else                             snprintf(unit_answer, LEN_UNIT, "s_celln modded   : (%4d) :%-.40s:", (int) strlen(x_cell->v_str), x_cell->v_str);
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln modded   : (----) ::");
+      else if (x_cell->v_str == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln modded   : (null) ::");
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln modded   : (%4d) :%-.40s:", (int) strlen(x_cell->v_str), x_cell->v_str);
    }
    else if (strcmp(a_question, "printable") == 0) {
-      /*> snprintf(unit_answer, LEN_UNIT, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_cell->p), x_cell->p);   <*/
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (----) ::");
-      else if (x_cell->p     == NULL)  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (null) ::");
+      /*> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_cell->p), x_cell->p);   <*/
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln print    : (----) ::");
+      else if (x_cell->p     == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln print    : (null) ::");
       else {
          len = strlen (x_cell->p);
-         if      (len        == 0   )  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (null) ::");
-         else if (len        >= 35  )  snprintf(unit_answer, LEN_UNIT, "s_celln print    : (%4d) :%-34.34s++", (int) strlen(x_cell->p), x_cell->p);
-         else                          snprintf(unit_answer, LEN_UNIT, "s_celln print    : (%4d) :%s:"       , (int) strlen(x_cell->p), x_cell->p);
+         if      (len        == 0   )  snprintf(unit_answer, LEN_FULL, "s_celln print    : (null) ::");
+         else if (len        >= 35  )  snprintf(unit_answer, LEN_FULL, "s_celln print    : (%4d) :%-34.34s++", (int) strlen(x_cell->p), x_cell->p);
+         else                          snprintf(unit_answer, LEN_FULL, "s_celln print    : (%4d) :%s:"       , (int) strlen(x_cell->p), x_cell->p);
       }
    }
    else if (strcmp(a_question, "cell_contents")  == 0) {
-      if      (x_cell       == NULL)   snprintf(unit_answer, LEN_UNIT, "s_celln cont (-) : (--:--) ::");
-      else                             snprintf(unit_answer, LEN_UNIT, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
+      if      (x_cell       == NULL)   snprintf(unit_answer, LEN_FULL, "s_celln cont (-) : (--:--) ::");
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln cont (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    /*---(cell contents)------------------*/
    else if (strcmp(a_question, "cell_rpn")       == 0) {
-      /*> if      (x_cell       == NULL)   snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (----) -");                                  <* 
-       *> else if (x_cell->nrpn == 0)      snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);                <* 
-       *> else                             snprintf(unit_answer, LEN_UNIT, "s_celln rpn      : (%4d) %s"    , x_cell->nrpn, x_cell->rpn);   <*/
+      /*> if      (x_cell       == NULL)   snprintf(unit_answer, LEN_FULL, "s_celln rpn      : (----) -");                                  <* 
+       *> else if (x_cell->nrpn == 0)      snprintf(unit_answer, LEN_FULL, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);                <* 
+       *> else                             snprintf(unit_answer, LEN_FULL, "s_celln rpn      : (%4d) %s"    , x_cell->nrpn, x_cell->rpn);   <*/
    }
    /*---(complete)-----------------------*/
    return unit_answer;

@@ -37,9 +37,9 @@ COL_clear            (int a_tab)
    DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
    DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
    /*---(defense)------------------------*/
-   rc = TAB_valid (a_tab);
+   rc = VALID_tab (a_tab);
    DEBUG_LOCS   yLOG_snote   (rc);
-   --rce;  if (rc < 0) {
+   --rce;  if (rc == 0) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
@@ -50,8 +50,6 @@ COL_clear            (int a_tab)
       s_tabs [a_tab].cols [x_col].w       = s_tabs [a_tab].defwide;
       s_tabs [a_tab].cols [x_col].x       = 0;
       s_tabs [a_tab].cols [x_col].c       = 0;
-      /*---(name)------------------------*/
-      COL_defname (a_tab, x_col, s_tabs [a_tab].cols [x_col].l);
       /*---(done)------------------------*/
    }
    /*---(clear frozen cols)--------------*/
@@ -63,40 +61,6 @@ COL_clear            (int a_tab)
    DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
-
-char         /*-> tbd --------------------------------[ leaf   [ge.330.215.40]*/ /*-[00.0000.194.I]-*/ /*-[--.---.---.--]-*/
-COL__validity        (char a_mode, int a_tab, int a_col)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   static char x_mode      =  '-';
-   static int  x_tab       = -666;
-   static int  x_col       = -666;
-   static int  x_shorts    =    0;
-   /*---(shortcut)-----------------------*/
-   if (a_mode == x_mode && a_tab == x_tab && a_col == x_col) {
-      ++x_shorts;
-      return 1;
-   }
-   /*---(tab part)-----------------------*/
-   rc = TAB_valid (a_tab);
-   --rce;  if (rc    < 0)                                    return rce;
-   /*---(col part)-----------------------*/
-   --rce;  if (a_col < 0)                                    return rce;
-   --rce;
-   if      (a_mode == 'L' && a_col >= s_tabs [a_tab].ncol)   return rce;
-   else if (a_col >= MAX_COLS)                               return rce;
-   /*---(save success)-------------------*/
-   x_mode  = a_mode;
-   x_tab   = a_tab;
-   x_col   = a_col;
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char  COL_valid    (int a_tab, int a_col) { return COL__validity ('V', a_tab, a_col); }
-char  COL_legal    (int a_tab, int a_col) { return COL__validity ('L', a_tab, a_col); }
 
 
 
@@ -114,24 +78,15 @@ COL_defmax           (void)
 int          /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
 COL_max              (int a_tab)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rc          =    0;
    /*---(defense)------------------------*/
-   rc = TAB_legal (a_tab);
-   if (rc < 0) return rc;
-   /*---(complete)-----------------------*/
+   if (!LEGAL_TAB (a_tab))   return -1;
    return s_tabs [a_tab].ncol;
 }
 
 int          /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 COL_used             (int a_tab, int a_col)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rc          =    0;
-   /*---(defense)------------------------*/
-   rc = COL_legal (a_tab, a_col);
-   if (rc < 0) return rc;
-   /*---(complete)-----------------------*/
+   if (!LEGAL_COL (a_tab, a_col))   return -1;
    return s_tabs [a_tab].cols [a_col].c;
 }
 
@@ -145,65 +100,15 @@ static void  o___POSITION________o () { return; }
 int          /*-> return the col xpos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.503.!]-*/ /*-[--.---.---.--]-*/
 COL_xpos             (int a_tab, int a_col)
 {
-   char rc = COL_valid (a_tab, a_col);
-   if (rc < 0) return rc;
+   if (!LEGAL_COL (a_tab, a_col))  return -1;
    return s_tabs [a_tab].cols [a_col].x;
 }
 
 char         /*-> set a new col x-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 COL_xset             (int a_tab, int a_col, int a_pos)
 {
-   char rc = COL_valid (a_tab, a_col);
-   if (rc < 0) return rc;
+   if (!LEGAL_COL (a_tab, a_col))  return -1;
    s_tabs [a_tab].cols [a_col].x = a_pos;
-   return 0;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                          column naming                       ----===*/
-/*====================------------------------------------====================*/
-static void  o___NAMING__________o () { return; }
-
-char         /*-> return the col xpos ----------------[ ------ [gc.210.313.21]*/ /*-[00.0000.204.!]-*/ /*-[--.---.---.--]-*/
-COL_defname          (int a_tab, int a_col, char *a_name)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   /*---(defense)------------------------*/
-   --rce;  if (a_name == NULL)   return rce;
-   strlcpy (a_name, "??", LEN_ABBR);
-   rc = COL_valid (a_tab, a_col);
-   --rce;  if (rc < 0) return rce;
-   /*---(make name)----------------------*/
-   if        (a_col < 26)  {
-      a_name [0] = '-';
-      a_name [1] = a_col + 'a';
-   } else  {
-      a_name [0] = (a_col / 26) - 1 + 'a';
-      a_name [1] = (a_col % 26) + 'a';
-   }
-   a_name [2] = '\0';
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> return the col xpos ----------------[ ------ [gc.210.313.21]*/ /*-[00.0000.204.!]-*/ /*-[--.---.---.--]-*/
-COL_name             (int a_tab, int a_col, char *a_name)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   /*---(defense)------------------------*/
-   --rce;  if (a_name == NULL)   return rce;
-   strlcpy (a_name, "??", LEN_ABBR);
-   rc = COL_valid (a_tab, a_col);
-   --rce;  if (rc < 0) return rce;
-   /*---(copy name)----------------------*/
-   strlcpy (a_name, s_tabs [a_tab].cols [a_col].l, LEN_ABBR);
-   /*---(complete)-----------------------*/
    return 0;
 }
 
@@ -224,8 +129,7 @@ COL_widen            (int a_tab, int a_col, int a_size)
    int         x_max       =    0;
    tCELL      *x_curr      = NULL;
    /*---(defense)------------------------*/
-   rc = COL_valid (a_tab, a_col);
-   --rce;  if (rc < 0) return rc;
+   --rce;  if (!VALID_col (a_col))  return rce;
    /*---(limits)-------------------------*/
    if (a_size  < MIN_WIDTH)    a_size = MIN_WIDTH;
    if (a_size  > MAX_WIDTH)    a_size = MAX_WIDTH;
@@ -262,7 +166,7 @@ COL_resize           (char *a_name, int a_size, int a_count)
    int         x_col       =    0;
    int         x_off       =    0;
    /*---(defense)------------------------*/
-   rc = str2gyges (a_name, &x_tab, &x_col, NULL, NULL, 0);
+   rc = str2gyges (a_name, &x_tab, &x_col, NULL, NULL, NULL, 0, YSTR_LEGAL);
    --rce;  if (rc < 0) return rc;
    /*---(resize)-------------------------*/
    if (a_count == 0)  a_count = 1;
@@ -346,8 +250,8 @@ COL_defwidth         (int a_tab, int a_size)
    int         x_max       =    0;
    int         x_col       =    0;
    /*---(defense)------------------------*/
-   rc = TAB_valid (a_tab);
-   --rce;  if (rc < 0) return rc;
+   rc = VALID_tab (a_tab);
+   --rce;  if (rc == 0) return rc;
    /*---(prepare)------------------------*/
    x_def  = s_tabs [a_tab].defwide;
    x_max  = COL_max (a_tab);
@@ -369,8 +273,7 @@ COL_width            (int a_tab, int a_col)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(defense)------------------------*/
-   rc = COL_valid (a_tab, a_col);
-   --rce;  if (rc < 0) return rc;
+   --rce;  if (!VALID_col (a_col))  return rce;
    /*---(complete)-----------------------*/
    return s_tabs [a_tab].cols [a_col].w;
 }
@@ -385,10 +288,9 @@ static void  o___FREEZING________o () { return; }
 char         /*-> change the frozen cols -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 COL_freeze           (int a_tab, int a_bcol, int a_ecol)
 {
-   char        rc          =    0;
-   rc = COL_valid (a_tab, a_ecol);
-   if (rc < 0) return rc;
-   int  x_col;
+   int         x_col       =    0;
+   if (!LEGAL_COL (a_tab, a_bcol))   return -1;
+   if (!LEGAL_COL (a_tab, a_ecol))   return -2;
    if (a_bcol  >  a_ecol) {
       x_col   = a_bcol;
       a_bcol  = a_ecol;
@@ -403,8 +305,7 @@ COL_freeze           (int a_tab, int a_bcol, int a_ecol)
 char         /*-> clear the frozen cols --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 COL_unfreeze         (int a_tab)
 {
-   char rc = COL_valid (a_tab, 0);
-   if (rc < 0) return rc;
+   if (!LEGAL_TAB (a_tab))   return -1;
    s_tabs [a_tab].froz_col    = '-';
    s_tabs [a_tab].froz_bcol   = 0;
    s_tabs [a_tab].froz_ecol   = 0;
@@ -481,12 +382,13 @@ COL_writer              (int a_tab, int a_col)
    yPARSE_outclear  ();
    /*---(prepare tab)--------------------*/
    DEBUG_OUTP   yLOG_value   ("a_tab"     , a_tab);
-   rc = TAB_valid (a_tab);
-   --rce; if (rc < 0) { 
+   rc = LEGAL_TAB (a_tab);
+   --rce; if (rc == 0) { 
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (COL_legal (a_tab, a_col) < 0) {
+   rc = LEGAL_COL (a_tab, a_col);
+   --rce;  if (rc == 0) {
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -516,7 +418,7 @@ COL_writer              (int a_tab, int a_col)
    }
    DEBUG_OUTP   yLOG_value   ("c"         , c);
    /*---(write)-----------------------*/
-   rc = str4gyges (a_tab, a_col, 0, 0, x_label);
+   rc = str4gyges (a_tab, a_col, 0, 0, 0, x_label, YSTR_LEGAL);
    yPARSE_fullwrite ("width", x_label, x_size, c);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
@@ -567,18 +469,18 @@ COL__unit          (char *a_question, char *a_label)
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "COL              : label could not be parsed");
    if (a_label == NULL)  return unit_answer;
-   rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, 0);
+   rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
    if (rc <  0)  return unit_answer;
-   rc = COL_valid (x_tab, x_col);
-   if (rc <  0)  return unit_answer;
-   x_abbr = TAB_label (x_tab);
+   if (!VALID_tab (x_tab))  return unit_answer;
+   if (!VALID_col (x_col))  return unit_answer;
+   x_abbr = LABEL_tab (x_tab);
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "COL              : question not understood");
    if      (strcmp(a_question, "col_info"      ) == 0) {
-      if (COL_legal (x_tab, x_col) < 0) {
-         snprintf(unit_answer, LEN_UNIT, "COL info         : -t, --,   -#,   -w,   -x,   -c");
+      if (!LEGAL_COL (x_tab, x_col)) {
+         snprintf(unit_answer, LEN_FULL, "COL info         : -t, --,   -#,   -w,   -x,   -c");
       } else {
-         snprintf(unit_answer, LEN_UNIT, "COL info         : %ct, %-2.2s, %3d#, %3dw, %3dx, %3dc", x_abbr, s_tabs [x_tab].cols [x_col].l, x_col, s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].cols [x_col].x, s_tabs [x_tab].cols [x_col].c);
+         snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#, %3dw, %3dx, %3dc", x_abbr, LABEL_col (x_col), x_col, s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].cols [x_col].x, s_tabs [x_tab].cols [x_col].c);
       }
    }
    /*---(complete)-----------------------*/

@@ -34,7 +34,7 @@ char           hist_active;
 struct {
    char        act;
    char        name         [LEN_LABEL];
-   char        desc         [LEN_DESC];
+   char        desc         [LEN_HUND];
 } s_hist_acts [LEN_LABEL] = {
    { HIST_OVERWRITE, "overwrite"    , "" },
    { HIST_CHANGE   , "change"       , "" },
@@ -124,7 +124,7 @@ HIST_single        (char a_mode, char a_type, int a_tab, int a_col, int a_row, c
    s_hist [s_chist].act   = a_type;
    s_hist [s_chist].nkey  = yVIKEYS_keys_nkey ();
    /*---(address)------------------------*/
-   rc = str4gyges (a_tab, a_col, a_row, 0, x_label);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    strlcpy (s_hist [s_chist].addr  , x_label, LEN_LABEL);
    /*---(before)-------------------------*/
    strlcpy  (t, a_before, LEN_RECD);
@@ -149,7 +149,7 @@ HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF
    char        x           [LEN_RECD];
    int         i           =    0;
    /*---(make label)---------------------*/
-   rc = str4gyges (a_tab, a_col, a_row, 0, x_label);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    if (rc < 0)  return rc;
    if (a_afterF  != NULL)  sprintf (x, "%s", a_afterF);
    else                    sprintf (x, "´´´");
@@ -313,7 +313,7 @@ HIST__undo_single       (void)
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
    DEBUG_HIST  yLOG_info    ("label"     , s_hist [s_chist].addr);
-   rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, 0);
+   rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_ADAPT);
    DEBUG_HIST  yLOG_value   ("str2gyges"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
@@ -321,7 +321,7 @@ HIST__undo_single       (void)
    }
    DEBUG_HIST  yLOG_complex ("jump to"   , "c=%4d, r=%4d, t=%4d", x_col, x_row, x_tab);
    /*---(get to right location)----------*/
-   rc = yVIKEYS_jump  (x_col, x_row, x_tab);
+   rc = yVIKEYS_jump  (x_tab, x_col, x_row, 0);
    DEBUG_HIST  yLOG_value   ("jump"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
@@ -434,7 +434,7 @@ HIST__redo_single       (void)
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
    DEBUG_HIST  yLOG_info    ("label"     , s_hist [s_chist].addr);
-   rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, 0);
+   rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_ADAPT);
    DEBUG_HIST  yLOG_value   ("str2gyges"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
@@ -442,7 +442,7 @@ HIST__redo_single       (void)
    }
    DEBUG_HIST  yLOG_complex ("jump to"   , "c=%4d, r=%4d, t=%4d", x_col, x_row, x_tab);
    /*---(get to right location)----------*/
-   rc = yVIKEYS_jump  (x_col, x_row, x_tab);
+   rc = yVIKEYS_jump  (x_tab, x_col, x_row, 0);
    DEBUG_HIST  yLOG_value   ("jump"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
@@ -576,7 +576,7 @@ HIST_list          (void)
 }
 
 
-char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_STR, "[ s_nhist : %4d, s_chist : %4d, top : %s ]", s_nhist, s_chist, s_hist [s_chist].act); }
+char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_FULL, "[ s_nhist : %4d, s_chist : %4d, top : %s ]", s_nhist, s_chist, s_hist [s_chist].act); }
 
 char*        /*-> unit test accessor -----------------[ ------ [gs.950.221.M1]*/ /*-[03.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 HIST__unit         (char *a_question, int a_ref)
@@ -589,24 +589,24 @@ HIST__unit         (char *a_question, int a_ref)
    strcpy  (unit_answer, "HIST             : question not understood");
    /*---(selection)----------------------*/
    if        (strcmp (a_question, "history"   )    == 0) {
-      if      (s_nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "HIST count       : n=%4d, c=%4d, n/a", s_nhist, s_chist);
-      if      (s_chist <  0    )  snprintf (unit_answer, LEN_UNIT, "HIST count       : n=%4d, c=%4d, n/a", s_nhist, s_chist);
-      else                        snprintf (unit_answer, LEN_UNIT, "HIST count       : n=%4d, c=%4d, %c" , s_nhist, s_chist, s_hist[s_chist].act);
+      if      (s_nhist == 0    )  snprintf (unit_answer, LEN_FULL, "HIST count       : n=%4d, c=%4d, n/a", s_nhist, s_chist);
+      if      (s_chist <  0    )  snprintf (unit_answer, LEN_FULL, "HIST count       : n=%4d, c=%4d, n/a", s_nhist, s_chist);
+      else                        snprintf (unit_answer, LEN_FULL, "HIST count       : n=%4d, c=%4d, %c" , s_nhist, s_chist, s_hist[s_chist].act);
    } else if (strcmp (a_question, "entry"     )    == 0) {
-      if      (a_ref <  0    )    snprintf (unit_answer, LEN_UNIT, "HIST entry       : %4d too small", a_ref);
-      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "HIST entry       : %4d too large", a_ref);
+      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST entry       : %4d too small", a_ref);
+      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST entry       : %4d too large", a_ref);
       else {
-         rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, 0);
-         snprintf (unit_answer, LEN_UNIT, "HIST entry       : %4d, t=%4d, c=%4d, r=%4d, %c", a_ref, x_tab, x_col, x_row, s_hist[a_ref].act);
+         rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+         snprintf (unit_answer, LEN_FULL, "HIST entry       : %4d, t=%4d, c=%4d, r=%4d, %c", a_ref, x_tab, x_col, x_row, s_hist[a_ref].act);
       }
    } else if (strcmp (a_question, "before"    )    == 0) {
-      if      (a_ref <  0    )    snprintf (unit_answer, LEN_UNIT, "HIST before      : %4d too small", a_ref);
-      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "HIST before      : %4d too large", a_ref);
-      else                        snprintf (unit_answer, LEN_UNIT, "HIST before      : %4d :%s:", a_ref, s_hist[a_ref].before);
+      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST before      : %4d too small", a_ref);
+      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST before      : %4d too large", a_ref);
+      else                        snprintf (unit_answer, LEN_FULL, "HIST before      : %4d :%s:", a_ref, s_hist[a_ref].before);
    } else if (strcmp (a_question, "after"     )    == 0) {
-      if      (a_ref <  0    )    snprintf (unit_answer, LEN_UNIT, "HIST after       : %4d too small", a_ref);
-      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "HIST after       : %4d too large", a_ref);
-      else                        snprintf (unit_answer, LEN_UNIT, "HIST after       : %4d :%s:", a_ref, s_hist[a_ref].after);
+      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST after       : %4d too small", a_ref);
+      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST after       : %4d too large", a_ref);
+      else                        snprintf (unit_answer, LEN_FULL, "HIST after       : %4d :%s:", a_ref, s_hist[a_ref].after);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

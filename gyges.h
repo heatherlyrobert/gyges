@@ -1,11 +1,44 @@
 /*===============================[[ beg code ]]===============================*/
 /* htag ::  714,  326 docs 36%,  386 code 72%,  326 othr 21%,  304 slocl      */
 
+
+/*===[[ BEG_HEADER ]]=========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
+
+/*===[[ ONE_LINERS ]]=========================================================*/
+
+#define     P_FOCUS     "TO (major tools)"
+#define     P_NICHE     "ss (spreadsheet)"
+#define     P_PURPOSE   "light, clean, vim-ish, technical, and wicked spreadsheet"
+
+#define     P_NAMESAKE  "gyges-hecatoncheires (hundred-handed)"
+#define     P_HERITAGE  "gyges, the furious, is one of the three hecatoncheires" 
+#define     P_IMAGERY   "ugly, impossibly powerful, one-hundred handed, fifty headed giant"
+
+#define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
+#define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
+
+#define     P_AUTHOR    "heatherlyrobert"
+#define     P_CREATED   "2010-09"
+#define     P_DEPENDS   "none"
+
+#define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
+#define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
+#define     P_VERNUM    "3.4b"
+#define     P_VERTXT    "updated to use VALID_, LEGAL_, LABEL_, and INDEX_ functions from ySTR"
+
+#define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
+#define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
+#define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
+
+/*===[[ END_HEADER ]]=========================================================*/
+
 /*===[[ HEADER ]]=============================================================*
 
  *   focus         : (TO) tools
  *   niche         : (SS) spreadsheet
- *   application   : gyges
+ *   heritage      : gyges-hecatoncheires (fifty-headed, hundred-handed giant)
  *   purpose       : light, clean, vim-ish, technical, and wicked spreadsheet
  *
  *   base_system   : gnu/linux   (powerful, ubiquitous, technical, and hackable)
@@ -143,11 +176,6 @@
 #define     PR        static
 #define     PRIV      static
 
-/* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "3.3j"
-#define     VER_TXT   "first full output (not input) from gyges using yPARSE, no unit testing"
-
-
 
 /*===[[ TYPEDEFS : COMBINATIONS ]]============================================*/
 /*---(basics)--------------------------*/
@@ -195,19 +223,12 @@ typedef struct timespec  tTSPEC;
 #define     MAX_HEIGHT  4
 #define     DEF_HEIGHT  1
 #define     MIN_HEIGHT  1
-/*---(string length)------------------*/
-#define     LEN_RECD    4000
-#define     LEN_UNIT    500
-#define     LEN_STR     500
-#define     LEN_DESC    100
-#define     LEN_LABEL   20
-#define     LEN_ABBR    10
 /*---(registers)----------------------*/
 
 
 char        buf0        [LEN_RECD];
 
-char        keylog      [10000];
+char        keylog      [LEN_HUGE];
 int         nkeylog;
 
 /*---(macros)-------------------------*/
@@ -591,7 +612,6 @@ int         acell;           /* count of all cells                            */
  *
  */
 struct cCOLS {
-   char      l[3];            /* column label                                 */
    uchar     w;               /* column width                                 */
    ushort    x;               /* starting horizonal position on screen        */
    int       c;               /* optional: count of entries in column         */
@@ -777,7 +797,7 @@ struct cLAYOUT {
    char        formula;
    char        status;
    char        command;
-   char        desc        [LEN_DESC];
+   char        desc        [LEN_HUND];
 };
 extern      tLAYOUT     g_layouts [MAX_LAYOUT];
 
@@ -828,11 +848,7 @@ extern      char     *g_rcops;
 
 
 
-extern int     g_done;
 extern char    g_contents [LEN_RECD];
-extern char    g_saved    [LEN_RECD];
-extern char    g_cmd      [10];
-extern char    msg_type;
 extern char    message    [LEN_RECD];
 extern char    sta_error;
 extern char    special;
@@ -844,12 +860,8 @@ extern char      ver_ctrl;
 extern char      ver_num  [10];
 extern char      ver_txt  [100];
 
-int     row_buffers;
 int     row_formula;
-int     row_chead;
 int     row_main;
-int     col_header;
-int     col_far;
 
 
 
@@ -862,7 +874,7 @@ int     col_far;
 #define     K_CTRL_L      12
 #define     K_CTRL_S      19
 
-extern      char          unit_answer [LEN_UNIT];
+extern      char          unit_answer [LEN_FULL];
 
 
 
@@ -899,18 +911,6 @@ char      PROG__unitend       (void);
 
 
 
-char      save_saved         (void);
-char      clear_input        (void);
-
-
-
-/*---(screen formatting)------------------------*/
-
-char      row_print          (void);
-char      EDIT_start         (char *a_prefix);
-char      EDIT_prep          (void);
-char      EDIT_done          (void);
-char      EDIT_pos           (char);
 
 
 
@@ -1088,39 +1088,9 @@ char      SMOD_menus           (char  a_major, char  a_minor);
 
 /*> char      KEYS_init          (void);                                              <*/
 char      KEYS_record        (char  a_curr);
-char      KEYS_reverse       (char  a_curr);
-char      KEYS_z_family      (char  a_major, char  a_minor);
-char      KEYS_col           (char  a_major, char  a_minor);
-char      KEYS_bcol          (int);
-char      KEYS_ecol          (int);
-char      KEYS_pcol          (void);
-char      KEYS_row           (char  a_major, char  a_minor);
-char      KEYS_brow          (int);
-char      KEYS_erow          (int);
-char      KEYS_prow          (void);
 char*     KEYS__unit         (char *a_question);
 char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
-
-/*---(key movements)--------*/
-char      MOVE_prep          (void);
-char      MOVE_done          (void);
-
-char      KEYS_basics        (char  a_major, char  a_minor);
-char      MOVE_horz          (char  a_major);
-char      MOVE_vert          (char  a_major);
-
-char      KEYS_gz_family     (char  a_major, char  a_minor);
-char      MOVE_gz_horz       (char  a_major, char  a_minor);
-char      MOVE_gz_vert       (char  a_major, char  a_minor);
-
-char      KEYS_e_family      (char  a_major, char  a_minor);
-char      MOVE_ends          (char  a_minor);
-char      MOVE_edges         (char  a_minor);
-
-char      KEYS_c_family      (char  a_major, char  a_minor);
-
-char      KEYS_regbasic      (char  a_major, char  a_minor);
 
 char*     MOVE_unit          (char *a_question, int a_num);
 
@@ -1327,9 +1297,8 @@ char        LOC__clear_locs      /* septal 1----- */  (int a_tab);
 char        LOC__purge           /* stem   0----- */  (void);
 char        LOC_wrap             /* shoot  0----- */  (void);
 
-char        LOC_legal            /* stigma 4----- */  (int a_col, int a_row, int a_tab, char a_adapt);
-char        LOC_locator          (char *a_label, int *a_x, int *a_y, int *a_z);
-char        LOC_addressor        (char *a_label, int a_x, int a_y, int a_z);
+char        LOC_ystr_checker     (int a_tab, int a_col, int a_row, int a_nada, char a_check);
+char        LOC_legal            /* stigma 4----- */  (int a_tab, int a_col, int a_row, char a_adapt);
 
 char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, short a_tab , short a_col , short a_row);
 char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
@@ -1349,11 +1318,7 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        TAB_init             (void);
 char        TAB_purge            (void);
-char        TAB_valid            /* petal  1----- */  (int a_tab);
-char        TAB_legal            (int a_tab);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        TAB_label            (int a_tab);
-char        TAB_index            (char  a_abbr);
 int         TAB_used             (int a_tab);
 char        TAB_type             (int a_tab);
 char        TAB_retype           (int a_tab, char a_type);
@@ -1382,12 +1347,16 @@ char*       TAB__unit            (char *a_question, char *a_label);
 
 
 
+#define     LEGAL_TAB(A)       LEGAL_tab (NTAB, A)
+#define     LEGAL_COL(A,B)     LEGAL_col (COL_max (A), B)
+#define     LEGAL_ROW(A,B)     LEGAL_row (ROW_max (A), B)
+
+
+
 /*===[[ gyges_col.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_init             (void);
 char        COL_clear            /* septal 1----- */  (int a_tab);
-char        COL_valid            /* petal  2----- */  (int a_tab, int a_col);
-char        COL_legal            /* petal  2----- */  (int a_tab, int a_col);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         COL_defmax           /* petal  0----- */  (void);
 int         COL_max              /* petal  1----- */  (int a_tab);
@@ -1395,9 +1364,6 @@ int         COL_used             /* petal  2----- */  (int a_tab, int a_col);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         COL_xpos             /* petal  2----- */  (int a_tab, int a_col);
 char        COL_xset             /* stigma 3----- */  (int a_tab, int a_col, int a_pos);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        COL_defname          /* petal  3----- */  (int a_tab, int a_col, char *a_name);
-char        COL_name             /* petal  3----- */  (int a_tab, int a_col, char *a_name);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_defwidth         (int a_tab, int a_size);
 char        COL_width            /* petal  2----- */  (int a_tab, int a_col);
@@ -1420,7 +1386,6 @@ char*       COL__unit            (char *a_question, char *a_label);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_init                (void);
 char        ROW_clear            /* septal 1----- */  (int a_tab);
-char        ROW_valid            /* petal  2----- */  (int a_tab, int a_row);
 char        ROW_legal            /* petal  2----- */  (int a_tab, int a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         ROW_defmax           /* petal  0----- */  (void);
@@ -1429,9 +1394,6 @@ int         ROW_used             /* petal  2----- */  (int a_tab, int a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         ROW_ypos             /* petal  2----- */  (int a_tab, int a_row);
 char        ROW_yset             /* sigma  3----- */  (int a_tab, int a_row, int a_pos);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        ROW_defname          (int a_tab, int a_row, char *a_name);
-char        ROW_name             (int a_tab, int a_row, char *a_name);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_heighten            (int a_tab, int a_row, int a_size);
 char        ROW_resize              (char *a_name, int a_size, int a_count);
@@ -1591,11 +1553,11 @@ char        api_ycalc_pointer       (void *a_owner, char **a_source, char **a_ty
 char        api_ycalc_reaper        (void **a_owner);
 
 char        api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_deproot);
-char        api_ycalc_whos_at       (int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
+char        api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
 char*       api_ycalc_labeler       (void *a_owner);
 
 char        api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_string);
-char        api_ycalc_address       (void *a_owner, int *x, int *y, int *z);
+char        api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z);
 char        api_ycalc_special       (void *a_owner, char a_what, double *a_value, char **a_string);
 
 char        api_ycalc_printer       (void *a_owner);
@@ -1605,6 +1567,9 @@ char*       api_ycalc__unit         (char *a_question, char *a_label);
 
 
 /*===[[ gyges_yvikeys.c ]]====================================================*/
+
+char        api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
+char        api_yvikeys_addressor   (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);
 
 char        api_yvikeys_saver       (char *a_contents);
 
@@ -1620,6 +1585,7 @@ char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char
 char        api_yvikeys_regkiller   (tCELL *a_curr);
 
 
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 
 /*===[ SCRP   ]===============================================================*/
 /*345678901-12345678901234567890->--------------------------------------------*/

@@ -51,9 +51,11 @@ ROW_clear            (int a_tab)
    DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");
    DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
    for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
+      /*---(characteristics)-------------*/
       s_tabs [a_tab].rows [x_row].h = s_tabs [a_tab].deftall;
       s_tabs [a_tab].rows [x_row].y = 0;
       s_tabs [a_tab].rows [x_row].c = 0;
+      /*---(done)------------------------*/
    }
    /*---(clear frozen rows)--------------*/
    DEBUG_LOCS   yLOG_snote   ("clear any frozen rows");
@@ -83,8 +85,8 @@ ROW__validity        (char a_mode, int a_tab, int a_row)
       return 1;
    }
    /*---(tab part)-----------------------*/
-   rc = TAB_valid (a_tab);
-   --rce;  if (rc    < 0)                                    return rce;
+   rc = VALID_tab (a_tab);
+   --rce;  if (rc   == 0)                                    return rce;
    /*---(col part)-----------------------*/
    --rce;  if (a_row < 0)                                    return rce;
    --rce;
@@ -98,7 +100,6 @@ ROW__validity        (char a_mode, int a_tab, int a_row)
    return 0;
 }
 
-char  ROW_valid    (int a_tab, int a_row) { return ROW__validity ('V', a_tab, a_row); }
 char  ROW_legal    (int a_tab, int a_row) { return ROW__validity ('L', a_tab, a_row); }
 
 
@@ -117,16 +118,14 @@ ROW_defmax           (void)
 int          /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
 ROW_max              (int a_tab)
 {
-   char rc = ROW_valid (a_tab, 0);
-   if (rc < 0) return rc;
+   if (!LEGAL_TAB (a_tab))   return -1;
    return s_tabs [a_tab].nrow;
 }
 
 int          /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 ROW_used             (int a_tab, int a_row)
 {
-   char rc = ROW_valid (a_tab, a_row);
-   if (rc < 0) return rc;
+   if (!LEGAL_ROW (a_tab, a_row))   return -1;
    return s_tabs [a_tab].rows [a_row].c;
 }
 
@@ -140,51 +139,16 @@ static void  o___POSITION________o () { return; }
 int          /*-> return the row ypos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.603.!]-*/ /*-[--.---.---.--]-*/
 ROW_ypos             (int a_tab, int a_row)
 {
-   char rc = ROW_valid (a_tab, 0);
-   if (rc < 0) return rc;
+   if (!LEGAL_ROW (a_tab, a_row))  return -1;
    return s_tabs [a_tab].rows [a_row].y;
 }
 
 char         /*-> set a new row y-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 ROW_yset             (int a_tab, int a_row, int a_pos)
 {
-   char rc = ROW_valid (a_tab, a_row);
-   if (rc < 0) return rc;
+   if (!LEGAL_ROW (a_tab, a_row))  return -1;
    s_tabs [a_tab].rows [a_row].y = a_pos;
    return 0;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                          column naming                       ----===*/
-/*====================------------------------------------====================*/
-static void  o___NAMING__________o () { return; }
-
-char         /*-> return the col xpos ----------------[ ------ [gc.210.313.21]*/ /*-[00.0000.204.!]-*/ /*-[--.---.---.--]-*/
-ROW_defname          (int a_tab, int a_row, char *a_name)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   /*---(defense)------------------------*/
-   --rce;  if (a_name == NULL)   return rce;
-   strlcpy (a_name, "????", LEN_ABBR);
-   rc = ROW_valid (a_tab, a_row);
-   --rce;  if (rc < 0) return rce;
-   /*---(make name)----------------------*/
-   if      (a_row > 999)  sprintf (a_name, "%4d"   , a_row + 1);
-   else if (a_row >  99)  sprintf (a_name, "·%3d"  , a_row + 1);
-   else if (a_row >   9)  sprintf (a_name, "··%2d" , a_row + 1);
-   else                   sprintf (a_name, "···%1d", a_row + 1);
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> return the col xpos ----------------[ ------ [gc.210.313.21]*/ /*-[00.0000.204.!]-*/ /*-[--.---.---.--]-*/
-ROW_name             (int a_tab, int a_row, char *a_name)
-{
-   return ROW_defname (a_tab, a_row, a_name);
 }
 
 
@@ -204,8 +168,7 @@ ROW_heighten         (int a_tab, int a_row, int a_size)
    int         x_max       =    0;
    tCELL      *x_curr      = NULL;
    /*---(defense)------------------------*/
-   rc = ROW_valid (a_tab, a_row);
-   --rce;  if (rc < 0) return rc;
+   if (!LEGAL_ROW (a_tab, a_row))  return -1;
    /*---(limits)-------------------------*/
    if (a_size  < MIN_HEIGHT)    a_size = MIN_HEIGHT;
    if (a_size  > MAX_HEIGHT)    a_size = MAX_HEIGHT;
@@ -240,7 +203,7 @@ ROW_resize           (char *a_name, int a_size, int a_count)
    int         x_row       =    0;
    int         x_off       =    0;
    /*---(defense)------------------------*/
-   rc = str2gyges (a_name, &x_tab, NULL, &x_row, NULL, 0);
+   rc = str2gyges (a_name, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_LEGAL);
    --rce;  if (rc < 0) return rc;
    /*---(resize)-------------------------*/
    if (a_count == 0)  a_count = 1;
@@ -319,8 +282,8 @@ ROW_defheight        (int a_tab, int a_size)
    int         x_max       =    0;
    int         x_row       =    0;
    /*---(defense)------------------------*/
-   rc = TAB_valid (a_tab);
-   --rce;  if (rc < 0) return rc;
+   rc = VALID_tab (a_tab);
+   --rce;  if (rc == 0) return rc;
    /*---(prepare)------------------------*/
    x_def  = s_tabs [a_tab].deftall;
    x_max  = ROW_max (a_tab);
@@ -342,7 +305,7 @@ ROW_height           (int a_tab, int a_row)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(defense)------------------------*/
-   rc = ROW_valid (a_tab, a_row);
+   if (!LEGAL_ROW (a_tab, a_row))  return -1;
    --rce;  if (rc < 0) return rc;
    /*---(complete)-----------------------*/
    return s_tabs [a_tab].rows [a_row].h;
@@ -358,11 +321,9 @@ static void  o___FREEZING________o () { return; }
 char         /*-> change the frozen rows -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 ROW_freeze           (int a_tab, int a_brow, int a_erow)
 {
-   char rc = ROW_valid (a_tab, a_brow);
-   if (rc < 0) return rc;
-   rc = ROW_valid (a_tab, a_erow);
-   if (rc < 0) return rc;
    int    x_row;
+   if (!LEGAL_ROW (a_tab, a_brow))  return -1;
+   if (!LEGAL_ROW (a_tab, a_erow))  return -2;
    if (a_brow  >  a_erow) {
       x_row   = a_brow;
       a_brow  = a_erow;
@@ -377,8 +338,7 @@ ROW_freeze           (int a_tab, int a_brow, int a_erow)
 char         /*-> clear the frozen rows --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 ROW_unfreeze         (int a_tab)
 {
-   char rc = ROW_valid (a_tab, 0);
-   if (rc < 0) return rc;
+   if (!LEGAL_TAB (a_tab))  return -1;
    s_tabs [a_tab].froz_row    = '-';
    s_tabs [a_tab].froz_brow   = 0;
    s_tabs [a_tab].froz_erow   = 0;
@@ -459,8 +419,8 @@ ROW_writer              (int a_tab, int a_row)
    yPARSE_outclear  ();
    /*---(prepare tab)--------------------*/
    DEBUG_OUTP   yLOG_value   ("a_tab"     , a_tab);
-   rc = TAB_valid (a_tab);
-   --rce; if (rc < 0) { 
+   rc = VALID_tab (a_tab);
+   --rce; if (rc == 0) { 
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -495,7 +455,7 @@ ROW_writer              (int a_tab, int a_row)
       }
       DEBUG_OUTP   yLOG_value   ("n"         , n);
       /*---(write)-----------------------*/
-      rc = str4gyges (a_tab, 0, j, 0, x_label);
+      rc = str4gyges (a_tab, 0, j, 0, 0, x_label, YSTR_LEGAL);
       yPARSE_fullwrite ("height", x_label, x_size, n);
       /*---(clear)-----------------------*/
       if (x_beg != x_end)  yPARSE_outclear  ();
@@ -552,18 +512,17 @@ ROW__unit          (char *a_question, char *a_label)
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "COL              : label could not be parsed");
    if (a_label == NULL)  return unit_answer;
-   rc = str2gyges  (a_label, &x_tab, NULL, &x_row, NULL, 0);
+   rc = str2gyges  (a_label, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_LEGAL);
    if (rc <  0)  return unit_answer;
-   rc = ROW_valid (x_tab, x_row);
-   if (rc <  0)  return unit_answer;
-   x_abbr = TAB_label (x_tab);
+   if (!LEGAL_ROW (x_tab, x_row))  return unit_answer;
+   x_abbr = LABEL_tab (x_tab);
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "ROW              : question not understood");
    if      (strcmp(a_question, "row_info"      ) == 0) {
       if (ROW_legal (x_tab, x_row) < 0) {
-         snprintf(unit_answer, LEN_UNIT, "ROW info         : -t,       -#,   -w,   -y,   -c");
+         snprintf(unit_answer, LEN_FULL, "ROW info         : -t,       -#,   -w,   -y,   -c");
       } else {
-         snprintf(unit_answer, LEN_UNIT, "ROW info         : %ct,     %3d#, %3dh, %3dy, %3dc", x_abbr, x_row, s_tabs [x_tab].rows [x_row].h, s_tabs [x_tab].rows [x_row].y, s_tabs [x_tab].rows [x_row].c);
+         snprintf(unit_answer, LEN_FULL, "ROW info         : %ct,     %3d#, %3dh, %3dy, %3dc", x_abbr, x_row, s_tabs [x_tab].rows [x_row].h, s_tabs [x_tab].rows [x_row].y, s_tabs [x_tab].rows [x_row].c);
       }
    }
    /*---(complete)-----------------------*/

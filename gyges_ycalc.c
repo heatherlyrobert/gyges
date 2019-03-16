@@ -147,9 +147,9 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    char        rce         =  -10;
    char        rc          =    0;
    tCELL      *x_owner     = NULL;
+   int         x_tab       =   0;           /* working tab value              */
    int         x_col       =   0;           /* working col value              */
    int         x_row       =   0;           /* working row value              */
-   int         x_tab       =   0;           /* working tab value              */
    static char    x_sforce =  '?';
    static char   *x_label  [LEN_LABEL];
    static tCELL  *x_saved  = NULL;
@@ -198,13 +198,13 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    /*---(search)-------------------------*/
    else {
-      rc      = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
+      rc      = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
       DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
       --rce;  if (rc < 0) {
          DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_APIS   yLOG_complex ("loc"        , "%3dx, %3dy, %3dz", x_col, x_row, x_tab);
+      DEBUG_APIS   yLOG_complex ("loc"        , "%3db, %3dx, %3dy", x_tab, x_col, x_row);
       x_owner = LOC_cell_at_loc  (x_col, x_row, x_tab);
       DEBUG_APIS   yLOG_point   ("x_owner"    , x_owner);
       --rce;  if (x_owner == NULL && a_force == YCALC_LOOK) {
@@ -228,7 +228,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
       }
    }
    /*---(save)---------------------------*/
-   DEBUG_APIS   yLOG_complex ("loc_final"  , "%3dx, %3dy, %3dz", x_owner->col, x_owner->row, x_owner->tab);
+   DEBUG_APIS   yLOG_complex ("loc_final"  , "%3db, %3dx, %3dy", x_owner->tab, x_owner->col, x_owner->row);
    x_sforce = a_force;
    x_saved  = x_owner;
    strlcpy (x_label, a_label, LEN_LABEL);
@@ -249,13 +249,13 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
 }
 
 char         /*-> tbd --------------------------------[ leaf   [gc.320.621.10]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-api_ycalc_whos_at       (int x, int y, int z, char a_force, void **a_owner, void **a_deproot)
+api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owner, void **a_deproot)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
    /*---(legal)--------------------------*/
-   rc = str4gyges (z, x, y, 0, x_label);
+   rc = str4gyges (b, x, y, z, 0, x_label, YSTR_LEGAL);
    if (rc == 0)  rc = api_ycalc_named (x_label, YCALC_LOOK, a_owner, a_deproot);
    /*---(complete)-----------------------*/
    return rc;
@@ -325,15 +325,16 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
 }
 
 char
-api_ycalc_address       (void *a_owner, int *x, int *y, int *z)
+api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z)
 {
    tCELL      *x_owner     = NULL;
+   if (x != NULL)  *b   = 0;
    if (x != NULL)  *x   = 0;
    if (y != NULL)  *y   = 0;
    if (z != NULL)  *z   = 0;
    if (a_owner == NULL)  return -1;
    x_owner    = (tCELL     *) a_owner;
-   str2gyges (x_owner->label, z, x, y, NULL, 0);
+   str2gyges (x_owner->label, b, x, y, z, NULL, 0, YSTR_LEGAL);
    return 0;
 }
 
@@ -386,7 +387,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    char        rc          =    0;
    tCELL      *x_owner     = NULL;
    char        x_label     [LEN_LABEL];
-   int         x, y, z;
+   int         b, x, y, z;
    int         i           =    0;
    int         w           =    0;
    /*---(header)-------------------------*/
@@ -418,22 +419,22 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    s_owners [*a_merge] = x_owner;
    s_widths [*a_merge] = w;
    /*---(look for mergse)----------------*/
-   rc = str2gyges (x_owner->label, &z, &x, &y, NULL, 0);
+   rc = str2gyges (x_owner->label, &b, &x, &y, &z, NULL, 0, YSTR_LEGAL);
    DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
    if (rc < 0)  {
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->label, x, y, z, w);
+   DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->label, b, x, y, z, w);
    for (i = x + 1; i < x + 20; ++i) {
-      rc = str4gyges (z, i, y, 0, x_label);
+      rc = str4gyges (b, i, y, z, 0, x_label, YSTR_LEGAL);
       if (rc < 0)  break;
-      rc = api_ycalc_whos_at (i, y, z, YCALC_LOOK, &x_owner, NULL);
+      rc = api_ycalc_whos_at (b, i, y, z, YCALC_LOOK, &x_owner, NULL);
       if (rc < 0)                              break;
       if (x_owner == NULL)                     break;
       if (x_owner->t != YCALC_DATA_MERGED)     break;
       w         = COL_width (x_owner->tab, x_owner->col);
-      DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3dx, %3dy, %3dz, %3dw", x_owner, x_label, i, y, z, w);
+      DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_label, b, i, y, z, w);
       *a_width += w;
       ++(*a_merge);
       s_owners [*a_merge] = x_owner;
@@ -605,12 +606,12 @@ api_ycalc__unit    (char *a_question, char *a_label)
       sprintf (unit_answer, "ycalc error      : can not call on dependency s_root");
       return unit_answer;
    } else {
-      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
+      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
       if (rc < 0) {
          sprintf (unit_answer, "ycalc error      : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc     = LOC_legal (x_col, x_row, x_tab, CELL_FIXED);
+      rc     = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
       if (rc < 0) {
          sprintf (unit_answer, "ycalc error      : label <%s> not in-range", a_label);
          return unit_answer;
@@ -623,30 +624,30 @@ api_ycalc__unit    (char *a_question, char *a_label)
    }
    /*---(ycalc information)--------------*/
    if (strcmp(a_question, "ycalc_rpn"    )  == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (----) - -");
-      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (----) %c -", x_cell->t);
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (----) - -");
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (----) %c -", x_cell->t);
       else {
          yCALC_show_rpn  (x_cell->ycalc, &x_count, x_list);
-         if (x_count      == 0)        snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (%4d) %c ."     , 0, x_cell->t);
-         else                          snprintf(unit_answer, LEN_UNIT, "ycalc rpn        : (%4d) %c %s"    , x_count, x_cell->t, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (%4d) %c ."     , 0, x_cell->t);
+         else                          snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (%4d) %c %s"    , x_count, x_cell->t, x_list);
       }
    }
    if (strcmp(a_question, "ycalc_reqs"   )  == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (----) -");
-      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (----) -");
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc reqs       : (----) -");
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc reqs       : (----) -");
       else {
          yCALC_show_reqs (x_cell->ycalc, &x_count, x_list);
-         if (x_count      == 0)        snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (%4d) ."     , 0);
-         else                          snprintf(unit_answer, LEN_UNIT, "ycalc reqs       : (%4d) %s"    , x_count, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_FULL, "ycalc reqs       : (%4d) ."     , 0);
+         else                          snprintf(unit_answer, LEN_FULL, "ycalc reqs       : (%4d) %s"    , x_count, x_list);
       }
    }
    if (strcmp(a_question, "ycalc_pros"   )  == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (----) -");
-      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (----) -");
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc pros       : (----) -");
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc pros       : (----) -");
       else {
          yCALC_show_pros (x_cell->ycalc, &x_count, x_list);
-         if (x_count      == 0)        snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (%4d) ."     , 0);
-         else                          snprintf(unit_answer, LEN_UNIT, "ycalc pros       : (%4d) %s"    , x_count, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_FULL, "ycalc pros       : (%4d) ."     , 0);
+         else                          snprintf(unit_answer, LEN_FULL, "ycalc pros       : (%4d) %s"    , x_count, x_list);
       }
    }
    /*---(complete)-----------------------*/

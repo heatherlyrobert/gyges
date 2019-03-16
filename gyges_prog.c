@@ -2,7 +2,7 @@
 
 #include   "gyges.h"
 
-char          unit_answer [LEN_UNIT];
+char          unit_answer [LEN_FULL];
 
 tLAYOUT     g_layouts [MAX_LAYOUT] = {
    /*"1234567890", "123456789012" , 12345678901234567890, 12345678901234567890, 12345678901234567890, "1234567890123456789012345678901234567890"      */
@@ -83,7 +83,7 @@ PROG_version       (void)
 #else
    strncpy (t, "[unknown    ]", 15);
 #endif
-   snprintf (verstring, 100, "%s   %s : %s", t, VER_NUM, VER_TXT);
+   snprintf (verstring, 100, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
    return verstring;
 }
 
@@ -97,7 +97,7 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_TOPS   yLOG_info     ("gyges"   , PROG_version    ());
    DEBUG_TOPS   yLOG_info     ("yURG"    , yURG_version    ());
    DEBUG_TOPS   yLOG_info     ("ySTR"    , ySTR_version    ());
-   DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOG_version    ());
+   DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOGS_version   ());
    DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version    ());
    DEBUG_TOPS   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
    DEBUG_TOPS   yLOG_info     ("yCALC"   , yCALC_version   ());
@@ -106,12 +106,12 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    yVIKEYS_init         ();
-   if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", VER_NUM, VER_TXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
+   if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
    FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
    if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
-   if (rc == 0)  rc = yVIKEYS_regs_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller, api_yvikeys_exim);
+   if (rc == 0)  rc = yVIKEYS_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_TOPS   yLOG_value    ("yvikeys"   , rc);
    if (rc <  0) {
       DEBUG_TOPS   yLOG_exitr    (__FUNCTION__, rc);
@@ -147,8 +147,8 @@ PROG_args          (int argc, char *argv[])
    char       *a           = NULL;
    int         x_total     = 0;
    int         x_args      = 0;
-   char        x_name      [LEN_STR]   = "";
-   char        t           [LEN_STR]   = "";
+   char        x_name      [LEN_FULL]   = "";
+   char        t           [LEN_FULL]   = "";
    /*---(begin)--------------------------*/
    /*> FILE_rename ("");                                                              <*/
    /*---(process)------------------------*/
@@ -200,7 +200,7 @@ PROG_begin         (void)
    COL_init  ();
    ROW_init  ();
    /*---(locals)-------------------------*/
-   VISU_init ();
+   /*> VISU_init ();                                                                  <*/
    /*> REG_init  ();                                                                  <*/
    /*> KEYS_init ();                                                                  <*/
    /*---(char settings)------------------*/
@@ -213,8 +213,8 @@ PROG_begin         (void)
    /*---(prepare)------------------------*/
    /*> DEP_init  ();                                                                  <*/
    /*---(overall)------------------------*/
-   yVIKEYS_view_config   ("gyges spreadsheet", VER_NUM, YVIKEYS_CURSES, 0, 0, 0);
-   yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, LOC_locator, LOC_addressor);
+   yVIKEYS_view_config   ("gyges spreadsheet", P_VERNUM, YVIKEYS_CURSES, 0, 0, 0);
+   yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, api_yvikeys_locator, api_yvikeys_addressor);
    yVIKEYS_bufs_config   (TAB_switch_char);
    yVIKEYS_hist_config   (HIST_undo, HIST_redo);
    /*---(complete)-----------------------*/
@@ -234,10 +234,8 @@ PROG_final         (void)
    /*---(status options)-----------------*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );   <*/
-   yVIKEYS_view_option (YVIKEYS_STATUS, "visual" , CURS_status_visual  , "details of visual selection"                );
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );   <*/
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );   <*/
-   yVIKEYS_view_option (YVIKEYS_STATUS, "mark"   , CURS_status_mark    , "details of cell and location marks"         );
    yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
    yVIKEYS_view_option (YVIKEYS_STATUS, "deps"   , CURS_status_deps    , "details of current cell dependencies"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
@@ -269,132 +267,9 @@ PROG_end             (void)
    DEBUG_PROG   yLOG_note    ("yVIKEYS_wrap");
    yVIKEYS_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
-   DEBUG_TOPS   yLOG_end     ();
+   DEBUG_TOPS   yLOGS_end     ();
    return 0;
 }
-
-
-
-/*====================------------------------------------====================*/
-/*===----                     layout configuration                     ----===*/
-/*====================------------------------------------====================*/
-PRIV void  o___LAYOUT__________o () { return; }
-
-/*> char         /+-> tbd --------------------------------[ shoot  [gz.430.011.10]+/ /+-[01.0000.012.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> PROG_layout_init    (void)                                                                                                     <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         i           = 0;                                                                                                <* 
- *>    /+---(initialize data)----------------+/                                                                                    <* 
- *>    g_nlayout = 0;                                                                                                              <* 
- *>    for (i = 0; i <= MAX_LAYOUT; ++i) {                                                                                         <* 
- *>       /+---(filter)----------------------+/                                                                                    <* 
- *>       if (g_layouts [i].cat [0] == '\0')            break;                                                                     <* 
- *>       ++g_nlayout;                                                                                                             <* 
- *>    }                                                                                                                           <* 
- *>    /+---(set defaults)-------------------+/                                                                                    <* 
- *>    my.layout_formula     = G_FORMULA_SMALL;                                                                                    <* 
- *>    my.layout_status      = G_STATUS_FILE;                                                                                      <* 
- *>    my.layout_command     = G_COMMAND_SHOW;                                                                                     <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> tbd --------------------------------[ ------ [gc.850.323.C5]+/ /+-[02.0000.152.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> PROG_layout_set     (char *a_who, char *a_cat, char *a_opt)                                                                    <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         i           = 0;                                                                                                <* 
- *>    int         x_found     = -1;                                                                                               <* 
- *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    if (a_cat == NULL)   return -1;                                                                                             <* 
- *>    if (a_opt == NULL)   return -2;                                                                                             <* 
- *>    /+---(list)---------------------------+/                                                                                    <* 
- *>    if (strcmp (a_opt, "options") == 0)  PROG_layout_list (a_who);                                                              <* 
- *>    /+---(find)---------------------------+/                                                                                    <* 
- *>    for (i = 0; i <= g_nlayout; ++i) {                                                                                          <* 
- *>       /+---(filter)----------------------+/                                                                                    <* 
- *>       if (g_layouts [i].cat [0] == '\0')            break;                                                                     <* 
- *>       if (g_layouts [i].cat [0] != a_cat [0])       continue;                                                                  <* 
- *>       if (g_layouts [i].opt [0] != a_opt [0])       continue;                                                                  <* 
- *>       if (strcmp (g_layouts [i].cat, a_cat) != 0)   continue;                                                                  <* 
- *>       if (strcmp (g_layouts [i].opt, a_opt) != 0)   continue;                                                                  <* 
- *>       /+---(assign)----------------------+/                                                                                    <* 
- *>       x_found = i;                                                                                                             <* 
- *>       if (g_layouts [i].formula > 0)  my.layout_formula = g_layouts [i].formula;                                               <* 
- *>       if (g_layouts [i].status  > 0)  my.layout_status  = g_layouts [i].status;                                                <* 
- *>       if (g_layouts [i].command > 0)  my.layout_command = g_layouts [i].command;                                               <* 
- *>       /+---(reset)-----------------------+/                                                                                    <* 
- *>       CURS_size    ();                                                                                                         <* 
- *>       if (strcmp (a_who, "cmd") == 0) {                                                                                        <* 
- *>          /+> MOVE_prep    ();                                                         <+/                                      <* 
- *>          EROW         = 10000;                                                                                                 <* 
- *>          MOVE_vert    ('r');                                                                                                   <* 
- *>          MOVE_done    ();                                                                                                      <* 
- *>       }                                                                                                                        <* 
- *>       break;                                                                                                                   <* 
- *>       /+---(done)------------------------+/                                                                                    <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return x_found;                                                                                                             <* 
- *> }                                                                                                                              <*/
-
-/*> char PROG_layout_formula (char *a_opt) { return PROG_layout_set ("cmd", "formula", a_opt); }   <*/
-/*> char PROG_layout_status  (char *a_opt) { return PROG_layout_set ("cmd", "status" , a_opt); }   <*/
-/*> char PROG_layout_command (char *a_opt) { return PROG_layout_set ("cmd", "command", a_opt); }   <*/
-/*> char PROG_layout_layout  (char *a_opt) { return PROG_layout_set ("cmd", "layout" , a_opt); }   <*/
-
-/*> char         /+-> tbd --------------------------------[ ------ [gc.750.153.41]+/ /+-[01.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> PROG_layout_list    (char *a_who)                                                                                              <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    int         i           = 0;                                                                                                <* 
- *>    char        x_save      [LEN_LABEL] = "";                                                                                   <* 
- *>    char        x_cli       [LEN_DESC];                                                                                         <* 
- *>    char        x_cmd       [LEN_DESC];                                                                                         <* 
- *>    char       *x_title     = "   ---option-----------  ---command----------  ---description------------------------";          <* 
- *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    if (a_who == NULL)  return -1;                                                                                              <* 
- *>    if (strcmp (a_who, "cmd") == 0) {                                                                                           <* 
- *>       CURS_info_request  (G_INFO_LAYOUT);                                                                                      <* 
- *>       return 0;                                                                                                                <* 
- *>    }                                                                                                                           <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    printf ("gyges_hekatonkheires - screen layout options/commands\n");                                                         <* 
- *>    printf ("\n%s\n", x_title);                                                                                                 <* 
- *>    for (i = 0; i <= MAX_LAYOUT; ++i) {                                                                                         <* 
- *>       /+---(filter)----------------------+/                                                                                    <* 
- *>       if (g_layouts [i].cat [0] == '\0')            break;                                                                     <* 
- *>       /+---(show)------------------------+/                                                                                    <* 
- *>       if (strcmp (g_layouts [i].cat, x_save) != 0)  printf ("\n   %s options\n", g_layouts [i].cat);                           <* 
- *>       sprintf (x_cli, "--%s-%s", g_layouts [i].cat, g_layouts [i].opt);                                                        <* 
- *>       sprintf (x_cmd, ":%s %s" , g_layouts [i].cat, g_layouts [i].opt);                                                        <* 
- *>       printf  ("   %-20.20s  %-20.20s  %s\n", x_cli, x_cmd, g_layouts [i].desc);                                               <* 
- *>       strcpy  (x_save, g_layouts [i].cat);                                                                                     <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    printf ("\n%s\n", x_title);                                                                                                 <* 
- *>    exit (-1);                                                                                                                  <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> tbd --------------------------------[ leaf   [ge.430.224.30]+/ /+-[00.0000.104.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> PROG_layout_entry   (int a_num, char *a_line)                                                                                  <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
- *>    char        rce         = -10;                                                                                              <* 
- *>    char        x_cmd       [LEN_DESC];                                                                                         <* 
- *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    --rce;  if (a_line == NULL)       return rce;                                                                               <* 
- *>    strcpy (a_line, " -------------------- ---------------------------------------- ");                                         <* 
- *>    --rce;  if (a_num <  0        )  return rce;                                                                                <* 
- *>    --rce;  if (a_num >= g_nlayout)  return rce;                                                                                <* 
- *>    /+---(format)-------------------------+/                                                                                    <* 
- *>    sprintf (x_cmd , ":%s %s" , g_layouts [a_num].cat, g_layouts [a_num].opt);                                                  <* 
- *>    sprintf (a_line, " %-20.20s %-40.40s ", x_cmd, g_layouts [a_num].desc);                                                     <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
 
 
 
@@ -416,79 +291,79 @@ PROG__unit           (char *a_question, void *a_thing)
    int         x_back      = 0;
    /*---(sheet focus)--------------------*/
    if        (strcmp(a_question, "sheet_size")     == 0) {
-      snprintf(unit_answer, LEN_UNIT, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, NCOL, NROW);
+      snprintf(unit_answer, LEN_FULL, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, NCOL, NROW);
    } else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);
+      snprintf(unit_answer, LEN_FULL, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);
    } else if (strcmp(a_question, "cell_count")     == 0) {
       /*> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->next; }   <*/
       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
-      snprintf(unit_answer, LEN_UNIT, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
+      snprintf(unit_answer, LEN_FULL, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
    } else if (strcmp(a_question, "mode")           == 0) {
-      /*> snprintf(unit_answer, LEN_UNIT, "Mode             : %c", yVIKEYS_mode_curr ());   <*/
+      /*> snprintf(unit_answer, LEN_FULL, "Mode             : %c", yVIKEYS_mode_curr ());   <*/
    }
    /*---(cell focus)---------------------*/
    else if   (strcmp(a_question, "cell_where")     == 0) {
-      if (x_curr == NULL)  snprintf(unit_answer, LEN_UNIT, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", NULL  , -1         , -1         , -1         );
-      else                 snprintf(unit_answer, LEN_UNIT, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+      if (x_curr == NULL)  snprintf(unit_answer, LEN_FULL, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", NULL  , -1         , -1         , -1         );
+      else                 snprintf(unit_answer, LEN_FULL, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
    } else if (strcmp(a_question, "sheet_who")      == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Sheet Location   : p=%9p", x_curr);
+      snprintf(unit_answer, LEN_FULL, "Sheet Location   : p=%9p", x_curr);
    } else if (strcmp(a_question, "cell_info")      == 0) {
-      /*> snprintf(unit_answer, LEN_UNIT, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <*/
+      /*> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <*/
    }
    /*---(cell contents)------------------*/
    else if   (strcmp(a_question, "cell_source")    == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cell Source      : (%5d) :%-.40s:", x_curr->l, x_curr->s);
+      snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->l, x_curr->s);
    } else if (strcmp(a_question, "cell_value")     == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cell Value       : %18.6F", x_curr->v_num);
+      snprintf(unit_answer, LEN_FULL, "Cell Value       : %18.6F", x_curr->v_num);
    } else if (strcmp(a_question, "cell_modified")  == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->v_str), x_curr->v_str);
+      snprintf(unit_answer, LEN_FULL, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->v_str), x_curr->v_str);
    } else if (strcmp(a_question, "cell_printable") == 0) {
-      /*> snprintf(unit_answer, LEN_UNIT, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->p), x_curr->p);   <*/
-      snprintf(unit_answer, LEN_UNIT, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->p), x_curr->p);
+      /*> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->p), x_curr->p);   <*/
+      snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->p), x_curr->p);
    } else if (strcmp(a_question, "cell_contents")  == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Contents     (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
+      snprintf(unit_answer, LEN_FULL, "Contents     (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }
    /*---(cell contents)------------------*/
    else if   (strcmp(a_question, "cell_rpn")       == 0) {
-      /*> snprintf(unit_answer, LEN_UNIT, "Cell RPN         : (%3d) %-.40s", x_curr->nrpn, x_curr->rpn);   <*/
+      /*> snprintf(unit_answer, LEN_FULL, "Cell RPN         : (%3d) %-.40s", x_curr->nrpn, x_curr->rpn);   <*/
    }
    /*---(display focus)------------------*/
    else if   (strcmp(a_question, "rows")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NROW, my.y_avail, BROW, CROW, EROW);
+      snprintf(unit_answer, LEN_FULL, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NROW, my.y_avail, BROW, CROW, EROW);
    } else if (strcmp(a_question, "cols")           == 0) {
-      snprintf(unit_answer, LEN_UNIT, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NCOL, my.x_avail, BCOL, CCOL, ECOL);
+      snprintf(unit_answer, LEN_FULL, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NCOL, my.x_avail, BCOL, CCOL, ECOL);
    }
    /*---(selection)----------------------*/
    /*> else if   (strcmp(a_question, "sel_range")      == 0) {                                                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Select Range (%c) : ta=%3d, bc=%3d, br=%3d, ec=%3d, er=%3d", (sel.live == 0) ? '-' : 'L', sel.otab, sel.bcol, sel.brow, sel.ecol, sel.erow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "Select Range (%c) : ta=%3d, bc=%3d, br=%3d, ec=%3d, er=%3d", (sel.live == 0) ? '-' : 'L', sel.otab, sel.bcol, sel.brow, sel.ecol, sel.erow);   <* 
     *> } else if (strcmp(a_question, "sel_curr")       == 0) {                                                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Select Current   : st=%3d, sc=%3d, sr=%3d", sel.otab, sel.ccol, sel.crow);                                                                     <* 
+    *>    snprintf(unit_answer, LEN_FULL, "Select Current   : st=%3d, sc=%3d, sr=%3d", sel.otab, sel.ccol, sel.crow);                                                                     <* 
     *> } else if (strcmp(a_question, "sel_full")       == 0) {                                                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Select Full      : st=%3d, sc=%3d, sr=%3d, sp=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);                   <*/
+    *>    snprintf(unit_answer, LEN_FULL, "Select Full      : st=%3d, sc=%3d, sr=%3d, sp=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);                   <*/
    else if   (strcmp(a_question, "curr_pos")       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, CCOL, CROW);
+      snprintf(unit_answer, LEN_FULL, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, CCOL, CROW);
    } else if (strcmp(a_question, "max_pos" )       == 0) {
-      snprintf(unit_answer, LEN_UNIT, "maximum position : tab=%3d, col=%3d, row=%3d", MAX_TABS, NCOL, NROW);
+      snprintf(unit_answer, LEN_FULL, "maximum position : tab=%3d, col=%3d, row=%3d", MAX_TABS, NCOL, NROW);
    }
    /*---(dependencies)-------------------*/
    /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <* 
+    *>    snprintf(unit_answer, LEN_FULL, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <* 
     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <* 
     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->next; }   <+/   <* 
     *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <* 
     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <* 
+    *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <* 
     *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <* 
     *>    DEP_disp_reqs  (a_thing, temp);                                                                                                                                               <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Cell Reqs List   : %-.35s", temp);                                                                                                     <* 
+    *>    snprintf(unit_answer, LEN_FULL, "Cell Reqs List   : %-.35s", temp);                                                                                                     <* 
     *> } else if (strcmp(a_question, "cell_deps")      == 0) {                                                                                                                    <* 
     *>    DEP_disp_pros  (a_thing, temp);                                                                                                                                               <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "Cell Deps List   : %-.35s", temp);                                                                                                     <* 
+    *>    snprintf(unit_answer, LEN_FULL, "Cell Deps List   : %-.35s", temp);                                                                                                     <* 
     *> }                                                                                                                                                                          <*/
    /*---(UNKNOWN)------------------------*/
    else {
-      snprintf(unit_answer, LEN_UNIT, "UNKNOWN          : question is not understood");
+      snprintf(unit_answer, LEN_FULL, "UNKNOWN          : question is not understood");
    }
    /*---(complete)-----------------------*/
    return unit_answer;

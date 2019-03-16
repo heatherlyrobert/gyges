@@ -119,6 +119,7 @@ LOC_wrap             (void)
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    LOC__purge  ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 
@@ -167,7 +168,7 @@ LOC_hook           (
       return rce;
    }
    /*---(defense: valid destination)-----*/
-   rc = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
+   rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -183,7 +184,7 @@ LOC_hook           (
    a_cell->tab = a_tab;
    a_cell->col = a_col;
    a_cell->row = a_row;
-   str4gyges (a_tab, a_col, a_row, 0, a_cell->label);
+   str4gyges (a_tab, a_col, a_row, 0, 0, a_cell->label, YSTR_LEGAL);
    /*---(point location at cell)---------*/
    s_tabs [a_tab].sheet[a_col][a_row] = a_cell;
    /*> if (LOC_label (a_cell, a_cell->label) < 0) {                                   <* 
@@ -243,7 +244,7 @@ LOC_unhook         (
    x_col       = a_cell->col;
    x_row       = a_cell->row;
    /*---(defense: valid position)--------*/
-   rc = LOC_legal (x_col, x_row, x_tab, CELL_FIXED);
+   rc = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
    DEBUG_LOCS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -294,11 +295,11 @@ LOC_move           (
    char        rce         = -10;           /* return code for errors         */
    /*---(defense: source)----------------*/
    --rce;
-   if (LOC_legal (a_scol, a_srow, a_stab, CELL_FIXED) != 0)  return rce;
+   if (LOC_legal (a_stab, a_scol, a_srow, CELL_FIXED) != 0)  return rce;
    source      = s_tabs[a_stab].sheet[a_scol][a_srow];
    /*---(defense: target)----------------*/
    --rce;
-   if (LOC_legal (a_tcol, a_trow, a_ttab, CELL_FIXED) != 0)  return rce;
+   if (LOC_legal (a_ttab, a_tcol, a_trow, CELL_FIXED) != 0)  return rce;
    target      = s_tabs[a_ttab].sheet[a_tcol][a_trow];
    /*---(overwrite as necessary)---------*/
    if (target  != NULL) {
@@ -325,15 +326,21 @@ LOC_move           (
 /*====================------------------------------------====================*/
 PRIV void  o___LOCATION________o () { return; }
 
+
+char
+LOC_ystr_checker   (int a_tab, int a_col, int a_row, int a_nada, char a_check)
+{
+}
+
 char         /*-> verify that a location is legal ----[ leaf   [ge.QA9.49#.M0]*/ /*-[02.0000.C94.#]-*/ /*-[--.---.---.--]-*/
-LOC_legal          (int a_col, int a_row, int a_tab, char a_adapt)
+LOC_legal          (int a_tab, int a_col, int a_row, char a_adapt)
 {  /*---(design notes)--------------------------------------------------------*/
    /* tests the tab, col, and row against minimum and maximum limits as well  */
    /* as against current limits as a service to other functions.              */
    /* additionally, if requested, the function can expand the current limits  */
    /* to include the requested row and column if it is within the max limits. */
    /*---(locals)-----------+-----------+-*/
-   char          rce       =  -10;          /* return code for errors         */
+   char          rce       =  -10;          /* rcode for errors               */
    short         x_max     =    0;          /* maximum used col/row in tab    */
    int           i         =    0;
    static int    x_xtab    = -666;
@@ -466,7 +473,7 @@ LOC_cell_at_curr     (void)
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = LOC_legal (CCOL, CROW, CTAB, CELL_FIXED);
+   rc = LOC_legal (CTAB, CCOL, CROW, CELL_FIXED);
    if (rc < 0)  {
       DEBUG_LOCS_M   yLOG_note    ("nothing found");
       DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
@@ -488,7 +495,7 @@ LOC_cell_at_loc      (int a_col, int a_row, int a_tab)
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);
+   rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
    if (rc < 0)  {
       DEBUG_LOCS_M   yLOG_note    ("nothing found");
       DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
@@ -513,7 +520,7 @@ LOC_cell_labeled   (char *a_label)
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
+   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
    if (rc < 0)  {
       DEBUG_LOCS_M   yLOG_note    ("nothing found");
       DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
@@ -529,55 +536,6 @@ LOC_cell_labeled   (char *a_label)
    /*---(complete)-----------------------*/
    DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
    return x_curr;
-}
-
-char         /*-> return coordinates for address -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
-LOC_locator        (char *a_label, int *a_x, int *a_y, int *a_z)
-{
-   char        rc;
-   short       x_tab;
-   short       x_col;
-   short       x_row;
-   /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
-   DEBUG_LOCS   yLOG_point   ("a_x"       , a_x);
-   DEBUG_LOCS   yLOG_point   ("a_y"       , a_y);
-   DEBUG_LOCS   yLOG_point   ("a_z"       , a_z);
-   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, 0);
-   if (rc < 0)  {
-      DEBUG_LOCS   yLOG_note    ("nothing found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-      return NULL;
-   }
-   if (a_x != NULL)  *a_x = x_col;
-   if (a_y != NULL)  *a_y = x_row;
-   if (a_z != NULL)  *a_z = x_tab;
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> return address for coordinates -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
-LOC_addressor      (char *a_label, int a_x, int a_y, int a_z)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;
-   /*---(begin)--------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_value   ("a_x"       , a_x);
-   DEBUG_LOCS   yLOG_value   ("a_y"       , a_y);
-   DEBUG_LOCS   yLOG_value   ("a_z"       , a_z);
-   rc = str3gyges (a_z, a_x, a_y, 0, a_label);
-   if (rc < 0)  {
-      DEBUG_LOCS   yLOG_note    ("nothing found");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-      return -1;
-   }
-   DEBUG_LOCS   yLOG_info    ("a_label"   , a_label);
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
 }
 
 
@@ -614,7 +572,7 @@ PRIV void  o___REFERENCES______o () { return; }
  *>    --rce;  if (a_final == NULL)                  return rce;                                                                   <* 
  *>    strcpy (a_final, "n/a");                                                                                                    <* 
  *>    /+---(defense: legal reference)-------+/                                                                                    <* 
- *>    rc = LOC_legal (a_col, a_row, a_tab, CELL_FIXED);                                                                           <* 
+ *>    rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);                                                                           <* 
  *>    if (rc < 0)                         return rc - 10;                                                                         <* 
  *>    --rce;  if (a_abs < 0)                        return rce;                                                                   <* 
  *>    --rce;  if (a_abs > 7)                        return rce;                                                                   <* 
@@ -934,10 +892,10 @@ LOC__unit          (char *a_question, char *a_label)
    strcpy  (unit_answer, "LOC              : label could not be parsed");
    if (a_label != NULL && strcmp (a_label, "") != 0) {
       x_label = a_label [0];
-      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, &x_abs, 0);
+      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, &x_abs, 0, YSTR_LEGAL);
    } else {
       x_tab   = CTAB;
-      x_label = TAB_label (x_tab);
+      x_label = LABEL_tab (x_tab);
       x_col   = CCOL;
       x_row   = CROW;
       x_abs   = 0;
@@ -948,39 +906,39 @@ LOC__unit          (char *a_question, char *a_label)
    /*> DEBUG_LOCS   yLOG_complex  ("row"       , "%3db, %3de, %3dc, %3dn", s_tabs [x_tab].brow, s_tabs [x_tab].erow, s_tabs [x_tab].crow, s_tabs [x_tab].nrow - 1);   <*/
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "LOC              : locations could not be prepared");
-   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, x_beg);
-   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, x_end);
-   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, x_cur);
-   if (rc >= 0)  rc = str3gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, x_max);
+   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, 0, x_beg, YSTR_CHECK);
+   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, 0, x_end, YSTR_CHECK);
+   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, 0, x_cur, YSTR_CHECK);
+   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);
    if (rc <  0)  return unit_answer;
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "LOC              : question not understood");
    if      (strcmp(a_question, "tab_info"      ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
+      snprintf(unit_answer, LEN_FULL, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
    }
    else if (strcmp(a_question, "cell_size"     ) == 0) {
-      snprintf(unit_answer, LEN_UNIT, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
+      snprintf(unit_answer, LEN_FULL, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
    }
    else if (strcmp(a_question, "loc_who"       )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "LOC occupant/who : ptr=%10p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);
+      snprintf (unit_answer, LEN_FULL, "LOC occupant/who : ptr=%10p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);
    }
    else if (strcmp(a_question, "loc_col"       )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "LOC col stats    : tab=%4d, col=%4d, width =%4d, used=%4d", x_tab, x_col, s_tabs[x_tab].cols[x_col].w, s_tabs[x_tab].cols[x_col].c);
+      snprintf (unit_answer, LEN_FULL, "LOC col stats    : tab=%4d, col=%4d, width =%4d, used=%4d", x_tab, x_col, s_tabs[x_tab].cols[x_col].w, s_tabs[x_tab].cols[x_col].c);
    }
    else if (strcmp(a_question, "loc_row"       )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);
+      snprintf (unit_answer, LEN_FULL, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);
    }
    else if (strcmp(a_question, "tab_def"       )  == 0) {
-      snprintf (unit_answer, LEN_UNIT, "LOC tab defaults : col=%2d, row=%2d", s_tabs[x_tab].defwide, s_tabs[x_tab].deftall);
+      snprintf (unit_answer, LEN_FULL, "LOC tab defaults : col=%2d, row=%2d", s_tabs[x_tab].defwide, s_tabs[x_tab].deftall);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
     *> }                                                                                                                                  <* 
     *> else if (strcmp(a_question, "tab_pos"       ) == 0) {                                                                              <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ccol, s_tabs [a_num].crow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ccol, s_tabs [a_num].crow);   <* 
     *> }                                                                                                                                  <* 
     *> else if (strcmp(a_question, "tab_max" )       == 0) {                                                                              <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ncol, s_tabs [a_num].nrow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ncol, s_tabs [a_num].nrow);   <* 
     *> }                                                                                                                                  <*/
    /*---(complete)-----------------------*/
    return unit_answer;
@@ -993,7 +951,7 @@ LOC__unit_OLD      (char *a_question, tCELL *a_cell)
    int         rc          = -1;
    int         i           =  0;
    tCELL      *x_curr      = NULL;
-   char        t           [LEN_STR]   = "";
+   char        t           [LEN_FULL]   = "";
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "s_loc            : question not understood");
    /*---(find cell by pointer)-----------*/
@@ -1007,43 +965,43 @@ LOC__unit_OLD      (char *a_question, tCELL *a_cell)
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "loc_cell"     )  == 0) {
       if        (a_cell == NULL) {
-         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : requested a null cell");
+         snprintf (unit_answer, LEN_FULL, "s_loc cell       : requested a null cell");
       } else if (x_curr == NULL) {
-         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : ptr=%9p, cell not found in list"   , a_cell);
+         snprintf (unit_answer, LEN_FULL, "s_loc cell       : ptr=%9p, cell not found in list"   , a_cell);
       } else {
-         snprintf (unit_answer, LEN_UNIT, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_FULL, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
       }
    }
    else if (strcmp(a_question, "loc_who"       )  == 0) {
       if (a_cell != NULL) {
-         snprintf (unit_answer, LEN_UNIT, "s_loc occupant   : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_FULL, "s_loc occupant   : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
       } else {
-         snprintf (unit_answer, LEN_UNIT, "s_loc occupant   : ptr=%9p, no cell attached", a_cell);
+         snprintf (unit_answer, LEN_FULL, "s_loc occupant   : ptr=%9p, no cell attached", a_cell);
       }
    }
    else if (strcmp (a_question, "cell_where")     == 0) {
       if (a_cell == NULL) {
 
       } else if (rc == 0) {
-         snprintf (unit_answer, LEN_UNIT, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_FULL, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->tab, x_curr->col, x_curr->row);
       } else {
-         snprintf (unit_answer, LEN_UNIT, "s_cell location  : not found in cell list");
+         snprintf (unit_answer, LEN_FULL, "s_cell location  : not found in cell list");
       }
    }
    else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_cell main list : num=%4d, head=%9p, tail=%9p", NCEL, hcell, tcell);
+      snprintf(unit_answer, LEN_FULL, "s_cell main list : num=%4d, head=%9p, tail=%9p", NCEL, hcell, tcell);
    }
    else if (strcmp(a_question, "loc_label")      == 0) {
-      snprintf(unit_answer, LEN_UNIT, "s_loc label      : %s", s_label);
+      snprintf(unit_answer, LEN_FULL, "s_loc label      : %s", s_label);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
     *> }                                                                                                                                  <* 
     *> else if (strcmp(a_question, "tab_pos"       ) == 0) {                                                                              <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ccol, s_tabs [a_num].crow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "s_move tab pos   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ccol, s_tabs [a_num].crow);   <* 
     *> }                                                                                                                                  <* 
     *> else if (strcmp(a_question, "tab_max" )       == 0) {                                                                              <* 
-    *>    snprintf(unit_answer, LEN_UNIT, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ncol, s_tabs [a_num].nrow);   <* 
+    *>    snprintf(unit_answer, LEN_FULL, "s_move tab max   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].ncol, s_tabs [a_num].nrow);   <* 
     *> }                                                                                                                                  <*/
    /*---(complete)-----------------------*/
    return unit_answer;

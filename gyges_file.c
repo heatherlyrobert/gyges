@@ -542,7 +542,7 @@ EXIM_export             (char a_style)
       return rce;
    }
    /*---(process independent cells)------*/
-   rc    = yVIKEYS_first (&x_col, &x_row, &x_tab);
+   rc    = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
    curr  = LOC_cell_at_loc (x_col, x_row, x_tab);
    x_rowsave = x_row;
    while (rc >= 0) {
@@ -635,7 +635,7 @@ EXIM_export             (char a_style)
          }
       }
       x_rowsave = x_row;
-      rc      = yVIKEYS_next  (&x_col, &x_row, &x_tab);
+      rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
       curr  = LOC_cell_at_loc (x_col, x_row, x_tab);
    };
    /*---(close file)---------------------*/
@@ -665,35 +665,35 @@ FILE_unit          (char *a_question, int a_ref)
    strcpy  (unit_answer, "s_file           : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "ver_num"   )    == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_file ver_num   : %s", ver_num);
+      snprintf (unit_answer, LEN_FULL, "s_file ver_num   : %s", ver_num);
    } else if (strcmp (a_question, "version"   )    == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_file version   : %c %-4.4s %s", ver_ctrl, ver_num, ver_txt);
+      snprintf (unit_answer, LEN_FULL, "s_file version   : %c %-4.4s %s", ver_ctrl, ver_num, ver_txt);
    } else if (strcmp (a_question, "recd"      )    == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_file recd      : %s", my.f_recd);
+      snprintf (unit_answer, LEN_FULL, "s_file recd      : %s", my.f_recd);
    } else if (strcmp (a_question, "freeze"    )    == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)",
+      snprintf (unit_answer, LEN_FULL, "s_file freeze    : col=%c (%4d to %4d)   row=%c (%4d to %4d)",
             FR_COL, FR_BCOL, FR_ECOL, FR_ROW, FR_BROW, FR_EROW);
    } else if (strcmp (a_question, "tab_name"  )    == 0) {
       TAB_name (a_ref, x_name);
-      snprintf (unit_answer, LEN_UNIT, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, 'y', x_name);
+      snprintf (unit_answer, LEN_FULL, "s_file tab name  : tab=%4d, act=%c, :%s:", a_ref, 'y', x_name);
    } else if (strcmp (a_question, "tab_count" )    == 0) {
-      snprintf (unit_answer, LEN_UNIT, "s_file tab count : ntab=%4d", MAX_TABS);
+      snprintf (unit_answer, LEN_FULL, "s_file tab count : ntab=%4d", MAX_TABS);
       /*> } else if (strcmp (a_question, "history"   )    == 0) {                                                                                   <* 
-       *>    if      (s_nhist == 0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
-       *>    if      (s_chist <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
-       *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file history   : n=%4d, c=%4d, %s" , s_nhist, s_chist, s_hist[s_chist].act);   <*/
+       *>    if      (s_nhist == 0    )  snprintf (unit_answer, LEN_FULL, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
+       *>    if      (s_chist <  0    )  snprintf (unit_answer, LEN_FULL, "s_file history   : n=%4d, c=%4d, n/a", s_nhist, s_chist);                      <* 
+       *>    else                      snprintf (unit_answer, LEN_FULL, "s_file history   : n=%4d, c=%4d, %s" , s_nhist, s_chist, s_hist[s_chist].act);   <*/
    /*> } else if (strcmp (a_question, "entry"     )    == 0) {                                                                                                                                                   <* 
-    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too small", a_ref);                                                                                                 <* 
-    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d too large", a_ref);                                                                                                 <* 
-    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file entry     : %4d, t=%4d, c=%4d, r=%4d, %s", a_ref, s_hist[a_ref].btab, s_hist[a_ref].bcol, s_hist[a_ref].brow, s_hist[a_ref].act);   <*/
+    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_FULL, "s_file entry     : %4d too small", a_ref);                                                                                                 <* 
+    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "s_file entry     : %4d too large", a_ref);                                                                                                 <* 
+    *>    else                      snprintf (unit_answer, LEN_FULL, "s_file entry     : %4d, t=%4d, c=%4d, r=%4d, %s", a_ref, s_hist[a_ref].btab, s_hist[a_ref].bcol, s_hist[a_ref].brow, s_hist[a_ref].act);   <*/
    /*> } else if (strcmp (a_question, "before"    )    == 0) {                                                                      <* 
-    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d too small", a_ref);                    <* 
-    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d too large", a_ref);                    <* 
-    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file before    : %4d :%s:", a_ref, s_hist[a_ref].before);   <*/
+    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_FULL, "s_file before    : %4d too small", a_ref);                    <* 
+    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "s_file before    : %4d too large", a_ref);                    <* 
+    *>    else                      snprintf (unit_answer, LEN_FULL, "s_file before    : %4d :%s:", a_ref, s_hist[a_ref].before);   <*/
    /*> } else if (strcmp (a_question, "after"     )    == 0) {                                                                     <* 
-    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too small", a_ref);                   <* 
-    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d too large", a_ref);                   <* 
-    *>    else                      snprintf (unit_answer, LEN_UNIT, "s_file after     : %4d :%s:", a_ref, s_hist[a_ref].after);   <*/
+    *>    if      (a_ref <  0    )  snprintf (unit_answer, LEN_FULL, "s_file after     : %4d too small", a_ref);                   <* 
+    *>    else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "s_file after     : %4d too large", a_ref);                   <* 
+    *>    else                      snprintf (unit_answer, LEN_FULL, "s_file after     : %4d :%s:", a_ref, s_hist[a_ref].after);   <*/
 }
 /*---(complete)-----------------------*/
 return unit_answer;
