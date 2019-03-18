@@ -70,6 +70,7 @@ static void   o___FORMAT__________o (void) { return; }
 char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
 api_yvikeys_format      (int a_major, int a_minor)
 {
+   DEBUG_USER   yLOG_enter   (__FUNCTION__);
    /*---(column widths)------------------*/
    switch (a_minor) {
    case  'm' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'm');  break;  /* smallest    */
@@ -112,6 +113,8 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  ']' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, ']');  break;  /* right dec   */
    case  '}' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '}');  break;  /* right +2    */
    case  '{' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '{');  break;  /* left  +2    */
+   case  ':' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, ':');  break;  /* < with :    */
+   case  '\'': CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '\''); break;  /* > with :    */
    }
    /*---(merging)------------------------*/
    switch (a_minor) {
@@ -120,11 +123,12 @@ api_yvikeys_format      (int a_major, int a_minor)
    }
    /*---(integer formats)----------------*/
    switch (a_minor) {
-   case  'i' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'i');  break;  /* integer         */
-   case  'I' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'I');  break;  /* indented integer         */
-   case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  break;  /* real/float      */
-   case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  break;  /* exponencial     */
-   case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  break;  /* spaced exponencial     */
+   case  'i' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'i');  break;  /* integer    */
+   case  'I' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'I');  break;  /* indented   */
+   case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  break;  /* real       */
+   case  'F' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'F');  break;  /* scaled     */
+   case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  break;  /* exponencial*/
+   case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  break;  /* spaced exp */
    }
    /*---(comma formats)------------------*/
    switch (a_minor) {
@@ -174,10 +178,18 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  '@' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '@');  break;  /* filled divs     */
    case  'q' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'q');  break;  /* filled quote    */
    case  'Q' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'Q');  break;  /* filled quote    */
-   case  ':' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, ':');  break;  /* filled ruler    */
+   case  '~' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '~');  break;  /* filled ruler    */
    case  '#' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '#');  break;  /* filled numbers  */
    }
    /*---(complete)-----------------------*/
+   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
+api_yvikeys_units       (int a_major, int a_minor)
+{
+   CELL_visual   (CHANGE_UNITS  , HIST_BEG, a_minor);
    return 0;
 }
 
@@ -220,12 +232,12 @@ api_yvikeys_searcher      (char *a_search)
    /*> x_next  = VISU_first (&x_tab, &x_col, &x_row);                                 <*/
    do {
       DEBUG_SRCH   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
-      if (x_next != NULL && x_next->s != NULL) {
-         DEBUG_SRCH   yLOG_char    ("->type"    , x_next->t);
-         switch (x_next->t) {
+      if (x_next != NULL && x_next->source != NULL) {
+         DEBUG_SRCH   yLOG_char    ("->type"    , x_next->type);
+         switch (x_next->type) {
          case YCALC_DATA_STR   :
-            DEBUG_SRCH   yLOG_info    ("->s"       , x_next->s);
-            rc = yREGEX_exec (x_next->s);
+            DEBUG_SRCH   yLOG_info    ("->source"       , x_next->source);
+            rc = yREGEX_exec (x_next->source);
             break;
          case YCALC_DATA_SFORM :
          case YCALC_DATA_SLIKE :
@@ -240,7 +252,7 @@ api_yvikeys_searcher      (char *a_search)
          DEBUG_SRCH   yLOG_value   ("exec rc"   , rc);
          if (rc > 0) {
             yVIKEYS_srch_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);
-            x_next->n = 's';
+            x_next->note = 's';
          }
       }
       x_next = x_next->next;
@@ -263,8 +275,8 @@ api_yvikeys_unsearcher   (int a_x, int a_y, int a_z)
    DEBUG_SRCH   yLOG_value   ("a_z"       , a_z);
    x_curr = LOC_cell_at_loc (a_x, a_y, a_z);
    DEBUG_SRCH   yLOG_point   ("x_curr"    , x_curr);
-   if (x_curr != NULL) x_curr->n = '-';
-   DEBUG_SRCH   yLOG_char    ("x_curr->n" , x_curr->n);
+   if (x_curr != NULL) x_curr->note = '-';
+   DEBUG_SRCH   yLOG_char    ("x_curr->n" , x_curr->note);
    /*---(complete)---------------------------*/
    DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -331,15 +343,15 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;     /* no cell                       */
    }
-   DEBUG_REGS   yLOG_point   ("s"         , a_curr->s);
-   --rce;  if (a_curr->s == NULL) {
+   DEBUG_REGS   yLOG_point   ("s"         , a_curr->source);
+   --rce;  if (a_curr->source == NULL) {
       DEBUG_REGS   yLOG_note    ("no source");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;     /* nothing to write              */
    }
-   DEBUG_REGS   yLOG_info    ("s"         , a_curr->s);
-   DEBUG_REGS   yLOG_char    ("t"         , a_curr->t);
-   --rce;  if (a_curr->t == '-')  {
+   DEBUG_REGS   yLOG_info    ("s"         , a_curr->source);
+   DEBUG_REGS   yLOG_char    ("t"         , a_curr->type);
+   --rce;  if (a_curr->type == '-')  {
       DEBUG_REGS   yLOG_note    ("could not copy an empty");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;     /* don't write, recreate on read */
@@ -472,12 +484,12 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    x_drow  = x_srow + a_yoff;
    DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
    /*---(check cell type)----------------*/
-   DEBUG_REGS   yLOG_info    ("source"    , a_cell->s);
-   DEBUG_REGS   yLOG_char    ("type"      , a_cell->t);
+   DEBUG_REGS   yLOG_info    ("source"    , a_cell->source);
+   DEBUG_REGS   yLOG_char    ("type"      , a_cell->type);
    strcpy (x_source, "");
-   if (strchr (YCALC_GROUP_RPN, a_cell->t) != 0) {
+   if (strchr (YCALC_GROUP_RPN, a_cell->type) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-      rc = yRPN_addr_require (a_cell->s, a_reqs, a_zoff, a_xoff, a_yoff, 0, LEN_RECD, x_source);
+      rc = yRPN_addr_require (a_cell->source, a_reqs, a_zoff, a_xoff, a_yoff, 0, LEN_RECD, x_source);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_REGS   yLOG_note    ("formula could not be parsed");
@@ -485,10 +497,10 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       }
    } else {
       DEBUG_REGS   yLOG_note    ("just copy straight across");
-      strcpy (x_source, a_cell->s);
+      strcpy (x_source, a_cell->source);
    }
    DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-   sprintf (x_bformat, "%c%c%c", a_cell->f, a_cell->d, a_cell->a);
+   sprintf (x_bformat, "%c%c%c", a_cell->format, a_cell->decs, a_cell->align);
    DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
    if (a_1st == 'y')  x_copy = CELL_overwrite (HIST_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (HIST_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
@@ -532,12 +544,12 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
          rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc == 0) {
-            DEBUG_REGS   yLOG_info    ("source"    , x_provider->s);
+            DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            rc = yRPN_addr_provide (x_provider->s, a_pros, a_zoff, a_xoff, a_yoff, 0, a_cell->label, LEN_RECD, x_source);
+            rc = yRPN_addr_provide (x_provider->source, a_pros, a_zoff, a_xoff, a_yoff, 0, a_cell->label, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-            sprintf (x_bformat, "%c%c%c", x_provider->f, x_provider->d, x_provider->a);
+            sprintf (x_bformat, "%c%c%c", x_provider->format, x_provider->decs, x_provider->align);
             DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
             CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
          }
@@ -584,11 +596,11 @@ api_yvikeys_macro_get       (char a_name, char *a_macro)
    x_row = a_name - 'a';
    x_curr = LOC_cell_at_loc (1, x_row, 37);
    --rce;  if (x_curr    == NULL)                           return rce;
-   if (x_curr->t == YCALC_DATA_STR) {
-      strlcpy (a_macro, x_curr->s    , LEN_RECD);
+   if (x_curr->type == YCALC_DATA_STR) {
+      strlcpy (a_macro, x_curr->source    , LEN_RECD);
       return 0;
    }
-   if (x_curr->t == YCALC_DATA_SFORM) {
+   if (x_curr->type == YCALC_DATA_SFORM) {
       strlcpy (a_macro, x_curr->v_str, LEN_RECD);
       return 0;
    }
@@ -843,11 +855,11 @@ MAP_mapper           (char a_req)
    EROW = g_ymap.gend;
    CTAB = g_zmap.gcur;
    x_curr = LOC_cell_at_curr ();
-   if      (x_curr == NULL || x_curr->s == NULL) {
+   if      (x_curr == NULL || x_curr->source == NULL) {
       str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
       yVIKEYS_source (t, "");
    } else {
-      yVIKEYS_source (x_curr->label, x_curr->s);
+      yVIKEYS_source (x_curr->label, x_curr->source);
    }
    return 0;
 }

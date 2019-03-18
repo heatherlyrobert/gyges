@@ -53,7 +53,7 @@ ROW_clear            (int a_tab)
    for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
       /*---(characteristics)-------------*/
       s_tabs [a_tab].rows [x_row].h = s_tabs [a_tab].deftall;
-      s_tabs [a_tab].rows [x_row].y = 0;
+      /*> s_tabs [a_tab].rows [x_row].y = 0;                                          <*/
       s_tabs [a_tab].rows [x_row].c = 0;
       /*---(done)------------------------*/
    }
@@ -129,25 +129,28 @@ ROW_used             (int a_tab, int a_row)
    return s_tabs [a_tab].rows [a_row].c;
 }
 
-
-
-/*====================------------------------------------====================*/
-/*===----                        screen positions                      ----===*/
-/*====================------------------------------------====================*/
-static void  o___POSITION________o () { return; }
-
-int          /*-> return the row ypos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.603.!]-*/ /*-[--.---.---.--]-*/
-ROW_ypos             (int a_tab, int a_row)
+int          /*-> find largest used row in tab -------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
+ROW_maxused          (int a_tab)
 {
-   if (!LEGAL_ROW (a_tab, a_row))  return -1;
-   return s_tabs [a_tab].rows [a_row].y;
+   int         i           =    0;
+   int         x_max       =   -1;
+   if (!LEGAL_TAB (a_tab))        return -1;
+   for (i = 0; i < s_tabs [a_tab].nrow; ++i) {
+      if (s_tabs [a_tab].rows [i].c > 0)  x_max   = i;
+   }
+   return x_max;
 }
 
-char         /*-> set a new row y-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
-ROW_yset             (int a_tab, int a_row, int a_pos)
+int          /*-> update the row count in tab --------[ ------ [gn.210.213.11]*/ /*-[00.0000.503.!]-*/ /*-[--.---.---.--]-*/
+ROW_setmax           (int a_tab, int a_count)
 {
-   if (!LEGAL_ROW (a_tab, a_row))  return -1;
-   s_tabs [a_tab].rows [a_row].y = a_pos;
+   int         x_max       =    0;
+   x_max = ROW_maxused (a_tab);
+   if (x_max >= a_count)  a_count = x_max + 1;
+   if (a_count < 1)  a_count = 1;
+   if (!VALID_row (a_count - 1))  return -2;
+   if (a_count >  MAX_ROWS)       return -3;
+   s_tabs [a_tab].nrow = a_count;
    return 0;
 }
 
@@ -506,23 +509,25 @@ ROW__unit          (char *a_question, char *a_label)
    /*---(locals)-------------------------*/
    char        rc          =    0;
    int         x_tab       =    0;
-   int         x_abbr      =    0;
+   int         x_col       =    0;
    int         x_row       =    0;
+   int         x_abbr      =    0;
    char        x_name      [LEN_LABEL]   = "";
    /*---(parse location)-----------------*/
-   strcpy  (unit_answer, "COL              : label could not be parsed");
+   strcpy  (unit_answer, "ROW              : label could not be parsed");
    if (a_label == NULL)  return unit_answer;
-   rc = str2gyges  (a_label, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+   rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
    if (rc <  0)  return unit_answer;
-   if (!LEGAL_ROW (x_tab, x_row))  return unit_answer;
+   if (!VALID_tab (x_tab))  return unit_answer;
+   if (!VALID_row (x_row))  return unit_answer;
    x_abbr = LABEL_tab (x_tab);
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "ROW              : question not understood");
    if      (strcmp(a_question, "row_info"      ) == 0) {
-      if (ROW_legal (x_tab, x_row) < 0) {
-         snprintf(unit_answer, LEN_FULL, "ROW info         : -t,       -#,   -w,   -y,   -c");
+      if (!LEGAL_ROW (x_tab, x_row)) {
+         snprintf(unit_answer, LEN_FULL, "ROW info         : %ct, %4s, %4d#,   -h,   -c", x_abbr, LABEL_row (x_row), x_row);
       } else {
-         snprintf(unit_answer, LEN_FULL, "ROW info         : %ct,     %3d#, %3dh, %3dy, %3dc", x_abbr, x_row, s_tabs [x_tab].rows [x_row].h, s_tabs [x_tab].rows [x_row].y, s_tabs [x_tab].rows [x_row].c);
+         snprintf(unit_answer, LEN_FULL, "ROW info         : %ct, %4s, %4d#, %3dh, %3dc", x_abbr, LABEL_row (x_row), x_row, s_tabs [x_tab].rows [x_row].h, s_tabs [x_tab].rows [x_row].c);
       }
    }
    /*---(complete)-----------------------*/

@@ -235,7 +235,7 @@ PRIV void  o___SPECIFIC________o () { return; }
  *>       /+---(1st 12 chars)---+/                                                                                                                          <* 
  *>       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);                            <* 
  *>       /+---(2nd 13 chars)---+/                                                                                                                          <* 
- *>       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  ", COL_width (CTAB, CCOL), a_curr->t, a_curr->f, a_curr->d, a_curr->a);   <* 
+ *>       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  ", COL_width (CTAB, CCOL), a_curr->type, a_curr->format, a_curr->decs, a_curr->align);   <* 
  *>       else                 mvprintw (row_formula, 12, " %02d - - - -  "    , COL_width (CTAB, CCOL));                                               <* 
  *>       /+---(3rd  5 chars)---+/                                                                                                                          <* 
  *>       mvprintw (row_formula, 25, "%4d", len);                                                                                                           <* 
@@ -594,8 +594,8 @@ DRAW_xaxis         (void)
  *>       sprintf    (x_line, " %-50.50s ", " s --- (null)");                                                                      <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
  *>    } else {                                                                                                                    <* 
- *>       if (x_curr->l < 43)  sprintf    (x_temp, "s %3d [%-s]"     , x_curr->l, x_curr->s);                                      <* 
- *>       else                 sprintf    (x_temp, "s %3d [%-42.42s>", x_curr->l, x_curr->s);                                      <* 
+ *>       if (x_curr->len < 43)  sprintf    (x_temp, "s %3d [%-s]"     , x_curr->len, x_curr->source);                                      <* 
+ *>       else                 sprintf    (x_temp, "s %3d [%-42.42s>", x_curr->len, x_curr->source);                                      <* 
  *>       sprintf    (x_line, " %-50.50s ", x_temp);                                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
  *>       sprintf    (x_temp, "v     = %-16.6lf", x_curr->v_num);                                                                  <* 
@@ -611,21 +611,21 @@ DRAW_xaxis         (void)
  *>          sprintf    (x_line, " %-50.50s ", x_temp);                                                                            <* 
  *>          mvprintw   ( i++, 10, x_line);                                                                                        <* 
  *>       }                                                                                                                        <* 
- *>       sprintf    (x_line, " t     %c%-43.43s ", x_curr->t, " ");                                                               <* 
+ *>       sprintf    (x_line, " t     %c%-43.43s ", x_curr->type, " ");                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
- *>       sprintf    (x_line, " a     %c%-43.43s ", x_curr->a, " ");                                                               <* 
+ *>       sprintf    (x_line, " a     %c%-43.43s ", x_curr->align, " ");                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
- *>       sprintf    (x_line, " d     %c%-43.43s ", x_curr->d, " ");                                                               <* 
+ *>       sprintf    (x_line, " d     %c%-43.43s ", x_curr->decs, " ");                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
- *>       sprintf    (x_line, " f     %c%-43.43s ", x_curr->f, " ");                                                               <* 
+ *>       sprintf    (x_line, " f     %c%-43.43s ", x_curr->format, " ");                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
- *>       if (x_curr->p == NULL) {                                                                                                 <* 
+ *>       if (x_curr->print == NULL) {                                                                                                 <* 
  *>          sprintf    (x_line, " %-50.50s ", "p --- (null)");                                                                    <* 
  *>          mvprintw   ( i++, 10, x_line);                                                                                        <* 
  *>       } else {                                                                                                                 <* 
- *>          x_len = strlen (x_curr->p);                                                                                           <* 
- *>          if (x_len     < 43)  sprintf    (x_temp, "p %3d [%-s]"     , x_len, x_curr->p);                                       <* 
- *>          else                 sprintf    (x_temp, "p %3d [%-42.42s>", x_len, x_curr->p);                                       <* 
+ *>          x_len = strlen (x_curr->print);                                                                                           <* 
+ *>          if (x_len     < 43)  sprintf    (x_temp, "p %3d [%-s]"     , x_len, x_curr->print);                                       <* 
+ *>          else                 sprintf    (x_temp, "p %3d [%-42.42s>", x_len, x_curr->print);                                       <* 
  *>          sprintf    (x_line, " %-50.50s ", x_temp);                                                                            <* 
  *>          mvprintw   ( i++, 10, x_line);                                                                                        <* 
  *>       }                                                                                                                        <* 
@@ -948,7 +948,7 @@ CURS_color_min       (int a_col, int a_row, tCELL *a_curr)
 {
    /*---(current)------------------------*/
    if      (a_col == CCOL && a_row == CROW)             attron (S_COLOR_HCURR  );
-   else if (a_curr != NULL && a_curr->n == 's')         attron (S_COLOR_HUSED  );
+   else if (a_curr != NULL && a_curr->note == 's')         attron (S_COLOR_HUSED  );
    /*---(visual-range)-------------------*/
    else if (yVIKEYS_root   (CTAB, a_col, a_row, NULL))  attron (S_COLOR_ROOT   );
    else if (yVIKEYS_visual (CTAB, a_col, a_row, NULL))  attron (S_COLOR_VISUAL );
@@ -973,7 +973,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    }
    /*---(current)------------------------*/
    if      (a_col == CCOL && a_row == CROW)             attron (S_COLOR_CURRENT);
-   else if (a_curr != NULL && a_curr->n == 's')         attron (S_COLOR_SEARCH );
+   else if (a_curr != NULL && a_curr->note == 's')         attron (S_COLOR_SEARCH );
    /*---(visual-range)-------------------*/
    else if (yVIKEYS_root   (CTAB, a_col, a_row, NULL))        attron (S_COLOR_ROOT   );
    else if (yVIKEYS_visual (CTAB, a_col, a_row, NULL))        attron (S_COLOR_VISUAL );
@@ -983,30 +983,30 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
       /*---(trouble)---------------------*/
-      if      (a_curr->t == YCALC_DATA_ERROR)           attron (S_COLOR_ERROR  );
+      if      (a_curr->type == YCALC_DATA_ERROR)           attron (S_COLOR_ERROR  );
       /*---(related)---------------------*/
       else if (strstr (my.reqs_list, label) != NULL)    attron (S_COLOR_REQS   );
       else if (strstr (my.deps_list, label) != NULL)    attron (S_COLOR_PROS   );
       else if (strstr (my.like_list, label) != NULL)    attron (S_COLOR_LIKE   );
       /*---(pointers)--------------------*/
-      else if (a_curr->t == YCALC_DATA_RANGE)           attron (S_COLOR_POINTER);
-      else if (a_curr->t == YCALC_DATA_ADDR )           attron (S_COLOR_POINTER);
+      else if (a_curr->type == YCALC_DATA_RANGE)           attron (S_COLOR_POINTER);
+      else if (a_curr->type == YCALC_DATA_ADDR )           attron (S_COLOR_POINTER);
       /*---(numbers)---------------------*/
-      else if (a_curr->t == YCALC_DATA_NUM  )           attron (S_COLOR_NUMBER );
-      else if (a_curr->t == YCALC_DATA_NFORM) {
+      else if (a_curr->type == YCALC_DATA_NUM  )           attron (S_COLOR_NUMBER );
+      else if (a_curr->type == YCALC_DATA_NFORM) {
          if   (yCALC_nreq (a_curr->ycalc)  < 5)         attron (S_COLOR_FSIMPLE);
          else                                           attron (S_COLOR_FDANGER);
       }
-      else if (a_curr->t == YCALC_DATA_NLIKE)           attron (S_COLOR_FLIKE  );
+      else if (a_curr->type == YCALC_DATA_NLIKE)           attron (S_COLOR_FLIKE  );
       /*---(strings)---------------------*/
-      else if (a_curr->t == YCALC_DATA_STR  )           attron (S_COLOR_STRING );
-      else if (a_curr->t == YCALC_DATA_SFORM) {
+      else if (a_curr->type == YCALC_DATA_STR  )           attron (S_COLOR_STRING );
+      else if (a_curr->type == YCALC_DATA_SFORM) {
          if   (yCALC_nreq (a_curr->ycalc)  < 5)         attron (S_COLOR_FSTRING);
          else                                           attron (S_COLOR_FSTRDAG);
       }
-      else if (a_curr->t == YCALC_DATA_SLIKE)           attron (S_COLOR_MLIKE  );
+      else if (a_curr->type == YCALC_DATA_SLIKE)           attron (S_COLOR_MLIKE  );
       /*---(constants)-------------------*/
-      else if (a_curr->t == YCALC_DATA_BLANK)           attron (S_COLOR_NULL   );
+      else if (a_curr->type == YCALC_DATA_BLANK)           attron (S_COLOR_NULL   );
       else                                              attron (S_COLOR_STRING );
    }
    /*---(complete)-----------------------*/
@@ -1027,12 +1027,12 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    if (s_coloration == 'F')  CURS_color_full (a_col, a_row, x_curr);
    else                      CURS_color_min  (a_col, a_row, x_curr);
    /*---(display cell)-------------------*/
-   if (x_curr == NULL || x_curr->p == NULL)  {
+   if (x_curr == NULL || x_curr->print == NULL)  {
       DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, "");
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, g_empty);
    } else {
-      DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->p);
-      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->p);
+      DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->print);
+      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->print);
    }
    /*---(highlight off)------------------*/
    attrset (0);

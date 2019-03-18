@@ -63,12 +63,12 @@ api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double *
    /*---(save)---------------------------*/
    if (a_source != NULL) {
       DEBUG_APIS   yLOG_spoint  (*a_source);
-      *a_source = &x_owner->s;
+      *a_source = &x_owner->source;
       DEBUG_APIS   yLOG_spoint  (*a_source);
    }
    if (a_type  != NULL) {
       DEBUG_APIS   yLOG_spoint  (*a_type);
-      *a_type   = &x_owner->t;
+      *a_type   = &x_owner->type;
       DEBUG_APIS   yLOG_spoint  (*a_type);
    }
    if (a_value  != NULL) {
@@ -115,8 +115,8 @@ api_ycalc_reaper        (void **a_owner)
    }
    /*---(check type)---------------------*/
    DEBUG_APIS   yLOG_info    ("label"     , x_owner->label);
-   DEBUG_APIS   yLOG_char    ("type"      , x_owner->t);
-   --rce;  if (x_owner->t != YCALC_DATA_BLANK) {
+   DEBUG_APIS   yLOG_char    ("type"      , x_owner->type);
+   --rce;  if (x_owner->type != YCALC_DATA_BLANK) {
       DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -300,7 +300,7 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
    }
    x_owner    = (tCELL *) a_owner;
    if (a_type   != NULL) {
-      *a_type   = x_owner->t;
+      *a_type   = x_owner->type;
       DEBUG_APIS   yLOG_schar   (*a_type);
    }
    if (a_value  != NULL) {
@@ -308,10 +308,10 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
       DEBUG_APIS   yLOG_sdouble (*a_value);
    }
    if (a_string != NULL) {
-      if        (x_owner->t     == 'E') {
+      if        (x_owner->type     == 'E') {
          *a_string   = s_nada;
-      } else if (x_owner->t     == 's'){
-         if (x_owner->s != NULL)  *a_string = x_owner->s;
+      } else if (x_owner->type     == 's'){
+         if (x_owner->source != NULL)  *a_string = x_owner->source;
          else                     *a_string = s_nada;
       } else if (x_owner->v_str != NULL) {
          *a_string = x_owner->v_str;
@@ -355,13 +355,13 @@ api_ycalc_special       (void *a_owner, char a_what, double *a_value, char **a_s
    x_owner   = (tCELL     *) a_owner;
    --rce;  switch (a_what) {
    case G_SPECIAL_SOURCE :
-      if (a_string != NULL)  *a_string = x_owner->s;
+      if (a_string != NULL)  *a_string = x_owner->source;
       break;
    case G_SPECIAL_PRINT  :
-      if (a_string != NULL)  *a_string = x_owner->p;
+      if (a_string != NULL)  *a_string = x_owner->print;
       break;
    case G_SPECIAL_TYPE   :
-      if (a_value  != NULL)  *a_value  = x_owner->t;
+      if (a_value  != NULL)  *a_value  = x_owner->type;
       break;
    }
    DEBUG_APIS   yLOG_snote   (*a_string);
@@ -432,7 +432,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
       rc = api_ycalc_whos_at (b, i, y, z, YCALC_LOOK, &x_owner, NULL);
       if (rc < 0)                              break;
       if (x_owner == NULL)                     break;
-      if (x_owner->t != YCALC_DATA_MERGED)     break;
+      if (x_owner->type != YCALC_DATA_MERGED)     break;
       w         = COL_width (x_owner->tab, x_owner->col);
       DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_label, b, i, y, z, w);
       *a_width += w;
@@ -472,12 +472,12 @@ api__ycalc_parse        (char *a_full, int a_merge)
       while (p == NULL)  p = (char*) malloc (w + 1);
       DEBUG_APIS  yLOG_point   ("p"         , p);
       sprintf (p, "%-*.*s", w, w, a_full + wa);
-      DEBUG_APIS  yLOG_point   ("x_owner->p", x_owner->p);
-      if (x_owner->p != NULL) {
-         free (x_owner->p);
-         x_owner->p = NULL;
+      DEBUG_APIS  yLOG_point   ("->print", x_owner->print);
+      if (x_owner->print != NULL) {
+         free (x_owner->print);
+         x_owner->print = NULL;
       }
-      x_owner->p = p;
+      x_owner->print = p;
       p    = NULL;
       wa   += w;
    }
@@ -492,6 +492,7 @@ api_ycalc_printer       (void *a_owner)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    tCELL      *x_owner     = NULL;
+   double      x_value     =  0.0;
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
    char        x_out       [LEN_RECD];
@@ -508,10 +509,10 @@ api_ycalc_printer       (void *a_owner)
    }
    x_owner   = (tCELL     *) a_owner;
    /*---(contents)-----------------------*/
-   DEBUG_APIS   yLOG_char    ("type"      , x_owner->t);
-   DEBUG_APIS   yLOG_char    ("decs"      , x_owner->d);
-   DEBUG_APIS   yLOG_char    ("format"    , x_owner->f);
-   DEBUG_APIS   yLOG_char    ("align"     , x_owner->a);
+   DEBUG_APIS   yLOG_char    ("type"      , x_owner->type);
+   DEBUG_APIS   yLOG_char    ("decs"      , x_owner->decs);
+   DEBUG_APIS   yLOG_char    ("format"    , x_owner->format);
+   DEBUG_APIS   yLOG_char    ("align"     , x_owner->align);
    /*---(get size)-----------------------*/
    api__ycalc_width (x_owner, &w, &c);
    DEBUG_APIS   yLOG_value   ("w"         , w);
@@ -521,32 +522,33 @@ api_ycalc_printer       (void *a_owner)
    }
    DEBUG_APIS   yLOG_value   ("c"         , c);
    /*---(contents)-----------------------*/
-   if (strchr (YCALC_GROUP_NUM, x_owner->t) != NULL) {
+   if (strchr (YCALC_GROUP_NUM, x_owner->type) != NULL) {
       DEBUG_APIS   yLOG_value   ("value"     , x_owner->v_num);
-      strl4main (x_owner->v_num, s, x_owner->d - '0', x_owner->f, LEN_RECD);
+      x_value = x_owner->v_num;
+      strl4main (x_value, s, x_owner->decs - '0', x_owner->format, x_owner->unit, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
-      if (x_owner->a == '?')  strlpad (s, t, '!', '>'       , w - 1);
-      else                    strlpad (s, t, '!', x_owner->a, w - 1);
+      if (x_owner->align == '?')  strlpad (s, t, '!', '>'       , w - 1);
+      else                    strlpad (s, t, '!', x_owner->align, w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
-   } else if (strchr (YCALC_GROUP_STR, x_owner->t) != NULL) {
+   } else if (strchr (YCALC_GROUP_STR, x_owner->type) != NULL) {
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
-      else                         strlcpy (s, x_owner->s    , LEN_RECD);
+      else                         strlcpy (s, x_owner->source    , LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
-      if (x_owner->a == '?')  strlpad (s, t, x_owner->f, '<'       , w - 1);
-      else                    strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      if (x_owner->align == '?')  strlpad (s, t, x_owner->format, '<'       , w - 1);
+      else                    strlpad (s, t, x_owner->format, x_owner->align, w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
-   } else if (strchr (YCALC_GROUP_POINT, x_owner->t) != NULL) {
-      strlcpy (s, x_owner->s, LEN_RECD);
+   } else if (strchr (YCALC_GROUP_POINT, x_owner->type) != NULL) {
+      strlcpy (s, x_owner->source, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("pointer"   , s);
-      strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      strlpad (s, t, x_owner->format, x_owner->align, w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
-   } else if (YCALC_DATA_ERROR == x_owner->t) {
+   } else if (YCALC_DATA_ERROR == x_owner->type) {
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
       else                         strlcpy (s, "#?/???"      , LEN_RECD);
       DEBUG_APIS   yLOG_info    ("pointer"   , s);
@@ -554,17 +556,17 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
-   } else if (x_owner->t == YCALC_DATA_BLANK) {
+   } else if (x_owner->type == YCALC_DATA_BLANK) {
       strlcpy (s, "-", LEN_RECD);
       DEBUG_APIS   yLOG_info    ("blank"     , s);
       strlpad (s, t, '!', '>', w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
-   } else if (x_owner->t == YCALC_DATA_INTERN) {
-      strlcpy (s, x_owner->s, LEN_RECD);
+   } else if (x_owner->type == YCALC_DATA_INTERN) {
+      strlcpy (s, x_owner->source, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("range"     , s);
-      strlpad (s, t, x_owner->f, x_owner->a, w - 1);
+      strlpad (s, t, x_owner->format, x_owner->align, w - 1);
       DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
       sprintf (x_out, "%s ", t);
       DEBUG_APIS   yLOG_info    ("final"     , x_out);
@@ -625,11 +627,11 @@ api_ycalc__unit    (char *a_question, char *a_label)
    /*---(ycalc information)--------------*/
    if (strcmp(a_question, "ycalc_rpn"    )  == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (----) - -");
-      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (----) %c -", x_cell->t);
+      else if (x_cell->ycalc == NULL)  snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (----) %c -", x_cell->type);
       else {
          yCALC_show_rpn  (x_cell->ycalc, &x_count, x_list);
-         if (x_count      == 0)        snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (%4d) %c ."     , 0, x_cell->t);
-         else                          snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (%4d) %c %s"    , x_count, x_cell->t, x_list);
+         if (x_count      == 0)        snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (%4d) %c ."     , 0, x_cell->type);
+         else                          snprintf(unit_answer, LEN_FULL, "ycalc rpn        : (%4d) %c %s"    , x_count, x_cell->type, x_list);
       }
    }
    if (strcmp(a_question, "ycalc_reqs"   )  == 0) {

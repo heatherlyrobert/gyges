@@ -328,8 +328,81 @@ PRIV void  o___LOCATION________o () { return; }
 
 
 char
-LOC_ystr_checker   (int a_tab, int a_col, int a_row, int a_nada, char a_check)
+LOC_checker        (int a_tab, int a_col, int a_row, int a_nada, char a_check)
 {
+   /*
+    *  all values are checked for validity before calling checker.
+    *
+    */
+   /*---(locals)-----------+-----------+-*/
+   char          rce       =  -10;          /* rcode for errors               */
+   short         x_max     =    0;          /* maximum used col/row in tab    */
+   int           i         =    0;
+   static int    x_xtab    = -666;
+   static int    x_xcol    = -666;
+   static int    x_xrow    = -666;
+   static char   x_adapt   =  '-';
+   static char   x_xrc     =  -66;
+   static int    x_xtotal  =    0;
+   static int    x_xshort  =    0;
+   /*---(short-cut)----------------------*/
+   /*> if (x_xtab == a_tab && x_xcol == a_col && x_xrow == a_row &&  x_adapt == a_adapt) {   <* 
+    *>    ++x_xshort;                                                                        <* 
+    *>    DEBUG_LOCS     yLOG_senter  (__FUNCTION__);                                        <* 
+    *>    DEBUG_LOCS     yLOG_snote   ("same as last search");                               <* 
+    *>    DEBUG_LOCS     yLOG_sint    (x_xrc);                                               <* 
+    *>    DEBUG_LOCS     yLOG_sint    (x_xtotal);                                            <* 
+    *>    DEBUG_LOCS     yLOG_sint    (x_xshort);                                            <* 
+    *>    DEBUG_LOCS     yLOG_sexit   (__FUNCTION__);                                        <* 
+    *>    return x_xrc;                                                                      <* 
+    *> }                                                                                     <*/
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(save values)--------------------*/
+   /*> x_xtab  = a_tab;                                                               <* 
+    *> x_xcol  = a_col;                                                               <* 
+    *> x_xrow  = a_row;                                                               <* 
+    *> x_adapt = a_adapt;                                                             <*/
+   /*---(simple legal check)-------------*/
+   /*> if (a_adapt == YSTR_FIXED) {                                                         <* 
+    *>    DEBUG_LOCS     yLOG_note    ("checking a fixed, no expansion allowed (FIXED)");   <* 
+    *>    --rce;  if (!LEGAL_TAB (a_tab)) {                                                 <* 
+    *>       DEBUG_LOCS     yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>       return x_rc = rce;                                                             <* 
+    *>    }                                                                                 <* 
+    *>    --rce;  if (!LEGAL_COL (a_col)) {                                                 <* 
+    *>       DEBUG_LOCS     yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>       return x_rc = rce;                                                             <* 
+    *>    }                                                                                 <* 
+    *>    --rce;  if (!LEGAL_ROW (a_col)) {                                                 <* 
+    *>       DEBUG_LOCS     yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>       return x_rc = rce;                                                             <* 
+    *>    }                                                                                 <* 
+    *> }                                                                                    <*/
+   /*---(if adapting)--------------------*/
+   /*> else if (a_adapt == YSTR_ADAPT ) {                                             <* 
+    *>    DEBUG_LOCS     yLOG_note    ("checking a expansion allowed (GROW)");        <* 
+    *>    if (!LEGAL_TAB (a_tab)) {                                                   <* 
+    *>       NTAB = a_tab + 1;                                                        <* 
+    *>       DEBUG_LOCS     yLOG_value   ("ntab now"  , NTAB);                        <* 
+    *>    }                                                                           <* 
+    *>    if (!LEGAL_COL (a_col)) {                                                   <* 
+    *>       s_tabs[a_tab].ncol = a_col  + 1;                                         <* 
+    *>       DEBUG_LOCS     yLOG_value   ("ncol now"  , COL_max (a_tab));             <* 
+    *>    }                                                                           <* 
+    *>    if (!LEGAL_ROW (a_row)) {                                                   <* 
+    *>       s_tabs[a_tab].nrow = a_row  + 1;                                         <* 
+    *>    }                                                                           <* 
+    *>    /+---(update)---------+/                                                    <* 
+    *>    if (a_tab == CTAB) {                                                        <* 
+    *>       NCOL = s_tabs [a_tab].ncol;                                              <* 
+    *>       NROW = s_tabs [a_tab].nrow;                                              <* 
+    *>       DEBUG_LOCS_M   yLOG_value   ("NCOL"      , NCOL);                        <* 
+    *>       DEBUG_LOCS_M   yLOG_value   ("NROW"      , NROW);                        <* 
+    *>    }                                                                           <* 
+    *> }                                                                              <*/
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
 }
 
 char         /*-> verify that a location is legal ----[ leaf   [ge.QA9.49#.M0]*/ /*-[02.0000.C94.#]-*/ /*-[--.---.---.--]-*/

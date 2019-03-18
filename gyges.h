@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4b"
-#define     P_VERTXT    "updated to use VALID_, LEGAL_, LABEL_, and INDEX_ functions from ySTR"
+#define     P_VERNUM    "3.4d"
+#define     P_VERTXT    "simpified row/col and added _usedmax and _setmax, with unit tests"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -467,44 +467,30 @@ struct cCELL {
    /*   stores the original unmodified user-typed string as well as its       */
    /*   length which is required to supporting later editing.  string is      */
    /*   dynamically allocated to conserve space.                              */
-   char       *s;            /* unmodified input string just as user typed    */
-   short       l;            /* length of input string                        */
+   char       *source;       /* unmodified input string just as user typed    */
+   short       len;          /* length of input string                        */
    /*---(#3, CONVERSION)-----------------*/
    /*   type characterizes the cell content type, the value of the cell if    */
    /*   numeric, and a modified version of the cell if its not.               */
    /*   see legend below for cell content types.                              */
-   char        t;            /* type of contents (program assigned)           */
+   char        type;         /* type of contents (program assigned)           */
    double      v_num;        /* cell contents translated to a numeric value   */
    char       *v_str;        /* cell contents translated to a string value    */
    /*---(#4, FORMATTING)-----------------*/
    /*   contains all information required to convert the final cell value     */
    /*   into a printable string to be shown on the screen.                    */
    /*   see the legend below for alignment and formatting codes.              */
-   char        a;            /* alignment code                                */
-   char        d;            /* number of decimals to be shown                */
-   char        f;            /* formatting/filler style                       */
-   char       *p;            /* printable version of the cell                 */
-   char        n;            /* note for error, searching, etc                */
+   char        align;        /* alignment code                                */
+   char        format;       /* formatting/filler style                       */
+   char        decs;         /* number of decimals to be shown                */
+   char        unit;         /* units for conversion                          */
+   char       *print;        /* printable version of the cell                 */
+   char        note;         /* note for error, searching, etc                */
    /*---(#5, CALCULATION)----------------*/
    /*   in the case that the cell is a formula, this section will contain the */
    /*   conversion into RPN (reverse polish notation) and translation into    */
    /*   a linked list of byte-code to conduct the calculation.                */
    void       *ycalc;            /* connection to yCALC library               */
-   /*> char        nrpn;         /+ number of calculation tokens                  +/   <* 
-    *> char       *rpn;          /+ rpn version of formula                        +/   <* 
-    *> tCALC      *calc;         /+ pointer to head of calculation line           +/   <* 
-    *> char        clevel;       /+ calculation level                             +/   <* 
-    *> tCELL      *cprev;        /+ pointer to calculation execution prev         +/   <* 
-    *> tCELL      *cnext;        /+ pointer to calculation execution next         +/   <*/
-   /*---(#6, DEPENDENCIES)---------------*/
-   /*   cells are related to each other as lists of requirements for this     */
-   /*   calculation and a list of cells that are dependent on this one.       */
-   /*   both lists are kept to enable full dependency calculation.            */
-   /*> char        nrequire;     /+ number of required cells                      +/   <* 
-    *> tDEP       *requires;     /+ incomming predesesors to this calc            +/   <* 
-    *> char        nprovide;     /+ number of dependent cells                     +/   <* 
-    *> tDEP       *provides;     /+ outgoing successors to this calc              +/   <* 
-    *> long        u;            /+ timestamp of last update run                  +/   <*/
    /*---(#7, CELL LIST)------------------*/
    /*   all the cells are stored in a doublly linked list in order to make    */
    /*   them easy to manage and verify as a entire population.  the linked    */
@@ -613,12 +599,10 @@ int         acell;           /* count of all cells                            */
  */
 struct cCOLS {
    uchar     w;               /* column width                                 */
-   ushort    x;               /* starting horizonal position on screen        */
    int       c;               /* optional: count of entries in column         */
 };
 struct cROWS {
    ushort    h;               /* row height                                   */
-   ushort    y;               /* starting vertical position on screen         */
    int       c;               /* optional: count of entries in row            */
 };
 
@@ -1077,6 +1061,7 @@ char*     REG__getter        (char *a_question, char a_reg);
 /*---(sub-modes)------------*/
 char      SMOD_buffer          (char  a_major, char  a_minor);
 char      api_yvikeys_format   (int   a_major, int   a_minor);
+char      api_yvikeys_units    (int   a_major, int   a_minor);
 char      api_yvikeys_exim     (char  a_dir  , char  a_style);
 char      EXIM_export          (char a_style);
 char      SMOD_wander          (char  a_major, char  a_minor);
@@ -1361,9 +1346,8 @@ char        COL_clear            /* septal 1----- */  (int a_tab);
 int         COL_defmax           /* petal  0----- */  (void);
 int         COL_max              /* petal  1----- */  (int a_tab);
 int         COL_used             /* petal  2----- */  (int a_tab, int a_col);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         COL_xpos             /* petal  2----- */  (int a_tab, int a_col);
-char        COL_xset             /* stigma 3----- */  (int a_tab, int a_col, int a_pos);
+int         COL_maxused          (int a_tab);
+int         COL_setmax           (int a_tab, int a_count);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_defwidth         (int a_tab, int a_size);
 char        COL_width            /* petal  2----- */  (int a_tab, int a_col);
@@ -1391,9 +1375,8 @@ char        ROW_legal            /* petal  2----- */  (int a_tab, int a_row);
 int         ROW_defmax           /* petal  0----- */  (void);
 int         ROW_max              /* petal  1----- */  (int a_tab);
 int         ROW_used             /* petal  2----- */  (int a_tab, int a_row);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         ROW_ypos             /* petal  2----- */  (int a_tab, int a_row);
-char        ROW_yset             /* sigma  3----- */  (int a_tab, int a_row, int a_pos);
+int         ROW_maxused          (int a_tab);
+int         ROW_setmax           (int a_tab, int a_count);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_heighten            (int a_tab, int a_row, int a_size);
 char        ROW_resize              (char *a_name, int a_size, int a_count);
@@ -1482,6 +1465,7 @@ char      CELL_align           (tCELL *a_head, tCELL *a_curr, char a_mode, char 
 char      CELL_decimals        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      COL_visual           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_format          (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
+char      CELL_units           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_merge_visu      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_unmerge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_visual          (char   a_what, char a_mode, char a_how);
@@ -1489,6 +1473,7 @@ char      CELL_visual          (char   a_what, char a_mode, char a_how);
 #define   CHANGE_WIDTH    'w'
 #define   CHANGE_HEIGHT   'h'
 #define   CHANGE_FORMAT   'f'
+#define   CHANGE_UNITS    'K'
 #define   CHANGE_ERASE    'e'
 #define   CHANGE_ALIGN    'a'
 #define   CHANGE_DECIMAL  'd'

@@ -573,9 +573,9 @@ EXIM_export             (char a_style)
       else {
          DEBUG_REGS   yLOG_info    ("cell"      , curr->label);
          /*---(source)-------------------*/
-         if (curr->s != NULL) {
+         if (curr->source != NULL) {
             DEBUG_REGS   yLOG_note    ("convert source string");
-            strlcpy      (x_source, curr->s, LEN_RECD);
+            strlcpy      (x_source, curr->source, LEN_RECD);
             strldecode   (x_source, LEN_RECD);
          } else {
             DEBUG_REGS   yLOG_note    ("source is NULL");
@@ -590,9 +590,9 @@ EXIM_export             (char a_style)
             DEBUG_REGS   yLOG_note    ("modified is NULL");
          }
          /*---(printable)----------------*/
-         if (curr->p != NULL) {
+         if (curr->print != NULL) {
             DEBUG_REGS   yLOG_note    ("convert printable");
-            strlcpy  (x_print , curr->p, LEN_RECD);
+            strlcpy  (x_print , curr->print, LEN_RECD);
             strldecode   (x_print, LEN_RECD);
             strlcpy  (x_trim  , x_print, LEN_RECD);
          } else {
@@ -629,7 +629,7 @@ EXIM_export             (char a_style)
                     break;
          case 'F' : fprintf (f, "cell_reg    -D-                ");
                     fprintf (f, "%5d  %-8.8s  "   , c, curr->label);
-                    fprintf (f, "%c %c %c %c %c  "  , curr->t, curr->f, curr->d, curr->a, curr->n);
+                    fprintf (f, "%c %c %c %c %c  "  , curr->type, curr->format, curr->decs, curr->align, curr->note);
                     fprintf (f, "%s\n"                , x_source);
                     break;
          }

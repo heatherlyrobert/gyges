@@ -105,9 +105,9 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
-   yVIKEYS_init         ();
+   rc = yVIKEYS_init         ();
    if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
-   FILE_init     ();
+   rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
    if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
@@ -118,9 +118,13 @@ PROG_init          (int a_argc, char *a_argv[])
       return rc;
    }
    /*---(globals)------------------------*/
-   CELL_init  ();
+   rc = CELL_init  ();
+   /*---(ystr config)--------------------*/
+   rc = str0gyges (LOC_legal);
+   /*---(yrpn config)--------------------*/
+   rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yVIKEYS_mreg_inside);
    /*---(ycalc config)-------------------*/
-   yCALC_init ('g');
+   rc = yCALC_init ('g');
    if (rc == 0)  rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
    if (rc == 0)  rc = yCALC_label_config (api_ycalc_named  , api_ycalc_whos_at, api_ycalc_labeler);
    if (rc == 0)  rc = yCALC_value_config (api_ycalc_valuer , api_ycalc_address, api_ycalc_special, api_ycalc_printer);
@@ -242,7 +246,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_mode_formatter (api_yvikeys_format);
+   yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
    yVIKEYS_cmds_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );
@@ -309,18 +313,18 @@ PROG__unit           (char *a_question, void *a_thing)
    } else if (strcmp(a_question, "sheet_who")      == 0) {
       snprintf(unit_answer, LEN_FULL, "Sheet Location   : p=%9p", x_curr);
    } else if (strcmp(a_question, "cell_info")      == 0) {
-      /*> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->t, x_curr->f, x_curr->d, x_curr->a, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <*/
+      /*> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->type, x_curr->format, x_curr->decs, x_curr->align, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <*/
    }
    /*---(cell contents)------------------*/
    else if   (strcmp(a_question, "cell_source")    == 0) {
-      snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->l, x_curr->s);
+      snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->len, x_curr->source);
    } else if (strcmp(a_question, "cell_value")     == 0) {
       snprintf(unit_answer, LEN_FULL, "Cell Value       : %18.6F", x_curr->v_num);
    } else if (strcmp(a_question, "cell_modified")  == 0) {
       snprintf(unit_answer, LEN_FULL, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->v_str), x_curr->v_str);
    } else if (strcmp(a_question, "cell_printable") == 0) {
-      /*> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->p), x_curr->p);   <*/
-      snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->p), x_curr->p);
+      /*> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->print), x_curr->print);   <*/
+      snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->print), x_curr->print);
    } else if (strcmp(a_question, "cell_contents")  == 0) {
       snprintf(unit_answer, LEN_FULL, "Contents     (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
    }

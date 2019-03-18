@@ -48,7 +48,7 @@ COL_clear            (int a_tab)
    for (x_col = 0; x_col < MAX_COLS; ++x_col) {
       /*---(characteristics)-------------*/
       s_tabs [a_tab].cols [x_col].w       = s_tabs [a_tab].defwide;
-      s_tabs [a_tab].cols [x_col].x       = 0;
+      /*> s_tabs [a_tab].cols [x_col].x       = 0;                                    <*/
       s_tabs [a_tab].cols [x_col].c       = 0;
       /*---(done)------------------------*/
    }
@@ -90,25 +90,28 @@ COL_used             (int a_tab, int a_col)
    return s_tabs [a_tab].cols [a_col].c;
 }
 
-
-
-/*====================------------------------------------====================*/
-/*===----                        screen positions                      ----===*/
-/*====================------------------------------------====================*/
-static void  o___POSITION________o () { return; }
-
-int          /*-> return the col xpos ----------------[ ------ [gn.210.213.11]*/ /*-[00.0000.503.!]-*/ /*-[--.---.---.--]-*/
-COL_xpos             (int a_tab, int a_col)
+int          /*-> find largest used col in tab -------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
+COL_maxused          (int a_tab)
 {
-   if (!LEGAL_COL (a_tab, a_col))  return -1;
-   return s_tabs [a_tab].cols [a_col].x;
+   int         i           =    0;
+   int         x_max       =   -1;
+   if (!LEGAL_TAB (a_tab))        return -1;
+   for (i = 0; i < s_tabs [a_tab].ncol; ++i) {
+      if (s_tabs [a_tab].cols [i].c > 0)  x_max   = i;
+   }
+   return x_max;
 }
 
-char         /*-> set a new col x-pos ----------------[ ------ [gc.210.312.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
-COL_xset             (int a_tab, int a_col, int a_pos)
+int          /*-> update the col count in tab --------[ ------ [gn.210.213.11]*/ /*-[00.0000.503.!]-*/ /*-[--.---.---.--]-*/
+COL_setmax           (int a_tab, int a_count)
 {
-   if (!LEGAL_COL (a_tab, a_col))  return -1;
-   s_tabs [a_tab].cols [a_col].x = a_pos;
+   int         x_max       =    0;
+   x_max = COL_maxused (a_tab);
+   if (x_max >= a_count)  a_count = x_max + 1;
+   if (a_count < 1)  a_count = 1;
+   if (!VALID_col (a_count - 1))  return -2;
+   if (a_count >  MAX_COLS)       return -3;
+   s_tabs [a_tab].ncol = a_count;
    return 0;
 }
 
@@ -145,7 +148,7 @@ COL_widen            (int a_tab, int a_col, int a_size)
       x_curr = LOC_cell_at_loc (a_col, x_row, a_tab);
       if (x_curr == NULL) continue;
       /*---(update merged cells)---------*/
-      if (x_curr->t == YCALC_DATA_MERGED)  yCALC_calc_from (x_curr->ycalc);
+      if (x_curr->type == YCALC_DATA_MERGED)  yCALC_calc_from (x_curr->ycalc);
       /*---(update printable)------------*/
       api_ycalc_printer (x_curr);
       /*---(done)------------------------*/
@@ -478,9 +481,9 @@ COL__unit          (char *a_question, char *a_label)
    strcpy  (unit_answer, "COL              : question not understood");
    if      (strcmp(a_question, "col_info"      ) == 0) {
       if (!LEGAL_COL (x_tab, x_col)) {
-         snprintf(unit_answer, LEN_FULL, "COL info         : -t, --,   -#,   -w,   -x,   -c");
+         snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#,   -w,   -c", x_abbr, LABEL_col (x_col), x_col);
       } else {
-         snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#, %3dw, %3dx, %3dc", x_abbr, LABEL_col (x_col), x_col, s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].cols [x_col].x, s_tabs [x_tab].cols [x_col].c);
+         snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#, %3dw, %3dc", x_abbr, LABEL_col (x_col), x_col, s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].cols [x_col].c);
       }
    }
    /*---(complete)-----------------------*/
