@@ -352,6 +352,7 @@ TAB_resize           (char *a_max)
    int         x_tab       =   0;
    int         x_col       =   0;
    int         x_row       =   0;
+   char        x_label     [LEN_LABEL];
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(handle default sizing)----------*/
@@ -373,7 +374,7 @@ TAB_resize           (char *a_max)
       return rce;
    }
    /*---(adjust tab)---------------------*/
-   rc = LOC_legal  (x_tab, x_col, x_row, CELL_EXACT);
+   rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_EXACT);
    DEBUG_LOCS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);

@@ -149,8 +149,8 @@ ROW_setmax           (int a_tab, int a_count)
    if (x_max >= a_count)  a_count = x_max + 1;
    if (a_count < 1)  a_count = 1;
    if (!VALID_row (a_count - 1))  return -2;
-   if (a_count >  MAX_ROWS)       return -3;
    s_tabs [a_tab].nrow = a_count;
+   if (a_tab == CTAB)  CROW = a_count;
    return 0;
 }
 
@@ -516,19 +516,31 @@ ROW__unit          (char *a_question, char *a_label)
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "ROW              : label could not be parsed");
    if (a_label == NULL)  return unit_answer;
-   rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
-   if (rc <  0)  return unit_answer;
-   if (!VALID_tab (x_tab))  return unit_answer;
-   if (!VALID_row (x_row))  return unit_answer;
+   if (strcmp (a_label, "curr") == 0) {
+      x_tab = CTAB;
+      x_col = CCOL;
+      x_row = CROW;
+   } else {
+      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+      if (rc <  0)  return unit_answer;
+      if (!VALID_tab (x_tab))  return unit_answer;
+      if (!VALID_row (x_row))  return unit_answer;
+   }
    x_abbr = LABEL_tab (x_tab);
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "ROW              : question not understood");
-   if      (strcmp(a_question, "row_info"      ) == 0) {
+   if      (strcmp(a_question, "count"         ) == 0) {
+      snprintf(unit_answer, LEN_FULL, "ROW count        : %ct, %4d", x_abbr, ROW_max (x_tab));
+   }
+   else if (strcmp(a_question, "info"          ) == 0) {
       if (!LEGAL_ROW (x_tab, x_row)) {
          snprintf(unit_answer, LEN_FULL, "ROW info         : %ct, %4s, %4d#,   -h,   -c", x_abbr, LABEL_row (x_row), x_row);
       } else {
          snprintf(unit_answer, LEN_FULL, "ROW info         : %ct, %4s, %4d#, %3dh, %3dc", x_abbr, LABEL_row (x_row), x_row, s_tabs [x_tab].rows [x_row].h, s_tabs [x_tab].rows [x_row].c);
       }
+   }
+   else if (strcmp(a_question, "curr"          ) == 0) {
+      snprintf(unit_answer, LEN_FULL, "ROW curr         : %ct, %4s, %4d#, %3dh, %3dc", x_abbr, LABEL_row (x_row), x_row, s_tabs [x_tab].rows [x_row].h, s_tabs [x_tab].rows [x_row].c);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

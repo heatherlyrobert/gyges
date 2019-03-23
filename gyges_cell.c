@@ -500,10 +500,11 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
    /*---(locals)----------------------*/
    char        rce         =  -10;
    char        rc          =    0;
+   char        x_label     [LEN_LABEL];
    /*---(defenses)-----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = LOC_legal (a_tab, a_col, a_row, CELL_GROW);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_ADAPT);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -535,6 +536,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    char        rce         = -10;
    char        rc          = 0;
    tCELL      *x_curr      = NULL;
+   char        x_label     [LEN_LABEL]  = "";
    char        x_format    [LEN_LABEL]  = "";
    char        x_before    [LEN_RECD]   = "";
    char        x_after     [LEN_RECD]   = "";
@@ -543,8 +545,8 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
    DEBUG_CELL   yLOG_value   ("a_col"     , a_col);
    DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
-   rc          = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
-   DEBUG_CELL   yLOG_value   ("LOC_legal" , rc);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
+   DEBUG_CELL   yLOG_value   ("legal"     , rc);
    --rce;  if (rc < 0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -673,7 +675,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("contents"  , a_source);
    /*---(legal location)-----------------*/
-   rc = LOC_legal (a_tab, a_col, a_row, CELL_FIXED);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -987,7 +989,7 @@ CELL_reader          (void)
       return rce;
    }
    DEBUG_INPT   yLOG_complex ("location"  , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
-   rc = LOC_legal (x_tab, x_col, x_row, CELL_GROW);
+   rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_ADAPT);
    DEBUG_INPT  yLOG_value   ("legal"     , rc);
    --rce;  if (rc < 0)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -1196,6 +1198,7 @@ CELL__unitnew      (char *a_question, char *a_label)
    /*---(locals)-----------+-----------+-*/
    int         len         = 0;
    char        temp        [LEN_RECD];
+   char        x_label     [LEN_LABEL];
    int         x_fore      = 0;
    int         x_back      = 0;
    tDEP       *x_dep       = NULL;
@@ -1217,7 +1220,7 @@ CELL__unitnew      (char *a_question, char *a_label)
          sprintf (unit_answer, "s_celln error    : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc     = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
+      rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_LEGAL);
       if (rc < 0) {
          sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;

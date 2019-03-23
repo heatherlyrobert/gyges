@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4e"
-#define     P_VERTXT    "simpified tab, added _usedmax and _setmax, with unit tests"
+#define     P_VERNUM    "3.4f"
+#define     P_VERTXT    "simpified loc, replaced _legal with _checker, reworked unit tests"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1282,18 +1282,21 @@ char        LOC__clear_locs      /* septal 1----- */  (int a_tab);
 char        LOC__purge           /* stem   0----- */  (void);
 char        LOC_wrap             /* shoot  0----- */  (void);
 
-char        LOC_ystr_checker     (int a_tab, int a_col, int a_row, int a_nada, char a_check);
-char        LOC_legal            /* stigma 4----- */  (int a_tab, int a_col, int a_row, char a_adapt);
+char        loc__checker_legal      (int a_tab, int a_col, int a_row);
+char        loc__checker_adapt      (int a_tab, int a_col, int a_row);
+char        loc__checker_adapt      (int a_tab, int a_col, int a_row);
+char        LOC_checker             (int a_tab, int a_col, int a_row, int a_nada, char a_check);
+char        LOC_legal          (int a_tab, int a_col, int a_row, char a_adapt);
 
-char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, short a_tab , short a_col , short a_row);
+char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, int a_tab , int a_col , int a_row);
 char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
-char        LOC_move             /* stigma 6----- */  (short  a_tab1, short a_col1, short a_row1, short a_tab2, short a_col2, short a_row2);
+char        LOC_move             /* stigma 6----- */  (int  a_tab1, int a_col1, int a_row1, int a_tab2, int a_col2, int a_row2);
 
 tCELL      *LOC_cell_at_curr     /* petal  0----- */  (void);
 tCELL      *LOC_cell_at_loc      /* petal  3----- */  (int a_tab, int  a_col, int  a_row);
 tCELL      *LOC_cell_labeled     /* petal  1----- */  (char  *a_label);
 
-char        LOC_coords           /* petal  4----- */  (tCELL *a_cell, short *a_tab, short *a_col, short *a_row);
+char        LOC_coords           /* petal  4----- */  (tCELL *a_cell, int *a_tab, int *a_col, int *a_row);
 
 char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_final);
 

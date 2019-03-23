@@ -110,8 +110,8 @@ COL_setmax           (int a_tab, int a_count)
    if (x_max >= a_count)  a_count = x_max + 1;
    if (a_count < 1)  a_count = 1;
    if (!VALID_col (a_count - 1))  return -2;
-   if (a_count >  MAX_COLS)       return -3;
    s_tabs [a_tab].ncol = a_count;
+   if (a_tab == CTAB)  CCOL = a_count;
    return 0;
 }
 

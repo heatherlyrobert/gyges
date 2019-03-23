@@ -595,6 +595,7 @@ api_ycalc__unit    (char *a_question, char *a_label)
    int         len         = 0;
    tCELL      *x_cell      = NULL;
    char        rc          = 0;
+   char        x_label     [LEN_LABEL];
    int         x_tab       = 0;
    int         x_col       = 0;
    int         x_row       = 0;
@@ -613,7 +614,7 @@ api_ycalc__unit    (char *a_question, char *a_label)
          sprintf (unit_answer, "ycalc error      : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc     = LOC_legal (x_tab, x_col, x_row, CELL_FIXED);
+      rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_LEGAL);
       if (rc < 0) {
          sprintf (unit_answer, "ycalc error      : label <%s> not in-range", a_label);
          return unit_answer;

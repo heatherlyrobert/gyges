@@ -120,7 +120,7 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(globals)------------------------*/
    rc = CELL_init  ();
    /*---(ystr config)--------------------*/
-   rc = str0gyges (LOC_legal);
+   rc = str0gyges (LOC_checker);
    /*---(yrpn config)--------------------*/
    rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yVIKEYS_mreg_inside);
    /*---(ycalc config)-------------------*/
