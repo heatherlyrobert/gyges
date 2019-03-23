@@ -111,8 +111,7 @@ TAB_defname          (int a_tab, char *a_name)
 {
    char        rce         =  -20;
    char        rc          =    0;
-   rc = VALID_tab (a_tab);
-   if (rc == 0) return rc;
+   --rce;  if (!VALID_tab (a_tab))                    return rce;
    --rce;  if (a_name  == NULL)                       return rce;
    sprintf (a_name, "tab_%02d", a_tab);
    return 0;
@@ -122,8 +121,7 @@ char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/
 TAB_name             (int a_tab, char *a_name)
 {
    char        rce         =  -20;
-   char rc = VALID_tab (a_tab);
-   if (rc == 0) return rc;
+   --rce;  if (!LEGAL_TAB (a_tab))                    return rce;
    --rce;  if (a_name  == NULL)                       return rce;
    strlcpy (a_name, s_tabs [a_tab].name, LEN_TERSE);
    return 0;
@@ -133,8 +131,7 @@ char         /*-> tbd --------------------------------[ ------ [ge.330.225.41]*/
 TAB_rename           (int a_tab, char *a_name)
 {
    char        rce         =  -20;
-   char rc = VALID_tab (a_tab);
-   if (rc == 0) return rc;
+   --rce;  if (!LEGAL_TAB (a_tab))                    return rce;
    --rce;  if (a_name  == NULL)                       return rce;
    --rce;  if (a_name [0] == '\0')                    return rce;
    --rce;  if (strlen (a_name) >= LEN_TERSE)           return rce;
@@ -154,10 +151,13 @@ static void  o___SWITCHING_______o () { return; }
 char
 TAB_retrieve            (void)
 {
-   /*---(switch tab)---------------------*/
-   p_tab     = &s_tabs[CTAB];
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(restore values)-----------------*/
    DEBUG_LOCS   yLOG_note    ("restore new tab values");
+   DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
+   /*---(switch tab)---------------------*/
+   p_tab     = &s_tabs[CTAB];
    /*---(cols)---------*/
    NCOL      = s_tabs [CTAB].ncol;
    CCOL      = s_tabs [CTAB].ccol;
@@ -188,8 +188,11 @@ TAB_retrieve            (void)
 char
 TAB_save               (void)
 {
-   /*---(restore values)-----------------*/
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(save values)--------------------*/
    DEBUG_LOCS   yLOG_note    ("save existing tab values");
+   DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
    /*---(cols)---------*/
    s_tabs [CTAB].ncol      = NCOL;
    s_tabs [CTAB].ccol      = CCOL;
@@ -215,16 +218,17 @@ char         /*-> tbd --------------------------------[ ------ [gc.E82.112.31]*/
 TAB_switch             (int a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
    char        rc          =    0;
    /*---(begin)--------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
    /*---(defense)---------------------*/
-   rc = VALID_tab (a_tab);
+   rc = LEGAL_TAB (a_tab);
    DEBUG_LOCS   yLOG_value   ("rc"        , rc);
-   if (rc == 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rc);
-      return rc;
+   --rce;  if (rc <= 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(save values)-----------------*/
    TAB_save     ();
@@ -271,6 +275,56 @@ char        TAB_first            (void)  { return TAB_switch_char ('['); }
 char        TAB_prev             (void)  { return TAB_switch_char ('<'); }
 char        TAB_next             (void)  { return TAB_switch_char ('>'); }
 char        TAB_last             (void)  { return TAB_switch_char (']'); }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        updating sizing                       ----===*/
+/*====================------------------------------------====================*/
+static void  o___COUNTS__________o () { return; }
+
+int          /*-> return default col size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10#.6]-*/ /*-[--.---.---.--]-*/
+TAB_defmax           (void)
+{
+   return DEF_TABS;
+}
+
+int          /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
+TAB_max              (void)
+{
+   return NTAB;
+}
+
+int          /*-> indicate if tab is used ------------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
+TAB_used             (int a_tab)
+{
+   if (!LEGAL_TAB (a_tab))   return -1;
+   return s_tabs [a_tab].c;
+}
+
+int          /*-> find largest used tab --------------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
+TAB_maxused          (void)
+{
+   int         i           =    0;
+   int         x_max       =   -1;
+   for (i = 0; i < NTAB; ++i) {
+      if (s_tabs [i].c > 0)  x_max   = i;
+   }
+   return x_max;
+}
+
+int          /*-> update the tab count ---------------[ ------ [gn.210.213.11]*/ /*-[00.0000.503.!]-*/ /*-[--.---.---.--]-*/
+TAB_setmax           (int a_count)
+{
+   int         x_max       =    0;
+   x_max = TAB_maxused ();
+   if (x_max >= a_count)  a_count = x_max + 1;
+   if (a_count < 1)  a_count = 1;
+   if (!VALID_tab (a_count - 1))  return -2;
+   if (a_count >  MAX_TABS)       return -3;
+   NTAB = a_count;
+   return 0;
+}
 
 
 
@@ -350,14 +404,6 @@ TAB_type             (int a_tab)
    rc = VALID_tab (a_tab);
    if (rc == 0) return rc;
    return s_tabs [a_tab].type;
-}
-
-int          /*-> indicate if tab is used ------------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
-TAB_used             (int a_tab)
-{
-   char rc = VALID_tab (a_tab);
-   if (rc == 0) return rc;
-   return s_tabs [a_tab].c;
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
@@ -612,7 +658,7 @@ static void  o___UNITTEST________o () { return; }
 
 
 char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
-TAB__unit          (char *a_question, char *a_label)
+TAB__unit          (char *a_question, int a_tab)
 {
    /*---(locals)-------------------------*/
    char        rc          =    0;
@@ -621,38 +667,36 @@ TAB__unit          (char *a_question, char *a_label)
    int         x_col       =    0;
    int         x_row       =    0;
    char        x_abs       =    0;
-   char        x_label     =  '-';
+   uchar       x_label     =  '-';
    char        x_beg       [LEN_LABEL]   = "";
    char        x_end       [LEN_LABEL]   = "";
    char        x_cur       [LEN_LABEL]   = "";
    char        x_max       [LEN_LABEL]   = "";
    /*---(parse location)-----------------*/
-   strcpy  (unit_answer, "LOC              : label could not be parsed");
-   if (a_label != NULL && strcmp (a_label, "") != 0) {
-      x_label = a_label [0];
-      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, &x_abs, 0, YSTR_LEGAL);
-   } else {
-      x_tab   = CTAB;
-      x_label = LABEL_tab (x_tab);
-      x_col   = CCOL;
-      x_row   = CROW;
-      x_abs   = 0;
-   }
-   if (rc <  0)  return unit_answer;
+   strcpy  (unit_answer, "TAB              : label could not be parsed");
    /*---(prepare data)-------------------*/
-   strcpy  (unit_answer, "LOC              : locations could not be prepared");
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, 0, x_beg, YSTR_CHECK);
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, 0, x_end, YSTR_CHECK);
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, 0, x_cur, YSTR_CHECK);
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);
+   strcpy  (unit_answer, "TAB              : locations could not be prepared");
+   if (strcmp (a_question, "curr") == 0)  a_tab = CTAB;
+   if (rc >= 0)  rc = str4gyges  (a_tab, s_tabs [a_tab].bcol, s_tabs [a_tab].brow, 0, 0, x_beg, YSTR_CHECK);
+   if (rc >= 0)  rc = str4gyges  (a_tab, s_tabs [a_tab].ecol, s_tabs [a_tab].erow, 0, 0, x_end, YSTR_CHECK);
+   if (rc >= 0)  rc = str4gyges  (a_tab, s_tabs [a_tab].ccol, s_tabs [a_tab].crow, 0, 0, x_cur, YSTR_CHECK);
+   if (rc >= 0)  rc = str4gyges  (a_tab, s_tabs [a_tab].ncol - 1, s_tabs [a_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);
    if (rc <  0)  return unit_answer;
+   x_label = LABEL_tab (a_tab);
    /*---(overall)------------------------*/
-   strcpy  (unit_answer, "LOC              : question not understood");
-   if      (strcmp(a_question, "tab_info"      ) == 0) {
-      snprintf(unit_answer, LEN_FULL, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].c);
+   strcpy  (unit_answer, "TAB              : question not understood");
+   if      (strcmp(a_question, "count"         ) == 0) {
+      snprintf(unit_answer, LEN_FULL, "TAB count        : %d", NTAB);
    }
-   else if (strcmp(a_question, "tab_def"       )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "LOC tab defaults : col=%2d, row=%2d", s_tabs[x_tab].defwide, s_tabs[x_tab].deftall);
+   else if (strcmp(a_question, "info"          ) == 0) {
+      if (!LEGAL_TAB (a_tab))  snprintf(unit_answer, LEN_FULL, "TAB info     (%c) : %-12.12s -       -       -       -       -", x_label, s_tabs [a_tab].name);
+      else                     snprintf(unit_answer, LEN_FULL, "TAB info     (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [a_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [a_tab].c);
+   }
+   else if (strcmp(a_question, "curr"          ) == 0) {
+      snprintf(unit_answer, LEN_FULL, "TAB curr     (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [a_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [a_tab].c);
+   }
+   else if (strcmp(a_question, "defs"          )  == 0) {
+      snprintf (unit_answer, LEN_FULL, "TAB defaults     : col=%2d, row=%2d", s_tabs[a_tab].defwide, s_tabs[a_tab].deftall);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

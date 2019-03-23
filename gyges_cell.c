@@ -549,7 +549,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   x_curr      = LOC_cell_at_loc (a_col, a_row, a_tab);
+   x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    --rce;  if (x_curr == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -571,7 +571,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
       return rce;
    }
    /*---(see if its still there)------*/
-   x_curr        = LOC_cell_at_loc (a_col, a_row, a_tab);
+   x_curr        = LOC_cell_at_loc (a_tab, a_col, a_row);
    if (x_curr == NULL) {
       DEBUG_CELL   yLOG_note    ("cell already removed, moving on");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -680,7 +680,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       return rce;
    }
    /*---(cell present)-------------------*/
-   x_curr      = LOC_cell_at_loc (a_col, a_row, a_tab);
+   x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    /*---(save before picture)------------*/
    /*> strcpy (x_bsource, "[<{(null)}>]");                                            <*/
@@ -896,7 +896,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
    /*---(get first)----------------------*/
    rc       = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
    DEBUG_CELL    yLOG_value  ("rc"        , rc);
-   x_first  = LOC_cell_at_loc (x_col, x_row, x_tab);
+   x_first  = LOC_cell_at_loc (x_tab, x_col, x_row);
    DEBUG_CELL    yLOG_point  ("x_first"   , x_first);
    x_next   = x_first;
    /*---(process range)------------------*/
@@ -934,7 +934,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
       /*---(get next)--------------------*/
       rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
       DEBUG_CELL   yLOG_value  ("next_rc"   , rc);
-      x_next  = LOC_cell_at_loc (x_col, x_row, x_tab);
+      x_next  = LOC_cell_at_loc (x_tab, x_col, x_row);
       DEBUG_CELL   yLOG_point  ("x_next"    , x_next);
       /*---(done)------------------------*/
    }
@@ -1093,11 +1093,11 @@ CELL_writer_all         (void)
     */
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
+   int         b           =    0;             /* iterator -- tabs               */
    int         x           =    0;             /* iterator -- columns            */
    int         x_end       =    0;
    int         y           =    0;             /* iterator -- row                */
    int         y_end       =    0;
-   int         z           =    0;             /* iterator -- tabs               */
    tCELL      *x_curr      = NULL;
    int         x_stamp     =    0;
    int         c           =    0;
@@ -1111,12 +1111,12 @@ CELL_writer_all         (void)
    /*---(independent)--------------------*/
    s_count = 0;
    yPARSE_verb_begin ("cell");
-   for (z = 0; z < NTAB; ++z) {
-      x_end = COL_max (z) - 1;
-      y_end = ROW_max (z) - 1;
+   for (b = 0; b < NTAB; ++b) {
+      x_end = COL_max (b) - 1;
+      y_end = ROW_max (b) - 1;
       for (x = 0; x <= x_end; ++x) {
          for (y = 0; y <= y_end; ++y) {
-            x_curr = LOC_cell_at_loc (x, y, z);
+            x_curr = LOC_cell_at_loc (b, x, y);
             if (x_curr    == NULL)                         continue;
             if (x_curr->source == NULL)                         continue;
             if (x_curr->type == YCALC_DATA_BLANK)             continue;
@@ -1222,7 +1222,7 @@ CELL__unitnew      (char *a_question, char *a_label)
          sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;
       }
-      x_cell = LOC_cell_at_loc  (x_col, x_row, x_tab);
+      x_cell = LOC_cell_at_loc  (x_tab, x_col, x_row);
       /*> if (x_cell == NULL) {                                                         <* 
        *>    sprintf (unit_answer, "s_celln          : label <%s> is NULL", a_label);   <* 
        *>    return unit_answer;                                                        <* 

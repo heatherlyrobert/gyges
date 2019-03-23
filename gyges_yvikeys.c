@@ -264,16 +264,17 @@ api_yvikeys_searcher      (char *a_search)
 }
 
 char
-api_yvikeys_unsearcher   (int a_x, int a_y, int a_z)
+api_yvikeys_unsearcher   (int b, int x, int y, int z)
 {
    /*---(locals)-----------+------+----+-*/
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
-   DEBUG_SRCH   yLOG_value   ("a_x"       , a_x);
-   DEBUG_SRCH   yLOG_value   ("a_y"       , a_y);
-   DEBUG_SRCH   yLOG_value   ("a_z"       , a_z);
-   x_curr = LOC_cell_at_loc (a_x, a_y, a_z);
+   DEBUG_SRCH   yLOG_value   ("b"         , b);
+   DEBUG_SRCH   yLOG_value   ("x"         , x);
+   DEBUG_SRCH   yLOG_value   ("y"         , y);
+   DEBUG_SRCH   yLOG_value   ("z"         , z);
+   x_curr = LOC_cell_at_loc (b, x, y);
    DEBUG_SRCH   yLOG_point   ("x_curr"    , x_curr);
    if (x_curr != NULL) x_curr->note = '-';
    DEBUG_SRCH   yLOG_char    ("x_curr->n" , x_curr->note);
@@ -290,7 +291,7 @@ api_yvikeys_unsearcher   (int a_x, int a_y, int a_z)
 static void  o___REGISTERS_______o () { return; }
 
 char
-api_yvikeys_clearer     (char a_1st, int x, int y, int z)
+api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -303,8 +304,8 @@ api_yvikeys_clearer     (char a_1st, int x, int y, int z)
    DEBUG_REGS   yLOG_char    ("a_1st"     , a_1st);
    if (a_1st == 'y')  x_count = 0;
    /*---(identify cell)------------------*/
-   DEBUG_REGS   yLOG_complex ("coords"    , "%3dx, %3dy, %3dz", x, y, z);
-   x_curr = LOC_cell_at_loc (x, y, z);
+   DEBUG_REGS   yLOG_complex ("coords"    , "%3db, %3dx, %3dy", b, x, y);
+   x_curr = LOC_cell_at_loc (b, x, y);
    DEBUG_REGS   yLOG_complex ("x_curr"    , x_curr);
    --rce;  if (x_curr == NULL) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -312,8 +313,8 @@ api_yvikeys_clearer     (char a_1st, int x, int y, int z)
    }
    /*---(delete)-------------------------*/
    DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
-   if (a_1st == 'y')  rc = CELL_change (NULL, HIST_BEG, z, x, y, "");
-   else               rc = CELL_change (NULL, HIST_ADD, z, x, y, "");
+   if (a_1st == 'y')  rc = CELL_change (NULL, HIST_BEG, b, x, y, "");
+   else               rc = CELL_change (NULL, HIST_ADD, b, x, y, "");
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -416,7 +417,7 @@ api_yvikeys_copier      (char a_type, long a_stamp)
    DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
    rc      = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
    while (rc >= 0) {
-      x_curr  = LOC_cell_at_loc (x_col, x_row, x_tab);
+      x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
       if (x_curr != NULL && !yCALC_stamp_cmp (x_curr->ycalc, s_stamp))   api__yvikeys_copier_one (x_curr, s_stamp);
       rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
    }
@@ -513,7 +514,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       return 0;
    }
    DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
-   x_original = LOC_cell_at_loc (x_scol, x_srow, x_stab);
+   x_original = LOC_cell_at_loc (x_stab, x_scol, x_srow);
    DEBUG_REGS   yLOG_point   ("x_original", x_original);
    if (x_original == NULL) {
       DEBUG_REGS   yLOG_note    ("no cell at original location");
@@ -594,7 +595,7 @@ api_yvikeys_macro_get       (char a_name, char *a_macro)
    --rce;  if (a_macro   == NULL     )                      return rce;
    --rce;  if (a_name < 'a' || a_name > 'z')  return rce;
    x_row = a_name - 'a';
-   x_curr = LOC_cell_at_loc (1, x_row, 37);
+   x_curr = LOC_cell_at_loc (37, 1, x_row);
    --rce;  if (x_curr    == NULL)                           return rce;
    if (x_curr->type == YCALC_DATA_STR) {
       strlcpy (a_macro, x_curr->source    , LEN_RECD);
@@ -675,27 +676,28 @@ LOC__mapper                (char a_dir)
    int         x_mark      =    0;
    /*---(prepare)------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   DEBUG_MAP    yLOG_value   ("b->gcur"   , g_bmap.gcur);
    DEBUG_MAP    yLOG_value   ("x->gcur"   , g_xmap.gcur);
    DEBUG_MAP    yLOG_value   ("y->gcur"   , g_ymap.gcur);
    DEBUG_MAP    yLOG_value   ("z->gcur"   , g_zmap.gcur);
    switch (a_dir) {
+   case 'T' : case 't' :
+      DEBUG_MAP    yLOG_note    ("TABS (z)");
+      x_map  = &g_bmap;
+      x_max  = NTAB - 1;
+      x_total = 1;
+      break;
    case 'C' : case 'c' :
       DEBUG_MAP    yLOG_note    ("COLS (x)");
       x_map   = &g_xmap;
       x_max   = NCOL - 1;
-      x_total = s_tabs [g_zmap.gcur].rows [g_ymap.gcur].c;
+      x_total = s_tabs [g_bmap.gcur].rows [g_ymap.gcur].c;
       break;
    case 'R' : case 'r' :
       DEBUG_MAP    yLOG_note    ("ROWS (y)");
       x_map   = &g_ymap;
       x_max   = NROW - 1;
-      x_total = s_tabs [g_zmap.gcur].cols [g_xmap.gcur].c;
-      break;
-   case 'T' : case 't' :
-      DEBUG_MAP    yLOG_note    ("TABS (z)");
-      x_map  = &g_zmap;
-      x_max  = NTAB - 1;
-      x_total = 1;
+      x_total = s_tabs [g_bmap.gcur].cols [g_xmap.gcur].c;
       break;
    }
    x_mark = x_map->gcur;
@@ -707,20 +709,20 @@ LOC__mapper                (char a_dir)
    for (x_cell = 0; x_cell <= x_max; ++x_cell) {
       /*---(get base data)---------------*/
       switch (a_dir) {
-      case 'C' : case 'c' :
-         x_size  = s_tabs [g_zmap.gcur].cols [x_cell].w;
-         x_curr  = LOC_cell_at_loc (x_cell, g_ymap.gcur, g_zmap.gcur);
-         x_count = s_tabs [g_zmap.gcur].cols [x_cell].c;
-         break;
-      case 'R' : case 'r' :
-         x_size  = s_tabs [g_zmap.gcur].rows [x_cell].h;
-         x_curr  = LOC_cell_at_loc (g_xmap.gcur, x_cell, g_zmap.gcur);
-         x_count = s_tabs [g_zmap.gcur].rows [x_cell].c;
-         break;
       case 'T' : case 't' :
          x_size  = 1;
-         x_curr  = LOC_cell_at_loc (g_xmap.gcur, g_ymap.gcur, x_cell);
+         x_curr  = LOC_cell_at_loc (x_cell, g_xmap.gcur, g_ymap.gcur);
          x_count = 1;
+         break;
+      case 'C' : case 'c' :
+         x_size  = s_tabs [g_bmap.gcur].cols [x_cell].w;
+         x_curr  = LOC_cell_at_loc (g_bmap.gcur, x_cell, g_ymap.gcur);
+         x_count = s_tabs [g_bmap.gcur].cols [x_cell].c;
+         break;
+      case 'R' : case 'r' :
+         x_size  = s_tabs [g_bmap.gcur].rows [x_cell].h;
+         x_curr  = LOC_cell_at_loc (g_bmap.gcur, g_xmap.gcur, x_cell);
+         x_count = s_tabs [g_bmap.gcur].rows [x_cell].c;
          break;
       }
       DEBUG_MAP    yLOG_complex ("LOOP"      , "%3dn, %3du, %3ds, %-10p, %3dc", x_cell, x_unit, x_size, x_curr, x_count);
@@ -797,6 +799,10 @@ LOC__mapprint    (char a_dir)
    int         i           =    0;
    /*---(prepare)------------------------*/
    switch (a_dir) {
+   case 't' :
+      x_map = &g_bmap;
+      strlcpy (x_name, "gyges.tmap", LEN_LABEL);
+      break;
    case 'c' :
       x_map = &g_xmap;
       strlcpy (x_name, "gyges.cmap", LEN_LABEL);
@@ -804,10 +810,6 @@ LOC__mapprint    (char a_dir)
    case 'r' :
       x_map = &g_ymap;
       strlcpy (x_name, "gyges.rmap", LEN_LABEL);
-      break;
-   case 't' :
-      x_map = &g_zmap;
-      strlcpy (x_name, "gyges.tmap", LEN_LABEL);
       break;
    }
    /*---(write it out)-------------------*/
@@ -835,25 +837,28 @@ LOC__mapprint    (char a_dir)
 char
 MAP_mapper           (char a_req)
 {
+   /*---(locals)-----------+-----+-----+-*/
    tCELL      *x_curr      = NULL;
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
    yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.avail, NULL, &g_ymap.avail, NULL);
    if (a_req == YVIKEYS_INIT) {
+      LOC__mapper   ('T');
       LOC__mapper   ('C');
       LOC__mapper   ('R');
-      LOC__mapper   ('T');
    } else {
+      LOC__mapper   ('t');
       LOC__mapper   ('c');
       LOC__mapper   ('r');
-      LOC__mapper   ('t');
    }
+   /*> CTAB = g_bmap.gcur;                                                            <*/
    BCOL = g_xmap.gbeg;
    CCOL = g_xmap.gcur;
    ECOL = g_xmap.gend;
    BROW = g_ymap.gbeg;
    CROW = g_ymap.gcur;
    EROW = g_ymap.gend;
-   CTAB = g_zmap.gcur;
    x_curr = LOC_cell_at_curr ();
    if      (x_curr == NULL || x_curr->source == NULL) {
       str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
@@ -861,6 +866,8 @@ MAP_mapper           (char a_req)
    } else {
       yVIKEYS_source (x_curr->label, x_curr->source);
    }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

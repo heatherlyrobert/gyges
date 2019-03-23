@@ -389,11 +389,12 @@ PROG__unitquiet     (void)
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unitloud      (void)
 {
-   char       *x_args [6]  = { "gyges_unit", "@@kitchen", "@@ystr", "@@ycalc", "@@yrpn", "@@yparse"    };
-   yURG_logger (6, x_args);
-   PROG_init   (6, x_args);
-   yURG_urgs   (6, x_args);
-   PROG_args   (6, x_args);
+   int         x_argc      = 9;
+   char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@ystr", "@@ycalc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
+   yURG_logger (x_argc, x_args);
+   PROG_init   (x_argc, x_args);
+   yURG_urgs   (x_argc, x_args);
+   PROG_args   (x_argc, x_args);
    PROG_begin  ();
    return 0;
 }

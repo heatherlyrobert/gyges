@@ -184,7 +184,7 @@ ROW_heighten         (int a_tab, int a_row, int a_size)
    /*---(update column printables)-------*/
    for (x_col = 0; x_col < x_max; ++x_col) {
       /*---(check for cell)--------------*/
-      x_curr = LOC_cell_at_loc (x_col, a_row, a_tab);
+      x_curr = LOC_cell_at_loc (a_tab, x_col, a_row);
       if (x_curr == NULL) continue;
       /*---(update printable)------------*/
       api_ycalc_printer (x_curr);

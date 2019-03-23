@@ -205,7 +205,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
          return rce;
       }
       DEBUG_APIS   yLOG_complex ("loc"        , "%3db, %3dx, %3dy", x_tab, x_col, x_row);
-      x_owner = LOC_cell_at_loc  (x_col, x_row, x_tab);
+      x_owner = LOC_cell_at_loc  (x_tab, x_col, x_row);
       DEBUG_APIS   yLOG_point   ("x_owner"    , x_owner);
       --rce;  if (x_owner == NULL && a_force == YCALC_LOOK) {
          DEBUG_APIS   yLOG_note    ("owner does not exist and only in look mode");
@@ -618,7 +618,7 @@ api_ycalc__unit    (char *a_question, char *a_label)
          sprintf (unit_answer, "ycalc error      : label <%s> not in-range", a_label);
          return unit_answer;
       }
-      x_cell = LOC_cell_at_loc  (x_col, x_row, x_tab);
+      x_cell = LOC_cell_at_loc  (x_tab, x_col, x_row);
       /*> if (x_cell == NULL) {                                                         <* 
        *>    sprintf (unit_answer, "s_celln          : label <%s> is NULL", a_label);   <* 
        *>    return unit_answer;                                                        <* 

@@ -38,7 +38,7 @@ COL_clear            (int a_tab)
    DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
    /*---(defense)------------------------*/
    rc = VALID_tab (a_tab);
-   DEBUG_LOCS   yLOG_snote   (rc);
+   DEBUG_LOCS   yLOG_sint    (rc);
    --rce;  if (rc == 0) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
@@ -145,7 +145,7 @@ COL_widen            (int a_tab, int a_col, int a_size)
    /*---(update column printables)-------*/
    for (x_row = 0; x_row < x_max; ++x_row) {
       /*---(check for cell)--------------*/
-      x_curr = LOC_cell_at_loc (a_col, x_row, a_tab);
+      x_curr = LOC_cell_at_loc (a_tab, a_col, x_row);
       if (x_curr == NULL) continue;
       /*---(update merged cells)---------*/
       if (x_curr->type == YCALC_DATA_MERGED)  yCALC_calc_from (x_curr->ycalc);

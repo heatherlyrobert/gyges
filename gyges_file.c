@@ -229,7 +229,7 @@ static short   s_crow     =    0;
  *>    for (i = 0; i < MAX_COLS; ++i) {                                                                                            <* 
  *>       x_ccol = CCOL + i;                                                                                                       <* 
  *>       DEBUG_REGS   yLOG_value   ("x_ccol"    , x_ccol);                                                                        <* 
- *>       x_curr = LOC_cell_at_loc (x_ccol, CROW, CTAB);                                                                           <* 
+ *>       x_curr = LOC_cell_at_loc (CTAB, x_ccol, CROW);                                                                           <* 
  *>       DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);                                                                        <* 
  *>       if (x_curr == NULL)  {                                                                                                   <* 
  *>          DEBUG_REGS   yLOG_note    ("end of mapping (null cell)");                                                             <* 
@@ -543,7 +543,7 @@ EXIM_export             (char a_style)
    }
    /*---(process independent cells)------*/
    rc    = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
-   curr  = LOC_cell_at_loc (x_col, x_row, x_tab);
+   curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    x_rowsave = x_row;
    while (rc >= 0) {
       DEBUG_REGS   yLOG_point   ("curr"      , curr);
@@ -636,7 +636,7 @@ EXIM_export             (char a_style)
       }
       x_rowsave = x_row;
       rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
-      curr  = LOC_cell_at_loc (x_col, x_row, x_tab);
+      curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    };
    /*---(close file)---------------------*/
    DEBUG_REGS   yLOG_note    ("closing file");

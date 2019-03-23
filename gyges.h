@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4d"
-#define     P_VERTXT    "simpified row/col and added _usedmax and _setmax, with unit tests"
+#define     P_VERNUM    "3.4e"
+#define     P_VERTXT    "simpified tab, added _usedmax and _setmax, with unit tests"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -204,7 +204,7 @@ typedef struct timespec  tTSPEC;
 /*===[[ CONSTANTS : LIMITS ]]=================================================*/
 /*---(tabs)---------------------------*/
 #define     MAX_TABS    38
-#define     DEF_TABS    38
+#define     DEF_TABS    5
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
 #define     MAX_COLS    130
@@ -1290,7 +1290,7 @@ char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
 char        LOC_move             /* stigma 6----- */  (short  a_tab1, short a_col1, short a_row1, short a_tab2, short a_col2, short a_row2);
 
 tCELL      *LOC_cell_at_curr     /* petal  0----- */  (void);
-tCELL      *LOC_cell_at_loc      /* petal  3----- */  (int  a_col, int  a_row, int a_tab);
+tCELL      *LOC_cell_at_loc      /* petal  3----- */  (int a_tab, int  a_col, int  a_row);
 tCELL      *LOC_cell_labeled     /* petal  1----- */  (char  *a_label);
 
 char        LOC_coords           /* petal  4----- */  (tCELL *a_cell, short *a_tab, short *a_col, short *a_row);
@@ -1304,7 +1304,11 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 char        TAB_init             (void);
 char        TAB_purge            (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+int         TAB_defmax           (void);
+int         TAB_max              (void);
 int         TAB_used             (int a_tab);
+int         TAB_maxused          (void);
+int         TAB_setmax           (int a_count);
 char        TAB_type             (int a_tab);
 char        TAB_retype           (int a_tab, char a_type);
 char        TAB_defname          /* petal  2----- */  (int a_tab, char *a_name);
@@ -1328,7 +1332,7 @@ char        TAB_switch_char      (char  a_tab);
 char        TAB_line             (char  a_tab, char *a_list);
 char        TAB_status           (char  a_tab, char *a_list);
 char        TAB_status_curr      (char *a_list);
-char*       TAB__unit            (char *a_question, char *a_label);
+char*       TAB__unit            (char *a_question, int a_tab);
 
 
 
@@ -1562,9 +1566,9 @@ char        api_yvikeys_macro_get   (char   a_name, char  *a_keys);
 char        api_yvikeys_macro_set   (char   a_name, char  *a_keys);
 
 char        api_yvikeys_searcher    (char *a_search);
-char        api_yvikeys_unsearcher  (int a_x, int a_y, int a_z);
+char        api_yvikeys_unsearcher  (int b, int x, int y, int z);
 
-char        api_yvikeys_clearer     (char a_1st, int x, int y, int z);
+char        api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z);
 char        api_yvikeys_copier      (char a_type, long a_stamp);
 char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 char        api_yvikeys_regkiller   (tCELL *a_curr);
