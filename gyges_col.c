@@ -111,7 +111,6 @@ COL_setmax           (int a_tab, int a_count)
    if (a_count < 1)  a_count = 1;
    if (!VALID_col (a_count - 1))  return -2;
    s_tabs [a_tab].ncol = a_count;
-   if (a_tab == CTAB)  CCOL = a_count;
    return 0;
 }
 
@@ -472,14 +471,14 @@ COL__unit          (char *a_question, char *a_label)
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "COL              : label could not be parsed");
    if (a_label == NULL)  return unit_answer;
-   rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+   rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_CHECK);
    if (rc <  0)  return unit_answer;
    if (!VALID_tab (x_tab))  return unit_answer;
    if (!VALID_col (x_col))  return unit_answer;
    x_abbr = LABEL_tab (x_tab);
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "COL              : question not understood");
-   if      (strcmp(a_question, "col_info"      ) == 0) {
+   if      (strcmp(a_question, "info"          ) == 0) {
       if (!LEGAL_COL (x_tab, x_col)) {
          snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#,   -w,   -c", x_abbr, LABEL_col (x_col), x_col);
       } else {

@@ -683,8 +683,8 @@ LOC__mapper                (char a_dir)
    switch (a_dir) {
    case 'T' : case 't' :
       DEBUG_MAP    yLOG_note    ("TABS (z)");
-      x_map  = &g_bmap;
-      x_max  = NTAB - 1;
+      x_map   = &g_bmap;
+      x_max   = MAX_TABS;
       x_total = 1;
       break;
    case 'C' : case 'c' :
@@ -710,7 +710,7 @@ LOC__mapper                (char a_dir)
       /*---(get base data)---------------*/
       switch (a_dir) {
       case 'T' : case 't' :
-         x_size  = 1;
+         x_size  = LEGAL_TAB (x_cell);
          x_curr  = LOC_cell_at_loc (x_cell, g_xmap.gcur, g_ymap.gcur);
          x_count = 1;
          break;
@@ -852,13 +852,14 @@ MAP_mapper           (char a_req)
       LOC__mapper   ('c');
       LOC__mapper   ('r');
    }
-   /*> CTAB = g_bmap.gcur;                                                            <*/
-   BCOL = g_xmap.gbeg;
-   CCOL = g_xmap.gcur;
-   ECOL = g_xmap.gend;
-   BROW = g_ymap.gbeg;
-   CROW = g_ymap.gcur;
-   EROW = g_ymap.gend;
+   CTAB   = g_bmap.gcur;
+   p_tab  = &s_tabs[CTAB];
+   BCOL   = g_xmap.gbeg;
+   CCOL   = g_xmap.gcur;
+   ECOL   = g_xmap.gend;
+   BROW   = g_ymap.gbeg;
+   CROW   = g_ymap.gcur;
+   EROW   = g_ymap.gend;
    x_curr = LOC_cell_at_curr ();
    if      (x_curr == NULL || x_curr->source == NULL) {
       str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);

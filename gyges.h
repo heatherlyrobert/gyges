@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4f"
-#define     P_VERTXT    "simpified loc, replaced _legal with _checker, reworked unit tests"
+#define     P_VERNUM    "3.4g"
+#define     P_VERTXT    "fixed tab mapping and simplified shortcuts to tab data"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -293,22 +293,23 @@ struct cACCESSOR {
    /*---(LOC vars)--------*/
    short       ntab;           /* number of worksheet tabs                         */
    short       ctab;           /* current tab                                      */
-   short       ncol;
-   short       ccol;
-   short       bcol;
-   short       ecol;
-   short       nrow;
-   short       crow;
-   short       brow;
-   short       erow;
-   short       tab1;           /* tab of source                                    */
-   short       tab2;           /* tab of destination                               */
-   char        froz_col;
-   short       froz_bcol;
-   short       froz_ecol;
-   char        froz_row;
-   short       froz_brow;
-   short       froz_erow;
+
+   /*> short       ncol;                                                                    <* 
+    *> short       ccol;                                                                    <* 
+    *> short       bcol;                                                                    <* 
+    *> short       ecol;                                                                    <* 
+    *> short       nrow;                                                                    <* 
+    *> short       crow;                                                                    <* 
+    *> short       brow;                                                                    <* 
+    *> short       erow;                                                                    <* 
+    *> short       tab1;           /+ tab of source                                    +/   <* 
+    *> short       tab2;           /+ tab of destination                               +/   <* 
+    *> char        froz_col;                                                                <* 
+    *> short       froz_bcol;                                                               <* 
+    *> short       froz_ecol;                                                               <* 
+    *> char        froz_row;                                                                <* 
+    *> short       froz_brow;                                                               <* 
+    *> short       froz_erow;                                                               <*/
    /*---(horizontal size)----------------*/
    int         x_full;         // total screen size in chars
    int         x_left;         // number of chars for row labels to left
@@ -547,21 +548,6 @@ int         acell;           /* count of all cells                            */
 #define     NTAB        my.ntab
 #define     CTAB        my.ctab
 
-#define     NCOL        my.ncol
-#define     CCOL        my.ccol
-#define     BCOL        my.bcol
-#define     ECOL        my.ecol
-#define     FR_COL      my.froz_col
-#define     FR_BCOL     my.froz_bcol
-#define     FR_ECOL     my.froz_ecol
-
-#define     NROW        my.nrow
-#define     CROW        my.crow
-#define     BROW        my.brow
-#define     EROW        my.erow
-#define     FR_ROW      my.froz_row
-#define     FR_BROW     my.froz_brow
-#define     FR_EROW     my.froz_erow
 
 #define     NCEL        ncell
 #define     ACEL        acell
@@ -641,7 +627,7 @@ struct cTAB {
    /*---(header)-------------------------*/
    /* tabs are pre-allocated and can put into and taken out of use simply by  */
    /* starting to use them.                                                   */
-   short       tab;                         /* number of tab                  */
+   int         tab;                         /* number of tab                  */
    char        name  [LEN_LABEL];           /* tab name for user reference    */
    char        type;                        /* tab type                       */
    /*---(contents)-----------------------*/
@@ -651,39 +637,55 @@ struct cTAB {
    tROWS       rows  [MAX_ROWS];            /* row characteristics            */
    tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
    int         c;                           /* count of entries in sheet      */
-   short       defwide;                     /* default col width              */
-   short       deftall;                     /* default row height             */
+   int         defwide;                     /* default col width              */
+   int         deftall;                     /* default row height             */
    /*---(current size limits)------------*/
    /* while a maximum size sheet is allocated, there are logical user set     */
    /* maximums in order to manage the complexity.                             */
-   short       ncol;                        /* current limit on cols          */
-   short       nrow;                        /* current limit on rows          */
+   int         ncol;                        /* current limit on cols          */
+   int         nrow;                        /* current limit on rows          */
    /*---(current position)---------------*/
    /* while working, a user changes position to review and manipulate and     */
    /* these variables store the current screen position.                      */
-   short       ccol;                        /* current column                 */
-   short       crow;                        /* current row                    */
+   int         ccol;                        /* current column                 */
+   int         crow;                        /* current row                    */
    /*---(screen limits)------------------*/
    /* given user movement, the program calculates and stores the first (beg)  */
    /* and last (end) cols and rows which can be seen.                         */
-   short       bcol;                        /* beginning column               */
-   short       brow;                        /* beginning row                  */
-   short       ecol;                        /* ending column                  */
-   short       erow;                        /* ending row                     */
+   int         bcol;                        /* beginning column               */
+   int         brow;                        /* beginning row                  */
+   int         ecol;                        /* ending column                  */
+   int         erow;                        /* ending row                     */
    /*---(frozen rows and cols)-----------*/
    /* in order to handle large volumes of data in a table, it is necessary to */
    /* be able to freeze cols and/or rows so they remain visible               */
    char        froz_col;                    /* are the cols frozen            */
-   short       froz_bcol;                   /* left of frozen cols            */
-   short       froz_ecol;                   /* right of frozen cols           */
+   int         froz_bcol;                   /* left of frozen cols            */
+   int         froz_ecol;                   /* right of frozen cols           */
    char        froz_row;                    /* are the rows frozen            */
-   short       froz_brow;                   /* top of frozen rows             */
-   short       froz_erow;                   /* bottom of frozen rows          */
+   int         froz_brow;                   /* top of frozen rows             */
+   int         froz_erow;                   /* bottom of frozen rows          */
    /*---(end)----------------------------*/
 };
 tTAB     s_tabs [MAX_TABS];
 tTAB    *p_tab;                        /* current tab pointer                 */
 
+
+#define     NCOL        p_tab->ncol
+#define     CCOL        p_tab->ccol
+#define     BCOL        p_tab->bcol
+#define     ECOL        p_tab->ecol
+#define     FR_COL      p_tab->froz_col
+#define     FR_BCOL     p_tab->froz_bcol
+#define     FR_ECOL     p_tab->froz_ecol
+
+#define     NROW        p_tab->nrow
+#define     CROW        p_tab->crow
+#define     BROW        p_tab->brow
+#define     EROW        p_tab->erow
+#define     FR_ROW      p_tab->froz_row
+#define     FR_BROW     p_tab->froz_brow
+#define     FR_EROW     p_tab->froz_erow
 
 
 

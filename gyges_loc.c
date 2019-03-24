@@ -448,6 +448,7 @@ LOC_checker        (int a_tab, int a_col, int a_row, int a_nada, char a_check)
    }
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_complex ("location"  , "%2db, %3dx, %4dy, %4dz, %c", a_tab, a_col, a_row, a_nada, a_check);
    /*---(save values)--------------------*/
    x_xtab  = a_tab;
    x_xcol  = a_col;

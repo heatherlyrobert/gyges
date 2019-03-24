@@ -150,7 +150,6 @@ ROW_setmax           (int a_tab, int a_count)
    if (a_count < 1)  a_count = 1;
    if (!VALID_row (a_count - 1))  return -2;
    s_tabs [a_tab].nrow = a_count;
-   if (a_tab == CTAB)  CROW = a_count;
    return 0;
 }
 
@@ -521,7 +520,7 @@ ROW__unit          (char *a_question, char *a_label)
       x_col = CCOL;
       x_row = CROW;
    } else {
-      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_CHECK);
       if (rc <  0)  return unit_answer;
       if (!VALID_tab (x_tab))  return unit_answer;
       if (!VALID_row (x_row))  return unit_answer;

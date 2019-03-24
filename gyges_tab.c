@@ -29,6 +29,7 @@ TAB_init                (void)
    /*---(count buffer labels)------------*/
    s_nvalid = strlen (s_valids);
    TAB_purge ();
+   NTAB = DEF_TABS;
    /*---(add buffer commands)------------*/
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "buf"         , "bu"  , "c"    , TAB_switch_char            , "switch buffer"                        );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "btitle"      , "bt"  , "s"    , TAB_rename_curr            , "rename current buffer"                );
@@ -159,27 +160,32 @@ TAB_retrieve            (void)
    /*---(switch tab)---------------------*/
    p_tab     = &s_tabs[CTAB];
    /*---(cols)---------*/
-   NCOL      = s_tabs [CTAB].ncol;
-   CCOL      = s_tabs [CTAB].ccol;
-   BCOL      = s_tabs [CTAB].bcol;
-   ECOL      = s_tabs [CTAB].ecol;
-   FR_COL    = s_tabs [CTAB].froz_col;
-   FR_BCOL   = s_tabs [CTAB].froz_bcol;
-   FR_ECOL   = s_tabs [CTAB].froz_ecol;
+   /*> NCOL      = s_tabs [CTAB].ncol;                                                <* 
+    *> CCOL      = s_tabs [CTAB].ccol;                                                <* 
+    *> BCOL      = s_tabs [CTAB].bcol;                                                <* 
+    *> ECOL      = s_tabs [CTAB].ecol;                                                <* 
+    *> FR_COL    = s_tabs [CTAB].froz_col;                                            <* 
+    *> FR_BCOL   = s_tabs [CTAB].froz_bcol;                                           <* 
+    *> FR_ECOL   = s_tabs [CTAB].froz_ecol;                                           <*/
    /*---(rows)---------*/
-   NROW      = s_tabs [CTAB].nrow;
-   CROW      = s_tabs [CTAB].crow;
-   BROW      = s_tabs [CTAB].brow;
-   EROW      = s_tabs [CTAB].erow;
-   FR_ROW    = s_tabs [CTAB].froz_row;
-   FR_BROW   = s_tabs [CTAB].froz_brow;
-   FR_EROW   = s_tabs [CTAB].froz_erow;
+   /*> NROW      = s_tabs [CTAB].nrow;                                                <* 
+    *> CROW      = s_tabs [CTAB].crow;                                                <* 
+    *> BROW      = s_tabs [CTAB].brow;                                                <* 
+    *> EROW      = s_tabs [CTAB].erow;                                                <* 
+    *> FR_ROW    = s_tabs [CTAB].froz_row;                                            <* 
+    *> FR_BROW   = s_tabs [CTAB].froz_brow;                                           <* 
+    *> FR_EROW   = s_tabs [CTAB].froz_erow;                                           <*/
    /*---(reposition)---------------------*/
-   g_xmap.gcur = CCOL;
-   g_ymap.gcur = CROW;
-   g_zmap.gcur = CTAB;
+   /*> g_bmap.gcur = CTAB;                                                            <* 
+    *> g_xmap.gcur = CCOL;                                                            <* 
+    *> g_ymap.gcur = CROW;                                                            <*/
+   g_bmap.gcur = CTAB;
+   g_xmap.gcur = 0;
+   g_ymap.gcur = 0;
+   g_zmap.gcur = 0;
    MAP_mapper (YVIKEYS_UPDATE);
-   yVIKEYS_jump (CTAB, CCOL, CROW, 0);
+   /*> yVIKEYS_jump (CTAB, CCOL, CROW, 0);                                            <*/
+   yVIKEYS_jump (CTAB, 0, 0, 0);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return CTAB;
@@ -194,21 +200,21 @@ TAB_save               (void)
    DEBUG_LOCS   yLOG_note    ("save existing tab values");
    DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
    /*---(cols)---------*/
-   s_tabs [CTAB].ncol      = NCOL;
-   s_tabs [CTAB].ccol      = CCOL;
-   s_tabs [CTAB].bcol      = BCOL;
-   s_tabs [CTAB].ecol      = ECOL;
-   s_tabs [CTAB].froz_col  = FR_COL;
-   s_tabs [CTAB].froz_bcol = FR_BCOL;
-   s_tabs [CTAB].froz_ecol = FR_ECOL;
+   /*> s_tabs [CTAB].ncol      = NCOL;                                                <* 
+    *> s_tabs [CTAB].ccol      = CCOL;                                                <* 
+    *> s_tabs [CTAB].bcol      = BCOL;                                                <* 
+    *> s_tabs [CTAB].ecol      = ECOL;                                                <* 
+    *> s_tabs [CTAB].froz_col  = FR_COL;                                              <* 
+    *> s_tabs [CTAB].froz_bcol = FR_BCOL;                                             <* 
+    *> s_tabs [CTAB].froz_ecol = FR_ECOL;                                             <*/
    /*---(rows)---------*/
-   s_tabs [CTAB].nrow      = NROW;
-   s_tabs [CTAB].crow      = CROW;
-   s_tabs [CTAB].brow      = BROW;
-   s_tabs [CTAB].erow      = EROW;
-   s_tabs [CTAB].froz_row  = FR_ROW;
-   s_tabs [CTAB].froz_brow = FR_BROW;
-   s_tabs [CTAB].froz_erow = FR_EROW;
+   /*> s_tabs [CTAB].nrow      = NROW;                                                <* 
+    *> s_tabs [CTAB].crow      = CROW;                                                <* 
+    *> s_tabs [CTAB].brow      = BROW;                                                <* 
+    *> s_tabs [CTAB].erow      = EROW;                                                <* 
+    *> s_tabs [CTAB].froz_row  = FR_ROW;                                              <* 
+    *> s_tabs [CTAB].froz_brow = FR_BROW;                                             <* 
+    *> s_tabs [CTAB].froz_erow = FR_EROW;                                             <*/
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return CTAB;
@@ -380,6 +386,10 @@ TAB_resize           (char *a_max)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*> if (x_tab == CTAB) {                                                           <* 
+    *>    NCOL = x_col + 1;                                                           <* 
+    *>    NROW = x_row + 1;                                                           <* 
+    *> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
