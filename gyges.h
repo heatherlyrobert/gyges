@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4g"
-#define     P_VERTXT    "fixed tab mapping and simplified shortcuts to tab data"
+#define     P_VERNUM    "3.4h"
+#define     P_VERTXT    "fixed troubles in unit tests due to recent tab, col, row, loc fixes"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1379,7 +1379,6 @@ char*       COL__unit            (char *a_question, char *a_label);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_init                (void);
 char        ROW_clear            /* septal 1----- */  (int a_tab);
-char        ROW_legal            /* petal  2----- */  (int a_tab, int a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         ROW_defmax           /* petal  0----- */  (void);
 int         ROW_max              /* petal  1----- */  (int a_tab);

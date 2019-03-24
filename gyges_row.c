@@ -100,7 +100,6 @@ ROW__validity        (char a_mode, int a_tab, int a_row)
    return 0;
 }
 
-char  ROW_legal    (int a_tab, int a_row) { return ROW__validity ('L', a_tab, a_row); }
 
 
 
@@ -405,12 +404,8 @@ ROW_writer              (int a_tab, int a_row)
    char        rce         =  -10;
    char        rc          =    0;
    char        c           =    0;
-   int         n           =    0;
-   int         j           =    0;
-   int         x_beg       =    0;
-   int         x_end       =    0;
    int         x_max       =    0;
-   int         k           =    0;
+   int         i           =    0;
    int         x_def       =    0;
    int         x_size      =    0;
    int         x_prev      =    0;
@@ -421,68 +416,140 @@ ROW_writer              (int a_tab, int a_row)
    yPARSE_outclear  ();
    /*---(prepare tab)--------------------*/
    DEBUG_OUTP   yLOG_value   ("a_tab"     , a_tab);
-   rc = VALID_tab (a_tab);
+   rc = LEGAL_TAB (a_tab);
    --rce; if (rc == 0) { 
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(prepare range)------------------*/
-   if (a_row < 0) {
-      x_beg = 0;
-      x_end = ROW_max (a_tab) - 1;
-   } else {
-      x_beg = x_end = a_row;
+   rc = LEGAL_ROW (a_tab, a_row);
+   --rce;  if (rc == 0) {
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);
-   DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);
-   x_max = ROW_max (a_tab) - 1;
-   DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);
-   /*---(prepare default)----------------*/
+   /*---(filter)----------------------*/
+   x_size = ROW_height (a_tab, a_row);
+   DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
+   /*---(check default)------------------*/
    x_def  = TAB_rowtall (a_tab);
    DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
-   if (x_beg > 0)  x_prev = ROW_height (a_tab, x_beg - 1);
-   /*---(run range)----------------------*/
-   for (j = x_beg; j <= x_end; ++j) {
-      /*---(filter)----------------------*/
-      if (ROW_legal (a_tab, j) < 0)  continue;
-      x_size = ROW_height (a_tab, j);
-      DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
-      if (x_size == x_def )  continue;
-      if (x_size == x_prev)  continue;
-      /*---(check repeats)---------------*/
-      n = 1;
-      for (k = j + 1; k <= x_max; ++k) {
-         if (x_size != ROW_height (a_tab, k))  break;
-         ++n;
-      }
-      DEBUG_OUTP   yLOG_value   ("n"         , n);
-      /*---(write)-----------------------*/
-      rc = str4gyges (a_tab, 0, j, 0, 0, x_label, YSTR_LEGAL);
-      yPARSE_fullwrite ("height", x_label, x_size, n);
-      /*---(clear)-----------------------*/
-      if (x_beg != x_end)  yPARSE_outclear  ();
-      /*---(next)------------------------*/
-      c += n;
-      j += n - 1;
-      /*---(done)------------------------*/
+   --rce;  if (x_size == x_def ) {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
    }
+   /*---(check prev)---------------------*/
+   if (a_row > 0)  x_prev = ROW_height (a_tab, a_row - 1);
+   --rce;  if (x_size == x_prev) {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check repeats)---------------*/
+   x_max = ROW_max (a_tab) - 1;
+   DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);
+   c = 1;
+   for (i = a_row + 1; i <= x_max; ++i) {
+      if (x_size != ROW_height (a_tab, i))  break;
+      ++c;
+   }
+   DEBUG_OUTP   yLOG_value   ("c"         , c);
+   /*---(write)-----------------------*/
+   rc = str4gyges (a_tab, 0, a_row, 0, 0, x_label, YSTR_LEGAL);
+   yPARSE_fullwrite ("height", x_label, x_size, c);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
    return c;
 }
+
+/*> char         /+-> tbd --------------------------------[ ------ [ge.732.124.21]+/ /+-[02.0000.01#.#]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_writer              (int a_tab, int a_row)                                                                                 <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    char        c           =    0;                                                                                             <* 
+ *>    int         n           =    0;                                                                                             <* 
+ *>    int         j           =    0;                                                                                             <* 
+ *>    int         x_beg       =    0;                                                                                             <* 
+ *>    int         x_end       =    0;                                                                                             <* 
+ *>    int         x_max       =    0;                                                                                             <* 
+ *>    int         k           =    0;                                                                                             <* 
+ *>    int         x_def       =    0;                                                                                             <* 
+ *>    int         x_size      =    0;                                                                                             <* 
+ *>    int         x_prev      =    0;                                                                                             <* 
+ *>    char        x_label     [LEN_LABEL];                                                                                        <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    /+---(clear output)-------------------+/                                                                                    <* 
+ *>    yPARSE_outclear  ();                                                                                                        <* 
+ *>    /+---(prepare tab)--------------------+/                                                                                    <* 
+ *>    DEBUG_OUTP   yLOG_value   ("a_tab"     , a_tab);                                                                            <* 
+ *>    rc = LEGAL_TAB (a_tab);                                                                                                     <* 
+ *>    --rce; if (!LEGAL_TAB (a_tab)) {                                                                                            <* 
+ *>       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(prepare range)------------------+/                                                                                    <* 
+ *>    if (a_row < 0) {                                                                                                            <* 
+ *>       x_beg = 0;                                                                                                               <* 
+ *>       x_end = ROW_max (a_tab) - 1;                                                                                             <* 
+ *>    } else {                                                                                                                    <* 
+ *>       x_beg = x_end = a_row;                                                                                                   <* 
+ *>    }                                                                                                                           <* 
+ *>    DEBUG_OUTP   yLOG_value   ("x_beg"     , x_beg);                                                                            <* 
+ *>    DEBUG_OUTP   yLOG_value   ("x_end"     , x_end);                                                                            <* 
+ *>    x_max = ROW_max (a_tab) - 1;                                                                                                <* 
+ *>    DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);                                                                            <* 
+ *>    /+---(prepare default)----------------+/                                                                                    <* 
+ *>    x_def  = TAB_rowtall (a_tab);                                                                                               <* 
+ *>    DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);                                                                            <* 
+ *>    if (x_beg > 0)  x_prev = ROW_height (a_tab, x_beg - 1);                                                                     <* 
+ *>    /+---(run range)----------------------+/                                                                                    <* 
+ *>    for (j = x_beg; j <= x_end; ++j) {                                                                                          <* 
+ *>       /+---(filter)----------------------+/                                                                                    <* 
+ *>       if (LEGAL_ROW (a_tab, j) < 0)  continue;                                                                                 <* 
+ *>       x_size = ROW_height (a_tab, j);                                                                                          <* 
+ *>       DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);                                                                        <* 
+ *>       if (x_size == x_def )  continue;                                                                                         <* 
+ *>       if (x_size == x_prev)  continue;                                                                                         <* 
+ *>       /+---(check repeats)---------------+/                                                                                    <* 
+ *>       n = 1;                                                                                                                   <* 
+ *>       for (k = j + 1; k <= x_max; ++k) {                                                                                       <* 
+ *>          if (x_size != ROW_height (a_tab, k))  break;                                                                          <* 
+ *>          ++n;                                                                                                                  <* 
+ *>       }                                                                                                                        <* 
+ *>       DEBUG_OUTP   yLOG_value   ("n"         , n);                                                                             <* 
+ *>       /+---(write)-----------------------+/                                                                                    <* 
+ *>       rc = str4gyges (a_tab, 0, j, 0, 0, x_label, YSTR_LEGAL);                                                                 <* 
+ *>       yPARSE_fullwrite ("height", x_label, x_size, n);                                                                         <* 
+ *>       /+---(clear)-----------------------+/                                                                                    <* 
+ *>       if (x_beg != x_end)  yPARSE_outclear  ();                                                                                <* 
+ *>       /+---(next)------------------------+/                                                                                    <* 
+ *>       c += n;                                                                                                                  <* 
+ *>       j += n - 1;                                                                                                              <* 
+ *>       /+---(done)------------------------+/                                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return c;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char
 ROW_writer_all          (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
+   int         x_ntab      =    0;
    int         x_tab       =    0;
+   int         x_nrow      =    0;
    int         x_row       =    0;
    int         c           =    0;
    /*---(walk)---------------------------*/
    yPARSE_verb_begin ("height");
-   for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
-      for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
+   x_ntab = TAB_max ();
+   if (x_ntab > 35)  x_ntab = 35;
+   for (x_tab = 0; x_tab <= x_ntab; ++x_tab) {
+      if (!LEGAL_TAB (x_tab))    continue;
+      x_nrow = ROW_max (x_tab);
+      for (x_row = 0; x_row < x_nrow; ++x_row) {
          rc = ROW_writer   (x_tab, x_row);
          if (rc <= 0)    continue;
          ++c;

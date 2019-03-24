@@ -400,19 +400,19 @@ COL_writer              (int a_tab, int a_col)
    /*---(check default)------------------*/
    x_def  = TAB_colwide (a_tab);
    DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
-   if (a_col > 0)  x_prev = COL_width  (a_tab, a_col - 1);
    --rce;  if (x_size == x_def ) {
       DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(check prev)---------------------*/
-   x_max = COL_max (a_tab) - 1;
-   DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);
+   if (a_col > 0)  x_prev = COL_width  (a_tab, a_col - 1);
    --rce;  if (x_size == x_prev) {
       DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(check repeats)---------------*/
+   x_max = COL_max (a_tab) - 1;
+   DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);
    c = 1;
    for (i = a_col + 1; i <= x_max; ++i) {
       if (x_size != COL_width  (a_tab, i))  break;
@@ -432,13 +432,19 @@ COL_writer_all          (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
+   int         x_ntab      =    0;
    int         x_tab       =    0;
+   int         x_ncol      =    0;
    int         x_col       =    0;
    int         c           =    0;
    /*---(walk)---------------------------*/
    yPARSE_verb_begin ("width");
-   for (x_tab = 0; x_tab < MAX_TABS; ++x_tab) {
-      for (x_col = 0; x_col < MAX_COLS; ++x_col) {
+   x_ntab = TAB_max ();
+   if (x_ntab > 35)  x_ntab = 35;
+   for (x_tab = 0; x_tab <= x_ntab; ++x_tab) {
+      if (!LEGAL_TAB (x_tab))    continue;
+      x_ncol = COL_max (x_tab);
+      for (x_col = 0; x_col < x_ncol; ++x_col) {
          rc = COL_writer   (x_tab, x_col);
          if (rc <= 0)    continue;
          ++c;
