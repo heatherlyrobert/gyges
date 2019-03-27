@@ -92,18 +92,18 @@ PROG_init          (int a_argc, char *a_argv[])
 {
    char        rc          =    0;
    /*---(log header)---------------------*/
-   DEBUG_TOPS   yLOG_info     ("purpose" , "light, clean, vim-ish, technical, and wicked spreadsheet");
-   DEBUG_TOPS   yLOG_info     ("namesake", "ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant");
-   DEBUG_TOPS   yLOG_info     ("gyges"   , PROG_version    ());
-   DEBUG_TOPS   yLOG_info     ("yURG"    , yURG_version    ());
-   DEBUG_TOPS   yLOG_info     ("ySTR"    , ySTR_version    ());
-   DEBUG_TOPS   yLOG_info     ("yLOG"    , yLOGS_version   ());
-   DEBUG_TOPS   yLOG_info     ("yRPN"    , yRPN_version    ());
-   DEBUG_TOPS   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
-   DEBUG_TOPS   yLOG_info     ("yCALC"   , yCALC_version   ());
-   DEBUG_TOPS   yLOG_info     ("yPARSE"  , yPARSE_version  ());
+   DEBUG_PROG   yLOG_info     ("purpose" , "light, clean, vim-ish, technical, and wicked spreadsheet");
+   DEBUG_PROG   yLOG_info     ("namesake", "ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant");
+   DEBUG_PROG   yLOG_info     ("gyges"   , PROG_version    ());
+   DEBUG_PROG   yLOG_info     ("yURG"    , yURG_version    ());
+   DEBUG_PROG   yLOG_info     ("ySTR"    , ySTR_version    ());
+   DEBUG_PROG   yLOG_info     ("yLOG"    , yLOGS_version   ());
+   DEBUG_PROG   yLOG_info     ("yRPN"    , yRPN_version    ());
+   DEBUG_PROG   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
+   DEBUG_PROG   yLOG_info     ("yCALC"   , yCALC_version   ());
+   DEBUG_PROG   yLOG_info     ("yPARSE"  , yPARSE_version  ());
    /*---(header)-------------------------*/
-   DEBUG_TOPS   yLOG_enter    (__FUNCTION__);
+   DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    rc = yVIKEYS_init         ();
    if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
@@ -112,40 +112,40 @@ PROG_init          (int a_argc, char *a_argv[])
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
    if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
    if (rc == 0)  rc = yVIKEYS_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller, api_yvikeys_exim);
-   DEBUG_TOPS   yLOG_value    ("yvikeys"   , rc);
+   DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
    if (rc <  0) {
-      DEBUG_TOPS   yLOG_exitr    (__FUNCTION__, rc);
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
    /*---(globals)------------------------*/
    rc = CELL_init  ();
-   /*---(ystr config)--------------------*/
-   rc = str0gyges (LOC_checker);
-   /*---(yrpn config)--------------------*/
-   rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yVIKEYS_mreg_inside);
    /*---(ycalc config)-------------------*/
    rc = yCALC_init ('g');
    if (rc == 0)  rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
    if (rc == 0)  rc = yCALC_label_config (api_ycalc_named  , api_ycalc_whos_at, api_ycalc_labeler);
    if (rc == 0)  rc = yCALC_value_config (api_ycalc_valuer , api_ycalc_address, api_ycalc_special, api_ycalc_printer);
-   DEBUG_TOPS   yLOG_value    ("ycalc"     , rc);
+   DEBUG_PROG   yLOG_value    ("ycalc"     , rc);
    if (rc <  0) {
-      DEBUG_TOPS   yLOG_exitr    (__FUNCTION__, rc);
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
+   /*---(ystr config)--------------------*/
+   rc = str0gyges (LOC_checker);
+   /*---(yrpn config)--------------------*/
+   rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yVIKEYS_mreg_inside);
    /*---(globals)------------------------*/
    if (rc == 0)  rc = yVIKEYS_hist_config (HIST_undo, HIST_redo);
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
    /*---(complete)-----------------------*/
-   DEBUG_TOPS   yLOG_exit     (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit     (__FUNCTION__);
    return 0;
 }
 
 char         /*-> process the command line args ------[ ------ [gz.952.251.B4]*/ /*-[01.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG_args          (int argc, char *argv[])
 {
-   DEBUG_TOPS  yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(locals)-------------------------*/
    int         i           = 0;
    char       *a           = NULL;
@@ -185,7 +185,7 @@ PROG_args          (int argc, char *argv[])
       yVIKEYS_cmds_direct (t);
    }
    /*---(complete)-----------------------*/
-   DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
+   DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
 }
 
@@ -271,7 +271,7 @@ PROG_end             (void)
    DEBUG_PROG   yLOG_note    ("yVIKEYS_wrap");
    yVIKEYS_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
-   DEBUG_TOPS   yLOGS_end     ();
+   DEBUG_PROG   yLOGS_end     ();
    return 0;
 }
 
@@ -392,6 +392,7 @@ PROG__unitloud      (void)
    int         x_argc      = 9;
    char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@ystr", "@@ycalc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
    yURG_logger (x_argc, x_args);
+   yURG_name   ("tops", YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

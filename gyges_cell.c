@@ -193,6 +193,7 @@ CELL_wrap          (void)
    NCEL   = 0;
    /*---(root)---------------------------*/
    CELL__free    (&my.root, UNLINKED);
+   my.root = NULL;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1176,7 +1177,7 @@ CELL__unit         (char *a_question, tCELL *a_cell)
    else if (strcmp(a_question, "cell_count")     == 0) {
       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }
       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
-      snprintf(unit_answer, LEN_FULL, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
+      snprintf (unit_answer, LEN_FULL, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
    }
    /*---(printing)-----------------------*/
    /*> else if (strcmp(a_question, "cell_print")     == 0) {                          <* 

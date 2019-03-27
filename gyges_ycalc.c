@@ -229,10 +229,12 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    /*---(save)---------------------------*/
    DEBUG_APIS   yLOG_complex ("loc_final"  , "%3db, %3dx, %3dy", x_owner->tab, x_owner->col, x_owner->row);
-   x_sforce = a_force;
-   x_saved  = x_owner;
-   strlcpy (x_label, a_label, LEN_LABEL);
-   DEBUG_APIS   yLOG_point   ("x_saved"   , x_saved);
+   if (strcmp ("ROOT", a_label) != 0) {
+      x_sforce = a_force;
+      x_saved  = x_owner;
+      strlcpy (x_label, a_label, LEN_LABEL);
+      DEBUG_APIS   yLOG_point   ("x_saved"   , x_saved);
+   }
    /*---(handle normal)------------------*/
    DEBUG_APIS   yLOG_note    ("success");
    if (a_owner   != NULL) {
