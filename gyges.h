@@ -3,16 +3,16 @@
 
 
 /*===[[ BEG_HEADER ]]=========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
 
 /*===[[ ONE_LINERS ]]=========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
 
 #define     P_FOCUS     "TO (major tools)"
 #define     P_NICHE     "ss (spreadsheet)"
-#define     P_PURPOSE   "light, clean, vim-ish, technical, and wicked spreadsheet"
+#define     P_PURPOSE   "technical, fullsome, aesthetic, and keyboard-centric spreadsheet"
 
 #define     P_NAMESAKE  "gyges-hecatoncheires (hundred-handed)"
-#define     P_HERITAGE  "gyges, the furious, is one of the three hecatoncheires" 
+#define     P_HERITAGE  "gyges, the furious, is one of the three hecatoncheires"
 #define     P_IMAGERY   "ugly, impossibly powerful, one-hundred handed, fifty headed giant"
 
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
@@ -25,33 +25,59 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4i"
-#define     P_VERTXT    "fixed last issue with cell unit test (short-cutting caused it)"
+#define     P_VERNUM    "3.4j"
+#define     P_VERTXT    "updated history to include full formatting and unit tested 01-02"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
 #define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
 
-/*===[[ END_HEADER ]]=========================================================*/
+/*===[[ REASONING ]]==========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
 
-/*===[[ HEADER ]]=============================================================*
-
- *   focus         : (TO) tools
- *   niche         : (SS) spreadsheet
- *   heritage      : gyges-hecatoncheires (fifty-headed, hundred-handed giant)
- *   purpose       : light, clean, vim-ish, technical, and wicked spreadsheet
+/*
+ *  spreadsheet
+ *  presentation
+ *  writing
+ *  graphing/charting
+ *  engineering/cad/vector
+ *  drawing/paint/pixel
+ *  note taking
+ *  personal database
+ *  project management
+ *  todo/task management
+ *  workflow/hypercard
  *
- *   base_system   : gnu/linux   (powerful, ubiquitous, technical, and hackable)
- *   lang_name     : ansi-c      (wicked, limitless, universal, and everlasting)
- *   dependencies  : ncurses, yLOG, yRPN
- *   size goal     : toolish (around 10,000 slocL)
- * 
- *   author        : the_heatherlys
- *   created       : 2010-09
- *   priorities    : direct, simple, brief, vigorous, and lucid (h.w. fowler)
- *   end goal      : loosely coupled, strict interface, maintainable, portable
+ *
  *
  */
+
+
+
+
+
+#define     P_DEFINE    \
+ "one of the major, general-purpose, user-empowerment tools, spreadsheets allow¦" \
+ "ad-hoc, informal, quick, and evolving analysis and manipulation of any kind¦" \
+ "of data set -- from massive tables to irregular and unclear collections.¦"
+#define     P_CURRENT   \
+ "this is a fairly well-defined category of tool with a relatively stable¦" \
+ "interface and several major alternative products.  while user experiences¦" \
+ "vary, major functions and features are broadly comparable across competitors.¦"
+#define     P_CONCERN   \
+ "these tools have become overly complex, unwieldy, kitchen-sink tools that¦" \
+ "overlap with other major tools rather than complement them.  spreadsheets in¦" \
+ "particular have become dangerous, error-prone replacements for real systems.¦"
+#define     P_ALTERNS   "visicalc, lotus 123, excel, google, and gnumeric¦"
+
+/*===[[ END_HEADER ]]=========================================================*/
+
+
+
+
+
+/*===[[ END_HEADER ]]=========================================================*/
+
 /*===[[ PURPOSE ]]============================================================*
 
  *   gyges is a light, clean, fast, and aesthetic consol-based spreadsheet

@@ -686,13 +686,11 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    /*---(save before picture)------------*/
-   /*> strcpy (x_bsource, "[<{(null)}>]");                                            <*/
    strcpy (x_bsource, "");
-   strcpy (x_bformat, "???");
    --rce;  if (x_curr != NULL) {
       DEBUG_CELL   yLOG_note    ("save existing data");
       if (x_curr->source != NULL)  strcpy (x_bsource, x_curr->source);
-      sprintf (x_bformat, "%c%c%c", x_curr->format, x_curr->align, x_curr->decs);
+      sprintf (x_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
    } else if (x_curr == NULL) {
       rc = CELL__create (&x_curr, a_tab, a_col, a_row);
       DEBUG_CELL   yLOG_point   ("new cell"  , x_curr);
@@ -703,8 +701,9 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
    /*---(history)------------------------*/
-   if (a_source [0] == '\0')   HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
-   else                        HIST_change  (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat, a_source);
+   if (a_source [0] == NULL)        HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
+   else if (a_source [0] == '\0')   HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
+   else                             HIST_change  (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat, a_source);
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("change source and length values");
    x_curr->source = strndup (a_source, LEN_RECD);
@@ -726,6 +725,7 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
    tCELL      *x_new       = NULL;
+   char       x_aformat    [200] = "";
    /*---(defense)------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    if (strlen (a_format) != 9) {
@@ -742,15 +742,16 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    }
    /*---(history)------------------------*/
    DEBUG_CELL   yLOG_note    ("write history");
-   HIST_overwrite (a_mode, a_tab, a_col, a_row, a_format);
+   sprintf (x_aformat, "%c%c%c%c%c", a_format [0], a_format [2], a_format [4], a_format [6], a_format [8]);
+   if (a_mode != HIST_NONE)  HIST_overwrite (a_mode, a_tab, a_col, a_row, a_format);
    /*---(formatting)---------------------*/
    DEBUG_CELL   yLOG_note    ("update format fields");
-   x_new->format = a_format [0];
-   DEBUG_CELL   yLOG_char    ("format"    , x_new->format);
-   x_new->decs   = a_format [2];
-   DEBUG_CELL   yLOG_char    ("decs"      , x_new->decs);
-   x_new->align  = a_format [4];
+   x_new->align  = a_format [0];
    DEBUG_CELL   yLOG_char    ("align"     , x_new->align);
+   x_new->format = a_format [2];
+   DEBUG_CELL   yLOG_char    ("format"    , x_new->format);
+   x_new->decs   = a_format [4];
+   DEBUG_CELL   yLOG_char    ("decs"      , x_new->decs);
    x_new->unit   = a_format [6];
    DEBUG_CELL   yLOG_char    ("unit"      , x_new->unit);
    /*---(update)-------------------------*/
@@ -999,8 +1000,8 @@ CELL_reader          (void)
    /*---(format)-------------------------*/
    rc = yPARSE_popstr  (&x_format);
    DEBUG_INPT   yLOG_value   ("pop format", rc);
-   if      (strlen (x_format) != 9)              strcpy  (x_format, "? 0 ? - -");
-   else if (strcmp (x_format, "- - - - -") == 0) strcpy  (x_format, "? 0 ? - -");
+   if      (strlen (x_format) != 9)              strcpy  (x_format, "? ? 0 - -");
+   else if (strcmp (x_format, "- - - - -") == 0) strcpy  (x_format, "? ? 0 - -");
    DEBUG_INPT  yLOG_info    ("x_format"  , x_format);
    /*---(source)-------------------------*/
    rc = yPARSE_popstr  (&x_source);
@@ -1234,8 +1235,8 @@ CELL__unitnew      (char *a_question, char *a_label)
    }
    /*---(cell contents)------------------*/
    if (strcmp(a_question, "info"     )      == 0) {
-      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln info     : --- --- --- --- ----- -----");
-      else                             snprintf(unit_answer, LEN_FULL, "s_celln info     : t=%c f=%c d=%c a=%c w=%3d h=%3d", x_cell->type, x_cell->format, x_cell->decs, x_cell->align, COL_width (x_cell->tab, x_cell->col), ROW_height (x_cell->tab, x_cell->row));
+      if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln info     : --- --- --- --- --- --- ----- -----");
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln info     : t=%c a=%c f=%c d=%c u=%c 5=%c w=%3d h=%3d", x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, '-', COL_width (x_cell->tab, x_cell->col), ROW_height (x_cell->tab, x_cell->row));
    }
    else if   (strcmp(a_question, "source"     )    == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln source   : (----) ::");

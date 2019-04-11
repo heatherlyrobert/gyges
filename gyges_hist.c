@@ -9,9 +9,10 @@
 #define     HIST_DELETE       'D'
 #define     HIST_CLEAR        'X'
 /*---(minor changes)-------------*/
-#define     HIST_DECIMALS     'd'
 #define     HIST_ALIGN        'a'
 #define     HIST_FORMAT       'f'
+#define     HIST_DECIMALS     'd'
+#define     HIST_UNITS        'u'
 #define     HIST_WIDTH        'w'
 #define     HIST_HEIGHT       'h'
 
@@ -36,18 +37,22 @@ struct {
    char        name         [LEN_LABEL];
    char        desc         [LEN_HUND];
 } s_hist_acts [LEN_LABEL] = {
-   { HIST_OVERWRITE, "overwrite"    , "" },
-   { HIST_CHANGE   , "change"       , "" },
+   { HIST_OVERWRITE, "overwrite"    , "change contents and formatting" },
+   { HIST_CHANGE   , "change"       , "change contents only" },
    { HIST_DELETE   , "delete"       , "" },
    { HIST_CLEAR    , "clear"        , "" },
-   { HIST_DECIMALS , "decimals"     , "" },
-   { HIST_ALIGN    , "align"        , "" },
-   { HIST_FORMAT   , "format"       , "" },
-   { HIST_WIDTH    , "width"        , "" },
-   { HIST_HEIGHT   , "height"       , "" },
+   { HIST_ALIGN    , "align"        , "display alignment" },
+   { HIST_FORMAT   , "format"       , "display format" },
+   { HIST_DECIMALS , "decimals"     , "display decimal places" },
+   { HIST_UNITS    , "units"        , "display units of measure" },
+   { HIST_WIDTH    , "width"        , "change column width" },
+   { HIST_HEIGHT   , "height"       , "change row height" },
    { 0             , "end"          , "" },
 };
 int         s_hist_nact =    0;
+
+char       *s_nothing   = "´´´´´";
+char       *s_default   = "??0--";
 
 
 /*====================------------------------------------====================*/
@@ -101,8 +106,7 @@ HIST_debug         (void)
    char        x_recd      [LEN_RECD ];
    sprintf (x_recd, "#%d, %s, %c", s_chist,
          s_hist [s_chist].addr, s_hist [s_chist].act);
-   DEBUG_HIST  
-      DEBUG_HIST  yLOG_info    ("record"    , x_recd);
+   DEBUG_HIST  yLOG_info    ("record"    , x_recd);
    return 0;
 }
 
@@ -127,13 +131,15 @@ HIST_single        (char a_mode, char a_type, int a_tab, int a_col, int a_row, c
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    strlcpy (s_hist [s_chist].addr  , x_label, LEN_LABEL);
    /*---(before)-------------------------*/
-   strlcpy  (t, a_before, LEN_RECD);
-   if (strlen (t) > 5)  strldchg (t + 5, G_KEY_SPACE, G_CHAR_SPACE, LEN_RECD);
-   strlcpy (s_hist [s_chist].before, t, LEN_RECD);
+   /*> strlcpy  (t, a_before, LEN_RECD);                                              <* 
+    *> if (strlen (t) > 6)  strldchg (t + 6, G_KEY_SPACE, G_CHAR_SPACE, LEN_RECD);    <* 
+    *> strlcpy (s_hist [s_chist].before, t, LEN_RECD);                                <*/
+   strlcpy (s_hist [s_chist].before, a_before, LEN_RECD);
    /*---(after)--------------------------*/
-   strlcpy  (t, a_after , LEN_RECD);
-   if (strlen (t) > 5)  strldchg (t + 5, G_KEY_SPACE, G_CHAR_SPACE, LEN_RECD);
-   strlcpy (s_hist [s_chist].after , t , LEN_RECD);
+   /*> strlcpy  (t, a_after , LEN_RECD);                                              <* 
+    *> if (strlen (t) > 6)  strldchg (t + 6, G_KEY_SPACE, G_CHAR_SPACE, LEN_RECD);    <* 
+    *> strlcpy (s_hist [s_chist].after , t , LEN_RECD);                               <*/
+   strlcpy (s_hist [s_chist].after , a_after , LEN_RECD);
    /*---(debugging)----------------------*/
    HIST_debug ();
    /*---(complete)-----------------------*/
@@ -152,7 +158,7 @@ HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    if (rc < 0)  return rc;
    if (a_afterF  != NULL)  sprintf (x, "%s", a_afterF);
-   else                    sprintf (x, "´´´");
+   else                    strcpy  (x, s_default);
    /*---(add record)---------------------*/
    for (i = s_chist; i >= 0; --i) {
       if (s_hist [i].act != HIST_CHANGE)            continue;
@@ -161,11 +167,13 @@ HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF
       s_hist [s_chist].after [0] = x [0];
       s_hist [s_chist].after [1] = x [1];
       s_hist [s_chist].after [2] = x [2];
+      s_hist [s_chist].after [3] = x [3];
+      s_hist [s_chist].after [4] = x [4];
       return 0;
    }
    /*---(complete)--------------------*/
    return -1;
-}
+} 
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
 HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF, char *a_after)
@@ -175,13 +183,18 @@ HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    char        x           [LEN_RECD];
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(formatting)---------------------*/
+   if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
+   else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
+   else                                   sprintf (x, "%s", a_beforeF);
+   /*---(content change)-----------------*/
+   if      (a_before  == NULL)            sprintf (s, "%s"    , s_nothing);
+   else if (strcmp (a_before , "") == 0)  sprintf (s, "%s"    , s_nothing);
+   else                                   sprintf (s, "%s··%s", x, a_before);
+   if      (a_after   == NULL)            sprintf (t, "%s"    , s_nothing);
+   else if (strcmp (a_after  , "") == 0)  sprintf (s, "%s"    , s_nothing);
+   else                                   sprintf (t, "%s··%s", s_default, a_after);
    /*---(add record)---------------------*/
-   if (a_beforeF != NULL)  sprintf (x, "%s", a_beforeF);
-   else                    sprintf (x, "´´´");
-   if (a_before  != NULL)  sprintf (s, "%s  %s", x, a_before);
-   else                    sprintf (s, "%s  ", x);
-   if (a_after   != NULL)  sprintf (t, "´´´  %s", a_after);
-   else                    sprintf (t, "´´´  ");
    rc = HIST_single (a_mode, HIST_CHANGE, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
    return rc;
@@ -196,11 +209,13 @@ HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
    /*---(add record)---------------------*/
-   if (a_beforeF != NULL)  sprintf (x, "%s", a_beforeF);
-   else                    sprintf (x, "´´´");
-   if (a_before  != NULL)  sprintf (s, "%s  %s", x, a_before);
-   else                    sprintf (s, "%s  "  , x);
-   sprintf (t, "---  ");
+   if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
+   else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
+   else                                   sprintf (x, "%s", a_beforeF);
+   if      (a_before  == NULL)            sprintf (s, "%s"    , s_nothing);
+   else if (strcmp (a_before , "") == 0)  sprintf (s, "%s"    , s_nothing);
+   else                                   sprintf (s, "%s··%s", x, a_before);
+   sprintf (t, "´´´´´");
    rc = HIST_single (a_mode, HIST_DELETE, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
    return rc;
@@ -215,11 +230,13 @@ HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
    /*---(add record)---------------------*/
-   if (a_beforeF != NULL)  sprintf (x, "%s", a_beforeF);
-   else                    sprintf (x, "´´´");
-   if (a_before  != NULL)  sprintf (s, "%s  %s", x, a_before);
-   else                    sprintf (s, "%s  "  , x);
-   sprintf (t, "???  ");
+   if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
+   else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
+   else                                   sprintf (x, "%s", a_beforeF);
+   if      (a_before  == NULL)            sprintf (s, "%s"    , s_nothing);
+   else if (strcmp (a_before , "") == 0)  sprintf (s, "%s"    , s_nothing);
+   else                                   sprintf (s, "%s··%s", x, a_before);
+   sprintf (t, "´´´´´");
    rc = HIST_single (a_mode, HIST_CLEAR, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
    return rc;
@@ -334,15 +351,15 @@ HIST__undo_single       (void)
    case HIST_OVERWRITE :
    case HIST_CLEAR     :
    case HIST_DELETE    :
-      sprintf (x_format, "%c%c%c", s_hist [s_chist].before[0], s_hist [s_chist].before[1], s_hist [s_chist].before[2]);
-      if (strlen (s_hist [s_chist].before) <= 5)  strlcpy (x_source, "", LEN_RECD);
-      else                                        strlcpy (x_source, s_hist [s_chist].before + 5, LEN_RECD);
+      sprintf (x_format, "%c %c %c %c %c", s_hist [s_chist].before[0], s_hist [s_chist].before[1], s_hist [s_chist].before[2], s_hist [s_chist].before[3], s_hist [s_chist].before[4]);
+      if (strlen (s_hist [s_chist].before) <= 6)  strlcpy (x_source, "", LEN_RECD);
+      else                                        strlcpy (x_source, s_hist [s_chist].before + 7, LEN_RECD);
       strldchg (x_source, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       CELL_overwrite (HIST_NONE, x_tab, x_col, x_row, x_source, x_format);
       break;
    case HIST_CHANGE    :
-      if (strlen (s_hist [s_chist].before) <= 5)  strlcpy (x_source, "", LEN_RECD);
-      else                                        strlcpy (x_source, s_hist [s_chist].before + 5, LEN_RECD);
+      if (strlen (s_hist [s_chist].before) <= 6)  strlcpy (x_source, "", LEN_RECD);
+      else                                        strlcpy (x_source, s_hist [s_chist].before + 7, LEN_RECD);
       strldchg (x_source, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       CELL_change  (NULL, HIST_NONE, x_tab, x_col, x_row, x_source);
       break;
@@ -455,15 +472,15 @@ HIST__redo_single       (void)
    case HIST_OVERWRITE :
    case HIST_CLEAR     :
    case HIST_DELETE    :
-      sprintf (x_format, "%c%c%c", s_hist [s_chist].after [0], s_hist [s_chist].after [1], s_hist [s_chist].after [2]);
-      if (strlen (s_hist [s_chist].after ) <= 5)  strlcpy (x_source, "", LEN_RECD);
-      else                                        strlcpy (x_source, s_hist [s_chist].after  + 5, LEN_RECD);
+      sprintf (x_format, "%c %c %c %c %c", s_hist [s_chist].after [0], s_hist [s_chist].after [1], s_hist [s_chist].after [2], s_hist [s_chist].after [3], s_hist [s_chist].after [4]);
+      if (strlen (s_hist [s_chist].after ) <= 6)  strlcpy (x_source, "", LEN_RECD);
+      else                                        strlcpy (x_source, s_hist [s_chist].after  + 7, LEN_RECD);
       strldchg (x_source, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       CELL_overwrite (HIST_NONE, x_tab, x_col, x_row, x_source, x_format);
       break;
    case HIST_CHANGE    :
-      if (strlen (s_hist [s_chist].after ) <= 5)  strlcpy (x_source, "", LEN_RECD);
-      else                                        strlcpy (x_source, s_hist [s_chist].after  + 5, LEN_RECD);
+      if (strlen (s_hist [s_chist].after ) <= 6)  strlcpy (x_source, "", LEN_RECD);
+      else                                        strlcpy (x_source, s_hist [s_chist].after  + 7, LEN_RECD);
       CELL_change  (NULL, HIST_NONE, x_tab, x_col, x_row, x_source);
       strldchg (x_source, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       break;
@@ -593,20 +610,20 @@ HIST__unit         (char *a_question, int a_ref)
       if      (s_chist <  0    )  snprintf (unit_answer, LEN_FULL, "HIST count       : n=%4d, c=%4d, n/a", s_nhist, s_chist);
       else                        snprintf (unit_answer, LEN_FULL, "HIST count       : n=%4d, c=%4d, %c" , s_nhist, s_chist, s_hist[s_chist].act);
    } else if (strcmp (a_question, "entry"     )    == 0) {
-      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST entry       : %4d too small", a_ref);
-      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST entry       : %4d too large", a_ref);
+      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : too small", a_ref);
+      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : too large", a_ref);
       else {
-         rc = str2gyges (s_hist [s_chist].addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
-         snprintf (unit_answer, LEN_FULL, "HIST entry       : %4d, t=%4d, c=%4d, r=%4d, %c", a_ref, x_tab, x_col, x_row, s_hist[a_ref].act);
+         rc = str2gyges (s_hist [a_ref].addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+         snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : %-8.8s, %2dt, %3dc, %3dr, %s", a_ref, s_hist[a_ref].addr, x_tab, x_col, x_row, HIST__action (s_hist[a_ref].act));
       }
    } else if (strcmp (a_question, "before"    )    == 0) {
-      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST before      : %4d too small", a_ref);
-      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST before      : %4d too large", a_ref);
-      else                        snprintf (unit_answer, LEN_FULL, "HIST before      : %4d :%s:", a_ref, s_hist[a_ref].before);
+      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST before (%2d) : too small", a_ref);
+      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST before (%2d) : too large", a_ref);
+      else                        snprintf (unit_answer, LEN_FULL, "HIST before (%2d) : :%s:", a_ref, s_hist[a_ref].before);
    } else if (strcmp (a_question, "after"     )    == 0) {
-      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST after       : %4d too small", a_ref);
-      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST after       : %4d too large", a_ref);
-      else                        snprintf (unit_answer, LEN_FULL, "HIST after       : %4d :%s:", a_ref, s_hist[a_ref].after);
+      if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST after  (%2d) : too small", a_ref);
+      else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST after  (%2d) : too large", a_ref);
+      else                        snprintf (unit_answer, LEN_FULL, "HIST after  (%2d) : :%s:", a_ref, s_hist[a_ref].after);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

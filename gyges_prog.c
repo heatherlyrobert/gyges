@@ -92,8 +92,10 @@ PROG_init          (int a_argc, char *a_argv[])
 {
    char        rc          =    0;
    /*---(log header)---------------------*/
-   DEBUG_PROG   yLOG_info     ("purpose" , "light, clean, vim-ish, technical, and wicked spreadsheet");
-   DEBUG_PROG   yLOG_info     ("namesake", "ugly, impossibly powerful, one-hundred handed, fifty headed, primeval giant");
+   DEBUG_PROG   yLOG_info     ("purpose" , P_PURPOSE);
+   DEBUG_PROG   yLOG_info     ("namesake", P_NAMESAKE);
+   DEBUG_PROG   yLOG_info     ("heritage", P_HERITAGE);
+   DEBUG_PROG   yLOG_info     ("imagery" , P_IMAGERY);
    DEBUG_PROG   yLOG_info     ("gyges"   , PROG_version    ());
    DEBUG_PROG   yLOG_info     ("yURG"    , yURG_version    ());
    DEBUG_PROG   yLOG_info     ("ySTR"    , ySTR_version    ());
@@ -390,9 +392,10 @@ char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/
 PROG__unitloud      (void)
 {
    int         x_argc      = 9;
-   char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@ystr", "@@ycalc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
+   char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@ystr", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
    yURG_logger (x_argc, x_args);
    yURG_name   ("tops", YURG_ON);
+   yURG_name   ("cell", YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

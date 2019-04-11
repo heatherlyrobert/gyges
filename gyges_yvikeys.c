@@ -501,7 +501,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       strcpy (x_source, a_cell->source);
    }
    DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-   sprintf (x_bformat, "%c%c%c", a_cell->format, a_cell->decs, a_cell->align);
+   sprintf (x_bformat, "%c %c %c %c -", a_cell->align, a_cell->format, a_cell->decs, a_cell->unit);
    DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
    if (a_1st == 'y')  x_copy = CELL_overwrite (HIST_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (HIST_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
@@ -550,7 +550,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
             rc = yRPN_addr_provide (x_provider->source, a_pros, a_zoff, a_xoff, a_yoff, 0, a_cell->label, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-            sprintf (x_bformat, "%c%c%c", x_provider->format, x_provider->decs, x_provider->align);
+            sprintf (x_bformat, "%c %c %c %c -", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
             DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
             CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
          }
