@@ -223,6 +223,8 @@ PROG_begin         (void)
    yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, api_yvikeys_locator, api_yvikeys_addressor);
    yVIKEYS_bufs_config   (TAB_switch_char);
    yVIKEYS_hist_config   (HIST_undo, HIST_redo);
+   HIST_init ();
+   yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -236,7 +238,6 @@ PROG_final         (void)
    /*> INPT_main         ();                                                          <*/
    /*> CURS_screen_reset ();                                                          <*/
    yCALC_calculate   ();
-   HIST_init ();
    /*---(status options)-----------------*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
    /*> yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );   <*/
@@ -248,7 +249,6 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
    yVIKEYS_cmds_direct (":read");
    yVIKEYS_map_refresh ();
    yVIKEYS_cmds_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );

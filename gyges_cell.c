@@ -701,7 +701,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
    /*---(history)------------------------*/
-   if (a_source [0] == NULL)        HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
+   if (a_source == NULL)            HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
    else if (a_source [0] == '\0')   HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
    else                             HIST_change  (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat, a_source);
    /*---(update)-------------------------*/
@@ -786,7 +786,7 @@ PRIV void  o___FORMATTING______o () { return; }
 char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.106.!]-*/ /*-[--.---.---.--]-*/
 CELL_erase         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 {
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
+   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
    CELL_change (NULL, a_mode, a_curr->tab, a_curr->col, a_curr->row, "");
    return 0;
 }
@@ -802,7 +802,7 @@ CELL_units         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_unit)
    /*---(defenses)-----------------------*/
    if (a_head == NULL || a_curr == NULL)    return  0;
    /*---(prepare)------------------------*/
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
+   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
    HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->unit, a_unit);
    a_curr->unit = a_unit;
    /*---(complete)-----------------------*/
@@ -818,17 +818,17 @@ CELL_format        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
     *  down and flexibility up.  if there is no cell, simply move on.
     */
    /*---(defenses)-----------------------*/
-   if (a_head == NULL || a_curr == NULL)    return  0;
+   if (a_head == NULL || a_curr == NULL)        return  0;
    if (a_curr->align == '+')                    return  0;
    if (a_format  == '"')  a_format = a_curr->format;
    /*---(prepare)------------------------*/
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
+   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
    if      (strchr (YCALC_GROUP_STR , a_curr->type) != 0) {
-      if (str9filler (a_format) < 0)  return -1;
+      if (str9filler (a_format) < 0)  return 0;
       HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
       a_curr->format = a_format;
    } else if (strchr (YCALC_GROUP_NUM , a_curr->type) != 0) {
-      if (str9format (a_format) < 0)  return -2;
+      if (str9format (a_format) < 0)  return 0;
       HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
       a_curr->format = a_format;
    }
@@ -843,9 +843,9 @@ CELL_align         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_align)
    if (a_head == NULL || a_curr == NULL)    return  0;
    if (a_curr->align == '+')                    return  0;
    if (a_align   == '"')  a_align = a_curr->align;
-   if (str9align (a_align) < 0)             return -1;
+   if (str9align (a_align) < 0)             return 0;
    /*---(process all cells in range)-----*/
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
+   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
    HIST_align  (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->align, a_align);
    a_curr->align = a_align;
    /*---(complete)---------------------------*/
@@ -865,9 +865,10 @@ CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    if      (x_decs <  '0')  x_decs = '0';
    else if (x_decs >  '9')  x_decs = '9';
    /*---(update)-----------------------*/
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
-   HIST_decimals (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->decs, x_decs);
-   a_curr->decs = x_decs;
+   if (strchr (YCALC_GROUP_NUM , a_curr->type) != 0) {
+      HIST_decimals (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->decs, x_decs);
+      a_curr->decs = x_decs;
+   }
    /*---(complete)---------------------------*/
    return 0;
 }
@@ -933,6 +934,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
             return 0;
          }
          /*---(done)------------------------*/
+         a_mode = HIST_ADD;
          api_ycalc_printer (x_next);
       }
       /*---(get next)--------------------*/
@@ -1010,7 +1012,7 @@ CELL_reader          (void)
    strldchg (x_source, G_CHAR_STORAGE, G_KEY_SPACE, LEN_RECD);
    DEBUG_INPT   yLOG_info    ("source"    , x_source);
    /*---(update)-------------------------*/
-   x_new = CELL_overwrite (CHG_NOHIST, x_tab, x_col, x_row, x_source, x_format);
+   x_new = CELL_overwrite (HIST_NONE, x_tab, x_col, x_row, x_source, x_format);
    DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);

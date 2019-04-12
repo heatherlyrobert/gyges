@@ -111,7 +111,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change first cell to a simple cell reference formula         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11"                                     i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11"                                     i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 #
 #   COND       v21  check cell sources (0d11 now there, and null 0e11)           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -152,7 +152,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  put a value in the second cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 4, 10, "20"                                       i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 4, 10, "20"                                       i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 #
 #   COND       v21  check cell sources (changes 0e11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -193,7 +193,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change the value in second cell                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 4, 10, "100"                                      i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 4, 10, "100"                                      i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 #
 #   COND       v21  check cell sources (changes 0e11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -234,7 +234,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change the formula in the first cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+12"                                  i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11+12"                                  i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   3, num=   2, fore=   2, back=   2            
 #
 #   COND       v21  check cell sources (changes 0d11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -262,7 +262,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's information         CELL__unitnew         "cell_info"      , "1g11"                                               s_equal     s_celln info     : --- --- --- --- ----- ----- -----                   
 #
 #   COND       v21  delete the first cell (with the formula)                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  delete cell                          CELL_delete           CHG_INPUT,  0, 3, 10                                                    i_equal     0                                                                      
+#     exec     v21  delete cell                          CELL_delete           HIST_BEG ,  0, 3, 10                                                    i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   2, num=   1, fore=   1, back=   1            
 #
 #   COND       v21  check cell sources (changes 0d11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.039))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -303,7 +303,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  add a formula to the first cell again)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11*f11"                                 i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11*f11"                                 i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0d11, adds 0f11)                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -344,7 +344,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  put a value in the third cell                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 5, 10, "5"                                        i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 5, 10, "5"                                        i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0e11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -385,7 +385,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change the formula in the first cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.056))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+f11"                                 i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11+f11"                                 i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0d11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.057))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -426,7 +426,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  delete the third cell (required by first, so just cleared)   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.062))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  delete cell                          CELL_delete           CHG_INPUT,  0, 5, 10                                                    i_equal     0                                                                      
+#     exec     v21  delete cell                          CELL_delete           HIST_BEG ,  0, 5, 10                                                    i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0f11 only)                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.063))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -467,11 +467,11 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change the value in third cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.068))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 5, 10, "5"                                        i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 5, 10, "5"                                        i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  change the formula, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.069))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11/f11"                                 i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11/f11"                                 i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0f11 and 0d11)                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.070))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -512,7 +512,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change the value in third cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.075))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 5, 10, "35"                                       i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 5, 10, "35"                                       i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0f11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.076))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -553,7 +553,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  change the formula, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.081))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+f11+e11"                             i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11+f11+e11"                             i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   4, num=   3, fore=   3, back=   3            
 #
 #   COND       v21  check cell sources (changes 0d11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.082))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -594,7 +594,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : ----- ( 0) -                                        
 #
 #   COND       v21  make formula include forth cell (second sheet)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.087))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, "=e11+f11+(e11*1g11)"                      i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, "=e11+f11+(e11*1g11)"                      i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   5, num=   4, fore=   4, back=   4            
 #
 #   COND       v21  check cell sources (changes 0d11 and adds 1g11)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.088))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -635,7 +635,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : 1g11  ( 1) ,0d11,                                   
 #
 #   COND       v21  change the value in the forth cell                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.093))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  1, 6, 10, "40"                                       i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  1, 6, 10, "40"                                       i_equal     0                                                                      
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   5, num=   4, fore=   4, back=   4            
 #
 #   COND       v21  check cell sources (changes 1g11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.094))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -676,7 +676,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : 1g11  ( 1) ,0d11,                                   
 #
 #   COND       v21  clear the formula (and kills all dependencies)               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.099))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 3, 10, ""                                         i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 3, 10, ""                                         i_equal     0                                                                      
 #
 #   COND       v21  check cell sources (changes 1g11)                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.100))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0d11"                                               s_equal     s_celln source   : (   0) ::                                           
@@ -736,8 +736,8 @@ PREP          v21  include the prototype headers                              
 #     code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
 #
 #   COND       v21  add first couple cells                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10, 10, "test"                                     i_equal     0                                                                      
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "first"                                    i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 10, 10, "test"                                     i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 11, 10, "first"                                    i_equal     0                                                                      
 #     exec     v21  add a cell                           CELL__create          &x_1st , 0, 12, 10                                                      i_equal     0                                                                      
 #
 #   COND       v21  check cell sources (initial setting)                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -753,8 +753,8 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  add next couple cells                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12, 10, "second"                                   i_equal     0                                                                      
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 13, 10, "a_longer_one_in_here"                     i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 12, 10, "second"                                   i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 13, 10, "a_longer_one_in_here"                     i_equal     0                                                                      
 #
 #   COND       v21  check cell sources (0m11 and 0n11 updated)                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (   4) :test:                                       
@@ -770,7 +770,7 @@ PREP          v21  include the prototype headers                              
 #
 #   COND       v21  select and widen the first cell                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'N'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'N'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  12) :test        :                               
@@ -779,7 +779,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (   8) :a_long> :                                   
 #
 #   COND       v21  set back to normal                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'n'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'n'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (   8) :test    :                                   
@@ -788,7 +788,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (   8) :a_long> :                                   
 #
 #   COND       v21  widen to wide-normal                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'w'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'w'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  20) :test                :                       
@@ -800,7 +800,7 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  set the current cell                 LOC_jump              0, 13, 10                                                               i_equal     0                                                                      
 #
 #   COND       v21  widen to extra-wide                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'W'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'W'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0n11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  20) :test                :                       
@@ -812,7 +812,7 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  set the current cell                 LOC_jump              0, 12, 10                                                               i_equal     0                                                                      
 #
 #   COND       v21  narrow to minimum                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'm'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'm'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0m11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  20) :test                :                       
@@ -824,7 +824,7 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 #
 #   COND       v21  narrow by one                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'h'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'h'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  19) :test               :                        
@@ -833,7 +833,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  narrow by big-one                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'H'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'H'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  15) :test           :                            
@@ -842,7 +842,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by one                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'l'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'l'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  16) :test            :                           
@@ -851,7 +851,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  narrow by big-one                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'H'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'H'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  15) :test           :                            
@@ -860,7 +860,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by big-one                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'L'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'L'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  20) :test                :                       
@@ -869,8 +869,8 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by one twice                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'l'                                                          i_equal     0                                                                      
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'l'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'l'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'l'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  22) :test                  :                     
@@ -879,7 +879,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by big-one                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'L'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'L'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  25) :test                     :                  
@@ -888,7 +888,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by big-one, again                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'L'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'L'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  30) :test                          :             
@@ -897,7 +897,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  go to exactly 17                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.039))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, -17                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , -17                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (only 0k11 updated)                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.040))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  17) :test             :                          
@@ -911,7 +911,7 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     1                                                                      
 #
 #   COND       v21  enlarge by one                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.042))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'l'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'l'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (0k11 and 0l11 updated)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  18) :test              :                         
@@ -920,7 +920,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by another one                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'l'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'l'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (0k11 and 0l11 updated)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  19) :test               :                        
@@ -929,7 +929,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  enlarge by big one                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.046))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'L'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'L'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (0k11 and 0l11 updated)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.047))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  20) :test                :                       
@@ -943,7 +943,7 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  check if selection is live           VISU_islive                                                                                   i_equal     1                                                                      
 #
 #   COND       v21  set to normal                                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.049))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the width                     CELL_width            CHG_INPUT, 'n'                                                          i_equal     0                                                                      
+#     exec     v21  change the width                     CELL_width            HIST_BEG , 'n'                                                          i_equal     0                                                                      
 #
 #   COND       v21  check cell printables (0l11 and 0m11 updated)                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0k11"                                               s_equal     s_celln print    : (  20) :test                :                       
@@ -986,7 +986,7 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 #
 #   COND       v21  get small amount of text in the cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "test"                                     i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "test"                                     i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (    4) :%-.40s:", "test");                                                                                                
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
@@ -994,72 +994,72 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (   8) :test    :                                   
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (   8) :   test :                                   
 #
 #   COND       v21  format to the center                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '|'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '|'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (   8) :  test  :                                   
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (   8) :test    :                                   
 #
 #   COND       v21  format to the center, again                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '|'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '|'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (   8) :  test  :                                   
 #
 #   COND       v21  widen cell for better testing                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_width            CHG_INPUT, 'N'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_width            HIST_BEG , 'N'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :    test    :                               
 #
 #   COND       v21  format with a dash fill                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, '-'                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , '-'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :----test--- :                               
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=< c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :test------- :                               
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :-------test :                               
 #
 #   COND       v21  format to the center, again                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '|'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '|'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :----test--- :                               
 #
 #   COND       v21  format with a underscore fill                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, '_'                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , '_'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=_ d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :____test___ :                               
 #
 #   COND       v21  format with a equal sign fill                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, '='                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , '='                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :====test=== :                               
 #
 #   COND       v21  format with a dash fill, again                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, '-'                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , '-'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :----test--- :                               
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :-------test :                               
 #
 #   COND       v21  get a empty string in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, ""                                         i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, ""                                         i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   0, "");                                                                                                 
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=- d=0 a=? c=  0 r=  0 d=  0                   
@@ -1067,13 +1067,13 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :          - :                               
 #
 #   COND       v21  format with a empty fill                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, ' '                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , ' '                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=- f=- d=0 a=? c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :          - :                               
 #
 #   COND       v21  get a longer value in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT,  0, 10, 10, "testing"                                 i_equal     0                                                                      
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, ' '                                                          i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG ,  0, 10, 10, "testing"                                 i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , ' '                                                          i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   7, "testing");                                                                                          
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0                   
@@ -1081,42 +1081,42 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :testing     :                               
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :    testing :                               
 #
 #   COND       v21  format to the center                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '|'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '|'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :  testing   :                               
 #
 #   COND       v21  format with dash fill                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '.'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '.'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :..testing.. :                               
 #
 #   COND       v21  format with numeric format                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'f'                                                          i_lesser    0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'f'                                                          i_lesser    0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :..testing.. :                               
 #
 #   COND       v21  format with numeric format                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, ','                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , ','                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :..testing.. :                               
 #
 #   COND       v21  format with numeric format                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'x'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'x'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=. d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :..testing.. :                               
 #
 #   COND       v21  format with dash fill, again                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '-'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '-'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :--testing-- :                               
 #
 #   COND       v21  get a almost max length string in cell                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "eleventeen"                               i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "eleventeen"                               i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  10, "eleventeen");                                                                                       
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=| c=  0 r=  0 d=  0                   
@@ -1124,22 +1124,22 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :-eleventeen :                               
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=< c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeen- :                               
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=- d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :-eleventeen :                               
 #
 #   COND       v21  format with a empty fill                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, ' '                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , ' '                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) : eleventeen :                               
 #
 #   COND       v21  get a longer value in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "eleventeeny"                              i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "eleventeeny"                              i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  11, "eleventeeny");                                                                                      
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0                   
@@ -1147,27 +1147,27 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeeny :                               
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeeny :                               
 #
 #   COND       v21  format to the center                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '|'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '|'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeeny :                               
 #
 #   COND       v21  format with equal sign fill                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '='                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '='                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeeny :                               
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=< c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :eleventeeny :                               
 #
 #   COND       v21  get a over long string in the cell                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.038))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "supercalafragalistic"                     i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "supercalafragalistic"                     i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  20, "supercalafragalistic");                                                                             
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=< c=  0 r=  0 d=  0                   
@@ -1175,22 +1175,22 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :supercalaf> :                               
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.039))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :<ragalistic :                               
 #
 #   COND       v21  format to the center                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.040))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '|'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '|'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :<calafraga> :                               
 #
 #   COND       v21  format with a empty fill                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.041))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the formatting                CELL_format           CHG_INPUT, ' '                                                          i_equal     0                                                                      
+#     exec     v21  change the formatting                CELL_format           HIST_BEG , ' '                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=| c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :<calafraga> :                               
 #
 #   COND       v21  get a over long string with spaces                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.042))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "super alaf agal stic"                     i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "super alaf agal stic"                     i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  20, "super alaf agal stic");                                                                             
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=| c=  0 r=  0 d=  0                   
@@ -1198,57 +1198,57 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :< alaf aga> :                               
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.043))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=< c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :super alaf> :                               
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.044))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :< agal stic :                               
 #
 #   COND       v21  make cell even wider                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_width            CHG_INPUT, 'w'                                                          i_equal     0                                                                      
-#     exec     v21  change the alignment                 CELL_width            CHG_INPUT, 'L'                                                          i_equal     0                                                                      
-#     exec     v21  change the alignment                 CELL_width            CHG_INPUT, 'L'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_width            HIST_BEG , 'w'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_width            HIST_BEG , 'L'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_width            HIST_BEG , 'L'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=  d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :         super alaf agal stic :             
 #
 #   COND       v21  use equal sign filler                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.046))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '='                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '='                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :=========super alaf agal stic :             
 #
 #   COND       v21  try left with bracket alignment                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.047))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '['                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '['                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=[ c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[super alaf agal stic========]:             
 #
 #   COND       v21  put a medium size string in the cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.048))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "super calaf"                              i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "super calaf"                              i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  11, "super calaf");                                                                                      
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f== d=0 a=[ c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[super calaf=================]:             
 #
 #   COND       v21  switch to righ bracket alignment                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.049))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, ']'                                                          i_equal     0                                                                      
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '_'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , ']'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '_'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=_ d=0 a=] c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[_________________super calaf]:             
 #
 #   COND       v21  switch to left brace alignment                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.050))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '{'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '{'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=_ d=0 a={ c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[__super calaf_______________]:             
 #
 #   COND       v21  switch to right brace alignment                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '}'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '}'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=_ d=0 a=} c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[_______________super calaf__]:             
 #
 #   COND       v21  try to force real/float format                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.052))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'r'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'r'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=_ d=0 a=} c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[_______________super calaf__]:             
 #
@@ -1277,7 +1277,7 @@ PREP          v21  include the prototype headers                              
 #     code     v21  create a custom expect string        - - - - - - - - - -   char custom[2000];                                                                                                                                             
 #
 #   COND       v21  add a long cell                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 10, 10, "testing one, two, three"                  i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 10, 10, "testing one, two, three"                  i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1298,7 +1298,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  add a merge marker on next cell                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "<"                                        i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 11, 10, "<"                                        i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1319,7 +1319,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  take away merge marker, add other content                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "NOPE"                                     i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 11, 10, "NOPE"                                     i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1340,7 +1340,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  add a merge marker on a further cell                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 12, 10, "<"                                        i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 12, 10, "<"                                        i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1361,7 +1361,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  blank out the middle cell                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change cell to empty                 CELL_change           NULL , CHG_INPUT, 0, 11, 10, ""                                         i_equal     0                                                                      
+#     exec     v21  change cell to empty                 CELL_change           NULL , HIST_BEG , 0, 11, 10, ""                                         i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1382,7 +1382,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  change middle cell to merge marker                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  add a cell                           CELL_change           NULL , CHG_INPUT, 0, 11, 10, "<"                                        i_equal     0                                                                      
+#     exec     v21  add a cell                           CELL_change           NULL , HIST_BEG , 0, 11, 10, "<"                                        i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1403,7 +1403,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  delete the last cell                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change cell to empty                 CELL_delete           CHG_INPUT, 0, 12, 10                                                    i_equal     0                                                                      
+#     exec     v21  change cell to empty                 CELL_delete           HIST_BEG , 0, 12, 10                                                    i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (  23) :testing one, two, three:                    
@@ -1424,7 +1424,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  delete the source                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change cell to empty                 CELL_delete           CHG_INPUT, 0, 10, 10                                                    i_equal     0                                                                      
+#     exec     v21  change cell to empty                 CELL_delete           HIST_BEG , 0, 10, 10                                                    i_equal     0                                                                      
 #
 #   COND       v21  check cell sources                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_source"    , "0k11"                                               s_equal     s_celln source   : (----) ::                                           
@@ -1479,129 +1479,129 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 #
 #   COND       v21  get a solid number in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "54321.6789"                               i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "54321.6789"                               i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",  10, "54321.6789");                                                                                       
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's value               PROG__unit         "cell_value",    x_one                                                  s_equal     Cell Value       :       54321.678900                                  
 #
 #   COND       v21  widen cell for better testing                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_width            CHG_INPUT, 'N'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_width            HIST_BEG , 'N'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=? d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 #
 #   COND       v21  format to as a comma                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, ','                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , ','                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :     54,322 :                               
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :     54,322 :                               
 #
 #   COND       v21  change to accounting format                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'a'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'a'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=a d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :    54,322  :                               
 #
 #   COND       v21  change to currency format                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '$'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '$'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=$ d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :   $54,322  :                               
 #
 #   COND       v21  change to float format                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'r'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'r'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=r d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 #
 #   COND       v21  change to comma format                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, ','                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , ','                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :     54,322 :                               
 #
 #   COND       v21  change to a decimal                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '1'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '1'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=1 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :   54,321.7 :                               
 #
 #   COND       v21  change to two decimals                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '2'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '2'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=2 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :  54,321.68 :                               
 #
 #   COND       v21  change to three decimals                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '3'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '3'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=3 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) : 54,321.679 :                               
 #
 #   COND       v21  change to four decimals                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '4'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '4'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=4 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :54,321.6789 :                               
 #
 #   COND       v21  change to five decimals                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '5'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '5'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=5 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :<,321.67890 :                               
 #
 #   COND       v21  change to four decimals                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '4'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '4'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=4 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :54,321.6789 :                               
 #
 #   COND       v21  change to three decimals                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '3'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '3'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=3 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) : 54,321.679 :                               
 #
 #   COND       v21  change to no decimals                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '0'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '0'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :     54,322 :                               
 #
 #   COND       v21  change to four decimals                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '4'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '4'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=4 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :54,321.6789 :                               
 #
 #   COND       v21  change to integer format (but four dec spacing)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'i'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'i'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=4 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) : 54322      :                               
 #
 #   COND       v21  change to comma format                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, ','                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , ','                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=4 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :54,321.6789 :                               
 #
 #   COND       v21  change to no decimals                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.024))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the decimals                  CELL_decimals         CHG_INPUT, '0'                                                          i_equal     0                                                                      
+#     exec     v21  change the decimals                  CELL_decimals         HIST_BEG , '0'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=, d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :     54,322 :                               
 #
 #   COND       v21  change to integer format                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'i'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'i'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 #
 #   COND       v21  change filler type                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '-'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '-'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 #
 #   COND       v21  change another filler                                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, '.'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , '.'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 #
 #   COND       v21  change to an illegal format                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'Q'                                                          i_lesser    0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'Q'                                                          i_lesser    0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :      54322 :                               
 #
 #   COND       v21  get a small number in the cell                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "21"                                       i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "21"                                       i_equal     0                                                                      
 #     code     v21  create a custom expect string        - - - - - - - - - -   sprintf(CUSTOM, "Cell Source      : (%5d) :%-.40s:",   2, "21");                                                                                               
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     [[ CUSTOM ]]                                                           
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=i d=0 a=> c=  0 r=  0 d=  0                   
@@ -1609,7 +1609,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :         21 :                               
 #
 #   COND       v21  change to bullet format                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the format                    CELL_format           CHG_INPUT, 'p'                                                          i_equal     0                                                                      
+#     exec     v21  change the format                    CELL_format           HIST_BEG , 'p'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=n f=p d=0 a=> c=  0 r=  0 d=  0                   
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :        21) :                               
 #
@@ -1648,47 +1648,47 @@ PREP          v21  include the prototype headers                              
 #     exec     v21  set the current cell                 LOC_jump              0, 10, 10                                                               i_equal     0                                                                      
 #
 #   COND       v21  add some contents                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the source string             CELL_change           NULL , CHG_INPUT, 0, 10, 10, "test"                                     i_equal     0                                                                      
+#     exec     v21  change the source string             CELL_change           NULL , HIST_BEG , 0, 10, 10, "test"                                     i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to the right                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '>'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '>'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to with an illegal lower case letter                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, 'a'                                                          i_not       0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , 'a'                                                          i_not       0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to with an illegal upper case letter                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, 'X'                                                          i_not       0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , 'X'                                                          i_not       0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to with a space                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, ' '                                                          i_not       0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , ' '                                                          i_not       0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=> c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to the left decimal                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '['                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '['                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=[ c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to the right decimal                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, ']'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , ']'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=] c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to with a number                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.012))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '3'                                                          i_not       0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '3'                                                          i_not       0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=] c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to with a fill character                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '='                                                          i_not       0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '='                                                          i_not       0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=] c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to the center decimal                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '^'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '^'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=^ c=  0 r=  0 d=  0                   
 #
 #   COND       v21  format to the left                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.015))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  change the alignment                 CELL_align            CHG_INPUT, '<'                                                          i_equal     0                                                                      
+#     exec     v21  change the alignment                 CELL_align            HIST_BEG , '<'                                                          i_equal     0                                                                      
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  

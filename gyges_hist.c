@@ -53,6 +53,7 @@ int         s_hist_nact =    0;
 
 char       *s_nothing   = "´´´´´";
 char       *s_default   = "??0--";
+char        s_action    [LEN_LABEL];
 
 
 /*====================------------------------------------====================*/
@@ -88,16 +89,22 @@ HIST_init          (void)
 }
 
 char*
-HIST__action        (char a_act)
+HIST__action        (char a_mode, char a_act)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
+   int         j           = 0;
+   strcpy (s_action, "n/f");
    for (i = 0; i < s_hist_nact; ++i) {
       if (s_hist_acts [i].act == 0)      break;
       if (s_hist_acts [i].act != a_act)  continue;
-      return s_hist_acts [i].name;
+      strcpy (s_action, s_hist_acts [i].name);
+      if (a_mode == HIST_ADD) {
+         for (j = 0; s_action [j] != '\0'; ++j)  s_action [j] = toupper (s_action [j]);
+      }
+      break;
    }
-   return "n/f";
+   return s_action;
 }
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
@@ -117,9 +124,20 @@ HIST_single        (char a_mode, char a_type, int a_tab, int a_col, int a_row, c
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_HIST  yLOG_char    ("a_mode"    , a_mode);
+   DEBUG_HIST  yLOG_char    ("a_type"    , a_type);
+   DEBUG_HIST  yLOG_char    ("active"    , hist_active);
    /*---(internal)-----------------------*/
-   if (hist_active != 'y')        return 0;
-   if (a_mode      == HIST_NONE)  return 0;
+   if (hist_active != 'y') {
+      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_mode      == HIST_NONE) {
+      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(update pointers)----------------*/
    ++s_chist;
    s_nhist = s_chist + 1;
@@ -143,6 +161,7 @@ HIST_single        (char a_mode, char a_type, int a_tab, int a_col, int a_row, c
    /*---(debugging)----------------------*/
    HIST_debug ();
    /*---(complete)-----------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -154,6 +173,8 @@ HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF
    char        x_label     [LEN_LABEL];
    char        x           [LEN_RECD];
    int         i           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(make label)---------------------*/
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    if (rc < 0)  return rc;
@@ -169,9 +190,11 @@ HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF
       s_hist [s_chist].after [2] = x [2];
       s_hist [s_chist].after [3] = x [3];
       s_hist [s_chist].after [4] = x [4];
+      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exitr   (__FUNCTION__, -1);
    return -1;
 } 
 
@@ -183,20 +206,26 @@ HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    char        x           [LEN_RECD];
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(formatting)---------------------*/
    if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
    else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
    else                                   sprintf (x, "%s", a_beforeF);
+   DEBUG_HIST  yLOG_info    ("x"         , x);
    /*---(content change)-----------------*/
    if      (a_before  == NULL)            sprintf (s, "%s"    , s_nothing);
    else if (strcmp (a_before , "") == 0)  sprintf (s, "%s"    , s_nothing);
    else                                   sprintf (s, "%s··%s", x, a_before);
+   DEBUG_HIST  yLOG_info    ("s"         , s);
    if      (a_after   == NULL)            sprintf (t, "%s"    , s_nothing);
-   else if (strcmp (a_after  , "") == 0)  sprintf (s, "%s"    , s_nothing);
+   else if (strcmp (a_after  , "") == 0)  sprintf (t, "%s"    , s_nothing);
    else                                   sprintf (t, "%s··%s", s_default, a_after);
+   DEBUG_HIST  yLOG_info    ("t"         , t);
    /*---(add record)---------------------*/
    rc = HIST_single (a_mode, HIST_CHANGE, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -208,6 +237,8 @@ HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    char        x           [LEN_RECD];
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)---------------------*/
    if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
    else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
@@ -218,6 +249,7 @@ HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    sprintf (t, "´´´´´");
    rc = HIST_single (a_mode, HIST_DELETE, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -229,6 +261,8 @@ HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    char        x           [LEN_RECD];
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)---------------------*/
    if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
    else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
@@ -239,6 +273,7 @@ HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    sprintf (t, "´´´´´");
    rc = HIST_single (a_mode, HIST_CLEAR, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -249,11 +284,14 @@ HIST_decimals      (char a_mode, int a_tab, int a_col, int a_row, char a_before,
    char        rc          =    0;
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)------------------*/
    sprintf (s, "%c", a_before);
    sprintf (t, "%c", a_after );
    rc = HIST_single (a_mode, HIST_DECIMALS, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -264,11 +302,14 @@ HIST_align         (char a_mode, int a_tab, int a_col, int a_row, char a_before,
    char        rc          =    0;
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)------------------*/
    sprintf (s, "%c", a_before);
    sprintf (t, "%c", a_after );
    rc = HIST_single (a_mode, HIST_ALIGN, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -279,11 +320,14 @@ HIST_format        (char a_mode, int a_tab, int a_col, int a_row, char a_before,
    char        rc          =    0;
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)------------------*/
    sprintf (s, "%c", a_before);
    sprintf (t, "%c", a_after );
    rc = HIST_single (a_mode, HIST_FORMAT, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -294,11 +338,14 @@ HIST_width         (char a_mode, int a_tab, int a_col, int a_row, int a_before, 
    char        rc          =    0;
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)------------------*/
    sprintf (s, "%d", a_before);
    sprintf (t, "%d", a_after );
    rc = HIST_single (a_mode, HIST_WIDTH, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -309,11 +356,14 @@ HIST_height        (char a_mode, int a_tab, int a_col, int a_row, int a_before, 
    char        rc          =    0;
    char        s           [LEN_RECD];
    char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)------------------*/
    sprintf (s, "%d", a_before);
    sprintf (t, "%d", a_after );
    rc = HIST_single (a_mode, HIST_HEIGHT, a_tab, a_col, a_row, s, t);
    /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -582,7 +632,7 @@ HIST_list          (void)
       if (i % 5 == 0)  fprintf (x_file, "\n-ref- § mod § nkey § ---action----- § ---addr--- § ---before----------------------------------------- § ---after------------------------------------------ §\n");
       fprintf (x_file, "%-5d §  %c  § %-4d § %c.%-12.12s § %-10.10s § %-50.50s § %-50.50s §\n",
             i                , s_hist [i].mode  , s_hist [i].nkey  ,
-            s_hist [i].act   , HIST__action (s_hist [i].act),
+            s_hist [i].act   , HIST__action (s_hist [i].mode, s_hist [i].act),
             s_hist [i].addr  , s_hist [i].before, s_hist [i].after );
    }
    fprintf (x_file, "\ndone\n");
@@ -614,7 +664,7 @@ HIST__unit         (char *a_question, int a_ref)
       else if (a_ref >= s_nhist)  snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : too large", a_ref);
       else {
          rc = str2gyges (s_hist [a_ref].addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
-         snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : %-8.8s, %2dt, %3dc, %3dr, %s", a_ref, s_hist[a_ref].addr, x_tab, x_col, x_row, HIST__action (s_hist[a_ref].act));
+         snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : %-8.8s, %2dt, %3dc, %3dr, %c %s", a_ref, s_hist[a_ref].addr, x_tab, x_col, x_row, s_hist[a_ref].mode, HIST__action (s_hist[a_ref].mode, s_hist[a_ref].act));
       }
    } else if (strcmp (a_question, "before"    )    == 0) {
       if      (a_ref <  0    )    snprintf (unit_answer, LEN_FULL, "HIST before (%2d) : too small", a_ref);

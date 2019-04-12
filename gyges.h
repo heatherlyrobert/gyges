@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4j"
-#define     P_VERTXT    "updated history to include full formatting and unit tested 01-02"
+#define     P_VERNUM    "3.4k"
+#define     P_VERTXT    "updated history unit tested 03 to handle visual/multiples"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1462,15 +1462,9 @@ char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
 char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
 
 
+#define     HIST_NONE          'x'
 #define     HIST_BEG           'y'
 #define     HIST_ADD           '-'
-#define     HIST_NONE          'x'
-
-#define     CHG_INPUT          'i'
-#define     CHG_INPUTAND       'A'
-#define     CHG_OVER           '#'
-#define     CHG_OVERAND        '&'
-#define     CHG_NOHIST         'x'
 
 
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
