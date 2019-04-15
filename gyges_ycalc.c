@@ -31,6 +31,10 @@ api_ycalc_enabler       (void *a_owner, void *a_deproot)
    /*---(check)--------------------------*/
    DEBUG_APIS   yLOG_spoint  (a_deproot);
    DEBUG_APIS   yLOG_spoint  (x_owner->ycalc);
+   --rce;  if (a_deproot == x_owner->ycalc) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
    --rce;  if (a_deproot != NULL && x_owner->ycalc != NULL) {
       DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
@@ -153,6 +157,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    static char    x_sforce =  '?';
    static char   *x_label  [LEN_LABEL];
    static tCELL  *x_saved  = NULL;
+   static char    x_rc     =    0;
    /*---(header)-------------------------*/
    DEBUG_APIS   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
@@ -166,19 +171,19 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    DEBUG_APIS   yLOG_info    ("a_label"   , a_label);
    /*---(shortcut)-----------------------*/
-   if (strcmp (x_label, a_label) == 0 && a_force == x_sforce) {
-      DEBUG_APIS   yLOG_note    ("short-cut");
-      if (a_owner   != NULL) {
-         *a_owner   = x_saved;
-         DEBUG_APIS   yLOG_point   ("*a_owner"  , *a_owner);
-      }
-      if (a_deproot != NULL) {
-         *a_deproot = x_saved->ycalc;
-         DEBUG_APIS   yLOG_point   ("*a_deproot", *a_deproot);
-      }
-      DEBUG_APIS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
+   /*> if (strcmp (x_label, a_label) == 0 && a_force == x_sforce) {                   <* 
+    *>    DEBUG_APIS   yLOG_note    ("short-cut");                                    <* 
+    *>    if (a_owner   != NULL) {                                                    <* 
+    *>       *a_owner   = x_saved;                                                    <* 
+    *>       DEBUG_APIS   yLOG_point   ("*a_owner"  , *a_owner);                      <* 
+    *>    }                                                                           <* 
+    *>    if (a_deproot != NULL) {                                                    <* 
+    *>       *a_deproot = x_saved->ycalc;                                             <* 
+    *>       DEBUG_APIS   yLOG_point   ("*a_deproot", *a_deproot);                    <* 
+    *>    }                                                                           <* 
+    *>    DEBUG_APIS   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return x_rc;                                                                <* 
+    *> }                                                                              <*/
    /*---(root)---------------------------*/
    if (strcmp ("ROOT", a_label) == 0) {
       if (my.root == NULL) {
@@ -229,12 +234,13 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    /*---(save)---------------------------*/
    DEBUG_APIS   yLOG_complex ("loc_final"  , "%3db, %3dx, %3dy", x_owner->tab, x_owner->col, x_owner->row);
-   if (strcmp ("ROOT", a_label) != 0) {
-      x_sforce = a_force;
-      x_saved  = x_owner;
-      strlcpy (x_label, a_label, LEN_LABEL);
-      DEBUG_APIS   yLOG_point   ("x_saved"   , x_saved);
-   }
+   /*> if (strcmp ("ROOT", a_label) != 0) {                                           <* 
+    *>    x_sforce = a_force;                                                         <* 
+    *>    x_saved  = x_owner;                                                         <* 
+    *>    r_rc     = 0;                                                               <* 
+    *>    strlcpy (x_label, a_label, LEN_LABEL);                                      <* 
+    *>    DEBUG_APIS   yLOG_point   ("x_saved"   , x_saved);                          <* 
+    *> }                                                                              <*/
    /*---(handle normal)------------------*/
    DEBUG_APIS   yLOG_note    ("success");
    if (a_owner   != NULL) {
@@ -256,9 +262,12 @@ api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owne
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
+   /*---(prepare)------------------------*/
+   if (a_owner   != NULL)  *a_owner   = NULL;
+   if (a_deproot != NULL)  *a_deproot = NULL;
    /*---(legal)--------------------------*/
    rc = str4gyges (b, x, y, z, 0, x_label, YSTR_LEGAL);
-   if (rc == 0)  rc = api_ycalc_named (x_label, YCALC_LOOK, a_owner, a_deproot);
+   if (rc == 0)  rc = api_ycalc_named (x_label, a_force, a_owner, a_deproot);
    /*---(complete)-----------------------*/
    return rc;
 }
@@ -493,6 +502,7 @@ api_ycalc_printer       (void *a_owner)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   char        rc          =    0;
    tCELL      *x_owner     = NULL;
    double      x_value     =  0.0;
    char        s           [LEN_RECD];
@@ -501,6 +511,7 @@ api_ycalc_printer       (void *a_owner)
    char        x_len       =    0;
    int         w           =    0;
    int         c           =    0;
+   char        x_type      =  '-';
    /*---(header)-------------------------*/
    DEBUG_APIS   yLOG_enter   (__FUNCTION__);
    DEBUG_APIS   yLOG_point   ("a_owner"   , a_owner);
@@ -515,6 +526,11 @@ api_ycalc_printer       (void *a_owner)
    DEBUG_APIS   yLOG_char    ("decs"      , x_owner->decs);
    DEBUG_APIS   yLOG_char    ("format"    , x_owner->format);
    DEBUG_APIS   yLOG_char    ("align"     , x_owner->align);
+   /*---(reset printing errors)----------*/
+   if (x_owner->type == YCALC_DATA_ERROR && x_owner->print != NULL && strncmp (x_owner->print, "#p/", 3) == 0) {
+      x_type        = x_owner->type;
+      x_owner->type = x_owner->print [9];  /*    #p/ali  (=)  */
+   }
    /*---(get size)-----------------------*/
    api__ycalc_width (x_owner, &w, &c);
    DEBUG_APIS   yLOG_value   ("w"         , w);
@@ -527,58 +543,58 @@ api_ycalc_printer       (void *a_owner)
    if (strchr (YCALC_GROUP_NUM, x_owner->type) != NULL) {
       DEBUG_APIS   yLOG_value   ("value"     , x_owner->v_num);
       x_value = x_owner->v_num;
-      strl4main (x_value, s, x_owner->decs - '0', x_owner->format, x_owner->unit, LEN_RECD);
+      rc = strl4main (x_value, s, x_owner->decs - '0', x_owner->format, x_owner->unit, LEN_RECD);
+      DEBUG_APIS   yLOG_value   ("strl4main" , rc);
       DEBUG_APIS   yLOG_info    ("string"    , s);
-      if (x_owner->align == '?')  strlpad (s, t, '!', '>'       , w - 1);
-      else                    strlpad (s, t, '!', x_owner->align, w - 1);
-      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
-      sprintf (x_out, "%s ", t);
-      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+      if      (rc < 0)                  strcpy (t, s);
+      else if (x_owner->align == '?')   rc = strlpad (s, t, '!', '>', w - 1);
+      else                              rc = strlpad (s, t, '!', x_owner->align, w - 1);
    } else if (strchr (YCALC_GROUP_STR, x_owner->type) != NULL) {
-      if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
-      else                         strlcpy (s, x_owner->source    , LEN_RECD);
+      if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str , LEN_RECD);
+      else                         strlcpy (s, x_owner->source, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
-      if (x_owner->align == '?')  strlpad (s, t, x_owner->format, '<'       , w - 1);
-      else                    strlpad (s, t, x_owner->format, x_owner->align, w - 1);
-      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
-      sprintf (x_out, "%s ", t);
-      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+      if (x_owner->align == '?')  rc = strlpad (s, t, x_owner->format, '<'       , w - 1);
+      else                        rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);
    } else if (strchr (YCALC_GROUP_POINT, x_owner->type) != NULL) {
       strlcpy (s, x_owner->source, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("pointer"   , s);
-      strlpad (s, t, x_owner->format, x_owner->align, w - 1);
-      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
-      sprintf (x_out, "%s ", t);
-      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+      rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);
    } else if (YCALC_DATA_ERROR == x_owner->type) {
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str, LEN_RECD);
       else                         strlcpy (s, "#?/???"      , LEN_RECD);
       DEBUG_APIS   yLOG_info    ("pointer"   , s);
-      strlpad (s, t, '!', '<', w - 1);
-      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
-      sprintf (x_out, "%s ", t);
-      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+      rc = strlpad (s, t, '!', '<', w - 1);
    } else if (x_owner->type == YCALC_DATA_BLANK) {
       strlcpy (s, "-", LEN_RECD);
       DEBUG_APIS   yLOG_info    ("blank"     , s);
-      strlpad (s, t, '!', '>', w - 1);
-      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
-      sprintf (x_out, "%s ", t);
-      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+      rc = strlpad (s, t, '!', '>', w - 1);
    } else if (x_owner->type == YCALC_DATA_INTERN) {
       strlcpy (s, x_owner->source, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("range"     , s);
-      strlpad (s, t, x_owner->format, x_owner->align, w - 1);
-      DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
-      sprintf (x_out, "%s ", t);
-      DEBUG_APIS   yLOG_info    ("final"     , x_out);
+      rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);
    } else {
       DEBUG_APIS   yLOG_note    ("non-printing type");
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   /*---(check for errors)---------------*/
+   DEBUG_APIS   yLOG_info    ("trim/pad"  , t);
+   DEBUG_APIS   yLOG_value   ("strlpad"   , rc);
+   if (rc < 0) {
+      strltrim (t, ySTR_BOTH, LEN_LABEL);
+      sprintf (t, "%s  (%c)", t, x_owner->type);
+      x_owner->type = YCALC_DATA_ERROR;
+      strcpy (s, t);
+      rc = strlpad (s, t, '!', '<', w - 1);
+   }
+   sprintf (x_out, "%s ", t);
+   DEBUG_APIS   yLOG_info    ("final"     , x_out);
    /*---(parse)--------------------------*/
    api__ycalc_parse (x_out, c);
+   /*---(handle fixed present errors)----*/
+   if (x_type == YCALC_DATA_ERROR && x_owner->type != YCALC_DATA_ERROR) {
+      yCALC_handle (x_owner->label);
+   }
    /*---(complete)-----------------------*/
    DEBUG_APIS   yLOG_exit    (__FUNCTION__);
    return 0;

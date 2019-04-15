@@ -181,6 +181,15 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  '~' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '~');  break;  /* filled ruler    */
    case  '#' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '#');  break;  /* filled numbers  */
    }
+   /*---(defaults)-----------------------*/
+   switch (a_minor) {
+   case  '?' :
+      CELL_visual   (CHANGE_FORMAT , HIST_BEG, '?');
+      CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '?');
+      CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '0');
+      CELL_visual   (CHANGE_UNITS  , HIST_BEG, '-');
+      break;
+   }
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return 0;

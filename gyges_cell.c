@@ -141,8 +141,8 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,f-d-a-u-?,contents-----------------" , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,f-d-a-u-?,contents-----------------" , "gyges free cells"       );
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,a-f-d-u-?,contents-----------------" , "gyges dependent cells"  );
+   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,a-f-d-u-?,contents-----------------" , "gyges free cells"       );
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -817,17 +817,24 @@ CELL_format        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
     *  update all cells to new format regardless of type to keep complexity
     *  down and flexibility up.  if there is no cell, simply move on.
     */
+   char        x_type      =  '-';
    /*---(defenses)-----------------------*/
    if (a_head == NULL || a_curr == NULL)        return  0;
    if (a_curr->align == '+')                    return  0;
    if (a_format  == '"')  a_format = a_curr->format;
+   /*---(reset printing errors)----------*/
+   if (a_curr->type == YCALC_DATA_ERROR && a_curr->print != NULL && strncmp (a_curr->print, "#p/", 3) == 0) {
+      x_type = a_curr->print [9];  /*    #p/ali  (=)  */
+   } else {
+      x_type = a_curr->type;
+   }
    /*---(prepare)------------------------*/
    /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   if      (strchr (YCALC_GROUP_STR , a_curr->type) != 0) {
+   if      (strchr (YCALC_GROUP_STR , x_type) != 0) {
       if (str9filler (a_format) < 0)  return 0;
       HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
       a_curr->format = a_format;
-   } else if (strchr (YCALC_GROUP_NUM , a_curr->type) != 0) {
+   } else if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
       if (str9format (a_format) < 0)  return 0;
       HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
       a_curr->format = a_format;
@@ -856,6 +863,7 @@ char         /*-> change cell decimal places ---------[ ------ [gc.950.272.94]*/
 CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
 {
    /*---(locals)-----------+-----------+-*/
+   char        x_type      =  '-';
    char        x_decs      = 0;
    /*---(defense)------------------------*/
    if (a_head == NULL || a_curr == NULL)    return  0;
@@ -864,8 +872,14 @@ CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    /*---(fix ranges)-------------------------*/
    if      (x_decs <  '0')  x_decs = '0';
    else if (x_decs >  '9')  x_decs = '9';
+   /*---(reset printing errors)----------*/
+   if (a_curr->type == YCALC_DATA_ERROR && a_curr->print != NULL && strncmp (a_curr->print, "#p/", 3) == 0) {
+      x_type = a_curr->print [9];  /*    #p/ali  (=)  */
+   } else {
+      x_type = a_curr->type;
+   }
    /*---(update)-----------------------*/
-   if (strchr (YCALC_GROUP_NUM , a_curr->type) != 0) {
+   if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
       HIST_decimals (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->decs, x_decs);
       a_curr->decs = x_decs;
    }
@@ -1059,11 +1073,11 @@ CELL_writer        (tCELL *a_curr)
    }
    DEBUG_OUTP   yLOG_info    ("source"    , a_curr->source);
    /*---(format)-------------------------*/
+   DEBUG_OUTP   yLOG_complex ("align"     , "%-3d (%c)", a_curr->align , a_curr->align);
    DEBUG_OUTP   yLOG_complex ("format"    , "%-3d (%c)", a_curr->format, a_curr->format);
    DEBUG_OUTP   yLOG_complex ("decs"      , "%-3d (%c)", a_curr->decs  , a_curr->decs);
-   DEBUG_OUTP   yLOG_complex ("align"     , "%-3d (%c)", a_curr->align , a_curr->align);
    DEBUG_OUTP   yLOG_complex ("unit"      , "%-3d (%c)", a_curr->unit  , a_curr->unit);
-   sprintf (x_format, "%c %c %c %c -", a_curr->format, a_curr->decs, a_curr->align, a_curr->unit);
+   sprintf (x_format, "%c %c %c %c -", a_curr->align, a_curr->format, a_curr->decs, a_curr->unit);
    /*---(call writer)--------------------*/
    strlcpy  (t, a_curr->source, LEN_RECD);
    strldchg (t, G_KEY_SPACE, G_CHAR_STORAGE, LEN_RECD);
