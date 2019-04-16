@@ -126,7 +126,6 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  'i' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'i');  break;  /* integer    */
    case  'I' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'I');  break;  /* indented   */
    case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  break;  /* real       */
-   case  'F' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'F');  break;  /* scaled     */
    case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  break;  /* exponencial*/
    case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  break;  /* spaced exp */
    }

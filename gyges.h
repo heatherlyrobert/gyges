@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4m"
-#define     P_VERTXT    "created basic ycalc api unit tests to find troubles"
+#define     P_VERNUM    "3.4n"
+#define     P_VERTXT    "completed uom and combined formatting to simpify"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -61,7 +61,7 @@
 #define     P_DEFINE    \
  "one of the major, general-purpose, user-empowerment tools, spreadsheets allow¦" \
  "ad-hoc, informal, quick, and evolving analysis and manipulation of any kind¦" \
- "of data set -- from massive tables to irregular and unclear collections.¦"
+ "of data -- from massive tables to irregular and unclear collections.¦"
 #define     P_CURRENT   \
  "this is a fairly well-defined category of tool with a relatively stable¦" \
  "interface and several major alternative products.  while user experiences¦" \
@@ -70,7 +70,7 @@
  "these tools have become overly complex, unwieldy, kitchen-sink tools that¦" \
  "overlap with other major tools rather than complement them.  spreadsheets in¦" \
  "particular have become dangerous, error-prone replacements for real systems.¦"
-#define     P_ALTERNS   "visicalc, lotus 123, excel, google, and gnumeric¦"
+#define     P_ALTERNS   "visicalc, lotus 123, excel, google, oocalc, gnumeric¦"
 
 /*===[[ END_HEADER ]]=========================================================*/
 
