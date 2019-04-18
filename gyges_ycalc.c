@@ -338,6 +338,7 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
 char
 api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z)
 {
+   char        rc          =    0;
    tCELL      *x_owner     = NULL;
    if (x != NULL)  *b   = 0;
    if (x != NULL)  *x   = 0;
@@ -345,8 +346,8 @@ api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z)
    if (z != NULL)  *z   = 0;
    if (a_owner == NULL)  return -1;
    x_owner    = (tCELL     *) a_owner;
-   str2gyges (x_owner->label, b, x, y, z, NULL, 0, YSTR_LEGAL);
-   return 0;
+   rc = str2gyges (x_owner->label, b, x, y, z, NULL, 0, YSTR_LEGAL);
+   return rc;
 }
 
 char

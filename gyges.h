@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4o"
-#define     P_VERTXT    "uom unit testing found little issues and fixed"
+#define     P_VERNUM    "3.4p"
+#define     P_VERTXT    "small fixes to cell unit test, plus fix to ySTR mongo"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -46,7 +46,8 @@
  *  personal database
  *  project management
  *  todo/task management
- *  workflow/hypercard
+ *  workflow
+ *  data browser/hypercard
  *
  *  signal processing
  *  computer vision
@@ -57,11 +58,10 @@
 
 
 
-
 #define     P_DEFINE    \
- "one of the major, general-purpose, user-empowerment tools, spreadsheets allow¦" \
- "ad-hoc, informal, quick, and evolving analysis and manipulation of any kind¦" \
- "of data -- from massive tables to irregular and unclear collections.¦"
+ "as one of the major user-empowerment tools, spreadsheets allow ad-hoc,¦" \
+ "informal, low skill, quick, and evolving analysis and manipulation of any¦" \
+ "kind of data -- from massive tables to irregular and unclear collections.¦"
 #define     P_CURRENT   \
  "this is a fairly well-defined category of tool with a relatively stable¦" \
  "interface and several major alternative products.  while user experiences¦" \
