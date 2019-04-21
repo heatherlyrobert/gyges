@@ -982,12 +982,12 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          strstr (s_mark_list, label) != NULL)           attron (S_COLOR_MARK     );
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
-      /*---(trouble)---------------------*/
-      if      (a_curr->type == YCALC_DATA_ERROR)           attron (S_COLOR_ERROR  );
       /*---(related)---------------------*/
-      else if (strstr (my.reqs_list, label) != NULL)    attron (S_COLOR_REQS   );
+      if      (strstr (my.reqs_list, label) != NULL)    attron (S_COLOR_REQS   );
       else if (strstr (my.deps_list, label) != NULL)    attron (S_COLOR_PROS   );
       else if (strstr (my.like_list, label) != NULL)    attron (S_COLOR_LIKE   );
+      /*---(trouble)---------------------*/
+      else if (a_curr->type == YCALC_DATA_ERROR)           attron (S_COLOR_ERROR  );
       /*---(pointers)--------------------*/
       else if (a_curr->type == YCALC_DATA_RANGE)           attron (S_COLOR_POINTER);
       else if (a_curr->type == YCALC_DATA_ADDR )           attron (S_COLOR_POINTER);

@@ -549,13 +549,13 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       x_provider = LOC_cell_labeled (p);
       DEBUG_REGS   yLOG_point   ("x_provider", x_provider);
       if (x_provider != NULL) {
-         DEBUG_REGS   yLOG_complex ("details"   , "%s, %3dx, %3dy, %3dz", x_provider->label, x_provider->col, x_provider->row, x_provider->tab);
+         DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);
          rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc == 0) {
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            rc = yRPN_addr_provide (x_provider->source, a_pros, a_boff, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD, x_source);
+            rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
             sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
