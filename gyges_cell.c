@@ -141,8 +141,8 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,a-f-d-u-?-,contents-----------------" , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,a-f-d-u-?-,contents-----------------" , "gyges free cells"       );
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,afdu?-----,contents-----------------" , "gyges dependent cells"  );
+   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,afdu?-----,contents-----------------" , "gyges free cells"       );
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -269,7 +269,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    strcpy ((*a_cell)->label, "tbd");
    /*---(source)------------------------*/
    (*a_cell)->source    = NULL;
-   (*a_cell)->len         = 0;
+   (*a_cell)->len       = 0;
    /*---(results)-----------------------*/
    (*a_cell)->type      = YCALC_DATA_BLANK;
    (*a_cell)->v_num     =  0.0;
@@ -280,7 +280,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    (*a_cell)->decs      =  '0';
    (*a_cell)->unit      =  '-';
    (*a_cell)->note      =  '-';
-   (*a_cell)->print         = NULL;
+   (*a_cell)->print     = NULL;
    /*---(calculations)-------------------*/
    (*a_cell)->ycalc     = NULL;
    DEBUG_CELL   yLOG_note    ("successful");
@@ -642,9 +642,10 @@ CELL_dup           (tCELL **a_new, tCELL *a_old)
    /*---(copy formatting)----------------*/
    DEBUG_CELL   yLOG_note    ("copy old type and formatting");
    (*a_new)->type        = a_old->type;
-   (*a_new)->format        = a_old->format;
+   (*a_new)->align       = a_old->align;
+   (*a_new)->format      = a_old->format;
    (*a_new)->decs        = a_old->decs;
-   (*a_new)->align        = a_old->align;
+   (*a_new)->unit        = a_old->unit;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return  0;
@@ -665,7 +666,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    char        x_label     [LEN_LABEL];
    tCELL      *x_curr      = NULL;
    char       x_bsource    [200] = "";
-   char       x_bformat    [200] = "";
+   char       x_bformat    [200] = "´´´´´";
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_complex ("location"  , "tab %4d, col %4d, row %4d", a_tab, a_col, a_row);
@@ -686,7 +687,6 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    /*---(save before picture)------------*/
-   strcpy (x_bsource, "");
    --rce;  if (x_curr != NULL) {
       DEBUG_CELL   yLOG_note    ("save existing data");
       if (x_curr->source != NULL)  strcpy (x_bsource, x_curr->source);
@@ -725,10 +725,10 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
    tCELL      *x_new       = NULL;
-   char       x_aformat    [200] = "";
+   char       x_aformat    [LEN_LABEL] = "??0--";
    /*---(defense)------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   if (strlen (a_format) != 9) {
+   if (strlen (a_format) < 5) {
       DEBUG_CELL   yLOG_warn    ("format not valid length");
       DEBUG_CELL   yLOG_exit    (__FUNCTION__);
       return NULL;
@@ -741,22 +741,20 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       return NULL;
    }
    /*---(history)------------------------*/
-   DEBUG_CELL   yLOG_note    ("write history");
-   sprintf (x_aformat, "%c%c%c%c%c", a_format [0], a_format [2], a_format [4], a_format [6], a_format [8]);
-   if (a_mode != HIST_NONE)  HIST_overwrite (a_mode, a_tab, a_col, a_row, a_format);
+   if (a_format [0] != '´')   strcpy (x_aformat, a_format);
+   if (a_mode != HIST_NONE)  HIST_overwrite (a_mode, a_tab, a_col, a_row, x_aformat);
    /*---(formatting)---------------------*/
    DEBUG_CELL   yLOG_note    ("update format fields");
-   x_new->align  = a_format [0];
+   x_new->align  = x_aformat [0];
    DEBUG_CELL   yLOG_char    ("align"     , x_new->align);
-   x_new->format = a_format [2];
+   x_new->format = x_aformat [1];
    DEBUG_CELL   yLOG_char    ("format"    , x_new->format);
-   x_new->decs   = a_format [4];
+   x_new->decs   = x_aformat [2];
    DEBUG_CELL   yLOG_char    ("decs"      , x_new->decs);
-   x_new->unit   = a_format [6];
+   x_new->unit   = x_aformat [3];
    DEBUG_CELL   yLOG_char    ("unit"      , x_new->unit);
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("call printable");
-   /*> rc = CELL_printable (x_new);                                                   <*/
    rc = api_ycalc_printer (x_new);
    if (rc < 0) {
       DEBUG_CELL   yLOG_warn    ("printable returned a bad return code");
@@ -764,12 +762,6 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
       return NULL;
    }
    DEBUG_CELL   yLOG_note    ("call calc");
-   /*> rc = SEQ_calc_up    (x_new);                                                   <* 
-    *> if (rc < 0) {                                                                  <* 
-    *>    DEBUG_CELL   yLOG_warn    ("calc returned a bad return code");     <* 
-    *>    DEBUG_CELL   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return NULL;                                                                <* 
-    *> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return x_new;
@@ -976,7 +968,7 @@ char
 CELL_reader          (void)
 {
    /*---(locals)-----------+-----------+-*/
-   char        rce         =  -11;
+   char        rce         =  -10;
    char        rc          =    0;
    char        x_verb      [LEN_LABEL];
    char        x_label     [LEN_LABEL];
@@ -1016,8 +1008,9 @@ CELL_reader          (void)
    /*---(format)-------------------------*/
    rc = yPARSE_popstr  (&x_format);
    DEBUG_INPT   yLOG_value   ("pop format", rc);
-   if      (strlen (x_format) != 9)              strcpy  (x_format, "? ? 0 - -");
-   else if (strcmp (x_format, "- - - - -") == 0) strcpy  (x_format, "? ? 0 - -");
+   if      (strcmp (x_format , "")         == 0) strcpy  (x_format, "??0--");
+   else if (strcmp (x_format , "-")        == 0) strcpy  (x_format, "??0--");
+   else if (strlen (x_format) <  5)              strcpy  (x_format, "??0--");
    DEBUG_INPT  yLOG_info    ("x_format"  , x_format);
    /*---(source)-------------------------*/
    rc = yPARSE_popstr  (&x_source);
@@ -1077,7 +1070,7 @@ CELL_writer        (tCELL *a_curr)
    DEBUG_OUTP   yLOG_complex ("format"    , "%-3d (%c)", a_curr->format, a_curr->format);
    DEBUG_OUTP   yLOG_complex ("decs"      , "%-3d (%c)", a_curr->decs  , a_curr->decs);
    DEBUG_OUTP   yLOG_complex ("unit"      , "%-3d (%c)", a_curr->unit  , a_curr->unit);
-   sprintf (x_format, "%c %c %c %c -", a_curr->align, a_curr->format, a_curr->decs, a_curr->unit);
+   sprintf (x_format, "%c%c%c%c-", a_curr->align, a_curr->format, a_curr->decs, a_curr->unit);
    /*---(call writer)--------------------*/
    strlcpy  (t, a_curr->source, LEN_RECD);
    strldchg (t, G_KEY_SPACE, G_CHAR_STORAGE, LEN_RECD);

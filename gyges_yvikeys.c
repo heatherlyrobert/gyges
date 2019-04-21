@@ -435,7 +435,7 @@ api_yvikeys_copier      (char a_type, long a_stamp)
 }
 
 char
-api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
+api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -443,7 +443,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    short       x_stab, x_scol, x_srow;
    short       x_dtab, x_dcol, x_drow;
    char        x_source    [LEN_RECD]   = "";
-   char        x_bformat   [LEN_RECD]   = "";
+   char        x_bformat   [LEN_LABEL]  = "";
    tCELL      *x_copy      = NULL;
    char        x_label     [LEN_LABEL]  = "";
    char        x_list      [LEN_RECD]   = "";
@@ -459,7 +459,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
    DEBUG_REGS   yLOG_char    ("a_intg"    , a_intg);
    DEBUG_REGS   yLOG_char    ("a_1st"     , a_1st);
-   DEBUG_REGS   yLOG_complex ("offset"    , "x=%4d, y=%4d, z=%4d", a_xoff, a_yoff, a_zoff);
+   DEBUG_REGS   yLOG_complex ("offset"    , "b=%4d, x=%4d, y=%4d, z=%4d", a_boff, a_xoff, a_yoff, a_zoff);
    /*---(defense)------------------------*/
    DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);
    --rce;  if (a_cell == NULL)  {
@@ -488,7 +488,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    }
    DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
    /*---(set new location)---------------*/
-   x_dtab  = x_stab + a_zoff;
+   x_dtab  = x_stab + a_boff;
    x_dcol  = x_scol + a_xoff;
    x_drow  = x_srow + a_yoff;
    DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
@@ -498,7 +498,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    strcpy (x_source, "");
    if (strchr (YCALC_GROUP_RPN, a_cell->type) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-      rc = yRPN_addr_require (a_cell->source, a_reqs, a_zoff, a_xoff, a_yoff, 0, LEN_RECD, x_source);
+      rc = yRPN_addr_require (a_cell->source, a_reqs, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
          DEBUG_REGS   yLOG_note    ("formula could not be parsed");
@@ -509,7 +509,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       strcpy (x_source, a_cell->source);
    }
    DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-   sprintf (x_bformat, "%c %c %c %c -", a_cell->align, a_cell->format, a_cell->decs, a_cell->unit);
+   sprintf (x_bformat, "%c%c%c%c-", a_cell->align, a_cell->format, a_cell->decs, a_cell->unit);
    DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
    if (a_1st == 'y')  x_copy = CELL_overwrite (HIST_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (HIST_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
@@ -555,10 +555,10 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
          if (rc == 0) {
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            rc = yRPN_addr_provide (x_provider->source, a_pros, a_zoff, a_xoff, a_yoff, 0, a_cell->label, LEN_RECD, x_source);
+            rc = yRPN_addr_provide (x_provider->source, a_pros, a_boff, a_xoff, a_yoff, a_zoff, a_cell->label, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-            sprintf (x_bformat, "%c %c %c %c -", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
+            sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
             DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
             CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
          }

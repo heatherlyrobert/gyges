@@ -264,11 +264,11 @@ HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before
    /*---(header)-------------------------*/
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(add record)---------------------*/
-   if      (a_beforeF == NULL)            strcpy  (x, s_nothing);
-   else if (strcmp (a_beforeF, "") == 0)  strcpy  (x, s_nothing);
-   else                                   sprintf (x, "%s", a_beforeF);
-   if      (a_before  == NULL)            sprintf (s, "%s"    , s_nothing);
-   else if (strcmp (a_before , "") == 0)  sprintf (s, "%s"    , s_nothing);
+   if      (a_beforeF == NULL)            strcpy  (x          , s_nothing);
+   else if (strcmp (a_beforeF, "") == 0)  strcpy  (x          , s_nothing);
+   else                                   sprintf (x, "%s"    , a_beforeF);
+   if      (a_before  == NULL)            sprintf (s, "%s"    , x);
+   else if (strcmp (a_before , "") == 0)  sprintf (s, "%s"    , x);
    else                                   sprintf (s, "%s··%s", x, a_before);
    sprintf (t, "´´´´´");
    rc = HIST_single (a_mode, HIST_CLEAR, a_tab, a_col, a_row, s, t);
@@ -401,9 +401,11 @@ HIST__undo_single       (void)
    case HIST_OVERWRITE :
    case HIST_CLEAR     :
    case HIST_DELETE    :
-      sprintf (x_format, "%c %c %c %c %c", s_hist [s_chist].before[0], s_hist [s_chist].before[1], s_hist [s_chist].before[2], s_hist [s_chist].before[3], s_hist [s_chist].before[4]);
+      sprintf (x_format, "%-5.5s", s_hist [s_chist].before);
+      DEBUG_HIST  yLOG_info    ("x_format"  , x_format);
       if (strlen (s_hist [s_chist].before) <= 6)  strlcpy (x_source, "", LEN_RECD);
       else                                        strlcpy (x_source, s_hist [s_chist].before + 7, LEN_RECD);
+      DEBUG_HIST  yLOG_info    ("x_source"  , x_source);
       strldchg (x_source, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       CELL_overwrite (HIST_NONE, x_tab, x_col, x_row, x_source, x_format);
       break;
@@ -522,7 +524,7 @@ HIST__redo_single       (void)
    case HIST_OVERWRITE :
    case HIST_CLEAR     :
    case HIST_DELETE    :
-      sprintf (x_format, "%c %c %c %c %c", s_hist [s_chist].after [0], s_hist [s_chist].after [1], s_hist [s_chist].after [2], s_hist [s_chist].after [3], s_hist [s_chist].after [4]);
+      sprintf (x_format, "%-5.5s", s_hist [s_chist].after);
       if (strlen (s_hist [s_chist].after ) <= 6)  strlcpy (x_source, "", LEN_RECD);
       else                                        strlcpy (x_source, s_hist [s_chist].after  + 7, LEN_RECD);
       strldchg (x_source, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
