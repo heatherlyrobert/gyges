@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4r"
-#define     P_VERTXT    "complete work on reg unit test, units 06-09 working great now"
+#define     P_VERNUM    "3.4s"
+#define     P_VERTXT    "complete work and unit testing on data export"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1515,19 +1515,12 @@ char      CELL_visual          (char   a_what, char a_mode, char a_how);
 char     *CELL__unit           (char  *a_question, tCELL *a_cell);
 char     *CELL__unitnew        (char  *a_question, char *a_label);
 
-char      SYLK_read            (char  *a_name);
-char      SYLK_write           (char  *a_name, char a_variation);
-char      FILE_init               (void);
-char      FILE_controlled      (char  *a_yes);
-char      FILE_control         (void);
-char      FILE_nocontrol       (void);
-char      FILE_version         (char  *a_ver);
-char      FILE_vertxt          (char  *a_txt);
-char      FILE_bump            (char  *a_type);
-char      FILE_bump_major      (void);
-char      FILE_bump_minor      (void);
-char      FILE_bump_inc        (void);
-char      FILE_rename          (char  *a_name);
+
+
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        FILE_init               (void);
+char        FILE_rename             (char  *a_name);
+char*       FILE__unit              (char *a_question, int a_ref);
 
 
 /*---(file)------------------*/
