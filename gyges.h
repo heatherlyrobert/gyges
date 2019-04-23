@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4s"
-#define     P_VERTXT    "complete work and unit testing on data export"
+#define     P_VERNUM    "3.4t"
+#define     P_VERTXT    "added data export descriptive formats and unit testing them"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
