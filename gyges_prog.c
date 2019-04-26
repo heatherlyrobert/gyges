@@ -397,6 +397,7 @@ PROG__unitloud      (void)
    yURG_name   ("tops", YURG_ON);
    yURG_name   ("cell", YURG_ON);
    yURG_name   ("regs", YURG_ON);
+   yURG_name   ("deps", YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

@@ -340,7 +340,7 @@ api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z)
 {
    char        rc          =    0;
    tCELL      *x_owner     = NULL;
-   if (x != NULL)  *b   = 0;
+   if (b != NULL)  *b   = 0;
    if (x != NULL)  *x   = 0;
    if (y != NULL)  *y   = 0;
    if (z != NULL)  *z   = 0;
