@@ -899,6 +899,8 @@ CELL_visual        (char a_what, char a_mode, char a_how)
    int         x_row       =    0;
    int         x_total     =    0;
    int         x_handle    =    0;
+   int         x_top       =    0;
+   int         x_left      =    0;
    /*---(header)-------------------------*/
    DEBUG_CELL    yLOG_enter  (__FUNCTION__);
    DEBUG_CELL    yLOG_char   ("a_what"    , a_what);
@@ -908,16 +910,30 @@ CELL_visual        (char a_what, char a_mode, char a_how)
    rc       = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
    DEBUG_CELL    yLOG_value  ("rc"        , rc);
    x_first  = LOC_cell_at_loc (x_tab, x_col, x_row);
+   x_top    = x_row;
+   x_left   = x_col;
    DEBUG_CELL    yLOG_point  ("x_first"   , x_first);
    x_next   = x_first;
    /*---(process range)------------------*/
    while (rc >= 0) {
       ++x_total;
-      if (x_next != NULL) {
+      /*---(widths)----------------------*/
+      if (x_top  == x_row && a_what == CHANGE_WIDTH) {
+         rc = COL_visual (x_tab, x_col, x_row, a_mode, a_how);
+         DEBUG_CELL   yLOG_value  ("width"     , rc);
+         if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
+      }
+      /*---(heights)---------------------*/
+      else if (x_left == x_col && a_what == CHANGE_HEIGHT) {
+         rc = ROW_visual (x_tab, x_col, x_row, a_mode, a_how);
+         DEBUG_CELL   yLOG_value  ("height"    , rc);
+         if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
+      }
+      /*---(cell-specific)---------------*/
+      else if (x_next != NULL) {
+         DEBUG_CELL   yLOG_note   ("cell exists");
          ++x_handle;
-         DEBUG_CELL   yLOG_note   ("handlers");
          switch (a_what) {
-         case CHANGE_WIDTH   : rc = COL_visual        (x_first, x_next, a_mode, a_how); break;
          case CHANGE_DECIMAL : rc = CELL_decimals     (x_first, x_next, a_mode, a_how); break;
          case CHANGE_ALIGN   : rc = CELL_align        (x_first, x_next, a_mode, a_how); break;
          case CHANGE_FORMAT  : rc = CELL_format       (x_first, x_next, a_mode, a_how); break;
@@ -940,7 +956,7 @@ CELL_visual        (char a_what, char a_mode, char a_how)
             return 0;
          }
          /*---(done)------------------------*/
-         a_mode = HIST_ADD;
+         if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
          api_ycalc_printer (x_next);
       }
       /*---(get next)--------------------*/

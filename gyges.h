@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4t"
-#define     P_VERTXT    "added data export descriptive formats and unit testing them"
+#define     P_VERNUM    "3.4u"
+#define     P_VERTXT    "completed export format unit testing, including source and native"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -245,7 +245,7 @@ typedef struct timespec  tTSPEC;
 /*---(cell width)---------------------*/
 #define     MAX_WIDTH   100
 #define     DEF_WIDTH   8
-#define     MIN_WIDTH   2
+#define     MIN_WIDTH   4
 #define     MAX_MERGE   10
 /*---(cell height)--------------------*/
 #define     MAX_HEIGHT  4
@@ -1063,7 +1063,7 @@ char      REG_paste            (char a_type);
 
 /*---(data import)----------*/
 char      REG__inpt_prep       (char a_style);
-char      REG__inpt_map        (void);
+char      EXIM_mapping         (void);
 char      REG__inpt_read       (void);
 char      REG__inpt_width      (short a_col, short a_wide);
 char      REG__inpt_sizer      (void);
@@ -1093,6 +1093,7 @@ char      SMOD_buffer          (char  a_major, char  a_minor);
 char      api_yvikeys_format   (int   a_major, int   a_minor);
 char      api_yvikeys_units    (int   a_major, int   a_minor);
 char      api_yvikeys_exim     (char  a_dir  , char  a_style);
+char      EXIM_import          (char a_style);
 char      EXIM_export          (char a_style);
 char      SMOD_wander          (char  a_major, char  a_minor);
 char      SMOD_error           (char  a_major, char  a_minor);
@@ -1417,7 +1418,6 @@ int         ROW_setmax           (int a_tab, int a_count);
 char        ROW_heighten            (int a_tab, int a_row, int a_size);
 char        ROW_resize              (char *a_name, int a_size, int a_count);
 char        ROW_reset               (void);
-char        ROW_visual              (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char        ROW_defheight           (int a_tab, int a_size);
 char        ROW_height           /* petal  2----- */  (int a_tab, int a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1490,10 +1490,11 @@ char      CELL_wrap            (void);
 char      CELL__interpret      (tCELL *a_curr);
 
 
+char      COL_visual           (int a_tab, int a_col, int a_row,  char a_mode, char a_num);
+char      ROW_visual           (int a_tab, int a_col, int a_row,  char a_mode, char a_num);
 char      CELL_erase           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_align           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_decimals        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      COL_visual           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_format          (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_units           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_merge_visu      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);

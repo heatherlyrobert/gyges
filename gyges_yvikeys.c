@@ -54,7 +54,16 @@ api_yvikeys_exim        (char a_dir, char a_style)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_dir"     , a_dir);
    DEBUG_REGS   yLOG_char    ("a_style"   , a_style);
-   if (a_dir == '-')  rc = EXIM_export (a_style);
+   switch (a_dir) {
+   case '+' :
+      DEBUG_REGS   yLOG_note    ("call importer (+)");
+      rc = EXIM_import (a_style);
+      break;
+   case '-' :
+      DEBUG_REGS   yLOG_note    ("call exporter (-)");
+      rc = EXIM_export (a_style);
+      break;
+   }
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;

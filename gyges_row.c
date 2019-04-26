@@ -237,7 +237,7 @@ ROW_reset            (void)
 }
 
 char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
-ROW_visual         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
+ROW_visual         (int a_tab, int a_col, int a_row, char a_mode, char a_num)
 {  /*---(design notes)-------------------*/
    /*  update all cells to new width, either a standard size, or a specific   */
    /*  value communicated as a negative number.                               */
@@ -245,14 +245,11 @@ ROW_visual         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    int         x_prev      = 0;
    int         x_height    = 0;
    int         x_row       = 0;
-   tCELL      *x_cell      = NULL;
-   /*---(stop early)-------------------------*/
-   if (a_head->row != a_curr->row)  return 1;
    /*---(adjust)----------------------*/
    if (a_num <   0) {
       x_height                = -(a_num);
    } else {
-      x_height = x_prev = ROW_height (a_curr->tab, a_curr->row);
+      x_height = x_prev = ROW_height (a_tab, a_row);
       switch (a_num) {
       case  'm' : x_height    = 0;                           break;
       case  'd' : x_height    = DEF_HEIGHT;                  break;
@@ -262,10 +259,9 @@ ROW_visual         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
       }
    }
    /*---(history)----------------------*/
-   if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;
-   HIST_height (a_mode, a_curr->tab, a_curr->col, a_curr->row, x_prev, x_height);
+   HIST_height (a_mode, a_tab, a_col, a_row, x_prev, x_height);
    /*---(set width)--------------------*/
-   ROW_heighten (a_curr->tab, a_curr->row, x_height);
+   ROW_heighten (a_tab, a_row, x_height);
    /*---(reset headers)---------------*/
    yVIKEYS_map_refresh ();
    /*---(complete)---------------------------*/
