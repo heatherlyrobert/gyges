@@ -31,15 +31,17 @@ TAB_init                (void)
    TAB_purge ();
    NTAB = DEF_TABS;
    /*---(add buffer commands)------------*/
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "buf"         , "bu"  , "c"    , TAB_switch_char            , "switch buffer"                        );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "btitle"      , "bt"  , "s"    , TAB_rename_curr            , "rename current buffer"                );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bfirst"      , "bf"  , ""     , TAB_first                  , "goto the first buffer in list"        );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bnext"       , "bn"  , ""     , TAB_next                   , "goto the next sequential buffer"      );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bprev"       , "bp"  , ""     , TAB_prev                   , "goto the previous sequential buffer"  );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "blast"       , "bl"  , ""     , TAB_last                   , "goto the last buffer in list"         );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "bsize"       , "bs"  , "s"    , TAB_resize                 , "change a buffer size"                 );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "defwide"     , ""    , "i"    , TAB_defwide                , "change default column width"          );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "deftall"     , ""    , "i"    , TAB_deftall                , "change default row height"            );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "buf"         , "bu"  , "c"    , TAB_switch_char            , "switch buffer"                        );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "btitle"      , "bt"  , "s"    , TAB_rename_curr            , "rename current buffer"                );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bfirst"      , "bf"  , ""     , TAB_first                  , "goto the first buffer in list"        );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bnext"       , "bn"  , ""     , TAB_next                   , "goto the next sequential buffer"      );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bprev"       , "bp"  , ""     , TAB_prev                   , "goto the previous sequential buffer"  );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "blast"       , "bl"  , ""     , TAB_last                   , "goto the last buffer in list"         );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bsize"       , "bs"  , "s"    , TAB_resize                 , "change a buffer size"                 );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bmax"        , "bx"  , "i"    , TAB_setmax                 , "change count of available buffers"    );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bbrowse"     , "bb"  , "a"    , TAB_browse                 , "find buffer by name"                  );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "defwide"     , ""    , "i"    , TAB_defwide                , "change default column width"          );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "deftall"     , ""    , "i"    , TAB_deftall                , "change default row height"            );
    /*---(add status options)-------------*/
    rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
    /*---(add yparse specification)-------*/
@@ -251,27 +253,43 @@ char         /*-> tbd --------------------------------[ ------ [gc.220.112.31]*/
 TAB_switch_char        (char a_tab)
 {
    /*---(locals)-----------+-----+-----+-*/
-   int         x_tab       =    0;
-   /*---(relative tabs)------------------*/
+   char        rc          =    0;
+   static int  x_last      =    0;
+   static int  x_tab       =    0;
+   /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_char    ("a_tab"     , a_tab);
    DEBUG_LOCS   yLOG_value   ("a_tab"     , a_tab);
-   if (a_tab > 0 && strchr ("[<>]", a_tab) != NULL) {
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_LOCS   yLOG_value   ("x_last"    , x_last);
+   /*---(previous tabs)------------------*/
+   if (a_tab == ',') {
+      rc     = x_tab;
+      x_tab  = x_last;
+      x_last = rc;
+   }
+   /*---(relative tabs)------------------*/
+   else if (a_tab > 0 && strchr ("[<>]", a_tab) != NULL) {
+      x_last = x_tab;
       switch (a_tab) {
       case '[' :  x_tab = 0;             break;
       case '<' :  x_tab = CTAB - 1;      break;
       case '>' :  x_tab = CTAB + 1;      break;
-      case ']' :  x_tab = s_nvalid - 3;  break;
+      case ']' :  x_tab = NTAB - 1;      break;
       }
    }
    /*---(absolute tabs)------------------*/
    else {
+      x_last = x_tab;
       x_tab = INDEX_tab (a_tab);
       if (x_tab < 0) {
          DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
          return x_tab;
       }
    }
+   /*---(done)---------------------------*/
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_LOCS   yLOG_value   ("x_last"    , x_last);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return TAB_switch (x_tab);
@@ -281,6 +299,53 @@ char        TAB_first            (void)  { return TAB_switch_char ('['); }
 char        TAB_prev             (void)  { return TAB_switch_char ('<'); }
 char        TAB_next             (void)  { return TAB_switch_char ('>'); }
 char        TAB_last             (void)  { return TAB_switch_char (']'); }
+
+char
+TAB_browse              (char *a_entry)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         i           =    0;
+   int         x_first     =   -1;
+   int         x_matches   =    0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(defense)--------------------s---*/
+   DEBUG_LOCS   yLOG_point   ("a_entry"   , a_entry);
+   --rce;  if (a_entry == NULL || a_entry [0] == 0) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_delim   ("a_entry"   , a_entry);
+   /*---(compile search)-----------------*/
+   rc = yREGEX_comp (a_entry);
+   DEBUG_SRCH   yLOG_value   ("comp"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_SRCH   yLOG_note    ("could not compile search");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check all tabs)-----------------*/
+   for (i = 0; i < NTAB; ++i) {
+      DEBUG_INPT   yLOG_info    ("tab"       , s_tabs [i].name);
+      rc = yREGEX_exec (s_tabs [i].name);
+      DEBUG_INPT   yLOG_value   ("exec"      , rc);
+      if (rc <= 0)   continue;
+      ++x_matches;
+      if (x_matches == 1)  x_first = i;
+   }
+   DEBUG_LOCS   yLOG_value   ("x_matches" , x_matches);
+   --rce;  if (x_matches != 1) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(make switch)--------------------*/
+   TAB_switch (x_first);
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 
 
@@ -493,7 +558,7 @@ TAB_status         (char a_tab, char *a_list)
       return rc;
    }
    /*---(generate stats)--------------*/
-   sprintf (a_list, "[ buffer %s ]", t);
+   sprintf (a_list, "buffer  %s", t);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;

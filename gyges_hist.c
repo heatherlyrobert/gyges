@@ -71,6 +71,7 @@ HIST_init          (void)
       s_hist [i].mode  = '-';
       s_hist [i].act   = '-';
       s_hist [i].nkey  = -1;
+      strcpy (s_hist [i].addr  , "");
       strcpy (s_hist [i].before, "");
       strcpy (s_hist [i].after , "");
    }
@@ -645,7 +646,7 @@ HIST_list          (void)
 }
 
 
-char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_FULL, "[ s_nhist : %4d, s_chist : %4d, top : %s ]", s_nhist, s_chist, s_hist [s_chist].act); }
+char  CURS_status_history  (char *a_list) { snprintf (a_list, LEN_FULL, "mundo   %3d/%3d %c %-7.7s [%-25.25s] [%-25.25s]", s_chist + 1, s_nhist, s_hist [s_chist].act, s_hist [s_chist].addr, s_hist [s_chist].before, s_hist [s_chist].after); }
 
 char*        /*-> unit test accessor -----------------[ ------ [gs.950.221.M1]*/ /*-[03.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 HIST__unit         (char *a_question, int a_ref)

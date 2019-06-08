@@ -952,7 +952,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's source string       CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (  50) :a_longer_one_in_here              ++        
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.051))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1253,7 +1253,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  30) :[_______________super calaf__]:             
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.053))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1445,7 +1445,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    CELL__unitnew         "cell_printable" , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1614,7 +1614,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's printable string    PROG__unit         "cell_printable",x_one                                                  s_equal     Cell Printable   : (  12) :        21) :                               
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1692,7 +1692,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the cell's information         PROG__unit         "cell_info",     x_one                                                  s_equal     Cell Information : t=s f=? d=0 a=< c=  0 r=  0 d=  0                   
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -2127,7 +2127,7 @@ SECT          v21  checking input and source modes                            
 #     get      v21  check the cell's source string       PROG__unit         "cell_source",   x_one                                                  s_equal     Cell Source      : (   14) : testin  the/ :                            
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.060))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -2597,7 +2597,7 @@ SECT          v21  checking input and source modes                            
 #     get      v21  check the row data                   PROG__unit         "rows",          NULL                                                   s_equal     Rows             : n=200, a= 40, b= 60, c= 78, e= 99                   
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.074))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 

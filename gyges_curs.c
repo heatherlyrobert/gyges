@@ -26,6 +26,13 @@
 #include   "gyges.h"
 
 
+/*============================---- METIS TASKS ---============================*/
+/*
+ *
+ * task  gyges  ncurses     dw3<·  draw/clear partial cell at end of row/col to keep screen garbage out 
+ *
+ */
+
 PRIV  char      CURS_page          (void);
 
 int     s_status_row;
@@ -1151,10 +1158,10 @@ DRAW_init          (void)
 {
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
-   yVIKEYS_view_basic    (YVIKEYS_MAIN     , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
+   yVIKEYS_view_basic    (YVIKEYS_MAIN , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
    yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
-   yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0             , DRAW_xaxis  );
-   yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0             , DRAW_yaxis  );
+   yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0, DRAW_xaxis  );
+   yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0, DRAW_yaxis  );
    yVIKEYS_cmds_direct   (":layout min");
    yVIKEYS_cmds_direct   (":status show");
    yVIKEYS_cmds_direct   (":command show");

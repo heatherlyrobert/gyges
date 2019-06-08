@@ -18,8 +18,8 @@ ROW_init             (void)
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(add buffer commands)------------*/
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "rowtall"     , ""    , "sii"  , ROW_resize                 , "change a row size using address"      );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "rowreset"    , ""    , ""     , ROW_reset                  , "reset all rows to default width"      );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_resize                 , "change a row size using address"      );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_reset                  , "reset all rows to default width"      );
    /*---(add yparse specification)-------*/
    rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
    /*---(complete)-----------------------*/

@@ -79,6 +79,16 @@ static FILE    *s_file;                      /* file pointer                   *
 
 
 
+char
+FILE_new                (void)
+{
+   CELL_purge ();
+   TAB_purge  ();
+   MAP_mapper (YVIKEYS_INIT);
+   yVIKEYS_jump (0, 0, 0, 0);
+   return 0;
+}
+
 
 char
 FILE_init               (void)
@@ -86,6 +96,7 @@ FILE_init               (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    /*---(handlers)-----------------------*/
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_FILE  , "new"         , ""    , ""     , FILE_new                     , "clear out all content"                                       );
    /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );   <*/
 
 
@@ -640,7 +651,7 @@ EXIM__import_content    (char *a_content)
    char        rc          =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   strltrim (a_content, ySTR_BOTH, LEN_LABEL);
+   strltrim (a_content, ySTR_BOTH, LEN_RECD);
    strldchg (a_content, G_CHAR_STORAGE, G_KEY_SPACE, LEN_RECD);
    DEBUG_REGS   yLOG_info    ("a_content" , a_content);
    /*---(check cell type)----------------*/
@@ -1172,6 +1183,37 @@ EXIM_export             (char a_style)
    return 0;
 }
 
+char
+EXIM_init               (void)
+{
+   yVIKEYS_cmds_add (YVIKEYS_M_FILE, "import"      , ""    , "c"    , EXIM_import  , "data import driver");
+   yVIKEYS_menu_add ("µfma", "auto"      , ":import +¦");
+   yVIKEYS_menu_add ("µfmv", "values"    , ":import v¦");
+   yVIKEYS_menu_add ("µfmV", "values+"   , ":import V¦");
+   yVIKEYS_menu_add ("µfmd", "coldel"    , ":import d¦");
+   yVIKEYS_menu_add ("µfmD", "coldel+"   , ":import D¦");
+   yVIKEYS_menu_add ("µfmf", "field"     , ":import f¦");
+   yVIKEYS_menu_add ("µfmF", "field+"    , ":import F¦");
+   yVIKEYS_menu_add ("µfmt", "tab"       , ":import t¦");
+   yVIKEYS_menu_add ("µfmT", "tab+"      , ":import T¦");
+   yVIKEYS_menu_add ("µfmn", "navive"    , ":import N¦");
+   yVIKEYS_cmds_add (YVIKEYS_M_FILE, "export"      , ""    , "c"    , EXIM_export  , "data export driver");
+   yVIKEYS_menu_add ("µfxa", "values"    , ":export v¦");
+   yVIKEYS_menu_add ("µfxV", "values+"   , ":export V¦");
+   yVIKEYS_menu_add ("µfed", "coldel"    , ":export d¦");
+   yVIKEYS_menu_add ("µfxD", "coldel+"   , ":export D¦");
+   yVIKEYS_menu_add ("µfxf", "field"     , ":export f¦");
+   yVIKEYS_menu_add ("µfxF", "field+"    , ":export F¦");
+   yVIKEYS_menu_add ("µfxc", "csv"       , ":export c¦");
+   yVIKEYS_menu_add ("µfxC", "csv+"      , ":export C¦");
+   yVIKEYS_menu_add ("µfxt", "tab"       , ":export t¦");
+   yVIKEYS_menu_add ("µfxT", "tab+"      , ":export T¦");
+   yVIKEYS_menu_add ("µfxr", "results"   , ":export r¦");
+   yVIKEYS_menu_add ("µfxR", "results+"  , ":export R¦");
+   yVIKEYS_menu_add ("µfxs", "source"    , ":export S¦");
+   yVIKEYS_menu_add ("µfxn", "navive"    , ":export N¦");
+   return 0;
+}
 
 
 

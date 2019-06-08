@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4v"
-#define     P_VERTXT    "caught stupid little error in ycalc addresser interface (merges work)"
+#define     P_VERNUM    "3.4w"
+#define     P_VERTXT    "updates to tab setting and finding, added tab regex browse"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -802,19 +802,6 @@ tCELL       denada;
 #define     DONE_DONE    &denada
 
 
-/*===[ MODES ]================================================================*/
-#define     MAX_LAYOUT      100
-typedef     struct cLAYOUT  tLAYOUT;
-struct cLAYOUT {
-   char        cat         [LEN_LABEL];
-   char        opt         [LEN_LABEL];
-   char        formula;
-   char        status;
-   char        command;
-   char        desc        [LEN_HUND];
-};
-extern      tLAYOUT     g_layouts [MAX_LAYOUT];
-
 
 /*---(layout_formula)--------------------*/
 #define     G_FORMULA_TINY      't'    /* top line shows only source               */
@@ -1093,6 +1080,7 @@ char      SMOD_buffer          (char  a_major, char  a_minor);
 char      api_yvikeys_format   (int   a_major, int   a_minor);
 char      api_yvikeys_units    (int   a_major, int   a_minor);
 char      api_yvikeys_exim     (char  a_dir  , char  a_style);
+char      EXIM_init            (void);
 char      EXIM_import          (char a_style);
 char      EXIM_export          (char a_style);
 char      SMOD_wander          (char  a_major, char  a_minor);
@@ -1363,6 +1351,7 @@ char        TAB_save             (void);
 char        TAB_retrieve         (void);
 char        TAB_switch           (int a_tab);
 char        TAB_switch_char      (char  a_tab);
+char        TAB_browse           (char *a_entry);
 char        TAB_line             (char  a_tab, char *a_list);
 char        TAB_status           (char  a_tab, char *a_list);
 char        TAB_status_curr      (char *a_list);
@@ -1473,7 +1462,7 @@ char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_
 tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
 
 /*> char      CELL__depwipe        (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);   <*/
-char      CELL__purge          (void);
+char      CELL_purge           (void);
 
 char      CELL__numerics       (tCELL *a_cell);
 
@@ -1576,6 +1565,8 @@ char*       api_ycalc__unit         (char *a_question, char *a_label);
 
 
 /*===[[ gyges_yvikeys.c ]]====================================================*/
+
+char        api_vikeys_init         (void);
 
 char        api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
 char        api_yvikeys_addressor   (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);

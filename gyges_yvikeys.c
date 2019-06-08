@@ -7,6 +7,20 @@ static long s_stamp = 0;
 
 
 
+char
+api_vikeys_init         (void)
+{
+   yVIKEYS_menu_add ("畫Pn", "normal"    , "Pn");
+   yVIKEYS_menu_add ("畫P#", "clear"     , "P#");
+   yVIKEYS_menu_add ("畫Pr", "replace"   , "Pr");
+   yVIKEYS_menu_add ("畫Pd", "dup"       , "Pd");
+   yVIKEYS_menu_add ("畫Pc", "combo"     , "Pc");
+   yVIKEYS_menu_add ("畫Pm", "move"      , "Pm");
+   yVIKEYS_menu_add ("畫Pf", "force"     , "Pf");
+   yVIKEYS_menu_add ("畫Pv", "values"    , "Pv");
+   return 0;
+}
+
 /*====================------------------------------------====================*/
 /*===----                   support for map mode                       ----===*/
 /*====================------------------------------------====================*/
@@ -509,10 +523,10 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
       rc = yRPN_addr_require (a_cell->source, a_reqs, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
-      if (rc < 0) {
-         DEBUG_REGS   yLOG_note    ("formula could not be parsed");
-         strcpy (x_source, "not_translatable");
-      }
+      /*> if (rc < 0) {                                                               <* 
+       *>    DEBUG_REGS   yLOG_note    ("formula could not be parsed");               <* 
+       *>    strcpy (x_source, "not_translatable");                                   <* 
+       *> }                                                                           <*/
    } else {
       DEBUG_REGS   yLOG_note    ("just copy straight across");
       strcpy (x_source, a_cell->source);
@@ -668,7 +682,7 @@ MAP__clear            (tMAPPED *a_map)
    /*---(rights)-------------------------*/
    a_map->umax = a_map->gmax = a_map->gamax = a_map->glmax = a_map->gnext = -1;
    /*---(screen)-------------------------*/
-   a_map->beg  = a_map->cur  = a_map->end  = a_map->len  = a_map->tend = 0;
+   a_map->ubeg  = a_map->ucur  = a_map->uend  = a_map->ulen  = a_map->utend = 0;
    /*---(grids)--------------------------*/
    a_map->gbeg = a_map->gcur = a_map->gend = 0;
    /*---(complete)-----------------------*/
@@ -792,11 +806,11 @@ LOC__mapper                (char a_dir)
    }
    /*---(other)--------------------------*/
    if (a_dir != tolower (a_dir)) {
-      x_map->beg   = 0;
-      x_map->cur   = 0;
-      x_map->end   = 0;
-      x_map->len   = 0;
-      x_map->tend  = 0;
+      x_map->ubeg   = 0;
+      x_map->ucur   = 0;
+      x_map->uend   = 0;
+      x_map->ulen   = 0;
+      x_map->utend  = 0;
       x_map->gbeg  = 0;
       x_map->gcur  = 0;
       x_map->gend  = 0;
@@ -859,7 +873,7 @@ MAP_mapper           (char a_req)
    char        t           [LEN_RECD];
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.avail, NULL, &g_ymap.avail, NULL);
+   yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.uavail, NULL, &g_ymap.uavail, NULL);
    if (a_req == YVIKEYS_INIT) {
       LOC__mapper   ('T');
       LOC__mapper   ('C');

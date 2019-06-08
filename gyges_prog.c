@@ -4,33 +4,7 @@
 
 char          unit_answer [LEN_FULL];
 
-tLAYOUT     g_layouts [MAX_LAYOUT] = {
-   /*"1234567890", "123456789012" , 12345678901234567890, 12345678901234567890, 12345678901234567890, "1234567890123456789012345678901234567890"      */
-   { "formula"   , "tiny"         , G_FORMULA_TINY      , 0                   , 0                   , "shows only contents/formula"                },
-   { "formula"   , "small"        , G_FORMULA_SMALL     , 0                   , 0                   , "shows tiny plus location and version"       },
-   { "formula"   , "debug"        , G_FORMULA_DEBUG     , 0                   , 0                   , "shows small plus current cell info"         },
-   { "status"    , "hide"         , 0                   , G_STATUS_HIDE       , 0                   , "status line is not displayed"               },
-   { "status"    , "file"         , 0                   , G_STATUS_FILE       , 0                   , "file name, control, and version"            },
-   { "status"    , "tab"          , 0                   , G_STATUS_TAB        , 0                   , "tab name, type, and dimensions"             },
-   { "status"    , "buffer"       , 0                   , G_STATUS_BUFFER     , 0                   , "details of current buffer"                  },
-   { "status"    , "visual"       , 0                   , G_STATUS_VISUAL     , 0                   , "details of visual selection"                },
-   { "status"    , "regs"         , 0                   , G_STATUS_REGS       , 0                   , "details of map register contents"           },
-   { "status"    , "treg"         , 0                   , G_STATUS_TREG       , 0                   , "details of text register contents"          },
-   { "status"    , "mark"         , 0                   , G_STATUS_MARK       , 0                   , "details of cell and location marks"         },
-   { "status"    , "cell"         , 0                   , G_STATUS_CELL       , 0                   , "details of current cell"                    },
-   { "status"    , "deps"         , 0                   , G_STATUS_DEPS       , 0                   , "details of current cell dependencies"       },
-   { "status"    , "rpn"          , 0                   , G_STATUS_RPN        , 0                   , "details of current cell rpn notation"       },
-   { "status"    , "keylog"       , 0                   , G_STATUS_KEYLOG     , 0                   , "key logging details for debugging"          },
-   { "status"    , "history"      , 0                   , G_STATUS_HISTORY    , 0                   , "change history for debugging"               },
-   { "command"   , "hide"         , 0                   , 0                   , G_COMMAND_HIDE      , "command line is not shown"                  },
-   { "command"   , "show"         , 0                   , 0                   , G_COMMAND_SHOW      , "display the command line"                   },
-   { "command"   , "float"        , 0                   , 0                   , G_COMMAND_FLOAT     , "display command line when required"         },
-   { "layout"    , "min"          , G_FORMULA_TINY      , G_STATUS_HIDE       , G_COMMAND_HIDE      , "greatest working room available"            },
-   { "layout"    , "normal"       , G_FORMULA_SMALL     , G_STATUS_FILE       , G_COMMAND_SHOW      , "normal working environment"                 },
-   { "layout"    , "max"          , G_FORMULA_DEBUG     , G_STATUS_FILE       , G_COMMAND_SHOW      , "greatest supporting information"            },
-   { ""          , ""             , 0                   , 0                   , 0                   , ""                                           },
-};
-int         g_nlayout;
+
 
 /*====================------------------------------------====================*/
 /*===----                        program wide                          ----===*/
@@ -108,7 +82,7 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    rc = yVIKEYS_init         ();
-   if (rc == 0)  rc = yVIKEYS_file_config  ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
+   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
    rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
@@ -121,6 +95,8 @@ PROG_init          (int a_argc, char *a_argv[])
    }
    /*---(globals)------------------------*/
    rc = CELL_init  ();
+   EXIM_init ();
+   api_vikeys_init ();
    /*---(ycalc config)-------------------*/
    rc = yCALC_init ('g');
    if (rc == 0)  rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
@@ -246,7 +222,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
    yVIKEYS_view_option (YVIKEYS_STATUS, "deps"   , CURS_status_deps    , "details of current cell dependencies"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "history", CURS_status_history , "change history for debugging"               );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "mundo"  , CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
    yVIKEYS_cmds_direct (":read");

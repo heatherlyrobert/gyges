@@ -961,7 +961,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
 #     get      v21  check the cell's printable string    CELL__unitnew         "printable"      , "0n11"                                               s_equal     s_celln print    : (----) ::                                           
 #
 #   COND       v21  purge all cells                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.035))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  purge the cells                      CELL__purge                                                                                   i_equal     0                                                                      
+#     exec     v21  purge the cells                      CELL_purge                                                                                    i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #

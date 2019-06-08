@@ -17,8 +17,8 @@ COL_init             (void)
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(add buffer commands)------------*/
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "colwide"     , ""    , "sii"  , COL_resize                 , "change a column size using address"   );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFER, "colreset"    , ""    , ""     , COL_reset                  , "reset all columns to default width"   );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colwide"     , ""    , "sii"  , COL_resize                 , "change a column size using address"   );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colreset"    , ""    , ""     , COL_reset                  , "reset all columns to default width"   );
    /*---(add yparse specification)-------*/
    rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
    /*---(complete)-----------------------*/
@@ -457,7 +457,6 @@ COL_writer_all          (void)
 /*===----                      unit testing                            ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNITTEST________o () { return; }
-
 
 char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 COL__unit          (char *a_question, char *a_label)

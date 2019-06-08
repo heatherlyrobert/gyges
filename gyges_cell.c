@@ -127,29 +127,8 @@ char        g_dashes      [200] = "----·----·----·----·----·----·----·----·----·
 /*====================------------------------------------====================*/
 PRIV void  o___PROGRAM_________o () { return; }
 
-char         /*-> tbd --------------------------------[ shoot  [ge.G94.071.80]*/ /*-[04.0000.102.!]-*/ /*-[--.---.---.--]-*/
-CELL_init          (void)
-{
-   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   char        rc          =    0;
-   /*---(cells)--------------------------*/
-   ACEL        = 0;
-   my.root     = NULL;
-   hcell       = NULL;
-   tcell       = NULL;
-   NCEL        = 0;
-   /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,afdu?-----,contents-----------------" , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,afdu?-----,contents-----------------" , "gyges free cells"       );
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 char         /*-> tbd --------------------------------[ ------ [fz.842.041.24]*/ /*-[01.0000.013.T]-*/ /*-[--.---.---.--]-*/
-CELL__purge        (void)
+CELL_purge         (void)
 {
    /*---(locals)-----------+-----------+-*/
    tCELL      *curr        = NULL;
@@ -181,13 +160,34 @@ CELL__purge        (void)
    return 0;
 }
 
+char         /*-> tbd --------------------------------[ shoot  [ge.G94.071.80]*/ /*-[04.0000.102.!]-*/ /*-[--.---.---.--]-*/
+CELL_init          (void)
+{
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          =    0;
+   /*---(cells)--------------------------*/
+   ACEL        = 0;
+   my.root     = NULL;
+   hcell       = NULL;
+   tcell       = NULL;
+   NCEL        = 0;
+   /*---(handlers)-----------------------*/
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,afdu?-----,contents-----------------" , "gyges dependent cells"  );
+   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,afdu?-----,contents-----------------" , "gyges free cells"       );
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*-> tbd --------------------------------[ shoot  [gz.321.001.01]*/ /*-[00.0000.102.!]-*/ /*-[--.---.---.--]-*/
 CELL_wrap          (void)
 {
    /*---(header)-------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    /*---(cells)--------------------------*/
-   CELL__purge ();
+   CELL_purge  ();
    hcell  = NULL;
    tcell  = NULL;
    NCEL   = 0;
