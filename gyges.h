@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4w"
-#define     P_VERTXT    "updates to tab setting and finding, added tab regex browse"
+#define     P_VERNUM    "3.4x"
+#define     P_VERTXT    "fixed xaxis/yaxis drawing to be simplier and work everytime"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

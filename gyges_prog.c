@@ -81,7 +81,7 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
-   rc = yVIKEYS_init         ();
+   rc = yVIKEYS_init         (MODE_MAP);
    if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
    rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
@@ -197,10 +197,11 @@ PROG_begin         (void)
    /*---(overall)------------------------*/
    yVIKEYS_view_config   ("gyges spreadsheet", P_VERNUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, api_yvikeys_locator, api_yvikeys_addressor);
-   yVIKEYS_bufs_config   (TAB_switch_char);
+   yVIKEYS_bufs_config   (TAB_switch_char, TAB_browse);
    yVIKEYS_hist_config   (HIST_undo, HIST_redo);
    HIST_init ();
    yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
+   MAP_mapper (YVIKEYS_INIT);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

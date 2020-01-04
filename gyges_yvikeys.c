@@ -408,7 +408,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
    strlcpy (x_copy->label, a_curr->label, LEN_LABEL);
    yCALC_stamp_set (a_curr->ycalc, s_stamp);
    /*---(place in buffer)----------------*/
-   rc = yVIKEYS_mreg_add  (x_copy, x_copy->label,'d');
+   rc = yVIKEYS_mreg_add  (x_copy, x_copy->label);
    DEBUG_REGS   yLOG_value   ("hook_rc"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_note    ("could not hook to register");

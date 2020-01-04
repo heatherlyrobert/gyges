@@ -452,18 +452,27 @@ DRAW_yaxis         (void)
    int         x_tall      = 0;
    int         x_left      = 0;
    int         x_bott      = 0;
-   char        x_label     [LEN_TERSE] = "";     /* column label              */
+   uchar       x_label     [LEN_TERSE] = "";     /* column label              */
+   /*---(begin)--------------------------*/
+   DEBUG_WIND  yLOG_enter   (__FUNCTION__);
    yVIKEYS_view_size     (YVIKEYS_YAXIS, &x_left, NULL, &x_bott, &x_tall, NULL);
-   /*---(process rows)-----------------------*/
-   for (i = BROW; i <=  EROW; ++i) {
-      if (i >= NROW)  break;
-      /*---(prepare)----------------------------*/
-      CURS_row_color  (i);
-      strlcpy (x_label, LABEL_row (i), LEN_TERSE);
-      mvprintw (x_bott - x_tall + 1 + (i - BROW), x_left, "%-4.4s", x_label);
+   DEBUG_WIND  yLOG_complex ("size"      , "%3dl, %3db, %3dt", x_left, x_bott, x_tall);
+   DEBUG_WIND  yLOG_complex ("rows"      , "%3db, %3de, %3dn", BROW, EROW, NROW);
+   /*---(process rows)------------------*/
+   for (i = 0; i < x_tall; ++i) {
+      /*---(prepare)------------*/
+      if (BROW + i < NROW)   strlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
+      else                   strlcpy (x_label, "····"       , LEN_TERSE);
+      /*---(show)---------------*/
+      CURS_row_color  (BROW + i);
+      mvprintw (x_bott - x_tall + 1 + i, x_left, "%-4.4s", x_label);
+      /*---(spacer)-------------*/
       attrset (0);
-      mvprintw (x_bott - x_tall + 1 + (i - BROW), x_left + 4, " ");
+      mvprintw (x_bott - x_tall + 1 + i, x_left + 4, " ");
+      /*---(done)---------------*/
    }
+   /*---(complete)----------------------*/
+   DEBUG_WIND  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -477,7 +486,9 @@ DRAW_xaxis         (void)
    int         x_bott      = 0;
    int         i           = 0;                  /* iterator -- columns       */
    int         w           = 0;                  /* column width              */
-   int         wa          = 0;                  /* adjusted column width     */
+   int         x_fill      = 0;                  /* adjusted column width     */
+   int         x_cum       = 0;
+   int         x_avail     = 0;
    char        x_label     [LEN_TERSE] = "";     /* column label              */
    int         x_pos       = 0;                  /* adjusted column width     */
    char        x_disp      [500]       = "";     /* temporary display message */
@@ -486,42 +497,35 @@ DRAW_xaxis         (void)
    /*---(begin)--------------------------*/
    yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &x_pref, NULL   , NULL, NULL);
    yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
-   DEBUG_GRAF  yLOG_complex ("yaxis"     , "%3d wide", x_pref);
-   DEBUG_GRAF  yLOG_complex ("xaxis"     , "%3d left, %3d wide, %3d bott", x_left, x_wide, x_bott);
-   x_pos = x_pref;
+   x_cum = x_pref;
    sprintf (x_disp, "¼_%c_½     ", LABEL_tab (CTAB));
-   mvprintw (x_bott, x_left, "%*.*s", x_pos, x_pos, x_disp);
-   DEBUG_GRAF  yLOG_complex ("pos"       , "%3d ncol, %3d bcol, %3d ecol", NCOL, BCOL, ECOL);
-   for (i = BCOL; i <=  ECOL; ++i) {
-      if (i >= NCOL) break;
+   mvprintw (x_bott, x_left, "%*.*s", x_cum, x_cum, x_disp);
+   DEBUG_WIND  yLOG_complex ("size"      , "%3dp, %3dl, %3dw, %3db", x_pref, x_left, x_wide, x_bott);
+   DEBUG_WIND  yLOG_complex ("cols"      , "%3db, %3de, %3dn", BCOL, ECOL, NCOL);
+   /*---(normal cols)--------------------*/
+   while (x_cum < x_wide) {
+      if (BCOL + i >= NCOL) break;
       /*---(prepare)---------------------*/
-      w     = COL_width (CTAB, i);
-      wa    = w - 4;
-      strlcpy (x_label, LABEL_col (i), LEN_TERSE);
-      /*---(output)----------------------*/
-      snprintf (x_disp, 500, "\[%*.*s%s\]", wa, wa, g_dashes, x_label);
-      if (x_disp [5] == '-')  x_disp [5] = G_CHAR_SPACE; 
-      DEBUG_GRAF  yLOG_complex (x_label     , "%3d wide, %3d adjd, %3d xpos, %s", w, wa, x_pos, x_disp);
-      CURS_col_color  (i);
-      mvprintw (x_bott, x_pos, x_disp);
+      x_avail = x_wide - x_cum;
+      w      = COL_width (CTAB, BCOL + i);
+      x_fill = w - 4;
+      if (x_avail < w)  x_fill = x_avail - 4;
+      strlcpy (x_label, LABEL_col (BCOL + i), LEN_TERSE);
+      /*---(format)----------------------*/
+      DEBUG_WIND  yLOG_complex ("curr"      , "%3d, %s, %3dw, %3dwa, %3dav", i, x_label, w, x_fill, x_avail);
+      if      (x_avail == 1) snprintf (x_disp, 500, ">");
+      else if (x_avail == 2) snprintf (x_disp, 500, "\[>");
+      else if (x_avail == 3) snprintf (x_disp, 500, "\[->");
+      else if (x_avail <  w) snprintf (x_disp, 500, "\[%*.*s%s>", x_fill, x_fill, g_dashes, x_label);
+      else                   snprintf (x_disp, 500, "\[%*.*s%s\]", x_fill, x_fill, g_dashes, x_label);
+      /*> if (x_disp [5] == '-')  x_disp [5] = G_CHAR_SPACE;                          <*/
+      /*---(draw))-----------------------*/
+      CURS_col_color  (BCOL + i);
+      mvprintw (x_bott, x_cum, x_disp);
       attrset (0);
-      x_pos += w;
-   }
-   /*---(fill in right side)-------------*/
-   if (x_pos < x_wide) {
-      w     = x_wide - x_pos;
-      wa    = w - 4;
-      strlcpy (x_label, LABEL_col (ECOL + 1), LEN_TERSE);
-      if (ECOL < NCOL - 1){
-         if      (w == 1) snprintf (x_disp, 500, ">");
-         else if (w == 2) snprintf (x_disp, 500, "\[>");
-         else if (w == 3) snprintf (x_disp, 500, "\[->");
-         else             snprintf (x_disp, 500, "\[%*.*s%s>", wa, wa, g_dashes, x_label);
-      } else              snprintf (x_disp, 500, "%*.*s ", w, w, g_empty);
-      DEBUG_GRAF  yLOG_complex (x_label     , "%3d wide, %3d adjd, %3d xpos, %s", w, wa, x_pos, x_disp);
-      CURS_col_color  (ECOL + 1);
-      mvprintw (x_bott, x_pos, x_disp);
-      attrset (0);
+      /*---(next)------------------------*/
+      x_cum += w;
+      ++i;
    }
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
@@ -1162,12 +1166,7 @@ DRAW_init          (void)
    yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
    yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0, DRAW_xaxis  );
    yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0, DRAW_yaxis  );
-   yVIKEYS_cmds_direct   (":layout min");
-   yVIKEYS_cmds_direct   (":status show");
-   yVIKEYS_cmds_direct   (":command show");
-   yVIKEYS_cmds_direct   (":formula show");
-   yVIKEYS_cmds_direct   (":xaxis show");
-   yVIKEYS_cmds_direct   (":yaxis show");
+   yVIKEYS_cmds_direct   (":layout gyges");
    yVIKEYS_cmds_add      (YVIKEYS_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
    /*---(get window size)-------------*/
    /*> CURS_size   ();                                                                <*/
