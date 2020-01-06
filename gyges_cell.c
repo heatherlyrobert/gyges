@@ -118,6 +118,7 @@
 
 char        g_empty       [200] = "                                                                                                                                                                                                       ";
 char        g_dashes      [200] = "----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----";
+char       *g_tbd         = "tbd";
 
 
 
@@ -266,7 +267,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    (*a_cell)->tab       = UNHOOKED;
    (*a_cell)->col       = UNHOOKED;
    (*a_cell)->row       = UNHOOKED;
-   strcpy ((*a_cell)->label, "tbd");
+   (*a_cell)->label     = g_tbd;
    /*---(source)------------------------*/
    (*a_cell)->source    = NULL;
    (*a_cell)->len       = 0;
@@ -670,12 +671,12 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_complex ("location"  , "tab %4d, col %4d, row %4d", a_tab, a_col, a_row);
-   DEBUG_CELL   yLOG_point   ("contents"  , a_source);
+   DEBUG_CELL   yLOG_point   ("a_source"  , a_source);
    --rce;  if (a_source == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_CELL   yLOG_info    ("contents"  , a_source);
+   DEBUG_CELL   yLOG_info    ("a_source"  , a_source);
    /*---(legal location)-----------------*/
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
@@ -707,7 +708,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("change source and length values");
    x_curr->source = strndup (a_source, LEN_RECD);
-   x_curr->len = strlen  (x_curr->source);
+   x_curr->len    = strlen  (x_curr->source);
    /*---(interpret)----------------------*/
    DEBUG_CELL   yLOG_note    ("interpret new contents");
    rc = yCALC_handle (x_curr->label);

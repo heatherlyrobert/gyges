@@ -2,7 +2,8 @@
 #include   "gyges.h"
 
 
-static char s_nada       [5] = "";
+static char   s_nada       [5] = "";
+static char  *s_root     = "ROOT";
 
 
 
@@ -185,7 +186,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
     *>    return x_rc;                                                                <* 
     *> }                                                                              <*/
    /*---(root)---------------------------*/
-   if (strcmp ("ROOT", a_label) == 0) {
+   if (strcmp (s_root, a_label) == 0) {
       if (my.root == NULL) {
          rc = CELL__new (&my.root, UNLINKED);
          DEBUG_PROG   yLOG_value   ("rc"        , rc);
@@ -197,7 +198,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
             DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
             return rce;
          }
-         strcpy (my.root->label, "ROOT");
+         my.root->label = s_root;
       }
       x_owner = my.root;
    }

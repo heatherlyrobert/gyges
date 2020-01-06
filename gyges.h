@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4y"
-#define     P_VERTXT    "switched history to dynamic memory, saved 400Mb (really!! and stupid)"
+#define     P_VERNUM    "3.4z"
+#define     P_VERTXT    "updated all unit tests and caught some edge-cases"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -256,8 +256,6 @@ typedef struct timespec  tTSPEC;
 
 char        buf0        [LEN_RECD];
 
-char        keylog      [LEN_HUGE];
-int         nkeylog;
 
 /*---(macros)-------------------------*/
 /*---(run as)----------*/
@@ -434,7 +432,6 @@ int         nerror;  /* count */
 
 
 
-
 /*====================-----------------+------------------====================*/
 /*===----                     CELL DATA STRUCTURE                      ----===*/
 /*====================-----------------+------------------====================*/
@@ -498,7 +495,7 @@ struct cCELL {
    short       tab;          /* which tab contains the cell                   */
    short       col;          /* which column contains this cell               */
    short       row;          /* which row contains this cell                  */
-   char        label [10];   /* label of the cell at its current location     */
+   char       *label;        /* label of the cell at its current location     */
    /*---(#2, SOURCE)---------------------*/
    /*   stores the original unmodified user-typed string as well as its       */
    /*   length which is required to supporting later editing.  string is      */
@@ -863,6 +860,7 @@ extern char    special;
 
 extern char      g_empty    [200];
 extern char      g_dashes   [200];
+extern   char   *g_tbd;
 
 extern char      ver_ctrl;
 extern char      ver_num  [10];

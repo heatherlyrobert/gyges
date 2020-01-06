@@ -275,7 +275,7 @@ TAB_switch_char        (char a_tab)
       case '[' :  x_tab = 0;             break;
       case '<' :  x_tab = CTAB - 1;      break;
       case '>' :  x_tab = CTAB + 1;      break;
-      case ']' :  x_tab = NTAB - 1;      break;
+      case ']' :  x_tab = NTAB - 3;      break;
       }
    }
    /*---(absolute tabs)------------------*/

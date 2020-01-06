@@ -337,7 +337,7 @@ api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z)
    /*---(identify cell)------------------*/
    DEBUG_REGS   yLOG_complex ("coords"    , "%3db, %3dx, %3dy", b, x, y);
    x_curr = LOC_cell_at_loc (b, x, y);
-   DEBUG_REGS   yLOG_complex ("x_curr"    , x_curr);
+   DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
    --rce;  if (x_curr == NULL) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -405,7 +405,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
       return rce;
    }
    /*---(move in critical data)----------*/
-   strlcpy (x_copy->label, a_curr->label, LEN_LABEL);
+   x_copy->label = strdup (a_curr->label);
    yCALC_stamp_set (a_curr->ycalc, s_stamp);
    /*---(place in buffer)----------------*/
    rc = yVIKEYS_mreg_add  (x_copy, x_copy->label);

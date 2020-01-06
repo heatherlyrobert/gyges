@@ -378,6 +378,10 @@ PROG__unitloud      (void)
    yURG_name   ("deps", YURG_ON);
    yURG_name   ("ystr", YURG_ON);
    yURG_name   ("args", YURG_ON);
+   yURG_name   ("apis", YURG_ON);
+   yURG_name   ("calc", YURG_ON);
+   yURG_name   ("exec", YURG_ON);
+   yURG_name   ("adjs", YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

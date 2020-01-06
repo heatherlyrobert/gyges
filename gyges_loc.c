@@ -182,15 +182,13 @@ LOC_hook           (
       return rce;
    }
    /*---(point cell at location)---------*/
-   a_cell->tab = a_tab;
-   a_cell->col = a_col;
-   a_cell->row = a_row;
-   str4gyges (a_tab, a_col, a_row, 0, 0, a_cell->label, YSTR_LEGAL);
+   a_cell->tab   = a_tab;
+   a_cell->col   = a_col;
+   a_cell->row   = a_row;
+   if (a_cell->label != g_tbd)  free (a_cell->label);
+   a_cell->label = strdup (x_label);
    /*---(point location at cell)---------*/
    s_tabs [a_tab].sheet[a_col][a_row] = a_cell;
-   /*> if (LOC_label (a_cell, a_cell->label) < 0) {                                   <* 
-    *>    strcpy (a_cell->label, "tbd");                                              <* 
-    *> }                                                                              <*/
    /*---(update totals)------------------*/
    ++s_tabs[a_tab].cols[a_col].c;
    ++s_tabs[a_tab].rows[a_row].c;
@@ -266,10 +264,11 @@ LOC_unhook         (
    --s_tabs[x_tab].c;
    /*---(detach)-------------------------*/
    DEBUG_LOCS   yLOG_note    ("mark cell unhooked");
-   a_cell->tab = UNHOOKED;
-   a_cell->col = UNHOOKED;
-   a_cell->row = UNHOOKED;
-   strcpy (a_cell->label, "tbd");
+   a_cell->tab   = UNHOOKED;
+   a_cell->col   = UNHOOKED;
+   a_cell->row   = UNHOOKED;
+   if (a_cell->label != g_tbd)  free (a_cell->label);
+   a_cell->label = g_tbd;
    DEBUG_LOCS   yLOG_note    ("mark location unused");
    s_tabs [x_tab].sheet[x_col][x_row] = NULL;
    /*---(complete)-----------------------*/
