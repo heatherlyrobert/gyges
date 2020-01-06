@@ -55,84 +55,84 @@ static char  s_mark_list   [LEN_RECD];       /* current marks                  *
 
 
 #define     MAX_MENU       500
-typedef struct cMENU  tMENU;
-struct  cMENU {  /* two level menu only, none of that complex shit            */
-   char     one;                            /* shortcut for menu              */
-   char     menu      [LEN_FULL];            /* top level menu item            */
-   char     next;                           /* next column                    */
-   char     two;                            /* shortcut for submenu           */
-   char     name      [LEN_FULL];            /* name of menu item              */
-   char     desc      [LEN_FULL];            /* descripion, example, alternate */
-};
-tMENU       s_menus     [MAX_MENU] = {
-   /* one  ---menu---------- next  -sc-  ---name----------  ---example------------ */
-   {  'f', "file"           , ' ', '-', ""               , ""                     },
-   {  't', "technical"      , ' ', '-', ""               , ""                     },
-   {  'F', "format"         , ' ', '<', "left"           , "test                " },
-   {  ' ', ""               , ' ', '|', "center"         , "        test        " },
-   {  ' ', ""               , ' ', '>', "right"          , "               test " },
-   {  ' ', ""               , ' ', '[', "left bracket"   , "[test              ]" },
-   {  ' ', ""               , ' ', '^', "center bracket" , "[       test       ]" },
-   {  ' ', ""               , ' ', ']', "right bracket"  , "[              test]" },
-   {  ' ', ""               , ' ', '{', "right brace"    , "[  test            ]" },
-   {  ' ', ""               , ' ', '}', "left brace"     , "[            test  ]" },
-   {  ' ', ""               , ' ', ' ', "fill space"     , "[  test            ]" },
-   {  ' ', ""               , ' ', '-', "fill dash"      , "[--test------------]" },
-   {  ' ', ""               , ' ', '=', "fill equal"     , "[==test============]" },
-   {  ' ', ""               , ' ', '_', "fill under"     , "[__test____________]" },
-   {  ' ', ""               , ' ', '.', "fill period"    , "[..test............]" },
-   {  ' ', ""               , ' ', '+', "fill plus"      , "[++test++++++++++++]" },
-   {  ' ', ""               , ' ', 'i', "integer"        , "            1234567 " },
-   {  ' ', ""               , ' ', 'r', "real"           , "            987.541 " },
-   {  ' ', ""               , ' ', 'g', "general"        , "         987.541234 " },
-   {  ' ', ""               , ' ', ',', "comma"          , "          1,234,567 " },
-   {  ' ', ""               , ' ', 's', "comma/sign"     , "         +1,234,567 " },
-   {  ' ', ""               , ' ', 'a', "accounting"     , "        (1,234,567) " },
-   {  ' ', ""               , ' ', '$', "currency"       , "         $1,234,567 " },
-   {  ' ', ""               , ' ', 'p', "percent"        , "                15p " },
-   {  ' ', ""               , '-', 'P', "point/bullet"   , "                 5) " },
-   {  ' ', ""               , ' ', '#', "technical"      , "  123,456.789'032 + " },
-   {  ' ', ""               , ' ', 'e', "exponential"    , "          1.235e+05 " },
-   {  ' ', ""               , ' ', 'E', "exp divided"    , "       +1.235 e +05 " },
-   {  ' ', ""               , ' ', 'x', "hexidecimal"    , "              xaf68 " },
-   {  ' ', ""               , ' ', 'X', "hex divided"    , "            x'af'68 " },
-   {  ' ', ""               , ' ', 'b', "binary"         , "          b10101111 " },
-   {  ' ', ""               , ' ', 'B', "binary divided" , "        b'1010'1111 " },
-   {  ' ', ""               , ' ', 'o', "octal"          , "               o257 " },
-   {  ' ', ""               , ' ', 'O', "octal"          , "              o'257 " },
-   {  ' ', ""               , ' ', 't', "time (24h)"     , "              13:26 " },
-   {  ' ', ""               , ' ', 'd', "date"           , "        2014-Dec-15 " },
-   {  ' ', ""               , ' ', 'T', "timestamp"      , "  14.12.15.13.26.15 " },
-   {  ' ', ""               , ' ', 'D', "date/time"      , "  2014-Dec-15 13:26 " },
-   {  ' ', ""               , ' ', '0', "0 decimals"     , "                  0 " },
-   {  ' ', ""               , ' ', '1', "1 decimals"     , "                0.1 " },
-   {  ' ', ""               , ' ', '2', "2 decimals"     , "               0.12 " },
-   {  ' ', ""               , ' ', '3', "3 decimals"     , "              0.123 " },
-   {  ' ', ""               , ' ', '4', "4 decimals"     , "             0.1234 " },
-   {  ' ', ""               , ' ', '5', "5 decimals"     , "            0.12345 " },
-   {  ' ', ""               , ' ', '6', "6 decimals"     , "           0.123456 " },
-   {  ' ', ""               , ' ', '7', "7 decimals"     , "          0.1234567 " },
-   {  ' ', ""               , ' ', '8', "8 decimals"     , "         0.12345678 " },
-   {  ' ', ""               , ' ', '9', "9 decimals"     , "        0.123456789 " },
-   {  'S', "sizing"         , ' ', 'm', "min width"      , "4 chars             " },
-   {  ' ', ""               , ' ', 'n', "normal width"   , "8 chars             " },
-   {  ' ', ""               , ' ', 'N', "normal+ width"  , "12 chars            " },
-   {  ' ', ""               , ' ', 'w', "wide width"     , "20 chars            " },
-   {  ' ', ""               , ' ', 'w', "wide+ width"    , "50 chars            " },
-   {  ' ', ""               , ' ', 'H', "narrower by 5"  , "-5 chars (rounded)  " },
-   {  ' ', ""               , ' ', 'h', "narrower by 1"  , "-1 chars            " },
-   {  ' ', ""               , ' ', 'l', "wider by 1"     , "+1 chars            " },
-   {  ' ', ""               , ' ', 'L', "wider by 5"     , "+5 chars (rounded)  " },
-   {  ' ', ""               , ' ', 'K', "shortest"       , "1 char tall         " },
-   {  ' ', ""               , ' ', 'k', "shorter by 1"   , "-1 chars            " },
-   {  ' ', ""               , ' ', 'j', "taller by 1"    , "+1 chars            " },
-   {  ' ', ""               , ' ', 'J', "tallest"        , "5 chars             " },
-   {  ' ', ""               , ' ', 'M', "merge cells"    , "                    " },
-   {  ' ', ""               , ' ', 'U', "unmerge cells"  , "                    " },
-   {  'D', "distribution"   , ' ', '-', ""               , "                    " },
-   {  '~', "end-of-menu"    , ' ', ' ', ""               , ""                     },
-   {  ' ', ""               , ' ', ' ', ""               , ""                     },
-};
+/*> typedef struct cMENU  tMENU;                                                        <* 
+ *> struct  cMENU {  /+ two level menu only, none of that complex shit            +/    <* 
+ *>    char     one;                            /+ shortcut for menu              +/    <* 
+ *>    char     menu      [LEN_FULL];            /+ top level menu item            +/   <* 
+ *>    char     next;                           /+ next column                    +/    <* 
+ *>    char     two;                            /+ shortcut for submenu           +/    <* 
+ *>    char     name      [LEN_FULL];            /+ name of menu item              +/   <* 
+ *>    char     desc      [LEN_FULL];            /+ descripion, example, alternate +/   <* 
+ *> };                                                                                  <*/
+/*> tMENU       s_menus     [MAX_MENU] = {                                                  <* 
+ *>    /+ one  ---menu---------- next  -sc-  ---name----------  ---example------------ +/   <* 
+ *>    {  'f', "file"           , ' ', '-', ""               , ""                     },    <* 
+ *>    {  't', "technical"      , ' ', '-', ""               , ""                     },    <* 
+ *>    {  'F', "format"         , ' ', '<', "left"           , "test                " },    <* 
+ *>    {  ' ', ""               , ' ', '|', "center"         , "        test        " },    <* 
+ *>    {  ' ', ""               , ' ', '>', "right"          , "               test " },    <* 
+ *>    {  ' ', ""               , ' ', '[', "left bracket"   , "[test              ]" },    <* 
+ *>    {  ' ', ""               , ' ', '^', "center bracket" , "[       test       ]" },    <* 
+ *>    {  ' ', ""               , ' ', ']', "right bracket"  , "[              test]" },    <* 
+ *>    {  ' ', ""               , ' ', '{', "right brace"    , "[  test            ]" },    <* 
+ *>    {  ' ', ""               , ' ', '}', "left brace"     , "[            test  ]" },    <* 
+ *>    {  ' ', ""               , ' ', ' ', "fill space"     , "[  test            ]" },    <* 
+ *>    {  ' ', ""               , ' ', '-', "fill dash"      , "[--test------------]" },    <* 
+ *>    {  ' ', ""               , ' ', '=', "fill equal"     , "[==test============]" },    <* 
+ *>    {  ' ', ""               , ' ', '_', "fill under"     , "[__test____________]" },    <* 
+ *>    {  ' ', ""               , ' ', '.', "fill period"    , "[..test............]" },    <* 
+ *>    {  ' ', ""               , ' ', '+', "fill plus"      , "[++test++++++++++++]" },    <* 
+ *>    {  ' ', ""               , ' ', 'i', "integer"        , "            1234567 " },    <* 
+ *>    {  ' ', ""               , ' ', 'r', "real"           , "            987.541 " },    <* 
+ *>    {  ' ', ""               , ' ', 'g', "general"        , "         987.541234 " },    <* 
+ *>    {  ' ', ""               , ' ', ',', "comma"          , "          1,234,567 " },    <* 
+ *>    {  ' ', ""               , ' ', 's', "comma/sign"     , "         +1,234,567 " },    <* 
+ *>    {  ' ', ""               , ' ', 'a', "accounting"     , "        (1,234,567) " },    <* 
+ *>    {  ' ', ""               , ' ', '$', "currency"       , "         $1,234,567 " },    <* 
+ *>    {  ' ', ""               , ' ', 'p', "percent"        , "                15p " },    <* 
+ *>    {  ' ', ""               , '-', 'P', "point/bullet"   , "                 5) " },    <* 
+ *>    {  ' ', ""               , ' ', '#', "technical"      , "  123,456.789'032 + " },    <* 
+ *>    {  ' ', ""               , ' ', 'e', "exponential"    , "          1.235e+05 " },    <* 
+ *>    {  ' ', ""               , ' ', 'E', "exp divided"    , "       +1.235 e +05 " },    <* 
+ *>    {  ' ', ""               , ' ', 'x', "hexidecimal"    , "              xaf68 " },    <* 
+ *>    {  ' ', ""               , ' ', 'X', "hex divided"    , "            x'af'68 " },    <* 
+ *>    {  ' ', ""               , ' ', 'b', "binary"         , "          b10101111 " },    <* 
+ *>    {  ' ', ""               , ' ', 'B', "binary divided" , "        b'1010'1111 " },    <* 
+ *>    {  ' ', ""               , ' ', 'o', "octal"          , "               o257 " },    <* 
+ *>    {  ' ', ""               , ' ', 'O', "octal"          , "              o'257 " },    <* 
+ *>    {  ' ', ""               , ' ', 't', "time (24h)"     , "              13:26 " },    <* 
+ *>    {  ' ', ""               , ' ', 'd', "date"           , "        2014-Dec-15 " },    <* 
+ *>    {  ' ', ""               , ' ', 'T', "timestamp"      , "  14.12.15.13.26.15 " },    <* 
+ *>    {  ' ', ""               , ' ', 'D', "date/time"      , "  2014-Dec-15 13:26 " },    <* 
+ *>    {  ' ', ""               , ' ', '0', "0 decimals"     , "                  0 " },    <* 
+ *>    {  ' ', ""               , ' ', '1', "1 decimals"     , "                0.1 " },    <* 
+ *>    {  ' ', ""               , ' ', '2', "2 decimals"     , "               0.12 " },    <* 
+ *>    {  ' ', ""               , ' ', '3', "3 decimals"     , "              0.123 " },    <* 
+ *>    {  ' ', ""               , ' ', '4', "4 decimals"     , "             0.1234 " },    <* 
+ *>    {  ' ', ""               , ' ', '5', "5 decimals"     , "            0.12345 " },    <* 
+ *>    {  ' ', ""               , ' ', '6', "6 decimals"     , "           0.123456 " },    <* 
+ *>    {  ' ', ""               , ' ', '7', "7 decimals"     , "          0.1234567 " },    <* 
+ *>    {  ' ', ""               , ' ', '8', "8 decimals"     , "         0.12345678 " },    <* 
+ *>    {  ' ', ""               , ' ', '9', "9 decimals"     , "        0.123456789 " },    <* 
+ *>    {  'S', "sizing"         , ' ', 'm', "min width"      , "4 chars             " },    <* 
+ *>    {  ' ', ""               , ' ', 'n', "normal width"   , "8 chars             " },    <* 
+ *>    {  ' ', ""               , ' ', 'N', "normal+ width"  , "12 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'w', "wide width"     , "20 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'w', "wide+ width"    , "50 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'H', "narrower by 5"  , "-5 chars (rounded)  " },    <* 
+ *>    {  ' ', ""               , ' ', 'h', "narrower by 1"  , "-1 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'l', "wider by 1"     , "+1 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'L', "wider by 5"     , "+5 chars (rounded)  " },    <* 
+ *>    {  ' ', ""               , ' ', 'K', "shortest"       , "1 char tall         " },    <* 
+ *>    {  ' ', ""               , ' ', 'k', "shorter by 1"   , "-1 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'j', "taller by 1"    , "+1 chars            " },    <* 
+ *>    {  ' ', ""               , ' ', 'J', "tallest"        , "5 chars             " },    <* 
+ *>    {  ' ', ""               , ' ', 'M', "merge cells"    , "                    " },    <* 
+ *>    {  ' ', ""               , ' ', 'U', "unmerge cells"  , "                    " },    <* 
+ *>    {  'D', "distribution"   , ' ', '-', ""               , "                    " },    <* 
+ *>    {  '~', "end-of-menu"    , ' ', ' ', ""               , ""                     },    <* 
+ *>    {  ' ', ""               , ' ', ' ', ""               , ""                     },    <* 
+ *> };                                                                                      <*/
 
 
 

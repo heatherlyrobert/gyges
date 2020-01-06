@@ -97,7 +97,7 @@ FILE_init               (void)
    char        rc          =    0;
    /*---(handlers)-----------------------*/
    rc = yVIKEYS_cmds_add (YVIKEYS_M_FILE  , "new"         , ""    , ""     , FILE_new                     , "clear out all content"                                       );
-   /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );   <*/
+   /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", -1, TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );   <*/
 
 
    /*> { 'e', FILE_DEPCEL , "dependent cells"    , "cell_dep"  , 'D', "TiaTO-----", "lvl/reg"   , "seq"       , "label"     , "t-f-d-a-m" , "contents"  , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 

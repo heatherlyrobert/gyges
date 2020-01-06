@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.4-, stablize port to allow basic functioning"
-#define     P_VERNUM    "3.4x"
-#define     P_VERTXT    "fixed xaxis/yaxis drawing to be simplier and work everytime"
+#define     P_VERNUM    "3.4y"
+#define     P_VERTXT    "switched history to dynamic memory, saved 400Mb (really!! and stupid)"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -383,6 +383,13 @@ struct cACCESSOR {
    /*---(done)------------*/
 };
 extern    struct cACCESSOR my;
+
+extern    char       *g_nada;
+extern    char       *g_nothing;
+extern    char       *g_default;
+extern    char       *g_ditto;
+extern    char       *g_before;
+extern    char       *g_after;
 
 
 #define     G_INFO_NONE       ' '
@@ -1275,18 +1282,25 @@ char        CELL__unitchange     (tCELL *a_cell, char *a_source);
 
 
 
-char        HIST_init          (void);
+char        HIST_init               (void);
+char        HIST_wrap               (void);
+
+char        HIST__new               (char a_mode, char a_type, int a_tab, int a_col, int a_row);
+char        HIST__delete            (tHIST *a_curr);
+char        HIST__prune             (void);
+char        HIST__purge             (void);
+
+char        HIST__find              (int a_index);
+char        HIST__cursor            (char a_move);
+
+char        HIST__concat       (char *a_format, char *a_content, char **a_final);
 
 char        HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF, char *a_after);
-char        HIST_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_afterF);
+char        HIST_overwrite     (int a_tab, int a_col, int a_row, char *a_after , char *a_afterF);
 char        HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
 char        HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
-
-char        HIST_decimals      (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
-char        HIST_align         (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
-char        HIST_format        (char a_mode, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
-char        HIST_width         (char a_mode, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
-char        HIST_height        (char a_mode, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
+char        HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
+char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
 
 char        HIST_list          (void);
 char        HIST_undo          (void);
@@ -1453,9 +1467,27 @@ char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
 char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
 
 
+
+/*---(major changes)-------------*/
+#define     HIST_OVERWRITE    'O'
+#define     HIST_CHANGE       'S'
+#define     HIST_DELETE       'D'
+#define     HIST_CLEAR        'X'
+/*---(minor changes)-------------*/
+#define     HIST_ALIGN        'a'
+#define     HIST_FORMAT       'f'
+#define     HIST_DECIMALS     'd'
+#define     HIST_UNITS        'u'
+#define     HIST_WIDTH        'w'
+#define     HIST_HEIGHT       'h'
+/*---(validations)---------------*/
+#define     HIST_FORMATS      "afdu"
+#define     HIST_SIZES        "wh"
+/*---(modes)---------------------*/
 #define     HIST_NONE          'x'
 #define     HIST_BEG           'y'
 #define     HIST_ADD           '-'
+
 
 
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);

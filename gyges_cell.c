@@ -174,8 +174,8 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", CELL_reader     , CELL_writer_all , "------------" , "label,afdu?-----,contents-----------------" , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", CELL_reader     , NULL            , "------------" , "label,afdu?-----,contents-----------------" , "gyges free cells"       );
+   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", -1, CELL_reader     , CELL_writer_all , "------------" , "label,afdu?-----,contents-----------------" , "gyges dependent cells"  );
+   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", -1, CELL_reader     , NULL            , "------------" , "label,afdu?-----,contents-----------------" , "gyges free cells"       );
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -666,7 +666,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    char        x_label     [LEN_LABEL];
    tCELL      *x_curr      = NULL;
    char       x_bsource    [200] = "";
-   char       x_bformat    [200] = "´´´´´";
+   char       x_bformat    [LEN_LABEL] = "";
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_complex ("location"  , "tab %4d, col %4d, row %4d", a_tab, a_col, a_row);
@@ -690,7 +690,6 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    --rce;  if (x_curr != NULL) {
       DEBUG_CELL   yLOG_note    ("save existing data");
       if (x_curr->source != NULL)  strcpy (x_bsource, x_curr->source);
-      sprintf (x_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
    } else if (x_curr == NULL) {
       rc = CELL__create (&x_curr, a_tab, a_col, a_row);
       DEBUG_CELL   yLOG_point   ("new cell"  , x_curr);
@@ -701,6 +700,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
    /*---(history)------------------------*/
+   sprintf (x_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
    if (a_source == NULL)            HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
    else if (a_source [0] == '\0')   HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
    else                             HIST_change  (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat, a_source);
@@ -742,7 +742,7 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    }
    /*---(history)------------------------*/
    if (a_format [0] != '´')   strcpy (x_aformat, a_format);
-   if (a_mode != HIST_NONE)  HIST_overwrite (a_mode, a_tab, a_col, a_row, x_aformat);
+   if (a_mode != HIST_NONE)  HIST_overwrite (a_tab, a_col, a_row, a_source, x_aformat);
    /*---(formatting)---------------------*/
    DEBUG_CELL   yLOG_note    ("update format fields");
    x_new->align  = x_aformat [0];
@@ -795,7 +795,7 @@ CELL_units         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_unit)
    if (a_head == NULL || a_curr == NULL)    return  0;
    /*---(prepare)------------------------*/
    /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->unit, a_unit);
+   HIST_format (a_mode, HIST_UNITS   , a_curr->tab, a_curr->col, a_curr->row, a_curr->unit, a_unit);
    a_curr->unit = a_unit;
    /*---(complete)-----------------------*/
    return 0;
@@ -824,11 +824,11 @@ CELL_format        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
    /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
    if      (strchr (YCALC_GROUP_STR , x_type) != 0) {
       if (str9filler (a_format) < 0)  return 0;
-      HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
+      HIST_format (a_mode, HIST_FORMAT  , a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
       a_curr->format = a_format;
    } else if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
       if (str9format (a_format) < 0)  return 0;
-      HIST_format (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
+      HIST_format (a_mode, HIST_FORMAT  , a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
       a_curr->format = a_format;
    }
    /*---(complete)-----------------------*/
@@ -845,7 +845,7 @@ CELL_align         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_align)
    if (str9align (a_align) < 0)             return 0;
    /*---(process all cells in range)-----*/
    /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   HIST_align  (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->align, a_align);
+   HIST_format (a_mode, HIST_ALIGN   , a_curr->tab, a_curr->col, a_curr->row, a_curr->align, a_align);
    a_curr->align = a_align;
    /*---(complete)---------------------------*/
    return 0;
@@ -872,7 +872,7 @@ CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    }
    /*---(update)-----------------------*/
    if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
-      HIST_decimals (a_mode, a_curr->tab, a_curr->col, a_curr->row, a_curr->decs, x_decs);
+      HIST_format (a_mode, HIST_DECIMALS, a_curr->tab, a_curr->col, a_curr->row, a_curr->decs, x_decs);
       a_curr->decs = x_decs;
    }
    /*---(complete)---------------------------*/

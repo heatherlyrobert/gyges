@@ -20,7 +20,7 @@ COL_init             (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colwide"     , ""    , "sii"  , COL_resize                 , "change a column size using address"   );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colreset"    , ""    , ""     , COL_reset                  , "reset all columns to default width"   );
    /*---(add yparse specification)-------*/
-   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
+   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", -1, COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -227,7 +227,7 @@ COL_visual         (int a_tab, int a_col, int a_row, char a_mode, char a_num)
       }
    }
    /*---(history)----------------------*/
-   HIST_width  (a_mode, a_tab, a_col, a_row, x_prev, x_width);
+   HIST_size   (a_mode, HIST_WIDTH   , a_tab, a_col, a_row, x_prev, x_width);
    /*---(set width)--------------------*/
    COL_widen  (a_tab, a_col, x_width);
    /*---(reset headers)---------------*/

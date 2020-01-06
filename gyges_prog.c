@@ -249,6 +249,7 @@ PROG_end             (void)
    LOC_wrap     ();
    DEBUG_PROG   yLOG_note    ("yVIKEYS_wrap");
    yVIKEYS_wrap ();
+   HIST_wrap    ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_PROG   yLOGS_end     ();
    return 0;
@@ -368,13 +369,15 @@ PROG__unitquiet     (void)
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unitloud      (void)
 {
-   int         x_argc      = 9;
-   char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@ystr", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
+   int         x_argc      = 10;
+   char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@args", "@@cmds", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
    yURG_logger (x_argc, x_args);
    yURG_name   ("tops", YURG_ON);
    yURG_name   ("cell", YURG_ON);
    yURG_name   ("regs", YURG_ON);
    yURG_name   ("deps", YURG_ON);
+   yURG_name   ("ystr", YURG_ON);
+   yURG_name   ("args", YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

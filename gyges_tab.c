@@ -45,7 +45,7 @@ TAB_init                (void)
    /*---(add status options)-------------*/
    rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
    /*---(add yparse specification)-------*/
-   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
+   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
    /*---(complete)-----------------------*/
    return rc;
 }

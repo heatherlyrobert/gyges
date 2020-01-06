@@ -21,7 +21,7 @@ ROW_init             (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_resize                 , "change a row size using address"      );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_reset                  , "reset all rows to default width"      );
    /*---(add yparse specification)-------*/
-   rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
+   rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -259,7 +259,7 @@ ROW_visual         (int a_tab, int a_col, int a_row, char a_mode, char a_num)
       }
    }
    /*---(history)----------------------*/
-   HIST_height (a_mode, a_tab, a_col, a_row, x_prev, x_height);
+   HIST_size   (a_mode, HIST_HEIGHT  , a_tab, a_col, a_row, x_prev, x_height);
    /*---(set width)--------------------*/
    ROW_heighten (a_tab, a_row, x_height);
    /*---(reset headers)---------------*/
