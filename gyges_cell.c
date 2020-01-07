@@ -142,7 +142,7 @@ CELL_purge         (void)
    DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
    while (next != NULL) {
       curr = next;
-      next = curr->next;
+      next = curr->m_next;
       rc = CELL__wipe    (curr);
       DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
       rc = LOC_unhook   (curr);
@@ -246,18 +246,18 @@ CELL__new          (tCELL **a_cell, char a_linked)
    /*---(into linked list)---------------*/
    DEBUG_CELL   yLOG_value   ("a_linked"  , a_linked);
    (*a_cell)->linked  = a_linked;
-   (*a_cell)->next    = NULL;
-   (*a_cell)->prev    = NULL;
+   (*a_cell)->m_next    = NULL;
+   (*a_cell)->m_prev    = NULL;
    if (a_linked != UNLINKED) {
       (*a_cell)->linked  = LINKED;
       if (tcell == NULL) {
          hcell           = *a_cell;
          tcell           = *a_cell;
       } else {
-         (*a_cell)->prev = tcell;
-         (*a_cell)->next = NULL;
-         tcell->next     = *a_cell;
-         tcell           = *a_cell;
+         (*a_cell)->m_prev = tcell;
+         (*a_cell)->m_next = NULL;
+         tcell->m_next     = *a_cell;
+         tcell             = *a_cell;
       }
       ++NCEL;
    }
@@ -282,6 +282,10 @@ CELL__new          (tCELL **a_cell, char a_linked)
    (*a_cell)->unit      =  '-';
    (*a_cell)->note      =  '-';
    (*a_cell)->print     = NULL;
+   /*---(btree)--------------------------*/
+   (*a_cell)->key       =   -1;
+   (*a_cell)->b_left    = NULL;
+   (*a_cell)->b_right   = NULL;
    /*---(calculations)-------------------*/
    (*a_cell)->ycalc     = NULL;
    DEBUG_CELL   yLOG_note    ("successful");
@@ -400,7 +404,7 @@ CELL__valid        (tCELL *a_cell, char a_linked)
          DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
          return 0;
       }
-      x_save = x_save->next;
+      x_save = x_save->m_next;
    }
    DEBUG_CELL   yLOG_snote   ("NOT found");
    --rce;
@@ -438,10 +442,10 @@ CELL__free         (tCELL **a_cell, char a_linked)
    /*---(out of linked list)-------------*/
    if ((*a_cell)->linked == LINKED) {
       DEBUG_CELL   yLOG_note    ("linked cell, unlinking now");
-      if ((*a_cell)->next != NULL)   (*a_cell)->next->prev = (*a_cell)->prev;
-      else                           tcell                 = (*a_cell)->prev;
-      if ((*a_cell)->prev != NULL)   (*a_cell)->prev->next = (*a_cell)->next;
-      else                           hcell                 = (*a_cell)->next;
+      if ((*a_cell)->m_next != NULL)   (*a_cell)->m_next->m_prev = (*a_cell)->m_prev;
+      else                           tcell                       = (*a_cell)->m_prev;
+      if ((*a_cell)->m_prev != NULL)   (*a_cell)->m_prev->m_next = (*a_cell)->m_next;
+      else                           hcell                       = (*a_cell)->m_next;
       --NCEL;
    }
    /*---(free main)----------------------*/
@@ -925,11 +929,11 @@ CELL_visual        (char a_what, char a_mode, char a_how)
          if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
       }
       /*---(heights)---------------------*/
-      else if (x_left == x_col && a_what == CHANGE_HEIGHT) {
-         rc = ROW_visual (x_tab, x_col, x_row, a_mode, a_how);
-         DEBUG_CELL   yLOG_value  ("height"    , rc);
-         if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
-      }
+      /*> else if (x_left == x_col && a_what == CHANGE_HEIGHT) {                      <* 
+       *>    rc = ROW_visual (x_tab, x_col, x_row, a_mode, a_how);                    <* 
+       *>    DEBUG_CELL   yLOG_value  ("height"    , rc);                             <* 
+       *>    if (a_mode == HIST_BEG)  a_mode = HIST_ADD;                              <* 
+       *> }                                                                           <*/
       /*---(cell-specific)---------------*/
       else if (x_next != NULL) {
          DEBUG_CELL   yLOG_note   ("cell exists");
@@ -1191,7 +1195,7 @@ CELL__unit         (char *a_question, tCELL *a_cell)
          x_found = 'y';
          break;
       }
-      x_curr = x_curr->next;
+      x_curr = x_curr->m_next;
    }
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "cell_where")    == 0) {
@@ -1202,8 +1206,8 @@ CELL__unit         (char *a_question, tCELL *a_cell)
       snprintf(unit_answer, LEN_FULL, "s_cell main list : num=%4d, head=%10p, tail=%10p", NCEL, hcell, tcell);
    }
    else if (strcmp(a_question, "cell_count")     == 0) {
-      x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }
-      x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
+      x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->m_next; }
+      x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->m_prev; }
       snprintf (unit_answer, LEN_FULL, "s_cell count     : all=%4d, num=%4d, fore=%4d, back=%4d", ACEL, NCEL, x_fore, x_back);
    }
    /*---(printing)-----------------------*/

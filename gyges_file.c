@@ -497,7 +497,7 @@ EXIM__import_sizer      (char a_dir)
       x_size = atoi (t);
       DEBUG_REGS   yLOG_value   ("x_size"    , x_size);
       if (a_dir == 'x')  COL_widen    (CTAB, CCOL + x_pos, x_size);
-      else               ROW_heighten (CTAB, CROW + x_pos, x_size);
+      /*> else               ROW_heighten (CTAB, CROW + x_pos, x_size);               <*/
    }
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);

@@ -279,9 +279,9 @@ PROG__unit           (char *a_question, void *a_thing)
    } else if (strcmp(a_question, "cell_list")      == 0) {
       snprintf(unit_answer, LEN_FULL, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);
    } else if (strcmp(a_question, "cell_count")     == 0) {
-      /*> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->next; }   <*/
-      x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->next; }
-      x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->prev; }
+      /*> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <*/
+      x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->m_next; }
+      x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->m_prev; }
       snprintf(unit_answer, LEN_FULL, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
    } else if (strcmp(a_question, "mode")           == 0) {
       /*> snprintf(unit_answer, LEN_FULL, "Mode             : %c", yVIKEYS_mode_curr ());   <*/
@@ -334,7 +334,7 @@ PROG__unit           (char *a_question, void *a_thing)
    /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 
     *>    snprintf(unit_answer, LEN_FULL, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <* 
     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <* 
-    *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->next; }   <+/   <* 
+    *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/   <* 
     *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <* 
     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <* 
     *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <* 

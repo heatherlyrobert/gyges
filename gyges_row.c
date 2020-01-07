@@ -18,8 +18,8 @@ ROW_init             (void)
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(add buffer commands)------------*/
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_resize                 , "change a row size using address"      );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_reset                  , "reset all rows to default width"      );
+   /*> rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_resize                 , "change a row size using address"      );   <*/
+   /*> rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_reset                  , "reset all rows to default width"      );   <*/
    /*---(add yparse specification)-------*/
    rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
    /*---(complete)-----------------------*/
@@ -27,45 +27,88 @@ ROW_init             (void)
    return rc;
 }
 
-char         /*-> clear all row customizations -------[ leaf   [ge.843.123.20]*/ /*-[01.0000.014.!]-*/ /*-[--.---.---.--]-*/
-ROW_clear            (int a_tab)
+char         /*-> clear all row customizations -------[ leaf   [ge.A53.123.40]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
+ROW_clear            (tTAB *a_tab, char a_init)
 {
-   /*---(locals)-----------+-----------+-*/
-   char        rce         = -10;
-   int         x_row       =   0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tROWS      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   DEBUG_LOCS   yLOG_spoint  (a_tab);
    /*---(defense)------------------------*/
-   --rce;  if (a_tab <  0) {
-      DEBUG_LOCS   yLOG_snote   ("tab too small");
+   --rce;  if (a_tab == NULL) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_tab >= MAX_TABS) {
-      DEBUG_LOCS   yLOG_snote   ("tab too big");
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(initialize rows)----------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");
-   DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);
-   for (x_row = 0; x_row < MAX_ROWS; ++x_row) {
-      /*---(characteristics)-------------*/
-      s_tabs [a_tab].rows [x_row].h = s_tabs [a_tab].deftall;
-      /*> s_tabs [a_tab].rows [x_row].y = 0;                                          <*/
-      s_tabs [a_tab].rows [x_row].c = 0;
-      /*---(done)------------------------*/
-   }
-   /*---(clear frozen rows)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear any frozen rows");
-   s_tabs [a_tab].froz_row  = '-';
-   s_tabs [a_tab].froz_brow = 0;
-   s_tabs [a_tab].froz_erow = 0;
+   /*---(initialize columns)-------------*/
+   DEBUG_LOCS   yLOG_spoint  (a_tab->r_head);
+   DEBUG_LOCS   yLOG_sint    (MAX_COLS);
+   /*> for (x_col = 0; x_col < MAX_COLS; ++x_col) {                                   <* 
+    *>    /+---(characteristics)-------------+/                                       <* 
+    *>    a_tab->cols [x_col].w       = a_tab->defwide;                               <* 
+    *>    if (a_init == 'y') {                                                        <* 
+    *>       a_tab->cols [x_col].c       = 0;                                         <* 
+    *>       a_tab->cols [x_col].c_head  = NULL;                                      <* 
+    *>       a_tab->cols [x_col].c_tail  = NULL;                                      <* 
+    *>    }                                                                           <* 
+    *>    /+---(done)------------------------+/                                       <* 
+    *> }                                                                              <*/
+   /*---(clear frozen cols)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("screen");
+   a_tab->bcol      = 0;
+   a_tab->ccol      = 0;
+   a_tab->ecol      = 0;
+   /*---(clear frozen cols)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("frozen");
+   a_tab->froz_col  = '-';
+   a_tab->froz_bcol = 0;
+   a_tab->froz_ecol = 0;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
+
+/*> char         /+-> clear all row customizations -------[ leaf   [ge.843.123.20]+/ /+-[01.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_clear            (int a_tab)                                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    char        rce         = -10;                                                                                              <* 
+ *>    int         x_row       =   0;                                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_LOCS   yLOG_senter  (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);                                                                            <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    --rce;  if (a_tab <  0) {                                                                                                   <* 
+ *>       DEBUG_LOCS   yLOG_snote   ("tab too small");                                                                             <* 
+ *>       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    --rce;  if (a_tab >= MAX_TABS) {                                                                                            <* 
+ *>       DEBUG_LOCS   yLOG_snote   ("tab too big");                                                                               <* 
+ *>       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(initialize rows)----------------+/                                                                                    <* 
+ *>    DEBUG_LOCS   yLOG_snote   ("clear rows to defaults");                                                                       <* 
+ *>    DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);                                                                         <* 
+ *>    for (x_row = 0; x_row < MAX_ROWS; ++x_row) {                                                                                <* 
+ *>       /+---(characteristics)-------------+/                                                                                    <* 
+ *>       s_tabs [a_tab].rows [x_row].h = s_tabs [a_tab].deftall;                                                                  <* 
+ *>       /+> s_tabs [a_tab].rows [x_row].y = 0;                                          <+/                                      <* 
+ *>       s_tabs [a_tab].rows [x_row].c = 0;                                                                                       <* 
+ *>       /+---(done)------------------------+/                                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(clear frozen rows)--------------+/                                                                                    <* 
+ *>    DEBUG_LOCS   yLOG_snote   ("clear any frozen rows");                                                                        <* 
+ *>    s_tabs [a_tab].froz_row  = '-';                                                                                             <* 
+ *>    s_tabs [a_tab].froz_brow = 0;                                                                                               <* 
+ *>    s_tabs [a_tab].froz_erow = 0;                                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 
@@ -159,153 +202,154 @@ ROW_setmax           (int a_tab, int a_count)
 /*====================------------------------------------====================*/
 static void  o___SIZING__________o () { return; }
 
-char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
-ROW_heighten         (int a_tab, int a_row, int a_size)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         x_col       =    0;
-   int         x_max       =    0;
-   tCELL      *x_curr      = NULL;
-   /*---(defense)------------------------*/
-   if (!LEGAL_ROW (a_tab, a_row))  return -1;
-   /*---(limits)-------------------------*/
-   if (a_size  < MIN_HEIGHT)    a_size = MIN_HEIGHT;
-   if (a_size  > MAX_HEIGHT)    a_size = MAX_HEIGHT;
-   /*---(check existing)-----------------*/
-   if (s_tabs [a_tab].rows [a_row].h == a_size)  return 1;
-   /*---(set default)--------------------*/
-   s_tabs [a_tab].rows [a_row].h = a_size;
-   /*---(find last row)------------------*/
-   x_max = ROW_max (a_tab);
-   /*---(update column printables)-------*/
-   for (x_col = 0; x_col < x_max; ++x_col) {
-      /*---(check for cell)--------------*/
-      x_curr = LOC_cell_at_loc (a_tab, x_col, a_row);
-      if (x_curr == NULL) continue;
-      /*---(update printable)------------*/
-      api_ycalc_printer (x_curr);
-      /*---(done)------------------------*/
-   }
-   /*---(reset headers)------------------*/
-   yVIKEYS_map_refresh ();
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> change the col width ---------------[ ------ [gc.320.312.31]+/ /+-[00.0000.404.5]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_heighten         (int a_tab, int a_row, int a_size)                                                                        <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    int         x_col       =    0;                                                                                             <* 
+ *>    int         x_max       =    0;                                                                                             <* 
+ *>    tCELL      *x_curr      = NULL;                                                                                             <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    if (!LEGAL_ROW (a_tab, a_row))  return -1;                                                                                  <* 
+ *>    /+---(limits)-------------------------+/                                                                                    <* 
+ *>    if (a_size  < MIN_HEIGHT)    a_size = MIN_HEIGHT;                                                                           <* 
+ *>    if (a_size  > MAX_HEIGHT)    a_size = MAX_HEIGHT;                                                                           <* 
+ *>    /+---(check existing)-----------------+/                                                                                    <* 
+ *>    if (s_tabs [a_tab].rows [a_row].h == a_size)  return 1;                                                                     <* 
+ *>    /+---(set default)--------------------+/                                                                                    <* 
+ *>    s_tabs [a_tab].rows [a_row].h = a_size;                                                                                     <* 
+ *>    /+---(find last row)------------------+/                                                                                    <* 
+ *>    x_max = ROW_max (a_tab);                                                                                                    <* 
+ *>    /+---(update column printables)-------+/                                                                                    <* 
+ *>    for (x_col = 0; x_col < x_max; ++x_col) {                                                                                   <* 
+ *>       /+---(check for cell)--------------+/                                                                                    <* 
+ *>       x_curr = LOC_cell_at_loc (a_tab, x_col, a_row);                                                                          <* 
+ *>       if (x_curr == NULL) continue;                                                                                            <* 
+ *>       /+---(update printable)------------+/                                                                                    <* 
+ *>       api_ycalc_printer (x_curr);                                                                                              <* 
+ *>       /+---(done)------------------------+/                                                                                    <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(reset headers)------------------+/                                                                                    <* 
+ *>    yVIKEYS_map_refresh ();                                                                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
-ROW_resize           (char *a_name, int a_size, int a_count)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         x_tab       =    0;
-   int         x_row       =    0;
-   int         x_off       =    0;
-   /*---(defense)------------------------*/
-   rc = str2gyges (a_name, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_LEGAL);
-   --rce;  if (rc < 0) return rc;
-   /*---(resize)-------------------------*/
-   if (a_count == 0)  a_count = 1;
-   for (x_off = 0; x_off < a_count; ++x_off) {
-      rc = ROW_heighten (x_tab, x_row + x_off, a_size);
-      DEBUG_INPT  yLOG_value   ("heighten"  , rc);
-      --rce;  if (rc < 0) {
-         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> change the col width ---------------[ ------ [gc.320.312.31]+/ /+-[00.0000.404.5]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_resize           (char *a_name, int a_size, int a_count)                                                                   <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    int         x_tab       =    0;                                                                                             <* 
+ *>    int         x_row       =    0;                                                                                             <* 
+ *>    int         x_off       =    0;                                                                                             <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    rc = str2gyges (a_name, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_LEGAL);                                                   <* 
+ *>    --rce;  if (rc < 0) return rc;                                                                                              <* 
+ *>    /+---(resize)-------------------------+/                                                                                    <* 
+ *>    if (a_count == 0)  a_count = 1;                                                                                             <* 
+ *>    for (x_off = 0; x_off < a_count; ++x_off) {                                                                                 <* 
+ *>       rc = ROW_heighten (x_tab, x_row + x_off, a_size);                                                                        <* 
+ *>       DEBUG_INPT  yLOG_value   ("heighten"  , rc);                                                                             <* 
+ *>       --rce;  if (rc < 0) {                                                                                                    <* 
+ *>          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                                                                         <* 
+ *>          return rce;                                                                                                           <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
-ROW_reset            (void)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;
-   int         x_max       =    0;
-   int         i           =    0;
-   /*---(resize)-------------------------*/
-   x_max  = ROW_max (CTAB);
-   for (i = 0; i <= x_max; ++i) {
-      rc = ROW_heighten (CTAB, i, s_tabs [CTAB].deftall);
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> change the col width ---------------[ ------ [gc.320.312.31]+/ /+-[00.0000.404.5]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_reset            (void)                                                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    int         x_max       =    0;                                                                                             <* 
+ *>    int         i           =    0;                                                                                             <* 
+ *>    /+---(resize)-------------------------+/                                                                                    <* 
+ *>    x_max  = ROW_max (CTAB);                                                                                                    <* 
+ *>    for (i = 0; i <= x_max; ++i) {                                                                                              <* 
+ *>       rc = ROW_heighten (CTAB, i, s_tabs [CTAB].deftall);                                                                      <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
-ROW_visual         (int a_tab, int a_col, int a_row, char a_mode, char a_num)
-{  /*---(design notes)-------------------*/
-   /*  update all cells to new width, either a standard size, or a specific   */
-   /*  value communicated as a negative number.                               */
-   /*---(locals)-----------+-----------+-*/
-   int         x_prev      = 0;
-   int         x_height    = 0;
-   int         x_row       = 0;
-   /*---(adjust)----------------------*/
-   if (a_num <   0) {
-      x_height                = -(a_num);
-   } else {
-      x_height = x_prev = ROW_height (a_tab, a_row);
-      switch (a_num) {
-      case  'm' : x_height    = 0;                           break;
-      case  'd' : x_height    = DEF_HEIGHT;                  break;
-      case  'n' : x_height    = 1;                           break;
-      case  'j' : x_height   -= 1;                           break;
-      case  'k' : x_height   += 1;                           break;
-      }
-   }
-   /*---(history)----------------------*/
-   HIST_size   (a_mode, HIST_HEIGHT  , a_tab, a_col, a_row, x_prev, x_height);
-   /*---(set width)--------------------*/
-   ROW_heighten (a_tab, a_row, x_height);
-   /*---(reset headers)---------------*/
-   yVIKEYS_map_refresh ();
-   /*---(complete)---------------------------*/
-   DEBUG_CELL  yLOG_exit   (__FUNCTION__);
-   return 0;
-}
+/*> char         /+-> change cell column width -----------[ ------ [gc.E91.292.69]+/ /+-[02.0000.303.Y]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_visual         (int a_tab, int a_col, int a_row, char a_mode, char a_num)                                                  <* 
+ *> {  /+---(design notes)-------------------+/                                                                                    <* 
+ *>    /+  update all cells to new width, either a standard size, or a specific   +/                                               <* 
+ *>    /+  value communicated as a negative number.                               +/                                               <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    int         x_prev      = 0;                                                                                                <* 
+ *>    int         x_height    = 0;                                                                                                <* 
+ *>    int         x_row       = 0;                                                                                                <* 
+ *>    /+---(adjust)----------------------+/                                                                                       <* 
+ *>    if (a_num <   0) {                                                                                                          <* 
+ *>       x_height                = -(a_num);                                                                                      <* 
+ *>    } else {                                                                                                                    <* 
+ *>       x_height = x_prev = ROW_height (a_tab, a_row);                                                                           <* 
+ *>       switch (a_num) {                                                                                                         <* 
+ *>       case  'm' : x_height    = 0;                           break;                                                            <* 
+ *>       case  'd' : x_height    = DEF_HEIGHT;                  break;                                                            <* 
+ *>       case  'n' : x_height    = 1;                           break;                                                            <* 
+ *>       case  'j' : x_height   -= 1;                           break;                                                            <* 
+ *>       case  'k' : x_height   += 1;                           break;                                                            <* 
+ *>       }                                                                                                                        <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(history)----------------------+/                                                                                      <* 
+ *>    HIST_size   (a_mode, HIST_HEIGHT  , a_tab, a_col, a_row, x_prev, x_height);                                                 <* 
+ *>    /+---(set width)--------------------+/                                                                                      <* 
+ *>    ROW_heighten (a_tab, a_row, x_height);                                                                                      <* 
+ *>    /+---(reset headers)---------------+/                                                                                       <* 
+ *>    yVIKEYS_map_refresh ();                                                                                                     <* 
+ *>    /+---(complete)---------------------------+/                                                                                <* 
+ *>    DEBUG_CELL  yLOG_exit   (__FUNCTION__);                                                                                     <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
-char         /*-> set the default width --------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
-ROW_defheight        (int a_tab, int a_size)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         x_def       =    0;
-   int         x_max       =    0;
-   int         x_row       =    0;
-   /*---(defense)------------------------*/
-   rc = VALID_tab (a_tab);
-   --rce;  if (rc == 0) return rc;
-   /*---(prepare)------------------------*/
-   x_def  = s_tabs [a_tab].deftall;
-   x_max  = ROW_max (a_tab);
-   /*---(update column printables)-------*/
-   for (x_row = 0; x_row < x_max; ++x_row) {
-      if (s_tabs [a_tab].rows [x_row].h != x_def)  continue;
-      ROW_heighten (a_tab, x_row, a_size);
-   }
-   /*---(set default)--------------------*/
-   s_tabs [a_tab].deftall = a_size;
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> set the default width --------------[ ------ [gc.210.213.11]+/ /+-[00.0000.G03.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_defheight        (int a_tab, int a_size)                                                                                   <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rce         =  -10;                                                                                             <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    int         x_def       =    0;                                                                                             <* 
+ *>    int         x_max       =    0;                                                                                             <* 
+ *>    int         x_row       =    0;                                                                                             <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    rc = VALID_tab (a_tab);                                                                                                     <* 
+ *>    --rce;  if (rc == 0) return rc;                                                                                             <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    x_def  = s_tabs [a_tab].deftall;                                                                                            <* 
+ *>    x_max  = ROW_max (a_tab);                                                                                                   <* 
+ *>    /+---(update column printables)-------+/                                                                                    <* 
+ *>    for (x_row = 0; x_row < x_max; ++x_row) {                                                                                   <* 
+ *>       if (s_tabs [a_tab].rows [x_row].h != x_def)  continue;                                                                   <* 
+ *>       ROW_heighten (a_tab, x_row, a_size);                                                                                     <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(set default)--------------------+/                                                                                    <* 
+ *>    s_tabs [a_tab].deftall = a_size;                                                                                            <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 char         /*-> return the col width ---------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
 ROW_height           (int a_tab, int a_row)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   /*---(defense)------------------------*/
-   if (!LEGAL_ROW (a_tab, a_row))  return -1;
-   --rce;  if (rc < 0) return rc;
-   /*---(complete)-----------------------*/
-   return s_tabs [a_tab].rows [a_row].h;
+   /*> /+---(locals)-----------+-----+-----+-+/                                       <* 
+    *> char        rce         =  -10;                                                <* 
+    *> char        rc          =    0;                                                <* 
+    *> /+---(defense)------------------------+/                                       <* 
+    *> if (!LEGAL_ROW (a_tab, a_row))  return -1;                                     <* 
+    *> --rce;  if (rc < 0) return rc;                                                 <* 
+    *> /+---(complete)-----------------------+/                                       <* 
+    *> return s_tabs [a_tab].rows [a_row].h;                                          <*/
+   return 1;
 }
 
 
@@ -382,12 +426,12 @@ ROW_reader           (void)
    DEBUG_INPT   yLOG_value   ("pop count" , rc);
    DEBUG_INPT   yLOG_value   ("count"     , x_count);
    /*---(resize)-------------------------*/
-   rc = ROW_resize (x_label, x_size, x_count);
-   DEBUG_INPT   yLOG_value   ("resize"    , rc);
-   if (rc < 0) {
-      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   /*> rc = ROW_resize (x_label, x_size, x_count);                                    <* 
+    *> DEBUG_INPT   yLOG_value   ("resize"    , rc);                                  <* 
+    *> if (rc < 0) {                                                                  <* 
+    *>    DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(complete)-----------------------*/
    DEBUG_INPT  yLOG_exit    (__FUNCTION__);
    return 1;
@@ -402,7 +446,7 @@ ROW_writer              (int a_tab, int a_row)
    char        c           =    0;
    int         x_max       =    0;
    int         i           =    0;
-   int         x_def       =    0;
+   int         x_def       =    1;
    int         x_size      =    0;
    int         x_prev      =    0;
    char        x_label     [LEN_LABEL];
@@ -426,12 +470,12 @@ ROW_writer              (int a_tab, int a_row)
    x_size = ROW_height (a_tab, a_row);
    DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
    /*---(check default)------------------*/
-   x_def  = TAB_rowtall (a_tab);
-   DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);
-   --rce;  if (x_size == x_def ) {
-      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
+   /*> x_def  = TAB_rowtall (a_tab);                                                  <* 
+    *> DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);                               <* 
+    *> --rce;  if (x_size == x_def ) {                                                <* 
+    *>    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
    /*---(check prev)---------------------*/
    if (a_row > 0)  x_prev = ROW_height (a_tab, a_row - 1);
    --rce;  if (x_size == x_prev) {

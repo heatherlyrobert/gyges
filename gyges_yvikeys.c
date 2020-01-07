@@ -286,7 +286,7 @@ api_yvikeys_searcher      (char *a_search)
             x_next->note = 's';
          }
       }
-      x_next = x_next->next;
+      x_next = x_next->m_next;
       /*> x_next  = VISU_next (&x_tab, &x_col, &x_row);                               <*/
    } while (x_next != NULL && x_next != DONE_DONE);
    /*---(complete)---------------------------*/

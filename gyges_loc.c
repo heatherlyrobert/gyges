@@ -6,6 +6,7 @@ static char    s_label     [LEN_RECD]   = "";
 
 
 
+
 /*====================------------------------------------====================*/
 /*===----                        program level                         ----===*/
 /*====================------------------------------------====================*/
@@ -80,7 +81,7 @@ LOC__purge           (void)
       /*---(main config)-----------------*/
       DEBUG_PROG   yLOG_note    ("reset naming");
       sprintf (t, "tab_%02d", x_tab);
-      strlcpy (s_tabs [x_tab].name, t, LEN_RECD);
+      s_tabs [x_tab].name    = strdup (t);
       s_tabs [x_tab].tab     = x_tab;
       s_tabs [x_tab].type    = G_TAB_NORMAL;
       s_tabs [x_tab].c       =    0;
@@ -103,8 +104,8 @@ LOC__purge           (void)
       s_tabs [x_tab].ecol    =    0;
       s_tabs [x_tab].erow    =    0;
       /*---(initialize)------------------*/
-      COL_clear         (x_tab);
-      ROW_clear         (x_tab);
+      COL_clear         (&(s_tabs [x_tab]), '-');
+      ROW_clear         (&(s_tabs [x_tab]), '-');
       LOC__clear_locs   (x_tab);
       /*---(done)------------------------*/
    }
@@ -187,6 +188,7 @@ LOC_hook           (
    a_cell->row   = a_row;
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = strdup (x_label);
+   a_cell->key   = BTREE_genkey (x_label);
    /*---(point location at cell)---------*/
    s_tabs [a_tab].sheet[a_col][a_row] = a_cell;
    /*---(update totals)------------------*/
@@ -269,6 +271,7 @@ LOC_unhook         (
    a_cell->row   = UNHOOKED;
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = g_tbd;
+   a_cell->key   = -1;
    DEBUG_LOCS   yLOG_note    ("mark location unused");
    s_tabs [x_tab].sheet[x_col][x_row] = NULL;
    /*---(complete)-----------------------*/
@@ -1104,7 +1107,7 @@ LOC__unit_OLD      (char *a_question, tCELL *a_cell)
    for (i = 0; i < NCEL; ++i) {
       if (x_curr == NULL)     break;
       if (x_curr == a_cell) { rc = 0; break; }
-      x_curr = x_curr->next;
+      x_curr = x_curr->m_next;
    }
    if (rc < 0)   x_curr = NULL;
    /*---(selection)----------------------*/

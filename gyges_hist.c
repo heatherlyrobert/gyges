@@ -11,8 +11,8 @@ struct cHIST {
    char       *addr;
    char       *before;
    char       *after;
-   tHIST      *m_prev;
-   tHIST      *m_next;
+   tHIST      *h_prev;
+   tHIST      *h_next;
 };
 static tHIST  *s_head     = NULL;
 static tHIST  *s_curr     = NULL;
@@ -105,16 +105,16 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
    x_new->addr    = strdup (x_label);
    x_new->before  = g_before;
    x_new->after   = g_after;
-   x_new->m_prev  = NULL;
-   x_new->m_next  = NULL;
+   x_new->h_prev  = NULL;
+   x_new->h_next  = NULL;
    /*---(tie to master list)-------------*/
    if (s_head == NULL) {
       DEBUG_HIST   yLOG_note    ("nothing in list, make first");
       s_head         = x_new;
    } else  {
       DEBUG_HIST   yLOG_note    ("append to list");
-      s_tail->m_next = x_new;
-      x_new->m_prev  = s_tail;
+      s_tail->h_next = x_new;
+      x_new->h_prev  = s_tail;
    }
    s_tail        = x_new;
    /*---(update counts)------------------*/
@@ -150,15 +150,15 @@ HIST__delete            (tHIST *a_curr)
    if (a_curr->before != g_nothing)   free (a_curr->before);
    if (a_curr->after  != g_nothing)   free (a_curr->after);
    /*---(out of linked list)-------------*/
-   if (a_curr->m_next != NULL)   a_curr->m_next->m_prev = a_curr->m_prev;
-   else                          s_tail                 = a_curr->m_prev;
-   if (a_curr->m_prev != NULL)   a_curr->m_prev->m_next = a_curr->m_next;
-   else                          s_head                 = a_curr->m_next;
+   if (a_curr->h_next != NULL)   a_curr->h_next->h_prev = a_curr->h_prev;
+   else                          s_tail                 = a_curr->h_prev;
+   if (a_curr->h_prev != NULL)   a_curr->h_prev->h_next = a_curr->h_next;
+   else                          s_head                 = a_curr->h_next;
    --s_count;
    DEBUG_HIST   yLOG_sint    (s_count);
    /*---(clear links)--------------------*/
-   a_curr->m_prev = NULL;
-   a_curr->m_next = NULL;
+   a_curr->h_prev = NULL;
+   a_curr->h_next = NULL;
    /*---(update current)-----------------*/
    if (s_curr == a_curr) {
       s_curr   = s_tail;
@@ -184,15 +184,15 @@ HIST__prune             (void)
       DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   x_curr = s_curr->m_next;
+   x_curr = s_curr->h_next;
    DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    while (x_curr != NULL) {
-      x_next = x_curr->m_next;
+      x_next = x_curr->h_next;
       HIST__delete (x_curr);
       x_curr = x_next;
       DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    }
-   s_curr->m_next = NULL;
+   s_curr->h_next = NULL;
    s_tail = s_curr;
    DEBUG_HIST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -205,7 +205,7 @@ HIST__purge             (void)
    tHIST      *x_next      = NULL;
    x_curr = s_tail;
    while (x_curr != NULL) {
-      x_next = x_curr->m_prev;
+      x_next = x_curr->h_prev;
       HIST__delete (x_next);
       x_curr = x_next;
    }
@@ -242,7 +242,7 @@ HIST__find              (int a_index)
    while (x_curr != NULL) {
       if (a_index == c) break;
       ++c;
-      x_curr = x_curr->m_next;
+      x_curr = x_curr->h_next;
    }
    /*---(check for miss)-----------------*/
    --rce;  if (x_curr == NULL) {
@@ -289,11 +289,11 @@ HIST__cursor            (char a_move)
       s_index = 0;
       break;
    case '<' :
-      s_curr  = s_curr->m_prev;
+      s_curr  = s_curr->h_prev;
       --s_index;
       break;
    case '>' :
-      s_curr  = s_curr->m_next;
+      s_curr  = s_curr->h_next;
       ++s_index;
       break;
    case ']' :
@@ -818,7 +818,7 @@ HIST_redo          (void)
          break;
       }
       /*---(check for breakpoint)--------*/
-      if (s_curr->m_next == NULL || s_curr->m_next->mode == HIST_BEG) {
+      if (s_curr->h_next == NULL || s_curr->h_next->mode == HIST_BEG) {
          DEBUG_HIST  yLOG_note    ("hit end of undo chain, done");
          break;
       }
@@ -866,7 +866,7 @@ HIST_list          (void)
             x_curr->act   , HIST__action (x_curr->mode, x_curr->act),
             x_curr->addr  , x_curr->before, x_curr->after );
       ++c;
-      x_curr = x_curr->m_next;
+      x_curr = x_curr->h_next;
    }
    fprintf (x_file, "\ndone\n");
    /*---(close)--------------------------*/
@@ -911,8 +911,8 @@ HIST__unit         (char *a_question, int a_ref)
    strcpy  (unit_answer, "HIST             : question not understood");
    /*---(selection)----------------------*/
    if        (strcmp (a_question, "count"     )    == 0) {
-      x_curr = s_head; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->m_next; }
-      x_curr = s_tail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->m_prev; }
+      x_curr = s_head; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->h_next; }
+      x_curr = s_tail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->h_prev; }
       snprintf (unit_answer, LEN_FULL, "HIST count       : %4dn, %4df, %4db, %4di", s_count, x_fore, x_back, s_index);
    } else if (strcmp (a_question, "current"   )    == 0) {
       if      (s_curr == NULL)    snprintf (unit_answer, LEN_FULL, "HIST curr   (--) : -       ,  -t,   -c,   -r, - -           0[]              0[]");

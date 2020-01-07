@@ -27,7 +27,7 @@ COL_init             (void)
 }
 
 char         /*-> clear all column customizations ----[ leaf   [ge.A53.123.40]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
-COL_clear            (int a_tab)
+COL_clear            (tTAB *a_tab, char a_init)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -35,28 +35,34 @@ COL_clear            (int a_tab)
    int         x_col       =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_svalue  ("a_tab"     , a_tab);
+   DEBUG_LOCS   yLOG_spoint  (a_tab);
    /*---(defense)------------------------*/
-   rc = VALID_tab (a_tab);
-   DEBUG_LOCS   yLOG_sint    (rc);
-   --rce;  if (rc == 0) {
+   --rce;  if (a_tab == NULL) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(initialize columns)-------------*/
-   DEBUG_LOCS   yLOG_svalue  ("MAX_COLS"  , MAX_COLS);
+   DEBUG_LOCS   yLOG_sint    (MAX_COLS);
    for (x_col = 0; x_col < MAX_COLS; ++x_col) {
       /*---(characteristics)-------------*/
-      s_tabs [a_tab].cols [x_col].w       = s_tabs [a_tab].defwide;
-      /*> s_tabs [a_tab].cols [x_col].x       = 0;                                    <*/
-      s_tabs [a_tab].cols [x_col].c       = 0;
+      a_tab->cols [x_col].w       = a_tab->defwide;
+      if (a_init == 'y') {
+         a_tab->cols [x_col].c       = 0;
+         a_tab->cols [x_col].c_head  = NULL;
+         a_tab->cols [x_col].c_tail  = NULL;
+      }
       /*---(done)------------------------*/
    }
    /*---(clear frozen cols)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("clear any frozen columns");
-   s_tabs [a_tab].froz_col  = '-';
-   s_tabs [a_tab].froz_bcol = 0;
-   s_tabs [a_tab].froz_ecol = 0;
+   DEBUG_LOCS   yLOG_snote   ("screen");
+   a_tab->bcol      = 0;
+   a_tab->ccol      = 0;
+   a_tab->ecol      = 0;
+   /*---(clear frozen cols)--------------*/
+   DEBUG_LOCS   yLOG_snote   ("frozen");
+   a_tab->froz_col  = '-';
+   a_tab->froz_bcol = 0;
+   a_tab->froz_ecol = 0;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
    return 0;
