@@ -85,8 +85,6 @@ LOC__purge           (void)
       s_tabs [x_tab].tab     = x_tab;
       s_tabs [x_tab].type    = G_TAB_NORMAL;
       s_tabs [x_tab].c       =    0;
-      s_tabs [x_tab].defwide = DEF_WIDTH;
-      s_tabs [x_tab].deftall = DEF_HEIGHT;
       /*---(size limits)-----------------*/
       DEBUG_PROG   yLOG_note    ("reset default size");
       DEBUG_PROG   yLOG_value   ("DEF_COLS"  , DEF_COLS);
@@ -188,7 +186,7 @@ LOC_hook           (
    a_cell->row   = a_row;
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = strdup (x_label);
-   a_cell->key   = BTREE_genkey (x_label);
+   a_cell->key   = BTREE_label2key (x_label);
    /*---(point location at cell)---------*/
    s_tabs [a_tab].sheet[a_col][a_row] = a_cell;
    /*---(update totals)------------------*/
@@ -1077,7 +1075,7 @@ LOC__unit          (char *a_question, char *a_label)
       snprintf (unit_answer, LEN_FULL, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);
    }
    else if (strcmp(a_question, "tab_def"       )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "LOC tab defaults : col=%2d, row=%2d", s_tabs[x_tab].defwide, s_tabs[x_tab].deftall);
+      snprintf (unit_answer, LEN_FULL, "LOC tab defaults : col=%2d, row=%2d", DEF_WIDTH, DEF_HEIGHT);
    }
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_FULL, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 

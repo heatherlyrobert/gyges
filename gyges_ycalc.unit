@@ -18,7 +18,7 @@ PREP          v21  include the prototype headers                              
 SCRP          v21  (ycalc ) verify ycalc enabler api                                  api_ycalc_enabler                                                                                     ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       v21  setup testing variables                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a cell pointer                - - - - - - - - - - - - -   tCELL  *x_owner   = NULL;                                                                                                                                                                                                  
@@ -91,7 +91,7 @@ SCRP          v21  (ycalc ) verify ycalc enabler api                          
      echo     v21  ...confirm ycalc                     - - - - - - - - - - - - -   x_owner->ycalc                                                                                        p_null      0                                                                                                    
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -100,7 +100,7 @@ SCRP          v21  (ycalc ) verify ycalc enabler api                          
 SCRP          v21  (ycalc ) verify ycalc pointer access                               api_ycalc_pointer                                                                                     ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       v21  setup testing variables                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a cell pointer                - - - - - - - - - - - - -   tCELL   *x_1st     = NULL;                                                                                                                                                                                                  
@@ -331,7 +331,7 @@ SCRP          v21  (ycalc ) verify ycalc pointer access                       
    GROUP      v21  complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -340,7 +340,7 @@ SCRP          v21  (ycalc ) verify ycalc pointer access                       
 SCRP          v21  (ycalc ) verify ycalc named, whos at, and labeler                  api_ycalc_named, api_ycalc_whos_at, api_ycalc_labeler, api_ycalc_address                              ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       v21  setup testing variables                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a cell pointer                - - - - - - - - - - - - -   tCELL   *x_1st     = NULL;                                                                                                                                                                                                 
@@ -539,7 +539,7 @@ SCRP          v21  (ycalc ) verify ycalc named, whos at, and labeler          
    GROUP      v21  complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -548,7 +548,7 @@ SCRP          v21  (ycalc ) verify ycalc named, whos at, and labeler          
 SCRP          v21  (ycalc ) verify ycalc reaper                                       api_ycalc_reaper                                                                                      ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       v21  setup testing variables                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a cell pointer                - - - - - - - - - - - - -   tCELL   *x_1st     = NULL;                                                                                                                                                                                                 
@@ -623,7 +623,7 @@ SCRP          v21  (ycalc ) verify ycalc reaper                               
      get      v21  0f6 check info                       CELL__unitnew               "info"           , "0f6"                                                                              s_equal     s_celln info     : --- --- --- --- --- ¬¬¬ ¬¬¬¬¬ ¬¬¬¬¬                                                
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -632,7 +632,7 @@ SCRP          v21  (ycalc ) verify ycalc reaper                               
 SCRP          v21  (ycalc ) verify printing error code handling                       api_ycalc_printer                                                                                     ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       v21  setup testing variables                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      code     v21  create a cell pointer                - - - - - - - - - - - - -   tCELL  *x_cell  = NULL;                                                                                                                                                                      
@@ -781,7 +781,7 @@ SCRP          v21  (ycalc ) verify printing error code handling               
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -790,7 +790,7 @@ SCRP          v21  (ycalc ) verify printing error code handling               
 SCRP          v21  (s_cell) verify merged cell formatting                       CELL_printable                                                          ((30.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitloud                                                                                i_equal     0                                                                      
+     exec     v21  setup the program                    PROG__unit_loud                                                                               i_equal     0                                                                      
 
    COND       v21  add a long cell                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  add the base string                  yVIKEYS_main_string         ":0k11¦····stesting one, two, three¦"                              i_equal     0                                                                                                    
@@ -966,7 +966,7 @@ SCRP          v21  (s_cell) verify merged cell formatting                     
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
    COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 
 
 

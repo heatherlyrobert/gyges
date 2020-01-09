@@ -26,7 +26,7 @@ PREP          v21  include the prototype headers                              
 #     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list"      , NULL                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count"     , NULL                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #     get      v21  review the deps linked list          DEP_unit              "dep_pointers"   , "root"                                               s_equal     s_dep pointers   : num=   0, head=    (nil), tail=    (nil)            
@@ -716,7 +716,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  check the dependencies               DEP_unit              "cell_provides"  , "1g11"                                               s_equal     s_dep provides   : 1g11  ( 0) .                                        
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.105))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -727,7 +727,7 @@ PREP          v21  include the prototype headers                              
 #SCRP          v21  (s_cell) verify cell width setting                           CELL_width                                                              ((28.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #     code     v21  create a pointer to one cell         - - - - - - - - - -   tCELL *x_1st  = NULL;                                                                                                                                          
@@ -957,7 +957,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((28.052))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -968,7 +968,7 @@ PREP          v21  include the prototype headers                              
 #SCRP          v21  single cell string formatting                                CELL_printable                                                          ((29.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1258,7 +1258,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((29.054))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -1269,7 +1269,7 @@ PREP          v21  include the prototype headers                              
 #SCRP          v21  (s_cell) verify merged cell formatting                       CELL_printable                                                          ((30.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1450,7 +1450,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((30.036))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 #
@@ -1461,7 +1461,7 @@ PREP          v21  include the prototype headers                              
 #SCRP          v21  single cell numeric formatting                               CELL_printable                                                          ((31.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1619,7 +1619,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((31.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -1630,7 +1630,7 @@ PREP          v21  include the prototype headers                              
 #SCRP          v21  alter cell alignment                                         CELL_align                                                              ((32.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1697,7 +1697,7 @@ PREP          v21  include the prototype headers                              
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((32.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 #
@@ -1717,7 +1717,7 @@ SECT          v21  checking input and source modes                            
 #SCRP          v21  test vi_input mode                                           MODE_input                                                              ((41.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -1847,7 +1847,7 @@ SECT          v21  checking input and source modes                            
 #     get      v21  check the mode                       PROG__unit         "mode",          NULL                                                   s_equal     Mode             : I                                                   
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((41.025))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -1858,7 +1858,7 @@ SECT          v21  checking input and source modes                            
 #SCRP          v21  test vi_source mode                                          MODE_source                                                             ((42.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -2138,7 +2138,7 @@ SECT          v21  checking input and source modes                            
 ##     get      v21  check the sheet location             PROG__unit         "sheet_who",     s_tabs[0].sheet[1][2]                                    s_equal     [[ CUSTOM ]]                                                           
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((42.062))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0            
 
@@ -2149,7 +2149,7 @@ SECT          v21  checking input and source modes                            
 #SCRP          v21  test vi_replace sub-mode                                     SMOD_replace                                                            ((43.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #
 #   COND       v21  initialize contents                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     exec     v21  set the mode                         yVIKEYS_mode_enter    MODE_SOURCE                                                             i_equal     0                                                                      
@@ -2245,7 +2245,7 @@ SECT          v21  checking input and source modes                            
 #     get      v21  check the contents                   MOVE_unit             "edit_con"       , 0                                                    s_equal     s_move edit con  : :westi123the replace sub-modA!# >   :               
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((43.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 
 
 
@@ -2254,7 +2254,7 @@ SECT          v21  checking input and source modes                            
 #SCRP          v21  verify row movement                                          KEYS_row                                                                ((44.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  verify program setup                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((44.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #     get      v21  review the cell linked list          CELL__unit            "cell_list",     NULL                                                   u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)          
 #     get      v21  review the cell counts               CELL__unit            "cell_count",    NULL                                                   s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0            
 #
@@ -2609,7 +2609,7 @@ SECT          v21  checking input and source modes                            
 #SCRP          v21  (s_calc) verify custom strtok handling                       CALC_strtok                                                             ((46.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #
 #   COND       v21  initialize testing                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  setup the program                    PROG__unitquiet                                                                               i_equal     0                                                                      
+#     exec     v21  setup the program                    PROG__unit_quiet                                                                              i_equal     0                                                                      
 #
 #   COND       v21  setup testing variables                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 #     code     v21  create a custom expect string        - - - - - - - - - -   char text   [2000];                                                                                                                                            
@@ -2667,7 +2667,7 @@ SECT          v21  checking input and source modes                            
 #     exec     v21  parse string                         CALC_strtok           NULL                                                                    p_null      0                                                                      
 #
 #   COND       v21  verify program teardown                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((46.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-#     exec     v21  wrap-up the program                  PROG__unitend                                                                                  i_equal     0                                                                      
+#     exec     v21  wrap-up the program                  PROG__unit_end                                                                                 i_equal     0                                                                      
 
 
 

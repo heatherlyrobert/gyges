@@ -354,7 +354,7 @@ PROG__unit           (char *a_question, void *a_thing)
 }
 
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.#]-*/ /*-[--.---.---.--]-*/
-PROG__unitquiet     (void)
+PROG__unit_quiet     (void)
 {
    char       *x_args [1]  = { "gyges" };
    yURG_logger (1, x_args);
@@ -367,7 +367,7 @@ PROG__unitquiet     (void)
 }
 
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-PROG__unitloud      (void)
+PROG__unit_loud      (void)
 {
    int         x_argc      = 10;
    char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@args", "@@cmds", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
@@ -390,7 +390,7 @@ PROG__unitloud      (void)
 }
 
 char         /*-> set up program urgents/debugging ---[ light  [uz.210.001.01]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-PROG__unitend       (void)
+PROG__unit_end       (void)
 {
    PROG_end       ();
    return 0;

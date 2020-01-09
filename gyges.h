@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5b"
-#define     P_VERTXT    "transferred and reworked btree from polymnia for use on cells"
+#define     P_VERNUM    "3.5c"
+#define     P_VERTXT    "updated col to be dynamic and then ported to nodes vs row/col"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -217,10 +217,11 @@ typedef     unsigned long long    ullong;
 typedef     struct   tm           tTIME;
 /*---(data structures)-----------------*/
 /*> typedef     struct   cDEBUG       tDEBUG;                                         <*/
-typedef     struct   cCELL        tCELL;
-typedef     struct   cCOLS        tCOLS;
-typedef     struct   cROWS        tROWS;
 typedef     struct   cTAB         tTAB;
+typedef     struct   cNODE        tNODE;
+typedef     struct   cCOL         tCOL;
+typedef     struct   cROW         tROW;
+typedef     struct   cCELL        tCELL;
 typedef     struct   cDEP         tDEP;          /* inter-cell dependency     */
 typedef     struct   cCALC        tCALC;         /* cell calculation entry    */
 typedef     struct   cREG         tREG;          /* cut and paste registers   */
@@ -515,93 +516,53 @@ int         nerror;  /* count */
  *
  */
 struct cCELL {
-   /*---(#1, LOCATION)-------------------*/
-   /*   contains the current location of the cell so it can self-identity in  */
-   /*   calculations, display, and testing/debugging.  i've used the short    */
-   /*   type to conserve memory, but you can modify this later as desired.    */
-   short       tab;          /* which tab contains the cell                   */
+   /*---(location)-----------------------*/
+   char        tab;          /* which tab contains the cell                   */
    short       col;          /* which column contains this cell               */
    short       row;          /* which row contains this cell                  */
-   char       *label;        /* label of the cell at its current location     */
-   /*---(#2, SOURCE)---------------------*/
-   /*   stores the original unmodified user-typed string as well as its       */
-   /*   length which is required to supporting later editing.  string is      */
-   /*   dynamically allocated to conserve space.                              */
-   char       *source;       /* unmodified input string just as user typed    */
+   uchar      *label;        /* label of the cell at its current location     */
+   long        key;          /* label as a unique long (for sorting)          */
+   /*---(source)-------------------------*/
+   uchar      *source;       /* unmodified input string just as user typed    */
    short       len;          /* length of input string                        */
-   /*---(#3, CONVERSION)-----------------*/
-   /*   type characterizes the cell content type, the value of the cell if    */
-   /*   numeric, and a modified version of the cell if its not.               */
-   /*   see legend below for cell content types.                              */
-   char        type;         /* type of contents (program assigned)           */
+   /*---(result)-------------------------*/
+   uchar       type;         /* type of contents (program assigned)           */
    double      v_num;        /* cell contents translated to a numeric value   */
-   char       *v_str;        /* cell contents translated to a string value    */
-   /*---(#4, FORMATTING)-----------------*/
-   /*   contains all information required to convert the final cell value     */
-   /*   into a printable string to be shown on the screen.                    */
-   /*   see the legend below for alignment and formatting codes.              */
-   char        align;        /* alignment code                                */
-   char        format;       /* formatting/filler style                       */
-   char        decs;         /* number of decimals to be shown                */
-   char        unit;         /* units for conversion                          */
-   char       *print;        /* printable version of the cell                 */
-   char        note;         /* note for error, searching, etc                */
-   /*---(#5, CALCULATION)----------------*/
-   /*   in the case that the cell is a formula, this section will contain the */
-   /*   conversion into RPN (reverse polish notation) and translation into    */
-   /*   a linked list of byte-code to conduct the calculation.                */
-   void       *ycalc;            /* connection to yCALC library               */
-   /*---(#7, CELL LIST)------------------*/
-   /*   all the cells are stored in a doublly linked list in order to make    */
-   /*   them easy to manage and verify as a entire population.  the linked    */
-   /*   field helps drive hooking and unhooking cells from sheets.            */
-   char        linked;       /* 1=linked, 0=unlinked                          */
+   uchar      *v_str;        /* cell contents translated to a string value    */
+   /*---(formatting)---------------------*/
+   uchar       align;        /* alignment code                                */
+   uchar       format;       /* formatting/filler style                       */
+   uchar       decs;         /* number of decimals to be shown                */
+   uchar       unit;         /* units for conversion                          */
+   uchar      *print;        /* printable version of the cell                 */
+   uchar       note;         /* note for error, searching, etc                */
+   /*---(calculation)--------------------*/
+   void       *ycalc;        /* connection to yCALC library                   */
+   /*---(master list)--------------------*/
+   uchar       linked;       /* 1=linked, 0=unlinked                          */
    tCELL      *m_prev;       /* previous cell in doubly linked list           */
    tCELL      *m_next;       /* next cell in doubly linked list               */
-   /*---(#8, BTREE)----------------------*/
-   long        key;          /* location sorting key                          */
+   /*---(btree)--------------------------*/
    tCELL      *b_left;       /* btree left branch                             */
    tCELL      *b_right;      /* btree right branch                            */
-   /*---(#9, ERRORS)---------------------*/
-   /*> char        nerror;       /+ number of current errors                      +/   <* 
-    *> tERROR     *errors;       /+ error entries                                 +/   <*/
+   /*---(ties to sheet)------------------*/
+   tCOL       *C_parent;     /* parent column                                 */
+   tCELL      *c_prev;       /* prev in specific column                       */
+   tCELL      *c_next;       /* next in specific column                       */
+   tROW       *R_parent;     /* parent row                                    */
+   tCELL      *r_prev;       /* prev in specific row                          */
+   tCELL      *r_next;       /* next in specific row                          */
    /*---(end)----------------------------*/
 };
-/*
- *   data structure variables...
- *
- *   in order to enable the doublly linked list of cells as well as a little
- *   other safety, i have included the following globals.  i follow an odd
- *   convension, but it serves me well so far.  i use prefixes to indicate
- *   the supporting variables for a data structure.
- *      h....      head pointer
- *      t....      tail pointer
- *      n....      count of elements
- *   there are more, but that might just prove how crazy i am.  LOL.
- *      
- */
 tCELL      *hcell;           /* head pointer for cell data structure          */
 tCELL      *tcell;           /* tail pointer for cell data structure          */
 int         ncell;           /* count of linked cells in data structure       */
 int         acell;           /* count of all cells                            */
-/*
- *
- *   related constants...
- *
- *   for clarity sake, i sometimes use a couple constants so the code does not
- *   get lost in literals.  i have done this for the linked flag on the cell
- *   data structure with the following two constants.
- *
- */
+
 #define     LINKED       'y'
 #define     UNLINKED     '-'
 
 #define     UNHOOKED    -1
-
-#define     CELL_BUFFER  1
-#define     CELL_SHEET   0
-
-
 
 #define     G_TAB_NORMAL   'y'
 #define     G_TAB_MACRO    'm'
@@ -643,17 +604,36 @@ int         acell;           /* count of all cells                            */
  *   actual data structures...
  *
  */
-struct cCOLS {
-   uchar     w;               /* column width                                 */
-   ushort    c;               /* count of entries in column                   */
-   tCELL    *c_head;          /* first/top used/real cell in col              */
-   tCELL    *c_tail;          /* last/bottom used/real cell in col            */
+struct cNODE {
+   uchar       type;            /* 'c' column vs 'r' row                      */
+   uchar       tab;             /* number of tab                              */
+   ushort      ref;             /* sequential identifier                      */
+   uchar       size;            /* size                                       */
+   tNODE      *N_prev;          /* prev col/row on tab                        */
+   tNODE      *N_next;          /* next col/row on tab                        */
+   ushort      count;           /* count of cells in col/row                  */
+   tCELL      *n_head;          /* first used/real cell in col/row            */
+   tCELL      *n_tail;          /* last/bottom used/real cell in col/row      */
 };
-struct cROWS {
-   uchar     h;               /* row height                                   */
-   ushort    c;               /* count of entries in row                      */
-   tCELL    *r_head;          /* first/left used/real cell in row             */
-   tCELL    *r_tail;          /* last/right used/real cell in row             */
+struct cCOL {
+   uchar       tab;             /* number of tab                              */
+   ushort      col;             /* colun identifier                           */
+   uchar       w;               /* column width                               */
+   ushort      c;               /* count of entries in column                 */
+   tCOL       *C_prev;          /* prev col on tab                            */
+   tCOL       *C_next;          /* next col on tab                            */
+   tCELL      *c_head;          /* first/top used/real cell in col            */
+   tCELL      *c_tail;          /* last/bottom used/real cell in col          */
+};
+struct cROW {
+   uchar       tab;             /* number of tab                              */
+   ushort      n;               /* row identifier                             */
+   uchar       h;               /* row height                                 */
+   ushort      c;               /* count of entries in row                    */
+   tROW       *R_prev;          /* prev row on tab                            */
+   tROW       *R_next;          /* next row on tab                            */
+   tCELL      *r_head;          /* first/left used/real cell in row           */
+   tCELL      *r_tail;          /* last/right used/real cell in row           */
 };
 
 
@@ -695,44 +675,33 @@ struct cTAB {
    uchar       abbr;                        /* abbreviation of tab            */
    uchar      *name;                        /* tab name for user reference    */
    uchar       type;                        /* tab type                       */
-   /*---(contents)-----------------------*/
-   /* tabs pull three other data structures together in a package: column     */
-   /* characteristics, row characteristics, and a grid on which to hang cells.*/
-   tCOLS       cols  [MAX_COLS];            /* column characteristics         */
-   tROWS      *r_head;
-   tROWS      *r_tail;
-   tROWS      *r_count;
-   tROWS       rows  [MAX_ROWS];            /* row characteristics            */
-   tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
-   uint        c;                           /* count of entries in sheet      */
-   uchar       defwide;                     /* default col width              */
-   uchar       deftall;                     /* default row height             */
-   /*---(current size limits)------------*/
-   /* while a maximum size sheet is allocated, there are logical user set     */
-   /* maximums in order to manage the complexity.                             */
+   /*---(columns)------------------------*/
+   tCOL        cols  [MAX_COLS];            /* column characteristics         */
+   tNODE      *C_head;
+   tNODE      *C_tail;
+   ushort      C_count;
    uchar       ncol;                        /* current limit on cols          */
-   ushort      nrow;                        /* current limit on rows          */
-   /*---(current position)---------------*/
-   /* while working, a user changes position to review and manipulate and     */
-   /* these variables store the current screen position.                      */
    uchar       ccol;                        /* current column                 */
-   ushort      crow;                        /* current row                    */
-   /*---(screen limits)------------------*/
-   /* given user movement, the program calculates and stores the first (beg)  */
-   /* and last (end) cols and rows which can be seen.                         */
    uchar       bcol;                        /* beginning column               */
-   ushort      brow;                        /* beginning row                  */
    uchar       ecol;                        /* ending column                  */
-   ushort      erow;                        /* ending row                     */
-   /*---(frozen rows and cols)-----------*/
-   /* in order to handle large volumes of data in a table, it is necessary to */
-   /* be able to freeze cols and/or rows so they remain visible               */
-   char        froz_col;                    /* are the cols frozen            */
+   uchar       froz_col;                    /* are the cols frozen            */
    uchar       froz_bcol;                   /* left of frozen cols            */
    uchar       froz_ecol;                   /* right of frozen cols           */
-   char        froz_row;                    /* are the rows frozen            */
+   /*---(rows)---------------------------*/
+   tROW        rows  [MAX_ROWS];            /* row characteristics            */
+   tNODE      *R_head;
+   tNODE      *R_tail;
+   ushort      R_count;
+   ushort      nrow;                        /* current limit on rows          */
+   ushort      crow;                        /* current row                    */
+   ushort      brow;                        /* beginning row                  */
+   ushort      erow;                        /* ending row                     */
+   uchar       froz_row;                    /* are the rows frozen            */
    ushort      froz_brow;                   /* top of frozen rows             */
    ushort      froz_erow;                   /* bottom of frozen rows          */
+   /*---(overall)------------------------*/
+   tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
+   uint        c;                           /* count of entries in sheet      */
    /*---(end)----------------------------*/
 };
 tTAB     s_tabs [MAX_TABS];
@@ -930,9 +899,9 @@ char      PROG_end             (void);
 
 char     *PROG__unit          (char *a_question, void *a_thing);
 char      PROG__testing       (void);
-char      PROG__unitloud      (void);
-char      PROG__unitquiet     (void);
-char      PROG__unitend       (void);
+char      PROG__unit_loud      (void);
+char      PROG__unit_quiet     (void);
+char      PROG__unit_end       (void);
 
 
 
@@ -1357,12 +1326,13 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 char        TAB__name_check         (char *a_name);
 char        TAB_init                (void);
 char        TAB_purge               (void);
-char        TAB__new                (uchar a_abbr, uchar *a_name, char *a_size);
-char        TAB__delete             (uchar a_abbr);
+char        TAB_new                 (uchar a_abbr, uchar *a_name, char *a_size);
+char        TAB_free                (uchar a_abbr);
 char        TAB_by_cursor           (char a_move);
 char        TAB_by_index            (char a_index);
 char        TAB_by_abbr             (uchar a_abbr);
 char        TAB_by_name             (uchar *a_regex);
+char        TAB_pointer             (tTAB **a_tab, char a_index);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         TAB_defmax           (void);
 int         TAB_max              (void);
@@ -1378,8 +1348,6 @@ char        TAB_size             /* petal  2----- */  (int a_tab, char *a_max);
 char        TAB_resize           /* stigma 1----- */  (char *a_max);
 char        TAB_colwide          (int a_tab);
 /*> char        TAB_rowtall          (int a_tab);                                     <*/
-char        TAB_defwide          (int a_size);
-/*> char        TAB_deftall          (int a_size);                                    <*/
 char        TAB_first            (void);
 char        TAB_prev             (void);
 char        TAB_next             (void);
@@ -1401,11 +1369,40 @@ char*       TAB__unit            (char *a_question, int a_tab);
 #define     LEGAL_ROW(A,B)     LEGAL_row (ROW_max (A), B)
 
 
+#define     IS_COL     'c'
+#define     IS_ROW     'r'
+
+/*===[[ gyges_node.c ]]=======================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(memory)-------------------------*/
+char        NODE_new                (tNODE **a_new, tTAB *a_tab, char a_type, ushort a_ref);
+char        NODE_free               (tNODE **a_old);
+/*---(search)-------------------------*/
+char        NODE_by_cursor          (tNODE **a_found, tTAB *a_tab, char a_type, char a_move);
+char        NODE_by_index           (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref);
+char        NODE_ensure             (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref);
+/*---(unit_test)----------------------*/
+char*       NODE__unit              (char *a_question, uchar a_tab, char a_type, ushort a_ref);
+
+
 
 /*===[[ gyges_col.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        COL_init             (void);
-char        COL_clear            (tTAB *a_tab, char a_init);
+/*---(memory)-------------------------*/
+char        COL__new                (tNODE **a_new, tTAB *a_tab, ushort a_col);
+char        COL__free               (tNODE **a_old);
+/*---(search)-------------------------*/
+char        COL__by_cursor          (tNODE **a_found, tTAB *a_tab, char a_move);
+char        COL__by_index           (tNODE **a_found, tTAB *a_tab, ushort a_col);
+char        COL__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_col);
+/*---(hooking)------------------------*/
+char        COL_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell);
+char        COL_unhook_cell         (tTAB *a_tab, tCELL *a_cell);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        COL_init                (void);
+char        COL_clear               (tTAB *a_tab, char a_init);
+char        COL_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell);
+char        COL_unhook_cell         (tTAB *a_tab, tCELL *a_cell);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         COL_defmax           /* petal  0----- */  (void);
 int         COL_max              /* petal  1----- */  (int a_tab);
@@ -1413,7 +1410,6 @@ int         COL_used             /* petal  2----- */  (int a_tab, int a_col);
 int         COL_maxused          (int a_tab);
 int         COL_setmax           (int a_tab, int a_count);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        COL_defwidth         (int a_tab, int a_size);
 char        COL_width            /* petal  2----- */  (int a_tab, int a_col);
 char        COL_widen            /* stigma 3----- */  (int a_tab, int a_col, int a_size);
 char        COL_reset            (void);
@@ -1426,11 +1422,19 @@ char        COL_reader              (void);
 char        COL_writer              (int  a_tab, int a_col);
 char        COL_writer_all          (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char*       COL__unit            (char *a_question, char *a_label);
+char*       COLn__unit              (char *a_question, uchar a_tab, ushort a_col);
+char*       COL__unit               (char *a_question, char *a_label);
 
 
 
 /*===[[ gyges_row.c ]]========================================================*/
+/*---(memory)-------------------------*/
+char        ROW__new                (tNODE **a_new, tTAB *a_tab, ushort a_row);
+char        ROW__free               (tNODE **a_old);
+/*---(search)-------------------------*/
+char        ROW__by_cursor          (tNODE **a_found, tTAB *a_tab, char a_move);
+char        ROW__by_index           (tNODE **a_found, tTAB *a_tab, ushort a_row);
+char        ROW__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_init                (void);
 char        ROW_clear            (tTAB *a_tab, char a_init);
@@ -1444,7 +1448,6 @@ int         ROW_setmax           (int a_tab, int a_count);
 /*> char        ROW_heighten            (int a_tab, int a_row, int a_size);           <* 
  *> char        ROW_resize              (char *a_name, int a_size, int a_count);      <* 
  *> char        ROW_reset               (void);                                       <* 
- *> char        ROW_defheight           (int a_tab, int a_size);                      <* 
  *> char        ROW_height           /+ petal  2----- +/  (int a_tab, int a_row);     <*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_reader              (void);
@@ -1454,6 +1457,7 @@ char        ROW_writer_all          (void);
 char        ROW_freeze              (int a_tab, int a_brow, int a_erow);
 char        ROW_unfreeze            (int a_tab);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char*       ROWn__unit              (char *a_question, uchar a_tab, ushort a_row);
 char*       ROW__unit               (char *a_question, char *a_label);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 
@@ -1483,7 +1487,7 @@ char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(memory)----------------------------*/
-char        CELL__new            /* ------ */  (tCELL **a_cell, char a_linked);
+char        CELL__new            (tCELL **a_cell, char a_linked);
 char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
 char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
 char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
@@ -1640,10 +1644,12 @@ char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char
 char        api_yvikeys_regkiller   (tCELL *a_curr);
 
 
-long        BTREE_genkey            (char *a_label);
+long        BTREE_label2key         (char *a_label);
+long        BTREE_coord2key         (int a_tab, int a_col, int a_row, char *a_label);
 char        BTREE_dgnome            (void);
 char        BTREE_build             (void);
-tCELL*      BTREE_search            (char *a_label);
+tCELL*      BTREE_by_label          (char *a_label);
+tCELL*      BTREE_by_coord          (int a_tab, int a_col, int a_row);
 char        BTREE_list              (void);
 char        BTREE_update            (void);
 char*       BTREE__unit             (char *a_question, int n);

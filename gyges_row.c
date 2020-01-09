@@ -3,6 +3,56 @@
 
 
 
+static tTAB *s_tab    = NULL;
+static tROW *s_curr   = NULL;
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       memory allocation                      ----===*/
+/*====================------------------------------------====================*/
+static void  o___MEMORY__________o () { return; }
+
+char
+ROW__new                (tNODE **a_new, tTAB *a_tab, ushort a_row)
+{
+   return NODE_new (a_new, a_tab, IS_ROW, a_row);
+}
+
+char
+ROW__free               (tNODE **a_old)
+{
+   return NODE_free (a_old);
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       search and finding                     ----===*/
+/*====================------------------------------------====================*/
+static void  o___SEARCH__________o () { return; }
+
+char         /*-> cursor with no bounce/safeties -----------------------------*/
+ROW__by_cursor          (tNODE **a_found, tTAB *a_tab, char a_move)
+{
+   return NODE_by_cursor (a_found, a_tab, IS_ROW, a_move);
+}
+
+char
+ROW__by_index           (tNODE **a_found, tTAB *a_tab, ushort a_row)
+{
+   return NODE_by_index (a_found, a_tab, IS_ROW, a_row);
+}
+
+char
+ROW__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_row)
+{
+   return NODE_ensure (a_found, a_tab, IS_ROW, a_row);
+}
+
+
+
+
 
 
 /*====================------------------------------------====================*/
@@ -33,7 +83,7 @@ ROW_clear            (tTAB *a_tab, char a_init)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tROWS      *x_curr      = NULL;
+   tROW       *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
    DEBUG_LOCS   yLOG_spoint  (a_tab);
@@ -43,11 +93,11 @@ ROW_clear            (tTAB *a_tab, char a_init)
       return rce;
    }
    /*---(initialize columns)-------------*/
-   DEBUG_LOCS   yLOG_spoint  (a_tab->r_head);
+   DEBUG_LOCS   yLOG_spoint  (a_tab->R_head);
    DEBUG_LOCS   yLOG_sint    (MAX_COLS);
    /*> for (x_col = 0; x_col < MAX_COLS; ++x_col) {                                   <* 
     *>    /+---(characteristics)-------------+/                                       <* 
-    *>    a_tab->cols [x_col].w       = a_tab->defwide;                               <* 
+    *>    a_tab->cols [x_col].w       = DEF_WIDTH;                                    <* 
     *>    if (a_init == 'y') {                                                        <* 
     *>       a_tab->cols [x_col].c       = 0;                                         <* 
     *>       a_tab->cols [x_col].c_head  = NULL;                                      <* 
@@ -95,7 +145,7 @@ ROW_clear            (tTAB *a_tab, char a_init)
  *>    DEBUG_LOCS   yLOG_svalue  ("MAX_ROWS"  , MAX_ROWS);                                                                         <* 
  *>    for (x_row = 0; x_row < MAX_ROWS; ++x_row) {                                                                                <* 
  *>       /+---(characteristics)-------------+/                                                                                    <* 
- *>       s_tabs [a_tab].rows [x_row].h = s_tabs [a_tab].deftall;                                                                  <* 
+ *>       s_tabs [a_tab].rows [x_row].h = DEF_HEIGHT;                                                                              <* 
  *>       /+> s_tabs [a_tab].rows [x_row].y = 0;                                          <+/                                      <* 
  *>       s_tabs [a_tab].rows [x_row].c = 0;                                                                                       <* 
  *>       /+---(done)------------------------+/                                                                                    <* 
@@ -273,7 +323,7 @@ static void  o___SIZING__________o () { return; }
  *>    /+---(resize)-------------------------+/                                                                                    <* 
  *>    x_max  = ROW_max (CTAB);                                                                                                    <* 
  *>    for (i = 0; i <= x_max; ++i) {                                                                                              <* 
- *>       rc = ROW_heighten (CTAB, i, s_tabs [CTAB].deftall);                                                                      <* 
+ *>       rc = ROW_heighten (CTAB, i, DEF_HEIGHT);                                                                                 <* 
  *>    }                                                                                                                           <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
  *>    return 0;                                                                                                                   <* 
@@ -309,32 +359,6 @@ static void  o___SIZING__________o () { return; }
  *>    yVIKEYS_map_refresh ();                                                                                                     <* 
  *>    /+---(complete)---------------------------+/                                                                                <* 
  *>    DEBUG_CELL  yLOG_exit   (__FUNCTION__);                                                                                     <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> set the default width --------------[ ------ [gc.210.213.11]+/ /+-[00.0000.G03.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> ROW_defheight        (int a_tab, int a_size)                                                                                   <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
- *>    char        rce         =  -10;                                                                                             <* 
- *>    char        rc          =    0;                                                                                             <* 
- *>    int         x_def       =    0;                                                                                             <* 
- *>    int         x_max       =    0;                                                                                             <* 
- *>    int         x_row       =    0;                                                                                             <* 
- *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    rc = VALID_tab (a_tab);                                                                                                     <* 
- *>    --rce;  if (rc == 0) return rc;                                                                                             <* 
- *>    /+---(prepare)------------------------+/                                                                                    <* 
- *>    x_def  = s_tabs [a_tab].deftall;                                                                                            <* 
- *>    x_max  = ROW_max (a_tab);                                                                                                   <* 
- *>    /+---(update column printables)-------+/                                                                                    <* 
- *>    for (x_row = 0; x_row < x_max; ++x_row) {                                                                                   <* 
- *>       if (s_tabs [a_tab].rows [x_row].h != x_def)  continue;                                                                   <* 
- *>       ROW_heighten (a_tab, x_row, a_size);                                                                                     <* 
- *>    }                                                                                                                           <* 
- *>    /+---(set default)--------------------+/                                                                                    <* 
- *>    s_tabs [a_tab].deftall = a_size;                                                                                            <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
@@ -608,6 +632,11 @@ ROW_writer_all          (void)
 /*====================------------------------------------====================*/
 static void  o___UNITTEST________o () { return; }
 
+char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
+ROWn__unit         (char *a_question, uchar a_tab, ushort a_row)
+{
+   NODE__unit (a_question, a_tab, IS_ROW, a_row);
+}
 
 char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 ROW__unit          (char *a_question, char *a_label)

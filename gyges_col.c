@@ -3,6 +3,185 @@
 
 
 
+static tTAB *s_tab    = NULL;
+static tCOL *s_curr   = NULL;
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       memory allocation                      ----===*/
+/*====================------------------------------------====================*/
+static void  o___MEMORY__________o () { return; }
+
+char
+COL__new                (tNODE **a_new, tTAB *a_tab, ushort a_col)
+{
+   return NODE_new (a_new, a_tab, IS_COL, a_col);
+}
+
+char
+COL__free               (tNODE **a_old)
+{
+   return NODE_free (a_old);
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       search and finding                     ----===*/
+/*====================------------------------------------====================*/
+static void  o___SEARCH__________o () { return; }
+
+char         /*-> cursor with no bounce/safeties -----------------------------*/
+COL__by_cursor          (tNODE **a_found, tTAB *a_tab, char a_move)
+{
+   return NODE_by_cursor (a_found, a_tab, IS_COL, a_move);
+}
+
+char
+COL__by_index           (tNODE **a_found, tTAB *a_tab, ushort a_col)
+{
+   return NODE_by_index (a_found, a_tab, IS_COL, a_col);
+}
+
+char
+COL__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_col)
+{
+   return NODE_ensure (a_found, a_tab, IS_COL, a_col);
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                  hooking and unhooking cells                 ----===*/
+/*====================------------------------------------====================*/
+static void  o___HOOKING_________o () { return; }
+
+char
+COL_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tCOL      *x_col        = NULL;
+   tCELL     *x_prev       = NULL;
+   tCELL     *x_curr       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_complex ("args"      , "tab %-10.10p, col %3d, row %3d, cell %-10.10p", a_tab, a_col, a_row, a_cell);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab == NULL && a_cell == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(find column)--------------------*/
+   COL__ensure (&x_col, a_tab, a_col);
+   DEBUG_LOCS   yLOG_point   ("ensure"    , x_col);
+   --rce;  if (x_col == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(find cell position)-------------*/
+   x_curr = x_col->c_head;
+   --rce;  while (x_curr != NULL) {
+      if (x_curr->row == a_row) {
+         DEBUG_LOCS   yLOG_note    ("already exists");
+         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      if (x_curr->row >  a_row)   break;
+      x_prev = x_curr;
+      x_curr = x_curr->c_next;
+   }
+   DEBUG_LOCS   yLOG_point   ("x_prev"    , x_prev);
+   DEBUG_LOCS   yLOG_point   ("x_curr"    , x_curr);
+   /*---(add cell to col)----------------*/
+   if (x_prev == NULL && x_curr == NULL) {
+      DEBUG_LOCS   yLOG_snote   ("first cell in column");
+      x_col->c_head  = a_cell;
+      x_col->c_tail  = a_cell;
+   } else if (x_prev == NULL && x_curr != NULL) {
+      DEBUG_LOCS   yLOG_snote   ("prepend to front of column");
+      a_cell->c_prev = NULL;
+      a_cell->c_next = x_col->c_head;
+      x_col->c_head->c_prev = a_cell;
+      x_col->c_head = a_cell;
+   } else if (x_prev != NULL && x_curr == NULL) {
+      DEBUG_LOCS   yLOG_snote   ("append to back of column");
+      a_cell->c_next = NULL;
+      a_cell->c_prev = x_col->c_tail;
+      x_col->c_tail->c_next = a_cell;
+      x_col->c_tail = a_cell;
+   } else {
+      DEBUG_LOCS   yLOG_snote   ("insert in middle of column");
+      a_cell->c_next  = x_prev->c_next;
+      x_prev->c_next = a_cell;
+      a_cell->c_prev  = x_curr->c_prev;
+      x_curr->c_prev = a_cell;
+   }
+   /*---(update counts)------------------*/
+   ++(x_col->c);
+   DEBUG_LOCS   yLOG_value   ("c"         , x_col->c);
+   /*---(update col ties)----------------*/
+   a_cell->col      = a_col;
+   a_cell->C_parent = x_col;
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+COL_unhook_cell         (tTAB *a_tab, tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tCOL       *x_col       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_complex ("args"      , "tab %-10.10p, cell %-10.10p", a_tab, a_cell);
+   /*---(defense)------------------------*/
+   --rce;  if (a_tab == NULL && a_cell == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(find column)--------------------*/
+   x_col = a_cell->C_parent;
+   DEBUG_LOCS   yLOG_point   ("x_col"     , x_col);
+   --rce;  if (x_col == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(remove from list)---------------*/
+   DEBUG_GRAF   yLOG_note    ("remove from column");
+   if (a_cell->c_prev != NULL)  a_cell->c_prev->c_next = a_cell->c_next;
+   else                         x_col->c_head          = a_cell->c_next;
+   if (a_cell->c_next != NULL)  a_cell->c_next->c_prev = a_cell->c_prev;
+   else                         x_col->c_tail          = a_cell->c_prev;
+   /*---(update counters)----------------*/
+   --(x_col->c);
+   DEBUG_LOCS   yLOG_sint    (x_col->c);
+   /*---(update col ties)----------------*/
+   a_cell->col      = -1;
+   a_cell->C_parent = NULL;
+   /*---(check for freeing)--------------*/
+   DEBUG_LOCS   yLOG_point   ("c_head"    , x_col->c_head);
+   DEBUG_LOCS   yLOG_value   ("c"         , x_col->c);
+   DEBUG_LOCS   yLOG_value   ("w"         , x_col->w);
+   DEBUG_LOCS   yLOG_value   ("def_width" , DEF_WIDTH);
+   --rce;  if (x_col->c_head == NULL && x_col->w == DEF_WIDTH) {
+      rc = COL__free (&x_col);
+      DEBUG_LOCS   yLOG_value   ("free"      , rc);
+      if (rc < 0) {
+         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
 
 /*====================------------------------------------====================*/
 /*===----                         program level                        ----===*/
@@ -45,7 +224,7 @@ COL_clear            (tTAB *a_tab, char a_init)
    DEBUG_LOCS   yLOG_sint    (MAX_COLS);
    for (x_col = 0; x_col < MAX_COLS; ++x_col) {
       /*---(characteristics)-------------*/
-      a_tab->cols [x_col].w       = a_tab->defwide;
+      a_tab->cols [x_col].w       = DEF_WIDTH;
       if (a_init == 'y') {
          a_tab->cols [x_col].c       = 0;
          a_tab->cols [x_col].c_head  = NULL;
@@ -200,7 +379,7 @@ COL_reset            (void)
    /*---(resize)-------------------------*/
    x_max  = COL_max (CTAB);
    for (i = 0; i <= x_max; ++i) {
-      rc = COL_widen (CTAB, i, s_tabs [CTAB].defwide);
+      rc = COL_widen (CTAB, i, DEF_WIDTH);
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -240,32 +419,6 @@ COL_visual         (int a_tab, int a_col, int a_row, char a_mode, char a_num)
    yVIKEYS_map_refresh ();
    /*---(complete)---------------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> set the default width --------------[ ------ [gc.210.213.11]*/ /*-[00.0000.G03.!]-*/ /*-[--.---.---.--]-*/
-COL_defwidth         (int a_tab, int a_size)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         x_def       =    0;
-   int         x_max       =    0;
-   int         x_col       =    0;
-   /*---(defense)------------------------*/
-   rc = VALID_tab (a_tab);
-   --rce;  if (rc == 0) return rc;
-   /*---(prepare)------------------------*/
-   x_def  = s_tabs [a_tab].defwide;
-   x_max  = COL_max (a_tab);
-   /*---(update column printables)-------*/
-   for (x_col = 0; x_col < x_max; ++x_col) {
-      if (s_tabs [a_tab].cols [x_col].w != x_def)  continue;
-      COL_widen (a_tab, x_col, a_size);
-   }
-   /*---(set default)--------------------*/
-   s_tabs [a_tab].defwide = a_size;
-   /*---(complete)-----------------------*/
    return 0;
 }
 
@@ -465,6 +618,12 @@ COL_writer_all          (void)
 static void  o___UNITTEST________o () { return; }
 
 char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
+COLn__unit         (char *a_question, uchar a_tab, ushort a_col)
+{
+   NODE__unit (a_question, a_tab, IS_COL, a_col);
+}
+
+char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 COL__unit          (char *a_question, char *a_label)
 {
    /*---(locals)-------------------------*/
@@ -490,6 +649,9 @@ COL__unit          (char *a_question, char *a_label)
       } else {
          snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#, %3dw, %3dc", x_abbr, LABEL_col (x_col), x_col, s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].cols [x_col].c);
       }
+   }
+   else if (strcmp(a_question, "info"          ) == 0) {
+      snprintf(unit_answer, LEN_FULL, "COL info         : %ct, %-2.2s, %3d#,   -w,   -c", x_abbr, LABEL_col (x_col), x_col);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

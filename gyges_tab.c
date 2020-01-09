@@ -12,8 +12,8 @@
  */
 
 
-static  uchar  *s_valids = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ®¯"; 
-static  int     s_nvalid = 38;
+static  uchar  *s_valids  = NULL;
+static  int     s_nvalid  = 38;
 
 static  tTAB   *s_master  [MAX_TABS];
 static  tTAB   *s_curr    = NULL;
@@ -328,6 +328,33 @@ TAB_by_name             (uchar *a_regex)
    return 0;
 }
 
+char
+TAB_pointer             (tTAB **a_tab, char a_index)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   if (a_tab != NULL)   *a_tab = NULL;
+   /*---(defenses)-----------------------*/
+   DEBUG_LOCS   yLOG_sint    (s_nvalid);
+   --rce;  if (a_index < 0 || a_index >= s_nvalid) {
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check)--------------------------*/
+   DEBUG_LOCS   yLOG_spoint  (s_master [a_index]);
+   --rce;  if (s_master [a_index] == NULL) {
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(set current)--------------------*/
+   if (a_tab != NULL)  *a_tab = s_master [a_index];
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
 
 
 
@@ -337,7 +364,7 @@ TAB_by_name             (uchar *a_regex)
 static void  o___MEMORY__________o () { return; }
 
 char 
-TAB__new                (uchar a_abbr, uchar *a_name, char *a_size)
+TAB_new                 (uchar a_abbr, uchar *a_name, char *a_size)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -380,12 +407,33 @@ TAB__new                (uchar a_abbr, uchar *a_name, char *a_size)
    if (TAB__name_check (a_name) < 0)  x_new->name = g_tbd;
    else                               x_new->name = strdup (a_name);
    x_new->type     = G_TAB_NORMAL;
-   /*> COL_clear (x_new, 'y');                                                        <*/
-   /*> ROW_clear (x_new, 'y');                                                        <*/
    /*---(tie to master list)-------------*/
    DEBUG_LOCS   yLOG_note    ("attach");
    s_master [n] = x_new;
+   /*---(columns)------------------------*/
+   x_new->C_head    = NULL;
+   x_new->C_tail    = NULL;
+   x_new->C_count   = 0;
+   x_new->ncol      = 0;
+   x_new->bcol      = 0;
+   x_new->ccol      = 0;
+   x_new->ecol      = 0;
+   x_new->froz_col  = '-';
+   x_new->froz_bcol = 0;
+   x_new->froz_ecol = 0;
+   /*---(rows)---------------------------*/
+   x_new->R_head    = NULL;
+   x_new->R_tail    = NULL;
+   x_new->R_count   = 0;
+   x_new->nrow      = 0;
+   x_new->brow      = 0;
+   x_new->crow      = 0;
+   x_new->erow      = 0;
+   x_new->froz_row  = '-';
+   x_new->froz_brow = 0;
+   x_new->froz_erow = 0;
    /*---(update counts)------------------*/
+   x_new->c         = 0;
    ++s_all;
    if (strchr ("®¯", s_valids [n]) == NULL)   ++s_count;
    DEBUG_LOCS   yLOG_value   ("s_all"     , s_all);
@@ -401,7 +449,7 @@ TAB__new                (uchar a_abbr, uchar *a_name, char *a_size)
 }
 
 char 
-TAB__delete             (uchar a_abbr)
+TAB_free                (uchar a_abbr)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -460,9 +508,10 @@ TAB_init                (void)
    char        rc          =    0;
    char        i           =    0;
    /*---(count buffer labels)------------*/
+   s_valids = LIST_tabs ();
    s_nvalid = strlen (s_valids);
    TAB_purge ();
-   NTAB = DEF_TABS;
+   NTAB = MAX_TABS;
    for (i = 0; i < s_nvalid; ++i)   s_master [i] = NULL;
    s_curr  = NULL;
    s_count = 0;
@@ -477,8 +526,6 @@ TAB_init                (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bsize"       , "bs"  , "s"    , TAB_resize                 , "change a buffer size"                 );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bmax"        , "bx"  , "i"    , TAB_setmax                 , "change count of available buffers"    );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bbrowse"     , "bb"  , "a"    , TAB_browse                 , "find buffer by name"                  );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "defwide"     , ""    , "i"    , TAB_defwide                , "change default column width"          );
-   /*> rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "deftall"     , ""    , "i"    , TAB_deftall                , "change default row height"            );   <*/
    /*---(add status options)-------------*/
    rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
    /*---(add yparse specification)-------*/
@@ -496,7 +543,7 @@ TAB_purge               (void)
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    for (i = 0; i < s_nvalid; ++i) {
-      TAB__delete (s_valids [i]);
+      TAB_free (s_valids [i]);
    }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -537,8 +584,6 @@ TAB_purge_OLD        (void)
       s_tabs [x_tab].ecol    =    0;
       s_tabs [x_tab].erow    =    0;
       /*---(col/row)---------------------*/
-      s_tabs [x_tab].defwide = DEF_WIDTH;
-      s_tabs [x_tab].deftall = DEF_HEIGHT;
       COL_clear         (&(s_tabs [x_tab]), '-');
       ROW_clear         (&(s_tabs [x_tab]), '-');
       /*---(frozen)----------------------*/
@@ -566,12 +611,10 @@ char         /*-> tbd --------------------------------[ ------ [ge.320.223.21]*/
 TAB_name             (int a_tab, char *a_name)
 {
    char        rce         =  -20;
-   char        n           =   -1;
-   n = INDEX_tab (a_tab);
-   --rce;  if (!LEGAL_TAB (a_tab))                    return rce;
+   --rce;  if (VALID_tab (a_tab) != 1)                return rce;
+   --rce;  if (s_master [a_tab] == NULL)              return rce;
    --rce;  if (a_name  == NULL)                       return rce;
-   --rce;  if (a_name  == NULL)                       return rce;
-   strlcpy (a_name, s_tabs [a_tab].name, LEN_TERSE);
+   strlcpy (a_name, s_master [a_tab]->name, LEN_LABEL);
    return 0;
 }
 
@@ -579,11 +622,11 @@ char         /*-> tbd --------------------------------[ ------ [ge.330.225.41]*/
 TAB_rename           (int a_tab, char *a_name)
 {
    char        rce         =  -20;
-   --rce;  if (!LEGAL_TAB (a_tab))                    return rce;
-   --rce;  if (a_name  == NULL)                       return rce;
-   --rce;  if (a_name [0] == '\0')                    return rce;
-   --rce;  if (strlen (a_name) >= LEN_TERSE)           return rce;
-   strlcpy (s_tabs [a_tab].name, a_name, LEN_TERSE);
+   --rce;  if (VALID_tab (a_tab) != 1)                return rce;
+   --rce;  if (s_master [a_tab] == NULL)              return rce;
+   --rce;  if (TAB__name_check (a_name) < 0)          return rce;
+   if (s_master [a_tab]->name != NULL && s_master [a_tab]->name != g_tbd)  free (s_master [a_tab]->name);
+   s_master [a_tab]->name = strdup (a_name);
    return 0;
 }
 
@@ -834,12 +877,10 @@ TAB_resize           (char *a_max)
    return 0;
 }
 
-char  TAB_colwide      (int a_tab) { return s_tabs [a_tab].defwide; }
-/*> char  TAB_rowtall      (int a_tab) { return s_tabs [a_tab].deftall; }             <*/
+char  TAB_colwide      (int a_tab) { return DEF_WIDTH; }
+/*> char  TAB_rowtall      (int a_tab) { return DEF_HEIGHT; }             <*/
 char  TAB_rowtall      (int a_tab) { return 1; }
 
-char  TAB_defwide      (int a_size) { return COL_defwidth  (CTAB, a_size); }
-/*> char  TAB_deftall      (int a_size) { return ROW_defheight (CTAB, a_size); }      <*/
 
 
 /*====================------------------------------------====================*/
@@ -1025,10 +1066,8 @@ TAB_reader           (void)
    /*---(default sizes)------------------*/
    rc = yPARSE_popint  (&x_size);
    DEBUG_INPT   yLOG_value   ("pop col"   , rc);
-   if (x_size > 0)  COL_defwidth  (x_tab, x_size);
    rc = yPARSE_popint  (&x_size);
    DEBUG_INPT   yLOG_value   ("pop row"   , rc);
-   /*> if (x_size > 0)  ROW_defheight (x_tab, x_size);                                <*/
    rc = yPARSE_popint  (&x_size);
    DEBUG_INPT   yLOG_value   ("pop depth" , rc);
    /*---(type)---------------------------*/
@@ -1143,14 +1182,14 @@ TAB__unit          (char *a_question, int a_tab)
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "TAB              : question not understood");
    if      (strcmp(a_question, "count"         ) == 0) {
-      snprintf(unit_answer, LEN_FULL, "TAB count        : %d", NTAB);
+      snprintf(unit_answer, LEN_FULL, "TAB count        : %2dn, %2da, %2dc", NTAB, s_all, s_count);
    }
    else if (strcmp(a_question, "entry"         ) == 0) {
       x_index = s_index;
       x_curr  = s_curr;
       TAB_by_index (a_tab);
-      if (s_curr == NULL)  snprintf (unit_answer, LEN_FULL, "TAB entry    (-) :  -=-  -            -       -       -       -       -");
-      else                 snprintf (unit_answer, LEN_FULL, "TAB entry    (%c) : %2d=%-2d %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", s_curr->abbr, s_index, s_curr->tab, s_curr->name, "-", "-", "-", "-", 0);
+      if (s_curr == NULL)  snprintf (unit_answer, LEN_FULL, "TAB entry    (-) :  -=-  -            -       -       -       -         -c   -r   -n");
+      else                 snprintf (unit_answer, LEN_FULL, "TAB entry    (%c) : %2d=%-2d %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %3dc %3dr %3dn", s_curr->abbr, s_index, s_curr->tab, s_curr->name, "-", "-", "-", "-", s_curr->C_count, s_curr->R_count, s_curr->c);
       s_index = x_index;
       s_curr  = x_curr;
    }
@@ -1182,7 +1221,7 @@ TAB__unit          (char *a_question, int a_tab)
       snprintf(unit_answer, LEN_FULL, "TAB curr     (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [a_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [a_tab].c);
    }
    else if (strcmp(a_question, "defs"          )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "TAB defaults     : col=%2d, row=%2d", s_tabs[a_tab].defwide, s_tabs[a_tab].deftall);
+      snprintf (unit_answer, LEN_FULL, "TAB defaults     : col=%2d, row=%2d", DEF_WIDTH, DEF_HEIGHT);                          
    }
    /*---(complete)-----------------------*/
    return unit_answer;

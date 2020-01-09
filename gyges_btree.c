@@ -2,6 +2,18 @@
 #include   "gyges.h"
 
 
+/*
+ *  cells are created once, updated sometimes, and calculated frequently
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 static tCELL   *s_broot  = NULL;
 static char     s_levels =    0;
 
@@ -20,13 +32,23 @@ static tCELL   *s_save   = NULL;
 static void  o___HELPERS_________o () { return; }
 
 long
-BTREE_genkey            (char *a_label)
+BTREE_label2key         (char *a_label)
 {
    int       x_tab, x_col, x_row;
    char      rc;
-   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
-   if (rc < 0)  return rc;
+   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+   if (rc < 0)  return -1;
    return x_row + (x_col * 10000) + (x_tab * 10000000);
+}
+
+long
+BTREE_coord2key         (int a_tab, int a_col, int a_row, char *a_label)
+{
+   char      rc;
+   rc = str4gyges (a_tab, a_col, a_row, NULL, NULL, a_label, YSTR_USABLE);
+   if (rc < 0)  return -1;
+   if (a_tab < 0 && a_col < 0 && a_row < 0)  return -1;
+   return a_row + (a_col * 10000) + (a_tab * 10000000);
 }
 
 
@@ -108,7 +130,7 @@ BTREE_dgnome            (void)
    s_swaps = 0;
    s_comps = 0;
    s_teles = 0;
-   x_base   = hcell->m_next;
+   x_base  = hcell->m_next;
    if (x_base != NULL) {
       x_comp = x_base->m_prev;
       x_tele = x_base->m_next;
@@ -313,7 +335,7 @@ BTREE__searchdown  (tCELL *a_node, char *a_dir, long a_key)
 }
 
 tCELL*  
-BTREE_search            (char *a_label)
+BTREE_by_label          (char *a_label)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -333,7 +355,7 @@ BTREE_search            (char *a_label)
       strlcpy (s_path, "-", LEN_DESC);
       return s_save;
    }
-   x_key   = BTREE_genkey (a_label);
+   x_key   = BTREE_label2key (a_label);
    DEBUG_DATA   yLOG_value   ("x_key"     , x_key);
    --rce;  if (x_key < 0) {
       DEBUG_DATA   yLOG_note    ("bad label");
@@ -357,6 +379,59 @@ BTREE_search            (char *a_label)
    /*---(save)---------------------------*/
    DEBUG_DATA   yLOG_note    ("found");
    strlcpy (s_last, a_label, LEN_LABEL);
+   s_save   = x_node;
+   s_result = 0;
+   /*---(complete)-----------------------*/
+   DEBUG_DATA   yLOG_exit    (__FUNCTION__);
+   return s_save;
+}
+
+tCELL*  
+BTREE_by_coord          (int a_tab, int a_col, int a_row)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         n           =   -1;
+   tCELL      *x_node      = NULL;
+   char        x_label     [LEN_LABEL] = "";
+   long        x_key       =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_DATA   yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   s_depth = 0;
+   strlcpy (s_path, "", LEN_DESC);
+   /*---(short-cut)----------------------*/
+   x_key   = BTREE_coord2key (a_tab, a_col, a_row, x_label);
+   DEBUG_DATA   yLOG_value   ("x_key"     , x_key);
+   --rce;  if (x_key < 0) {
+      DEBUG_DATA   yLOG_note    ("bad coordinates");
+      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      s_result = -1;
+      return NULL;
+   }
+   if (s_save != NULL && strcmp (s_last, x_label) == 0) {
+      DEBUG_DATA   yLOG_note    ("shortcut");
+      DEBUG_DATA   yLOG_exit    (__FUNCTION__);
+      s_result =  1;
+      strlcpy (s_path, "-", LEN_DESC);
+      return s_save;
+   }
+   /*---(search)-------------------------*/
+   DEBUG_DATA   yLOG_note    ("dive into btree");
+   x_node = BTREE__searchdown (s_broot, "@", x_key);
+   DEBUG_DATA   yLOG_value   ("max depth" , s_levels);
+   DEBUG_DATA   yLOG_value   ("s_depth"   , s_depth);
+   DEBUG_DATA   yLOG_info    ("s_path"    , s_path);
+   /*---(check)--------------------------*/
+   --rce;  if (x_node == NULL) {
+      DEBUG_DATA   yLOG_note    ("not found");
+      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      s_result = -1;
+      return NULL;
+   }
+   /*---(save)---------------------------*/
+   DEBUG_DATA   yLOG_note    ("found");
+   strlcpy (s_last, x_label, LEN_LABEL);
    s_save   = x_node;
    s_result = 0;
    /*---(complete)-----------------------*/

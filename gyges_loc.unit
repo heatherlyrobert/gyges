@@ -22,7 +22,7 @@ PREP          v21  include the prototype headers                              
 SCRP          v21  (LOC   ) verify purely legal location validatation                 log__checker_legal                                                                                    ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    GROUP      v21  use the direct interfaces                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -246,7 +246,7 @@ SCRP          v21  (LOC   ) verify purely legal location validatation         
    GROUP      v21  complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.045))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -255,7 +255,7 @@ SCRP          v21  (LOC   ) verify purely legal location validatation         
 SCRP          v21  (LOC   ) verify location validation with adaptation                log__checker_adapt                                                                                    ((02.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    GROUP      v21  use the direct interfaces                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -479,7 +479,7 @@ SCRP          v21  (LOC   ) verify location validation with adaptation        
    GROUP      v21  complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.016))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -488,7 +488,7 @@ SCRP          v21  (LOC   ) verify location validation with adaptation        
 SCRP          v21  (LOC   ) verify location validation for exact changes              log__checker_exact                                                                                    ((03.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    GROUP      v21  use the direct interfaces                                          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -752,7 +752,7 @@ SCRP          v21  (LOC   ) verify location validation for exact changes      
    GROUP      v21  complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -761,7 +761,7 @@ SCRP          v21  (LOC   ) verify location validation for exact changes      
 SCRP          v21  (LOC   ) cell attachment to and detachment from a sheet            LOC_hook, LOC_unhook, LOC_move, COL_used, ROW_used                                                    ((05.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list"    , NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count"   , NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -1289,7 +1289,7 @@ SCRP          v21  (LOC   ) cell attachment to and detachment from a sheet    
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.069))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -1300,7 +1300,7 @@ SCRP          v21  (LOC   ) cell attachment to and detachment from a sheet    
 SCRP          v21  (LOC   ) convert between cell, coords, and labels                  LOC_coords, LOC_cell_at_loc, LOC_cell_labeled, LOC_label                                              ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -1521,7 +1521,7 @@ SCRP          v21  (LOC   ) convert between cell, coords, and labels          
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -1532,7 +1532,7 @@ SCRP          v21  (LOC   ) convert between cell, coords, and labels          
 SCRP          v21  (LOC   ) tab setup and control                                     TAB_name, rename, size, resize, COL_max, ROW_max                                                      ((07.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      exec     v21  set full set of tabs                 TAB_setmax                  MAX_TABS                                                                                              i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
@@ -1797,7 +1797,7 @@ SCRP          v21  (LOC   ) tab setup and control                             
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.031))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 

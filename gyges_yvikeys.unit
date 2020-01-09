@@ -18,7 +18,7 @@ PREP          v21  include the prototype headers                              
 SCRP          v21  (gyges_vikeys) verify end and edge movements                       mapping                                                                                               ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   1, num=   0, fore=   0, back=   0                                          
 
@@ -256,7 +256,7 @@ SCRP          v21  (gyges_vikeys) verify end and edge movements               
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
      get      v21  review the cell linked list          CELL__unit                  "cell_list",     NULL                                                                                 u_round/1   s_cell main list : num=   0, head=     (nil), tail=     (nil)                                        
      get      v21  review the cell counts               CELL__unit                  "cell_count",    NULL                                                                                 s_equal     s_cell count     : all=   0, num=   0, fore=   0, back=   0                                          
 
@@ -267,7 +267,7 @@ SCRP          v21  (gyges_vikeys) verify end and edge movements               
 SCRP          v21  (YVIKEYS) verify all units of measure work with formats            api_yvikeys_format, api_yvikeys_units                                                                 ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  initialize testing                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     v21  setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       v21  setup a small positive number                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     v21  get to a cell                        yVIKEYS_main_string         ":0d4¦+1.23¦"                                                                                         i_equal     0                                                                                                    
@@ -415,7 +415,7 @@ SCRP          v21  (YVIKEYS) verify all units of measure work with formats    
    GROUP      v21  complete                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       v21  verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     v21  wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     v21  wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 

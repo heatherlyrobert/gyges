@@ -17,7 +17,7 @@ PREP          include the prototype headers                                    
 SCRP          (HIST  ) verify history content/format specification               HIST__concat                                                                                          ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       request simple success                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     before creation                      HIST__concat                "<r0--"        , "+25"                                  , &g_before                                   i_equal     0                                                                                                    
@@ -64,7 +64,7 @@ SCRP          (HIST  ) verify history content/format specification             
      code     ... must free since not default      - - - - - - - - - - - - -   free (g_after );  g_after  = NULL;                                                                                                                                                                                         
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -73,7 +73,7 @@ SCRP          (HIST  ) verify history content/format specification             
 SCRP          (HIST  ) verify history action decoding                            HIST__action                                                                                          ((02.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       request simple success                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     check action                         HIST__action                HIST_BEG       , HIST_OVERWRITE                                                                       s_equal     overwrite                                                                                            
@@ -96,7 +96,7 @@ SCRP          (HIST  ) verify history action decoding                          
      exec     check action                         HIST__action                '5'            , HIST_OVERWRITE                                                                       s_equal     n/f                                                                                                  
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((02.007))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -105,7 +105,7 @@ SCRP          (HIST  ) verify history action decoding                          
 SCRP          (HIST  ) verify simple creation and destruction                    HIST__new, HIST__delete                                                                               ((03.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      ... check current                    HIST__unit                  "current"      , 0                                                                                    s_equal     HIST curr   (--) : -       ,  -t,   -c,   -r, - -          ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬         
      get      ... check entry                      HIST__unit                  "entry"        , 0                                                                                    s_equal     HIST entry  ( 0) : -       ,  -t,   -c,   -r, - -          ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬         
      get      ... check entry                      HIST__unit                  "entry"        , 1                                                                                    s_equal     HIST entry  ( 1) : -       ,  -t,   -c,   -r, - -          ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬         
@@ -183,7 +183,7 @@ SCRP          (HIST  ) verify simple creation and destruction                  
      get      ... check entry                      HIST__unit                  "entry"        , 6                                                                                    s_equal     HIST entry  ( 6) : -       ,  -t,   -c,   -r, - -          ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬         
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((03.008))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -192,7 +192,7 @@ SCRP          (HIST  ) verify simple creation and destruction                  
 SCRP          (HIST  ) verify entry cursoring                                    HIST__cursor                                                                                          ((04.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    COND       add data set                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      exec     before creation                      HIST__concat                "<r0--"        , "+25"                                  , &g_before                                   i_equal     0                                                                                                    
@@ -253,7 +253,7 @@ SCRP          (HIST  ) verify entry cursoring                                  
      get      ... check current                    HIST__unit                  "current"      , 0                                                                                    s_equal     HIST curr   ( 1) : 1g4     ,  1t,   6c,   3r, y change     ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬         
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -262,7 +262,7 @@ SCRP          (HIST  ) verify entry cursoring                                  
 SCRP          (HIST  ) verify detailed add functions                             HIST_change, _overwrite, _delete, _clear                                                              ((04.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
 
    GROUP      start with content                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -436,7 +436,7 @@ SCRP          (HIST  ) verify detailed add functions                           
    GROUP      complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((04.004))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -445,7 +445,7 @@ SCRP          (HIST  ) verify detailed add functions                           
 SCRP          (hist  ) verify cell-based undo and redo handling                  HIST_undo, HIST_redo                                                                                  ((05.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitloud                                                                                                                    i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_loud                                                                                                                   i_equal     0                                                                                                    
      get      review the current position          MOVE_unit                   "tab_cur"              , 0                                                                            s_equal     s_move tab cur   : tab=   0, col=   0, row=   0                                                      
 
    COND       check on history stack                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -747,7 +747,7 @@ SCRP          (hist  ) verify cell-based undo and redo handling                
    GROUP      complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.034))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -756,7 +756,7 @@ SCRP          (hist  ) verify cell-based undo and redo handling                
 SCRP          (hist  ) verify formating undo and redo handling                   HIST_undo, HIST_redo                                                                                  ((06.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      review the current position          MOVE_unit                   "tab_cur"              , 0                                                                            s_equal     s_move tab cur   : tab=   0, col=   0, row=   0                                                      
 
    COND       check on history stack                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -1149,7 +1149,7 @@ SCRP          (hist  ) verify formating undo and redo handling                 
    GROUP      complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((06.037))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -1158,7 +1158,7 @@ SCRP          (hist  ) verify formating undo and redo handling                 
 SCRP          (hist  ) verify visual selection undo and redo handling            HIST_undo, HIST_redo                                                                                  ((07.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      review the current position          MOVE_unit                   "tab_cur"              , 0                                                                            s_equal     s_move tab cur   : tab=   0, col=   0, row=   0                                                      
 
    COND       check on history stack                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -1329,7 +1329,7 @@ SCRP          (hist  ) verify visual selection undo and redo handling          
    GROUP      complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((07.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
@@ -1338,7 +1338,7 @@ SCRP          (hist  ) verify visual selection undo and redo handling          
 SCRP          (hist  ) verify formula/deps undo and redo handling                HIST_undo, HIST_redo                                                                                  ((08.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     setup the program                    PROG__unitquiet                                                                                                                   i_equal     0                                                                                                    
+     exec     setup the program                    PROG__unit_quiet                                                                                                                  i_equal     0                                                                                                    
      get      review the current position          MOVE_unit                   "tab_cur"              , 0                                                                            s_equal     s_move tab cur   : tab=   0, col=   0, row=   0                                                      
 
    COND       check on history stack                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -1607,7 +1607,7 @@ SCRP          (hist  ) verify formula/deps undo and redo handling              
    GROUP      complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       verify program teardown                                            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((08.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     wrap-up the program                  PROG__unitend                                                                                                                     i_equal     0                                                                                                    
+     exec     wrap-up the program                  PROG__unit_end                                                                                                                    i_equal     0                                                                                                    
 
 
 
