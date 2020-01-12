@@ -52,6 +52,59 @@ ROW__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_row)
 
 
 
+/*====================------------------------------------====================*/
+/*===----                  hooking and unhooking cells                 ----===*/
+/*====================------------------------------------====================*/
+static void  o___HOOKING_________o () { return; }
+
+char
+ROW_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell)
+{
+   return NODE_hook_cell (a_tab, IS_ROW, a_row, a_col, a_cell);
+}
+
+char
+ROW_unhook_cell         (tCELL *a_cell)
+{
+   return NODE_unhook_cell (IS_ROW, a_cell);
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                     usage statistics                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___USAGE___________o () { return; }
+
+short
+ROW_used                (char a_index, short a_ref)
+{
+   return NODE_used (a_index, IS_ROW, a_ref);
+}
+
+short
+ROW_min_used            (char a_index)
+{
+   return NODE_min_used        (a_index, IS_ROW);
+}
+
+short
+ROW_max_used            (char a_index)
+{
+   return NODE_max_used        (a_index, IS_ROW);
+}
+
+short
+ROW_max                 (char a_index)
+{
+   return NODE_max             (a_index, IS_ROW);
+}
+
+short
+ROW_max_adjust          (char a_index)
+{
+   return NODE_max_adjust      (a_index, IS_ROW);
+}
 
 
 
@@ -80,44 +133,44 @@ ROW_init             (void)
 char         /*-> clear all row customizations -------[ leaf   [ge.A53.123.40]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
 ROW_clear            (tTAB *a_tab, char a_init)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   tROW       *x_curr      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_spoint  (a_tab);
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab == NULL) {
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(initialize columns)-------------*/
-   DEBUG_LOCS   yLOG_spoint  (a_tab->R_head);
-   DEBUG_LOCS   yLOG_sint    (MAX_COLS);
-   /*> for (x_col = 0; x_col < MAX_COLS; ++x_col) {                                   <* 
-    *>    /+---(characteristics)-------------+/                                       <* 
-    *>    a_tab->cols [x_col].w       = DEF_WIDTH;                                    <* 
-    *>    if (a_init == 'y') {                                                        <* 
-    *>       a_tab->cols [x_col].c       = 0;                                         <* 
-    *>       a_tab->cols [x_col].c_head  = NULL;                                      <* 
-    *>       a_tab->cols [x_col].c_tail  = NULL;                                      <* 
-    *>    }                                                                           <* 
-    *>    /+---(done)------------------------+/                                       <* 
-    *> }                                                                              <*/
-   /*---(clear frozen cols)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("screen");
-   a_tab->bcol      = 0;
-   a_tab->ccol      = 0;
-   a_tab->ecol      = 0;
-   /*---(clear frozen cols)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("frozen");
-   a_tab->froz_col  = '-';
-   a_tab->froz_bcol = 0;
-   a_tab->froz_ecol = 0;
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
-   return 0;
+   /*> /+---(locals)-----------+-----+-----+-+/                                                 <* 
+    *> char        rce         =  -10;                                                          <* 
+    *> char        rc          =    0;                                                          <* 
+    *> tROW       *x_curr      = NULL;                                                          <* 
+    *> /+---(header)-------------------------+/                                                 <* 
+    *> DEBUG_LOCS   yLOG_senter  (__FUNCTION__);                                                <* 
+    *> DEBUG_LOCS   yLOG_spoint  (a_tab);                                                       <* 
+    *> /+---(defense)------------------------+/                                                 <* 
+    *> --rce;  if (a_tab == NULL) {                                                             <* 
+    *>    DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);                                        <* 
+    *>    return rce;                                                                           <* 
+    *> }                                                                                        <* 
+    *> /+---(initialize columns)-------------+/                                                 <* 
+    *> DEBUG_LOCS   yLOG_spoint  (a_tab->R_head);                                               <* 
+    *> DEBUG_LOCS   yLOG_sint    (MAX_COLS);                                                    <* 
+    *> /+> for (x_col = 0; x_col < MAX_COLS; ++x_col) {                                   <*    <* 
+    *>  *>    /+---(characteristics)-------------+/                                       <*    <* 
+    *>  *>    a_tab->cols [x_col].w       = DEF_WIDTH;                                    <*    <* 
+    *>  *>    if (a_init == 'y') {                                                        <*    <* 
+    *>  *>       a_tab->cols [x_col].c       = 0;                                         <*    <* 
+    *>  *>       a_tab->cols [x_col].c_head  = NULL;                                      <*    <* 
+    *>  *>       a_tab->cols [x_col].c_tail  = NULL;                                      <*    <* 
+    *>  *>    }                                                                           <*    <* 
+    *>  *>    /+---(done)------------------------+/                                       <*    <* 
+    *>  *> }                                                                              <+/   <* 
+    *> /+---(clear frozen cols)--------------+/                                                 <* 
+    *> DEBUG_LOCS   yLOG_snote   ("screen");                                                    <* 
+    *> a_tab->bcol      = 0;                                                                    <* 
+    *> a_tab->ccol      = 0;                                                                    <* 
+    *> a_tab->ecol      = 0;                                                                    <* 
+    *> /+---(clear frozen cols)--------------+/                                                 <* 
+    *> DEBUG_LOCS   yLOG_snote   ("frozen");                                                    <* 
+    *> a_tab->froz_col  = '-';                                                                  <* 
+    *> a_tab->froz_bcol = 0;                                                                    <* 
+    *> a_tab->froz_ecol = 0;                                                                    <* 
+    *> /+---(complete)-----------------------+/                                                 <* 
+    *> DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);                                                <* 
+    *> return 0;                                                                                <*/
 }
 
 /*> char         /+-> clear all row customizations -------[ leaf   [ge.843.123.20]+/ /+-[01.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
@@ -160,6 +213,12 @@ ROW_clear            (tTAB *a_tab, char a_init)
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
+char
+ROW_cleanse             (tTAB *a_tab)
+{
+   return NODE_cleanse (a_tab, IS_ROW);
+}
+
 
 
 char         /*-> tbd --------------------------------[ leaf   [ge.330.215.40]*/ /*-[00.0000.194.I]-*/ /*-[--.---.---.--]-*/
@@ -201,25 +260,12 @@ ROW__validity        (char a_mode, int a_tab, int a_row)
 /*====================------------------------------------====================*/
 static void  o___CHARS___________o () { return; }
 
-int          /*-> return default col size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10#.6]-*/ /*-[--.---.---.--]-*/
-ROW_defmax           (void)
-{
-   return DEF_ROWS;
-}
-
-int          /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
-ROW_max              (int a_tab)
-{
-   if (!LEGAL_TAB (a_tab))   return -1;
-   return s_tabs [a_tab].nrow;
-}
-
-int          /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
-ROW_used             (int a_tab, int a_row)
-{
-   if (!LEGAL_ROW (a_tab, a_row))   return -1;
-   return s_tabs [a_tab].rows [a_row].c;
-}
+/*> int          /+-> return max col for tab -------------[ ------ [gn.210.113.11]+/ /+-[00.0000.704.D]-+/ /+-[--.---.---.--]-+/   <* 
+ *> ROW_max              (int a_tab)                                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    if (!LEGAL_TAB (a_tab))   return -1;                                                                                        <* 
+ *>    return s_tabs [a_tab].nrow;                                                                                                 <* 
+ *> }                                                                                                                              <*/
 
 int          /*-> find largest used row in tab -------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 ROW_maxused          (int a_tab)
@@ -297,7 +343,7 @@ static void  o___SIZING__________o () { return; }
  *>    int         x_row       =    0;                                                                                             <* 
  *>    int         x_off       =    0;                                                                                             <* 
  *>    /+---(defense)------------------------+/                                                                                    <* 
- *>    rc = str2gyges (a_name, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_LEGAL);                                                   <* 
+ *>    rc = str2gyges (a_name, &x_tab, NULL, &x_row, NULL, NULL, 0, YSTR_USABLE);                                                   <* 
  *>    --rce;  if (rc < 0) return rc;                                                                                              <* 
  *>    /+---(resize)-------------------------+/                                                                                    <* 
  *>    if (a_count == 0)  a_count = 1;                                                                                             <* 
@@ -516,7 +562,7 @@ ROW_writer              (int a_tab, int a_row)
    }
    DEBUG_OUTP   yLOG_value   ("c"         , c);
    /*---(write)-----------------------*/
-   rc = str4gyges (a_tab, 0, a_row, 0, 0, x_label, YSTR_LEGAL);
+   rc = str4gyges (a_tab, 0, a_row, 0, 0, x_label, YSTR_USABLE);
    yPARSE_fullwrite ("height", x_label, x_size, c);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
@@ -582,7 +628,7 @@ ROW_writer              (int a_tab, int a_row)
  *>       }                                                                                                                        <* 
  *>       DEBUG_OUTP   yLOG_value   ("n"         , n);                                                                             <* 
  *>       /+---(write)-----------------------+/                                                                                    <* 
- *>       rc = str4gyges (a_tab, 0, j, 0, 0, x_label, YSTR_LEGAL);                                                                 <* 
+ *>       rc = str4gyges (a_tab, 0, j, 0, 0, x_label, YSTR_USABLE);                                                                 <* 
  *>       yPARSE_fullwrite ("height", x_label, x_size, n);                                                                         <* 
  *>       /+---(clear)-----------------------+/                                                                                    <* 
  *>       if (x_beg != x_end)  yPARSE_outclear  ();                                                                                <* 
@@ -608,8 +654,7 @@ ROW_writer_all          (void)
    int         c           =    0;
    /*---(walk)---------------------------*/
    yPARSE_verb_begin ("height");
-   x_ntab = TAB_max ();
-   if (x_ntab > 35)  x_ntab = 35;
+   x_ntab = MAX_tab () - 2;
    for (x_tab = 0; x_tab <= x_ntab; ++x_tab) {
       if (!LEGAL_TAB (x_tab))    continue;
       x_nrow = ROW_max (x_tab);

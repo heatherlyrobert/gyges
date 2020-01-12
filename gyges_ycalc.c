@@ -204,7 +204,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    /*---(search)-------------------------*/
    else {
-      rc      = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+      rc      = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
       DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
       --rce;  if (rc < 0) {
          DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
@@ -267,7 +267,7 @@ api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owne
    if (a_owner   != NULL)  *a_owner   = NULL;
    if (a_deproot != NULL)  *a_deproot = NULL;
    /*---(legal)--------------------------*/
-   rc = str4gyges (b, x, y, z, 0, x_label, YSTR_LEGAL);
+   rc = str4gyges (b, x, y, z, 0, x_label, YSTR_USABLE);
    if (rc == 0)  rc = api_ycalc_named (x_label, a_force, a_owner, a_deproot);
    /*---(complete)-----------------------*/
    return rc;
@@ -347,7 +347,7 @@ api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z)
    if (z != NULL)  *z   = 0;
    if (a_owner == NULL)  return -1;
    x_owner    = (tCELL     *) a_owner;
-   rc = str2gyges (x_owner->label, b, x, y, z, NULL, 0, YSTR_LEGAL);
+   rc = str2gyges (x_owner->label, b, x, y, z, NULL, 0, YSTR_USABLE);
    return rc;
 }
 
@@ -432,7 +432,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    s_owners [*a_merge] = x_owner;
    s_widths [*a_merge] = w;
    /*---(look for mergse)----------------*/
-   rc = str2gyges (x_owner->label, &b, &x, &y, &z, NULL, 0, YSTR_LEGAL);
+   rc = str2gyges (x_owner->label, &b, &x, &y, &z, NULL, 0, YSTR_USABLE);
    DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
    if (rc < 0)  {
       DEBUG_APIS   yLOG_exit    (__FUNCTION__);
@@ -440,7 +440,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    }
    DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->label, b, x, y, z, w);
    for (i = x + 1; i < x + 20; ++i) {
-      rc = str4gyges (b, i, y, z, 0, x_label, YSTR_LEGAL);
+      rc = str4gyges (b, i, y, z, 0, x_label, YSTR_USABLE);
       if (rc < 0)  break;
       rc = api_ycalc_whos_at (b, i, y, z, YCALC_LOOK, &x_owner, NULL);
       if (rc < 0)                              break;
@@ -629,12 +629,12 @@ api_ycalc__unit    (char *a_question, char *a_label)
       sprintf (unit_answer, "ycalc error      : can not call on dependency s_root");
       return unit_answer;
    } else {
-      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+      rc     = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
       if (rc < 0) {
          sprintf (unit_answer, "ycalc error      : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_LEGAL);
+      rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_USABLE);
       if (rc < 0) {
          sprintf (unit_answer, "ycalc error      : label <%s> not in-range", a_label);
          return unit_answer;

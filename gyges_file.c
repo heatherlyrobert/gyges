@@ -82,8 +82,8 @@ static FILE    *s_file;                      /* file pointer                   *
 char
 FILE_new                (void)
 {
-   CELL_purge ();
-   TAB_purge  ();
+   CELL_purge   ();
+   LOC_purge    ();
    MAP_mapper (YVIKEYS_INIT);
    yVIKEYS_jump (0, 0, 0, 0);
    return 0;

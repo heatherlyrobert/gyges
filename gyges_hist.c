@@ -101,7 +101,7 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
    x_new->mode    = a_mode;
    x_new->act     = a_type;
    x_new->nkey    = yVIKEYS_keys_nkey ();
-   str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
+   str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    x_new->addr    = strdup (x_label);
    x_new->before  = g_before;
    x_new->after   = g_after;
@@ -456,7 +456,7 @@ HIST_overwrite     (int a_tab, int a_col, int a_row, char *a_after, char *a_afte
    /*---(header)-------------------------*/
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(make label)---------------------*/
-   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    if (rc < 0)  return rc;
    /*---(find label)---------------------*/
    x_curr  = s_curr;
@@ -917,7 +917,7 @@ HIST__unit         (char *a_question, int a_ref)
    } else if (strcmp (a_question, "current"   )    == 0) {
       if      (s_curr == NULL)    snprintf (unit_answer, LEN_FULL, "HIST curr   (--) : -       ,  -t,   -c,   -r, - -           0[]              0[]");
       else {
-         rc = str2gyges (s_curr->addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+         rc = str2gyges (s_curr->addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
          if (strlen (s_curr->before) < 13)  sprintf  (b, "%2d[%s]"      , strlen (s_curr->before), s_curr->before);
          else                               sprintf  (b, "%2d[%-12.12s>", strlen (s_curr->before), s_curr->before);
          if (strlen (s_curr->after ) < 13)  sprintf  (a, "%2d[%s]"      , strlen (s_curr->after ), s_curr->after );
@@ -930,7 +930,7 @@ HIST__unit         (char *a_question, int a_ref)
       HIST__find (a_ref);
       if      (s_curr == NULL)    snprintf (unit_answer, LEN_FULL, "HIST entry  (%2d) : -       ,  -t,   -c,   -r, - -           0[]              0[]", a_ref);
       else {
-         rc = str2gyges (s_curr->addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_LEGAL);
+         rc = str2gyges (s_curr->addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
          if (strlen (s_curr->before) < 13)  sprintf  (b, "%2d[%s]"      , strlen (s_curr->before), s_curr->before);
          else                               sprintf  (b, "%2d[%-12.12s>", strlen (s_curr->before), s_curr->before);
          if (strlen (s_curr->after ) < 13)  sprintf  (a, "%2d[%s]"      , strlen (s_curr->after ), s_curr->after );

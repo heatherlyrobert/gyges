@@ -60,125 +60,50 @@ static void  o___HOOKING_________o () { return; }
 char
 COL_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   tCOL      *x_col        = NULL;
-   tCELL     *x_prev       = NULL;
-   tCELL     *x_curr       = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "tab %-10.10p, col %3d, row %3d, cell %-10.10p", a_tab, a_col, a_row, a_cell);
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab == NULL && a_cell == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(find column)--------------------*/
-   COL__ensure (&x_col, a_tab, a_col);
-   DEBUG_LOCS   yLOG_point   ("ensure"    , x_col);
-   --rce;  if (x_col == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(find cell position)-------------*/
-   x_curr = x_col->c_head;
-   --rce;  while (x_curr != NULL) {
-      if (x_curr->row == a_row) {
-         DEBUG_LOCS   yLOG_note    ("already exists");
-         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-      if (x_curr->row >  a_row)   break;
-      x_prev = x_curr;
-      x_curr = x_curr->c_next;
-   }
-   DEBUG_LOCS   yLOG_point   ("x_prev"    , x_prev);
-   DEBUG_LOCS   yLOG_point   ("x_curr"    , x_curr);
-   /*---(add cell to col)----------------*/
-   if (x_prev == NULL && x_curr == NULL) {
-      DEBUG_LOCS   yLOG_snote   ("first cell in column");
-      x_col->c_head  = a_cell;
-      x_col->c_tail  = a_cell;
-   } else if (x_prev == NULL && x_curr != NULL) {
-      DEBUG_LOCS   yLOG_snote   ("prepend to front of column");
-      a_cell->c_prev = NULL;
-      a_cell->c_next = x_col->c_head;
-      x_col->c_head->c_prev = a_cell;
-      x_col->c_head = a_cell;
-   } else if (x_prev != NULL && x_curr == NULL) {
-      DEBUG_LOCS   yLOG_snote   ("append to back of column");
-      a_cell->c_next = NULL;
-      a_cell->c_prev = x_col->c_tail;
-      x_col->c_tail->c_next = a_cell;
-      x_col->c_tail = a_cell;
-   } else {
-      DEBUG_LOCS   yLOG_snote   ("insert in middle of column");
-      a_cell->c_next  = x_prev->c_next;
-      x_prev->c_next = a_cell;
-      a_cell->c_prev  = x_curr->c_prev;
-      x_curr->c_prev = a_cell;
-   }
-   /*---(update counts)------------------*/
-   ++(x_col->c);
-   DEBUG_LOCS   yLOG_value   ("c"         , x_col->c);
-   /*---(update col ties)----------------*/
-   a_cell->col      = a_col;
-   a_cell->C_parent = x_col;
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
+   NODE_hook_cell (a_tab, IS_COL, a_col, a_row, a_cell);
 }
 
 char
-COL_unhook_cell         (tTAB *a_tab, tCELL *a_cell)
+COL_unhook_cell         (tCELL *a_cell)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   tCOL       *x_col       = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "tab %-10.10p, cell %-10.10p", a_tab, a_cell);
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab == NULL && a_cell == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(find column)--------------------*/
-   x_col = a_cell->C_parent;
-   DEBUG_LOCS   yLOG_point   ("x_col"     , x_col);
-   --rce;  if (x_col == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(remove from list)---------------*/
-   DEBUG_GRAF   yLOG_note    ("remove from column");
-   if (a_cell->c_prev != NULL)  a_cell->c_prev->c_next = a_cell->c_next;
-   else                         x_col->c_head          = a_cell->c_next;
-   if (a_cell->c_next != NULL)  a_cell->c_next->c_prev = a_cell->c_prev;
-   else                         x_col->c_tail          = a_cell->c_prev;
-   /*---(update counters)----------------*/
-   --(x_col->c);
-   DEBUG_LOCS   yLOG_sint    (x_col->c);
-   /*---(update col ties)----------------*/
-   a_cell->col      = -1;
-   a_cell->C_parent = NULL;
-   /*---(check for freeing)--------------*/
-   DEBUG_LOCS   yLOG_point   ("c_head"    , x_col->c_head);
-   DEBUG_LOCS   yLOG_value   ("c"         , x_col->c);
-   DEBUG_LOCS   yLOG_value   ("w"         , x_col->w);
-   DEBUG_LOCS   yLOG_value   ("def_width" , DEF_WIDTH);
-   --rce;  if (x_col->c_head == NULL && x_col->w == DEF_WIDTH) {
-      rc = COL__free (&x_col);
-      DEBUG_LOCS   yLOG_value   ("free"      , rc);
-      if (rc < 0) {
-         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
+   NODE_unhook_cell (IS_COL, a_cell);
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                     usage statistics                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___USAGE___________o () { return; }
+
+short
+COL_used                (char a_index, short a_ref)
+{
+   return NODE_used (a_index, IS_COL, a_ref);
+}
+
+short
+COL_min_used            (char a_index)
+{
+   return NODE_min_used        (a_index, IS_COL);
+}
+
+short
+COL_max_used            (char a_index)
+{
+   return NODE_max_used        (a_index, IS_COL);
+}
+
+short
+COL_max                 (char a_index)
+{
+   return NODE_max             (a_index, IS_COL);
+}
+
+short
+COL_max_adjust          (char a_index)
+{
+   return NODE_max_adjust      (a_index, IS_COL);
 }
 
 
@@ -208,43 +133,49 @@ COL_init             (void)
 char         /*-> clear all column customizations ----[ leaf   [ge.A53.123.40]*/ /*-[02.0000.014.!]-*/ /*-[--.---.---.--]-*/
 COL_clear            (tTAB *a_tab, char a_init)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         x_col       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
-   DEBUG_LOCS   yLOG_spoint  (a_tab);
-   /*---(defense)------------------------*/
-   --rce;  if (a_tab == NULL) {
-      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(initialize columns)-------------*/
-   DEBUG_LOCS   yLOG_sint    (MAX_COLS);
-   for (x_col = 0; x_col < MAX_COLS; ++x_col) {
-      /*---(characteristics)-------------*/
-      a_tab->cols [x_col].w       = DEF_WIDTH;
-      if (a_init == 'y') {
-         a_tab->cols [x_col].c       = 0;
-         a_tab->cols [x_col].c_head  = NULL;
-         a_tab->cols [x_col].c_tail  = NULL;
-      }
-      /*---(done)------------------------*/
-   }
-   /*---(clear frozen cols)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("screen");
-   a_tab->bcol      = 0;
-   a_tab->ccol      = 0;
-   a_tab->ecol      = 0;
-   /*---(clear frozen cols)--------------*/
-   DEBUG_LOCS   yLOG_snote   ("frozen");
-   a_tab->froz_col  = '-';
-   a_tab->froz_bcol = 0;
-   a_tab->froz_ecol = 0;
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
-   return 0;
+   /*> /+---(locals)-----------+-----+-----+-+/                                       <* 
+    *> char        rce         =  -10;                                                <* 
+    *> char        rc          =    0;                                                <* 
+    *> int         x_col       =    0;                                                <* 
+    *> /+---(header)-------------------------+/                                       <* 
+    *> DEBUG_LOCS   yLOG_senter  (__FUNCTION__);                                      <* 
+    *> DEBUG_LOCS   yLOG_spoint  (a_tab);                                             <* 
+    *> /+---(defense)------------------------+/                                       <* 
+    *> --rce;  if (a_tab == NULL) {                                                   <* 
+    *>    DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <* 
+    *> /+---(initialize columns)-------------+/                                       <* 
+    *> DEBUG_LOCS   yLOG_sint    (MAX_COLS);                                          <* 
+    *> for (x_col = 0; x_col < MAX_COLS; ++x_col) {                                   <* 
+    *>    /+---(characteristics)-------------+/                                       <* 
+    *>    a_tab->cols [x_col].w       = DEF_WIDTH;                                    <* 
+    *>    if (a_init == 'y') {                                                        <* 
+    *>       a_tab->cols [x_col].c       = 0;                                         <* 
+    *>       a_tab->cols [x_col].c_head  = NULL;                                      <* 
+    *>       a_tab->cols [x_col].c_tail  = NULL;                                      <* 
+    *>    }                                                                           <* 
+    *>    /+---(done)------------------------+/                                       <* 
+    *> }                                                                              <* 
+    *> /+---(clear frozen cols)--------------+/                                       <* 
+    *> DEBUG_LOCS   yLOG_snote   ("screen");                                          <* 
+    *> a_tab->bcol      = 0;                                                          <* 
+    *> a_tab->ccol      = 0;                                                          <* 
+    *> a_tab->ecol      = 0;                                                          <* 
+    *> /+---(clear frozen cols)--------------+/                                       <* 
+    *> DEBUG_LOCS   yLOG_snote   ("frozen");                                          <* 
+    *> a_tab->froz_col  = '-';                                                        <* 
+    *> a_tab->froz_bcol = 0;                                                          <* 
+    *> a_tab->froz_ecol = 0;                                                          <* 
+    *> /+---(complete)-----------------------+/                                       <* 
+    *> DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);                                      <* 
+    *> return 0;                                                                      <*/
+}
+
+char
+COL_cleanse             (tTAB *a_tab)
+{
+   return NODE_cleanse (a_tab, IS_COL);
 }
 
 
@@ -254,26 +185,20 @@ COL_clear            (tTAB *a_tab, char a_init)
 /*====================------------------------------------====================*/
 static void  o___CHARS___________o () { return; }
 
-int          /*-> return default col size ------------[ leaf   [gn.210.002.00]*/ /*-[00.0000.10#.6]-*/ /*-[--.---.---.--]-*/
-COL_defmax           (void)
-{
-   return DEF_COLS;
-}
+/*> int          /+-> return max col for tab -------------[ ------ [gn.210.113.11]+/ /+-[00.0000.704.D]-+/ /+-[--.---.---.--]-+/   <* 
+ *> COL_max              (int a_tab)                                                                                               <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(defense)------------------------+/                                                                                    <* 
+ *>    if (!LEGAL_TAB (a_tab))   return -1;                                                                                        <* 
+ *>    return s_tabs [a_tab].ncol;                                                                                                 <* 
+ *> }                                                                                                                              <*/
 
-int          /*-> return max col for tab -------------[ ------ [gn.210.113.11]*/ /*-[00.0000.704.D]-*/ /*-[--.---.---.--]-*/
-COL_max              (int a_tab)
-{
-   /*---(defense)------------------------*/
-   if (!LEGAL_TAB (a_tab))   return -1;
-   return s_tabs [a_tab].ncol;
-}
-
-int          /*-> indicate if column is used ---------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
-COL_used             (int a_tab, int a_col)
-{
-   if (!LEGAL_COL (a_tab, a_col))   return -1;
-   return s_tabs [a_tab].cols [a_col].c;
-}
+/*> int          /+-> indicate if column is used ---------[ ------ [gn.210.212.11]+/ /+-[00.0000.304.!]-+/ /+-[--.---.---.--]-+/   <* 
+ *> COL_used             (int a_tab, int a_col)                                                                                    <* 
+ *> {                                                                                                                              <* 
+ *>    if (!LEGAL_COL (a_tab, a_col))   return -1;                                                                                 <* 
+ *>    return s_tabs [a_tab].cols [a_col].c;                                                                                       <* 
+ *> }                                                                                                                              <*/
 
 int          /*-> find largest used col in tab -------[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
 COL_maxused          (int a_tab)
@@ -353,7 +278,7 @@ COL_resize           (char *a_name, int a_size, int a_count)
    int         x_col       =    0;
    int         x_off       =    0;
    /*---(defense)------------------------*/
-   rc = str2gyges (a_name, &x_tab, &x_col, NULL, NULL, NULL, 0, YSTR_LEGAL);
+   rc = str2gyges (a_name, &x_tab, &x_col, NULL, NULL, NULL, 0, YSTR_USABLE);
    --rce;  if (rc < 0) return rc;
    /*---(resize)-------------------------*/
    if (a_count == 0)  a_count = 1;
@@ -574,7 +499,7 @@ COL_writer              (int a_tab, int a_col)
    }
    DEBUG_OUTP   yLOG_value   ("c"         , c);
    /*---(write)-----------------------*/
-   rc = str4gyges (a_tab, a_col, 0, 0, 0, x_label, YSTR_LEGAL);
+   rc = str4gyges (a_tab, a_col, 0, 0, 0, x_label, YSTR_USABLE);
    yPARSE_fullwrite ("width", x_label, x_size, c);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
@@ -593,8 +518,7 @@ COL_writer_all          (void)
    int         c           =    0;
    /*---(walk)---------------------------*/
    yPARSE_verb_begin ("width");
-   x_ntab = TAB_max ();
-   if (x_ntab > 35)  x_ntab = 35;
+   x_ntab = MAX_tab () - 2;
    for (x_tab = 0; x_tab <= x_ntab; ++x_tab) {
       if (!LEGAL_TAB (x_tab))    continue;
       x_ncol = COL_max (x_tab);

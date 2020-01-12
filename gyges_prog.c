@@ -81,6 +81,7 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
+   my.btree = 'y';
    rc = yVIKEYS_init         (MODE_MAP);
    if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
    rc = FILE_init     ();
@@ -108,7 +109,7 @@ PROG_init          (int a_argc, char *a_argv[])
       return rc;
    }
    /*---(ystr config)--------------------*/
-   rc = str0gyges (LOC_checker);
+   /*> rc = str0gyges (LOC_checker);                                                  <*/
    /*---(yrpn config)--------------------*/
    rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yVIKEYS_mreg_inside);
    /*---(globals)------------------------*/
@@ -197,7 +198,7 @@ PROG_begin         (void)
    /*---(overall)------------------------*/
    yVIKEYS_view_config   ("gyges spreadsheet", P_VERNUM, YVIKEYS_CURSES, 0, 0, 0);
    yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, api_yvikeys_locator, api_yvikeys_addressor);
-   yVIKEYS_bufs_config   (TAB_switch_char, TAB_browse);
+   yVIKEYS_bufs_config   (TAB_switch_key , TAB_browse);
    yVIKEYS_hist_config   (HIST_undo, HIST_redo);
    HIST_init ();
    yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
@@ -234,20 +235,25 @@ PROG_final         (void)
    return 0;
 }
 
+char
+PROG_cleanse         (void)
+{
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   yCALC_cleanse ();
+   CELL_purge    ();
+   LOC_purge     ();
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+}
+
 char         /*-> shutdown program and free memory ---[ ------ [gz.422.001.03]*/ /*-[00.0000.111.!]-*/ /*-[--.---.---.--]-*/
 PROG_end             (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   DEBUG_PROG   yLOG_note    ("yCALC_wrap");
-   yCALC_wrap ();
-   DEBUG_PROG   yLOG_note    ("CELL_wrap");
-   CELL_wrap    ();
-   DEBUG_PROG   yLOG_note    ("DEP_wrap");
-   /*> DEP_wrap     ();   /+ disconnect all cells +/                                  <*/
-   DEBUG_PROG   yLOG_note    ("LOC_wrap");
-   LOC_wrap     ();
-   DEBUG_PROG   yLOG_note    ("yVIKEYS_wrap");
+   my.btree = '-';
+   yCALC_wrap    ();
+   CELL_wrap     ();
+   LOC_wrap      ();
    yVIKEYS_wrap ();
    HIST_wrap    ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);

@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5c"
-#define     P_VERTXT    "updated col to be dynamic and then ported to nodes vs row/col"
+#define     P_VERNUM    "3.5d"
+#define     P_VERTXT    "most foundational COL/ROW/TAB logic is updated to dynamic and unit tested"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -292,6 +292,7 @@ struct cACCESSOR {
    /*---(files)----------------*/
    char        quiet;          /* bool : 0=normal, 1=quiet                    */
    int         logger;         /* log file so that we don't close it          */
+   char        btree;          /* updates active (y/n)                        */
    /*---(cell root)------------*/
    tCELL      *root;
    /*---(keyboard macro)-------*/
@@ -324,13 +325,13 @@ struct cACCESSOR {
    uchar       tab1;           /* tab of source                                    */
    uchar       tab2;           /* tab of destination                               */
    /*---(current ool)-----*/
-   uchar       ncol;
-   uchar       ccol;
-   uchar       bcol;
-   uchar       ecol;
+   ushort      ncol;
+   ushort      ccol;
+   ushort      bcol;
+   ushort      ecol;
    uchar       froz_col;
-   uchar       froz_bcol;
-   uchar       froz_ecol;
+   ushort      froz_bcol;
+   ushort      froz_ecol;
    /*---(current row)-----*/
    ushort      nrow;
    ushort      crow;
@@ -564,10 +565,13 @@ int         acell;           /* count of all cells                            */
 
 #define     UNHOOKED    -1
 
-#define     G_TAB_NORMAL   'y'
+#define     G_TAB_NORMAL   '-'
+#define     G_TAB_AUTO     'a'
 #define     G_TAB_MACRO    'm'
 #define     G_TAB_TABLE    't'
 #define     G_TAB_DATA     'd'
+#define     G_TAB_TYPES    "-amtd"
+
 
 
 #define     NCEL        ncell
@@ -680,13 +684,13 @@ struct cTAB {
    tNODE      *C_head;
    tNODE      *C_tail;
    ushort      C_count;
-   uchar       ncol;                        /* current limit on cols          */
-   uchar       ccol;                        /* current column                 */
-   uchar       bcol;                        /* beginning column               */
-   uchar       ecol;                        /* ending column                  */
+   ushort      ncol;                        /* current limit on cols          */
+   ushort      ccol;                        /* current column                 */
+   ushort      bcol;                        /* beginning column               */
+   ushort      ecol;                        /* ending column                  */
    uchar       froz_col;                    /* are the cols frozen            */
-   uchar       froz_bcol;                   /* left of frozen cols            */
-   uchar       froz_ecol;                   /* right of frozen cols           */
+   ushort      froz_bcol;                   /* left of frozen cols            */
+   ushort      froz_ecol;                   /* right of frozen cols           */
    /*---(rows)---------------------------*/
    tROW        rows  [MAX_ROWS];            /* row characteristics            */
    tNODE      *R_head;
@@ -701,7 +705,7 @@ struct cTAB {
    ushort      froz_erow;                   /* bottom of frozen rows          */
    /*---(overall)------------------------*/
    tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
-   uint        c;                           /* count of entries in sheet      */
+   uint        count;                       /* count of entries in sheet      */
    /*---(end)----------------------------*/
 };
 tTAB     s_tabs [MAX_TABS];
@@ -882,6 +886,7 @@ char      PROG_init            (int   argc, char *argv[]);
 char      PROG_args            (int   argc, char *argv[]);
 char      PROG_begin           (void);
 char      PROG_final           (void);
+char      PROG_cleanse         (void);
 char      PROG_end             (void);
 
 /*> char      PROG_main_input      (char  a_mode, char a_key);                        <*/
@@ -1297,8 +1302,7 @@ char*       HIST__unit         (char *a_question, int a_ref);
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(program)-------------------*/
 char        LOC_init             /* shoot  0----- */  (void);
-char        LOC__clear_locs      /* septal 1----- */  (int a_tab);
-char        LOC__purge           /* stem   0----- */  (void);
+char        LOC_purge            /* stem   0----- */  (void);
 char        LOC_wrap             /* shoot  0----- */  (void);
 
 char        loc__checker_legal      (int a_tab, int a_col, int a_row);
@@ -1307,9 +1311,9 @@ char        loc__checker_adapt      (int a_tab, int a_col, int a_row);
 char        LOC_checker             (int a_tab, int a_col, int a_row, int a_nada, char a_check);
 char        LOC_legal          (int a_tab, int a_col, int a_row, char a_adapt);
 
-char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, int a_tab , int a_col , int a_row);
+char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, char a_tab , short a_col , short a_row);
 char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
-char        LOC_move             /* stigma 6----- */  (int  a_tab1, int a_col1, int a_row1, int a_tab2, int a_col2, int a_row2);
+char        LOC_move             /* stigma 6----- */  (char  a_tab1, short a_col1, short a_row1, char a_tab2, short a_col2, short a_row2);
 
 tCELL      *LOC_cell_at_curr     /* petal  0----- */  (void);
 tCELL      *LOC_cell_at_loc      /* petal  3----- */  (int a_tab, int  a_col, int  a_row);
@@ -1323,39 +1327,49 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 
 /*===[[ gyges_tab.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        TAB_legal               (char a_index);
 char        TAB__name_check         (char *a_name);
+/*---(memory)-------------------------*/
+char        TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_size);
+char        TAB_free                (char a_index);
+char        TAB_open                (void);
+char        TAB_new_in_open         (uchar *a_name, uchar *a_size);
+char        TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size);
+/*---(search)-------------------------*/
+char        TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move);
+char        TAB_by_index            (tTAB **a_found, char a_index);
+char        TAB_by_abbr             (tTAB **a_found, uchar a_abbr);
+char        TAB_by_name             (tTAB **a_found, uchar *a_regex);
+char        TAB_pointer             (tTAB **a_found, char a_index);
+char        TAB_ensure              (tTAB **a_found, char a_index);
+/*---(hooking)------------------------*/
+char        TAB_hook_cell           (tTAB **a_found, char a_tab, tCELL *a_cell);
+char        TAB_unhook_cell         (tCELL *a_cell);
+/*---(program)------------------------*/
 char        TAB_init                (void);
-char        TAB_purge               (void);
-char        TAB_new                 (uchar a_abbr, uchar *a_name, char *a_size);
-char        TAB_free                (uchar a_abbr);
-char        TAB_by_cursor           (char a_move);
-char        TAB_by_index            (char a_index);
-char        TAB_by_abbr             (uchar a_abbr);
-char        TAB_by_name             (uchar *a_regex);
-char        TAB_pointer             (tTAB **a_tab, char a_index);
+char        TAB_cleanse             (tTAB *a_tab);
+/*---(usage)--------------------------*/
+int         TAB_used                (char a_index);
+/*---(switching)----------------------*/
+char        TAB_switch              (char a_index);
+char        TAB_switch_key          (uchar a_key);
+/*---(names)--------------------------*/
+char        TAB_name                (char a_index, char *a_name);
+char        TAB_rename              (char a_index, char *a_name);
+char        TAB_rename_curr         (char *a_name);
+/*---(types)--------------------------*/
+char        TAB_type                (char a_index);
+char        TAB_retype              (char a_index, char a_type);
+/*---(sizing)-------------------------*/
+char        TAB_size                (char a_index, char *a_max);
+char        TAB_resize              (char a_index, char *a_max);
+char        TAB_resize_curr         (char *a_max);
+
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         TAB_defmax           (void);
-int         TAB_max              (void);
-int         TAB_used             (int a_tab);
-int         TAB_maxused          (void);
-int         TAB_setmax           (int a_count);
-char        TAB_type             (int a_tab);
-char        TAB_retype           (int a_tab, char a_type);
-char        TAB_name             /* petal  2----- */  (int a_tab, char *a_name);
-char        TAB_rename           /* stigma 2----- */  (int a_tab, char *a_name);
-char        TAB_rename_curr      /* stigma 1----- */  (char *a_name);
-char        TAB_size             /* petal  2----- */  (int a_tab, char *a_max);
-char        TAB_resize           /* stigma 1----- */  (char *a_max);
 char        TAB_colwide          (int a_tab);
 /*> char        TAB_rowtall          (int a_tab);                                     <*/
-char        TAB_first            (void);
-char        TAB_prev             (void);
-char        TAB_next             (void);
-char        TAB_last             (void);
 char        TAB_save             (void);
 char        TAB_retrieve         (void);
-char        TAB_switch           (int a_tab);
-char        TAB_switch_char      (char  a_tab);
 char        TAB_browse           (char *a_entry);
 char        TAB_line             (char  a_tab, char *a_list);
 char        TAB_status           (char  a_tab, char *a_list);
@@ -1374,6 +1388,8 @@ char*       TAB__unit            (char *a_question, int a_tab);
 
 /*===[[ gyges_node.c ]]=======================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(program)------------------------*/
+short       NODE_cleanse            (tTAB *a_tab, char a_type);
 /*---(memory)-------------------------*/
 char        NODE_new                (tNODE **a_new, tTAB *a_tab, char a_type, ushort a_ref);
 char        NODE_free               (tNODE **a_old);
@@ -1381,6 +1397,24 @@ char        NODE_free               (tNODE **a_old);
 char        NODE_by_cursor          (tNODE **a_found, tTAB *a_tab, char a_type, char a_move);
 char        NODE_by_index           (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref);
 char        NODE_ensure             (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref);
+/*---(hooking)------------------------*/
+char        NODE_hook_cell          (tTAB *a_tab, char a_type, ushort a_ref, ushort a_seq, tCELL *a_cell);
+char        NODE_unhook_cell        (char a_type, tCELL *a_cell);
+/*---(usage)--------------------------*/
+short       NODE_used               (char a_index, char a_type, short a_ref);
+short       NODE_min_used           (char a_index, char a_type);
+short       NODE_max_used           (char a_index, char a_type);
+short       NODE_max                (char a_index, char a_type);
+short       NODE_max_adjust         (char a_index, char a_type);
+/*---(sizing)-------------------------*/
+char        NODE_size               (char a_tab, char a_type, short a_ref);
+char        NODE_resize             (char a_tab, char a_type, short a_ref, char a_size);
+char        NODE_reset              (char a_tab, char a_type, short a_ref);
+char        NODE_visual             (char a_tab, char a_type, short a_ref, char a_mode, char a_key);
+char        NODE_multisize          (char *a_label, char a_type, char a_size, char a_count);
+/*---(freezing)-----------------------*/
+char        NODE_freeze             (int a_tab, char a_type, int a_beg, int a_end);
+char        NODE_unfreeze           (int a_tab, char a_type);
 /*---(unit_test)----------------------*/
 char*       NODE__unit              (char *a_question, uchar a_tab, char a_type, ushort a_ref);
 
@@ -1397,16 +1431,21 @@ char        COL__by_index           (tNODE **a_found, tTAB *a_tab, ushort a_col)
 char        COL__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_col);
 /*---(hooking)------------------------*/
 char        COL_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell);
-char        COL_unhook_cell         (tTAB *a_tab, tCELL *a_cell);
+char        COL_unhook_cell         (tCELL *a_cell);
+/*---(usage)--------------------------*/
+short       COL_used                (char a_index, short a_ref);
+short       COL_min_used            (char a_index);
+short       COL_max_used            (char a_index);
+short       COL_max                 (char a_index);
+short       COL_max_adjust          (char a_index);
+/*---(program)------------------------*/
+char        COL_cleanse             (tTAB *a_tab);
+
+
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        COL_init                (void);
 char        COL_clear               (tTAB *a_tab, char a_init);
-char        COL_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell);
-char        COL_unhook_cell         (tTAB *a_tab, tCELL *a_cell);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         COL_defmax           /* petal  0----- */  (void);
-int         COL_max              /* petal  1----- */  (int a_tab);
-int         COL_used             /* petal  2----- */  (int a_tab, int a_col);
 int         COL_maxused          (int a_tab);
 int         COL_setmax           (int a_tab, int a_count);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1435,15 +1474,22 @@ char        ROW__free               (tNODE **a_old);
 char        ROW__by_cursor          (tNODE **a_found, tTAB *a_tab, char a_move);
 char        ROW__by_index           (tNODE **a_found, tTAB *a_tab, ushort a_row);
 char        ROW__ensure             (tNODE **a_found, tTAB *a_tab, ushort a_row);
+/*---(hooking)------------------------*/
+char        ROW_hook_cell           (tTAB *a_tab, ushort a_col, ushort a_row, tCELL *a_cell);
+char        ROW_unhook_cell         (tCELL *a_cell);
+/*---(usage)--------------------------*/
+short       ROW_used                (char a_index, short a_ref);
+short       ROW_min_used            (char a_index);
+short       ROW_max_used            (char a_index);
+short       ROW_max                 (char a_index);
+short       ROW_max_adjust          (char a_index);
+/*---(program)------------------------*/
+char        ROW_cleanse             (tTAB *a_tab);
+
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ROW_init                (void);
 char        ROW_clear            (tTAB *a_tab, char a_init);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         ROW_defmax           /* petal  0----- */  (void);
-int         ROW_max              /* petal  1----- */  (int a_tab);
-int         ROW_used             /* petal  2----- */  (int a_tab, int a_row);
-int         ROW_maxused          (int a_tab);
-int         ROW_setmax           (int a_tab, int a_count);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*> char        ROW_heighten            (int a_tab, int a_row, int a_size);           <* 
  *> char        ROW_resize              (char *a_name, int a_size, int a_count);      <* 
@@ -1648,8 +1694,8 @@ long        BTREE_label2key         (char *a_label);
 long        BTREE_coord2key         (int a_tab, int a_col, int a_row, char *a_label);
 char        BTREE_dgnome            (void);
 char        BTREE_build             (void);
-tCELL*      BTREE_by_label          (char *a_label);
-tCELL*      BTREE_by_coord          (int a_tab, int a_col, int a_row);
+char        BTREE_by_label          (tCELL **a_found, char *a_label);
+char        BTREE_by_coord          (tCELL **a_found, int a_tab, int a_col, int a_row);
 char        BTREE_list              (void);
 char        BTREE_update            (void);
 char*       BTREE__unit             (char *a_question, int n);

@@ -30,13 +30,13 @@ char         /*-> break label into coordinates -------[ ------ [gc.722.112.13]*/
 api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z)
 {
    if (a_z != NULL)  *a_z = 0;
-   return str2gyges (a_label, a_buf, a_x, a_y, NULL, NULL, 0, YSTR_LEGAL);
+   return str2gyges (a_label, a_buf, a_x, a_y, NULL, NULL, 0, YSTR_USABLE);
 }
 
 char         /*-> return address for coordinates -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
 api_yvikeys_addressor   (char *a_label, int a_buf, int a_x, int a_y, int a_z)
 {
-   return str4gyges (a_buf, a_x, a_y, 0, 0, a_label, YSTR_LEGAL);
+   return str4gyges (a_buf, a_x, a_y, 0, 0, a_label, YSTR_USABLE);
 }
 
 
@@ -503,7 +503,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    }
    /*---(get original location)----------*/
    DEBUG_REGS   yLOG_info    ("a_label"   , a_cell->label);
-   rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_LEGAL);
+   rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0)  {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);

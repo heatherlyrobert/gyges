@@ -137,6 +137,7 @@ BTREE_dgnome            (void)
    }
    /*---(do the gnome walk)--------------*/
    while (x_base != NULL) {
+      DEBUG_SORT   yLOG_complex ("pointers"  , "base %-10.10p, comp %-10.10p, tele %-10.10p", x_base, x_comp, x_tele);
       /*---(beginning)-------------------*/
       if (x_comp == NULL) {
          DEBUG_SORT   yLOG_note    ("bounce off beginning");
@@ -154,6 +155,7 @@ BTREE_dgnome            (void)
          continue;
       }
       /*---(compare)---------------------*/
+      DEBUG_SORT   yLOG_complex ("compare"   , "base key %10d, comp key %10d", x_base->key, x_comp->key);
       ++s_comps;
       if (x_comp->key < x_base->key) {
          x_match = -1;
@@ -164,7 +166,7 @@ BTREE_dgnome            (void)
       }
       /*> x_match = strcmp (x_comp->key, x_base->key);                                          <* 
        *> x_flag  = (x_match <= 0) ? 'y' : '#';                                       <*/
-      DEBUG_SORT   yLOG_complex ("compare"   , "%-20.20s v %-20.20s   %c %4d   %4d %4d %4d", x_comp->key, x_base->key, x_flag, x_match, s_comps, s_teles, s_swaps);
+      DEBUG_SORT   yLOG_complex ("compare"   , "%10d v %-10d   %c %4d   %4d %4d %4d", x_comp->key, x_base->key, x_flag, x_match, s_comps, s_teles, s_swaps);
       if (x_match <= 0) {
          if (x_swap == 'y') {
             ++s_swaps;
@@ -316,30 +318,35 @@ BTREE_build             (void)
 /*====================------------------------------------====================*/
 static void  o___SEARCH__________o () { return; }
 
-tCELL*
-BTREE__searchdown  (tCELL *a_node, char *a_dir, long a_key)
+char
+BTREE__searchdown       (tCELL **a_found, tCELL *a_node, char *a_dir, long a_key)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rc          =    0;
-   if (a_node == NULL)  return NULL;
+   /*---(defense)------------------------*/
+   if (a_node == NULL)  return -1;
+   /*---(prepare)------------------------*/
    ++s_depth;
    strlcat (s_path, a_dir, LEN_DESC);
-   /*> rc = strcmp  (a_node->key, a_name);                                           <*/
+   /*---(compare)------------------------*/
    if      (a_node->key == a_key)  rc =  0;
    else if (a_node->key >  a_key)  rc =  1;
    else                            rc = -1;
    DEBUG_SORT   yLOG_complex ("compare"   , "%s  %-20.20s  %4d", a_dir, a_node->key, rc);
-   if (rc >  0)  return BTREE__searchdown (a_node->b_left , "L", a_key);
-   if (rc <  0)  return BTREE__searchdown (a_node->b_right, "R", a_key);
-   return a_node;
+   /*---(no match)-----------------------*/
+   if (rc >  0)  return BTREE__searchdown (a_found, a_node->b_left , "L", a_key);
+   if (rc <  0)  return BTREE__searchdown (a_found, a_node->b_right, "R", a_key);
+   /*---(match)--------------------------*/
+   *a_found = a_node;
+   return 0;
 }
 
-tCELL*  
-BTREE_by_label          (char *a_label)
+char
+BTREE_by_label          (tCELL **a_found, char *a_label)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
-   int         n           =   -1;
+   char        rc          =    0;
    tCELL      *x_node      = NULL;
    long        x_key       =   -1;
    /*---(header)-------------------------*/
@@ -347,51 +354,54 @@ BTREE_by_label          (char *a_label)
    /*---(prepare)------------------------*/
    s_depth = 0;
    strlcpy (s_path, "", LEN_DESC);
+   if (a_found != NULL)  *a_found = NULL;
    /*---(short-cut)----------------------*/
    if (s_save != NULL && strcmp (s_last, a_label) == 0) {
       DEBUG_DATA   yLOG_note    ("shortcut");
-      DEBUG_DATA   yLOG_exit    (__FUNCTION__);
       s_result =  1;
       strlcpy (s_path, "-", LEN_DESC);
-      return s_save;
+      if (a_found != NULL)  *a_found = s_save;
+      DEBUG_DATA   yLOG_exit    (__FUNCTION__);
+      return 1;
    }
    x_key   = BTREE_label2key (a_label);
    DEBUG_DATA   yLOG_value   ("x_key"     , x_key);
    --rce;  if (x_key < 0) {
       DEBUG_DATA   yLOG_note    ("bad label");
-      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
       s_result = -1;
-      return NULL;
+      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(search)-------------------------*/
    DEBUG_DATA   yLOG_note    ("dive into btree");
-   x_node = BTREE__searchdown (s_broot, "@", x_key);
+   rc = BTREE__searchdown (&x_node, s_broot, "@", x_key);
    DEBUG_DATA   yLOG_value   ("max depth" , s_levels);
    DEBUG_DATA   yLOG_value   ("s_depth"   , s_depth);
    DEBUG_DATA   yLOG_info    ("s_path"    , s_path);
    /*---(check)--------------------------*/
    --rce;  if (x_node == NULL) {
       DEBUG_DATA   yLOG_note    ("not found");
-      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
       s_result = -1;
-      return NULL;
+      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   /*---(save)---------------------------*/
+   /*---(return)-------------------------*/
    DEBUG_DATA   yLOG_note    ("found");
+   if (a_found != NULL)  *a_found = x_node;
    strlcpy (s_last, a_label, LEN_LABEL);
    s_save   = x_node;
    s_result = 0;
    /*---(complete)-----------------------*/
    DEBUG_DATA   yLOG_exit    (__FUNCTION__);
-   return s_save;
+   return 0;
 }
 
-tCELL*  
-BTREE_by_coord          (int a_tab, int a_col, int a_row)
+char
+BTREE_by_coord          (tCELL **a_found, int a_tab, int a_col, int a_row)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
-   int         n           =   -1;
+   char        rc          =    0;
    tCELL      *x_node      = NULL;
    char        x_label     [LEN_LABEL] = "";
    long        x_key       =   -1;
@@ -400,43 +410,46 @@ BTREE_by_coord          (int a_tab, int a_col, int a_row)
    /*---(prepare)------------------------*/
    s_depth = 0;
    strlcpy (s_path, "", LEN_DESC);
+   if (a_found != NULL)  *a_found = NULL;
    /*---(short-cut)----------------------*/
    x_key   = BTREE_coord2key (a_tab, a_col, a_row, x_label);
    DEBUG_DATA   yLOG_value   ("x_key"     , x_key);
    --rce;  if (x_key < 0) {
       DEBUG_DATA   yLOG_note    ("bad coordinates");
-      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
       s_result = -1;
-      return NULL;
+      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    if (s_save != NULL && strcmp (s_last, x_label) == 0) {
       DEBUG_DATA   yLOG_note    ("shortcut");
-      DEBUG_DATA   yLOG_exit    (__FUNCTION__);
       s_result =  1;
       strlcpy (s_path, "-", LEN_DESC);
-      return s_save;
+      if (a_found != NULL)  *a_found = s_save;
+      DEBUG_DATA   yLOG_exit    (__FUNCTION__);
+      return 1;
    }
    /*---(search)-------------------------*/
    DEBUG_DATA   yLOG_note    ("dive into btree");
-   x_node = BTREE__searchdown (s_broot, "@", x_key);
+   rc = BTREE__searchdown (&x_node, s_broot, "@", x_key);
    DEBUG_DATA   yLOG_value   ("max depth" , s_levels);
    DEBUG_DATA   yLOG_value   ("s_depth"   , s_depth);
    DEBUG_DATA   yLOG_info    ("s_path"    , s_path);
    /*---(check)--------------------------*/
    --rce;  if (x_node == NULL) {
       DEBUG_DATA   yLOG_note    ("not found");
-      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
       s_result = -1;
-      return NULL;
+      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(save)---------------------------*/
    DEBUG_DATA   yLOG_note    ("found");
+   if (a_found != NULL)  *a_found = x_node;
    strlcpy (s_last, x_label, LEN_LABEL);
    s_save   = x_node;
    s_result = 0;
    /*---(complete)-----------------------*/
    DEBUG_DATA   yLOG_exit    (__FUNCTION__);
-   return s_save;
+   return 0;
 }
 
 
@@ -478,6 +491,7 @@ char
 BTREE_update            (void)
 {
    char        rc          =    0;
+   if (my.btree != 'y')  return 0;
    if (rc == 0)  rc = BTREE_dgnome  ();
    if (rc == 0)  rc = BTREE_build   ();
    return rc;

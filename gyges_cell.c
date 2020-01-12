@@ -160,7 +160,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    ++ACEL;
    DEBUG_CELL   yLOG_value   ("ACEL"      , ACEL);
    /*---(into linked list)---------------*/
-   DEBUG_CELL   yLOG_value   ("a_linked"  , a_linked);
+   DEBUG_CELL   yLOG_char    ("a_linked"  , a_linked);
    x_new->linked  = a_linked;
    x_new->m_next    = NULL;
    x_new->m_prev    = NULL;
@@ -184,7 +184,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    x_new->col       = UNHOOKED;
    x_new->row       = UNHOOKED;
    x_new->label     = g_tbd;
-   x_new->key       = BTREE_label2key (x_new->label);
+   x_new->key       = UNHOOKED;
    /*---(source)------------------------*/
    x_new->source    = NULL;
    x_new->len       = 0;
@@ -563,7 +563,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
    DEBUG_CELL   yLOG_value   ("a_col"     , a_col);
    DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
-   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    DEBUG_CELL   yLOG_value   ("legal"     , rc);
    --rce;  if (rc < 0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -694,7 +694,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("a_source"  , a_source);
    /*---(legal location)-----------------*/
-   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_LEGAL);
+   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
    --rce;  if (rc <  0) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -1268,7 +1268,7 @@ CELL__unitnew      (char *a_question, char *a_label)
          sprintf (unit_answer, "s_celln error    : label <%s> not legal", a_label);
          return unit_answer;
       }
-      rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_LEGAL);
+      rc = str4gyges (x_tab, x_col, x_row, 0, 0, x_label, YSTR_USABLE);
       if (rc < 0) {
          sprintf (unit_answer, "s_celln error    : label <%s> not in-range", a_label);
          return unit_answer;
