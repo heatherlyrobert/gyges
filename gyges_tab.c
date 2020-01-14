@@ -524,7 +524,7 @@ TAB_by_name             (tTAB **a_found, uchar *a_regex)
       if (x_matches == 1)  x_first = i;
    }
    DEBUG_LOCS   yLOG_value   ("x_matches" , x_matches);
-   --rce;  if (x_matches != 1) {
+   --rce;  if (x_matches <= 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -532,7 +532,7 @@ TAB_by_name             (tTAB **a_found, uchar *a_regex)
    TAB_by_index (a_found, x_first);
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return x_matches;
 }
 
 char
@@ -619,7 +619,7 @@ TAB_hook_cell           (tTAB **a_found, char a_tab, tCELL *a_cell)
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_complex ("args"      , "found %-10.10p, tab %2d, cell %-10.10p", a_found, a_tab, a_cell);
    /*---(defense)------------------------*/
-   --rce;  if (a_tab == NULL || a_cell == NULL) {
+   --rce;  if (a_cell == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -904,46 +904,21 @@ TAB_browse              (char *a_entry)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   int         i           =    0;
-   int         x_first     =   -1;
-   int         x_matches   =    0;
+   tTAB       *x_match     = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   /*---(defense)--------------------s---*/
-   DEBUG_LOCS   yLOG_point   ("a_entry"   , a_entry);
-   --rce;  if (a_entry == NULL || a_entry [0] == 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_LOCS   yLOG_delim   ("a_entry"   , a_entry);
    /*---(compile search)-----------------*/
-   rc = yREGEX_comp (a_entry);
-   DEBUG_SRCH   yLOG_value   ("comp"      , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_note    ("could not compile search");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(check all tabs)-----------------*/
-   for (i = 0; i < NTAB; ++i) {
-      if (TAB_legal (s_master [i] != 1)  continue;
-      DEBUG_INPT   yLOG_info    ("tab"       , s_master [i]->name);
-      rc = yREGEX_exec (s_mastir [i]->name);
-      DEBUG_INPT   yLOG_value   ("exec"      , rc);
-      if (rc <= 0)   continue;
-      ++x_matches;
-      if (x_matches == 1)  x_first = i;
-   }
-   DEBUG_LOCS   yLOG_value   ("x_matches" , x_matches);
-   --rce;  if (x_matches != 1) {
+   rc = TAB_by_name (&x_match, a_entry);
+   DEBUG_LOCS   yLOG_value   ("search"    , rc);
+   --rce;  if (rc <= 0)  {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(make switch)--------------------*/
-   TAB_switch (x_first);
+   TAB_switch (x_match->tab);
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return rc;
 }
 
 
@@ -975,30 +950,6 @@ TAB_used             (char a_index)
    /*---(complete)-----------------------*/
    return s_master [a_index]->count;
 }
-
-/*> int          /+-> find largest used tab --------------[ ------ [gn.210.212.11]+/ /+-[00.0000.304.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TAB_maxused          (void)                                                                                                    <* 
- *> {                                                                                                                              <* 
- *>    int         i           =    0;                                                                                             <* 
- *>    int         x_max       =   -1;                                                                                             <* 
- *>    for (i = 0; i < NTAB; ++i) {                                                                                                <* 
- *>       if (s_tabs [i].count > 0)  x_max   = i;                                                                                  <* 
- *>    }                                                                                                                           <* 
- *>    return x_max;                                                                                                               <* 
- *> }                                                                                                                              <*/
-
-/*> int          /+-> update the tab count ---------------[ ------ [gn.210.213.11]+/ /+-[00.0000.503.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> TAB_setmax           (int a_count)                                                                                             <* 
- *> {                                                                                                                              <* 
- *>    int         x_max       =    0;                                                                                             <* 
- *>    x_max = TAB_maxused ();                                                                                                     <* 
- *>    if (x_max >= a_count)  a_count = x_max + 1;                                                                                 <* 
- *>    if (a_count < 1)  a_count = 1;                                                                                              <* 
- *>    if (!VALID_tab (a_count - 1))  return -2;                                                                                   <* 
- *>    if (a_count >  MAX_TABS)       return -3;                                                                                   <* 
- *>    NTAB = a_count;                                                                                                             <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
 
 
 
@@ -1138,50 +1089,56 @@ TAB_retype           (char a_index, char a_type)
 static void  o___STATUS__________o () { return; }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
-TAB_line           (char a_tab, char *a_list)
+TAB_line           (char a_index, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   char        x_tab       =  '0';
+   uchar       x_abbr      =  '0';
+   tTAB       *x_tab       = NULL;
    char        x_size      [LEN_LABEL] = "";
    char        x_cur       [LEN_LABEL] = "";
    char        x_max       [LEN_LABEL] = "";
    char        x_count     [LEN_LABEL] = "";
    /*---(beginning)----------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_value   ("a_tab"     , a_tab);
+   DEBUG_REGS   yLOG_value   ("a_index"   , a_index);
    DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
    /*---(defenses)--------------------*/
-   if (a_list  == NULL) {
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return -1;     /* then no point                       */
-   }
-   /*---(convert tab)-----------------*/
-   x_tab = LABEL_tab (a_tab);
-   --rce;  if (x_tab < 0 && x_tab > -20) {
+   --rce;  if (a_list  == NULL) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   --rce;  if (!TAB_legal (a_index)) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = TAB_by_index (&x_tab, a_index);
+   --rce;  if (x_tab  == NULL) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(convert tab)-----------------*/
+   x_abbr = LABEL_tab (a_index);
    /*---(generate stats)--------------*/
-   sprintf (x_size, "%dx%d", s_tabs [a_tab].ncol, s_tabs [a_tab].nrow);
-   rc = str4gyges  (a_tab, s_tabs [a_tab].ccol, s_tabs [a_tab].crow, 0, 0, x_cur, YSTR_CHECK);
-   rc = str4gyges  (a_tab, s_tabs [a_tab].ncol - 1, s_tabs [a_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);
-   if      (s_tabs [a_tab].count ==   0)  sprintf (x_count, "  -");
-   else if (s_tabs [a_tab].count <  999)  sprintf (x_count, "%3d", s_tabs [a_tab].count);
-   else                               sprintf (x_count, "+++");
+   sprintf (x_size, "%dx%d", x_tab->ncol, x_tab->nrow);
+   rc = str4gyges  (a_index, x_tab->ccol, x_tab->crow, 0, 0, x_cur, YSTR_CHECK);
+   rc = str4gyges  (a_index, x_tab->ncol, x_tab->nrow, 0, 0, x_max, YSTR_CHECK);
+   if      (x_tab->count ==   0)  sprintf (x_count, "  -");
+   else if (x_tab->count <  999)  sprintf (x_count, "%3d", x_tab->count);
+   else                           sprintf (x_count, "+++");
    /*---(finish)----------------------*/
    snprintf (a_list, LEN_FULL, "%c %-12.12s %-10.10s %3s %c %-8.8s %-8.8s %2d %2d",
-         x_tab, s_tabs [a_tab].name, x_size, x_count,
-         s_tabs [a_tab].type, x_cur, x_max,
-         TAB_colwide (a_tab), TAB_rowtall (a_tab));
+         x_tab, x_tab->name, x_size, x_count,
+         x_tab->type, x_cur, x_max,
+         TAB_colwide (a_index), TAB_rowtall (a_index));
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.40]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
-TAB_status         (char a_tab, char *a_list)
+TAB_status         (char a_index, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
@@ -1189,7 +1146,7 @@ TAB_status         (char a_tab, char *a_list)
    /*---(beginning)---------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(get info)--------------------*/
-   rc = TAB_line (a_tab, t);
+   rc = TAB_line (a_index, t);
    if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rc);
       return rc;
@@ -1443,22 +1400,6 @@ TAB__unit          (char *a_question, int a_tab)
          strlcat (t, s, LEN_DESC);
       }
       snprintf (unit_answer, LEN_FULL, "TAB inventory    : %2d=%-2d %2d=%-2d %s", s_all, a, s_count, c, t);
-   }
-   /*> else if (strcmp(a_question, "current"       ) == 0) {                                                                                                                                                          <* 
-    *>    if (s_curr == NULL) {                                                                                                                                                                                       <* 
-    *>       if (s_index < 0)    snprintf (unit_answer, LEN_FULL, "TAB curr     (-) :  -=-  -            -       -       -       -       -       -");                                                                 <* 
-    *>       else                snprintf (unit_answer, LEN_FULL, "TAB curr     (%c) : %2d=-  -            -       -       -       -       -       -", s_valids [s_index], s_index);                                  <* 
-    *>    } else                 snprintf (unit_answer, LEN_FULL, "TAB curr     (%c) : %2d=%-2d %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", s_curr->abbr, s_index, s_curr->tab, s_curr->name, "-", "-", "-", "-", 0);   <* 
-    *> }                                                                                                                                                                                                              <*/
-   else if (strcmp(a_question, "info"          ) == 0) {
-      if (!LEGAL_TAB (a_tab))  snprintf(unit_answer, LEN_FULL, "TAB info     (%c) : %-12.12s -       -       -       -       -", x_label, s_tabs [a_tab].name);
-      else                     snprintf(unit_answer, LEN_FULL, "TAB info     (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [a_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [a_tab].count);
-   }
-   else if (strcmp(a_question, "curr"          ) == 0) {
-      snprintf(unit_answer, LEN_FULL, "TAB curr     (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [a_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [a_tab].count);
-   }
-   else if (strcmp(a_question, "defs"          )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "TAB defaults     : col=%2d, row=%2d", DEF_WIDTH, DEF_HEIGHT);                          
    }
    /*---(complete)-----------------------*/
    return unit_answer;

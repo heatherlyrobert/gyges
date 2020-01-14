@@ -269,7 +269,7 @@ BTREE__nextlevel   (int n, int a_lvl, int a_pos, int a_dist, char a_dir, tCELL *
       ++c;
    }
    /*---(recurse)------------------------*/
-   DEBUG_SORT   yLOG_complex ("a_btree"   , "%2d %c %4d %4d %s", a_lvl, a_dir, a_dist, x_pos, x_node->key);
+   DEBUG_SORT   yLOG_complex ("a_btree"   , "%2d %c %4d %4d %d", a_lvl, a_dir, a_dist, x_pos, x_node->key);
    x_node->b_left  = BTREE__nextlevel (n, a_lvl + 1, x_pos, a_dist / 2, 'L', x_node);
    x_node->b_right = BTREE__nextlevel (n, a_lvl + 1, x_pos, a_dist / 2, 'R', x_node);
    /*---(complete)-----------------------*/
@@ -302,7 +302,7 @@ BTREE_build             (void)
       s_broot = s_broot->m_next;
       ++c;
    }
-   DEBUG_SORT   yLOG_info    ("ROOT"      , s_broot->key);
+   DEBUG_SORT   yLOG_point   ("ROOT"      , s_broot);
    s_broot->b_left  = BTREE__nextlevel (n, 1, x_ctr, x_span / 4 + 1, 'L', s_broot);
    s_broot->b_right = BTREE__nextlevel (n, 1, x_ctr, x_span / 4 + 1, 'R', s_broot);
    DEBUG_SORT   yLOG_value   ("real depth", s_levels);
@@ -332,7 +332,7 @@ BTREE__searchdown       (tCELL **a_found, tCELL *a_node, char *a_dir, long a_key
    if      (a_node->key == a_key)  rc =  0;
    else if (a_node->key >  a_key)  rc =  1;
    else                            rc = -1;
-   DEBUG_SORT   yLOG_complex ("compare"   , "%s  %-20.20s  %4d", a_dir, a_node->key, rc);
+   DEBUG_SORT   yLOG_complex ("compare"   , "%s  %-20d  %4d", a_dir, a_node->key, rc);
    /*---(no match)-----------------------*/
    if (rc >  0)  return BTREE__searchdown (a_found, a_node->b_left , "L", a_key);
    if (rc <  0)  return BTREE__searchdown (a_found, a_node->b_right, "R", a_key);
@@ -468,7 +468,7 @@ BTREE__display        (int a_lvl, tCELL *a_node)
    if (a_lvl > 20)      return 0;
    for (i = 0; i < a_lvl; ++i)  strcat (x_pre, "  ");
    BTREE__display      (a_lvl + 1, a_node->b_left);
-   printf ("%s%s\n", x_pre, a_node->key);
+   printf ("%s%d\n", x_pre, a_node->key);
    BTREE__display      (a_lvl + 1, a_node->b_right);
    return 0;
 }

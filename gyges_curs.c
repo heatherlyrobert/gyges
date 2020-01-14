@@ -211,218 +211,12 @@ CURS_info_request  (char a_type)
 /*====================------------------------------------====================*/
 PRIV void  o___SPECIFIC________o () { return; }
 
-/*> char         /+-> tbd --------------------------------[ ------ [gz.MG1.171.O7]+/ /+-[02.I000.013.!]-+/ /+-[--.---.---.--]-+/                            <* 
- *> CURS_formula       (tCELL *a_curr)                                                                                                                      <* 
- *> {                                                                                                                                                       <* 
- *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                                             <* 
- *>    /+---(locals)-----------------------------+/                                                                                                         <* 
- *>    char      msg[500]  = "";                   /+ temporary display message   +/                                                                        <* 
- *>    int       len       = 0;                                                                                                                             <* 
- *>    int       w         = 0;                                                                                                                             <* 
- *>    int       x_beg     = 0;                                                                                                                             <* 
- *>    int       x_end     = 0;                                                                                                                             <* 
- *>    int       x_gap     = 0;                                                                                                                             <* 
- *>    int       x_len     = 0;                                                                                                                             <* 
- *>    /+---(clear line)---------------------+/                                                                                                             <* 
- *>    if (sta_error == 'y')  attron (S_COLOR_TITLEE);                                                                                                      <* 
- *>    else                   attron (S_COLOR_TITLE);                                                                                                       <* 
- *>    mvprintw (row_formula, 0, "%*.*s", my.x_full, my.x_full, g_empty);                                                                                   <* 
- *>    /+---(location)-----------------------+/                                                                                                             <* 
- *>    /+> strcpy(label, p_tab->cols[CCOL].l);                                         <*                                                                   <* 
- *>     *> if (label[0] == '-') label[0] = ' ';                                           <+/                                                               <* 
- *>    /+> mvprintw (row_formula,  0, "%c%c [%s%d ]", mode, (VISU_islive()) ? 'v' : ' ', label, CROW + 1);   <+/                                            <* 
- *>    /+---(label)------------------------------+/                                                                                                         <* 
- *>    if (a_curr != NULL)    strcpy  (s_label, a_curr->label);                                                                                             <* 
- *>    else                   LOC_ref (CTAB, CCOL, CROW, 0, s_label);                                                                                       <* 
- *>    /+---(length)-----------------------------+/                                                                                                         <* 
- *>    len = strlen (g_contents);                                                                                                                           <* 
- *>    /+---(display)----------------------------+/                                                                                                         <* 
- *>    switch (my.layout_formula) {                                                                                                                         <* 
- *>    case G_FORMULA_DEBUG :                                                                                                                               <* 
- *>       /+---(1st 12 chars)---+/                                                                                                                          <* 
- *>       mvprintw (row_formula,  0, "%c  %c%c %-6.6s", yVIKEYS_mode_curr(), (VISU_islive()) ? 'v' : ' ', my.reg_curr, s_label);                            <* 
- *>       /+---(2nd 13 chars)---+/                                                                                                                          <* 
- *>       if (a_curr != NULL)  mvprintw (row_formula, 12, " %02d %c %c %c %c  ", COL_width (CTAB, CCOL), a_curr->type, a_curr->format, a_curr->decs, a_curr->align);   <* 
- *>       else                 mvprintw (row_formula, 12, " %02d - - - -  "    , COL_width (CTAB, CCOL));                                               <* 
- *>       /+---(3rd  5 chars)---+/                                                                                                                          <* 
- *>       mvprintw (row_formula, 25, "%4d", len);                                                                                                           <* 
- *>       /+---(4th 14 chars)---+/                                                                                                                          <* 
- *>       attrset (0);                                                                                                                                      <* 
- *>       if (yURG_debugmode () == 'y')  attron (S_COLOR_TITLEE);                                                                                           <* 
- *>       else                           attron (S_COLOR_TITLE );                                                                                           <* 
- *>       mvprintw (row_formula, my.x_full - 14, " %s of gyges", VER_NUM);                                                                                  <* 
- *>       s_start  = 30;                                                                                                                                    <* 
- *>       break;                                                                                                                                            <* 
- *>    case G_FORMULA_SMALL :                                                                                                                               <* 
- *>       /+---(1st  6 chars)---+/                                                                                                                          <* 
- *>       mvprintw (row_formula,  0, "%-6.6s", s_label);                                                                                                    <* 
- *>       /+---(2nd  5 chars)---+/                                                                                                                          <* 
- *>       attrset (0);                                                                                                                                      <* 
- *>       if (yURG_debugmode () == 'y')  attron (S_COLOR_TITLEE);                                                                                           <* 
- *>       else                           attron (S_COLOR_TITLE );                                                                                           <* 
- *>       mvprintw (row_formula, my.x_full - 5, " %s", VER_NUM);                                                                                            <* 
- *>       s_start  =  7;                                                                                                                                    <* 
- *>       break;                                                                                                                                            <* 
- *>    case G_FORMULA_TINY  :                                                                                                                               <* 
- *>       s_start  =  1;                                                                                                                                    <* 
- *>       break;                                                                                                                                            <* 
- *>    }                                                                                                                                                    <* 
- *>    s_space  = my.apos;                                                                                                                                  <* 
- *>    /+---(set color)------------------------+/                                                                                                           <* 
- *>    attrset (0);                                                                                                                                         <* 
- *>    switch (yVIKEYS_mode_curr()) {                                                                                                                       <* 
- *>    case MODE_SOURCE  : attron (S_COLOR_SOURCE );  break;                                                                                                <* 
- *>    case MODE_INPUT   : attron (S_COLOR_INPUT  );  break;                                                                                                <* 
- *>    case SMOD_SELECT  : attron (S_COLOR_SOURCE );  break;                                                                                                <* 
- *>    case SMOD_TEXTREG : attron (S_COLOR_SOURCE );  break;                                                                                                <* 
- *>    case SMOD_WANDER  : attron (S_COLOR_WANDER );  break;                                                                                                <* 
- *>    case SMOD_REPLACE : attron (S_COLOR_REPLACE);  break;                                                                                                <* 
- *>    default           : attron (S_COLOR_CONTENT);  break;                                                                                                <* 
- *>    }                                                                                                                                                    <* 
- *>    /+---(contents)-------------------------+/                                                                                                           <* 
- *>    w  = s_space - len;                                                                                                                                  <* 
- *>    if (w < 0) w = 0;                                                                                                                                    <* 
-*>    mvprintw (row_formula, s_start, "%*.*s", s_space, s_space, g_empty);                                                                                 <* 
-*>    snprintf (msg, 500, "%s",    g_contents);                                                                                                            <* 
-*>    mvprintw (row_formula, s_start, "%-*.*s", s_space, s_space, msg + my.bpos);                                                                          <* 
-*>    /+---(highlight off)------------------+/                                                                                                             <* 
-*>    attrset (0);                                                                                                                                         <* 
-*>    /+---(show selection on top)------------+/                                                                                                           <* 
-*>    if ((yVIKEYS_mode_curr() == SMOD_SELECT || yVIKEYS_mode_curr() == SMOD_TEXTREG) && SELC_islive) {                                                    <* 
-   *>       x_beg = SELC_from ();                                                                                                                             <* 
-      *>       x_end = SELC_to   ();                                                                                                                             <* 
-      *>       if (x_beg < my.epos || x_end > my.bpos) {                                                                                                         <* 
-         *>          if (x_beg < my.bpos)  x_beg = my.bpos;                                                                                                         <* 
-            *>          if (x_end > my.epos)  x_end = my.epos;                                                                                                         <* 
-            *>          x_gap = x_beg - my.bpos;                                                                                                                       <* 
-            *>          x_len = x_end - x_beg + 1;                                                                                                                     <* 
-            *>          attron (S_COLOR_VISUAL);                                                                                                                       <* 
-            *>          mvprintw (row_formula, s_start + x_gap, "%-*.*s", x_len, x_len, msg + x_beg);                                                                  <* 
-            *>          attrset (0);                                                                                                                                   <* 
-            *>       }                                                                                                                                                 <* 
-            *>    }                                                                                                                                                    <* 
-            *>    /+---(boundary markers)---------------+/                                                                                                             <* 
-            *>    attron (S_COLOR_VISUAL );                                                                                                                            <* 
-            *>    sprintf (msg, "%c", G_CHAR_NULL );                                                                                                                   <* 
-            *>    /+---(beginning)---------+/                                                                                                                          <* 
-            *>    if      (my.npos == 0)            mvprintw (row_formula, s_start - 1, msg);                                                                          <* 
-            *>    else if (my.bpos == 0)            mvprintw (row_formula, s_start - 1, " ");                                                                          <* 
-            *>    else                              mvprintw (row_formula, s_start - 1, "<");                                                                          <* 
-            *>    /+---(ending)------------+/                                                                                                                          <* 
-            *>    if      (my.npos == 0)            mvprintw (row_formula, s_start + s_space, msg);                                                                    <* 
-            *>    else if (my.epos == my.npos - 1)  mvprintw (row_formula, s_start + s_space, " ");                                                                    <* 
-            *>    else                              mvprintw (row_formula, s_start + s_space, ">");                                                                    <* 
-            *>    /+---(done)--------------+/                                                                                                                          <* 
-            *>    attrset (0);                                                                                                                                         <* 
-            *>    /+---(complete)-----------------------+/                                                                                                             <* 
-            *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                             <* 
-            *>    return 0;                                                                                                                                            <* 
-            *> }                                                                                                                                                       <*/
+char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
+char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
+char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
+char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
+char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_FULL, "errors (%3d)", nerror); };
 
-            /*> char  DEP_reqs_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
-             *> char  DEP_pros_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <* 
-             *> char  DEP_like_status      (char *a_list) { return DEG_disp_reqs (x_curr, char a_list); }   <*/
-            char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
-            char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
-            char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
-            /*> char  CURS_status_buffer   (char *a_list) { TAB_status (CTAB, a_list); }   <*/
-            /*> char  CURS_status_textreg  (char *a_list) { TEXTREG_status (REG_CURR, a_list); }   <*/
-            char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
-            /*> char  CURS_status_reg      (char *a_list) { snprintf (a_list, LEN_FULL, "[ reg %-100.100s ]", my.reg_list); }   <*/
-            char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_FULL, "errors (%3d)", nerror); };
-
-/*> char         /+-> tbd --------------------------------[ ------ [gc.HB1.152.98]+/ /+-[02.3000.013.!]-+/ /+-[--.---.---.--]-+/                                                   <* 
- *> CURS_status        (tCELL *a_curr)                                                                                                                                             <* 
- *> {                                                                                                                                                                              <* 
- *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                                                                    <* 
- *>    int         l           = 0;             /+ string length                  +/                                                                                               <* 
- *>    int         i           = 0;             /+ iterator -- keys               +/                                                                                               <* 
- *>    char        msg[500]  = "n/a";                /+ temporary display message   +/                                                                                             <* 
- *>    char        t  [500]  = "";                   /+ temporary display message   +/                                                                                             <* 
- *>    char        rpn[LEN_RECD] = "";                                                                                                                                             <* 
- *>    if (s_status_size <= 0)  return 0;                                                                                                                                          <* 
- *>    switch (my.layout_status) {                                                                                                                                                 <* 
- *>    /+> case G_STATUS_CELL     : /+ cell details +/                                                                                                        <*                   <* 
- *>     *>    if (a_curr != NULL) {                                                                                                                           <*                   <* 
- *>     *>       strncpy (rpn , "+", LEN_RECD);                                                                                                               <*                   <* 
- *>     *>       if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, LEN_RECD);                                                             <*                   <* 
- *>     *>       snprintf (msg, 500, "[ rpn %-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ]", rpn, my.reqs_list, my.deps_list, my.like_list);   <*                   <* 
- *>     *>    }                                                                                                                                               <*                   <* 
- *>     *>    break;                                                                                                                                          <+/                  <* 
- *>    /+> case G_STATUS_DEPS     : /+ cell details +/                                                    <*                                                                       <* 
- *>     *>    if (a_curr != NULL) {                                                                       <*                                                                       <* 
- *>     *>       snprintf (msg, 500, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list);   <*                                                                       <* 
- *>     *>    }                                                                                           <*                                                                       <* 
- *>     *>    break;                                                                                      <+/                                                                      <* 
- *>    /+> case G_STATUS_BUFFER   : /+ buffer contents +/                                 <*                                                                                       <* 
- *>     *>    TAB_status (CTAB, msg);                                                 <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    /+> case G_STATUS_RPN      : /+ rpn contents +/                                           <*                                                                                <* 
- *>     *>    if (a_curr != NULL && a_curr->rpn != NULL) strncpy (rpn, a_curr->rpn, LEN_RECD);   <*                                                                                <* 
- *>     *>    else                                       strncpy (rpn, "((null))", LEN_RECD);    <*                                                                                <* 
- *>     *>    snprintf (msg, 500, "[ %-100.100s ]", rpn);                                        <*                                                                                <* 
- *>     *>    break;                                                                             <+/                                                                               <* 
- *>    /+> case G_STATUS_REGS     : /+ register contents +/                               <*                                                                                       <* 
- *>     *>    REG_list     (my.reg_curr  , my.reg_list);                                  <*                                                                                       <* 
- *>     *>    snprintf (msg, 500, "[ reg %-100.100s ]", my.reg_list);                     <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    /+> case G_STATUS_TREG     :                                                       <*                                                                                       <* 
- *>     *>    TREG_entry (REG_CURR, msg);                                                 <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    /+> case G_STATUS_MARK     :                                                       <*                                                                                       <* 
- *>     *>    MARK_status (msg);                                                          <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    case G_STATUS_HISTORY  :                                                                                                                                                    <* 
- *>       snprintf (msg, 500, "[ s_nhist : %4d, s_chist : %4d, top : %s ]", s_nhist, s_chist, s_hist [s_chist].act);                                                                           <* 
- *>       break;                                                                                                                                                                   <* 
- *>    /+> case G_STATUS_MODELIST :                                                       <*                                                                                       <* 
- *>     *>    yVIKEYS_mode_list (msg);                                                    <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    /+> case G_STATUS_VISUAL   :                                                       <*                                                                                       <* 
- *>     *>    VISU_status (msg);                                                          <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    /+> case G_STATUS_ERRORS   :                                                       <*                                                                                       <* 
- *>     *>    snprintf (msg, 500, "errors (%3d)", nerror);                                <*                                                                                       <* 
- *>     *>    break;                                                                      <+/                                                                                      <* 
- *>    /+> case G_STATUS_TAB      :                                                        <*                                                                                      <* 
- *>     *>    TAB_name (CTAB, t);                                                      <*                                                                                      <* 
- *>     *>    snprintf (msg, 500, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW);   <+/                                                                                     <* 
- *>    /+> case G_STATUS_FILE     :                                                                                                         <*                                     <* 
- *>     *> default  :                                                                                                                       <*                                     <* 
- *>     *>    snprintf (msg, 500, " %-20.20s%*.*s%30.30s %-4.4s ", my.f_name, my.x_full - 57, my.x_full - 57, g_empty, ver_txt, ver_num);   <*                                     <* 
- *>     *>    break;                                                                                                                        <+/                                    <* 
- *>    }                                                                                                                                                                           <* 
- *>    IF_MACRO_ON {                                                                                                                                                               <* 
- *>       snprintf (msg, 500, "macro %c %c %c %3d %02x %3d:%s", my.macro_name, my.macro_mode, my.macro_delay, my.macro_pos, (uchar) my.macro_char, my.macro_len, my.macro_keys);   <* 
- *>    }                                                                                                                                                                           <* 
- *>    if      (sta_error         == 'y')           attron (S_COLOR_STATUSE);                                                                                                      <* 
- *>    else                                         attron (S_COLOR_STATUS);                                                                                                       <* 
- *>    IF_MACRO_ON                                  attron (S_COLOR_STATUSE);                                                                                                      <* 
- *>    mvprintw(s_status_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);                                                                                                          <* 
- *>    mvprintw(s_status_row, 0, msg);                                                                                                                                             <* 
- *>    attrset    (0);                                                                                                                                                             <* 
- *>    IF_MACRO_ON {                                                                                                                                                               <* 
-*>       attron   (S_COLOR_CONTENT);                                                                                                                                              <* 
-*>       mvprintw (s_status_row, 23 + my.macro_pos, "%c", my.macro_keys [my.macro_pos]);                                                                                          <* 
-*>       attrset  (0);                                                                                                                                                            <* 
-*>    }                                                                                                                                                                           <* 
-*>    sta_error = '-';                                                                                                                                                            <* 
-*>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                                                                    <* 
-*>    return 0;                                                                                                                                                                   <* 
-*> }                                                                                                                                                                              <*/
-
-/*> char         /+-> tbd --------------------------------[ ------ [gc.321.002.11]+/ /+-[00.2000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> CURS_message       (void)                                                                                                      <* 
- *> {                                                                                                                              <* 
- *>    if (s_command_size <= 0 && yVIKEYS_mode_not (MODE_COMMAND))  return 0;                                                      <* 
- *>    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);                                                                                    <* 
- *>    attron  (S_COLOR_MESSAGE);                                                                                                  <* 
- *>    mvprintw (s_command_row, 0, "%*.*s", my.x_full, my.x_full, g_empty);                                                        <* 
- *>    mvprintw (s_command_row, 0, my.message);                                                                                    <* 
- *>    attroff (S_COLOR_MESSAGE);                                                                                                  <* 
- *>    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
 
 char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
 CURS_col_color     (short a_col)
@@ -507,7 +301,7 @@ DRAW_xaxis         (void)
       if (BCOL + i >= NCOL) break;
       /*---(prepare)---------------------*/
       x_avail = x_wide - x_cum;
-      w      = COL_width (CTAB, BCOL + i);
+      w      = COL_size (CTAB, BCOL + i);
       x_fill = w - 4;
       if (x_avail < w)  x_fill = x_avail - 4;
       strlcpy (x_label, LABEL_col (BCOL + i), LEN_TERSE);
@@ -1095,7 +889,7 @@ DRAW_main          (void)
       cw    = 0;
       /*---(cycle normal columns)--------*/
       for (x_cur = BCOL; x_cur <= ECOL; ++x_cur) {
-         w  = COL_width  (CTAB, x_cur);
+         w  = COL_size  (CTAB, x_cur);
          if (cw + w > x_wide)  w = x_wide - cw;
          CURS_cell (x_cur, y_cur, y_pos, x_pos, w);
          cw    += w;

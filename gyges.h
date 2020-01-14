@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5d"
-#define     P_VERTXT    "most foundational COL/ROW/TAB logic is updated to dynamic and unit tested"
+#define     P_VERNUM    "3.5e"
+#define     P_VERTXT    "columns and rows are fully dynamic, unit tested, and mapping works"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1390,6 +1390,7 @@ char*       TAB__unit            (char *a_question, int a_tab);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(program)------------------------*/
 short       NODE_cleanse            (tTAB *a_tab, char a_type);
+char        NODE_init               (void);
 /*---(memory)-------------------------*/
 char        NODE_new                (tNODE **a_new, tTAB *a_tab, char a_type, ushort a_ref);
 char        NODE_free               (tNODE **a_old);
@@ -1405,16 +1406,29 @@ short       NODE_used               (char a_index, char a_type, short a_ref);
 short       NODE_min_used           (char a_index, char a_type);
 short       NODE_max_used           (char a_index, char a_type);
 short       NODE_max                (char a_index, char a_type);
-short       NODE_max_adjust         (char a_index, char a_type);
+char        NODE__max_set           (char a_index, char a_type, short a_max);
+char        NODE_max_set            (char a_index, char a_type, short a_max);
+char        NODE_max_adjust         (char a_index, char a_type);
 /*---(sizing)-------------------------*/
 char        NODE_size               (char a_tab, char a_type, short a_ref);
 char        NODE_resize             (char a_tab, char a_type, short a_ref, char a_size);
 char        NODE_reset              (char a_tab, char a_type, short a_ref);
-char        NODE_visual             (char a_tab, char a_type, short a_ref, char a_mode, char a_key);
 char        NODE_multisize          (char *a_label, char a_type, char a_size, char a_count);
+char        NODE_multikey           (char a_type, char a_key);
 /*---(freezing)-----------------------*/
 char        NODE_freeze             (int a_tab, char a_type, int a_beg, int a_end);
 char        NODE_unfreeze           (int a_tab, char a_type);
+/*---(files)--------------------------*/
+char        NODE_reader             (void);
+char        NODE_writer             (char a_type, tNODE *a_node, short n);
+char        NODE_writer_one         (char a_index, char a_type, short a_ref);
+char        NODE_writer_all         (char a_type);
+/*---(mapping)------------------------*/
+char        NODE_map_clear          (char a_type);
+char        NODE_map_mapper         (char a_type);
+char        NODE_map_absolute       (char a_type);
+char        NODE_map_local          (char a_type);
+char        NODE_map_update         (char a_type);
 /*---(unit_test)----------------------*/
 char*       NODE__unit              (char *a_question, uchar a_tab, char a_type, ushort a_ref);
 
@@ -1437,32 +1451,33 @@ short       COL_used                (char a_index, short a_ref);
 short       COL_min_used            (char a_index);
 short       COL_max_used            (char a_index);
 short       COL_max                 (char a_index);
-short       COL_max_adjust          (char a_index);
+char        COL_max_set             (char a_index, short a_max);
+char        COL_max_adjust          (char a_index);
 /*---(program)------------------------*/
 char        COL_cleanse             (tTAB *a_tab);
-
-
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        COL_init                (void);
-char        COL_clear               (tTAB *a_tab, char a_init);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         COL_maxused          (int a_tab);
-int         COL_setmax           (int a_tab, int a_count);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        COL_width            /* petal  2----- */  (int a_tab, int a_col);
-char        COL_widen            /* stigma 3----- */  (int a_tab, int a_col, int a_size);
-char        COL_reset            (void);
-char        COL_resize           (char *a_name, int a_size, int a_count);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        COL_freeze           (int a_tab, int a_bcol, int a_ecol);
-char        COL_unfreeze         (int a_tab);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        COL_cleanse_curr        (void);
+/*---(sizing)-------------------------*/
+char        COL_size                (char a_index, short a_ref);
+char        COL_resize              (char a_index, short a_ref, char a_size);
+char        COL_reset               (char a_index, short a_ref);
+char        COL_multisize           (char *a_label, char a_size, char a_count);
+char        COL_multikey            (char a_key);
+/*---(freezing)-----------------------*/
+char        COL_freeze              (char a_index, short a_bcol, short a_ecol);
+char        COL_unfreeze            (char a_index);
+/*---(files)--------------------------*/
 char        COL_reader              (void);
-char        COL_writer              (int  a_tab, int a_col);
+char        COL_writer              (char a_index, short a_ref);
 char        COL_writer_all          (void);
+/*---(mapping)------------------------*/
+char        COL_map_clear           (void);
+char        COL_map_mapper          (void);
+char        COL_map_absolute        (void);
+char        COL_map_local           (void);
+char        COL_map_update          (void);
+/*---(unit_test)----------------------*/
+char*       COL__unit               (char *a_question, uchar a_tab, ushort a_col);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char*       COLn__unit              (char *a_question, uchar a_tab, ushort a_col);
-char*       COL__unit               (char *a_question, char *a_label);
 
 
 
@@ -1482,29 +1497,32 @@ short       ROW_used                (char a_index, short a_ref);
 short       ROW_min_used            (char a_index);
 short       ROW_max_used            (char a_index);
 short       ROW_max                 (char a_index);
-short       ROW_max_adjust          (char a_index);
+char        ROW_max_set             (char a_index, short a_max);
+char        ROW_max_adjust          (char a_index);
 /*---(program)------------------------*/
 char        ROW_cleanse             (tTAB *a_tab);
-
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        ROW_init                (void);
-char        ROW_clear            (tTAB *a_tab, char a_init);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-/*> char        ROW_heighten            (int a_tab, int a_row, int a_size);           <* 
- *> char        ROW_resize              (char *a_name, int a_size, int a_count);      <* 
- *> char        ROW_reset               (void);                                       <* 
- *> char        ROW_height           /+ petal  2----- +/  (int a_tab, int a_row);     <*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ROW_cleanse_curr        (void);
+/*---(sizing)-------------------------*/
+char        ROW_size                (char a_index, short a_ref);
+char        ROW_resize              (char a_index, short a_ref, char a_size);
+char        ROW_reset               (char a_index, short a_ref);
+char        ROW_multisize           (char *a_label, char a_size, char a_count);
+char        ROW_multikey            (char a_key);
+/*---(freezing)-----------------------*/
+char        ROW_freeze              (char a_index, short a_bref, short a_eref);
+char        ROW_unfreeze            (char a_index);
+/*---(files)--------------------------*/
 char        ROW_reader              (void);
-char        ROW_writer              (int a_tab, int a_row);
+char        ROW_writer              (char a_index, short a_ref);
 char        ROW_writer_all          (void);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        ROW_freeze              (int a_tab, int a_brow, int a_erow);
-char        ROW_unfreeze            (int a_tab);
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char*       ROWn__unit              (char *a_question, uchar a_tab, ushort a_row);
-char*       ROW__unit               (char *a_question, char *a_label);
+/*---(mapping)------------------------*/
+char        ROW_map_clear           (void);
+char        ROW_map_mapper          (void);
+char        ROW_map_absolute        (void);
+char        ROW_map_local           (void);
+char        ROW_map_update          (void);
+/*---(unit_test)----------------------*/
+char*       ROW__unit               (char *a_question, uchar a_tab, ushort a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 
 
@@ -1584,8 +1602,6 @@ char      CELL_wrap            (void);
 char      CELL__interpret      (tCELL *a_curr);
 
 
-char      COL_visual           (int a_tab, int a_col, int a_row,  char a_mode, char a_num);
-char      ROW_visual           (int a_tab, int a_col, int a_row,  char a_mode, char a_num);
 char      CELL_erase           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_align           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_decimals        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);

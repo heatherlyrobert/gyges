@@ -336,9 +336,9 @@ EXIM__close             (void)
  *>    /+---(defense)------------------------+/                                                                                    <* 
  *>    --rce;  if (s_sizer != 'a')      return rce;                                                                                <* 
  *>    /+---(resize)-------------------------+/                                                                                    <* 
- *>    w = COL_width (CTAB, CCOL + a_col);                                                                                         <* 
+ *>    w = COL_size (CTAB, CCOL + a_col);                                                                                         <* 
  *>    --rce;  if (w >= a_wide + 1)     return rce;                                                                                <* 
- *>    COL_widen (CTAB, CCOL + a_col, a_wide + 1);                                                                                 <* 
+ *>    COL_resize (CTAB, CCOL + a_col, a_wide + 1);                                                                                 <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
@@ -379,7 +379,7 @@ EXIM__close             (void)
  *>       x_len = strlen (p);                                                                                                      <* 
  *>       DEBUG_REGS   yLOG_value   ("x_len"     , x_len);                                                                         <* 
  *>       if (x_len == 0)  break;  /+ stop at unsized column +/                                                                    <* 
- *>       COL_widen (CTAB, CCOL + x_col, x_len + 1);                                                                               <* 
+ *>       COL_resize (CTAB, CCOL + x_col, x_len + 1);                                                                               <* 
  *>       ++x_col;                                                                                                                 <* 
  *>       p  = strtok_r (NULL, s_q, &s);                                                                                           <* 
  *>    }                                                                                                                           <* 
@@ -433,7 +433,7 @@ EXIM__export_sizer      (void)
    /*---(x_size)----------------------*/
    sprintf (s, "##x x-size %5d", xe - xb + 1);
    for (x_col = xb; x_col <= xe; ++x_col) {
-      w     = COL_width (CTAB, x_col);
+      w     = COL_size (CTAB, x_col);
       DEBUG_REGS  yLOG_value   ("w"         , w);
       sprintf (t, " %5d", w);
       DEBUG_REGS  yLOG_info    ("t"         , t);
@@ -444,7 +444,7 @@ EXIM__export_sizer      (void)
    /*---(y_size)----------------------*/
    sprintf (s, "##y y-size %5d", ye - yb + 1);
    for (x_row = yb; x_row <= ye; ++x_row) {
-      h     = ROW_height (CTAB, x_row);
+      h     = ROW_size (CTAB, x_row);
       DEBUG_REGS  yLOG_value   ("h"         , h);
       sprintf (t, " %5d", h);
       DEBUG_REGS  yLOG_info    ("t"         , t);
@@ -496,7 +496,7 @@ EXIM__import_sizer      (char a_dir)
       DEBUG_REGS   yLOG_delim   ("t"         , t);
       x_size = atoi (t);
       DEBUG_REGS   yLOG_value   ("x_size"    , x_size);
-      if (a_dir == 'x')  COL_widen    (CTAB, CCOL + x_pos, x_size);
+      if (a_dir == 'x')  COL_resize    (CTAB, CCOL + x_pos, x_size);
       /*> else               ROW_heighten (CTAB, CROW + x_pos, x_size);               <*/
    }
    /*---(complete)-----------------------*/
@@ -556,7 +556,7 @@ EXIM__import_values     (int a_row)
    /*---(process cells)---------------*/
    while (cw < s_max) {
       /*---(read import data)---------*/
-      w     = COL_width (CTAB, CCOL + x_col);
+      w     = COL_size (CTAB, CCOL + x_col);
       DEBUG_REGS  yLOG_value   ("w"         , w);
       strlcpy      (t, s_recd + cw, w + 1);
       DEBUG_REGS  yLOG_delim   ("t (orig)"  , t);
@@ -1084,7 +1084,7 @@ EXIM_export             (char a_style)
       /*---(fill in blank cells)---------*/
       if (x_curr == NULL) {
          DEBUG_REGS   yLOG_note    ("NULL cell");
-         w = COL_width (x_tab, x_col);
+         w = COL_size (x_tab, x_col);
          switch (s_style) {
          case 'v' : case 'V' :  fprintf (s_clip, "%*.*s", w, w, g_empty);       break;
          case 'd' : case 'D' :  fprintf (s_clip, "%*.*s", w, w, g_empty);     break;

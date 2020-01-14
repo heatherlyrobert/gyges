@@ -696,6 +696,7 @@ LOC__mapper                (char a_dir)
    int         i           =    0;
    int         x_max       =    0;
    tMAPPED    *x_map       = NULL;
+   tTAB       *x_tab       = NULL;
    int         x_size      =    0;
    int         x_count     =    0;
    int         x_total     =    0;
@@ -774,8 +775,8 @@ LOC__mapper                (char a_dir)
       /*---(update map)------------------*/
       for (i = 0; i < x_size; ++i) {
          x_map->map  [x_unit++] = x_cell;
-         if (x_curr == NULL)  x_map->used [x_cell] = '-';
-         else                 x_map->used [x_cell] = 'y';
+         /*> if (x_curr == NULL)  x_map->used [x_cell] = '-';                         <* 
+          *> else                 x_map->used [x_cell] = 'y';                         <*/
       }
       /*---(big maxs)--------------------*/
       if (x_curr != NULL)                      x_map->glmax = x_cell;
@@ -883,8 +884,7 @@ MAP_mapper           (char a_req)
       LOC__mapper   ('c');
       LOC__mapper   ('r');
    }
-   CTAB   = g_bmap.gcur;
-   p_tab  = &s_tabs[CTAB];
+   if (CTAB != g_bmap.gcur)  TAB_switch (g_bmap.gcur);
    BCOL   = g_xmap.gbeg;
    CCOL   = g_xmap.gcur;
    ECOL   = g_xmap.gend;

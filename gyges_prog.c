@@ -180,8 +180,7 @@ PROG_begin         (void)
    /*---(overall tab settings)-----------*/
    LOC_init  ();
    TAB_init  ();
-   COL_init  ();
-   ROW_init  ();
+   NODE_init ();
    /*---(locals)-------------------------*/
    /*> VISU_init ();                                                                  <*/
    /*> REG_init  ();                                                                  <*/

@@ -20,6 +20,10 @@ static tNODE *s_curr   = NULL;
 
 
 
+
+
+
+
 /*====================------------------------------------====================*/
 /*===----                       memory allocation                      ----===*/
 /*====================------------------------------------====================*/
@@ -181,7 +185,7 @@ NODE_free               (tNODE **a_old)
 /*====================------------------------------------====================*/
 static void  o___SEARCH__________o () { return; }
 
-char         /*-> cursor with no bounce/safeties -----------------------------*/
+char         /*-> re-entrant cursor with no bounce/safeties ------------------*/
 NODE_by_cursor          (tNODE **a_found, tTAB *a_tab, char a_type, char a_move)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -194,21 +198,21 @@ NODE_by_cursor          (tNODE **a_found, tTAB *a_tab, char a_type, char a_move)
    DEBUG_LOCS   yLOG_spoint  (a_tab);
    DEBUG_LOCS   yLOG_schar   (a_type);
    DEBUG_LOCS   yLOG_schar   (a_move);
-   /*---(prepare)------------------------*/
-   if (a_found != NULL)  *a_found = NULL;
    /*---(defense)------------------------*/
    --rce;  if (a_found == NULL || a_tab == NULL) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(look for tab change)------------*/
-   DEBUG_LOCS   yLOG_spoint  (s_tab);
    DEBUG_LOCS   yLOG_spoint  (s_curr);
    if (s_tab != a_tab || s_type != a_type) {
       DEBUG_LOCS   yLOG_snote   ("search change");
-      s_curr  = NULL;
-      s_tab   = a_tab;
-      s_type  = a_type;
+      *a_found = s_curr = NULL;
+      s_tab    = a_tab;
+      s_type   = a_type;
+   } else if (*a_found != NULL && strchr ("<>", a_move) != NULL) {
+      DEBUG_LOCS   yLOG_snote   ("continuing search");
+      s_curr   = *a_found;
    }
    /*---(defense)------------------------*/
    DEBUG_LOCS   yLOG_spoint  (s_curr);
@@ -262,6 +266,7 @@ NODE_by_index           (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref
    s_tab = a_tab;
    IF_COL    x_head = a_tab->C_head;
    ELSE_ROW  x_head = a_tab->R_head;
+   DEBUG_LOCS   yLOG_spoint  (x_head);
    --rce;  if (x_head == NULL) {
       s_curr = NULL;
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
@@ -381,6 +386,26 @@ NODE_cleanse            (tTAB *a_tab, char a_type)
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_remain;
+}
+
+char
+NODE_init            (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   /*---(command line commands)----------*/
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colreset"    , ""    , ""     , COL_cleanse_curr           , "make all columns default size"        );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colwide"     , ""    , "sii"  , COL_multisize              , "change the size of columns"           );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_cleanse_curr           , "make all rows default size"           );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_multisize              , "change the size of columns"           );
+   /*---(add yparse specification)-------*/
+   rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
+   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", -1, COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
+   /*---(complete)-----------------------*/
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   return rc;
 }
 
 
@@ -666,8 +691,8 @@ NODE_max             (char a_index, char a_type)
    return x_max;
 }
 
-short
-NODE_max_adjust      (char a_index, char a_type)
+char
+NODE__max_set           (char a_index, char a_type, short a_max)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -677,9 +702,15 @@ NODE_max_adjust      (char a_index, char a_type)
    int         x_new       =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%2d, %c", a_index, a_type);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%2d, %c, %4d", a_index, a_type, a_max);
    /*---(defense)------------------------*/
    --rce;  if (TAB_legal (a_index) != 1) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(find max)-----------------------*/
+   x_max = NODE_max_used (a_index, a_type);
+   --rce;  if (x_max < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -690,29 +721,35 @@ NODE_max_adjust      (char a_index, char a_type)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(find max)-----------------------*/
-   NODE_by_cursor (&x_found, x_tab, a_type, ']');
-   if    (x_found == NULL) x_max = 1;
-   else                    x_max = x_found->ref;
-   DEBUG_LOCS   yLOG_value   ("x_max"     , x_max);
-   --rce;  if (x_tab == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
    /*---(set new max)--------------------*/
-   IF_COL {
-      x_new = (trunc (x_max /  26) + 1) *  26;
-      if (x_new >  MAX_col ())  x_new = MAX_col ();
+   if (a_max == -1) {
+      IF_COL   a_max = (trunc (x_max /  26) + 1) *  26 - 1;
+      ELSE_ROW a_max = (trunc (x_max / 100) + 1) * 100 - 1;
    }
-   ELSE_ROW {
-      x_new = (trunc (x_max / 100) + 1) * 100;
-      if (x_new >  MAX_row ())  x_new = MAX_row ();
-   }
-   --x_new;
-   DEBUG_LOCS   yLOG_value   ("x_new"     , x_new);
+   /*---(check usage)--------------------*/
+   if (a_max < x_max)  a_max = x_max;
+   /*---(check limits)-------------------*/
+   IF_COL   if (a_max >  MAX_col ())  a_max = MAX_col ();
+   ELSE_ROW if (a_max >  MAX_row ())  a_max = MAX_row ();
+   DEBUG_LOCS   yLOG_value   ("a_max"     , a_max);
+   /*---(set max)------------------------*/
+   IF_COL   x_tab->ncol = a_max;
+   ELSE_ROW x_tab->nrow = a_max;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return x_new;
+   return 0;
+}
+
+char
+NODE_max_set            (char a_index, char a_type, short a_max)
+{
+   return NODE__max_set (a_index, a_type, a_max);
+}
+
+char
+NODE_max_adjust         (char a_index, char a_type)
+{
+   return NODE__max_set (a_index, a_type, -1);
 }
 
 
@@ -723,38 +760,41 @@ NODE_max_adjust      (char a_index, char a_type)
 static void  o___SIZING__________o () { return; }
 
 char
-NODE_size                (char a_tab, char a_type, short a_ref)
+NODE_size                (char a_index, char a_type, short a_ref)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
    tTAB       *x_tab       = NULL;
    tNODE      *x_node      = NULL;
+   char        x_size      =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr", a_tab, a_type, a_ref);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr", a_index, a_type, a_ref);
    /*---(defense)------------------------*/
-   rc = TAB_pointer (&x_tab, a_tab);
+   rc = TAB_pointer (&x_tab, a_index);
    DEBUG_LOCS   yLOG_point   ("x_tab"     , x_tab);
    --rce;  if (x_tab == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(find col/row)-------------------*/
-   NODE_by_index (&x_node, a_tab, a_type, a_ref);
+   NODE_by_index (&x_node, x_tab, a_type, a_ref);
    DEBUG_LOCS   yLOG_point   ("x_node"    , x_node);
-   --rce;  if (x_node == NULL) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   if (x_node != NULL) {
+      x_size = x_node->size;
+   } else {
+      IF_COL   x_size = DEF_WIDTH;
+      ELSE_ROW x_size = DEF_HEIGHT;
    }
-   DEBUG_LOCS   yLOG_value   ("size"      , x_node->size);
+   DEBUG_LOCS   yLOG_value   ("x_size"    , x_size);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return x_node->size;
+   return x_size;
 }
 
 char
-NODE_resize             (char a_tab, char a_type, short a_ref, char a_size)
+NODE__resize            (char a_index, char a_type, short a_ref, char a_size, char a_key, char a_mode)
 {  /*---(notes)--------------------------*/
    /*
     * metis § ----- § if col/row set back to default and empty, remove it
@@ -768,18 +808,19 @@ NODE_resize             (char a_tab, char a_type, short a_ref, char a_size)
    char        x_alt       =  '-';
    tCELL      *x_curr      = NULL;
    short       c           =    0;
+   char        x_prev      =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr, %3ds", a_tab, a_type, a_ref, a_size);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr, %3ds", a_index, a_type, a_ref, a_size);
    /*---(defense)------------------------*/
-   rc = TAB_pointer (&x_tab, a_tab);
+   rc = TAB_pointer (&x_tab, a_index);
    DEBUG_LOCS   yLOG_point   ("x_tab"     , x_tab);
    --rce;  if (x_tab == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(find col/row)-------------------*/
-   NODE_by_index (&x_node, a_tab, a_type, a_ref);
+   NODE_ensure (&x_node, x_tab, a_type, a_ref);
    DEBUG_LOCS   yLOG_point   ("x_node"    , x_node);
    --rce;  if (x_node == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -788,15 +829,49 @@ NODE_resize             (char a_tab, char a_type, short a_ref, char a_size)
    /*---(statistics)---------------------*/
    DEBUG_LOCS   yLOG_value   ("count"     , x_node->count);
    DEBUG_LOCS   yLOG_value   ("size"      , x_node->size);
+   x_prev = x_node->size;
+   /*---(check for default)--------------*/
+   if (a_size == -1) {
+      IF_COL   a_size = DEF_WIDTH;
+      ELSE_ROW a_size = DEF_HEIGHT;
+   }
+   /*---(check for keys)-----------------*/
+   else if (a_key != 0) {
+      switch (a_key) {
+      case  's' : a_size  = 0;                           break;
+      case  'n' : a_size  = DEF_WIDTH;                   break;
+      case  'N' : a_size  = 12;                          break;
+      case  'w' : a_size  = 20;                          break;
+      case  'W' : a_size  = 35;                          break;
+      case  'e' : a_size  = 50;                          break;
+      case  'h' : a_size -= 1;                           break;
+      case  'l' : a_size += 1;                           break;
+      case  'H' : a_size  = ((x_prev  / 5) * 5);         break;
+      case  'L' : a_size  = (((x_prev  / 5) + 1) * 5);   break;
+      case  't' : a_size  = 0;                           break;
+      case  'k' : a_size -= 1;                           break;
+      case  'j' : a_size += 1;                           break;
+      case  'b' : a_size  = 4;                           break;
+      }
+   }
    /*---(limits)-------------------------*/
-   if (a_size  < MIN_WIDTH)    a_size = MIN_WIDTH;
-   if (a_size  > MAX_WIDTH)    a_size = MAX_WIDTH;
+   IF_COL {
+      if (a_size  < MIN_WIDTH)    a_size = MIN_WIDTH;
+      if (a_size  > MAX_WIDTH)    a_size = MAX_WIDTH;
+   } ELSE_ROW {
+      if (a_size  < MIN_HEIGHT)   a_size = MIN_HEIGHT;
+      if (a_size  > MAX_HEIGHT)   a_size = MAX_HEIGHT;
+   }
    DEBUG_LOCS   yLOG_value   ("a_size*"   , a_size);
    if (a_size == x_node->size) {
-      DEBUG_LOCS   yLOG_note    ("already set to new size");
+      DEBUG_LOCS   yLOG_note    ("already set to new size (no action)");
       DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   /*---(update)-------------------------*/
+   x_node->size = a_size;
+   IF_COL   HIST_size   (a_mode, HIST_WIDTH   , a_index, a_ref, 0, x_prev, a_size);
+   ELSE_ROW HIST_size   (a_mode, HIST_HEIGHT  , a_index, 0, a_ref, x_prev, a_size);
    /*---(check if default size)----------*/
    IF_DEFAULT {
       DEBUG_LOCS   yLOG_note    ("making default size");
@@ -821,9 +896,6 @@ NODE_resize             (char a_tab, char a_type, short a_ref, char a_size)
       IF_COL   x_curr = x_curr->r_next;
       ELSE_ROW x_curr = x_curr->c_next;
    }
-   /*---(history)----------------------*/
-   /*> IF_COL   HIST_size   (a_mode, HIST_WIDTH   , a_tab, a_ref, x_prev, x_size);    <* 
-    *> ELSE_ROW HIST_size   (a_mode, HIST_HEIGHT  , a_tab, a_ref, x_prev, x_size);    <*/
    /*---(reset headers)------------------*/
    yVIKEYS_map_refresh ();
    /*---(complete)-----------------------*/
@@ -831,23 +903,9 @@ NODE_resize             (char a_tab, char a_type, short a_ref, char a_size)
    return c;
 }
 
-char
-NODE_reset               (char a_tab, char a_type, short a_ref)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;
-   char        x_size      =    0;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr", a_tab, a_type, a_ref);
-   /*---(reset size)---------------------*/
-   IF_COL   x_size = DEF_WIDTH;
-   ELSE_ROW x_size = DEF_HEIGHT;
-   rc = NODE_resize (a_tab, a_type, a_ref, x_size);
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return rc;
-}
+char NODE_resize     (char a_index, char a_type, short a_ref, char a_size) { return NODE__resize (a_index, a_type, a_ref, a_size, 0, HIST_BEG); }
+
+char NODE_reset      (char a_index, char a_type, short a_ref) { return NODE__resize (a_index, a_type, a_ref, -1, 0, HIST_BEG); }
 
 char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
 NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
@@ -868,7 +926,7 @@ NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
    DEBUG_LOCS   yLOG_value   ("str2gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rc;
+      return rce;
    }
    DEBUG_LOCS   yLOG_complex ("coord"     , "%s, %2dt, %3dc, %4dr", a_label, x_tab, x_col, x_row);
    /*---(prepare)------------------------*/
@@ -878,7 +936,8 @@ NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
    IF_COL   x_ref = x_col;
    ELSE_ROW x_ref = x_row;
    for (x_off = 0; x_off < a_count; ++x_off) {
-      rc = NODE_resize (x_tab, a_type, x_ref + x_off, a_size);
+      if (x_off == 0)  rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, HIST_BEG);
+      else             rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, HIST_ADD);
       DEBUG_INPT  yLOG_value   ("risize"    , rc);
       --rce;  if (rc < 0) {
          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -891,34 +950,22 @@ NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
 }
 
 char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
-NODE_visual        (char a_tab, char a_type, short a_ref, char a_mode, char a_key)
+NODE_multikey      (char a_type, char a_key)
 {  /*---(design notes)-------------------*/
    /*  update all cells to new width, either a standard size, or a specific   */
    /*  value communicated as a negative number.                               */
    /*---(locals)-----------+-----------+-*/
+   int         b, xb, xe, yb, ye;
    int         x_size      = 0;
-   /*---(adjust)----------------------*/
-   x_size  = NODE_size (a_tab, a_type, a_ref);
-   if (a_key <   0) {
-      x_size                 = -(a_key);
-   } else {
-      switch (a_key) {
-      case  'm' : x_size     = 0;                           break;
-      case  'd' : x_size     = DEF_WIDTH;                   break;
-      case  'n' : x_size     = 8;                           break;
-      case  'N' : x_size     = 12;                          break;
-      case  'w' : x_size     = 20;                          break;
-      case  'W' : x_size     = 50;                          break;
-      case  'h' : x_size    -= 1;                           break;
-      case  'l' : x_size    += 1;                           break;
-      case  'H' : x_size     = ((x_size  / 5) * 5);         break;
-      case  'L' : x_size     = (((x_size  / 5) + 1) * 5);   break;
-      }
+   short       x_pos, x_beg, x_end;
+   /*---(get coordinates)-------------*/
+   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
+   IF_COL   { x_beg = xb; x_end = xe; }
+   ELSE_ROW { x_beg = yb; x_end = ye; }
+   for (x_pos = x_beg; x_pos <= x_end; ++x_pos) {
+      if (x_pos == x_beg)  NODE__resize (b, a_type, x_pos, 0, a_key, HIST_BEG);
+      else                 NODE__resize (b, a_type, x_pos, 0, a_key, HIST_ADD);
    }
-   /*---(set width)--------------------*/
-   NODE_resize  (a_tab, a_type, a_ref, x_size);
-   /*---(reset headers)---------------*/
-   yVIKEYS_map_refresh ();
    /*---(complete)---------------------------*/
    DEBUG_CELL  yLOG_exit   (__FUNCTION__);
    return 0;
@@ -932,7 +979,7 @@ NODE_visual        (char a_tab, char a_type, short a_ref, char a_mode, char a_ke
 static void  o___FREEZING________o () { return; }
 
 char         /*-> change the frozen cols -------------[ ------ [gc.430.323.31]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-NODE_freeze           (int a_tab, char a_type, int a_beg, int a_end)
+NODE_freeze           (int a_index, char a_type, int a_beg, int a_end)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -941,25 +988,25 @@ NODE_freeze           (int a_tab, char a_type, int a_beg, int a_end)
    int         x_temp      =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%3dt, %c, %3db, %3de", a_tab, a_type, a_beg, a_end);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%3dt, %c, %3db, %3de", a_index, a_type, a_beg, a_end);
    /*---(defense)------------------------*/
-   TAB_pointer (&x_tab, a_tab);
+   TAB_pointer (&x_tab, a_index);
    DEBUG_LOCS   yLOG_point   ("x_tab"     , x_tab);
    --rce;  if (x_tab == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(beginning)----------------------*/
-   IF_COL   x_valid = LEGAL_COL (a_tab, a_beg);
-   ELSE_ROW x_valid = LEGAL_ROW (a_tab, a_beg);
+   IF_COL   x_valid = LEGAL_COL (a_index, a_beg);
+   ELSE_ROW x_valid = LEGAL_ROW (a_index, a_beg);
    DEBUG_LOCS   yLOG_value   ("x_valid"   , x_valid);
    --rce;  if (!x_valid) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(ending)-------------------------*/
-   IF_COL   x_valid = LEGAL_COL (a_tab, a_end);
-   ELSE_ROW x_valid = LEGAL_ROW (a_tab, a_end);
+   IF_COL   x_valid = LEGAL_COL (a_index, a_end);
+   ELSE_ROW x_valid = LEGAL_ROW (a_index, a_end);
    DEBUG_LOCS   yLOG_value   ("x_valid"   , x_valid);
    --rce;  if (!x_valid) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -988,16 +1035,16 @@ NODE_freeze           (int a_tab, char a_type, int a_beg, int a_end)
 }
 
 char         /*-> clear the frozen cols --------------[ ------ [gc.320.112.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-NODE_unfreeze         (int a_tab, char a_type)
+NODE_unfreeze         (int a_index, char a_type)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    tTAB       *x_tab       = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%3dt, %c", a_tab, a_type);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%3dt, %c", a_index, a_type);
    /*---(defense)------------------------*/
-   TAB_pointer (&x_tab, a_tab);
+   TAB_pointer (&x_tab, a_index);
    DEBUG_LOCS   yLOG_point   ("x_tab"     , x_tab);
    --rce;  if (x_tab == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -1028,136 +1075,407 @@ static void  o___YPARSE__________o () { return; }
 char
 NODE_reader          (void)
 {
-   /*> /+---(locals)-----------+-----------+-+/                                       <* 
-    *> char        rce         =  -11;                                                <* 
-    *> char        rc          =    0;                                                <* 
-    *> char        x_verb      [LEN_LABEL];                                           <* 
-    *> char        x_label     [LEN_LABEL];                                           <* 
-    *> int         x_size      =    0;                                                <* 
-    *> int         x_count     =    0;                                                <* 
-    *> char        x_type      =  '-';                                                <* 
-    *> /+---(header)-------------------------+/                                       <* 
-    *> DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                      <* 
-    *> /+---(get verb)-----------------------+/                                       <* 
-    *> rc = yPARSE_popstr (x_verb);                                                   <* 
-    *> DEBUG_INPT   yLOG_value   ("pop verb"  , rc);                                  <* 
-    *> DEBUG_INPT   yLOG_info    ("x_verb"    , x_verb);                              <* 
-    *> --rce;  if (strcmp ("width", x_verb) != 0) {                                   <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> /+---(label)--------------------------+/                                       <* 
-    *> rc = yPARSE_popstr (x_label);                                                  <* 
-    *> DEBUG_INPT   yLOG_value   ("pop max"   , rc);                                  <* 
-    *> DEBUG_INPT   yLOG_info    ("max"       , x_label);                             <* 
-    *> /+---(size)---------------------------+/                                       <* 
-    *> rc = yPARSE_popint  (&x_size);                                                 <* 
-    *> DEBUG_INPT   yLOG_value   ("pop width" , rc);                                  <* 
-    *> DEBUG_INPT   yLOG_value   ("width"     , x_size);                              <* 
-    *> rc = yPARSE_popint  (&x_count);                                                <* 
-    *> DEBUG_INPT   yLOG_value   ("pop count" , rc);                                  <* 
-    *> DEBUG_INPT   yLOG_value   ("count"     , x_count);                             <* 
-    *> /+---(resize)-------------------------+/                                       <* 
-    *> rc = COL_resize (x_label, x_size, x_count);                                    <* 
-    *> DEBUG_INPT   yLOG_value   ("resize"    , rc);                                  <* 
-    *> if (rc < 0) {                                                                  <* 
-    *>    DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                               <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> /+---(complete)-----------------------+/                                       <* 
-    *> DEBUG_INPT  yLOG_exit    (__FUNCTION__);                                       <* 
-    *> return 1;                                                                      <*/
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -11;
+   char        rc          =    0;
+   char        x_verb      [LEN_LABEL];
+   char        x_label     [LEN_LABEL];
+   int         x_size      =    0;
+   int         x_count     =    0;
+   char        a_type      =  '-';
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(get verb)-----------------------*/
+   rc = yPARSE_popstr (x_verb);
+   DEBUG_INPT   yLOG_value   ("pop verb"  , rc);
+   DEBUG_INPT   yLOG_info    ("x_verb"    , x_verb);
+   --rce;  if (strcmp ("width" , x_verb) == 0)   a_type = IS_COL;
+   else if    (strcmp ("height", x_verb) == 0)   a_type = IS_ROW;
+   else {
+      DEBUG_INPT   yLOG_note    ("verb not understood");;
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(label)--------------------------*/
+   rc = yPARSE_popstr (x_label);
+   DEBUG_INPT   yLOG_value   ("pop max"   , rc);
+   DEBUG_INPT   yLOG_info    ("max"       , x_label);
+   /*---(size)---------------------------*/
+   rc = yPARSE_popint  (&x_size);
+   DEBUG_INPT   yLOG_value   ("pop width" , rc);
+   DEBUG_INPT   yLOG_value   ("width"     , x_size);
+   rc = yPARSE_popint  (&x_count);
+   DEBUG_INPT   yLOG_value   ("pop count" , rc);
+   DEBUG_INPT   yLOG_value   ("count"     , x_count);
+   /*---(resize)-------------------------*/
+   IF_COL   rc = COL_multisize (x_label, x_size, x_count);
+   ELSE_ROW rc = ROW_multisize (x_label, x_size, x_count);
+   DEBUG_INPT   yLOG_value   ("multisize" , rc);
+   if (rc < 0) {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT  yLOG_exit    (__FUNCTION__);
+   return 1;
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-NODE_writer              (int a_tab, int a_col)
+NODE_writer              (char a_type, tNODE *a_node, short n)
 {
-   /*> /+---(locals)-----------+-----------+-+/                                       <* 
-    *> char        rce         =  -10;                                                <* 
-    *> char        rc          =    0;                                                <* 
-    *> char        c           =    0;                                                <* 
-    *> int         x_max       =    0;                                                <* 
-    *> int         i           =    0;                                                <* 
-    *> int         x_def       =    0;                                                <* 
-    *> int         x_size      =    0;                                                <* 
-    *> int         x_prev      =    0;                                                <* 
-    *> char        x_label     [LEN_LABEL];                                           <* 
-    *> /+---(header)-------------------------+/                                       <* 
-    *> DEBUG_OUTP   yLOG_enter   (__FUNCTION__);                                      <* 
-    *> /+---(clear output)-------------------+/                                       <* 
-    *> yPARSE_outclear  ();                                                           <* 
-    *> /+---(prepare tab)--------------------+/                                       <* 
-    *> DEBUG_OUTP   yLOG_value   ("a_tab"     , a_tab);                               <* 
-    *> rc = LEGAL_TAB (a_tab);                                                        <* 
-    *> --rce; if (rc == 0) {                                                          <* 
-    *>    DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> rc = LEGAL_COL (a_tab, a_col);                                                 <* 
-    *> --rce;  if (rc == 0) {                                                         <* 
-    *>    DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> /+---(filter)----------------------+/                                          <* 
-    *> x_size = COL_width  (a_tab, a_col);                                            <* 
-    *> DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);                              <* 
-    *> /+---(check default)------------------+/                                       <* 
-    *> x_def  = TAB_colwide (a_tab);                                                  <* 
-    *> DEBUG_OUTP   yLOG_value   ("x_def"     , x_def);                               <* 
-    *> --rce;  if (x_size == x_def ) {                                                <* 
-    *>    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <* 
-    *> /+---(check prev)---------------------+/                                       <* 
-    *> if (a_col > 0)  x_prev = COL_width  (a_tab, a_col - 1);                        <* 
-    *> --rce;  if (x_size == x_prev) {                                                <* 
-    *>    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <* 
-    *> /+---(check repeats)---------------+/                                          <* 
-    *> x_max = COL_max (a_tab) - 1;                                                   <* 
-    *> DEBUG_OUTP   yLOG_value   ("x_max"     , x_max);                               <* 
-    *> c = 1;                                                                         <* 
-    *> for (i = a_col + 1; i <= x_max; ++i) {                                         <* 
-    *>    if (x_size != COL_width  (a_tab, i))  break;                                <* 
-    *>    ++c;                                                                        <* 
-    *> }                                                                              <* 
-    *> DEBUG_OUTP   yLOG_value   ("c"         , c);                                   <* 
-    *> /+---(write)-----------------------+/                                          <* 
-    *> rc = str4gyges (a_tab, a_col, 0, 0, 0, x_label, YSTR_USABLE);                   <* 
-    *> yPARSE_fullwrite ("width", x_label, x_size, c);                                <* 
-    *> /+---(complete)-----------------------+/                                       <* 
-    *> DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                       <* 
-    *> return c;                                                                      <*/
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        c           =    0;
+   int         x_max       =    0;
+   int         i           =    0;
+   int         x_size      =    0;
+   int         x_prev      =    0;
+   char        x_label     [LEN_LABEL];
+   char        x_verb      [LEN_LABEL];
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(clear output)-------------------*/
+   yPARSE_outclear  ();
+   /*---(verb)------------------------*/
+   IF_COL   strlcpy (x_verb, "width"   , LEN_LABEL);
+   ELSE_ROW strlcpy (x_verb, "height"  , LEN_LABEL);
+   DEBUG_OUTP   yLOG_info    ("x_verb"    , x_verb);
+   /*---(filter)----------------------*/
+   x_size = a_node->size;
+   DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
+   /*---(write)-----------------------*/
+   IF_COL   rc = str4gyges (a_node->tab, a_node->ref, 0, 0, 0, x_label, YSTR_USABLE);
+   ELSE_ROW rc = str4gyges (a_node->tab, 0, a_node->ref, 0, 0, x_label, YSTR_USABLE);
+   yPARSE_fullwrite (x_verb, x_label, x_size, n);
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return n;
 }
 
 char
-NODE_writer_all          (void)
+NODE_writer_driver       (char a_index, char a_type, short a_ref)
 {
-   /*> /+---(locals)-----------+-----------+-+/                                       <* 
-    *> char        rc          =    0;                                                <* 
-    *> int         x_ntab      =    0;                                                <* 
-    *> int         x_tab       =    0;                                                <* 
-    *> int         x_ncol      =    0;                                                <* 
-    *> int         x_col       =    0;                                                <* 
-    *> int         c           =    0;                                                <* 
-    *> /+---(walk)---------------------------+/                                       <* 
-    *> yPARSE_verb_begin ("width");                                                   <* 
-    *> x_ntab = TAB_max ();                                                           <* 
-    *> if (x_ntab > 35)  x_ntab = 35;                                                 <* 
-    *> for (x_tab = 0; x_tab <= x_ntab; ++x_tab) {                                    <* 
-    *>    if (!LEGAL_TAB (x_tab))    continue;                                        <* 
-    *>    x_ncol = COL_max (x_tab);                                                   <* 
-    *>    for (x_col = 0; x_col < x_ncol; ++x_col) {                                  <* 
-    *>       rc = COL_writer   (x_tab, x_col);                                        <* 
-    *>       if (rc <= 0)    continue;                                                <* 
-    *>       ++c;                                                                     <* 
-    *>       yPARSE_verb_break (c);                                                   <* 
-    *>    }                                                                           <* 
-    *> }                                                                              <* 
-    *> yPARSE_verb_end   (c);                                                         <* 
-    *> /+---(complete)-----------------------+/                                       <* 
-    *> return c;                                                                      <*/
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   char        rc2         =    0;
+   tTAB       *x_tab       = NULL;
+   char        x_ntab      =    0;
+   tNODE      *x_prev      = NULL;
+   tNODE      *x_node      = NULL;
+   tNODE      *x_save      = NULL;
+   short       n           =    0;
+   short       c           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   DEBUG_OUTP   yLOG_complex ("args"      , "%2dt, %c, %4d", a_index, a_type, a_ref);
+   /*---(verb)---------------------------*/
+   IF_COL   yPARSE_verb_begin ("width");
+   ELSE_ROW yPARSE_verb_begin ("height");
+   /*---(head)---------------------------*/
+   if (a_index >= 0)  rc = TAB_by_index  (&x_tab, a_index);
+   else               rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
+   DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
+   /*---(walk)---------------------------*/
+   while (x_tab != NULL && rc == 0 && x_ntab < 36) {
+      if (a_ref >= 0) {
+         rc = NODE_by_index  (&x_node, x_tab, a_type, a_ref);
+         x_prev == x_node;
+         rc2 = NODE_by_cursor (&x_prev, x_tab, a_type, '<');
+         if (x_prev != NULL)  DEBUG_OUTP   yLOG_complex ("prev"      , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_prev, x_prev->size, x_prev->ref, n, c);
+         if (rc2 == 0 && x_prev != NULL && x_prev != x_node && x_prev->ref + 1 == x_node->ref && x_prev->size == x_node->size) {
+            DEBUG_OUTP   yLOG_note    ("x_prev matches size, so record already written");
+            break;
+         }
+      }
+      else rc = NODE_by_cursor (&x_node, x_tab, a_type, '[');
+      if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->size, x_node->ref, n, c);
+      else                 DEBUG_OUTP   yLOG_note    ("col is null");
+      while (x_node != NULL && rc == 0) {
+         IF_DEFAULT {
+            DEBUG_OUTP   yLOG_note    ("default width, break out");
+            break;
+         }
+         x_save = x_node;
+         n      = 0;
+         while (x_node != NULL && rc == 0 && x_node->size == x_save->size && x_node->ref == x_save->ref + n) {
+            ++n;
+            rc = NODE_by_cursor (&x_node, x_tab, a_type, '>');
+            if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->size, x_node->ref, n, c);
+            else                 DEBUG_OUTP   yLOG_note    ("col is null");
+         }
+         NODE_writer (a_type, x_save, n);
+         ++c;
+         yPARSE_verb_break (c);
+         if (a_ref >= 0)  break;
+      }
+      if (a_index >= 0) break;
+      rc = TAB_by_cursor (&x_tab, &x_ntab, '>');
+      DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
+   }
+   if (c > 0)  yPARSE_verb_end   (c);
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return c;
+}
+
+char NODE_writer_one (char a_index, char a_type, short a_ref) { return NODE_writer_driver (a_index, a_type, a_ref); }
+char NODE_writer_all (char a_type) { return NODE_writer_driver (-1, a_type, -1); }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                     yvikeys mapper                           ----===*/
+/*====================------------------------------------====================*/
+static void  o___MAPPER__________o () { return; }
+
+char
+NODE_map_clear             (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tMAPPED    *x_map       = NULL;
+   int         i           =    0;
+   /*---(prepare)------------------------*/
+   IF_COL   x_map   = &g_xmap;
+   ELSE_ROW x_map   = &g_ymap;
+   /*---(clear)--------------------------*/
+   for (i= 0; i < LEN_HUGE; ++i)  x_map->map [i] =  YVIKEYS_EMPTY;
+   x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;
+   x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+NODE_map_mapper            (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tMAPPED    *x_map       = NULL;
+   tTAB       *x_tab       = NULL;
+   tNODE      *x_node      = NULL;
+   int         x_max       =    0;
+   int         x_ref       =    0;
+   int         x_pos       =    0;
+   char        x_size      =    0;
+   int         i           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(get tab)------------------------*/
+   rc = TAB_by_index (&x_tab, CTAB);
+   DEBUG_MAP    yLOG_complex ("tab"       , "%3drc, %-10.10p", rc, x_tab);
+   --rce;  if (rc < 0 || x_tab == NULL) {
+      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   IF_COL {
+      DEBUG_MAP    yLOG_note    ("COL means mapping across a column (x)");
+      x_map   = &g_xmap;
+      x_max   = NCOL;
+   } ELSE_ROW {
+      DEBUG_MAP    yLOG_note    ("ROW means mapping down a row (y)");
+      x_map   = &g_ymap;
+      x_max   = NROW;
+   }
+   DEBUG_MAP    yLOG_complex ("map"       , "%-10.10p, max %4d", x_map, x_max);
+   /*---(big mins)--------------------*/
+   x_map->umin = 0;
+   x_map->gmin = 0;
+   /*---(fill main map)------------------*/
+   rc = NODE_by_cursor (&x_node, x_tab, a_type, '[');
+   for (x_ref = 0; x_ref <= x_max; ++x_ref) {
+      /*---(get size)----------*/
+      if (rc != 0 || x_node == NULL) {
+         IF_COL   x_size = DEF_WIDTH;
+         ELSE_ROW x_size = DEF_HEIGHT;
+      } else {
+         if (x_ref < x_node->ref) {
+            IF_COL   x_size = DEF_WIDTH;
+            ELSE_ROW x_size = DEF_HEIGHT;
+         } else {
+            x_size = x_node->size;
+            rc = NODE_by_cursor (&x_node, x_tab, a_type, '>');
+         }
+      }
+      /*---(fill)--------------*/
+      for (i = 0; i < x_size; ++i)  x_map->map  [x_pos++] = x_ref;
+   }
+   /*---(big maxs)--------------------*/
+   x_map->gmax = x_max;
+   x_map->umax = x_pos - 1;
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+NODE_map_display           (char a_type, char a_section, uchar *a_out)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tMAPPED    *x_map       = NULL;
+   char        i           =    0;
+   char        x_off       =    0;
+   char       *x_markers   = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   char        x_max       =   80;
+   /*---(prepare)------------------------*/
+   IF_COL   x_map   = &g_xmap;
+   ELSE_ROW x_map   = &g_ymap;
+   /*---(break out)----------------------*/
+   x_off = a_section * x_max;
+   for (i = 0; i < x_max; ++i) {
+      if (x_map->map [i + x_off] == YVIKEYS_EMPTY)
+         a_out [i] = '·';
+      else if (i > 0 && x_map->map [i + x_off] == x_map->map [i + x_off - 1])
+         a_out [i] = '-';
+      else if (x_map->map [i + x_off] < 62)
+         a_out [i] = x_markers [x_map->map [i + x_off]];
+      else
+         a_out [i] = '¬';
+   }
+   a_out [x_max] = '\0';
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+NODE_map_absolute          (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tMAPPED    *x_map       = NULL;
+   tTAB       *x_tab       = NULL;
+   tNODE      *x_node      = NULL;
+   char        x_min       =   -1;
+   char        x_max       =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(default)------------------------*/
+   IF_COL   x_map   = &g_xmap;
+   ELSE_ROW x_map   = &g_ymap;
+   x_map->gamin = -1;
+   x_map->gamax = -1;
+   /*---(get tab)------------------------*/
+   rc = TAB_by_index (&x_tab, CTAB);
+   DEBUG_MAP    yLOG_complex ("tab"       , "%3drc, %-10.10p", rc, x_tab);
+   --rce;  if (rc < 0 || x_tab == NULL) {
+      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(find min)-----------------------*/
+   rc = NODE_by_cursor (&x_node, x_tab, a_type, '[');
+   while (rc == 0 && x_node != NULL) {
+      if (x_node->count > 0) {
+         x_min = x_node->ref;
+         break;
+      }
+      rc = NODE_by_cursor (&x_node, x_tab, a_type, '>');
+   }
+   /*---(find max)-----------------------*/
+   rc = NODE_by_cursor (&x_node, x_tab, a_type, ']');
+   while (rc == 0 && x_node != NULL) {
+      if (x_node->count > 0)  {
+         x_max = x_node->ref;
+         break;
+      }
+      rc = NODE_by_cursor (&x_node, x_tab, a_type, '<');
+   }
+   /*---(update)-------------------------*/
+   x_map->gamin = x_min;
+   x_map->gamax = x_max;
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+NODE_map_local             (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tMAPPED    *x_map       = NULL;
+   tTAB       *x_tab       = NULL;
+   tNODE      *x_node      = NULL;
+   tCELL      *x_cell      = NULL;
+   char        x_type      =  '-';
+   int         x_curr      =    0;
+   int         x_opps      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(default)------------------------*/
+   IF_COL   x_map   = &g_xmap;
+   ELSE_ROW x_map   = &g_ymap;
+   x_map->glmin = -1;
+   x_map->gprev = -1;
+   x_map->gnext = -1;
+   x_map->glmax = -1;
+   /*---(get tab)------------------------*/
+   rc = TAB_by_index (&x_tab, CTAB);
+   DEBUG_MAP    yLOG_complex ("tab"       , "%3drc, %-10.10p", rc, x_tab);
+   --rce;  if (rc != 0 || x_tab == NULL) {
+      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   IF_COL   { x_type = IS_ROW; x_curr = g_xmap.gcur; x_opps = g_ymap.gcur; }
+   ELSE_ROW { x_type = IS_COL; x_curr = g_ymap.gcur; x_opps = g_xmap.gcur; }
+   DEBUG_MAP    yLOG_complex ("biggs"     , "%c, x_curr %4d, x_opps %4d", x_type, x_curr, x_opps);
+   /*---(find the opposite node)---------*/
+   rc = NODE_by_index (&x_node, x_tab, x_type, x_opps);
+   DEBUG_MAP    yLOG_complex ("node"      , "%3drc, %-10.10p", rc, x_node);
+   --rce;  if (rc != 0 || x_node == NULL) {
+      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   DEBUG_MAP    yLOG_complex ("node more" , "%c %4d %4d", x_node->type, x_node->ref, x_node->count);
+   /*---(walk the cells)-----------------*/
+   x_cell = x_node->n_head;
+   DEBUG_MAP    yLOG_point   ("head"      , x_cell);
+   while (rc == 0 && x_cell != NULL) {
+      DEBUG_MAP    yLOG_complex ("coord"     , "%2dt, %3dc, %4dr", x_cell->tab, x_cell->col, x_cell->row);
+      /*---(min)---------------*/
+      if (x_map->glmin < 0) {
+         IF_COL   x_map->glmin = x_cell->col;
+         ELSE_ROW x_map->glmin = x_cell->row;
+      }
+      /*---(max)---------------*/
+      IF_COL   x_map->glmax = x_cell->col;
+      ELSE_ROW x_map->glmax = x_cell->row;
+      /*---(prev)--------------*/
+      IF_COL   { if (x_cell->col < x_curr)  x_map->gprev = x_cell->col; }
+      ELSE_ROW { if (x_cell->row < x_curr)  x_map->gprev = x_cell->row; }
+      /*---(next)--------------*/
+      IF_COL   { if (x_cell->col > x_curr && x_map->gnext < 0) x_map->gnext = x_cell->col; }
+      ELSE_ROW { if (x_cell->row > x_curr && x_map->gnext < 0) x_map->gnext = x_cell->row; }
+      /*---(done)--------------*/
+      IF_COL   x_cell = x_cell->r_next;
+      ELSE_ROW x_cell = x_cell->c_next;
+      DEBUG_MAP    yLOG_point   ("x_cell"    , x_cell);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+char
+NODE_map_update            (char a_type)
+{
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(clear)--------------------------*/
+   NODE_map_clear    (a_type);
+   NODE_map_mapper   (a_type);
+   NODE_map_absolute (a_type);
+   NODE_map_local    (a_type);
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 
@@ -1187,11 +1505,14 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
    tTAB       *x_tsave     = NULL;
    tNODE      *x_nsave     = NULL;
    char        x_label     [LEN_LABEL] = "";
+   tMAPPED    *x_map       = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(parse location)-----------------*/
    IF_COL   strlcpy (x_pre, "COL", LEN_TERSE);
    ELSE_ROW strlcpy (x_pre, "ROW", LEN_TERSE);
+   IF_COL   x_map   = &g_xmap;
+   ELSE_ROW x_map   = &g_ymap;
    x_tsave = s_tab;
    x_nsave = s_curr;
    DEBUG_LOCS   yLOG_complex ("before"    , "s_tab %-10.10p, s_curr %-10.10p", s_tab, s_curr);
@@ -1240,6 +1561,17 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
          }
       }
    }
+   else if (strcmp (a_question, "map"           ) == 0) {
+      NODE_map_display (a_type, a_ref, t);
+      snprintf(unit_answer, LEN_FULL, "%-3.3s map     (%2d) : %s", x_pre, a_ref, t);
+   }
+   else if (strcmp (a_question, "abs"           ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "%-3.3s abs          : umin  %5d, gmin  %5d, gamin %5d      gamax %5d, gmax  %5d, umax  %5d", x_pre, x_map->umin, x_map->gmin, x_map->gamin, x_map->gamax, x_map->gmax, x_map->umax);
+   }
+   else if (strcmp (a_question, "local"         ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "%-3.3s local        : glmin %5d, gprev %5d                                gnext %5d, glmax %5d", x_pre, x_map->glmin, x_map->gprev, x_map->gnext, x_map->glmax);
+   }
+   /*---(wrap-up)------------------------*/
    s_tab  = x_tsave;
    s_curr = x_nsave;
    DEBUG_LOCS   yLOG_complex ("after"     , "s_tab %-10.10p, s_curr %-10.10p", s_tab, s_curr);

@@ -425,7 +425,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    x_owner  = (tCELL *) a_owner;
    DEBUG_APIS   yLOG_value   ("tab"       , x_owner->tab);
    DEBUG_APIS   yLOG_value   ("col"       , x_owner->col);
-   w        = COL_width (x_owner->tab, x_owner->col);
+   w        = COL_size (x_owner->tab, x_owner->col);
    DEBUG_APIS   yLOG_value   ("w"         , w);
    *a_width = w;
    *a_merge = 0;
@@ -446,7 +446,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
       if (rc < 0)                              break;
       if (x_owner == NULL)                     break;
       if (x_owner->type != YCALC_DATA_MERGED)     break;
-      w         = COL_width (x_owner->tab, x_owner->col);
+      w         = COL_size (x_owner->tab, x_owner->col);
       DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_label, b, i, y, z, w);
       *a_width += w;
       ++(*a_merge);

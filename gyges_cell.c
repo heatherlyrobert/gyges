@@ -923,6 +923,17 @@ CELL_visual        (char a_what, char a_mode, char a_how)
    DEBUG_CELL    yLOG_char   ("a_what"    , a_what);
    DEBUG_CELL    yLOG_char   ("a_mode"    , a_mode);
    DEBUG_CELL    yLOG_char   ("a_how"     , a_how);
+   /*---(check for sizing)---------------*/
+   if (a_what == CHANGE_WIDTH) {
+      rc = COL_multikey (a_how);
+      DEBUG_CELL    yLOG_exit   (__FUNCTION__);
+      return 0;
+   }
+   if (a_what == CHANGE_HEIGHT) {
+      rc = ROW_multikey (a_how);
+      DEBUG_CELL    yLOG_exit   (__FUNCTION__);
+      return 0;
+   }
    /*---(get first)----------------------*/
    rc       = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
    DEBUG_CELL    yLOG_value  ("rc"        , rc);
@@ -934,20 +945,8 @@ CELL_visual        (char a_what, char a_mode, char a_how)
    /*---(process range)------------------*/
    while (rc >= 0) {
       ++x_total;
-      /*---(widths)----------------------*/
-      if (x_top  == x_row && a_what == CHANGE_WIDTH) {
-         rc = COL_visual (x_tab, x_col, x_row, a_mode, a_how);
-         DEBUG_CELL   yLOG_value  ("width"     , rc);
-         if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
-      }
-      /*---(heights)---------------------*/
-      /*> else if (x_left == x_col && a_what == CHANGE_HEIGHT) {                      <* 
-       *>    rc = ROW_visual (x_tab, x_col, x_row, a_mode, a_how);                    <* 
-       *>    DEBUG_CELL   yLOG_value  ("height"    , rc);                             <* 
-       *>    if (a_mode == HIST_BEG)  a_mode = HIST_ADD;                              <* 
-       *> }                                                                           <*/
       /*---(cell-specific)---------------*/
-      else if (x_next != NULL) {
+      if (x_next != NULL) {
          DEBUG_CELL   yLOG_note   ("cell exists");
          ++x_handle;
          switch (a_what) {
@@ -1282,7 +1281,7 @@ CELL__unitnew      (char *a_question, char *a_label)
    /*---(cell contents)------------------*/
    if (strcmp(a_question, "info"     )      == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln info     : --- --- --- --- --- --- ----- -----");
-      else                             snprintf(unit_answer, LEN_FULL, "s_celln info     : t=%c a=%c f=%c d=%c u=%c 5=%c w=%3d h=%3d", x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, '-', COL_width (x_cell->tab, x_cell->col), ROW_height (x_cell->tab, x_cell->row));
+      else                             snprintf(unit_answer, LEN_FULL, "s_celln info     : t=%c a=%c f=%c d=%c u=%c 5=%c w=%3d h=%3d", x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, '-', COL_size (x_cell->tab, x_cell->col), ROW_size (x_cell->tab, x_cell->row));
    }
    else if   (strcmp(a_question, "source"     )    == 0) {
       if      (x_cell        == NULL)  snprintf(unit_answer, LEN_FULL, "s_celln source   : (----) ::");

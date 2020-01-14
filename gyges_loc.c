@@ -74,8 +74,8 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
    char        rce         =  -10;
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
-   tTAB       *x_tab       = NULL;
    tCELL      *x_curr      = NULL;
+   tTAB       *x_tab       = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_complex ("args"      , "cell %-10.10p, %2dt, %3dc, %4dr", a_cell, a_tab, a_col, a_row);
@@ -295,12 +295,12 @@ loc__checker_adapt      (int a_tab, int a_col, int a_row)
     *> }                                                                                    <* 
     *> /+---(col)-------------------------+/                                                <* 
     *> if (a_col >= COL_max (a_tab)) {                                                      <* 
-    *>    COL_setmax (a_tab, a_col + 1);                                                    <* 
+    *>    COL_max_set (a_tab, a_col + 1);                                                    <* 
     *>    DEBUG_LOCS     yLOG_value   ("col max"   , COL_max (a_tab));                      <* 
     *> }                                                                                    <* 
     *> /+---(row)-------------------------+/                                                <* 
     *> if (a_row >= ROW_max (a_tab)) {                                                      <* 
-    *>    ROW_setmax (a_tab, a_row + 1);                                                    <* 
+    *>    ROW_max_set (a_tab, a_row + 1);                                                    <* 
     *>    DEBUG_LOCS     yLOG_value   ("row max"   , ROW_max (a_tab));                      <* 
     *> }                                                                                    <* 
     *> /+---(done)------------------------+/                                                <* 
@@ -323,14 +323,14 @@ loc__checker_exact      (int a_tab, int a_col, int a_row)
     *>    DEBUG_LOCS     yLOG_value   ("tab max"   , TAB_max ());                      <* 
     *> }                                                                               <* 
     *> /+---(col)-------------------------+/                                           <* 
-    *> x_max = COL_maxused (a_tab);                                                    <* 
+    *> x_max = COL_max_used (a_tab);                                                    <* 
     *> if (a_col < x_max)  a_col = x_max;                                              <* 
-    *> COL_setmax (a_tab, a_col + 1);                                                  <* 
+    *> COL_max_set (a_tab, a_col + 1);                                                  <* 
     *> DEBUG_LOCS     yLOG_value   ("col max"   , COL_max (a_tab));                    <* 
     *> /+---(row)-------------------------+/                                           <* 
-    *> x_max = ROW_maxused (a_tab);                                                    <* 
+    *> x_max = ROW_max_used (a_tab);                                                    <* 
     *> if (a_row < x_max)  a_row = x_max;                                              <* 
-    *> ROW_setmax (a_tab, a_row + 1);                                                  <* 
+    *> ROW_max_set (a_tab, a_row + 1);                                                  <* 
     *> DEBUG_LOCS     yLOG_value   ("row max"   , ROW_max (a_tab));                    <* 
     *> /+---(done)------------------------+/                                           <* 
     *> DEBUG_LOCS     yLOG_exit    (__FUNCTION__);                                     <* 
