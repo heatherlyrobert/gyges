@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5e"
-#define     P_VERTXT    "columns and rows are fully dynamic, unit tested, and mapping works"
+#define     P_VERNUM    "3.5f"
+#define     P_VERTXT    "tabs are fully dynamic, unit tested, but no mapping yet"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1406,9 +1406,9 @@ short       NODE_used               (char a_index, char a_type, short a_ref);
 short       NODE_min_used           (char a_index, char a_type);
 short       NODE_max_used           (char a_index, char a_type);
 short       NODE_max                (char a_index, char a_type);
-char        NODE__max_set           (char a_index, char a_type, short a_max);
-char        NODE_max_set            (char a_index, char a_type, short a_max);
-char        NODE_max_adjust         (char a_index, char a_type);
+short       NODE__max_set           (char a_index, char a_type, short a_max);
+short       NODE_max_set            (char a_index, char a_type, short a_max);
+short       NODE_max_adjust         (char a_index, char a_type);
 /*---(sizing)-------------------------*/
 char        NODE_size               (char a_tab, char a_type, short a_ref);
 char        NODE_resize             (char a_tab, char a_type, short a_ref, char a_size);
@@ -1451,8 +1451,8 @@ short       COL_used                (char a_index, short a_ref);
 short       COL_min_used            (char a_index);
 short       COL_max_used            (char a_index);
 short       COL_max                 (char a_index);
-char        COL_max_set             (char a_index, short a_max);
-char        COL_max_adjust          (char a_index);
+short       COL_max_set             (char a_index, short a_max);
+short       COL_max_adjust          (char a_index);
 /*---(program)------------------------*/
 char        COL_cleanse             (tTAB *a_tab);
 char        COL_cleanse_curr        (void);
@@ -1497,8 +1497,8 @@ short       ROW_used                (char a_index, short a_ref);
 short       ROW_min_used            (char a_index);
 short       ROW_max_used            (char a_index);
 short       ROW_max                 (char a_index);
-char        ROW_max_set             (char a_index, short a_max);
-char        ROW_max_adjust          (char a_index);
+short       ROW_max_set             (char a_index, short a_max);
+short       ROW_max_adjust          (char a_index);
 /*---(program)------------------------*/
 char        ROW_cleanse             (tTAB *a_tab);
 char        ROW_cleanse_curr        (void);

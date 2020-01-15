@@ -51,9 +51,9 @@ short ROW_max_used   (char a_index) { return NODE_max_used        (a_index, IS_R
 
 short ROW_max        (char a_index) { return NODE_max             (a_index, IS_ROW); }
 
-char  ROW_max_set    (char a_index, short a_max) { return NODE_max_set         (a_index, IS_ROW, a_max); }
+short ROW_max_set    (char a_index, short a_max) { return NODE_max_set         (a_index, IS_ROW, a_max); }
 
-char  ROW_max_adjust (char a_index) { return NODE_max_adjust      (a_index, IS_ROW); }
+short ROW_max_adjust (char a_index) { return NODE_max_adjust      (a_index, IS_ROW); }
 
 
 

@@ -709,7 +709,8 @@ TAB_init                (void)
    /*---(add status options)-------------*/
    rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
    /*---(add yparse specification)-------*/
-   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
+   /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );   <*/
+   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLc---------", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
    /*---(complete)-----------------------*/
    return rc;
 }
@@ -1096,8 +1097,11 @@ TAB_line           (char a_index, char *a_list)
    char        rc          =    0;
    uchar       x_abbr      =  '0';
    tTAB       *x_tab       = NULL;
-   char        x_size      [LEN_LABEL] = "";
+   char        x_beg       [LEN_LABEL] = "";
    char        x_cur       [LEN_LABEL] = "";
+   char        x_end       [LEN_LABEL] = "";
+   char        x_siz       [LEN_LABEL] = "";
+   char        x_min       [LEN_LABEL] = "";
    char        x_max       [LEN_LABEL] = "";
    char        x_count     [LEN_LABEL] = "";
    /*---(beginning)----------------------*/
@@ -1109,29 +1113,33 @@ TAB_line           (char a_index, char *a_list)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (!TAB_legal (a_index)) {
+   --rce;  if (!VALID_tab (a_index)) {
+      snprintf (a_list, LEN_FULL, "- -  -            -  -       -       -       -       -       -         -c   -r   -n");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
+   }
+   x_abbr = LABEL_tab (a_index);
+   /*---(handle empties)--------------*/
+   if (!TAB_legal (a_index)) {
+      snprintf (a_list, LEN_FULL, "%c -  -            -  -       -       -       -       -       -         -c   -r   -n", x_abbr);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
    }
    rc = TAB_by_index (&x_tab, a_index);
    --rce;  if (x_tab  == NULL) {
+      snprintf (a_list, LEN_FULL, "%c -  -            -  -       -       -       -       -       -         -c   -r   -n", x_abbr);
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(convert tab)-----------------*/
-   x_abbr = LABEL_tab (a_index);
    /*---(generate stats)--------------*/
-   sprintf (x_size, "%dx%d", x_tab->ncol, x_tab->nrow);
-   rc = str4gyges  (a_index, x_tab->ccol, x_tab->crow, 0, 0, x_cur, YSTR_CHECK);
-   rc = str4gyges  (a_index, x_tab->ncol, x_tab->nrow, 0, 0, x_max, YSTR_CHECK);
-   if      (x_tab->count ==   0)  sprintf (x_count, "  -");
-   else if (x_tab->count <  999)  sprintf (x_count, "%3d", x_tab->count);
-   else                           sprintf (x_count, "+++");
+   str4gyges  (s_curr->tab, s_curr->bcol, s_curr->brow, 0, 0, x_beg, YSTR_USABLE);
+   str4gyges  (s_curr->tab, s_curr->ccol, s_curr->crow, 0, 0, x_cur, YSTR_USABLE);
+   str4gyges  (s_curr->tab, s_curr->ecol, s_curr->erow, 0, 0, x_end, YSTR_USABLE);
+   str4gyges  (s_curr->tab, s_curr->ncol, s_curr->nrow, 0, 0, x_siz, YSTR_USABLE);
+   str4gyges  (s_curr->tab, COL_min_used (s_curr->tab), ROW_min_used (s_curr->tab), 0, 0, x_min, YSTR_USABLE);
+   str4gyges  (s_curr->tab, COL_max_used (s_curr->tab), ROW_max_used (s_curr->tab), 0, 0, x_max, YSTR_USABLE);
    /*---(finish)----------------------*/
-   snprintf (a_list, LEN_FULL, "%c %-12.12s %-10.10s %3s %c %-8.8s %-8.8s %2d %2d",
-         x_tab, x_tab->name, x_size, x_count,
-         x_tab->type, x_cur, x_max,
-         TAB_colwide (a_index), TAB_rowtall (a_index));
+   snprintf (a_list, LEN_FULL, "%c %-2d %-12.12s %c  %-7.7s %-7.7s %-7.7s %-7.7s %-7.7s %-7.7s %3dc %3dr %3dn", x_tab->abbr, x_tab->tab, x_tab->name, x_tab->type, x_min, x_beg, x_cur, x_end, x_max, x_siz, x_tab->C_count, x_tab->R_count, x_tab->count);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1147,11 +1155,6 @@ TAB_status         (char a_index, char *a_list)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(get info)--------------------*/
    rc = TAB_line (a_index, t);
-   if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rc);
-      return rc;
-   }
-   /*---(generate stats)--------------*/
    sprintf (a_list, "buffer  %s", t);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -1201,15 +1204,15 @@ TAB_reader           (void)
       return rce;
    }
    /*---(min)----------------------------*/
-   rc = yPARSE_popstr (x_label);
-   DEBUG_INPT   yLOG_value   ("pop min"   , rc);
-   DEBUG_INPT   yLOG_info    ("min"       , x_label);
-   rc = str2gyges (x_label, NULL, NULL, NULL, NULL, NULL, 0, YSTR_ADAPT);
-   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   /*> rc = yPARSE_popstr (x_label);                                                  <* 
+    *> DEBUG_INPT   yLOG_value   ("pop min"   , rc);                                  <* 
+    *> DEBUG_INPT   yLOG_info    ("min"       , x_label);                             <* 
+    *> rc = str2gyges (x_label, NULL, NULL, NULL, NULL, NULL, 0, YSTR_ADAPT);         <* 
+    *> DEBUG_INPT   yLOG_value   ("str2gyges" , rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(max)----------------------------*/
    rc = yPARSE_popstr (x_label);
    DEBUG_INPT   yLOG_value   ("pop max"   , rc);
@@ -1222,32 +1225,32 @@ TAB_reader           (void)
    }
    DEBUG_INPT   yLOG_value   ("tab"       , x_tab);
    /*---(switch to tab)------------------*/
-   rc = TAB_switch (x_tab);
-   DEBUG_INPT   yLOG_value   ("TAB_switch", rc);
+   rc = TAB_new_in_abbr (LABEL_tab (x_tab), x_name, x_label);
+   DEBUG_INPT   yLOG_value   ("TAB_new"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(update tab)---------------------*/
-   rc = TAB_rename (x_tab, x_name);
-   DEBUG_INPT   yLOG_value   ("TAB_rename", rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   rc = TAB_resize (x_tab, x_label);
-   DEBUG_INPT   yLOG_value   ("TAB_resize", rc);
-   --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   /*> rc = TAB_rename (x_tab, x_name);                                               <* 
+    *> DEBUG_INPT   yLOG_value   ("TAB_rename", rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <* 
+    *> rc = TAB_resize (x_tab, x_label);                                              <* 
+    *> DEBUG_INPT   yLOG_value   ("TAB_resize", rc);                                  <* 
+    *> --rce;  if (rc < 0) {                                                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(default sizes)------------------*/
-   rc = yPARSE_popint  (&x_size);
-   DEBUG_INPT   yLOG_value   ("pop col"   , rc);
-   rc = yPARSE_popint  (&x_size);
-   DEBUG_INPT   yLOG_value   ("pop row"   , rc);
-   rc = yPARSE_popint  (&x_size);
-   DEBUG_INPT   yLOG_value   ("pop depth" , rc);
+   /*> rc = yPARSE_popint  (&x_size);                                                 <* 
+    *> DEBUG_INPT   yLOG_value   ("pop col"   , rc);                                  <* 
+    *> rc = yPARSE_popint  (&x_size);                                                 <* 
+    *> DEBUG_INPT   yLOG_value   ("pop row"   , rc);                                  <* 
+    *> rc = yPARSE_popint  (&x_size);                                                 <* 
+    *> DEBUG_INPT   yLOG_value   ("pop depth" , rc);                                  <*/
    /*---(type)---------------------------*/
    rc = yPARSE_popchar (&x_type);
    DEBUG_INPT   yLOG_value   ("pop type"  , rc);
@@ -1279,19 +1282,20 @@ TAB_writer            (char a_tab)
    /*---(prepare)------------------------*/
    yPARSE_outclear  ();
    /*---(defense)------------------------*/
-   if (VALID_tab (a_tab) == 0)  return -1;
-   if (TAB_used  (a_tab) <= 0)  return  0;
+   if (TAB_used  (a_tab) < 0)  return  0;
+   if (a_tab >= 36)            return  0;
    /*---(prepare)------------------------*/
    TAB_name    (a_tab, x_name);
-   x_cols = COL_max  (a_tab) - 1;
-   x_rows = ROW_max  (a_tab) - 1;
-   x_wide = TAB_colwide (a_tab);
-   x_tall = TAB_rowtall (a_tab);
+   /*> x_cols = COL_max  (a_tab) - 1;                                                 <* 
+    *> x_rows = ROW_max  (a_tab) - 1;                                                 <* 
+    *> x_wide = TAB_colwide (a_tab);                                                  <* 
+    *> x_tall = TAB_rowtall (a_tab);                                                  <*/
    x_type = TAB_type (a_tab);
-   str4gyges (a_tab , 0     , 0    , 0, 0, x_min, YSTR_USABLE);
-   str4gyges (a_tab, x_cols, x_rows, 0, 0, x_max, YSTR_USABLE);
+   /*> str4gyges (a_tab , 0     , 0    , 0, 0, x_min, YSTR_USABLE);                   <*/
+   str4gyges (a_tab, COL_max (a_tab), ROW_max (a_tab), 0, 0, x_max, YSTR_USABLE);
    /*---(write)--------------------------*/
-   rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);
+   /*> rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);   <*/
+   rc = yPARSE_fullwrite ("tab", x_name, x_max, x_type);
    if (rc < 0)   return rc;
    /*---(complete)-----------------------*/
    return 1;

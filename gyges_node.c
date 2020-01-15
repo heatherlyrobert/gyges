@@ -691,7 +691,7 @@ NODE_max             (char a_index, char a_type)
    return x_max;
 }
 
-char
+short
 NODE__max_set           (char a_index, char a_type, short a_max)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -710,10 +710,12 @@ NODE__max_set           (char a_index, char a_type, short a_max)
    }
    /*---(find max)-----------------------*/
    x_max = NODE_max_used (a_index, a_type);
-   --rce;  if (x_max < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   if (x_max < 0)  x_max = 0;
+   DEBUG_LOCS   yLOG_value   ("x_max"     , x_max);
+   /*> --rce;  if (x_max < 0) {                                                       <* 
+    *>    DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    /*---(convert to pointer)-------------*/
    TAB_pointer (&x_tab, a_index);
    DEBUG_LOCS   yLOG_point   ("x_tab"     , x_tab);
@@ -726,6 +728,7 @@ NODE__max_set           (char a_index, char a_type, short a_max)
       IF_COL   a_max = (trunc (x_max /  26) + 1) *  26 - 1;
       ELSE_ROW a_max = (trunc (x_max / 100) + 1) * 100 - 1;
    }
+   DEBUG_LOCS   yLOG_value   ("a_max"     , a_max);
    /*---(check usage)--------------------*/
    if (a_max < x_max)  a_max = x_max;
    /*---(check limits)-------------------*/
@@ -737,16 +740,16 @@ NODE__max_set           (char a_index, char a_type, short a_max)
    ELSE_ROW x_tab->nrow = a_max;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return a_max;
 }
 
-char
+short
 NODE_max_set            (char a_index, char a_type, short a_max)
 {
    return NODE__max_set (a_index, a_type, a_max);
 }
 
-char
+short
 NODE_max_adjust         (char a_index, char a_type)
 {
    return NODE__max_set (a_index, a_type, -1);

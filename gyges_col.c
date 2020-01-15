@@ -51,9 +51,9 @@ short COL_max_used   (char a_index)              { return NODE_max_used   (a_ind
 
 short COL_max        (char a_index)              { return NODE_max        (a_index, IS_COL); }
 
-char  COL_max_set    (char a_index, short a_max) { return NODE_max_set    (a_index, IS_COL, a_max); }
+short COL_max_set    (char a_index, short a_max) { return NODE_max_set    (a_index, IS_COL, a_max); }
 
-char  COL_max_adjust (char a_index)              { return NODE_max_adjust (a_index, IS_COL); }
+short COL_max_adjust (char a_index)              { return NODE_max_adjust (a_index, IS_COL); }
 
 
 
