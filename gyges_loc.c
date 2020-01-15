@@ -936,31 +936,31 @@ LOC__unit          (char *a_question, char *a_label)
    /*> DEBUG_LOCS   yLOG_complex  ("row"       , "%3db, %3de, %3dc, %3dn", s_tabs [x_tab].brow, s_tabs [x_tab].erow, s_tabs [x_tab].crow, s_tabs [x_tab].nrow - 1);   <*/
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "LOC              : locations could not be prepared");
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, 0, x_beg, YSTR_CHECK);
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, 0, x_end, YSTR_CHECK);
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, 0, x_cur, YSTR_CHECK);
-   if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);
-   if (rc <  0)  return unit_answer;
+   /*> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, 0, x_beg, YSTR_CHECK);           <* 
+    *> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, 0, x_end, YSTR_CHECK);           <* 
+    *> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, 0, x_cur, YSTR_CHECK);           <* 
+    *> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);   <* 
+    *> if (rc <  0)  return unit_answer;                                                                                   <*/
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "LOC              : question not understood");
-   if      (strcmp(a_question, "tab_info"      ) == 0) {
-      snprintf(unit_answer, LEN_FULL, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].count);
-   }
-   else if (strcmp(a_question, "cell_size"     ) == 0) {
-      snprintf(unit_answer, LEN_FULL, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);
-   }
-   else if (strcmp(a_question, "loc_who"       )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "LOC occupant/who : ptr=%10p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);
-   }
-   else if (strcmp(a_question, "loc_col"       )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "LOC col stats    : tab=%4d, col=%4d, width =%4d, used=%4d", x_tab, x_col, s_tabs[x_tab].cols[x_col].w, s_tabs[x_tab].cols[x_col].c);
-   }
-   else if (strcmp(a_question, "loc_row"       )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);
-   }
-   else if (strcmp(a_question, "tab_def"       )  == 0) {
-      snprintf (unit_answer, LEN_FULL, "LOC tab defaults : col=%2d, row=%2d", DEF_WIDTH, DEF_HEIGHT);
-   }
+   /*> if      (strcmp(a_question, "tab_info"      ) == 0) {                                                                                                                                <* 
+    *>    snprintf(unit_answer, LEN_FULL, "LOC tab info (%c) : %-12.12s %-7.7s %-7.7s %-7.7s %-7.7s %d", x_label, s_tabs [x_tab].name, x_beg, x_end, x_cur, x_max, s_tabs [x_tab].count);   <* 
+    *> }                                                                                                                                                                                    <*/
+   /*> else if (strcmp(a_question, "cell_size"     ) == 0) {                                                                                           <* 
+    *>    snprintf(unit_answer, LEN_FULL, "LOC cell size    : width=%3d, height=%3d", s_tabs [x_tab].cols [x_col].w, s_tabs [x_tab].rows [x_row].h);   <* 
+    *> }                                                                                                                                               <*/
+   /*> else if (strcmp(a_question, "loc_who"       )  == 0) {                                                                                                     <* 
+    *>    snprintf (unit_answer, LEN_FULL, "LOC occupant/who : ptr=%10p, tab=%4d, col=%4d, row=%4d", s_tabs [x_tab].sheet [x_col][x_row], x_tab, x_col, x_row);   <* 
+    *> }                                                                                                                                                          <*/
+   /*> else if (strcmp(a_question, "loc_col"       )  == 0) {                                                                                                                      <* 
+    *>    snprintf (unit_answer, LEN_FULL, "LOC col stats    : tab=%4d, col=%4d, width =%4d, used=%4d", x_tab, x_col, s_tabs[x_tab].cols[x_col].w, s_tabs[x_tab].cols[x_col].c);   <* 
+    *> }                                                                                                                                                                           <*/
+   /*> else if (strcmp(a_question, "loc_row"       )  == 0) {                                                                                                                      <* 
+    *>    snprintf (unit_answer, LEN_FULL, "LOC row stats    : tab=%4d, row=%4d, height=%4d, used=%4d", x_tab, x_row, s_tabs[x_tab].rows[x_row].h, s_tabs[x_tab].rows[x_row].c);   <* 
+    *> }                                                                                                                                                                           <*/
+   /*> else if (strcmp(a_question, "tab_def"       )  == 0) {                                               <* 
+    *>    snprintf (unit_answer, LEN_FULL, "LOC tab defaults : col=%2d, row=%2d", DEF_WIDTH, DEF_HEIGHT);   <* 
+    *> }                                                                                                    <*/
    /*> else if (strcmp(a_question, "tab_beg"       ) == 0) {                                                                              <* 
     *>    snprintf(unit_answer, LEN_FULL, "s_move tab beg   : tab=%4d, col=%4d, row=%4d", a_num, s_tabs [a_num].bcol, s_tabs [a_num].brow);   <* 
     *> }                                                                                                                                  <* 

@@ -114,6 +114,8 @@ char COL_writer_all  (void) { return NODE_writer_all (IS_COL); }
 /*====================------------------------------------====================*/
 static void  o___YVIKEYS_________o () { return; }
 
+char COL_map_init    (void) { return NODE_map_init  (IS_COL); }
+
 char COL_map_clear   (void) { return NODE_map_clear (IS_COL); }
 
 char COL_map_mapper  (void) { return NODE_map_mapper (IS_COL); }
@@ -122,7 +124,7 @@ char COL_map_absolute(void) { return NODE_map_absolute (IS_COL); }
 
 char COL_map_local   (void) { return NODE_map_local (IS_COL); }
 
-char COL_map_update  (void) { return NODE_map_update (IS_COL); }
+char COL_map_update  (char a_req) { return NODE_map_update (IS_COL, a_req); }
 
 
 

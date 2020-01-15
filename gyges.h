@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5f"
-#define     P_VERTXT    "tabs are fully dynamic, unit tested, but no mapping yet"
+#define     P_VERNUM    "3.5g"
+#define     P_VERTXT    "whoo-hoo, running again using only dynamic memory (stunned and happy)"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -216,11 +216,8 @@ typedef     unsigned long long    ullong;
 /*---(library simplifications)---------*/
 typedef     struct   tm           tTIME;
 /*---(data structures)-----------------*/
-/*> typedef     struct   cDEBUG       tDEBUG;                                         <*/
 typedef     struct   cTAB         tTAB;
 typedef     struct   cNODE        tNODE;
-typedef     struct   cCOL         tCOL;
-typedef     struct   cROW         tROW;
 typedef     struct   cCELL        tCELL;
 typedef     struct   cDEP         tDEP;          /* inter-cell dependency     */
 typedef     struct   cCALC        tCALC;         /* cell calculation entry    */
@@ -547,10 +544,10 @@ struct cCELL {
    tCELL      *b_left;       /* btree left branch                             */
    tCELL      *b_right;      /* btree right branch                            */
    /*---(ties to sheet)------------------*/
-   tCOL       *C_parent;     /* parent column                                 */
+   tNODE      *C_parent;     /* parent column                                 */
    tCELL      *c_prev;       /* prev in specific column                       */
    tCELL      *c_next;       /* next in specific column                       */
-   tROW       *R_parent;     /* parent row                                    */
+   tNODE      *R_parent;     /* parent row                                    */
    tCELL      *r_prev;       /* prev in specific row                          */
    tCELL      *r_next;       /* next in specific row                          */
    /*---(end)----------------------------*/
@@ -619,26 +616,6 @@ struct cNODE {
    tCELL      *n_head;          /* first used/real cell in col/row            */
    tCELL      *n_tail;          /* last/bottom used/real cell in col/row      */
 };
-struct cCOL {
-   uchar       tab;             /* number of tab                              */
-   ushort      col;             /* colun identifier                           */
-   uchar       w;               /* column width                               */
-   ushort      c;               /* count of entries in column                 */
-   tCOL       *C_prev;          /* prev col on tab                            */
-   tCOL       *C_next;          /* next col on tab                            */
-   tCELL      *c_head;          /* first/top used/real cell in col            */
-   tCELL      *c_tail;          /* last/bottom used/real cell in col          */
-};
-struct cROW {
-   uchar       tab;             /* number of tab                              */
-   ushort      n;               /* row identifier                             */
-   uchar       h;               /* row height                                 */
-   ushort      c;               /* count of entries in row                    */
-   tROW       *R_prev;          /* prev row on tab                            */
-   tROW       *R_next;          /* next row on tab                            */
-   tCELL      *r_head;          /* first/left used/real cell in row           */
-   tCELL      *r_tail;          /* last/right used/real cell in row           */
-};
 
 
 
@@ -680,7 +657,6 @@ struct cTAB {
    uchar      *name;                        /* tab name for user reference    */
    uchar       type;                        /* tab type                       */
    /*---(columns)------------------------*/
-   tCOL        cols  [MAX_COLS];            /* column characteristics         */
    tNODE      *C_head;
    tNODE      *C_tail;
    ushort      C_count;
@@ -692,7 +668,6 @@ struct cTAB {
    ushort      froz_bcol;                   /* left of frozen cols            */
    ushort      froz_ecol;                   /* right of frozen cols           */
    /*---(rows)---------------------------*/
-   tROW        rows  [MAX_ROWS];            /* row characteristics            */
    tNODE      *R_head;
    tNODE      *R_tail;
    ushort      R_count;
@@ -704,11 +679,9 @@ struct cTAB {
    ushort      froz_brow;                   /* top of frozen rows             */
    ushort      froz_erow;                   /* bottom of frozen rows          */
    /*---(overall)------------------------*/
-   tCELL      *sheet [MAX_COLS][MAX_ROWS];  /* cell pointers                  */
    uint        count;                       /* count of entries in sheet      */
    /*---(end)----------------------------*/
 };
-tTAB     s_tabs [MAX_TABS];
 tTAB    *p_tab;                        /* current tab pointer                 */
 
 
@@ -1329,6 +1302,8 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        TAB_legal               (char a_index);
 char        TAB__name_check         (char *a_name);
+char        TAB_save                (void);
+char        TAB_retrieve            (void);
 /*---(memory)-------------------------*/
 char        TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_size);
 char        TAB_free                (char a_index);
@@ -1340,6 +1315,7 @@ char        TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move)
 char        TAB_by_index            (tTAB **a_found, char a_index);
 char        TAB_by_abbr             (tTAB **a_found, uchar a_abbr);
 char        TAB_by_name             (tTAB **a_found, uchar *a_regex);
+char        TAB_browse              (char *a_entry);
 char        TAB_pointer             (tTAB **a_found, char a_index);
 char        TAB_ensure              (tTAB **a_found, char a_index);
 /*---(hooking)------------------------*/
@@ -1364,16 +1340,19 @@ char        TAB_retype              (char a_index, char a_type);
 char        TAB_size                (char a_index, char *a_max);
 char        TAB_resize              (char a_index, char *a_max);
 char        TAB_resize_curr         (char *a_max);
+/*---(mapping)------------------------*/
+char        TAB_map_clear           (void);
+char        TAB_map_mapper          (void);
+char        TAB_map_absolute        (void);
+char        TAB_map_local           (void);
+char        TAB_map_update          (char a_req);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        TAB_colwide          (int a_tab);
-/*> char        TAB_rowtall          (int a_tab);                                     <*/
-char        TAB_save             (void);
-char        TAB_retrieve         (void);
-char        TAB_browse           (char *a_entry);
+/*---(display)------------------------*/
 char        TAB_line             (char  a_tab, char *a_list);
 char        TAB_status           (char  a_tab, char *a_list);
 char        TAB_status_curr      (char *a_list);
+/*---(unit_test)----------------------*/
 char*       TAB__unit            (char *a_question, int a_tab);
 
 
@@ -1428,7 +1407,7 @@ char        NODE_map_clear          (char a_type);
 char        NODE_map_mapper         (char a_type);
 char        NODE_map_absolute       (char a_type);
 char        NODE_map_local          (char a_type);
-char        NODE_map_update         (char a_type);
+char        NODE_map_update         (char a_type, char a_req);
 /*---(unit_test)----------------------*/
 char*       NODE__unit              (char *a_question, uchar a_tab, char a_type, ushort a_ref);
 
@@ -1470,11 +1449,12 @@ char        COL_reader              (void);
 char        COL_writer              (char a_index, short a_ref);
 char        COL_writer_all          (void);
 /*---(mapping)------------------------*/
+char        COL_map_init            (void);
 char        COL_map_clear           (void);
 char        COL_map_mapper          (void);
 char        COL_map_absolute        (void);
 char        COL_map_local           (void);
-char        COL_map_update          (void);
+char        COL_map_update          (char a_req);
 /*---(unit_test)----------------------*/
 char*       COL__unit               (char *a_question, uchar a_tab, ushort a_col);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1516,11 +1496,12 @@ char        ROW_reader              (void);
 char        ROW_writer              (char a_index, short a_ref);
 char        ROW_writer_all          (void);
 /*---(mapping)------------------------*/
+char        ROW_map_init            (void);
 char        ROW_map_clear           (void);
 char        ROW_map_mapper          (void);
 char        ROW_map_absolute        (void);
 char        ROW_map_local           (void);
-char        ROW_map_update          (void);
+char        ROW_map_update          (char a_req);
 /*---(unit_test)----------------------*/
 char*       ROW__unit               (char *a_question, uchar a_tab, ushort a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/

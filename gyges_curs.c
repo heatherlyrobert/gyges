@@ -255,8 +255,8 @@ DRAW_yaxis         (void)
    /*---(process rows)------------------*/
    for (i = 0; i < x_tall; ++i) {
       /*---(prepare)------------*/
-      if (BROW + i < NROW)   strlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
-      else                   strlcpy (x_label, "····"       , LEN_TERSE);
+      if (BROW + i <= NROW)   strlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
+      else                    strlcpy (x_label, "····"       , LEN_TERSE);
       /*---(show)---------------*/
       CURS_row_color  (BROW + i);
       mvprintw (x_bott - x_tall + 1 + i, x_left, "%-4.4s", x_label);
@@ -298,7 +298,7 @@ DRAW_xaxis         (void)
    DEBUG_WIND  yLOG_complex ("cols"      , "%3db, %3de, %3dn", BCOL, ECOL, NCOL);
    /*---(normal cols)--------------------*/
    while (x_cum < x_wide) {
-      if (BCOL + i >= NCOL) break;
+      if (BCOL + i > NCOL) break;
       /*---(prepare)---------------------*/
       x_avail = x_wide - x_cum;
       w      = COL_size (CTAB, BCOL + i);

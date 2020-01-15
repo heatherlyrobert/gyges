@@ -699,6 +699,9 @@ TAB_init                (void)
    s_all    = 0;
    s_count  = 0;
    s_index  = -1;
+   TAB_new_in_abbr ('0', NULL, NULL);
+   TAB_new_in_abbr ('®', NULL, NULL);
+   TAB_new_in_abbr ('¯', NULL, NULL);
    /*---(add buffer commands)------------*/
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bnew"        , ""    , "ss"   , TAB_new_in_open            , "open a new tab in next open slot"     );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bmake"       , ""    , "css"  , TAB_new_in_abbr            , "open a new tab in specific slot"      );
@@ -947,7 +950,7 @@ TAB_used             (char a_index)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(defense)------------------------*/
-   --rce;  if (TAB_legal (a_index) != 1)         return rce;
+   --rce;  if (TAB_legal (a_index) != 1)         return NULL;
    /*---(complete)-----------------------*/
    return s_master [a_index]->count;
 }
@@ -1034,10 +1037,6 @@ TAB_resize           (char a_index, char *a_max)
    return 0;
 }
 char TAB_resize_curr      (char *a_max) { return TAB_resize (CTAB, a_max); }
-
-char  TAB_colwide      (int a_tab) { return DEF_WIDTH; }
-/*> char  TAB_rowtall      (int a_tab) { return DEF_HEIGHT; }             <*/
-char  TAB_rowtall      (int a_tab) { return 1; }
 
 
 
@@ -1139,7 +1138,7 @@ TAB_line           (char a_index, char *a_list)
    str4gyges  (s_curr->tab, COL_min_used (s_curr->tab), ROW_min_used (s_curr->tab), 0, 0, x_min, YSTR_USABLE);
    str4gyges  (s_curr->tab, COL_max_used (s_curr->tab), ROW_max_used (s_curr->tab), 0, 0, x_max, YSTR_USABLE);
    /*---(finish)----------------------*/
-   snprintf (a_list, LEN_FULL, "%c %-2d %-12.12s %c  %-7.7s %-7.7s %-7.7s %-7.7s %-7.7s %-7.7s %3dc %3dr %3dn", x_tab->abbr, x_tab->tab, x_tab->name, x_tab->type, x_min, x_beg, x_cur, x_end, x_max, x_siz, x_tab->C_count, x_tab->R_count, x_tab->count);
+   snprintf (a_list, LEN_FULL, "%c %-12.12s %c  %-7.7s %-7.7s %-7.7s %-7.7s %-7.7s %-7.7s %3dc %3dr %3dn", x_tab->abbr, x_tab->name, x_tab->type, x_min, x_beg, x_cur, x_end, x_max, x_siz, x_tab->C_count, x_tab->R_count, x_tab->count);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1155,7 +1154,7 @@ TAB_status         (char a_index, char *a_list)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(get info)--------------------*/
    rc = TAB_line (a_index, t);
-   sprintf (a_list, "buffer  %s", t);
+   sprintf (a_list, "%s", t);
    /*---(complete)--------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1203,16 +1202,6 @@ TAB_reader           (void)
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(min)----------------------------*/
-   /*> rc = yPARSE_popstr (x_label);                                                  <* 
-    *> DEBUG_INPT   yLOG_value   ("pop min"   , rc);                                  <* 
-    *> DEBUG_INPT   yLOG_info    ("min"       , x_label);                             <* 
-    *> rc = str2gyges (x_label, NULL, NULL, NULL, NULL, NULL, 0, YSTR_ADAPT);         <* 
-    *> DEBUG_INPT   yLOG_value   ("str2gyges" , rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
    /*---(max)----------------------------*/
    rc = yPARSE_popstr (x_label);
    DEBUG_INPT   yLOG_value   ("pop max"   , rc);
@@ -1224,33 +1213,13 @@ TAB_reader           (void)
       return rce;
    }
    DEBUG_INPT   yLOG_value   ("tab"       , x_tab);
-   /*---(switch to tab)------------------*/
+   /*---(make tab)-----------------------*/
    rc = TAB_new_in_abbr (LABEL_tab (x_tab), x_name, x_label);
    DEBUG_INPT   yLOG_value   ("TAB_new"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(update tab)---------------------*/
-   /*> rc = TAB_rename (x_tab, x_name);                                               <* 
-    *> DEBUG_INPT   yLOG_value   ("TAB_rename", rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <* 
-    *> rc = TAB_resize (x_tab, x_label);                                              <* 
-    *> DEBUG_INPT   yLOG_value   ("TAB_resize", rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
-   /*---(default sizes)------------------*/
-   /*> rc = yPARSE_popint  (&x_size);                                                 <* 
-    *> DEBUG_INPT   yLOG_value   ("pop col"   , rc);                                  <* 
-    *> rc = yPARSE_popint  (&x_size);                                                 <* 
-    *> DEBUG_INPT   yLOG_value   ("pop row"   , rc);                                  <* 
-    *> rc = yPARSE_popint  (&x_size);                                                 <* 
-    *> DEBUG_INPT   yLOG_value   ("pop depth" , rc);                                  <*/
    /*---(type)---------------------------*/
    rc = yPARSE_popchar (&x_type);
    DEBUG_INPT   yLOG_value   ("pop type"  , rc);
@@ -1272,29 +1241,19 @@ TAB_writer            (char a_tab)
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
    char        x_type      =  '-';
-   int         x_cols      =    0;
-   int         x_rows      =    0;
-   int         x_wide      =    0;
-   int         x_tall      =    0;
    char        x_name      [LEN_LABEL];
-   char        x_min       [LEN_LABEL];
    char        x_max       [LEN_LABEL];
    /*---(prepare)------------------------*/
    yPARSE_outclear  ();
    /*---(defense)------------------------*/
-   if (TAB_used  (a_tab) < 0)  return  0;
-   if (a_tab >= 36)            return  0;
+   if (!VALID_tab (a_tab))         return  0;
+   if (s_master [a_tab] == NULL)   return  0;
+   if (a_tab >= 36)                return  0;
    /*---(prepare)------------------------*/
    TAB_name    (a_tab, x_name);
-   /*> x_cols = COL_max  (a_tab) - 1;                                                 <* 
-    *> x_rows = ROW_max  (a_tab) - 1;                                                 <* 
-    *> x_wide = TAB_colwide (a_tab);                                                  <* 
-    *> x_tall = TAB_rowtall (a_tab);                                                  <*/
    x_type = TAB_type (a_tab);
-   /*> str4gyges (a_tab , 0     , 0    , 0, 0, x_min, YSTR_USABLE);                   <*/
    str4gyges (a_tab, COL_max (a_tab), ROW_max (a_tab), 0, 0, x_max, YSTR_USABLE);
    /*---(write)--------------------------*/
-   /*> rc = yPARSE_fullwrite ("tab", x_name, x_min, x_max, x_wide, x_tall, 1, x_type);   <*/
    rc = yPARSE_fullwrite ("tab", x_name, x_max, x_type);
    if (rc < 0)   return rc;
    /*---(complete)-----------------------*/
@@ -1324,13 +1283,196 @@ TAB_writer_all          (void)
 
 
 /*====================------------------------------------====================*/
+/*===----                     yvikeys mapper                           ----===*/
+/*====================------------------------------------====================*/
+static void  o___MAPPER__________o () { return; }
+
+char
+TAB_map_init            (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   tMAPPED    *x_map       = NULL;
+   /*---(prepare)------------------------*/
+   x_map   = &g_bmap;
+   /*---(clear)--------------------------*/
+   x_map->ubeg = x_map->ucur = x_map->uend  = x_map->ulen  = x_map->utend = 0;
+   x_map->gbeg = x_map->gcur = x_map->gend = 0;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+TAB_map_clear              (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tMAPPED    *x_map       = NULL;
+   int         i           =    0;
+   /*---(prepare)------------------------*/
+   x_map   = &g_bmap;
+   /*---(clear)--------------------------*/
+   for (i= 0; i < LEN_HUGE; ++i)  x_map->map [i] =  YVIKEYS_EMPTY;
+   x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;
+   x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+TAB_map_mapper            (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tMAPPED    *x_map       = NULL;
+   int         i           =    0;
+   int         x_pos       =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   x_map   = &g_bmap;
+   /*---(defaults)--------------------*/
+   x_map->umin = -1;
+   x_map->gmin =  0;
+   /*---(get tab)------------------------*/
+   for (i = 0; i < MAX_TABS; ++i) {
+      DEBUG_MAP    yLOG_point   ("used"      , s_master [i]);
+      if (s_master [i] == NULL)  continue;
+      x_map->map  [x_pos++] = i;
+   }
+   /*---(fixes)-----------------------*/
+   x_map->umax = x_pos - 1;
+   if (x_map->umax >= 0)  x_map->umin =  0;
+   x_map->gmax = MAX_TABS - 1;
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+TAB_map_display           (char a_section, uchar *a_out)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tMAPPED    *x_map       = NULL;
+   char        i           =    0;
+   /*---(prepare)------------------------*/
+   x_map   = &g_bmap;
+   /*---(break out)----------------------*/
+   for (i = 0; i < MAX_TABS; ++i) {
+      if (x_map->map [i] == YVIKEYS_EMPTY)   a_out [i] = '·';
+      else                                   a_out [i] = LABEL_tab (x_map->map [i]);
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+TAB_map_absolute          (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tMAPPED    *x_map       = NULL;
+   tTAB       *x_tab       = NULL;
+   char        x_ntab      =    0;
+   char        x_min       =   -1;
+   char        x_max       =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   x_map   = &g_bmap;
+   x_map->gamin = -1;
+   x_map->gamax = -1;
+   /*---(find min)-----------------------*/
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '_');
+   if (rc == 0 && x_tab != NULL) {
+      x_min = x_ntab;
+   }
+   /*---(find max)-----------------------*/
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '~');
+   if (rc == 0 && x_tab != NULL) {
+      x_max = x_ntab;
+   }
+   /*---(update)-------------------------*/
+   x_map->gamin = x_min;
+   x_map->gamax = x_max;
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+TAB_map_local             (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tMAPPED    *x_map       = NULL;
+   tTAB       *x_tab       = NULL;
+   char        x_ntab      =    0;
+   int         x_curr      =    0;
+   int         x_opps      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(default)------------------------*/
+   x_map   = &g_bmap;
+   x_map->glmin = -1;
+   x_map->gprev = -1;
+   x_map->gnext = -1;
+   x_map->glmax = -1;
+   /*---(find min)-----------------------*/
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
+   if (rc == 0 && x_tab != NULL) {
+      x_map->glmin = x_ntab;
+   }
+   /*---(find max)-----------------------*/
+   rc = TAB_by_cursor (&x_tab, &x_ntab, ']');
+   if (rc == 0 && x_tab != NULL) {
+      x_map->glmax = x_ntab;
+   }
+   /*---(find prev)----------------------*/
+   x_ntab = x_map->gcur;
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '<');
+   if (rc == 0 && x_tab != NULL) {
+      x_map->gprev = x_ntab;
+   }
+   /*---(find next)----------------------*/
+   x_ntab = x_map->gcur;
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '>');
+   if (rc == 0 && x_tab != NULL) {
+      x_map->gnext = x_ntab;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+TAB_map_update             (char a_req)
+{
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(clear)--------------------------*/
+   if (a_req == YVIKEYS_INIT)  TAB_map_init (a_req);
+   TAB_map_clear    ();
+   TAB_map_mapper   ();
+   TAB_map_absolute ();
+   TAB_map_local    ();
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                      unit testing                            ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNITTEST________o () { return; }
 
 
 char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
-TAB__unit          (char *a_question, int a_tab)
+TAB__unit          (char *a_question, int a_index)
 {
    /*---(locals)-------------------------*/
    char        rc          =    0;
@@ -1353,11 +1495,14 @@ TAB__unit          (char *a_question, int a_tab)
    char        c           =    0;
    tTAB       *x_curr      = NULL;
    int         x_index     =   -1;
+   tMAPPED    *x_map       = NULL;
+   /*---(prepare)------------------------*/
+   x_map   = &g_bmap;
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "TAB              : label could not be parsed");
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "TAB              : locations could not be prepared");
-   x_label = LABEL_tab (a_tab);
+   x_label = LABEL_tab (a_index);
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "TAB              : question not understood");
    if      (strcmp(a_question, "count"         ) == 0) {
@@ -1368,7 +1513,7 @@ TAB__unit          (char *a_question, int a_tab)
       x_curr  = s_curr;
       if (a_question [0] == 'e') {
          strlcpy (x_pref, "entry", LEN_LABEL);
-         TAB_by_index (NULL, a_tab);
+         TAB_by_index (NULL, a_index);
       } else if (a_question [0] == 'c') {
          strlcpy (x_pref, "curr " , LEN_LABEL);
       } else {
@@ -1404,6 +1549,16 @@ TAB__unit          (char *a_question, int a_tab)
          strlcat (t, s, LEN_DESC);
       }
       snprintf (unit_answer, LEN_FULL, "TAB inventory    : %2d=%-2d %2d=%-2d %s", s_all, a, s_count, c, t);
+   }
+   else if (strcmp (a_question, "map"           ) == 0) {
+      TAB_map_display (a_index, t);
+      snprintf(unit_answer, LEN_FULL, "TAB map     (%2d) : [%s]", a_index, t);
+   }
+   else if (strcmp (a_question, "abs"           ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "TAB abs          : umin  %5d, gmin  %5d, gamin %5d      gamax %5d, gmax  %5d, umax  %5d", x_map->umin, x_map->gmin, x_map->gamin, x_map->gamax, x_map->gmax, x_map->umax);
+   }
+   else if (strcmp (a_question, "local"         ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "TAB local        : glmin %5d, gprev %5d          gcur %5d            gnext %5d, glmax %5d", x_map->glmin, x_map->gprev, x_map->gcur, x_map->gnext, x_map->glmax);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

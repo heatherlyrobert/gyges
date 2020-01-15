@@ -1233,19 +1233,43 @@ char NODE_writer_all (char a_type) { return NODE_writer_driver (-1, a_type, -1);
 static void  o___MAPPER__________o () { return; }
 
 char
+NODE_map_init              (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   tMAPPED    *x_map       = NULL;
+   /*---(prepare)------------------------*/
+   IF_COL   x_map   = &g_xmap;
+   ELSE_ROW x_map   = &g_ymap;
+   /*---(clear)--------------------------*/
+   x_map->ubeg = x_map->ucur = x_map->uend  = x_map->ulen  = x_map->utend = 0;
+   x_map->gbeg = x_map->gcur = x_map->gend = 0;
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
 NODE_map_clear             (char a_type)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    tMAPPED    *x_map       = NULL;
    int         i           =    0;
+   int         x_min       =    0;
+   int         x_max       =    0;
+   int         x_len       =    0;
    /*---(prepare)------------------------*/
    IF_COL   x_map   = &g_xmap;
    ELSE_ROW x_map   = &g_ymap;
    /*---(clear)--------------------------*/
    for (i= 0; i < LEN_HUGE; ++i)  x_map->map [i] =  YVIKEYS_EMPTY;
-   x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;
-   x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;
+   x_map->umin = x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;
+   x_map->umax = x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;
+   /*---(screen)-------------------------*/
+   IF_COL   yVIKEYS_view_bounds (YVIKEYS_MAIN, &x_min, &x_max, &x_len, NULL, NULL, NULL);
+   ELSE_ROW yVIKEYS_view_bounds (YVIKEYS_MAIN, NULL, NULL, NULL, &x_min, &x_max, &x_len);
+   /*> x_map->umin   = x_min;                                                         <* 
+    *> x_map->umax   = x_max;                                                         <*/
+   x_map->uavail = x_len;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1467,11 +1491,12 @@ NODE_map_local             (char a_type)
 
 
 char
-NODE_map_update            (char a_type)
+NODE_map_update            (char a_type, char a_req)
 {
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
    /*---(clear)--------------------------*/
+   if (a_req == YVIKEYS_INIT)  NODE_map_init (a_req);
    NODE_map_clear    (a_type);
    NODE_map_mapper   (a_type);
    NODE_map_absolute (a_type);

@@ -201,7 +201,6 @@ PROG_begin         (void)
    yVIKEYS_hist_config   (HIST_undo, HIST_redo);
    HIST_init ();
    yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
-   MAP_mapper (YVIKEYS_INIT);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -227,6 +226,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
    yVIKEYS_cmds_direct (":read");
+   MAP_mapper (YVIKEYS_INIT);
    yVIKEYS_map_refresh ();
    yVIKEYS_cmds_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );
    /*---(complete)-----------------------*/
