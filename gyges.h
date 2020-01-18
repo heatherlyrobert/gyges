@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5g"
-#define     P_VERTXT    "whoo-hoo, running again using only dynamic memory (stunned and happy)"
+#define     P_VERNUM    "3.5i"
+#define     P_VERTXT    "tab, col, row, and btree all caught up on unit testing and sequencing"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -71,6 +71,15 @@
  "overlap with other major tools rather than complement them.  spreadsheets in¦" \
  "particular have become dangerous, error-prone replacements for real systems.¦"
 #define     P_ALTERNS   "visicalc, lotus 123, excel, google, oocalc, gnumeric¦"
+#define     P_WHATFOR   \
+ "i love spreadsheets.  love them.  but, in pursuit of market share, they have¦" \
+ "evolved into massive, complex, mouse-driven, productivity suckers that¦" \
+ "integrate poorly with other tools (anti-unix).¦"
+#define     P_DECISION  \
+ "gonna make my own.  crazy and unrealistic, but rewarding and sobering too.¦" \
+ "if you want to learn, pick blisteringly hard goals.  my result will be¦" \
+ "keyboard-driven, scriptable, light, fast, and flexible.¦"
+
 
 /*===[[ END_HEADER ]]=========================================================*/
 
@@ -558,16 +567,20 @@ int         ncell;           /* count of linked cells in data structure       */
 int         acell;           /* count of all cells                            */
 
 #define     LINKED       'y'
-#define     UNLINKED     '-'
+#define     UNLINKED     'x'
 
 #define     UNHOOKED    -1
 
 #define     G_TAB_NORMAL   '-'
-#define     G_TAB_AUTO     'a'
+#define     G_TAB_FIXED    'f'
 #define     G_TAB_MACRO    'm'
 #define     G_TAB_TABLE    't'
 #define     G_TAB_DATA     'd'
-#define     G_TAB_TYPES    "-amtd"
+#define     G_TAB_AUTO     'a'
+#define     G_TAB_TYPES    "-fmtda"
+#define     G_TAB_UNLOCK   'x'
+#define     G_TAB_LOCK     'X'
+#define     G_TAB_LOCKED   "NFMTD"
 
 
 
@@ -1286,7 +1299,7 @@ char        LOC_legal          (int a_tab, int a_col, int a_row, char a_adapt);
 
 char        LOC_hook             /* stigma 4----- */  (tCELL *a_cell, char a_tab , short a_col , short a_row);
 char        LOC_unhook           /* stigma 1----- */  (tCELL *a_cell);
-char        LOC_move             /* stigma 6----- */  (char  a_tab1, short a_col1, short a_row1, char a_tab2, short a_col2, short a_row2);
+/*> char        LOC_move             /+ stigma 6----- +/  (char  a_tab1, short a_col1, short a_row1, char a_tab2, short a_col2, short a_row2);   <*/
 
 tCELL      *LOC_cell_at_curr     /* petal  0----- */  (void);
 tCELL      *LOC_cell_at_loc      /* petal  3----- */  (int a_tab, int  a_col, int  a_row);
@@ -1300,16 +1313,20 @@ char        LOC_label            /* petal  1----- */  (tCELL *a_curr, char *a_fi
 
 /*===[[ gyges_tab.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        TAB_legal               (char a_index);
+char        TAB_live                (char a_index);
 char        TAB__name_check         (char *a_name);
+char        TAB_ground              (void);
 char        TAB_save                (void);
 char        TAB_retrieve            (void);
 /*---(memory)-------------------------*/
 char        TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_size);
 char        TAB_free                (char a_index);
-char        TAB_open                (void);
+char        TAB_first_filled        (void);
+char        TAB_first_open          (void);
 char        TAB_new_in_open         (uchar *a_name, uchar *a_size);
 char        TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size);
+char        TAB_free_all_empties    (void);
+char        TAB_free_from_abbr      (uchar a_abbr);
 /*---(search)-------------------------*/
 char        TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move);
 char        TAB_by_index            (tTAB **a_found, char a_index);
@@ -1319,7 +1336,7 @@ char        TAB_browse              (char *a_entry);
 char        TAB_pointer             (tTAB **a_found, char a_index);
 char        TAB_ensure              (tTAB **a_found, char a_index);
 /*---(hooking)------------------------*/
-char        TAB_hook_cell           (tTAB **a_found, char a_tab, tCELL *a_cell);
+char        TAB_hook_cell           (tTAB **a_found, char a_index, tCELL *a_cell);
 char        TAB_unhook_cell         (tCELL *a_cell);
 /*---(program)------------------------*/
 char        TAB_init                (void);
@@ -1349,9 +1366,10 @@ char        TAB_map_update          (char a_req);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(display)------------------------*/
-char        TAB_line             (char  a_tab, char *a_list);
-char        TAB_status           (char  a_tab, char *a_list);
-char        TAB_status_curr      (char *a_list);
+char        TAB_line                (char a_index, char a_size, char *a_list);
+char        TAB_status              (char  a_tab, char *a_list);
+char        TAB_status_curr         (char *a_list);
+char        TAB_inventory           (char a_size, char *a_list);
 /*---(unit_test)----------------------*/
 char*       TAB__unit            (char *a_question, int a_tab);
 
@@ -1533,7 +1551,7 @@ char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(memory)----------------------------*/
 char        CELL__new            (tCELL **a_cell, char a_linked);
-char        CELL__free           /* ------ */  (tCELL **a_cell, char a_linked);
+char        CELL__free           (tCELL **a_cell);
 char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
 char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
 char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
@@ -1604,14 +1622,19 @@ char      CELL_visual          (char   a_what, char a_mode, char a_how);
 
 
 
-char     *CELL__unit           (char  *a_question, tCELL *a_cell);
-char     *CELL__unitnew        (char  *a_question, char *a_label);
+char*       CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_ref);
+char       *CELL__unit              (char  *a_question, tCELL *a_cell);
+char       *CELL__unitnew           (char  *a_question, char *a_label);
 
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        FILE_init               (void);
+char        FILE_prepper            (void);
+char        FILE_new                (void);
 char        FILE_rename             (char  *a_name);
+char        FILE_write              (void);
+/*> char      FILE_writeas         (char *a_name);                                    <*/
 char*       FILE__unit              (char *a_question, int a_ref);
 
 
@@ -1632,17 +1655,6 @@ char        CELL_writer_all         (void);
 
 
 
-char      INPT_open            (void);
-char      INPT_read            (void);
-char      INPT_parse           (cchar *a_recd);
-char      INPT_close           (void);
-/*> char      INPT_main            (void);                                            <*/
-
-char      OUTP_header          (FILE *a_file);
-
-char      FILE_write           (void);
-/*> char      FILE_writeas         (char *a_name);                                    <*/
-char      XML3_read            (char *a_name);
 
 
 
@@ -1687,6 +1699,7 @@ char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char
 char        api_yvikeys_regkiller   (tCELL *a_curr);
 
 
+char        BTREE_init              (void);
 long        BTREE_label2key         (char *a_label);
 long        BTREE_coord2key         (int a_tab, int a_col, int a_row, char *a_label);
 char        BTREE_dgnome            (void);

@@ -22,6 +22,9 @@ main (int argc, char *argv[])
       PROG_end ();
       return -1;
    }
+   TAB_new_in_abbr ('0', NULL, NULL);
+   TAB_new_in_abbr ('®', NULL, NULL);
+   TAB_new_in_abbr ('¯', NULL, NULL);
    /*---(main-loop)----------------------*/
    rc = yVIKEYS_main  ("keys", "every", NULL);
    /*---(wrap-up)------------------------*/

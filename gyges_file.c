@@ -78,17 +78,25 @@ static char     f_suffix    [LEN_RECD];      /* file suffix for spreadsheet    *
 static FILE    *s_file;                      /* file pointer                   */
 
 
+char
+FILE_prepper            (void)
+{
+   CELL_purge   ();
+   LOC_purge    ();
+   TAB_new_in_abbr ('®', NULL, NULL);
+   TAB_new_in_abbr ('¯', NULL, NULL);
+   return 0;
+}
 
 char
 FILE_new                (void)
 {
-   CELL_purge   ();
-   LOC_purge    ();
+   FILE_prepper ();
+   TAB_new_in_abbr ('0', NULL, NULL);
    MAP_mapper (YVIKEYS_INIT);
    yVIKEYS_jump (0, 0, 0, 0);
    return 0;
 }
-
 
 char
 FILE_init               (void)
@@ -97,14 +105,6 @@ FILE_init               (void)
    char        rc          =    0;
    /*---(handlers)-----------------------*/
    rc = yVIKEYS_cmds_add (YVIKEYS_M_FILE  , "new"         , ""    , ""     , FILE_new                     , "clear out all content"                                       );
-   /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", -1, TABS_writer_all , TABS_reader     , "------------" , "name,min,max,x_def,y_def,z_def,type"  , "gyges tabs (v-axis)"      );   <*/
-
-
-   /*> { 'e', FILE_DEPCEL , "dependent cells"    , "cell_dep"  , 'D', "TiaTO-----", "lvl/reg"   , "seq"       , "label"     , "t-f-d-a-m" , "contents"  , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
-    *> { 'e', FILE_FREECEL, "independent cells"  , "cell_free" , 'D', "TiaTO-----", "lvl/reg"   , "seq"       , "label"     , "t-f-d-a-m" , "contents"  , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
-    *> { 'e', FILE_TABS   , "tab (v-axis)"       , "tab"       , 'I', "Naaiiic---", "name"      , "min"       , "max"       , "x_size"    , "y_size"    , "z_size"    , "type"      , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
-    *> { 'e', FILE_COLS   , "columns (x-axis)"   , "width"     , 'D', "aii-------", "label"     , "size"      , "count"     , ""          , ""          , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <* 
-    *> { 'e', FILE_ROWS   , "rows (y-axis)"      , "height"    , 'D', "aii-------", "label"     , "size"      , "count"     , ""          , ""          , ""          , ""          , ""          , ""          , NULL  , NULL  ,   0,   0 },   <*/
    /*---(complete)-----------------------*/
    return 0;
 }

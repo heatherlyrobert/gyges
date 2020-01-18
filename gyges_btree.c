@@ -17,12 +17,38 @@
 static tCELL   *s_broot  = NULL;
 static char     s_levels =    0;
 
+
+static  int     s_sorts      = 0;
+static  int     s_comps      = 0;
+static  int     s_swaps      = 0;
+static  int     s_teles      = 0;
+
+
+
 static char     s_result =    0;
 static char     s_path   [LEN_DESC]  = "";
 static char     s_depth  =    0;
 static char     s_last   [LEN_LABEL] = "";
 static tCELL   *s_save   = NULL;
 
+
+
+/*====================------------------------------------====================*/
+/*===----                       program level                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___PROGRAM_________o () { return; }
+
+char
+BTREE_init        (void)
+{
+   s_broot  = NULL;
+   s_levels = 0;
+   s_sorts  = 0;
+   s_comps  = 0;
+   s_swaps  = 0;
+   s_teles  = 0;
+   return 0;
+}
 
 
 
@@ -57,10 +83,6 @@ BTREE_coord2key         (int a_tab, int a_col, int a_row, char *a_label)
 /*===----                         sort the cells                       ----===*/
 /*====================------------------------------------====================*/
 static void  o___SORT____________o () { return; }
-
-static  s_swaps      = 0;
-static  s_comps      = 0;
-static  s_teles      = 0;
 
 char
 BTREE__swap             (tCELL *a_one, tCELL *a_two)
@@ -126,6 +148,7 @@ BTREE_dgnome            (void)
       DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
+   ++s_sorts;
    /*---(prepare)------------------------*/
    s_swaps = 0;
    s_comps = 0;
@@ -513,27 +536,8 @@ BTREE__unit        (char *a_question, int n)
    /*---(parse location)-----------------*/
    strcpy  (unit_answer, "BTREE            : label could not be parsed");
    /*---(overall)------------------------*/
-   if      (strcmp (a_question, "entry"         ) == 0) {
-      x_curr = hcell;
-      DEBUG_HIST   yLOG_value   ("n"         , n);
-      while (x_curr != NULL) {
-         /*> DEBUG_HIST   yLOG_complex ("entry"     , "%2d %-10.10s %10p %10p %10p", c, x_curr->text, x_curr, x_curr->m_next, x_curr->m_prev);   <*/
-         /*> printf ("entry  %2d %-10.10s %10p %10p\n", c, x_curr->text, x_curr, x_curr->m_next);   <*/
-         if (c == n) {
-            /*> printf ("found\n");                                                   <*/
-            /*> DEBUG_HIST   yLOG_point   ("found"     , x_curr);                     <*/
-            break;
-         }
-         x_curr = x_curr->m_next;
-         ++c;
-      }
-      /*> printf ("checking...%p\n", x_curr);                                         <*/
-      /*> DEBUG_HIST   yLOG_point   ("found"     , x_curr);                           <*/
-      if (x_curr == NULL)  snprintf (unit_answer, LEN_FULL, "BTREE entry (%2d) : -          -t   -c   -r  -", n);
-      else {
-         strl4comma (x_curr->key, t, 0, 'c', '-', LEN_LABEL);
-         snprintf (unit_answer, LEN_FULL, "BTREE entry (%2d) : %-8.8s %3dt %3dc %3dr  %s", n, x_curr->label, x_curr->tab, x_curr->col, x_curr->row, t);
-      }
+   if      (strcmp (a_question, "sorts"         ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "BTREE sorts      : %4d#, %4dl, %4dc, %4ds, %4dt", s_sorts, s_levels, s_comps, s_swaps, s_teles);
    }
    else if (strcmp (a_question, "result"        ) == 0) {
       snprintf (unit_answer, LEN_FULL, "BTREE result     : %2d %-8.8s  %2d %s", s_result, s_last, s_depth, s_path);

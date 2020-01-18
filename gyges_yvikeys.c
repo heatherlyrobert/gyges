@@ -94,6 +94,7 @@ char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/
 api_yvikeys_format      (int a_major, int a_minor)
 {
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
+   DEBUG_USER   yLOG_complex ("args"      , "%3d, %3d", a_major, a_minor);
    /*---(column widths)------------------*/
    switch (a_minor) {
    case  'm' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'm');  break;  /* smallest    */
@@ -603,7 +604,7 @@ api_yvikeys_regkiller    (tCELL *a_cell)
    DEBUG_APIS   yLOG_enter   (__FUNCTION__);
    DEBUG_APIS   yLOG_point   ("a_cell"    , a_cell);
    /*---(kill)---------------------------*/
-   rc = CELL__free (&a_cell, LINKED);
+   rc = CELL__free (&a_cell);
    DEBUG_APIS   yLOG_value   ("free"      , rc);
    /*---(complete)-----------------------*/
    DEBUG_APIS   yLOG_exit    (__FUNCTION__);

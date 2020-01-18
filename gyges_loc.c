@@ -20,7 +20,7 @@ LOC_init             (void)
    /*---(clean tabs)---------------------*/
    /*> LOC__purge    ();                                                              <*/
    /*---(update tab)---------------------*/
-   CTAB      = 0;
+   CTAB      = -1;
    TAB_retrieve ();
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
@@ -192,55 +192,55 @@ LOC_unhook         (tCELL *a_cell)
    return 0;
 }
 
-char         /*-> move a cell between locations ------[ ------ [ge.930.134.55]*/ /*-[01.0000.00#.J]-*/ /*-[--.---.---.--]-*/
-LOC_move           (
-      /*----------+-----------+-----------------------------------------------*/
-      char        a_stab,         /* tab of source cell                       */
-      short       a_scol,         /* col of source cell                       */
-      short       a_srow,         /* row of source cell                       */
-      char        a_dtab,         /* tab of target cell                       */
-      short       a_dcol,         /* col of target cell                       */
-      short       a_drow)         /* row of target cell                       */
-{  /*---(design notes)--------------------------------------------------------*/
-   /* changes the location of the cell at the source location to the target   */
-   /* location.  if there is a cell already at the target, it is deleted.  if */
-   /* there is nothing at the source, the target is wiped anyway as this is   */
-   /* consistent with selection cut, copy, and paste.                         */
-   /*---(locals)-----------+-----------+-*/
-   tCELL      *x_src       = NULL;
-   tCELL      *x_dst       = NULL;
-   char        rce         = -10;           /* return code for errors         */
-   char        rc          =   0;
-   char        x_label     [LEN_LABEL];
-   /*---(defense: source)----------------*/
-   rc = str4gyges (a_stab, a_scol, a_srow, 0, 0, x_label, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_value   ("str4gyges" , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   rc = BTREE_by_coord (&x_src, a_stab, a_scol, a_srow);
-   DEBUG_LOCS   yLOG_point   ("x_src"     , x_src);
-   /*---(defense: target)----------------*/
-   rc = str4gyges (a_dtab, a_dcol, a_drow, 0, 0, x_label, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_value   ("str4gyges" , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   x_dst = BTREE_by_coord (&x_dst, a_dtab, a_dcol, a_drow);
-   /*---(overwrite as necessary)---------*/
-   if (x_dst != NULL) {
-      CELL_change (NULL, HIST_NONE, a_dtab, a_dcol, a_drow, "");
-   }
-   /*---(set location)-------------------*/
-   if (x_src != NULL) {
-      LOC_unhook  (x_src);
-      LOC_hook    (x_src, a_dtab, a_dcol, a_drow);
-   }
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char         /+-> move a cell between locations ------[ ------ [ge.930.134.55]+/ /+-[01.0000.00#.J]-+/ /+-[--.---.---.--]-+/   <* 
+ *> LOC_move           (                                                                                                           <* 
+ *>       /+----------+-----------+-----------------------------------------------+/                                               <* 
+ *>       char        a_stab,         /+ tab of source cell                       +/                                               <* 
+ *>       short       a_scol,         /+ col of source cell                       +/                                               <* 
+ *>       short       a_srow,         /+ row of source cell                       +/                                               <* 
+ *>       char        a_dtab,         /+ tab of target cell                       +/                                               <* 
+ *>       short       a_dcol,         /+ col of target cell                       +/                                               <* 
+ *>       short       a_drow)         /+ row of target cell                       +/                                               <* 
+ *> {  /+---(design notes)--------------------------------------------------------+/                                               <* 
+ *>    /+ changes the location of the cell at the source location to the target   +/                                               <* 
+ *>    /+ location.  if there is a cell already at the target, it is deleted.  if +/                                               <* 
+ *>    /+ there is nothing at the source, the target is wiped anyway as this is   +/                                               <* 
+ *>    /+ consistent with selection cut, copy, and paste.                         +/                                               <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                    <* 
+ *>    tCELL      *x_src       = NULL;                                                                                             <* 
+ *>    tCELL      *x_dst       = NULL;                                                                                             <* 
+ *>    char        rce         = -10;           /+ return code for errors         +/                                               <* 
+ *>    char        rc          =   0;                                                                                              <* 
+ *>    char        x_label     [LEN_LABEL];                                                                                        <* 
+ *>    /+---(defense: source)----------------+/                                                                                    <* 
+ *>    rc = str4gyges (a_stab, a_scol, a_srow, 0, 0, x_label, YSTR_USABLE);                                                        <* 
+ *>    DEBUG_LOCS   yLOG_value   ("str4gyges" , rc);                                                                               <* 
+ *>    --rce;  if (rc < 0) {                                                                                                       <* 
+ *>       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    rc = BTREE_by_coord (&x_src, a_stab, a_scol, a_srow);                                                                       <* 
+ *>    DEBUG_LOCS   yLOG_point   ("x_src"     , x_src);                                                                            <* 
+ *>    /+---(defense: target)----------------+/                                                                                    <* 
+ *>    rc = str4gyges (a_dtab, a_dcol, a_drow, 0, 0, x_label, YSTR_USABLE);                                                        <* 
+ *>    DEBUG_LOCS   yLOG_value   ("str4gyges" , rc);                                                                               <* 
+ *>    --rce;  if (rc < 0) {                                                                                                       <* 
+ *>       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       return rce;                                                                                                              <* 
+ *>    }                                                                                                                           <* 
+ *>    x_dst = BTREE_by_coord (&x_dst, a_dtab, a_dcol, a_drow);                                                                    <* 
+ *>    /+---(overwrite as necessary)---------+/                                                                                    <* 
+ *>    if (x_dst != NULL) {                                                                                                        <* 
+ *>       CELL_change (NULL, HIST_NONE, a_dtab, a_dcol, a_drow, "");                                                               <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(set location)-------------------+/                                                                                    <* 
+ *>    if (x_src != NULL) {                                                                                                        <* 
+ *>       LOC_unhook  (x_src);                                                                                                     <* 
+ *>       LOC_hook    (x_src, a_dtab, a_dcol, a_drow);                                                                             <* 
+ *>    }                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
 
 
 

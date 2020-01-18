@@ -82,8 +82,12 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    my.btree = 'y';
+   BTREE_init ();
    rc = yVIKEYS_init         (MODE_MAP);
-   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet");
+   NODE_init ();
+   TAB_init  ();
+   LOC_init  ();
+   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet", FILE_prepper);
    rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
@@ -177,10 +181,6 @@ PROG_begin         (void)
    char        tmp         [100];
    /*---(clear)--------------------------*/
    /*> MARK_init ();                                                                  <*/
-   /*---(overall tab settings)-----------*/
-   LOC_init  ();
-   TAB_init  ();
-   NODE_init ();
    /*---(locals)-------------------------*/
    /*> VISU_init ();                                                                  <*/
    /*> REG_init  ();                                                                  <*/
@@ -211,7 +211,6 @@ PROG_final         (void)
 {
    DEBUG_PROG  yLOG_enter (__FUNCTION__);
    DRAW_init  ();
-   /*> INPT_main         ();                                                          <*/
    /*> CURS_screen_reset ();                                                          <*/
    yCALC_calculate   ();
    /*---(status options)-----------------*/
@@ -367,7 +366,7 @@ PROG__unit_quiet     (void)
    yURG_urgs   (1, x_args);
    PROG_args   (1, x_args);
    PROG_begin  ();
-   PROG_final  ();
+   /*> PROG_final  ();                                                                <*/
    return 0;
 }
 

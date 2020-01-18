@@ -198,7 +198,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
             DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
             return rce;
          }
-         my.root->label = s_root;
+         my.root->label = strdup (s_root);
       }
       x_owner = my.root;
    }
@@ -323,8 +323,7 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
       if        (x_owner->type     == 'E') {
          *a_string   = s_nada;
       } else if (x_owner->type     == 's'){
-         if (x_owner->source != NULL)  *a_string = x_owner->source;
-         else                     *a_string = s_nada;
+         *a_string = x_owner->source;
       } else if (x_owner->v_str != NULL) {
          *a_string = x_owner->v_str;
       } else {
@@ -553,7 +552,7 @@ api_ycalc_printer       (void *a_owner)
       else                              rc = strlpad (s, t, '!', x_owner->align, w - 1);
    } else if (strchr (YCALC_GROUP_STR, x_owner->type) != NULL) {
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str , LEN_RECD);
-      else                         strlcpy (s, x_owner->source, LEN_RECD);
+      else                           strlcpy (s, x_owner->source, LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
       if (x_owner->align == '?')  rc = strlpad (s, t, x_owner->format, '<'       , w - 1);
       else                        rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);
