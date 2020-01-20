@@ -114,17 +114,7 @@ char ROW_writer_all  (void) { return NODE_writer_all (IS_ROW); }
 /*====================------------------------------------====================*/
 static void  o___YVIKEYS_________o () { return; }
 
-char ROW_map_init    (void) { return NODE_map_init  (IS_ROW); }
-
-char ROW_map_clear   (void) { return NODE_map_clear (IS_ROW); }
-
-char ROW_map_mapper  (void) { return NODE_map_mapper (IS_ROW); }
-
-char ROW_map_absolute(void) { return NODE_map_absolute (IS_ROW); }
-
-char ROW_map_local   (void) { return NODE_map_local (IS_ROW); }
-
-char ROW_map_update  (char a_req) { return NODE_map_update (IS_ROW, a_req); }
+char ROW_mapper      (char a_req) { return NODE_map_update (IS_ROW, a_req); }
 
 
 

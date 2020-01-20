@@ -79,6 +79,7 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
       return 0;
    }
    if (a_mode      == HIST_NONE) {
+      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
       DEBUG_HIST  yLOG_exit    (__FUNCTION__);
       return 0;
    }

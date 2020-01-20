@@ -517,6 +517,11 @@ BTREE_update            (void)
    if (my.btree != 'y')  return 0;
    if (rc == 0)  rc = BTREE_dgnome  ();
    if (rc == 0)  rc = BTREE_build   ();
+   s_result = 0;
+   strlcpy (s_path, "", LEN_DESC);
+   s_depth  = 0;
+   strlcpy (s_last, "", LEN_DESC);
+   s_save   = NULL;
    return rc;
 }
 

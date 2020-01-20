@@ -212,6 +212,8 @@ CELL__new          (tCELL **a_cell, char a_linked)
    x_new->R_parent  = NULL;
    x_new->r_prev    = NULL;
    x_new->r_next    = NULL;
+   /*---(sort)---------------------------*/
+   BTREE_update ();
    /*---(return)-------------------------*/
    *a_cell = x_new;
    /*---(complete)-----------------------*/
@@ -260,6 +262,8 @@ CELL__free         (tCELL **a_cell)
    free (*a_cell);
    *a_cell = NULL;
    --ACEL;
+   /*---(sort)---------------------------*/
+   BTREE_update ();
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -546,9 +550,7 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    char        x_after     [LEN_RECD]   = "";
    /*---(defenses)-----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
-   DEBUG_CELL   yLOG_value   ("a_col"     , a_col);
-   DEBUG_CELL   yLOG_value   ("a_row"     , a_row);
+   DEBUG_CELL   yLOG_complex ("args"      , "%c, %2dt, %3dc, %4dr", a_mode, a_tab, a_col, a_row);
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    DEBUG_CELL   yLOG_value   ("legal"     , rc);
    --rce;  if (rc < 0) {
@@ -600,58 +602,6 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    /*---(complete)--------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
-}
-
-char         /*-> create a duplicate cell ------------[ ------ [ge.B44.225.61]*/ /*-[01.0000.205.2]-*/ /*-[--.---.---.--]-*/
-CELL_dup           (tCELL **a_new, tCELL *a_old)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   /*---(beginning)----------------------*/
-   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   /*---(defenses)-----------------------*/
-   DEBUG_CELL   yLOG_point   ("a_new"     , a_new);
-   --rce;  if (a_new  == NULL) {
-      DEBUG_CELL   yLOG_note    ("must be null contents to start");
-      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
-      return rce; /* nothing to move */
-   }
-   DEBUG_CELL   yLOG_point   ("*a_new"    , *a_new);
-   --rce;  if (*a_new != NULL) {
-      DEBUG_CELL   yLOG_note    ("must be a valid pointer");
-      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
-      return rce; /* nothing to move */
-   }
-   DEBUG_CELL   yLOG_point   ("a_old"     , a_old);
-   --rce;  if (a_old  == NULL)  {
-      DEBUG_CELL   yLOG_note    ("can not be null, no point");
-      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
-      return rce; /* nothing to move */
-   }
-   /*---(clear it out)-------------------*/
-   rc = CELL__new (a_new , LINKED);
-   DEBUG_CELL   yLOG_point   ("*a_new"    , *a_new);
-   --rce;  if (*a_new == NULL)  {
-      DEBUG_CELL   yLOG_note    ("new cell could not be created");
-      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(copy source)--------------------*/
-   DEBUG_CELL   yLOG_note    ("copy old source and length");
-   if (a_old->source == NULL)  (*a_new)->source = NULL;
-   else                        (*a_new)->source = strndup (a_old->source, LEN_RECD);
-   (*a_new)->len      = a_old->len;
-   /*---(copy formatting)----------------*/
-   DEBUG_CELL   yLOG_note    ("copy old type and formatting");
-   (*a_new)->type        = a_old->type;
-   (*a_new)->align       = a_old->align;
-   (*a_new)->format      = a_old->format;
-   (*a_new)->decs        = a_old->decs;
-   (*a_new)->unit        = a_old->unit;
-   /*---(complete)-----------------------*/
-   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
-   return  0;
 }
 
 char         /*-> change te contents of a cell -------[ leaf   [ge.M96.647.HB]*/ /*-[02.0000.953.#]-*/ /*-[--.---.---.--]-*/
@@ -771,6 +721,65 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    return x_new;
 }
 
+char         /*-> create a duplicate cell ------------[ ------ [ge.B44.225.61]*/ /*-[01.0000.205.2]-*/ /*-[--.---.---.--]-*/
+CELL_dup           (tCELL **a_new, tCELL *a_old)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   DEBUG_CELL   yLOG_point   ("a_new"     , a_new);
+   --rce;  if (a_new  == NULL) {
+      DEBUG_CELL   yLOG_note    ("must be null contents to start");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce; /* nothing to move */
+   }
+   DEBUG_CELL   yLOG_point   ("*a_new"    , *a_new);
+   --rce;  if (*a_new != NULL) {
+      DEBUG_CELL   yLOG_note    ("must be a valid pointer");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce; /* nothing to move */
+   }
+   DEBUG_CELL   yLOG_point   ("a_old"     , a_old);
+   --rce;  if (a_old  == NULL)  {
+      DEBUG_CELL   yLOG_note    ("can not be null, no point");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce; /* nothing to move */
+   }
+   /*---(clear it out)-------------------*/
+   rc = CELL__new (a_new , LINKED);
+   DEBUG_CELL   yLOG_point   ("*a_new"    , *a_new);
+   --rce;  if (*a_new == NULL)  {
+      DEBUG_CELL   yLOG_note    ("new cell could not be created");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(copy source)--------------------*/
+   DEBUG_CELL   yLOG_note    ("copy old source and length");
+   if (a_old->source == NULL)  (*a_new)->source = NULL;
+   else                        (*a_new)->source = strndup (a_old->source, LEN_RECD);
+   (*a_new)->len      = a_old->len;
+   /*---(copy formatting)----------------*/
+   DEBUG_CELL   yLOG_note    ("copy old type and formatting");
+   (*a_new)->type        = a_old->type;
+   (*a_new)->align       = a_old->align;
+   (*a_new)->format      = a_old->format;
+   (*a_new)->decs        = a_old->decs;
+   (*a_new)->unit        = a_old->unit;
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return  0;
+}
+
+char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.106.!]-*/ /*-[--.---.---.--]-*/
+CELL_erase         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
+{
+   CELL_change (NULL, a_mode, a_curr->tab, a_curr->col, a_curr->row, "");
+   return 0;
+}
+
 
 
 
@@ -778,14 +787,6 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
 /*===----                         formatting                           ----===*/
 /*====================------------------------------------====================*/
 static void  o___FORMATTING______o () { return; }
-
-char         /*-> erase cells in current selection ---[ ------ [ge.751.093.33]*/ /*-[01.0000.106.!]-*/ /*-[--.---.---.--]-*/
-CELL_erase         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
-{
-   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   CELL_change (NULL, a_mode, a_curr->tab, a_curr->col, a_curr->row, "");
-   return 0;
-}
 
 char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.303.#]-*/ /*-[--.---.---.--]-*/
 CELL_units         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_unit)
@@ -1258,11 +1259,128 @@ CELL_source_line        (tCELL *a_cell, char *a_line)
       return 0;
    }
    /*---(prepare full)----------------*/
-   if (a_cell->source != NULL)  sprintf  (t, "%3d[%.40s]", a_cell->len, a_cell->source);
-   else                         strlcpy  (t, " --[].40s]", LEN_HUND);
+   if (a_cell->source != NULL)  sprintf  (t, "%3d[%.38s]", a_cell->len, a_cell->source);
+   else                         strlcpy  (t, " --[]", LEN_HUND);
    strl4comma (a_cell->key, s, 0, 'c', '-', LEN_LABEL);
    if (a_cell->tab >= 0)  snprintf (a_line, LEN_FULL, "%c %-8.8s %2dt %3dc %4dr %11.11s %s", a_cell->linked, a_cell->label, a_cell->tab, a_cell->col, a_cell->row, s, t);
    else                   snprintf (a_line, LEN_FULL, "%c %-8.8s  -t   -c    -r           - %s", a_cell->linked, a_cell->label, t);
+   /*---(complete)--------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+CELL_result_line        (tCELL *a_cell, char *a_line)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        t           [LEN_HUND]  = "";
+   char        s           [LEN_LABEL] = "";
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   DEBUG_CELL   yLOG_complex ("args"      , "%-10.10p, %-10.10p", a_cell, a_line);
+   /*---(defense)---------------------*/
+   --rce;  if (a_line  == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(prepare defaults)------------*/
+   snprintf (a_line, LEN_FULL, "´ -        t=·           -.-           --[]");
+   --rce;  if (a_cell  == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(prepare full)----------------*/
+   if (a_cell->v_str    != NULL)  sprintf  (t, "%3d[%.38s]", strlen (a_cell->v_str), a_cell->v_str);
+   else                           strlcpy  (t, " --[]", LEN_HUND);
+   snprintf (a_line, LEN_FULL, "´ %-8.8s t=%c    %17.8lf   %s", a_cell->label, a_cell->type, a_cell->v_num, t);
+   /*---(complete)--------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+CELL_print_line         (tCELL *a_cell, char *a_line)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        t           [LEN_HUND]  = "";
+   char        s           [LEN_LABEL] = "";
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   DEBUG_CELL   yLOG_complex ("args"      , "%-10.10p, %-10.10p", a_cell, a_line);
+   /*---(defense)---------------------*/
+   --rce;  if (a_line  == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(prepare defaults)------------*/
+   snprintf (a_line, LEN_FULL, "´ -        a=· f=· d=· u=· 5=· -h  -w  --[]");
+   --rce;  if (a_cell  == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(prepare full)----------------*/
+   if (a_cell->C_parent != NULL)  sprintf  (s, "%1dh %2dw", a_cell->R_parent->size, a_cell->C_parent->size);
+   else                           strlcpy  (s, "-h  -w", LEN_LABEL);
+   if (a_cell->print    != NULL)  sprintf  (t, "%3d[%.38s]", strlen (a_cell->print), a_cell->print);
+   else                           strlcpy  (t, " --[]", LEN_HUND);
+   snprintf (a_line, LEN_FULL, "´ %-8.8s a=%c f=%c d=%c u=%c 5=%c %s %s", a_cell->label, a_cell->align, a_cell->format, a_cell->decs, a_cell->unit, '·', s, t);
+   /*---(complete)--------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+CELL_linkage_line       (tCELL *a_cell, char *a_line)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        t           [LEN_HUND]  = "";
+   char        s           [LEN_LABEL] = "";
+   /*---(beginning)----------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   DEBUG_CELL   yLOG_complex ("args"      , "%-10.10p, %-10.10p", a_cell, a_line);
+   /*---(defense)---------------------*/
+   --rce;  if (a_line  == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(prepare defaults)------------*/
+   snprintf (a_line, LEN_FULL, "- -        mp:-      mn:-        -c cp:-      cn:-         -r rp:-      rn:-");
+   --rce;  if (a_cell  == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(master)----------------------*/
+   if (a_cell->m_prev   == NULL)    strlcpy  (s, " mp:-     ", LEN_LABEL);
+   else                             sprintf  (s, " mp:%-6.6s", a_cell->m_prev->label);
+   strlcpy (t, s, LEN_HUND);
+   if (a_cell->m_next   == NULL)    strlcpy  (s, " mn:-     ", LEN_LABEL);
+   else                             sprintf  (s, " mn:%-6.6s", a_cell->m_next->label);
+   strlcat (t, s, LEN_HUND);
+   /*---(column)----------------------*/
+   if (a_cell->C_parent == NULL)    strlcpy  (s, "   -c", LEN_LABEL);
+   else                             sprintf  (s, " %3dc", a_cell->C_parent->ref);
+   strlcat (t, s, LEN_HUND);
+   if (a_cell->c_prev   == NULL)    strlcpy  (s, " cp:-     ", LEN_LABEL);
+   else                             sprintf  (s, " cp:%-6.6s", a_cell->c_prev->label);
+   strlcat (t, s, LEN_HUND);
+   if (a_cell->c_next   == NULL)    strlcpy  (s, " cn:-     ", LEN_LABEL);
+   else                             sprintf  (s, " cn:%-6.6s", a_cell->c_next->label);
+   strlcat (t, s, LEN_HUND);
+   /*---(row)-------------------------*/
+   if (a_cell->R_parent == NULL)    strlcpy  (s, "    -r", LEN_LABEL);
+   else                             sprintf  (s, " %4dr", a_cell->R_parent->ref);
+   strlcat (t, s, LEN_HUND);
+   if (a_cell->r_prev   == NULL)    strlcpy  (s, " rp:-     ", LEN_LABEL);
+   else                             sprintf  (s, " rp:%-6.6s", a_cell->r_prev->label);
+   strlcat (t, s, LEN_HUND);
+   if (a_cell->r_next   == NULL)    strlcpy  (s, " rn:-"     , LEN_LABEL);
+   else                             sprintf  (s, " rn:%s"    , a_cell->r_next->label);
+   strlcat (t, s, LEN_HUND);
+   /*---(concat)----------------------*/
+   snprintf (a_line, LEN_FULL, "%c %-8.8s%s", a_cell->linked, a_cell->label, t);
    /*---(complete)--------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1312,6 +1430,18 @@ CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_s
    else if (strcmp (a_question + 2, "entry"        ) == 0) {
       CELL_source_line (x_cell, t);
       snprintf (unit_answer, LEN_FULL, "CELLb entry (%2d) : %s", a_seq, t);
+   }
+   else if (strcmp (a_question + 2, "result"       ) == 0) {
+      CELL_result_line (x_cell, t);
+      snprintf (unit_answer, LEN_FULL, "CELLb result     : %s", t);
+   }
+   else if (strcmp (a_question + 2, "printable"    ) == 0) {
+      CELL_print_line  (x_cell, t);
+      snprintf (unit_answer, LEN_FULL, "CELLb printable  : %s", t);
+   }
+   else if (strcmp (a_question + 2, "linkage"      ) == 0) {
+      CELL_linkage_line (x_cell, t);
+      snprintf (unit_answer, LEN_FULL, "CELLb linkage    : %s", t);
    }
    /*---(complete)-----------------------*/
    return unit_answer;

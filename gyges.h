@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5i"
-#define     P_VERTXT    "tab, col, row, and btree all caught up on unit testing and sequencing"
+#define     P_VERNUM    "3.5j"
+#define     P_VERTXT    "mapping cleaned up, yvikeys and ycalc units passed too"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1421,10 +1421,13 @@ char        NODE_writer             (char a_type, tNODE *a_node, short n);
 char        NODE_writer_one         (char a_index, char a_type, short a_ref);
 char        NODE_writer_all         (char a_type);
 /*---(mapping)------------------------*/
-char        NODE_map_clear          (char a_type);
-char        NODE_map_mapper         (char a_type);
-char        NODE_map_absolute       (char a_type);
-char        NODE_map_local          (char a_type);
+char        NODE_map_clear          (tMAPPED **a_map, tTAB **a_tab, int *a_max, int *a_curr, tNODE **a_node, char a_type);
+char        NODE_map_mapper         (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type);
+char        NODE_map_display        (tMAPPED *a_map, char a_type, char a_section, uchar *a_out);
+char        NODE_map_used           (tMAPPED *a_map, tNODE *a_node, int a_max, int a_curr, char a_type);
+char        NODE_map_absolute       (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type);
+char        NODE_map_local          (tMAPPED *a_map, int a_max, int a_curr, tNODE *a_node, char a_type);
+char        NODE_map_ends           (uchar *a_map, int a_curr, int *a_prev, int *a_next);
 char        NODE_map_update         (char a_type, char a_req);
 /*---(unit_test)----------------------*/
 char*       NODE__unit              (char *a_question, uchar a_tab, char a_type, ushort a_ref);
@@ -1467,12 +1470,7 @@ char        COL_reader              (void);
 char        COL_writer              (char a_index, short a_ref);
 char        COL_writer_all          (void);
 /*---(mapping)------------------------*/
-char        COL_map_init            (void);
-char        COL_map_clear           (void);
-char        COL_map_mapper          (void);
-char        COL_map_absolute        (void);
-char        COL_map_local           (void);
-char        COL_map_update          (char a_req);
+char        COL_mapper              (char a_req);
 /*---(unit_test)----------------------*/
 char*       COL__unit               (char *a_question, uchar a_tab, ushort a_col);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1514,12 +1512,7 @@ char        ROW_reader              (void);
 char        ROW_writer              (char a_index, short a_ref);
 char        ROW_writer_all          (void);
 /*---(mapping)------------------------*/
-char        ROW_map_init            (void);
-char        ROW_map_clear           (void);
-char        ROW_map_mapper          (void);
-char        ROW_map_absolute        (void);
-char        ROW_map_local           (void);
-char        ROW_map_update          (char a_req);
+char        ROW_mapper              (char a_req);
 /*---(unit_test)----------------------*/
 char*       ROW__unit               (char *a_question, uchar a_tab, ushort a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/

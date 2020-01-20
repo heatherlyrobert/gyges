@@ -878,8 +878,8 @@ MAP_mapper           (char a_req)
    /*> yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.uavail, NULL, &g_ymap.uavail, NULL);   <*/
    /*---(remap)----------------*/
    TAB_map_update   (a_req);
-   COL_map_update   (a_req);
-   ROW_map_update   (a_req);
+   COL_mapper       (a_req);
+   ROW_mapper       (a_req);
    /*> if (a_req == YVIKEYS_INIT) {                                                   <* 
     *>    LOC__mapper   ('T');                                                        <* 
     *>    LOC__mapper   ('C');                                                        <* 

@@ -1061,6 +1061,8 @@ TAB_resize           (char a_index, char *a_max)
    int         x_col       =    0;
    int         x_row       =    0;
    int         x_max       =    0;
+   char        x_type      =  '-';
+   char        x_meth      =  '-';
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -1075,40 +1077,74 @@ TAB_resize           (char a_index, char *a_max)
       return rce;
    }
    DEBUG_LOCS   yLOG_info    ("a_max"     , a_max);
+   /*---(locked or fixed)----------------*/
+   x_type = s_master [a_index]->type;
+   DEBUG_LOCS   yLOG_char    ("x_type"    , x_type);
+   if (strchr (G_TAB_TYPES, x_type) == NULL) {
+      DEBUG_LOCS   yLOG_note    ("tab locked, no adjustment");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(check specific size)------------*/
    rc = str2gyges  (a_max, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
    DEBUG_LOCS   yLOG_value   ("str2gyges" , rc);
    /*---(check short-cuts)---------------*/
-   --rce;  if (rc < 0) {
-      if      (strcmp (a_max, "min"    ) == 0) {
-         x_col = COL_max_used   (a_index);
-         x_row = ROW_max_used   (a_index);
-      }
-      else if (strcmp (a_max, "auto"   ) == 0) {
-         x_col = COL_max_adjust (a_index);
-         x_row = ROW_max_adjust (a_index);
-      }
-      else if (strcmp (a_max, "full"   ) == 0) {
-         x_col = MAX_col ();
-         x_row = MAX_row ();
-      }
-      else {
-         DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
+   --rce;  if      (rc >= 0)                  x_meth = 'f';
+   else if (strcmp (a_max, "min"    ) == 0)   x_meth = 'm';
+   else if (strcmp (a_max, "auto"   ) == 0)   x_meth = 'a';
+   else if (strcmp (a_max, "full"   ) == 0)   x_meth = '*';
+   else if (strcmp (a_max, ""       ) == 0)   x_meth = '-';
+   else {
+      DEBUG_LOCS   yLOG_note    ("max or meth not understood");
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
-   /*---(check max)----------------------*/
+   if (x_meth == '-' && x_type == 'f') {
+      DEBUG_LOCS   yLOG_note    ("fixed tab, no update requested");
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(check short-cuts)---------------*/
+   if (x_meth == 'a' || x_type == 'a') {
+      DEBUG_LOCS   yLOG_note    ("auto treatment");
+      if (a_index < 36 && x_type == 'f')  s_master [a_index]->type = '-';
+      x_col = COL_max_adjust (a_index);
+      x_row = ROW_max_adjust (a_index);
+   }
+   else if (x_meth == 'f') {
+      DEBUG_LOCS   yLOG_note    ("fixed size");
+      s_master [a_index]->type = 'f';
+      x_max = COL_max_used   (a_index);
+      if (x_max > x_col)  x_col = x_max;
+      x_max = ROW_max_used   (a_index);
+      if (x_max > x_row)  x_row = x_max;
+   }
+   else if (x_meth == 'm') {
+      DEBUG_LOCS   yLOG_note    ("minimum size");
+      s_master [a_index]->type = 'f';
+      x_col = COL_max_used   (a_index);
+      x_row = ROW_max_used   (a_index);
+   }
+   else if (x_meth == '*') {
+      DEBUG_LOCS   yLOG_note    ("full size");
+      s_master [a_index]->type = 'f';
+      x_col = MAX_col ();
+      x_row = MAX_row ();
+   }
+   else {
+      DEBUG_LOCS   yLOG_note    ("normal/auto treatment");
+      x_col = COL_max_adjust (a_index);
+      x_row = ROW_max_adjust (a_index);
+   }
    DEBUG_LOCS   yLOG_complex ("coord"     , "%3dc, %4dr", x_col, x_row);
-   x_max = COL_max_used   (a_index);
-   if (x_col < x_max)  x_col = x_max;
-   x_max = ROW_max_used   (a_index);
-   if (x_row < x_max)  x_row = x_max;
-   DEBUG_LOCS   yLOG_complex ("revised"   , "%3dc, %4dr", x_col, x_row);
-   /*---(adjust tab)---------------------*/
-   if (x_tab == CTAB) {
+   /*---(adjust current)-----------------*/
+   if (a_index == CTAB) {
+      DEBUG_LOCS   yLOG_note    ("tab is current, adjusting");
       NCOL = x_col;
       NROW = x_row;
    }
+   /*---(adjust tab)---------------------*/
+   DEBUG_LOCS   yLOG_note    ("fix tab settings");
    s_master [a_index]->ncol = x_col;
    s_master [a_index]->nrow = x_row;
    /*---(complete)-----------------------*/
