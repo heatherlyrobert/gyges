@@ -266,96 +266,96 @@ PROG_end             (void)
 /*====================------------------------------------====================*/
 PRIV void  o___UNITTEST________o () { return; }
 
-char*        /*-> tbd --------------------------------[ light  [us.JC0.271.X1]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-PROG__unit           (char *a_question, void *a_thing)
-{
-   /*---(locals)-----------+-----------+-*/
-   tCELL      *x_curr      = (tCELL*) a_thing;
-   tDEP       *x_deps      = (tDEP*)  a_thing;
-   int         x_thing     = (int) a_thing;
-   int         len         = 0;
-   char        temp        [LEN_RECD];
-   int         x_fore      = 0;
-   int         x_back      = 0;
-   /*---(sheet focus)--------------------*/
-   if        (strcmp(a_question, "sheet_size")     == 0) {
-      snprintf(unit_answer, LEN_FULL, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, NCOL, NROW);
-   } else if (strcmp(a_question, "cell_list")      == 0) {
-      snprintf(unit_answer, LEN_FULL, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);
-   } else if (strcmp(a_question, "cell_count")     == 0) {
-      /*> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <*/
-      x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->m_next; }
-      x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->m_prev; }
-      snprintf(unit_answer, LEN_FULL, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);
-   } else if (strcmp(a_question, "mode")           == 0) {
-      /*> snprintf(unit_answer, LEN_FULL, "Mode             : %c", yVIKEYS_mode_curr ());   <*/
-   }
-   /*---(cell focus)---------------------*/
-   else if   (strcmp(a_question, "cell_where")     == 0) {
-      if (x_curr == NULL)  snprintf(unit_answer, LEN_FULL, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", NULL  , -1         , -1         , -1         );
-      else                 snprintf(unit_answer, LEN_FULL, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
-   } else if (strcmp(a_question, "sheet_who")      == 0) {
-      snprintf(unit_answer, LEN_FULL, "Sheet Location   : p=%9p", x_curr);
-   } else if (strcmp(a_question, "cell_info")      == 0) {
-      /*> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->type, x_curr->format, x_curr->decs, x_curr->align, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <*/
-   }
-   /*---(cell contents)------------------*/
-   else if   (strcmp(a_question, "cell_source")    == 0) {
-      snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->len, x_curr->source);
-   } else if (strcmp(a_question, "cell_value")     == 0) {
-      snprintf(unit_answer, LEN_FULL, "Cell Value       : %18.6F", x_curr->v_num);
-   } else if (strcmp(a_question, "cell_modified")  == 0) {
-      snprintf(unit_answer, LEN_FULL, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->v_str), x_curr->v_str);
-   } else if (strcmp(a_question, "cell_printable") == 0) {
-      /*> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->print), x_curr->print);   <*/
-      snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->print), x_curr->print);
-   } else if (strcmp(a_question, "cell_contents")  == 0) {
-      snprintf(unit_answer, LEN_FULL, "Contents     (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);
-   }
-   /*---(cell contents)------------------*/
-   else if   (strcmp(a_question, "cell_rpn")       == 0) {
-      /*> snprintf(unit_answer, LEN_FULL, "Cell RPN         : (%3d) %-.40s", x_curr->nrpn, x_curr->rpn);   <*/
-   }
-   /*---(display focus)------------------*/
-   else if   (strcmp(a_question, "rows")           == 0) {
-      snprintf(unit_answer, LEN_FULL, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NROW, my.y_avail, BROW, CROW, EROW);
-   } else if (strcmp(a_question, "cols")           == 0) {
-      snprintf(unit_answer, LEN_FULL, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NCOL, my.x_avail, BCOL, CCOL, ECOL);
-   }
-   /*---(selection)----------------------*/
-   /*> else if   (strcmp(a_question, "sel_range")      == 0) {                                                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Select Range (%c) : ta=%3d, bc=%3d, br=%3d, ec=%3d, er=%3d", (sel.live == 0) ? '-' : 'L', sel.otab, sel.bcol, sel.brow, sel.ecol, sel.erow);   <* 
-    *> } else if (strcmp(a_question, "sel_curr")       == 0) {                                                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Select Current   : st=%3d, sc=%3d, sr=%3d", sel.otab, sel.ccol, sel.crow);                                                                     <* 
-    *> } else if (strcmp(a_question, "sel_full")       == 0) {                                                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Select Full      : st=%3d, sc=%3d, sr=%3d, sp=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);                   <*/
-   else if   (strcmp(a_question, "curr_pos")       == 0) {
-      snprintf(unit_answer, LEN_FULL, "current position : tab=%3d, col=%3d, row=%3d", my.ctab, CCOL, CROW);
-   } else if (strcmp(a_question, "max_pos" )       == 0) {
-      snprintf(unit_answer, LEN_FULL, "maximum position : tab=%3d, col=%3d, row=%3d", MAX_TABS, NCOL, NROW);
-   }
-   /*---(dependencies)-------------------*/
-   /*> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <* 
-    *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <* 
-    *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/   <* 
-    *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <* 
-    *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <* 
-    *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <* 
-    *>    DEP_disp_reqs  (a_thing, temp);                                                                                                                                               <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Cell Reqs List   : %-.35s", temp);                                                                                                     <* 
-    *> } else if (strcmp(a_question, "cell_deps")      == 0) {                                                                                                                    <* 
-    *>    DEP_disp_pros  (a_thing, temp);                                                                                                                                               <* 
-    *>    snprintf(unit_answer, LEN_FULL, "Cell Deps List   : %-.35s", temp);                                                                                                     <* 
-    *> }                                                                                                                                                                          <*/
-   /*---(UNKNOWN)------------------------*/
-   else {
-      snprintf(unit_answer, LEN_FULL, "UNKNOWN          : question is not understood");
-   }
-   /*---(complete)-----------------------*/
-   return unit_answer;
-}
+/*> char*        /+-> tbd --------------------------------[ light  [us.JC0.271.X1]+/ /+-[01.0000.00#.!]-+/ /+-[--.---.---.--]-+/                                                                                                <* 
+ *> PROG__unit           (char *a_question, void *a_thing)                                                                                                                                                                      <* 
+ *> {                                                                                                                                                                                                                           <* 
+ *>    /+---(locals)-----------+-----------+-+/                                                                                                                                                                                 <* 
+ *>    tCELL      *x_curr      = (tCELL*) a_thing;                                                                                                                                                                              <* 
+ *>    tDEP       *x_deps      = (tDEP*)  a_thing;                                                                                                                                                                              <* 
+ *>    int         x_thing     = (int) a_thing;                                                                                                                                                                                 <* 
+ *>    int         len         = 0;                                                                                                                                                                                             <* 
+ *>    char        temp        [LEN_RECD];                                                                                                                                                                                      <* 
+ *>    int         x_fore      = 0;                                                                                                                                                                                             <* 
+ *>    int         x_back      = 0;                                                                                                                                                                                             <* 
+ *>    /+---(sheet focus)--------------------+/                                                                                                                                                                                 <* 
+ *>    if        (strcmp(a_question, "sheet_size")     == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "sheet_size       : ncell=%4d, ncol=%3d, nrow=%3d", ncell, NCOL, NROW);                                                                                                               <* 
+ *>    } else if (strcmp(a_question, "cell_list")      == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);                                                                                                                       <* 
+ *>    } else if (strcmp(a_question, "cell_count")     == 0) {                                                                                                                                                                  <* 
+ *>       /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/                                               <* 
+ *>       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->m_next; }                                                                                                                                         <* 
+ *>       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->m_prev; }                                                                                                                                         <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);                                                                                                                     <* 
+ *>    } else if (strcmp(a_question, "mode")           == 0) {                                                                                                                                                                  <* 
+ *>       /+> snprintf(unit_answer, LEN_FULL, "Mode             : %c", yVIKEYS_mode_curr ());   <+/                                                                                                                             <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(cell focus)---------------------+/                                                                                                                                                                                 <* 
+ *>    else if   (strcmp(a_question, "cell_where")     == 0) {                                                                                                                                                                  <* 
+ *>       if (x_curr == NULL)  snprintf(unit_answer, LEN_FULL, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", NULL  , -1         , -1         , -1         );                                                                <* 
+ *>       else                 snprintf(unit_answer, LEN_FULL, "s_cell loc       : p=%10p, t=%4d, c=%4d, r=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);                                                                <* 
+ *>    } else if (strcmp(a_question, "sheet_who")      == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Sheet Location   : p=%9p", x_curr);                                                                                                                                                  <* 
+ *>    } else if (strcmp(a_question, "cell_info")      == 0) {                                                                                                                                                                  <* 
+ *>       /+> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->type, x_curr->format, x_curr->decs, x_curr->align, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <+/   <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(cell contents)------------------+/                                                                                                                                                                                 <* 
+ *>    else if   (strcmp(a_question, "cell_source")    == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->len, x_curr->source);                                                                                                                    <* 
+ *>    } else if (strcmp(a_question, "cell_value")     == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Value       : %18.6F", x_curr->v_num);                                                                                                                                          <* 
+ *>    } else if (strcmp(a_question, "cell_modified")  == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->v_str), x_curr->v_str);                                                                                                       <* 
+ *>    } else if (strcmp(a_question, "cell_printable") == 0) {                                                                                                                                                                  <* 
+ *>       /+> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->print), x_curr->print);   <+/                                                                                           <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->print), x_curr->print);                                                                                                         <* 
+ *>    } else if (strcmp(a_question, "cell_contents")  == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Contents     (%c) : (%2d:%2d) :%-.40s:", (g_contents[my.cpos] >= ' ' && g_contents[my.cpos] <= '~') ? g_contents[my.cpos] : ' ', my.cpos, (int) strlen(g_contents), g_contents);     <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(cell contents)------------------+/                                                                                                                                                                                 <* 
+ *>    else if   (strcmp(a_question, "cell_rpn")       == 0) {                                                                                                                                                                  <* 
+ *>       /+> snprintf(unit_answer, LEN_FULL, "Cell RPN         : (%3d) %-.40s", x_curr->nrpn, x_curr->rpn);   <+/                                                                                                              <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(display focus)------------------+/                                                                                                                                                                                 <* 
+ *>    else if   (strcmp(a_question, "rows")           == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Rows             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NROW, my.y_avail, BROW, CROW, EROW);                                                                                          <* 
+ *>    } else if (strcmp(a_question, "cols")           == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cols             : n=%3d, a=%3d, b=%3d, c=%3d, e=%3d", NCOL, my.x_avail, BCOL, CCOL, ECOL);                                                                                          <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(selection)----------------------+/                                                                                                                                                                                 <* 
+ *>    /+> else if   (strcmp(a_question, "sel_range")      == 0) {                                                                                                                            <*                                <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Select Range (%c) : ta=%3d, bc=%3d, br=%3d, ec=%3d, er=%3d", (sel.live == 0) ? '-' : 'L', sel.otab, sel.bcol, sel.brow, sel.ecol, sel.erow);   <*                                <* 
+ *>     *> } else if (strcmp(a_question, "sel_curr")       == 0) {                                                                                                                            <*                                <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Select Current   : st=%3d, sc=%3d, sr=%3d", sel.otab, sel.ccol, sel.crow);                                                                     <*                                <* 
+ *>     *> } else if (strcmp(a_question, "sel_full")       == 0) {                                                                                                                            <*                                <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Select Full      : st=%3d, sc=%3d, sr=%3d, sp=%9p", sel.otab, sel.ccol, sel.crow, tabs[sel.otab].sheet[sel.ccol][sel.crow]);                   <+/                               <* 
+ *>    else if   (strcmp(a_question, "curr_pos")       == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "current position : tab=%3d, col=%3d, row=%3d", CTAB, CCOL, CROW);                                                                                                                    <* 
+ *>    } else if (strcmp(a_question, "max_pos" )       == 0) {                                                                                                                                                                  <* 
+ *>       snprintf(unit_answer, LEN_FULL, "maximum position : tab=%3d, col=%3d, row=%3d", MAX_TABS, NCOL, NROW);                                                                                                                <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(dependencies)-------------------+/                                                                                                                                                                                 <* 
+ *>    /+> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <*                                        <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <*                                    <* 
+ *>     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <*                                        <* 
+ *>     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/   <*                                      <* 
+ *>     *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <*                                       <* 
+ *>     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <*                                       <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <*                                      <* 
+ *>     *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <*                                        <* 
+ *>     *>    DEP_disp_reqs  (a_thing, temp);                                                                                                                                               <*                                  <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Cell Reqs List   : %-.35s", temp);                                                                                                     <*                                        <* 
+ *>     *> } else if (strcmp(a_question, "cell_deps")      == 0) {                                                                                                                    <*                                        <* 
+ *>     *>    DEP_disp_pros  (a_thing, temp);                                                                                                                                               <*                                  <* 
+ *>     *>    snprintf(unit_answer, LEN_FULL, "Cell Deps List   : %-.35s", temp);                                                                                                     <*                                        <* 
+ *>     *> }                                                                                                                                                                          <+/                                       <* 
+ *>    /+---(UNKNOWN)------------------------+/                                                                                                                                                                                 <* 
+ *>    else {                                                                                                                                                                                                                   <* 
+ *>       snprintf(unit_answer, LEN_FULL, "UNKNOWN          : question is not understood");                                                                                                                                     <* 
+ *>    }                                                                                                                                                                                                                        <* 
+ *>    /+---(complete)-----------------------+/                                                                                                                                                                                 <* 
+ *>    return unit_answer;                                                                                                                                                                                                      <* 
+ *> }                                                                                                                                                                                                                           <*/
 
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 PROG__unit_quiet     (void)

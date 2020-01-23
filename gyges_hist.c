@@ -647,6 +647,9 @@ HIST__undo_single       (void)
    case HIST_WIDTH     :
       CELL_visual   (CHANGE_WIDTH  , HIST_NONE, -(atoi (s_curr->before)));
       break;
+   case HIST_HEIGHT    :
+      CELL_visual   (CHANGE_HEIGHT , HIST_NONE, -(atoi (s_curr->before)));
+      break;
    }
    /*---(complete)-----------------------*/
    DEBUG_HIST  yLOG_exit    (__FUNCTION__);

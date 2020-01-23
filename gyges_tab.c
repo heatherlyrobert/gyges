@@ -780,7 +780,7 @@ TAB_init                (void)
    for (i = 0; i < s_nvalid; ++i)   s_master [i] = NULL;
    /*---(ground searches)----------------*/
    my.ptab  = NULL;
-   my.ctab  = -1;
+   CTAB     = -1;
    s_curr   = NULL;
    s_all    = 0;
    s_count  = 0;

@@ -424,7 +424,8 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    x_owner  = (tCELL *) a_owner;
    DEBUG_APIS   yLOG_value   ("tab"       , x_owner->tab);
    DEBUG_APIS   yLOG_value   ("col"       , x_owner->col);
-   w        = COL_size (x_owner->tab, x_owner->col);
+   DEBUG_APIS   yLOG_point   ("C_parent"  , x_owner->C_parent);
+   w         = x_owner->C_parent->size;
    DEBUG_APIS   yLOG_value   ("w"         , w);
    *a_width = w;
    *a_merge = 0;
@@ -439,14 +440,18 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    }
    DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->label, b, x, y, z, w);
    for (i = x + 1; i < x + 20; ++i) {
-      rc = str4gyges (b, i, y, z, 0, x_label, YSTR_USABLE);
+      DEBUG_APIS   yLOG_bullet  (i          , "check for merges to right");
+      /*---(filter non-valid)--*/
+      rc = VALID_col (i);
+      /*> rc = str4gyges (b, i, y, z, 0, x_label, YSTR_USABLE);                       <*/
       if (rc < 0)  break;
-      rc = api_ycalc_whos_at (b, i, y, z, YCALC_LOOK, &x_owner, NULL);
-      if (rc < 0)                              break;
-      if (x_owner == NULL)                     break;
+      rc = BTREE_by_coord (&x_owner, b, i, y);
+      /*> rc = api_ycalc_whos_at (b, i, y, z, YCALC_LOOK, &x_owner, NULL);            <*/
+      if (rc < 0 || x_owner == NULL)              break;
       if (x_owner->type != YCALC_DATA_MERGED)     break;
-      w         = COL_size (x_owner->tab, x_owner->col);
-      DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_label, b, i, y, z, w);
+      /*> w         = COL_size (x_owner->tab, x_owner->col);                          <*/
+      w         = x_owner->C_parent->size;
+      DEBUG_APIS   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->label, b, i, y, z, w);
       *a_width += w;
       ++(*a_merge);
       s_owners [*a_merge] = x_owner;
@@ -484,6 +489,7 @@ api__ycalc_parse        (char *a_full, int a_merge)
       while (p == NULL)  p = (char*) malloc (w + 1);
       DEBUG_APIS  yLOG_point   ("p"         , p);
       sprintf (p, "%-*.*s", w, w, a_full + wa);
+      DEBUG_APIS  yLOG_info    ("p"      , p);
       DEBUG_APIS  yLOG_point   ("->print", x_owner->print);
       if (x_owner->print != NULL) {
          free (x_owner->print);
@@ -522,6 +528,11 @@ api_ycalc_printer       (void *a_owner)
       return rce;
    }
    x_owner   = (tCELL     *) a_owner;
+   DEBUG_APIS   yLOG_complex ("loc"       , "%-10.10p %-7.7s, %2d, %3dc %-10.10p, %4dr %-10.10p", x_owner, x_owner->label, x_owner->tab, x_owner->col, x_owner->C_parent, x_owner->row, x_owner->R_parent);
+   --rce;  if (x_owner->tab  == UNHOOKED || x_owner->col  == UNHOOKED || x_owner->row  == UNHOOKED) {
+      DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(contents)-----------------------*/
    DEBUG_APIS   yLOG_char    ("type"      , x_owner->type);
    DEBUG_APIS   yLOG_char    ("decs"      , x_owner->decs);

@@ -455,34 +455,34 @@ NODE_hook_cell          (tTAB *a_tab, char a_type, ushort a_ref, ushort a_seq, t
    DEBUG_LOCS   yLOG_point   ("x_curr"    , x_curr);
    /*---(add cell to col)----------------*/
    if (x_prev == NULL && x_curr == NULL) {
-      DEBUG_LOCS   yLOG_snote   ("first cell in col/row");
+      DEBUG_LOCS   yLOG_note    ("first cell in col/row");
       IF_COL    { a_cell->c_prev = NULL; }
       ELSE_ROW  { a_cell->r_prev = NULL; }
       x_node->n_head         = a_cell;
       x_node->n_tail         = a_cell;
    } else if (x_prev == NULL && x_curr != NULL) {
-      DEBUG_LOCS   yLOG_snote   ("prepend to front");
+      DEBUG_LOCS   yLOG_note    ("prepend to front");
       IF_COL    { a_cell->c_prev = NULL; a_cell->c_next = x_node->n_head; x_node->n_head->c_prev = a_cell; }
       ELSE_ROW  { a_cell->r_prev = NULL; a_cell->r_next = x_node->n_head; x_node->n_head->r_prev = a_cell; }
       x_node->n_head         = a_cell;
    } else if (x_prev != NULL && x_curr == NULL) {
-      DEBUG_LOCS   yLOG_snote   ("append to back");
+      DEBUG_LOCS   yLOG_note    ("append to back");
       IF_COL    { a_cell->c_next = NULL; a_cell->c_prev = x_node->n_tail; x_node->n_tail->c_next = a_cell; }
       ELSE_ROW  { a_cell->r_next = NULL; a_cell->r_prev = x_node->n_tail; x_node->n_tail->r_next = a_cell; }
       x_node->n_tail         = a_cell;
    } else {
-      DEBUG_LOCS   yLOG_snote   ("insert in middle");
+      DEBUG_LOCS   yLOG_note    ("insert in middle");
       IF_COL    { a_cell->c_next = x_prev->c_next; x_prev->c_next = a_cell; a_cell->c_prev = x_curr->c_prev; x_curr->c_prev = a_cell; }
       ELSE_ROW  { a_cell->r_next = x_prev->r_next; x_prev->r_next = a_cell; a_cell->r_prev = x_curr->r_prev; x_curr->r_prev = a_cell; }
    }
-   /*---(update counts)------------------*/
-   ++(x_node->count);
-   DEBUG_LOCS   yLOG_value   ("count"     , x_node->count);
    /*---(update col ties)----------------*/
+   ++(x_node->count);
    IF_COL   a_cell->col      = a_ref;
    ELSE_ROW a_cell->row      = a_ref;
    IF_COL   a_cell->C_parent = x_node;
    ELSE_ROW a_cell->R_parent = x_node;
+   IF_COL   { DEBUG_LOCS   yLOG_complex ("C_parent"  , "%-10.10p, %c, %3dr, %3dc", a_cell->C_parent, a_cell->C_parent->type, a_cell->C_parent->ref, a_cell->C_parent->count); }
+   ELSE_ROW { DEBUG_LOCS   yLOG_complex ("R_parent"  , "%-10.10p, %c, %3dr, %3dc", a_cell->R_parent, a_cell->R_parent->type, a_cell->R_parent->ref, a_cell->R_parent->count); }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -787,10 +787,12 @@ NODE_size                (char a_index, char a_type, short a_ref)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_LOCS   yLOG_complex ("tab"       , "%c, %2d, %s", x_tab->abbr, x_tab->tab, x_tab->name);
    /*---(find col/row)-------------------*/
    NODE_by_index (&x_node, x_tab, a_type, a_ref);
    DEBUG_LOCS   yLOG_point   ("x_node"    , x_node);
    if (x_node != NULL) {
+      DEBUG_LOCS   yLOG_complex ("node"      , "%c, %2dr, %2ds", x_node->type, x_node->ref, x_node->size);
       x_size = x_node->size;
    } else {
       IF_COL   x_size = DEF_WIDTH;
@@ -908,8 +910,8 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
       api_ycalc_printer (x_curr);
       ++c;
       /*---(next)------------------------*/
-      IF_COL   x_curr = x_curr->r_next;
-      ELSE_ROW x_curr = x_curr->c_next;
+      IF_COL   x_curr = x_curr->c_next;
+      ELSE_ROW x_curr = x_curr->r_next;
    }
    /*---(reset headers)------------------*/
    yVIKEYS_map_refresh ();
@@ -976,6 +978,10 @@ NODE_multikey      (char a_type, char a_key)
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_complex ("args"      , "%c, %c", a_type, a_key);
+   if (a_key < 0)   {
+      x_size = -a_key;
+      a_key  = 0;
+   }
    /*---(get coordinates)-------------*/
    yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
    DEBUG_LOCS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", b, xb, xe, yb, ye);
@@ -983,8 +989,8 @@ NODE_multikey      (char a_type, char a_key)
    ELSE_ROW { x_beg = yb; x_end = ye; }
    DEBUG_LOCS   yLOG_complex ("range"     , "%4db..%4de", x_beg, x_end);
    for (x_pos = x_beg; x_pos <= x_end; ++x_pos) {
-      if (x_pos == x_beg)  NODE__resize (b, a_type, x_pos, 0, a_key, HIST_BEG);
-      else                 NODE__resize (b, a_type, x_pos, 0, a_key, HIST_ADD);
+      if (x_pos == x_beg)  NODE__resize (b, a_type, x_pos, x_size, a_key, HIST_BEG);
+      else                 NODE__resize (b, a_type, x_pos, x_size, a_key, HIST_ADD);
    }
    /*---(complete)---------------------------*/
    DEBUG_LOCS  yLOG_exit   (__FUNCTION__);

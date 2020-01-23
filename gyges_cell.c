@@ -247,6 +247,7 @@ CELL__free         (tCELL **a_cell)
     *>    DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);                              <* 
     *>    return rce;                                                                 <* 
     *> }                                                                              <*/
+   DEBUG_CELL   yLOG_info    ("->label"   , (*a_cell)->label);
    CELL__wipe (*a_cell);
    /*---(out of linked list)-------------*/
    if ((*a_cell)->linked == LINKED) {
@@ -667,6 +668,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    rc = yCALC_handle (x_curr->label);
    DEBUG_CELL   yLOG_value   ("handle"    , rc);
    /*---(return)-------------------------*/
+   BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
    if (a_cell != NULL)  *a_cell = x_curr;
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);

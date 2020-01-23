@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5j"
-#define     P_VERTXT    "mapping cleaned up, yvikeys and ycalc units passed too"
+#define     P_VERNUM    "3.5k"
+#define     P_VERTXT    "fully completed unit testing with dynamic version ;)))"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1061,9 +1061,6 @@ char*     REG__getter        (char *a_question, char a_reg);
 
 /*---(sub-modes)------------*/
 char      SMOD_buffer          (char  a_major, char  a_minor);
-char      api_yvikeys_format   (int   a_major, int   a_minor);
-char      api_yvikeys_units    (int   a_major, int   a_minor);
-char      api_yvikeys_exim     (char  a_dir  , char  a_style);
 char      EXIM_init            (void);
 char      EXIM_import          (char a_style);
 char      EXIM_export          (char a_style);
@@ -1080,7 +1077,6 @@ char*     KEYS__unit         (char *a_question);
 char        KEYS_quit        (void);
 char        KEYS_writequit   (void);
 
-char*     MOVE_unit          (char *a_question, int a_num);
 
 
 /*---(ncurses)----------------------------------*/
@@ -1672,24 +1668,31 @@ char*       api_ycalc__unit         (char *a_question, char *a_label);
 
 
 /*===[[ gyges_yvikeys.c ]]====================================================*/
-
 char        api_vikeys_init         (void);
-
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
 char        api_yvikeys_addressor   (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);
-
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_saver       (char *a_contents);
-
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_macro_get   (char   a_name, char  *a_keys);
 char        api_yvikeys_macro_set   (char   a_name, char  *a_keys);
-
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_searcher    (char *a_search);
 char        api_yvikeys_unsearcher  (int b, int x, int y, int z);
-
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z);
 char        api_yvikeys_copier      (char a_type, long a_stamp);
 char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 char        api_yvikeys_regkiller   (tCELL *a_curr);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        api_yvikeys_format      (int   a_major, int   a_minor);
+char        api_yvikeys_units       (int   a_major, int   a_minor);
+char        api_yvikeys_exim        (char  a_dir  , char  a_style);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char*       api_myvikeys__unit      (char *a_question, int a_num);
+
+
 
 
 char        BTREE_init              (void);
