@@ -83,6 +83,7 @@ FILE_prepper            (void)
 {
    CELL_purge   ();
    LOC_purge    ();
+   TAB_new_in_abbr ('0', NULL, NULL);
    TAB_new_in_abbr ('®', NULL, NULL);
    TAB_new_in_abbr ('¯', NULL, NULL);
    return 0;
@@ -91,10 +92,14 @@ FILE_prepper            (void)
 char
 FILE_new                (void)
 {
-   FILE_prepper ();
+   CELL_purge   ();
+   LOC_purge    ();
    TAB_new_in_abbr ('0', NULL, NULL);
+   TAB_new_in_abbr ('®', NULL, NULL);
+   TAB_new_in_abbr ('¯', NULL, NULL);
    MAP_mapper (YVIKEYS_INIT);
    yVIKEYS_jump (0, 0, 0, 0);
+   /*> yVIKEYS_cmds_direct ("0a1");                                                   <*/
    return 0;
 }
 

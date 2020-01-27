@@ -555,6 +555,27 @@ HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, ch
    return rc;
 }
 
+char
+HIST_units         (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        s           [LEN_RECD];
+   char        t           [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   /*---(add record)------------------*/
+   sprintf (s, "%c", a_before);
+   g_before = strdup  (s);
+   sprintf (t, "%c", a_after );
+   g_after  = strdup  (t);
+   rc = HIST__new (a_mode, a_act, a_tab, a_col, a_row);
+   /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int a_before, int a_after)
 {
@@ -643,6 +664,9 @@ HIST__undo_single       (void)
       break;
    case HIST_FORMAT    :
       CELL_visual   (CHANGE_FORMAT , HIST_NONE, s_curr->before[0]);
+      break;
+   case HIST_UNITS     :
+      CELL_visual   (CHANGE_UNITS  , HIST_NONE, s_curr->before[0]);
       break;
    case HIST_WIDTH     :
       CELL_visual   (CHANGE_WIDTH  , HIST_NONE, -(atoi (s_curr->before)));
@@ -769,8 +793,14 @@ HIST__redo_single       (void)
    case HIST_FORMAT    :
       CELL_visual   (CHANGE_FORMAT , HIST_NONE, s_curr->after [0]);
       break;
+   case HIST_UNITS     :
+      CELL_visual   (CHANGE_UNITS  , HIST_NONE, s_curr->after [0]);
+      break;
    case HIST_WIDTH     :
       CELL_visual   (CHANGE_WIDTH  , HIST_NONE, -(atoi (s_curr->after )));
+      break;
+   case HIST_HEIGHT    :
+      CELL_visual   (CHANGE_HEIGHT , HIST_NONE, -(atoi (s_curr->after )));
       break;
    }
    /*---(complete)-----------------------*/

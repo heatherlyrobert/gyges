@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5k"
-#define     P_VERTXT    "fully completed unit testing with dynamic version ;)))"
+#define     P_VERNUM    "3.5l"
+#define     P_VERTXT    "scripts are up and running, not perfect, but pretty awesome ;)"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1272,8 +1272,9 @@ char        HIST_change        (char a_mode, int a_tab, int a_col, int a_row, ch
 char        HIST_overwrite     (int a_tab, int a_col, int a_row, char *a_after , char *a_afterF);
 char        HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
 char        HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
-char        HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, char  a_before, char  a_after);
-char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int   a_before, int   a_after);
+char        HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);
+char        HIST_units         (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);
+char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int  a_before, int  a_after);
 
 char        HIST_list          (void);
 char        HIST_undo          (void);

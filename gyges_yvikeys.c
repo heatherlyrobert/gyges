@@ -156,12 +156,15 @@ api_yvikeys_format      (int a_major, int a_minor)
    case  'i' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'i');  break;  /* integer    */
    case  'I' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'I');  break;  /* indented   */
    case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  break;  /* real       */
+   case  'g' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  CELL_visual   (CHANGE_DECIMAL , HIST_ADD, '3');  break;  /* real       */
+   case  'G' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  CELL_visual   (CHANGE_DECIMAL , HIST_ADD, '6');  break;  /* real       */
    case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  break;  /* exponencial*/
    case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  break;  /* spaced exp */
    }
    /*---(comma formats)------------------*/
    switch (a_minor) {
    case  'c' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'c');  break;  /* comma           */
+   case  ',' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'c');  break;  /* comma           */
    case  'C' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'C');  break;  /* comma           */
    case  'a' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'a');  break;  /* accounting      */
    case  'A' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'A');  break;  /* accounting      */
@@ -917,7 +920,9 @@ MAP_mapper           (char a_req)
    }
    /*---(get current)----------*/
    x_curr = LOC_cell_at_curr ();
-   if      (x_curr == NULL || x_curr->source == NULL) {
+   if  (MODE_curr () == UMOD_WANDER) {
+      ;;
+   } else if (x_curr == NULL || x_curr->source == NULL) {
       str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
       yVIKEYS_source (t, "");
    } else {

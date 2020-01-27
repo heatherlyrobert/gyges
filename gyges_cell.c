@@ -802,7 +802,7 @@ CELL_units         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_unit)
    if (a_head == NULL || a_curr == NULL)    return  0;
    /*---(prepare)------------------------*/
    /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   HIST_format (a_mode, HIST_UNITS   , a_curr->tab, a_curr->col, a_curr->row, a_curr->unit, a_unit);
+   HIST_units  (a_mode, HIST_UNITS   , a_curr->tab, a_curr->col, a_curr->row, a_curr->unit, a_unit);
    a_curr->unit = a_unit;
    /*---(complete)-----------------------*/
    return 0;

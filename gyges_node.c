@@ -887,8 +887,8 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
    }
    /*---(update)-------------------------*/
    x_node->size = a_size;
-   IF_COL   HIST_size   (a_mode, HIST_WIDTH   , a_index, a_ref, 0, x_prev, a_size);
-   ELSE_ROW HIST_size   (a_mode, HIST_HEIGHT  , a_index, 0, a_ref, x_prev, a_size);
+   IF_COL   HIST_size   (a_mode, HIST_WIDTH   , a_index, a_ref, CROW, x_prev, a_size);
+   ELSE_ROW HIST_size   (a_mode, HIST_HEIGHT  , a_index, CCOL, a_ref, x_prev, a_size);
    /*---(check if default size)----------*/
    IF_DEFAULT {
       DEBUG_LOCS   yLOG_note    ("making default size");
