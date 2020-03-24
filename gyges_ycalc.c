@@ -121,7 +121,7 @@ api_ycalc_reaper        (void **a_owner)
    /*---(check type)---------------------*/
    DEBUG_APIS   yLOG_info    ("label"     , x_owner->label);
    DEBUG_APIS   yLOG_char    ("type"      , x_owner->type);
-   --rce;  if (x_owner->type != YCALC_DATA_BLANK) {
+   --rce;  if (x_owner->type != YCALC_DATA_BLANK && x_owner->type != YCALC_DATA_GARBAGE) {
       DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }

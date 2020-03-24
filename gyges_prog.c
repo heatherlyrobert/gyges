@@ -87,12 +87,12 @@ PROG_init          (int a_argc, char *a_argv[])
    NODE_init ();
    TAB_init  ();
    LOC_init  ();
-   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet", FILE_prepper);
+   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet", FILE_prepper, FILE_finisher);
    rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
    if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
-   if (rc == 0)  rc = yVIKEYS_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_regkiller, api_yvikeys_exim);
+   if (rc == 0)  rc = yVIKEYS_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_router, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
    if (rc <  0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
@@ -223,6 +223,7 @@ PROG_final         (void)
    yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "mundo"  , CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
+   yVIKEYS_view_option (YVIKEYS_STATUS, "detail" , CURS_status_detail  , "details on recent errors"                   );
    yVIKEYS_cmds_direct (":status mode");
    yVIKEYS_cmds_direct (":read");
    MAP_mapper (YVIKEYS_INIT);

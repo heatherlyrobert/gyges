@@ -81,17 +81,34 @@ static FILE    *s_file;                      /* file pointer                   *
 char
 FILE_prepper            (void)
 {
+   /*---(header)-------------------------*/
+   DEBUG_OUTP    yLOG_enter   (__FUNCTION__);
+   /*> yCALC_cleanse ();                                                              <*/
    CELL_purge   ();
    LOC_purge    ();
    TAB_new_in_abbr ('0', NULL, NULL);
    TAB_new_in_abbr ('®', NULL, NULL);
    TAB_new_in_abbr ('¯', NULL, NULL);
+   MAP_mapper (YVIKEYS_INIT);
+   yVIKEYS_jump (0, 0, 0, 0);
+   yCALC_set_state ('L');
+   DEBUG_OUTP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+FILE_finisher           (void)
+{
+   DEBUG_OUTP    yLOG_enter   (__FUNCTION__);
+   yCALC_set_state ('-');
+   DEBUG_OUTP    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
 FILE_new                (void)
 {
+   /*> yCALC_cleanse ();                                                              <*/
    CELL_purge   ();
    LOC_purge    ();
    TAB_new_in_abbr ('0', NULL, NULL);

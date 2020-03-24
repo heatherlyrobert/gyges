@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5l"
-#define     P_VERTXT    "scripts are up and running, not perfect, but pretty awesome ;)"
+#define     P_VERNUM    "3.5m"
+#define     P_VERTXT    "many changes to support bug fixes in yCALC and other libs"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -59,26 +59,26 @@
 
 
 #define     P_DEFINE    \
- "as one of the major user-empowerment tools, spreadsheets allow ad-hoc,¦" \
- "informal, low skill, quick, and evolving analysis and manipulation of any¦" \
- "kind of data -- from massive tables to irregular and unclear collections.¦"
+   "as one of the major user-empowerment tools, spreadsheets allow ad-hoc,¦" \
+   "informal, low skill, quick, and evolving analysis and manipulation of any¦" \
+   "kind of data -- from massive tables to irregular and unclear collections.¦"
 #define     P_CURRENT   \
- "this is a fairly well-defined category of tool with a relatively stable¦" \
- "interface and several major alternative products.  while user experiences¦" \
- "vary, major functions and features are broadly comparable across competitors.¦"
+   "this is a fairly well-defined category of tool with a relatively stable¦" \
+   "interface and several major alternative products.  while user experiences¦" \
+   "vary, major functions and features are broadly comparable across competitors.¦"
 #define     P_CONCERN   \
- "these tools have become overly complex, unwieldy, kitchen-sink tools that¦" \
- "overlap with other major tools rather than complement them.  spreadsheets in¦" \
- "particular have become dangerous, error-prone replacements for real systems.¦"
+   "these tools have become overly complex, unwieldy, kitchen-sink tools that¦" \
+   "overlap with other major tools rather than complement them.  spreadsheets in¦" \
+   "particular have become dangerous, error-prone replacements for real systems.¦"
 #define     P_ALTERNS   "visicalc, lotus 123, excel, google, oocalc, gnumeric¦"
 #define     P_WHATFOR   \
- "i love spreadsheets.  love them.  but, in pursuit of market share, they have¦" \
- "evolved into massive, complex, mouse-driven, productivity suckers that¦" \
- "integrate poorly with other tools (anti-unix).¦"
+   "i love spreadsheets.  love them.  but, in pursuit of market share, they have¦" \
+   "evolved into massive, complex, mouse-driven, productivity suckers that¦" \
+   "integrate poorly with other tools (anti-unix).¦"
 #define     P_DECISION  \
- "gonna make my own.  crazy and unrealistic, but rewarding and sobering too.¦" \
- "if you want to learn, pick blisteringly hard goals.  my result will be¦" \
- "keyboard-driven, scriptable, light, fast, and flexible.¦"
+   "gonna make my own.  crazy and unrealistic, but rewarding and sobering too.¦" \
+   "if you want to learn, pick blisteringly hard goals.  my result will be¦" \
+   "keyboard-driven, scriptable, light, fast, and flexible.¦"
 
 
 /*===[[ END_HEADER ]]=========================================================*/
@@ -160,7 +160,7 @@
  *   AS ALWAYS, there are many stable, accepted, existing programs that have
  *   been built by better programmers and are likely superior in speed, size
  *   capability, and reliability; BUT, i would not have learned nearly as much
- *   using them, so i follow the adage
+*   using them, so i follow the adage
 *
 *   TO TRULY LEARN> do not seek to follow in the footsteps of the men of old;
 *   seek what they sought ~ Matsuo Basho
@@ -830,6 +830,21 @@ extern      char     *g_rcnum;
 extern      char     *g_rcops;
 
 
+typedef struct cCURR tCURR;
+struct cCURR {
+   uchar       type;
+   uchar       label      [LEN_LABEL];
+   char        tab;
+   short       col;
+   short       row;
+   short       len;
+   uchar       align;
+   uchar       format;
+   uchar       decs;
+   uchar       unit;
+};
+extern  tCURR g_curr;
+
 
 extern char    g_contents [LEN_RECD];
 extern char    message    [LEN_RECD];
@@ -1081,6 +1096,7 @@ char        KEYS_writequit   (void);
 
 /*---(ncurses)----------------------------------*/
 
+char        CURS_status_detail   (char *a_list);
 char        CURS_status_cell     (char *a_list);
 char        CURS_status_deps     (char *a_list);
 char        CURS_status_rpn      (char *a_list);
@@ -1259,7 +1275,7 @@ char        HIST_init               (void);
 char        HIST_wrap               (void);
 
 char        HIST__new               (char a_mode, char a_type, int a_tab, int a_col, int a_row);
-char        HIST__delete            (tHIST *a_curr);
+char        HIST__free              (tHIST *a_curr);
 char        HIST__prune             (void);
 char        HIST__purge             (void);
 
@@ -1621,6 +1637,7 @@ char       *CELL__unitnew           (char  *a_question, char *a_label);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        FILE_init               (void);
 char        FILE_prepper            (void);
+char        FILE_finisher           (void);
 char        FILE_new                (void);
 char        FILE_rename             (char  *a_name);
 char        FILE_write              (void);
@@ -1684,7 +1701,9 @@ char        api_yvikeys_unsearcher  (int b, int x, int y, int z);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z);
 char        api_yvikeys_copier      (char a_type, long a_stamp);
-char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
+char        api_yvikeys_router      (tCELL *a_cell, char *a_list);
+char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell, char *a_list);
+char        api_yvikeys_finisher    (int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 char        api_yvikeys_regkiller   (tCELL *a_curr);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_format      (int   a_major, int   a_minor);

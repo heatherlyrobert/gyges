@@ -86,7 +86,9 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
    /*---(prune future)-------------------*/
    rc = HIST__prune ();
    /*---(allocate)-----------------------*/
+   DEBUG_HIST   yLOG_note    ("allocating");
    while (x_new == NULL && x_tries < 10)  {
+      DEBUG_HIST   yLOG_value   ("x_tries"   , x_tries);
       ++x_tries;
       x_new = (tHIST *) malloc (sizeof (tHIST));
    }
@@ -135,7 +137,7 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
 }
 
 char
-HIST__delete            (tHIST *a_curr)
+HIST__free              (tHIST *a_curr)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -173,6 +175,47 @@ HIST__delete            (tHIST *a_curr)
 }
 
 char
+HIST__prune_NEW         (char a_type)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tHIST      *x_curr      = NULL;
+   tHIST      *x_next      = NULL;
+   tHIST      *x_stop      = NULL;
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   DEBUG_HIST  yLOG_char    ("a_type"    , a_type);
+   DEBUG_HIST  yLOG_point   ("s_curr"    , s_curr);
+   DEBUG_HIST  yLOG_point   ("s_tail"    , s_tail);
+   x_curr = s_tail;
+   if (a_type == '*')  x_stop = NULL;
+   else                x_stop = s_curr;
+   DEBUG_HIST  yLOG_point   ("x_stop"    , x_stop);
+   /*---(walk)---------------------------*/
+   DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
+   while (x_curr != NULL && x_curr != x_stop) {
+      x_next = x_curr->h_prev;
+      HIST__free (x_next);
+      x_curr = x_next;
+      DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
+   }
+   /*---(clean up)-----------------------*/
+   if (a_type == '*') {
+      s_head  = NULL;
+      s_tail  = NULL;
+      s_curr  = NULL;
+      s_count = 0;
+      s_index = 0;
+   } else {
+      s_curr->h_next = NULL;
+      s_tail = s_curr;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
 HIST__prune             (void)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -189,7 +232,7 @@ HIST__prune             (void)
    DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    while (x_curr != NULL) {
       x_next = x_curr->h_next;
-      HIST__delete (x_curr);
+      HIST__free (x_curr);
       x_curr = x_next;
       DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    }
@@ -207,7 +250,7 @@ HIST__purge             (void)
    x_curr = s_tail;
    while (x_curr != NULL) {
       x_next = x_curr->h_prev;
-      HIST__delete (x_next);
+      HIST__free (x_next);
       x_curr = x_next;
    }
    s_head  = NULL;

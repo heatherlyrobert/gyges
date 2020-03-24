@@ -506,16 +506,33 @@ static void  o___EXISTANCE_______o () { return; }
 char         /*-> tbd --------------------------------[ ------ [fe.732.424.33]*/ /*-[01.0000.014.K]-*/ /*-[--.---.---.--]-*/
 CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
 {
-   /*---(locals)----------------------*/
+   /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
+   tCELL      *x_curr      = NULL;
    /*---(defenses)-----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   DEBUG_CELL   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   *a_cell = NULL;
    /*---(defenses)-----------------------*/
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_ADAPT);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0) {
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check for existing)----------*/
+   BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
+   DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
+   --rce;  if (x_curr != NULL) {
+      *a_cell = x_curr;
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -533,6 +550,7 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_CELL   yLOG_complex ("DEBUG 1"   , "%-10.10s, %2dt, %3dc, %4dr", (*a_cell)->label, (*a_cell)->tab, (*a_cell)->col, (*a_cell)->row);
    /*---(complete)--------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -630,6 +648,8 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       return rce;
    }
    DEBUG_CELL   yLOG_info    ("a_source"  , a_source);
+   /*---(prepare)------------------------*/
+   if (a_cell != NULL)  *a_cell = NULL;
    /*---(legal location)-----------------*/
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
@@ -653,8 +673,10 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       }
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
+   DEBUG_REGS   yLOG_complex ("DEBUG 9"   , "%-10.10s, %2dt, %3dc, %4dr", x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
    /*---(history)------------------------*/
    sprintf (x_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
+   DEBUG_CELL   yLOG_info    ("x_bformat" , x_bformat);
    if (a_source == NULL)            HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
    else if (a_source [0] == '\0')   HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
    else                             HIST_change  (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat, a_source);
@@ -666,10 +688,18 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    /*---(interpret)----------------------*/
    DEBUG_CELL   yLOG_note    ("interpret new contents");
    rc = yCALC_handle (x_curr->label);
+   if (x_curr != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
    DEBUG_CELL   yLOG_value   ("handle"    , rc);
    /*---(return)-------------------------*/
    BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
+   if (x_curr != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
    if (a_cell != NULL)  *a_cell = x_curr;
+   if (x_curr != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 11"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
+   if (a_cell != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 11"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", (*a_cell), (*a_cell)->label, (*a_cell)->tab, (*a_cell)->col, (*a_cell)->row);
+   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;

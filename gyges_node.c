@@ -1204,6 +1204,7 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
    DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
    /*---(walk)---------------------------*/
    while (x_tab != NULL && rc == 0 && x_ntab < 36) {
+      /*---(specific col/row)--*/
       if (a_ref >= 0) {
          rc = NODE_by_index  (&x_node, x_tab, a_type, a_ref);
          x_prev == x_node;
@@ -1214,30 +1215,40 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
             break;
          }
       }
+      /*---(or, start at head)-*/
       else rc = NODE_by_cursor (&x_node, x_tab, a_type, '[');
+      /*---(check node)--------*/
       if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->size, x_node->ref, n, c);
       else                 DEBUG_OUTP   yLOG_note    ("col is null");
+      /*---(loop col/row)------*/
       while (x_node != NULL && rc == 0) {
+         /*---(filter)------------*/
          IF_DEFAULT {
-            DEBUG_OUTP   yLOG_note    ("default width, break out");
-            break;
+            rc = NODE_by_cursor (&x_node, x_tab, a_type, '>');
+            continue;
          }
+         /*---(prepare)-----------*/
          x_save = x_node;
          n      = 0;
+         /*---(find similar)------*/
          while (x_node != NULL && rc == 0 && x_node->size == x_save->size && x_node->ref == x_save->ref + n) {
             ++n;
             rc = NODE_by_cursor (&x_node, x_tab, a_type, '>');
             if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->size, x_node->ref, n, c);
             else                 DEBUG_OUTP   yLOG_note    ("col is null");
          }
+         /*---(write)-------------*/
          NODE_writer (a_type, x_save, n);
          ++c;
          yPARSE_verb_break (c);
          if (a_ref >= 0)  break;
+         /*---(done-)-------------*/
       }
+      /*---(next tab)----------*/
       if (a_index >= 0) break;
       rc = TAB_by_cursor (&x_tab, &x_ntab, '>');
       DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
+      /*---(done)--------------*/
    }
    if (c > 0)  yPARSE_verb_end   (c);
    /*---(complete)-----------------------*/

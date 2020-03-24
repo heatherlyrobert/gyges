@@ -376,6 +376,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
    char        rce         = -10;
    char        rc          = 0;
    tCELL      *x_copy      = NULL;
+   int         b, xb, xe, yb, ye;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -385,6 +386,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;     /* no cell                       */
    }
+   DEBUG_REGS   yLOG_complex ("DEBUG 2"   , "%-10.10s, %2dt, %3dc, %4dr", a_curr->label, a_curr->tab, a_curr->col, a_curr->row);
    DEBUG_REGS   yLOG_point   ("s"         , a_curr->source);
    --rce;  if (a_curr->source == NULL) {
       DEBUG_REGS   yLOG_note    ("no source");
@@ -399,6 +401,8 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
       return rce;     /* don't write, recreate on read */
    }
    /*---(check for bounds)---------------*/
+   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
+   DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", b, xb, xe, yb, ye);
    rc = yVIKEYS_mreg_inside (a_curr->tab, a_curr->col, a_curr->row, 0);
    DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
    --rce;  if (rc <= 0)  {
@@ -468,7 +472,110 @@ api_yvikeys_copier      (char a_type, long a_stamp)
 }
 
 char
-api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
+api_yvikeys_router      (tCELL *a_cell, char *a_list)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        x_label     [LEN_LABEL]  = "";
+   int         x_npro      =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL)  {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_REGS   yLOG_point   ("a_list"    , a_list);
+   --rce;  if (a_list == NULL)  {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(find real cell)-----------------*/
+   strlcpy (x_label, a_cell->label, LEN_LABEL);
+   DEBUG_REGS   yLOG_info    ("label"     , x_label);
+   x_curr = LOC_cell_labeled (x_label);
+   DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
+   if (x_curr == NULL) {
+      DEBUG_REGS   yLOG_note    ("no cell at original location");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   DEBUG_REGS   yLOG_point   ("ycalc"     , x_curr->ycalc);
+   /*---(return providers)---------------*/
+   yCALC_show_pros (x_curr->ycalc, &x_npro, a_list);
+   DEBUG_REGS   yLOG_value   ("npro"      , x_npro);
+   DEBUG_REGS   yLOG_info    ("a_list"    , a_list);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   short       x_stab, x_scol, x_srow;
+   short       x_dtab, x_dcol, x_drow;
+   char        x_source    [LEN_RECD]   = "";
+   char        x_bformat   [LEN_LABEL]  = "";
+   tCELL      *x_copy      = NULL;
+   char        x_label     [LEN_LABEL]  = "";
+   char        x_list      [LEN_RECD]   = "";
+   char       *p           = NULL;               /* pointer for providers     */
+   char       *q           = ",";                /* delimiter for providers   */
+   char       *s           = NULL;               /* context for providers     */
+   tCELL      *x_provider  = NULL;               /* provider cell to adjust   */
+   tCELL      *x_original  = NULL;
+   int         x_nreq, x_npro;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
+   if (a_pros == G_RPN_IGNORE || a_pros == G_RPN_PNONE) {
+      DEBUG_REGS   yLOG_note    ("provider updates not requested");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_list == NULL) {
+      DEBUG_REGS   yLOG_note    ("no providers identified");
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   p  = strtok_r (a_list, q, &s);
+   DEBUG_REGS   yLOG_point   ("p"         , p);
+   while (p != NULL) {
+      DEBUG_REGS   yLOG_info    ("p"         , p);
+      x_provider = LOC_cell_labeled (p);
+      DEBUG_REGS   yLOG_point   ("x_provider", x_provider);
+      if (x_provider != NULL) {
+         DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);
+         rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);
+         DEBUG_REGS   yLOG_value   ("rc"        , rc);
+         if (rc == 0) {
+            DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
+            DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
+            rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
+            DEBUG_REGS   yLOG_value   ("rc"        , rc);
+            DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
+            sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
+            DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
+            CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
+         }
+      }
+      /*> CELL_change  (x_copy, HIST_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <*/
+      p  = strtok_r (NULL  , q, &s);
+      DEBUG_REGS   yLOG_point   ("p"         , p);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -525,6 +632,8 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    x_dcol  = x_scol + a_xoff;
    x_drow  = x_srow + a_yoff;
    DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
+   /*---(reroute providers)--------------*/
+   api_yvikeys__rerouter (a_pros, a_boff, a_xoff, a_yoff, a_zoff, a_cell, a_list);
    /*---(check cell type)----------------*/
    DEBUG_REGS   yLOG_info    ("source"    , a_cell->source);
    DEBUG_REGS   yLOG_char    ("type"      , a_cell->type);
@@ -546,59 +655,125 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
    if (a_1st == 'y')  x_copy = CELL_overwrite (HIST_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (HIST_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
+   DEBUG_REGS   yLOG_complex ("DEBUG 3"   , "%-10.10s, %2dt, %3dc, %4dr", x_copy->label, x_copy->tab, x_copy->col, x_copy->row);
    /*---(providers)----------------------*/
    DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");
-   DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
-   if (a_pros == G_RPN_IGNORE || a_pros == G_RPN_PNONE) {
-      DEBUG_REGS   yLOG_note    ("provider updates not requested");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return 0;
+   /*> DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);                              <*/
+   /*> if (a_pros == G_RPN_IGNORE || a_pros == G_RPN_PNONE) {                         <* 
+    *>    DEBUG_REGS   yLOG_note    ("provider updates not requested");               <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
+   /*> DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);   <*/
+   /*> x_original = LOC_cell_at_loc (x_stab, x_scol, x_srow);                         <* 
+    *> DEBUG_REGS   yLOG_point   ("x_original", x_original);                          <* 
+    *> if (x_original == NULL) {                                                      <* 
+    *>    DEBUG_REGS   yLOG_note    ("no cell at original location");                 <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
+   /*> strlcpy (x_label, x_original->label, LEN_LABEL);                                             <* 
+    *> DEBUG_REGS   yLOG_info    ("label"     , x_label);                                           <* 
+    *> yCALC_show_reqs (x_original->ycalc, &x_nreq, NULL);                                          <* 
+    *> DEBUG_REGS   yLOG_value   ("nreq"      , x_nreq);                                            <* 
+    *> yCALC_show_pros (x_original->ycalc, &x_npro, x_list);                                        <* 
+    *> DEBUG_REGS   yLOG_value   ("npro"      , x_npro);                                            <* 
+    *> DEBUG_REGS   yLOG_info    ("x_list"    , x_list);                                            <* 
+    *> DEBUG_REGS   yLOG_complex ("x_original", "%s, nreq=%d, npro=%d", x_label, x_nreq, x_npro);   <* 
+    *> if (strchr ("-.", x_list [0]) != NULL) {                                                     <* 
+    *>    DEBUG_REGS   yLOG_note    ("no providers identified");                                    <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                 <* 
+    *>    return 0;                                                                                 <* 
+    *> }                                                                                            <*/
+   /*> if (a_list == NULL) {                                                          <* 
+    *>    DEBUG_REGS   yLOG_note    ("no providers identified");                      <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
+   /*> p  = strtok_r (a_list, q, &s);                                                                                                                  <* 
+    *> DEBUG_REGS   yLOG_point   ("p"         , p);                                                                                                    <* 
+    *> while (p != NULL) {                                                                                                                             <* 
+    *>    DEBUG_REGS   yLOG_info    ("p"         , p);                                                                                                 <* 
+    *>    x_provider = LOC_cell_labeled (p);                                                                                                           <* 
+    *>    DEBUG_REGS   yLOG_point   ("x_provider", x_provider);                                                                                        <* 
+    *>    if (x_provider != NULL) {                                                                                                                    <* 
+    *>       DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);   <* 
+    *>       rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);                                                          <* 
+    *>       DEBUG_REGS   yLOG_value   ("rc"        , rc);                                                                                             <* 
+    *>       if (rc == 0) {                                                                                                                            <* 
+    *>          DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);                                                                          <* 
+    *>          DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);                                                                               <* 
+    *>          rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);                <* 
+    *>          DEBUG_REGS   yLOG_value   ("rc"        , rc);                                                                                          <* 
+    *>          DEBUG_REGS   yLOG_info    ("x_source"  , x_source);                                                                                    <* 
+    *>          sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);                           <* 
+    *>          DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);                                                                                   <* 
+    *>          CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);                                     <* 
+    *>       }                                                                                                                                         <* 
+    *>    }                                                                                                                                            <* 
+    *>    /+> CELL_change  (x_copy, HIST_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <+/                                                 <* 
+    *>    p  = strtok_r (NULL  , q, &s);                                                                                                               <* 
+    *>    DEBUG_REGS   yLOG_point   ("p"         , p);                                                                                                 <* 
+    *> }                                                                                                                                               <*/
+   DEBUG_REGS   yLOG_complex ("DEBUG 5"   , "%-10.10s, %2dt, %3dc, %4dr", x_copy->label, x_copy->tab, x_copy->col, x_copy->row);
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+api_yvikeys_finisher    (int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_label     [LEN_LABEL]  = "";
+   short       x_stab, x_scol, x_srow;
+   short       x_dtab, x_dcol, x_drow;
+   tCELL      *x_curr      = NULL;
+   char        x_list      [LEN_RECD]   = "";
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);
+   --rce;  if (a_cell == NULL)  {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get original location)----------*/
+   DEBUG_REGS   yLOG_info    ("a_label"   , a_cell->label);
+   rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
+   DEBUG_REGS   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc <  0)  {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
-   x_original = LOC_cell_at_loc (x_stab, x_scol, x_srow);
-   DEBUG_REGS   yLOG_point   ("x_original", x_original);
-   if (x_original == NULL) {
-      DEBUG_REGS   yLOG_note    ("no cell at original location");
+   /*---(set new location)---------------*/
+   x_dtab  = x_stab + a_boff;
+   x_dcol  = x_scol + a_xoff;
+   x_drow  = x_srow + a_yoff;
+   DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
+   x_curr  = LOC_cell_at_loc (x_dtab, x_dcol, x_drow);
+   DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
+   if (x_curr == NULL) {
+      DEBUG_REGS   yLOG_note    ("can not find cell");
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   strlcpy (x_label, x_original->label, LEN_LABEL);
-   DEBUG_REGS   yLOG_info    ("label"     , x_label);
-   yCALC_show_reqs (x_original->ycalc, &x_nreq, NULL);
-   DEBUG_REGS   yLOG_value   ("nreq"      , x_nreq);
-   yCALC_show_pros (x_original->ycalc, &x_npro, x_list);
-   DEBUG_REGS   yLOG_value   ("npro"      , x_npro);
-   DEBUG_REGS   yLOG_info    ("x_list"    , x_list);
-   DEBUG_REGS   yLOG_complex ("x_original", "%s, nreq=%d, npro=%d", x_label, x_nreq, x_npro);
-   if (strchr ("-.", x_list [0]) != NULL) {
-      DEBUG_REGS   yLOG_note    ("no providers identified");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   p  = strtok_r (x_list, q, &s);
-   DEBUG_REGS   yLOG_point   ("p"         , p);
-   while (p != NULL) {
-      DEBUG_REGS   yLOG_info    ("p"         , p);
-      x_provider = LOC_cell_labeled (p);
-      DEBUG_REGS   yLOG_point   ("x_provider", x_provider);
-      if (x_provider != NULL) {
-         DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);
-         rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);
-         DEBUG_REGS   yLOG_value   ("rc"        , rc);
-         if (rc == 0) {
-            DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
-            DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
-            DEBUG_REGS   yLOG_value   ("rc"        , rc);
-            DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
-            sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
-            DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
-            CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
-         }
-      }
-      p  = strtok_r (NULL  , q, &s);
-      DEBUG_REGS   yLOG_point   ("p"         , p);
-   }
+   DEBUG_REGS   yLOG_complex ("DEBUG 6"   , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   /*---(find likes)---------------------*/
+   /*> yCALC_disp_like (x_curr->ycalc, x_list);                                       <*/
+   /*> DEBUG_REGS   yLOG_info    ("x_list"    , x_list);                              <*/
+   DEBUG_REGS   yLOG_complex ("update"    , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
+   yCALC_handle (x_curr->label);
+   /*> if (x_curr->source != NULL && x_curr->source [0] == '~') {                     <* 
+    *>    DEBUG_REGS   yLOG_note    ("recalculate cell and dependencies");            <* 
+    *>    yCALC_handle (x_curr->label);                                               <* 
+    *> }                                                                              <*/
+   DEBUG_REGS   yLOG_complex ("finally"   , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
+   x_curr  = LOC_cell_at_loc (x_dtab, x_dcol, x_drow);
+   DEBUG_REGS   yLOG_complex ("DEBUG 8"   , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -770,111 +945,111 @@ MAP__clear            (tMAPPED *a_map)
  *>       DEBUG_MAP    yLOG_complex ("LOOP"      , "%3dn, %3du, %3ds, %-10p, %3dc", x_cell, x_unit, x_size, x_curr, x_count);        <* 
  *>       /+---(big mins)--------------------+/                                                                                      <* 
  *>       x_map->umin = 0;                                                                                                           <* 
- *>       x_map->gmin = 0;                                                                                                           <* 
- *>       if (x_map->gamin < 0 && x_count > 0)      x_map->gamin = x_cell;                                                           <* 
- *>       if (x_map->glmin < 0 && x_curr != NULL)   x_map->glmin = x_cell;                                                           <* 
- *>       /+---(little mins)-----------------+/                                                                                      <* 
- *>       if (x_cell == x_mark) {                                                                                                    <* 
- *>          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;                                                            <* 
- *>       }                                                                                                                          <* 
- *>       if (x_cell <  x_mark) {                                                                                                    <* 
- *>          if (x_prev == NULL && x_curr != NULL) x_map->gprev = x_cell;                                                            <* 
- *>          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;                                                            <* 
- *>       }                                                                                                                          <* 
- *>       DEBUG_MAP    yLOG_complex ("mins"    , "%3dg, %3da, %3dl, %3dp", x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);   <* 
- *>       /+---(update map)------------------+/                                                                                      <* 
- *>       for (i = 0; i < x_size; ++i) {                                                                                             <* 
- *>          x_map->map  [x_unit++] = x_cell;                                                                                        <* 
- *>          /+> if (x_curr == NULL)  x_map->used [x_cell] = '-';                         <*                                         <* 
- *>           *> else                 x_map->used [x_cell] = 'y';                         <+/                                        <* 
- *>       }                                                                                                                          <* 
- *>       /+---(big maxs)--------------------+/                                                                                      <* 
- *>       if (x_curr != NULL)                      x_map->glmax = x_cell;                                                            <* 
- *>       if (x_count > 0)                         x_map->gamax = x_cell;                                                            <* 
- *>       x_map->gmax = x_cell;                                                                                                      <* 
- *>       x_map->umax = x_unit - 1;                                                                                                  <* 
- *>       /+---(little maxes)----------------+/                                                                                      <* 
- *>       if (x_cell > x_mark && x_map->gnext < 0) {                                                                                 <* 
- *>          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;                                                            <* 
- *>       }                                                                                                                          <* 
- *>       if (x_cell > x_mark + 1 && x_map->gnext < 0) {                                                                             <* 
- *>          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;                                                            <* 
- *>          if (x_prev != NULL && x_curr == NULL) x_map->gnext = x_save;                                                            <* 
- *>       }                                                                                                                          <* 
- *>       DEBUG_MAP    yLOG_complex ("maxs"    , "%3dn, %3dl, %3da, %3dg", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);   <* 
- *>       /+---(done)------------------------+/                                                                                      <* 
- *>       x_save = x_cell;                                                                                                           <* 
- *>       x_prev = x_curr;                                                                                                           <* 
- *>    }                                                                                                                             <* 
- *>    /+---(update mins and maxes)----------+/                                                                                      <* 
- *>    if (x_total > 0) {                                                                                                            <* 
- *>       if (x_map->gamin < 0)  x_map->gamin = x_map->gmin;                                                                         <* 
- *>       if (x_map->glmin < 0)  x_map->glmin = x_map->gmin;                                                                         <* 
- *>       if (x_map->gprev < 0)  x_map->gprev = x_map->gmin;                                                                         <* 
- *>       if (x_map->gamax < 0)  x_map->gamax = x_map->gmin;                                                                         <* 
- *>       if (x_map->glmax < 0)  x_map->glmax = x_map->gmin;                                                                         <* 
- *>       if (x_map->gnext < 0)  x_map->gnext = x_map->gmax;                                                                         <* 
- *>    }                                                                                                                             <* 
- *>    /+---(other)--------------------------+/                                                                                      <* 
- *>    if (a_dir != tolower (a_dir)) {                                                                                               <* 
- *>       x_map->ubeg   = 0;                                                                                                         <* 
- *>       x_map->ucur   = 0;                                                                                                         <* 
- *>       x_map->uend   = 0;                                                                                                         <* 
- *>       x_map->ulen   = 0;                                                                                                         <* 
- *>       x_map->utend  = 0;                                                                                                         <* 
- *>       x_map->gbeg  = 0;                                                                                                          <* 
- *>       x_map->gcur  = 0;                                                                                                          <* 
- *>       x_map->gend  = 0;                                                                                                          <* 
- *>    }                                                                                                                             <* 
- *>    /+---(complete)-----------------------+/                                                                                      <* 
- *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                     <* 
- *>    return 0;                                                                                                                     <* 
- *> }                                                                                                                                <*/
+*>       x_map->gmin = 0;                                                                                                           <* 
+*>       if (x_map->gamin < 0 && x_count > 0)      x_map->gamin = x_cell;                                                           <* 
+*>       if (x_map->glmin < 0 && x_curr != NULL)   x_map->glmin = x_cell;                                                           <* 
+*>       /+---(little mins)-----------------+/                                                                                      <* 
+*>       if (x_cell == x_mark) {                                                                                                    <* 
+   *>          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;                                                            <* 
+      *>       }                                                                                                                          <* 
+      *>       if (x_cell <  x_mark) {                                                                                                    <* 
+         *>          if (x_prev == NULL && x_curr != NULL) x_map->gprev = x_cell;                                                            <* 
+            *>          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;                                                            <* 
+            *>       }                                                                                                                          <* 
+            *>       DEBUG_MAP    yLOG_complex ("mins"    , "%3dg, %3da, %3dl, %3dp", x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);   <* 
+            *>       /+---(update map)------------------+/                                                                                      <* 
+            *>       for (i = 0; i < x_size; ++i) {                                                                                             <* 
+               *>          x_map->map  [x_unit++] = x_cell;                                                                                        <* 
+                  *>          /+> if (x_curr == NULL)  x_map->used [x_cell] = '-';                         <*                                         <* 
+                  *>           *> else                 x_map->used [x_cell] = 'y';                         <+/                                        <* 
+                  *>       }                                                                                                                          <* 
+                  *>       /+---(big maxs)--------------------+/                                                                                      <* 
+                  *>       if (x_curr != NULL)                      x_map->glmax = x_cell;                                                            <* 
+                  *>       if (x_count > 0)                         x_map->gamax = x_cell;                                                            <* 
+                  *>       x_map->gmax = x_cell;                                                                                                      <* 
+                  *>       x_map->umax = x_unit - 1;                                                                                                  <* 
+                  *>       /+---(little maxes)----------------+/                                                                                      <* 
+                  *>       if (x_cell > x_mark && x_map->gnext < 0) {                                                                                 <* 
+                     *>          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;                                                            <* 
+                        *>       }                                                                                                                          <* 
+                        *>       if (x_cell > x_mark + 1 && x_map->gnext < 0) {                                                                             <* 
+                           *>          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;                                                            <* 
+                              *>          if (x_prev != NULL && x_curr == NULL) x_map->gnext = x_save;                                                            <* 
+                              *>       }                                                                                                                          <* 
+                              *>       DEBUG_MAP    yLOG_complex ("maxs"    , "%3dn, %3dl, %3da, %3dg", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);   <* 
+                              *>       /+---(done)------------------------+/                                                                                      <* 
+                              *>       x_save = x_cell;                                                                                                           <* 
+                              *>       x_prev = x_curr;                                                                                                           <* 
+                              *>    }                                                                                                                             <* 
+                              *>    /+---(update mins and maxes)----------+/                                                                                      <* 
+                              *>    if (x_total > 0) {                                                                                                            <* 
+                                 *>       if (x_map->gamin < 0)  x_map->gamin = x_map->gmin;                                                                         <* 
+                                    *>       if (x_map->glmin < 0)  x_map->glmin = x_map->gmin;                                                                         <* 
+                                    *>       if (x_map->gprev < 0)  x_map->gprev = x_map->gmin;                                                                         <* 
+                                    *>       if (x_map->gamax < 0)  x_map->gamax = x_map->gmin;                                                                         <* 
+                                    *>       if (x_map->glmax < 0)  x_map->glmax = x_map->gmin;                                                                         <* 
+                                    *>       if (x_map->gnext < 0)  x_map->gnext = x_map->gmax;                                                                         <* 
+                                    *>    }                                                                                                                             <* 
+                                    *>    /+---(other)--------------------------+/                                                                                      <* 
+                                    *>    if (a_dir != tolower (a_dir)) {                                                                                               <* 
+                                       *>       x_map->ubeg   = 0;                                                                                                         <* 
+                                          *>       x_map->ucur   = 0;                                                                                                         <* 
+                                          *>       x_map->uend   = 0;                                                                                                         <* 
+                                          *>       x_map->ulen   = 0;                                                                                                         <* 
+                                          *>       x_map->utend  = 0;                                                                                                         <* 
+                                          *>       x_map->gbeg  = 0;                                                                                                          <* 
+                                          *>       x_map->gcur  = 0;                                                                                                          <* 
+                                          *>       x_map->gend  = 0;                                                                                                          <* 
+                                          *>    }                                                                                                                             <* 
+                                          *>    /+---(complete)-----------------------+/                                                                                      <* 
+                                          *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                     <* 
+                                          *>    return 0;                                                                                                                     <* 
+                                          *> }                                                                                                                                <*/
 
-/*> char                                                                                              <* 
- *> LOC__mapprint    (char a_dir)                                                                     <* 
- *> {                                                                                                 <* 
- *>    /+---(locals)-----------+-----------+-+/                                                       <* 
- *>    FILE       *f           = NULL;                                                                <* 
- *>    char        x_name      [LEN_LABEL] = "";                                                      <* 
- *>    tMAPPED    *x_map       = NULL;                                                                <* 
- *>    int         i           =    0;                                                                <* 
- *>    /+---(prepare)------------------------+/                                                       <* 
- *>    switch (a_dir) {                                                                               <* 
- *>    case 't' :                                                                                     <* 
- *>       x_map = &g_bmap;                                                                            <* 
- *>       strlcpy (x_name, "gyges.tmap", LEN_LABEL);                                                  <* 
- *>       break;                                                                                      <* 
- *>    case 'c' :                                                                                     <* 
- *>       x_map = &g_xmap;                                                                            <* 
- *>       strlcpy (x_name, "gyges.cmap", LEN_LABEL);                                                  <* 
- *>       break;                                                                                      <* 
- *>    case 'r' :                                                                                     <* 
- *>       x_map = &g_ymap;                                                                            <* 
- *>       strlcpy (x_name, "gyges.rmap", LEN_LABEL);                                                  <* 
- *>       break;                                                                                      <* 
- *>    }                                                                                              <* 
- *>    /+---(write it out)-------------------+/                                                       <* 
- *>    f = fopen (x_name, "w");                                                                       <* 
- *>    if (f == NULL)  return -1;                                                                     <* 
- *>    /+---(headers)------------------------+/                                                       <* 
- *>    fprintf (f, "gmin amin lmin prev    ");                                                        <* 
- *>    for (i = 0; i < LEN_HUGE; ++i) {                                                               <* 
- *>       if (x_map->map [i] < 0)  break;                                                             <* 
- *>       fprintf (f, "%4d "  , i);                                                                   <* 
- *>    }                                                                                              <* 
- *>    fprintf (f, "   next lmax amax gmax\n");                                                       <* 
- *>    /+---(content)------------------------+/                                                       <* 
- *>    fprintf (f, "%4d %4d %4d %4d    "  , x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);   <* 
- *>    for (i = 0; i < LEN_HUGE; ++i) {                                                               <* 
- *>       if (x_map->map [i] < 0)  break;                                                             <* 
- *>       fprintf (f, "%4d "  , x_map->map [i]);                                                      <* 
- *>    }                                                                                              <* 
- *>    fprintf (f, "   %4d %4d %4d %4d\n", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);    <* 
- *>    fclose (f);                                                                                    <* 
- *>    /+---(complete)-----------------------+/                                                       <* 
- *>    return 0;                                                                                      <* 
- *> }                                                                                                 <*/
+                                          /*> char                                                                                              <* 
+                                           *> LOC__mapprint    (char a_dir)                                                                     <* 
+                                           *> {                                                                                                 <* 
+                                           *>    /+---(locals)-----------+-----------+-+/                                                       <* 
+                                           *>    FILE       *f           = NULL;                                                                <* 
+                                           *>    char        x_name      [LEN_LABEL] = "";                                                      <* 
+                                           *>    tMAPPED    *x_map       = NULL;                                                                <* 
+                                           *>    int         i           =    0;                                                                <* 
+                                           *>    /+---(prepare)------------------------+/                                                       <* 
+                                           *>    switch (a_dir) {                                                                               <* 
+                                           *>    case 't' :                                                                                     <* 
+                                           *>       x_map = &g_bmap;                                                                            <* 
+                                           *>       strlcpy (x_name, "gyges.tmap", LEN_LABEL);                                                  <* 
+                                           *>       break;                                                                                      <* 
+                                           *>    case 'c' :                                                                                     <* 
+                                           *>       x_map = &g_xmap;                                                                            <* 
+                                           *>       strlcpy (x_name, "gyges.cmap", LEN_LABEL);                                                  <* 
+                                           *>       break;                                                                                      <* 
+                                           *>    case 'r' :                                                                                     <* 
+                                           *>       x_map = &g_ymap;                                                                            <* 
+                                           *>       strlcpy (x_name, "gyges.rmap", LEN_LABEL);                                                  <* 
+                                           *>       break;                                                                                      <* 
+                                           *>    }                                                                                              <* 
+                                           *>    /+---(write it out)-------------------+/                                                       <* 
+                                           *>    f = fopen (x_name, "w");                                                                       <* 
+                                           *>    if (f == NULL)  return -1;                                                                     <* 
+                                           *>    /+---(headers)------------------------+/                                                       <* 
+                                           *>    fprintf (f, "gmin amin lmin prev    ");                                                        <* 
+                                           *>    for (i = 0; i < LEN_HUGE; ++i) {                                                               <* 
+                                           *>       if (x_map->map [i] < 0)  break;                                                             <* 
+                                           *>       fprintf (f, "%4d "  , i);                                                                   <* 
+                                           *>    }                                                                                              <* 
+                                           *>    fprintf (f, "   next lmax amax gmax\n");                                                       <* 
+                                           *>    /+---(content)------------------------+/                                                       <* 
+                                           *>    fprintf (f, "%4d %4d %4d %4d    "  , x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);   <* 
+                                           *>    for (i = 0; i < LEN_HUGE; ++i) {                                                               <* 
+                                           *>       if (x_map->map [i] < 0)  break;                                                             <* 
+                                           *>       fprintf (f, "%4d "  , x_map->map [i]);                                                      <* 
+                                           *>    }                                                                                              <* 
+                                           *>    fprintf (f, "   %4d %4d %4d %4d\n", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);    <* 
+                                           *>    fclose (f);                                                                                    <* 
+                                           *>    /+---(complete)-----------------------+/                                                       <* 
+                                           *>    return 0;                                                                                      <* 
+                                           *> }                                                                                                 <*/
 
 char
 MAP_mapper           (char a_req)
@@ -925,8 +1100,35 @@ MAP_mapper           (char a_req)
    } else if (x_curr == NULL || x_curr->source == NULL) {
       str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
       yVIKEYS_source (t, "");
+      strlcpy (my.reqs_list, "n/a", LEN_RECD);
+      strlcpy (my.deps_list, "n/a", LEN_RECD);
+      strlcpy (my.like_list, "n/a", LEN_RECD);
+      strlcpy (my.rpn_list , "n/a", LEN_RECD);
+      strlcpy (g_curr.label, "-"          , LEN_LABEL);
+      g_curr.len    = 0;
+      g_curr.type   = YCALC_DATA_BLANK;
+      g_curr.tab    = -1;
+      g_curr.col    = -1;
+      g_curr.row    = -1;
+      g_curr.align  = '-';
+      g_curr.format = '-';
+      g_curr.decs   = '-';
+      g_curr.unit   = '-';
    } else {
       yVIKEYS_source (x_curr->label, x_curr->source);
+      yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
+      yCALC_disp_pros (x_curr->ycalc, my.deps_list);
+      yCALC_disp_like (x_curr->ycalc, my.like_list);
+      strlcpy (g_curr.label, x_curr->label, LEN_LABEL);
+      g_curr.len    = x_curr->len;
+      g_curr.type   = x_curr->type;
+      g_curr.tab    = x_curr->tab;
+      g_curr.col    = x_curr->col;
+      g_curr.row    = x_curr->row;
+      g_curr.align  = x_curr->align;
+      g_curr.format = x_curr->format;
+      g_curr.decs   = x_curr->decs;
+      g_curr.unit   = x_curr->unit;
    }
    /*---(complete)-----------------------*/
    DEBUG_MAP    yLOG_exit    (__FUNCTION__);

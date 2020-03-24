@@ -137,6 +137,7 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = strdup (x_label);
    a_cell->key   = BTREE_label2key (x_label);
+   DEBUG_REGS   yLOG_complex ("DEBUG 4"   , "%-10.10s, %2dt, %3dc, %4dr", a_cell->label, a_cell->tab, a_cell->col, a_cell->row);
    BTREE_update ();
    /*---(adjust tab)--------------------*/
    TAB_resize (a_tab, "");

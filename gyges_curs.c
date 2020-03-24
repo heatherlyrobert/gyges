@@ -33,7 +33,7 @@
  *
  */
 
-PRIV  char      CURS_page          (void);
+static  char      CURS_page          (void);
 
 int     s_status_row;
 int     s_status_size;
@@ -48,6 +48,8 @@ static int  s_cursor_x   = 0;
 static int  s_cursor_y   = 0;
 static char s_coloration = 'F';
 
+
+tCURR g_curr;
 
 static char  s_mark_list   [LEN_RECD];       /* current marks                  */
 /*> static char  s_mark_plus   [LEN_RECD];       /+ current marks with mark id     +/   <*/
@@ -209,13 +211,14 @@ CURS_info_request  (char a_type)
 /*====================------------------------------------====================*/
 /*===----                   specific areas of screen                   ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___SPECIFIC________o () { return; }
+static void  o___SPECIFIC________o () { return; }
 
 char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
 char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
 char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
 char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
 char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_FULL, "errors (%3d)", nerror); };
+char  CURS_status_detail   (char *a_list) { snprintf (a_list, LEN_FULL, "%-8.8s %2dt, %3dc, %4dr, t=%c a=%c f=%c d=%c u=%c len=%3d", g_curr.label, g_curr.tab, g_curr.col, g_curr.row, g_curr.type, g_curr.align, g_curr.format, g_curr.decs, g_curr.unit, g_curr.len); }
 
 
 char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
@@ -724,7 +727,7 @@ DRAW_xaxis         (void)
 /*====================------------------------------------====================*/
 /*===----                      screen management                       ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___SCREEN__________o () { return; }
+void  o___SCREEN__________o () { return; }
 
 /*> char         /+-> capture keyboard input -------------[ leaf   [gc.320.012.00]+/ /+-[00.0001.102.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> CURS_playback      (void)                                                                                                      <* 
@@ -803,6 +806,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          else                                           attron (S_COLOR_FDANGER);
       }
       else if (a_curr->type == YCALC_DATA_NLIKE)           attron (S_COLOR_FLIKE  );
+      /*> else if (a_curr->type == YCALC_DATA_NLIKE)           attron (S_COLOR_LIKE  );   <*/
       /*---(strings)---------------------*/
       else if (a_curr->type == YCALC_DATA_STR  )           attron (S_COLOR_STRING );
       else if (a_curr->type == YCALC_DATA_SFORM) {
@@ -810,6 +814,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          else                                           attron (S_COLOR_FSTRDAG);
       }
       else if (a_curr->type == YCALC_DATA_SLIKE)           attron (S_COLOR_MLIKE  );
+      /*> else if (a_curr->type == YCALC_DATA_SLIKE)           attron (S_COLOR_LIKE  );   <*/
       /*---(constants)-------------------*/
       else if (a_curr->type == YCALC_DATA_BLANK)           attron (S_COLOR_NULL   );
       else                                              attron (S_COLOR_STRING );
@@ -862,20 +867,20 @@ DRAW_main          (void)
    int         cw          = 0;
    /*---(update globals)-----------------*/
    x_curr    = LOC_cell_at_curr ();
-   if (x_curr != x_save) {
-      if (x_curr != NULL) {
-         yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
-         yCALC_disp_pros (x_curr->ycalc, my.deps_list);
-         yCALC_disp_like (x_curr->ycalc, my.like_list);
-         /*> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <* 
-          *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <*/
-      } else {
-         strncpy (my.reqs_list, "n/a", LEN_RECD);
-         strncpy (my.deps_list, "n/a", LEN_RECD);
-         strncpy (my.like_list, "n/a", LEN_RECD);
-         strncpy (my.rpn_list , "n/a", LEN_RECD);
-      }
-   }
+   /*> if (x_curr != x_save) {                                                                   <* 
+    *>    if (x_curr != NULL) {                                                                  <* 
+    *>       yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                                      <* 
+    *>       yCALC_disp_pros (x_curr->ycalc, my.deps_list);                                      <* 
+    *>       yCALC_disp_like (x_curr->ycalc, my.like_list);                                      <* 
+    *>       /+> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <*    <* 
+    *>        *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <+/   <* 
+    *>    } else {                                                                               <* 
+    *>       strncpy (my.reqs_list, "n/a", LEN_RECD);                                            <* 
+    *>       strncpy (my.deps_list, "n/a", LEN_RECD);                                            <* 
+    *>       strncpy (my.like_list, "n/a", LEN_RECD);                                            <* 
+    *>       strncpy (my.rpn_list , "n/a", LEN_RECD);                                            <* 
+    *>    }                                                                                      <* 
+    *> }                                                                                         <*/
    x_save = x_curr;
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
    strncpy (s_mark_list, "+", LEN_RECD);
@@ -915,7 +920,7 @@ DRAW_main          (void)
 /*====================------------------------------------====================*/
 /*===----                       support functions                      ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___SUPPORT_________o () { return; }
+static void  o___SUPPORT_________o () { return; }
 
 char         /*-> resize screen ----------------------[ leaf   [gz.851.021.40]*/ /*-[00.0000.123.!]-*/ /*-[--.---.---.--]-*/
 CURS_size         (void)
@@ -999,17 +1004,17 @@ DRAW_init          (void)
    /*---(dep type)-------*/
    S_COLOR_REQS       = yCOLOR_curs_add   ("reqs"     , ' ', "value required from cell"                           , 'm' , 'm' , 'b');
    S_COLOR_PROS       = yCOLOR_curs_add   ("pros"     , ' ', "value provided to cell"                             , 'g' , 'g' , 'b');
-   S_COLOR_LIKE       = yCOLOR_curs_add   ("like"     , ' ', "formula is copy/variation"                          , 'b' , 'b' , 'b');
+   S_COLOR_LIKE       = yCOLOR_curs_add   ("like"     , ' ', "formula is copy/variation"                          , 'g' , ' ' , '-');
    /*---(danger signs)---*/
    S_COLOR_FDANGER    = yCOLOR_curs_add   ("fdang"    , 'f', "complex numeric formula"                            , 'r' , ' ' , 'y');
    S_COLOR_FSTRDAG    = yCOLOR_curs_add   ("mdang"    , 'm', "complex string formula"                             , 'r' , ' ' , 'y');
    /*---(cell types)-----*/
    S_COLOR_NUMBER     = yCOLOR_curs_add   ("num"      , 'n', "numeric literal"                                    , 'b' , ' ' , 'y');
    S_COLOR_FSIMPLE    = yCOLOR_curs_add   ("for"      , 'f', "numeric formula"                                    , 'g' , ' ' , 'y');
-   S_COLOR_FLIKE      = yCOLOR_curs_add   ("flike"    , 'l', "numeric formula (copy)"                             , 'g' , ' ' , '-');
+   S_COLOR_FLIKE      = yCOLOR_curs_add   ("flike"    , 'l', "numeric formula (copy)"                             , 'w' , ' ' , '-');
    S_COLOR_STRING     = yCOLOR_curs_add   ("str"      , 's', "string literal"                                     , 'y' , ' ' , 'y');
    S_COLOR_FSTRING    = yCOLOR_curs_add   ("mod"      , 'm', "string formula"                                     , 'm' , ' ' , 'y');
-   S_COLOR_MLIKE      = yCOLOR_curs_add   ("mlike"    , 'L', "string formula (copy)"                              , 'm' , ' ' , '-');
+   S_COLOR_MLIKE      = yCOLOR_curs_add   ("mlike"    , 'L', "string formula (copy)"                              , 'w' , ' ' , '-');
    S_COLOR_POINTER    = yCOLOR_curs_add   ("range"    , 'p', "range pointer"                                      , 'c' , ' ' , 'y');
    S_COLOR_ADDRESS    = yCOLOR_curs_add   ("addr"     , 'p', "address pointer"                                    , 'c' , ' ' , 'y');
    S_COLOR_NULL       = yCOLOR_curs_add   ("blank"    , '-', "blank cell"                                         , 'b' , ' ' , 'y');
