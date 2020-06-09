@@ -84,7 +84,7 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
       return 0;
    }
    /*---(prune future)-------------------*/
-   rc = HIST__prune ();
+   rc = HIST__prune ('-');
    /*---(allocate)-----------------------*/
    DEBUG_HIST   yLOG_note    ("allocating");
    while (x_new == NULL && x_tries < 10)  {
@@ -137,45 +137,52 @@ HIST__new          (char a_mode, char a_type, int a_tab, int a_col, int a_row)
 }
 
 char
-HIST__free              (tHIST *a_curr)
+HIST__free              (tHIST **a_curr)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   tHIST      *x_curr      = NULL;          /* simplifier only                */
+   /*---(locals)-----------+-----+-----+-*/
    DEBUG_HIST   yLOG_senter  (__FUNCTION__);
-   DEBUG_HIST   yLOG_spoint  (a_curr);
-   --rce;  if (a_curr == NULL) {
+   DEBUG_HIST   yLOG_spoint  (*a_curr);
+   --rce;  if (*a_curr == NULL) {
       DEBUG_HIST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_HIST   yLOG_sint    (s_count);
+   x_curr = *a_curr;
    /*---(free content)-------------------*/
-   if (a_curr->addr   != g_nada)      free (a_curr->addr);
-   if (a_curr->before != g_nothing)   free (a_curr->before);
-   if (a_curr->after  != g_nothing)   free (a_curr->after);
+   if (x_curr->addr   != g_nada)      free (x_curr->addr);
+   x_curr->addr   = NULL;
+   if (x_curr->before != g_nothing)   free (x_curr->before);
+   x_curr->before = NULL;
+   if (x_curr->after  != g_nothing)   free (x_curr->after);
+   x_curr->after  = NULL;
    /*---(out of linked list)-------------*/
-   if (a_curr->h_next != NULL)   a_curr->h_next->h_prev = a_curr->h_prev;
-   else                          s_tail                 = a_curr->h_prev;
-   if (a_curr->h_prev != NULL)   a_curr->h_prev->h_next = a_curr->h_next;
-   else                          s_head                 = a_curr->h_next;
+   if (x_curr->h_next != NULL)   x_curr->h_next->h_prev = x_curr->h_prev;
+   else                          s_tail                 = x_curr->h_prev;
+   if (x_curr->h_prev != NULL)   x_curr->h_prev->h_next = x_curr->h_next;
+   else                          s_head                 = x_curr->h_next;
    --s_count;
    DEBUG_HIST   yLOG_sint    (s_count);
    /*---(clear links)--------------------*/
-   a_curr->h_prev = NULL;
-   a_curr->h_next = NULL;
+   x_curr->h_prev = NULL;
+   x_curr->h_next = NULL;
    /*---(update current)-----------------*/
-   if (s_curr == a_curr) {
+   if (s_curr == x_curr) {
       s_curr   = s_tail;
       s_index  = s_count - 1;
    }
    /*---(free entry)---------------------*/
-   free (a_curr);
+   free (x_curr);
+   *a_curr = NULL;
    /*---(complete)-----------------------*/
    DEBUG_HIST   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
 char
-HIST__prune_NEW         (char a_type)
+HIST__prune             (char a_type)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -195,7 +202,7 @@ HIST__prune_NEW         (char a_type)
    DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    while (x_curr != NULL && x_curr != x_stop) {
       x_next = x_curr->h_prev;
-      HIST__free (x_next);
+      HIST__free (&x_curr);
       x_curr = x_next;
       DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    }
@@ -207,7 +214,7 @@ HIST__prune_NEW         (char a_type)
       s_count = 0;
       s_index = 0;
    } else {
-      s_curr->h_next = NULL;
+      if (s_curr != NULL) s_curr->h_next = NULL;
       s_tail = s_curr;
    }
    /*---(complete)-----------------------*/
@@ -216,7 +223,7 @@ HIST__prune_NEW         (char a_type)
 }
 
 char
-HIST__prune             (void)
+HIST__prune_OLD         (void)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -232,7 +239,7 @@ HIST__prune             (void)
    DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    while (x_curr != NULL) {
       x_next = x_curr->h_next;
-      HIST__free (x_curr);
+      HIST__free (&x_curr);
       x_curr = x_next;
       DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
    }
@@ -242,24 +249,24 @@ HIST__prune             (void)
    return 0;
 }
 
-char
-HIST__purge             (void)
-{
-   tHIST      *x_curr      = NULL;
-   tHIST      *x_next      = NULL;
-   x_curr = s_tail;
-   while (x_curr != NULL) {
-      x_next = x_curr->h_prev;
-      HIST__free (x_next);
-      x_curr = x_next;
-   }
-   s_head  = NULL;
-   s_tail  = NULL;
-   s_curr  = NULL;
-   s_count = 0;
-   s_index = 0;
-   return 0;
-}
+/*> char                                                                              <* 
+ *> HIST__purge             (void)                                                    <* 
+ *> {                                                                                 <* 
+ *>    tHIST      *x_curr      = NULL;                                                <* 
+ *>    tHIST      *x_next      = NULL;                                                <* 
+ *>    x_curr = s_tail;                                                               <* 
+ *>    while (x_curr != NULL) {                                                       <* 
+ *>       x_next = x_curr->h_prev;                                                    <* 
+ *>       HIST__free (&x_curr);                                                        <* 
+ *>       x_curr = x_next;                                                            <* 
+ *>    }                                                                              <* 
+ *>    s_head  = NULL;                                                                <* 
+ *>    s_tail  = NULL;                                                                <* 
+ *>    s_curr  = NULL;                                                                <* 
+ *>    s_count = 0;                                                                   <* 
+ *>    s_index = 0;                                                                   <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
 
 
 
@@ -384,7 +391,7 @@ HIST__concat       (char *a_format, char *a_content, char **a_final)
       else if (strcmp (a_format, g_nothing) == 0)  p = g_nothing;
       else                                         p = a_format;
    }
-   DEBUG_HIST  yLOG_complex ("format"    , "%-10.10sn, %-10.10sa, %10.10sp", g_nothing, a_format, p);
+   DEBUG_HIST  yLOG_complex ("format"    , "%-10.10s, %-10.10s, %10.10s", g_nothing, a_format, p);
    /*---(content)---------------------*/
    DEBUG_HIST  yLOG_point   ("a_content" , a_content);
    if      (a_content  == NULL)                   *a_final  = g_nothing;
@@ -393,7 +400,7 @@ HIST__concat       (char *a_format, char *a_content, char **a_final)
       if      (strcmp (a_content , "") == 0)         *a_final  = g_nothing;
       else    { sprintf (t, "%s··%s", p, a_content); *a_final  = strdup (t); }
    }
-   DEBUG_HIST  yLOG_complex ("before"    , "%-10.10sn, %-10.10sa, %10.10sx", g_nothing, a_content, *a_final);
+   DEBUG_HIST  yLOG_complex ("before"    , "%-10.10s, %-10.10s, %10.10s", g_nothing, a_content, *a_final);
    /*---(show)------------------------*/
    DEBUG_HIST  yLOG_info    ("*a_final"  , *a_final);
    /*---(complete)--------------------*/
@@ -457,7 +464,7 @@ HIST_init          (void)
 char
 HIST_wrap               (void)
 {
-   HIST__purge ();
+   HIST__prune ('*');
    return 0;
 }
 
@@ -753,6 +760,7 @@ HIST_undo          (void)
    }
    /*---(prepare)------------------------*/
    hist_active = '-';
+   HIST_debug ();
    /*---(process)------------------------*/
    while (rc == 0) {
       /*---(save mode)-------------------*/
@@ -766,7 +774,7 @@ HIST_undo          (void)
          return rc;
       }
       /*---(update position)-------------*/
-      HIST__cursor ('<');
+      rc = HIST__cursor ('<');
       /*---(check for breakpoint)--------*/
       if (x_mode == HIST_BEG) {
          DEBUG_HIST  yLOG_note    ("hit start of undo chain, done");
@@ -900,7 +908,7 @@ HIST_redo          (void)
          break;
       }
       /*---(next)------------------------*/
-      HIST__cursor ('>');
+      rc = HIST__cursor ('>');
    }
    /*---(reset)--------------------------*/
    hist_active = 'y';
@@ -915,6 +923,31 @@ HIST_redo          (void)
 /*===----                      display and reorting                    ----===*/
 /*====================------------------------------------====================*/
 static void  o___DISPLAY_________o () { return; }
+
+char         /*-> list history -----------------------[ leaf   [ge.740.042.20]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
+HIST_debug         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         c           = 0;
+   char        x_name      [100]       = "";
+   char        rce         = -10;
+   FILE       *x_file      = NULL;
+   tHIST      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   /*---(print)--------------------------*/
+   DEBUG_HIST  yLOG_value   ("s_count"   , s_count);
+   DEBUG_HIST  yLOG_value   ("s_index"   , s_index);
+   x_curr = s_head;
+   while (x_curr != NULL) {
+      DEBUG_HIST  yLOG_complex ("entry"     , "%5d, %c, %4d, %c.%-12.12s, %-10.10s, %-50.50s, %-50.50s", c, x_curr->mode, x_curr->nkey, x_curr->act, HIST__action (x_curr->mode, x_curr->act), x_curr->addr, x_curr->before, x_curr->after);
+      ++c;
+      x_curr = x_curr->h_next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char         /*-> list history -----------------------[ leaf   [ge.740.042.20]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
 HIST_list          (void)

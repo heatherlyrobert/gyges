@@ -401,8 +401,6 @@ NODE_init            (void)
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_cleanse_curr           , "make all rows default size"           );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_multisize              , "change the size of columns"           );
    /*---(add yparse specification)-------*/
-   rc = yPARSE_handler (FILE_ROWS    , "height"    , 4.3, "Lss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
-   rc = yPARSE_handler (FILE_COLS    , "width"     , 4.2, "Lss---------", -1, COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1099,39 +1097,37 @@ NODE_unfreeze         (int a_index, char a_type)
 static void  o___YPARSE__________o () { return; }
 
 char
-NODE_reader          (void)
+NODE_reader          (int c, uchar *a_verb)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -11;
    char        rc          =    0;
-   char        x_verb      [LEN_LABEL];
-   char        x_label     [LEN_LABEL];
+   uchar       x_label     [LEN_LABEL];
    int         x_size      =    0;
    int         x_count     =    0;
    char        a_type      =  '-';
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(get verb)-----------------------*/
-   rc = yPARSE_popstr (x_verb);
-   DEBUG_INPT   yLOG_value   ("pop verb"  , rc);
-   DEBUG_INPT   yLOG_info    ("x_verb"    , x_verb);
-   --rce;  if (strcmp ("width" , x_verb) == 0)   a_type = IS_COL;
-   else if    (strcmp ("height", x_verb) == 0)   a_type = IS_ROW;
+   DEBUG_INPT   yLOG_info    ("a_verb"    , a_verb);
+   --rce;  if (strcmp ("width" , a_verb) == 0)   a_type = IS_COL;
+   else if    (strcmp ("height", a_verb) == 0)   a_type = IS_ROW;
    else {
       DEBUG_INPT   yLOG_note    ("verb not understood");;
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(read all fields)----------------*/
+   rc = yPARSE_vscanf (a_verb, x_label, &x_size, &x_count);
+   DEBUG_INPT   yLOG_value   ("vscanf"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(label)--------------------------*/
-   rc = yPARSE_popstr (x_label);
-   DEBUG_INPT   yLOG_value   ("pop max"   , rc);
    DEBUG_INPT   yLOG_info    ("max"       , x_label);
    /*---(size)---------------------------*/
-   rc = yPARSE_popint  (&x_size);
-   DEBUG_INPT   yLOG_value   ("pop width" , rc);
    DEBUG_INPT   yLOG_value   ("width"     , x_size);
-   rc = yPARSE_popint  (&x_count);
-   DEBUG_INPT   yLOG_value   ("pop count" , rc);
    DEBUG_INPT   yLOG_value   ("count"     , x_count);
    /*---(resize)-------------------------*/
    IF_COL   rc = COL_multisize (x_label, x_size, x_count);
@@ -1147,12 +1143,11 @@ NODE_reader          (void)
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.732.124.21]*/ /*-[02.0000.01#.#]-*/ /*-[--.---.---.--]-*/
-NODE_writer              (char a_type, tNODE *a_node, short n)
+NODE_writer              (int c, char a_type, tNODE *a_node, short n)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   char        c           =    0;
    int         x_max       =    0;
    int         i           =    0;
    int         x_size      =    0;
@@ -1173,7 +1168,7 @@ NODE_writer              (char a_type, tNODE *a_node, short n)
    /*---(write)-----------------------*/
    IF_COL   rc = str4gyges (a_node->tab, a_node->ref, 0, 0, 0, x_label, YSTR_USABLE);
    ELSE_ROW rc = str4gyges (a_node->tab, 0, a_node->ref, 0, 0, x_label, YSTR_USABLE);
-   yPARSE_fullwrite (x_verb, x_label, x_size, n);
+   yPARSE_vprintf (c, x_verb, x_label, x_size, n);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
    return n;
@@ -1196,8 +1191,8 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    DEBUG_OUTP   yLOG_complex ("args"      , "%2dt, %c, %4d", a_index, a_type, a_ref);
    /*---(verb)---------------------------*/
-   IF_COL   yPARSE_verb_begin ("width");
-   ELSE_ROW yPARSE_verb_begin ("height");
+   /*> IF_COL   yPARSE_verb_begin ("width");                                          <*/
+   /*> ELSE_ROW yPARSE_verb_begin ("height");                                         <*/
    /*---(head)---------------------------*/
    if (a_index >= 0)  rc = TAB_by_index  (&x_tab, a_index);
    else               rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
@@ -1238,9 +1233,9 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
             else                 DEBUG_OUTP   yLOG_note    ("col is null");
          }
          /*---(write)-------------*/
-         NODE_writer (a_type, x_save, n);
+         NODE_writer (c, a_type, x_save, n);
          ++c;
-         yPARSE_verb_break (c);
+         /*> yPARSE_verb_break (c);                                                   <*/
          if (a_ref >= 0)  break;
          /*---(done-)-------------*/
       }
@@ -1250,7 +1245,7 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
       DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
       /*---(done)--------------*/
    }
-   if (c > 0)  yPARSE_verb_end   (c);
+   /*> if (c > 0)  yPARSE_verb_end   (c);                                             <*/
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
    return c;

@@ -25,8 +25,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5m"
-#define     P_VERTXT    "many changes to support bug fixes in yCALC and other libs"
+#define     P_VERNUM    "3.5n"
+#define     P_VERTXT    "switched over to improved yPARSE, hugely cool"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -207,6 +207,7 @@
 #include    <yCOLOR.h>             /* heatherly color library                 */
 #include    <yCALC.h>        /* CUSTOM : heatherly interactive calculation    */
 #include    <yPARSE.h>             /* heatherly file reading and writing      */
+#include    <ySORT.h>              /* heatherly sorting library               */
 
 
 
@@ -238,7 +239,7 @@ typedef struct timespec  tTSPEC;
 
 /*===[[ CONSTANTS : LIMITS ]]=================================================*/
 /*---(tabs)---------------------------*/
-#define     MAX_TABS    38
+#define     MAX_TABS    40
 #define     DEF_TABS    5
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
@@ -563,6 +564,7 @@ struct cCELL {
 };
 tCELL      *hcell;           /* head pointer for cell data structure          */
 tCELL      *tcell;           /* tail pointer for cell data structure          */
+tCELL      *rcell;           /* root pointer for tree operations              */
 int         ncell;           /* count of linked cells in data structure       */
 int         acell;           /* count of all cells                            */
 
@@ -889,6 +891,7 @@ char      PROG_begin           (void);
 char      PROG_final           (void);
 char      PROG_cleanse         (void);
 char      PROG_end             (void);
+char      PROG_bigdump            (void *a_file);
 
 /*> char      PROG_main_input      (char  a_mode, char a_key);                        <*/
 /*> char      PROG_main_handle     (char  a_key);                                     <*/
@@ -1116,6 +1119,9 @@ char      DRAW_init            (void);
 char      DRAW_wrap            (void);
 char      DRAW_xaxis           (void);
 char      DRAW_yaxis           (void);
+char      DRAW_buffer          (void);
+char      CURS_bufsum          (char *a_list);
+char      CURS_bufdet          (char *a_list);
 char      DRAW_main            (void);
 char      DRAW_coloration      (char *a_opt);
 char      CURS_playback        (void);
@@ -1178,22 +1184,22 @@ char      ERROR_cleanse        (tCELL  *a_owner);
 
 
 /*---(external)-------------*/
-#define     G_DEP_BLANK          '-'
-#define     G_DEP_REQUIRE        'R'
-#define     G_DEP_PROVIDE        'p'
-#define     G_DEP_RANGE          'P'
-#define     G_DEP_CELL           'c'
-#define     G_DEP_FORMAT         'F'
-#define     G_DEP_COPY           'f'
-#define     G_DEP_SOURCE         'S'
-#define     G_DEP_LIKE           'l'
-#define     G_DEP_MERGED         'M'
-#define     G_DEP_BLEED          'b'
-#define     G_DEP_CALCREF        'A'
-#define     G_DEP_ADDRESS        'a'
-#define     G_DEP_ROOT           'r'
-#define     G_DEP_UNROOT         'u'
-#define     G_DEP_CHECKROOT      'a'
+/*> #define     G_DEP_BLANK          '-'                                              <* 
+ *> #define     G_DEP_REQUIRE        'R'                                              <* 
+ *> #define     G_DEP_PROVIDE        'p'                                              <* 
+ *> #define     G_DEP_RANGE          'P'                                              <* 
+ *> #define     G_DEP_CELL           'c'                                              <* 
+ *> #define     G_DEP_FORMAT         'F'                                              <* 
+ *> #define     G_DEP_COPY           'f'                                              <* 
+ *> #define     G_DEP_SOURCE         'S'                                              <* 
+ *> #define     G_DEP_LIKE           'l'                                              <* 
+ *> #define     G_DEP_MERGED         'M'                                              <* 
+ *> #define     G_DEP_BLEED          'b'                                              <* 
+ *> #define     G_DEP_CALCREF        'A'                                              <* 
+ *> #define     G_DEP_ADDRESS        'a'                                              <* 
+ *> #define     G_DEP_ROOT           'r'                                              <* 
+ *> #define     G_DEP_UNROOT         'u'                                              <* 
+ *> #define     G_DEP_CHECKROOT      'a'                                              <*/
 /*---(program)--------------*/
 char        DEP_init             (void);
 char        DEP__purge           (void);
@@ -1275,8 +1281,8 @@ char        HIST_init               (void);
 char        HIST_wrap               (void);
 
 char        HIST__new               (char a_mode, char a_type, int a_tab, int a_col, int a_row);
-char        HIST__free              (tHIST *a_curr);
-char        HIST__prune             (void);
+char        HIST__free              (tHIST **a_curr);
+char        HIST__prune             (char a_type);
 char        HIST__purge             (void);
 
 char        HIST__find              (int a_index);
@@ -1293,6 +1299,7 @@ char        HIST_units         (char a_mode, char a_act, int a_tab, int a_col, i
 char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int  a_before, int  a_after);
 
 char        HIST_list          (void);
+char        HIST_debug         (void);
 char        HIST_undo          (void);
 char        HIST_redo          (void);
 char*       HIST__unit         (char *a_question, int a_ref);
@@ -1429,8 +1436,8 @@ char        NODE_multikey           (char a_type, char a_key);
 char        NODE_freeze             (int a_tab, char a_type, int a_beg, int a_end);
 char        NODE_unfreeze           (int a_tab, char a_type);
 /*---(files)--------------------------*/
-char        NODE_reader             (void);
-char        NODE_writer             (char a_type, tNODE *a_node, short n);
+char        NODE_reader             (int c, uchar *a_verb);
+char        NODE_writer             (int c, char a_type, tNODE *a_node, short n);
 char        NODE_writer_one         (char a_index, char a_type, short a_ref);
 char        NODE_writer_all         (char a_type);
 /*---(mapping)------------------------*/
@@ -1479,7 +1486,7 @@ char        COL_multikey            (char a_key);
 char        COL_freeze              (char a_index, short a_bcol, short a_ecol);
 char        COL_unfreeze            (char a_index);
 /*---(files)--------------------------*/
-char        COL_reader              (void);
+char        COL_reader              (int c, uchar *a_verb);
 char        COL_writer              (char a_index, short a_ref);
 char        COL_writer_all          (void);
 /*---(mapping)------------------------*/
@@ -1521,7 +1528,7 @@ char        ROW_multikey            (char a_key);
 char        ROW_freeze              (char a_index, short a_bref, short a_eref);
 char        ROW_unfreeze            (char a_index);
 /*---(files)--------------------------*/
-char        ROW_reader              (void);
+char        ROW_reader              (int c, uchar *a_verb);
 char        ROW_writer              (char a_index, short a_ref);
 char        ROW_writer_all          (void);
 /*---(mapping)------------------------*/
@@ -1628,6 +1635,7 @@ char      CELL_visual          (char   a_what, char a_mode, char a_how);
 
 
 
+char        CELL_dump               (FILE *a_file);
 char*       CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_ref);
 char       *CELL__unit              (char  *a_question, tCELL *a_cell);
 char       *CELL__unitnew           (char  *a_question, char *a_label);
@@ -1652,12 +1660,12 @@ char        TABS_reader             (char n, char *a, char *b, char *c, char *d,
 char        TABS_writer             (char  a_tab);
 char        TABS_writer_all         (void);
 
-char        TAB_reader              (void);
-char        TAB_writer              (char  a_tab);
+char        TAB_reader              (int c, uchar *a_verb);
+char        TAB_writer              (int c, char  a_tab);
 char        TAB_writer_all          (void);
 
-char        CELL_reader             (void);
-char        CELL_writer             (tCELL *a_curr);
+char        CELL_reader             (int c, uchar *a_verb);
+char        CELL_writer             (uchar *a_verb, tCELL *a_curr);
 char        CELL_writer_all         (void);
 
 
@@ -1687,6 +1695,7 @@ char*       api_ycalc__unit         (char *a_question, char *a_label);
 
 /*===[[ gyges_yvikeys.c ]]====================================================*/
 char        api_vikeys_init         (void);
+char        api_yvikeys_handlers    (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
 char        api_yvikeys_addressor   (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);
@@ -1715,16 +1724,14 @@ char*       api_myvikeys__unit      (char *a_question, int a_num);
 
 
 
-char        BTREE_init              (void);
-long        BTREE_label2key         (char *a_label);
-long        BTREE_coord2key         (int a_tab, int a_col, int a_row, char *a_label);
-char        BTREE_dgnome            (void);
-char        BTREE_build             (void);
-char        BTREE_by_label          (tCELL **a_found, char *a_label);
-char        BTREE_by_coord          (tCELL **a_found, int a_tab, int a_col, int a_row);
-char        BTREE_list              (void);
-char        BTREE_update            (void);
-char*       BTREE__unit             (char *a_question, int n);
+char        api_ysort_init          (void);
+long        api_ysort_label2key     (char *a_label);
+long        api_ysort_coord2key     (int a_tab, int a_col, int a_row, char *a_label);
+char        api_ysort_by_label      (tCELL **a_found, char *a_label);
+char        api_ysort_by_coord      (tCELL **a_found, int a_tab, int a_col, int a_row);
+char        api_ysort_update        (void);
+char        api_ysort_btree_dump    (FILE *a_file);
+char*       api_ysort__unit         (char *a_question, int n);
 
 
 

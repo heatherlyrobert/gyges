@@ -121,6 +121,8 @@ char        g_dashes      [200] = "----·----·----·----·----·----·----·----·----·
 char       *g_tbd         = "tbd";
 
 
+static int s_count        =    0;
+
 
 /*====================------------------------------------====================*/
 /*===----                      memory allocation                       ----===*/
@@ -213,7 +215,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    x_new->r_prev    = NULL;
    x_new->r_next    = NULL;
    /*---(sort)---------------------------*/
-   BTREE_update ();
+   api_ysort_update ();
    /*---(return)-------------------------*/
    *a_cell = x_new;
    /*---(complete)-----------------------*/
@@ -264,7 +266,7 @@ CELL__free         (tCELL **a_cell)
    *a_cell = NULL;
    --ACEL;
    /*---(sort)---------------------------*/
-   BTREE_update ();
+   api_ysort_update ();
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -325,8 +327,7 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler (FILE_DEPCEL  , "cell_dep"  , 5.1, "LTO---------", -1, CELL_reader     , CELL_writer_all , "------------" , "label,afdu?-----,contents-----------------" , "gyges dependent cells"  );
-   rc = yPARSE_handler (FILE_FREECEL , "cell"      , 5.2, "LTO---------", -1, CELL_reader     , NULL            , "------------" , "label,afdu?-----,contents-----------------" , "gyges free cells"       );
+   yVIKEYS_dump_add ("cells"      , CELL_dump);
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -529,7 +530,7 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
       return rce;
    }
    /*---(check for existing)----------*/
-   BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
+   api_ysort_by_coord (&x_curr, a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    --rce;  if (x_curr != NULL) {
       *a_cell = x_curr;
@@ -688,18 +689,15 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    /*---(interpret)----------------------*/
    DEBUG_CELL   yLOG_note    ("interpret new contents");
    rc = yCALC_handle (x_curr->label);
-   if (x_curr != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
-   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
    DEBUG_CELL   yLOG_value   ("handle"    , rc);
    /*---(return)-------------------------*/
-   BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
-   if (x_curr != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
-   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
+   rc = api_ysort_by_coord (&x_curr, a_tab, a_col, a_row);
+   if (rc < 0 || x_curr == NULL) {
+      DEBUG_CELL   yLOG_note    ("cell cleared, no longer exists");
+   } else {
+      DEBUG_REGS   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   }
    if (a_cell != NULL)  *a_cell = x_curr;
-   if (x_curr != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 11"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
-   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
-   if (a_cell != NULL)  DEBUG_REGS   yLOG_complex ("DEBUG 11"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", (*a_cell), (*a_cell)->label, (*a_cell)->tab, (*a_cell)->col, (*a_cell)->row);
-   else                 DEBUG_REGS   yLOG_note    ("cell cleared");
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1017,32 +1015,34 @@ CELL_visual        (char a_what, char a_mode, char a_how)
 static void  o___YPARSE__________o () { return; }
 
 char
-CELL_reader          (void)
+CELL_reader          (int c, uchar *a_verb)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   char        x_verb      [LEN_LABEL];
-   char        x_label     [LEN_LABEL];
+   uchar       x_label     [LEN_LABEL];
    int         x_tab       =    0;
    int         x_col       =    0;
    int         x_row       =    0;
-   char        x_format    [LEN_LABEL];
-   char        x_source    [LEN_RECD ];
+   uchar       x_format    [LEN_LABEL];
+   uchar       x_source    [LEN_RECD ];
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(get verb)-----------------------*/
-   rc = yPARSE_popstr (x_verb);
-   DEBUG_INPT   yLOG_value   ("pop verb"  , rc);
-   DEBUG_INPT   yLOG_info    ("x_verb"    , x_verb);
-   --rce;  if (strncmp ("cell", x_verb, 4) != 0) {
+   DEBUG_INPT   yLOG_info    ("a_verb"    , a_verb);
+   --rce;  if (strncmp ("cell", a_verb, 4) != 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(read all fields)----------------*/
+   rc = yPARSE_vscanf (a_verb, x_label, x_format, x_source);
+   DEBUG_INPT   yLOG_value   ("scanf"     , rc);
+   --rce;  if (rc < 0)  {
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(label)--------------------------*/
-   rc = yPARSE_popstr (x_label);
-   DEBUG_INPT   yLOG_value   ("pop label" , rc);
    DEBUG_INPT   yLOG_info    ("label"     , x_label);
    rc = str2gyges (x_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_ADAPT);
    DEBUG_INPT  yLOG_value   ("parse"     , rc);
@@ -1058,15 +1058,11 @@ CELL_reader          (void)
       return rce;
    }
    /*---(format)-------------------------*/
-   rc = yPARSE_popstr  (&x_format);
-   DEBUG_INPT   yLOG_value   ("pop format", rc);
    if      (strcmp (x_format , "")         == 0) strcpy  (x_format, "??0--");
    else if (strcmp (x_format , "-")        == 0) strcpy  (x_format, "??0--");
    else if (strlen (x_format) <  5)              strcpy  (x_format, "??0--");
    DEBUG_INPT  yLOG_info    ("x_format"  , x_format);
    /*---(source)-------------------------*/
-   rc = yPARSE_popstr  (&x_source);
-   DEBUG_INPT   yLOG_value   ("pop source", rc);
    DEBUG_INPT   yLOG_info    ("source"    , x_source);
    strldchg (x_source, G_CHAR_STORAGE, G_KEY_SPACE, LEN_RECD);
    DEBUG_INPT   yLOG_info    ("source"    , x_source);
@@ -1083,7 +1079,7 @@ CELL_reader          (void)
 }
 
 char         /*-> write a single cell to a file ------[ leaf   [ge.630.514.50]*/ /*-[02.0000.124.!]-*/ /*-[--.---.---.--]-*/
-CELL_writer        (tCELL *a_curr)
+CELL_writer        (uchar *a_verb, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -1126,13 +1122,11 @@ CELL_writer        (tCELL *a_curr)
    /*---(call writer)--------------------*/
    strlcpy  (t, a_curr->source, LEN_RECD);
    strldchg (t, G_KEY_SPACE, G_CHAR_STORAGE, LEN_RECD);
-   yPARSE_fullwrite ("cell", a_curr->label, x_format, t);
+   yPARSE_vprintf (s_count, a_verb, a_curr->label, x_format, t);
    /*---(complete)-----------------------*/
    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 1;
 }
-
-static      s_count     =    0;
 
 char
 CELL_writer_seq         (void *a_owner, void *a_deproot, int a_seq, int a_level)
@@ -1140,64 +1134,11 @@ CELL_writer_seq         (void *a_owner, void *a_deproot, int a_seq, int a_level)
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
    /*---(write)--------------------------*/
-   rc = CELL_writer ((tCELL *) a_owner);
+   rc = CELL_writer ("cell_dep", (tCELL *) a_owner);
    if (rc > 0)  ++s_count;
-   yPARSE_verb_break (s_count);
+   /*> yPARSE_verb_break (s_count);                                                   <*/
    /*---(complete)-----------------------*/
    return 0;
-}
-
-char
-CELL_writer_all_OLD     (void)
-{
-   /*---(FIX ME)-------------------------*/
-   /*
-    *  change independent cells to walking cell master list, rather than
-    *  every spreadsheet location -- much, much faster and clearer.
-    *
-    */
-   /*---(locals)-----------+-----------+-*/
-   char        rc          =    0;
-   int         b           =    0;             /* iterator -- tabs               */
-   int         x           =    0;             /* iterator -- columns            */
-   int         x_end       =    0;
-   int         y           =    0;             /* iterator -- row                */
-   int         y_end       =    0;
-   tCELL      *x_curr      = NULL;
-   int         x_stamp     =    0;
-   int         c           =    0;
-   /*---(dependent)----------------------*/
-   s_count = 0;
-   yPARSE_verb_begin ("cell_dep");
-   x_stamp   = rand ();
-   rc = yCALC_seq_downup (x_stamp, CELL_writer_seq);
-   yPARSE_verb_end   (s_count);
-   c  = s_count;
-   /*---(independent)--------------------*/
-   s_count = 0;
-   yPARSE_verb_begin ("cell");
-   for (b = 0; b < NTAB; ++b) {
-      x_end = COL_max (b) - 1;
-      y_end = ROW_max (b) - 1;
-      for (x = 0; x <= x_end; ++x) {
-         for (y = 0; y <= y_end; ++y) {
-            x_curr = LOC_cell_at_loc (b, x, y);
-            if (x_curr    == NULL)                         continue;
-            if (x_curr->source == NULL)                    continue;
-            if (x_curr->type == YCALC_DATA_BLANK)          continue;
-            if (yCALC_getstamp (x_curr->ycalc) == x_stamp) continue;
-            rc = CELL_writer (x_curr);
-            if (rc > 0)  ++s_count;
-            yPARSE_verb_break (s_count);
-         }
-      }
-   }
-   yPARSE_verb_end   (s_count);
-   c += s_count;
-   if (c > 100)  c = 100;
-   /*---(complete)-----------------------*/
-   DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
-   return c;
 }
 
 char
@@ -1222,29 +1163,54 @@ CELL_writer_all         (void)
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(dependent)----------------------*/
    s_count = 0;
-   yPARSE_verb_begin ("cell_dep");
+   /*> yPARSE_verb_begin ("cell_dep");                                                <*/
    x_stamp   = rand ();
    rc = yCALC_seq_downup (x_stamp, CELL_writer_seq);
-   yPARSE_verb_end   (s_count);
+   /*> yPARSE_verb_end   (s_count);                                                   <*/
    c  = s_count;
    /*---(independent)--------------------*/
    s_count = 0;
-   yPARSE_verb_begin ("cell");
+   /*> yPARSE_verb_begin ("cell");                                                    <*/
    x_curr = hcell;
    while (x_curr != NULL) {
-      if (x_curr->source != NULL && x_curr->type != YCALC_DATA_BLANK && yCALC_getstamp (x_curr->ycalc) != x_stamp) {
-         rc = CELL_writer (x_curr);
+      if (x_curr->source != NULL && x_curr->type != YCALC_DATA_BLANK && yCALC_getstamp (x_curr->ycalc) != x_stamp && x_curr->tab >= 0) {
+         rc = CELL_writer ("cell_free", x_curr);
          if (rc > 0)  ++s_count;
-         yPARSE_verb_break (s_count);
+         /*> yPARSE_verb_break (s_count);                                             <*/
       }
       x_curr = x_curr->m_next;
    }
-   yPARSE_verb_end   (s_count);
+   /*> yPARSE_verb_end   (s_count);                                                   <*/
    c += s_count;
    if (c > 100)  c = 100;
    /*---(complete)-----------------------*/
    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return c;
+}
+
+char
+CELL_dump               (FILE *a_file)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         c           =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   fprintf (a_file, "yVIKEYS, cell inventory                                                                  (:dump cells)\n");
+   fprintf (a_file, "count = %d all, %d linked\n", ACEL, NCEL);
+   x_curr = hcell;
+   while (x_curr != NULL) {
+      if (c %  5 == 0) fprintf (a_file, "\n");
+      if (c % 25 == 0) fprintf (a_file, "num-  label--- tb col row-  t a f d u  len[contents--------------------]\n\n");
+      ++c;
+      fprintf (a_file, "%4d  %-8.8s %2d %3d %4d  %c %c %c %c %c  %3d[%s]\n", c,
+            x_curr->label, x_curr->tab  , x_curr->col  , x_curr->row,
+            x_curr->type , x_curr->align, x_curr->format, x_curr->decs, x_curr->unit,
+            x_curr->len  , x_curr->source);
+      x_curr = x_curr->m_next;
+   }
+   fprintf (a_file, "\n");
+   /*---(complete)-----------------------*/
+   return 0;
 }
 
 
@@ -1443,7 +1409,7 @@ CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_s
       }
       if (x_cell == NULL)  n = -1;
    } else if (a_question [0] == 'l') {
-      BTREE_by_label (&x_cell, a_label);
+      api_ysort_by_label (&x_cell, a_label);
    }
    /*---(selection)----------------------*/
    if      (strcmp(a_question, "n_count"       ) == 0) {

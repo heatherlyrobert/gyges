@@ -329,6 +329,41 @@ DRAW_xaxis         (void)
    return 0;
 }
 
+char         /*-> update buffer display --------------[ ------ [gz.D91.061.A5]*/ /*-[02.3000.323.!]-*/ /*-[--.---.---.--]-*/
+CURS_bufsum        (char *a_list)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         x_left      = 0;
+   int         x_wide      = 0;
+   int         x_bott      = 0;
+   uchar       t           [LEN_HUND]  = "";
+   uchar       s           [LEN_HUND]  = "";
+   short       x_offset    =    0;
+   uchar       x_disp      [LEN_RECD]  = "";
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
+   /*---(begin)--------------------------*/
+   yVIKEYS_view_size     (YVIKEYS_BUFFER, &x_left, &x_wide, &x_bott, NULL, NULL);
+   DEBUG_WIND  yLOG_complex ("size"      , "%3dl, %3dw, %3db", x_left, x_wide, x_bott);
+   TAB_inventory ('L', t);
+   /*---(inventory)----------------------*/
+   strlcpy (s, t + 9, LEN_HUND);
+   sprintf (x_disp, "buffers %s ····· ····· ····· ····· ····· ····· ····· ·····", t + 2);
+   strlcpy (a_list, x_disp, LEN_RECD);
+   /*---(current)------------------------*/
+   x_offset  = 17;
+   x_offset += CTAB;
+   x_offset += (CTAB / 6) * 2;
+   x_offset += (CTAB / 3);
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
+   return x_offset;
+}
+
+char         /*-> update buffer display --------------[ ------ [gz.D91.061.A5]*/ /*-[02.3000.323.!]-*/ /*-[--.---.---.--]-*/
+CURS_bufdet        (char *a_list)
+{
+}
+
 /*> char         /+-> tbd --------------------------------[ leaf   [gz.B80.171.60]+/ /+-[03.5000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> CURS_menusub       (char a_menu)                                                                                               <* 
  *> {                                                                                                                              <* 
@@ -965,6 +1000,7 @@ DRAW_init          (void)
    yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
    yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0, DRAW_xaxis  );
    yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0, DRAW_yaxis  );
+   /*> yVIKEYS_view_simple   (YVIKEYS_BUFFER   , 0, DRAW_buffer );                    <*/
    yVIKEYS_cmds_direct   (":layout gyges");
    yVIKEYS_cmds_add      (YVIKEYS_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
    /*---(get window size)-------------*/

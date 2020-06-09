@@ -13,7 +13,8 @@
 
 
 static  uchar  *s_valids  = NULL;
-static  int     s_nvalid  = 38;
+static  int     s_nvalid  = 40;
+static  int     s_nnorm   = 40;
 
 static  tTAB   *s_master  [MAX_TABS];
 static  tTAB   *s_curr    = NULL;
@@ -447,12 +448,12 @@ TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move)
    }
    /*---(handle move)--------------------*/
    --rce;  switch (a_move) {
-   case '_' : x_beg =  0;           x_end = s_nvalid - 1;  x_dir = '>'; break;
-   case '[' : x_beg =  0;           x_end = s_nvalid - 3;  x_dir = '>'; break;
-   case '>' : x_beg = s_index + 1;  x_end = s_nvalid - 1;  x_dir = '>'; break;
-   case '<' : x_beg = s_index - 1;  x_end = 0;             x_dir = '<'; break;
-   case ']' : x_beg = s_nvalid - 3; x_end = 0;             x_dir = '<'; break;
-   case '~' : x_beg = s_nvalid - 1; x_end = 0;             x_dir = '<'; break;
+   case '[' : x_beg =  0;           x_end = s_nvalid - 1;  x_dir = '>'; break;
+   case '(' : x_beg =  0;           x_end = s_nnorm  - 1;  x_dir = '>'; break;
+   case '>' : x_beg = s_index  + 1; x_end = s_nvalid - 1;  x_dir = '>'; break;
+   case '<' : x_beg = s_index  - 1; x_end = 0;             x_dir = '<'; break;
+   case ')' : x_beg = s_nnorm  - 1; x_end = 0;             x_dir = '<'; break;
+   case ']' : x_beg = s_nvalid - 1; x_end = 0;             x_dir = '<'; break;
    default  :
               DEBUG_LOCS   yLOG_snote   ("movement unknown");
               DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
@@ -772,10 +773,19 @@ TAB_init                (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    char        i           =    0;
+   char       *x_valid     = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(set valids)---------------------*/
    s_valids = LIST_tabs ();
    s_nvalid = strlen (s_valids);
+   s_nnorm  = 0;
+   for (i = 0; i < s_nvalid; ++i) {
+      if (strchr (x_valid, s_valids [i]) != NULL)  ++s_nnorm;
+   }
    NTAB     = s_nvalid;
+   DEBUG_LOCS   yLOG_value   ("s_nvalid"  , s_nvalid);
+   DEBUG_LOCS   yLOG_value   ("s_nnorm"   , s_nnorm );
    /*---(ground tab pointers)------------*/
    for (i = 0; i < s_nvalid; ++i)   s_master [i] = NULL;
    /*---(ground searches)----------------*/
@@ -803,9 +813,8 @@ TAB_init                (void)
    /*---(add status options)-------------*/
    rc = yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , TAB_status_curr     , "details of current buffer"                  );
    /*---(add yparse specification)-------*/
-   /*> rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLLsssc-----", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );   <*/
-   rc = yPARSE_handler (FILE_TABS    , "tab"       , 4.1, "NLc---------", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
    /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -965,7 +974,7 @@ TAB_switch_key         (uchar a_key)
       x_prev  = x_temp;
    }
    /*---(relative tabs)------------------*/
-   else if (a_key > 0 && strchr ("_[<>]~", a_key) != NULL) {
+   else if (a_key > 0 && strchr ("[(<>)]", a_key) != NULL) {
       x_seq  = x_curr;
       rc     = TAB_by_cursor (&x_tab, &x_seq, a_key);
       if (rc != 0) {
@@ -1408,14 +1417,13 @@ TAB_inventory            (char a_size, char *a_list)
 static void  o___YPARSE__________o () { return; }
 
 char
-TAB_reader           (void)
+TAB_reader           (int c, uchar *a_verb)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -11;
    char        rc          =    0;
-   char        x_verb      [LEN_LABEL];
-   char        x_name      [LEN_LABEL];
-   char        x_label     [LEN_LABEL];
+   uchar       x_name      [LEN_LABEL];
+   uchar       x_label     [LEN_LABEL];
    int         x_len       =    0;
    int         x_tab       =    0;
    int         x_size      =    0;
@@ -1423,16 +1431,19 @@ TAB_reader           (void)
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(get verb)-----------------------*/
-   rc = yPARSE_popstr (x_verb);
-   DEBUG_INPT   yLOG_value   ("pop verb"  , rc);
-   DEBUG_INPT   yLOG_info    ("x_verb"    , x_verb);
-   --rce;  if (strcmp ("tab", x_verb) != 0) {
+   DEBUG_INPT   yLOG_info    ("a_verb"    , a_verb);
+   --rce;  if (strcmp ("tab", a_verb) != 0) {
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(read all fields)----------------*/
+   rc = yPARSE_vscanf (a_verb, x_name, x_label, &x_type);
+   DEBUG_INPT   yLOG_value   ("vscanf"    , rc);
+   --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(get name)-----------------------*/
-   rc = yPARSE_popstr (x_name);
-   DEBUG_INPT   yLOG_value   ("pop name"  , rc);
    DEBUG_INPT   yLOG_info    ("x_name"    , x_name);
    x_len = strlen (x_name);
    DEBUG_INPT   yLOG_value   ("x_len"     , x_len);
@@ -1441,8 +1452,6 @@ TAB_reader           (void)
       return rce;
    }
    /*---(max)----------------------------*/
-   rc = yPARSE_popstr (x_label);
-   DEBUG_INPT   yLOG_value   ("pop max"   , rc);
    DEBUG_INPT   yLOG_info    ("max"       , x_label);
    rc = str2gyges (x_label, &x_tab, NULL, NULL, NULL, NULL, 0, YSTR_ADAPT);
    DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
@@ -1459,8 +1468,6 @@ TAB_reader           (void)
       return rce;
    }
    /*---(type)---------------------------*/
-   rc = yPARSE_popchar (&x_type);
-   DEBUG_INPT   yLOG_value   ("pop type"  , rc);
    DEBUG_INPT   yLOG_char    ("x_type"    , x_type);
    rc = TAB_retype (x_tab, x_type);
    DEBUG_INPT   yLOG_value   ("TAB_retype", rc);
@@ -1474,7 +1481,7 @@ TAB_reader           (void)
 }
 
 char
-TAB_writer            (char a_tab)
+TAB_writer            (int c, char a_tab)
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
@@ -1492,7 +1499,7 @@ TAB_writer            (char a_tab)
    x_type = TAB_type (a_tab);
    str4gyges (a_tab, COL_max (a_tab), ROW_max (a_tab), 0, 0, x_max, YSTR_USABLE);
    /*---(write)--------------------------*/
-   rc = yPARSE_fullwrite ("tab", x_name, x_max, x_type);
+   rc = yPARSE_vprintf (c, "tab", x_name, x_max, x_type);
    if (rc < 0)   return rc;
    /*---(complete)-----------------------*/
    return 1;
@@ -1506,14 +1513,14 @@ TAB_writer_all          (void)
    int         i           =    0;
    char        c           =    0;
    /*---(walk)---------------------------*/
-   yPARSE_verb_begin ("tab");
+   /*> yPARSE_verb_begin ("tab");                                                     <*/
    for (i = 0; i < MAX_TABS; ++i) {
-      rc = TAB_writer   (i);
+      rc = TAB_writer   (c, i);
       if (rc <  1)  continue;
       ++c;
-      yPARSE_verb_break (c);
+      /*> yPARSE_verb_break (c);                                                      <*/
    }
-   yPARSE_verb_end   (c);
+   /*> yPARSE_verb_end   (c);                                                         <*/
    /*---(complete)-----------------------*/
    return c;
 }
@@ -1622,12 +1629,12 @@ TAB_map_absolute          (void)
    x_map->gamin = -1;
    x_map->gamax = -1;
    /*---(find min)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '_');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
    if (rc == 0 && x_tab != NULL) {
       x_min = x_ntab;
    }
    /*---(find max)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '~');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, ']');
    if (rc == 0 && x_tab != NULL) {
       x_max = x_ntab;
    }
@@ -1659,12 +1666,12 @@ TAB_map_local             (void)
    x_map->gnext = -1;
    x_map->glmax = -1;
    /*---(find min)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, '(');
    if (rc == 0 && x_tab != NULL) {
       x_map->glmin = x_ntab;
    }
    /*---(find max)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, ']');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, ')');
    if (rc == 0 && x_tab != NULL) {
       x_map->glmax = x_ntab;
    }

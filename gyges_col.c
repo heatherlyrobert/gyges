@@ -101,7 +101,7 @@ char COL_unfreeze    (char a_index) { return NODE_unfreeze (a_index, IS_COL); }
 /*====================------------------------------------====================*/
 static void  o___YPARSE__________o () { return; }
 
-char COL_reader      (void) { return NODE_reader (); }
+char COL_reader      (int c, uchar *a_verb) { return NODE_reader (c, a_verb); }
 
 char COL_writer      (char a_index, short a_ref) { return NODE_writer_one (a_index, IS_COL, a_ref); }
 

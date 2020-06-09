@@ -1041,7 +1041,7 @@ EXIM_export             (char a_style)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          = 0;
-   char       *x_valid     = "vdfctr·VDFCTR·SN";
+   char       *x_valid     = "vdfctrs·VDFCTR·SN";
    FILE       *f           = NULL;
    tCELL      *x_curr      = NULL;
    int         x_tab       = 0;
@@ -1098,7 +1098,7 @@ EXIM_export             (char a_style)
       DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
       ++c;
       /*---(look for line break)---------*/
-      if (strchr ("vdfctr·VDFCTRS", s_style) != NULL && x_row != x_rowsave) {
+      if (strchr ("vdfctrs·VDFCTRS", s_style) != NULL && x_row != x_rowsave) {
          DEBUG_REGS   yLOG_note    ("line break");
          fprintf (s_clip, "\n");
          ++t;
@@ -1114,7 +1114,7 @@ EXIM_export             (char a_style)
          case 'c' : case 'C' :  fprintf (s_clip, "\"\",");                      break;
          case 't' : case 'T' :  fprintf (s_clip, " \t");                        break;
          case 'r' : case 'R' :  fprintf (s_clip, " ");                        break;
-         case 'S' :             fprintf (s_clip, " ");                        break;
+         case 's' : case 'S' :  fprintf (s_clip, " ");                        break;
          }
       }
       /*---(write filled cells)----------*/
@@ -1170,7 +1170,7 @@ EXIM_export             (char a_style)
          case 't' : case 'T' :
             fprintf (s_clip, "%s\t"                , x_trim);
             break;
-         case 'S' :
+         case 's' : case 'S' :
             fprintf (s_clip, "%s"                , x_source);
             break;
          case 'N' :

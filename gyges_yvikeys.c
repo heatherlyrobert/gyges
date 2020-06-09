@@ -27,6 +27,31 @@ api_vikeys_init         (void)
    return 0;
 }
 
+char
+api_yvikeys_handlers    (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_FILE   yLOG_enter   (__FUNCTION__);
+   /*---(handlers)-----------------------*/
+   rc = yPARSE_handler_max (FILE_TABS    , "tab"       , 4.1, "LTc---------", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
+   DEBUG_FILE   yLOG_value   ("tab"       , rc);
+   rc = yPARSE_handler_max (FILE_COLS    , "width"     , 4.2, "Tss---------", -1, COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
+   DEBUG_FILE   yLOG_value   ("width"     , rc);
+   rc = yPARSE_handler_max (FILE_ROWS    , "height"    , 4.3, "Tss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
+   DEBUG_FILE   yLOG_value   ("height"    , rc);
+   rc = yPARSE_handler_max (FILE_DEPCEL  , "cell_dep"  , 5.1, "TTO---------", -1, CELL_reader     , CELL_writer_all , "------------" , "label,afdu?,contents" , "gyges dependent cells"  );
+   DEBUG_FILE   yLOG_value   ("cell_dep"  , rc);
+   rc = yPARSE_handler_max (FILE_FREECEL , "cell_free" , 5.2, "TTO---------", -1, CELL_reader     , NULL            , "------------" , "label,afdu?,contents" , "gyges free cells"       );
+   DEBUG_FILE   yLOG_value   ("cell_free" , rc);
+   /*---(complete)-----------------------*/
+   DEBUG_FILE   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
 /*====================------------------------------------====================*/
 /*===----                   support for map mode                       ----===*/
 /*====================------------------------------------====================*/
@@ -531,6 +556,7 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
    tCELL      *x_provider  = NULL;               /* provider cell to adjust   */
    tCELL      *x_original  = NULL;
    int         x_nreq, x_npro;
+   int         b, xb, xe, yb, ye;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
@@ -544,6 +570,8 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
+   DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", b, xb, xe, yb, ye);
    p  = strtok_r (a_list, q, &s);
    DEBUG_REGS   yLOG_point   ("p"         , p);
    while (p != NULL) {
@@ -874,183 +902,6 @@ MAP__clear            (tMAPPED *a_map)
    return  0;
 }
 
-/*> char                                                                                                                             <* 
- *> LOC__mapper                (char a_dir)                                                                                          <* 
- *> {                                                                                                                                <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                                                                      <* 
- *>    int         i           =    0;                                                                                               <* 
- *>    int         x_max       =    0;                                                                                               <* 
- *>    tMAPPED    *x_map       = NULL;                                                                                               <* 
- *>    tTAB       *x_tab       = NULL;                                                                                               <* 
- *>    int         x_size      =    0;                                                                                               <* 
- *>    int         x_count     =    0;                                                                                               <* 
- *>    int         x_total     =    0;                                                                                               <* 
- *>    int         x_cell      =    0;                                                                                               <* 
- *>    tCELL      *x_curr      = NULL;                                                                                               <* 
- *>    tCELL      *x_prev      = NULL;                                                                                               <* 
- *>    int         x_unit      =    0;                                                                                               <* 
- *>    int         x_save      =    0;                                                                                               <* 
- *>    int         x_mark      =    0;                                                                                               <* 
- *>    /+---(prepare)------------------------+/                                                                                      <* 
- *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                                                                     <* 
- *>    DEBUG_MAP    yLOG_value   ("b->gcur"   , g_bmap.gcur);                                                                        <* 
- *>    DEBUG_MAP    yLOG_value   ("x->gcur"   , g_xmap.gcur);                                                                        <* 
- *>    DEBUG_MAP    yLOG_value   ("y->gcur"   , g_ymap.gcur);                                                                        <* 
- *>    DEBUG_MAP    yLOG_value   ("z->gcur"   , g_zmap.gcur);                                                                        <* 
- *>    switch (a_dir) {                                                                                                              <* 
- *>    case 'T' : case 't' :                                                                                                         <* 
- *>       DEBUG_MAP    yLOG_note    ("TABS (z)");                                                                                    <* 
- *>       x_map   = &g_bmap;                                                                                                         <* 
- *>       x_max   = MAX_TABS;                                                                                                        <* 
- *>       x_total = 1;                                                                                                               <* 
- *>       break;                                                                                                                     <* 
- *>    case 'C' : case 'c' :                                                                                                         <* 
- *>       DEBUG_MAP    yLOG_note    ("COLS (x)");                                                                                    <* 
- *>       x_map   = &g_xmap;                                                                                                         <* 
- *>       x_max   = NCOL - 1;                                                                                                        <* 
- *>       x_total = s_tabs [g_bmap.gcur].rows [g_ymap.gcur].c;                                                                       <* 
- *>       break;                                                                                                                     <* 
- *>    case 'R' : case 'r' :                                                                                                         <* 
- *>       DEBUG_MAP    yLOG_note    ("ROWS (y)");                                                                                    <* 
- *>       x_map   = &g_ymap;                                                                                                         <* 
- *>       x_max   = NROW - 1;                                                                                                        <* 
- *>       x_total = s_tabs [g_bmap.gcur].cols [g_xmap.gcur].c;                                                                       <* 
- *>       break;                                                                                                                     <* 
- *>    }                                                                                                                             <* 
- *>    x_mark = x_map->gcur;                                                                                                         <* 
- *>    /+---(clear)--------------------------+/                                                                                      <* 
- *>    for (i= 0; i < LEN_HUGE; ++i)  x_map->map [i] =  YVIKEYS_EMPTY;                                                               <* 
- *>    x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;                                                                <* 
- *>    x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;                                                                <* 
- *>    /+---(do columns)---------------------+/                                                                                      <* 
- *>    for (x_cell = 0; x_cell <= x_max; ++x_cell) {                                                                                 <* 
- *>       /+---(get base data)---------------+/                                                                                      <* 
- *>       switch (a_dir) {                                                                                                           <* 
- *>       case 'T' : case 't' :                                                                                                      <* 
- *>          x_size  = LEGAL_TAB (x_cell);                                                                                           <* 
- *>          x_curr  = LOC_cell_at_loc (x_cell, g_xmap.gcur, g_ymap.gcur);                                                           <* 
- *>          x_count = 1;                                                                                                            <* 
- *>          break;                                                                                                                  <* 
- *>       case 'C' : case 'c' :                                                                                                      <* 
- *>          x_size  = s_tabs [g_bmap.gcur].cols [x_cell].w;                                                                         <* 
- *>          x_curr  = LOC_cell_at_loc (g_bmap.gcur, x_cell, g_ymap.gcur);                                                           <* 
- *>          x_count = s_tabs [g_bmap.gcur].cols [x_cell].c;                                                                         <* 
- *>          break;                                                                                                                  <* 
- *>       case 'R' : case 'r' :                                                                                                      <* 
- *>          x_size  = s_tabs [g_bmap.gcur].rows [x_cell].h;                                                                         <* 
- *>          x_curr  = LOC_cell_at_loc (g_bmap.gcur, g_xmap.gcur, x_cell);                                                           <* 
- *>          x_count = s_tabs [g_bmap.gcur].rows [x_cell].c;                                                                         <* 
- *>          break;                                                                                                                  <* 
- *>       }                                                                                                                          <* 
- *>       DEBUG_MAP    yLOG_complex ("LOOP"      , "%3dn, %3du, %3ds, %-10p, %3dc", x_cell, x_unit, x_size, x_curr, x_count);        <* 
- *>       /+---(big mins)--------------------+/                                                                                      <* 
- *>       x_map->umin = 0;                                                                                                           <* 
-*>       x_map->gmin = 0;                                                                                                           <* 
-*>       if (x_map->gamin < 0 && x_count > 0)      x_map->gamin = x_cell;                                                           <* 
-*>       if (x_map->glmin < 0 && x_curr != NULL)   x_map->glmin = x_cell;                                                           <* 
-*>       /+---(little mins)-----------------+/                                                                                      <* 
-*>       if (x_cell == x_mark) {                                                                                                    <* 
-   *>          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;                                                            <* 
-      *>       }                                                                                                                          <* 
-      *>       if (x_cell <  x_mark) {                                                                                                    <* 
-         *>          if (x_prev == NULL && x_curr != NULL) x_map->gprev = x_cell;                                                            <* 
-            *>          if (x_prev != NULL && x_curr == NULL) x_map->gprev = x_save;                                                            <* 
-            *>       }                                                                                                                          <* 
-            *>       DEBUG_MAP    yLOG_complex ("mins"    , "%3dg, %3da, %3dl, %3dp", x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);   <* 
-            *>       /+---(update map)------------------+/                                                                                      <* 
-            *>       for (i = 0; i < x_size; ++i) {                                                                                             <* 
-               *>          x_map->map  [x_unit++] = x_cell;                                                                                        <* 
-                  *>          /+> if (x_curr == NULL)  x_map->used [x_cell] = '-';                         <*                                         <* 
-                  *>           *> else                 x_map->used [x_cell] = 'y';                         <+/                                        <* 
-                  *>       }                                                                                                                          <* 
-                  *>       /+---(big maxs)--------------------+/                                                                                      <* 
-                  *>       if (x_curr != NULL)                      x_map->glmax = x_cell;                                                            <* 
-                  *>       if (x_count > 0)                         x_map->gamax = x_cell;                                                            <* 
-                  *>       x_map->gmax = x_cell;                                                                                                      <* 
-                  *>       x_map->umax = x_unit - 1;                                                                                                  <* 
-                  *>       /+---(little maxes)----------------+/                                                                                      <* 
-                  *>       if (x_cell > x_mark && x_map->gnext < 0) {                                                                                 <* 
-                     *>          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;                                                            <* 
-                        *>       }                                                                                                                          <* 
-                        *>       if (x_cell > x_mark + 1 && x_map->gnext < 0) {                                                                             <* 
-                           *>          if (x_prev == NULL && x_curr != NULL) x_map->gnext = x_cell;                                                            <* 
-                              *>          if (x_prev != NULL && x_curr == NULL) x_map->gnext = x_save;                                                            <* 
-                              *>       }                                                                                                                          <* 
-                              *>       DEBUG_MAP    yLOG_complex ("maxs"    , "%3dn, %3dl, %3da, %3dg", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);   <* 
-                              *>       /+---(done)------------------------+/                                                                                      <* 
-                              *>       x_save = x_cell;                                                                                                           <* 
-                              *>       x_prev = x_curr;                                                                                                           <* 
-                              *>    }                                                                                                                             <* 
-                              *>    /+---(update mins and maxes)----------+/                                                                                      <* 
-                              *>    if (x_total > 0) {                                                                                                            <* 
-                                 *>       if (x_map->gamin < 0)  x_map->gamin = x_map->gmin;                                                                         <* 
-                                    *>       if (x_map->glmin < 0)  x_map->glmin = x_map->gmin;                                                                         <* 
-                                    *>       if (x_map->gprev < 0)  x_map->gprev = x_map->gmin;                                                                         <* 
-                                    *>       if (x_map->gamax < 0)  x_map->gamax = x_map->gmin;                                                                         <* 
-                                    *>       if (x_map->glmax < 0)  x_map->glmax = x_map->gmin;                                                                         <* 
-                                    *>       if (x_map->gnext < 0)  x_map->gnext = x_map->gmax;                                                                         <* 
-                                    *>    }                                                                                                                             <* 
-                                    *>    /+---(other)--------------------------+/                                                                                      <* 
-                                    *>    if (a_dir != tolower (a_dir)) {                                                                                               <* 
-                                       *>       x_map->ubeg   = 0;                                                                                                         <* 
-                                          *>       x_map->ucur   = 0;                                                                                                         <* 
-                                          *>       x_map->uend   = 0;                                                                                                         <* 
-                                          *>       x_map->ulen   = 0;                                                                                                         <* 
-                                          *>       x_map->utend  = 0;                                                                                                         <* 
-                                          *>       x_map->gbeg  = 0;                                                                                                          <* 
-                                          *>       x_map->gcur  = 0;                                                                                                          <* 
-                                          *>       x_map->gend  = 0;                                                                                                          <* 
-                                          *>    }                                                                                                                             <* 
-                                          *>    /+---(complete)-----------------------+/                                                                                      <* 
-                                          *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                     <* 
-                                          *>    return 0;                                                                                                                     <* 
-                                          *> }                                                                                                                                <*/
-
-                                          /*> char                                                                                              <* 
-                                           *> LOC__mapprint    (char a_dir)                                                                     <* 
-                                           *> {                                                                                                 <* 
-                                           *>    /+---(locals)-----------+-----------+-+/                                                       <* 
-                                           *>    FILE       *f           = NULL;                                                                <* 
-                                           *>    char        x_name      [LEN_LABEL] = "";                                                      <* 
-                                           *>    tMAPPED    *x_map       = NULL;                                                                <* 
-                                           *>    int         i           =    0;                                                                <* 
-                                           *>    /+---(prepare)------------------------+/                                                       <* 
-                                           *>    switch (a_dir) {                                                                               <* 
-                                           *>    case 't' :                                                                                     <* 
-                                           *>       x_map = &g_bmap;                                                                            <* 
-                                           *>       strlcpy (x_name, "gyges.tmap", LEN_LABEL);                                                  <* 
-                                           *>       break;                                                                                      <* 
-                                           *>    case 'c' :                                                                                     <* 
-                                           *>       x_map = &g_xmap;                                                                            <* 
-                                           *>       strlcpy (x_name, "gyges.cmap", LEN_LABEL);                                                  <* 
-                                           *>       break;                                                                                      <* 
-                                           *>    case 'r' :                                                                                     <* 
-                                           *>       x_map = &g_ymap;                                                                            <* 
-                                           *>       strlcpy (x_name, "gyges.rmap", LEN_LABEL);                                                  <* 
-                                           *>       break;                                                                                      <* 
-                                           *>    }                                                                                              <* 
-                                           *>    /+---(write it out)-------------------+/                                                       <* 
-                                           *>    f = fopen (x_name, "w");                                                                       <* 
-                                           *>    if (f == NULL)  return -1;                                                                     <* 
-                                           *>    /+---(headers)------------------------+/                                                       <* 
-                                           *>    fprintf (f, "gmin amin lmin prev    ");                                                        <* 
-                                           *>    for (i = 0; i < LEN_HUGE; ++i) {                                                               <* 
-                                           *>       if (x_map->map [i] < 0)  break;                                                             <* 
-                                           *>       fprintf (f, "%4d "  , i);                                                                   <* 
-                                           *>    }                                                                                              <* 
-                                           *>    fprintf (f, "   next lmax amax gmax\n");                                                       <* 
-                                           *>    /+---(content)------------------------+/                                                       <* 
-                                           *>    fprintf (f, "%4d %4d %4d %4d    "  , x_map->gmin, x_map->gamin, x_map->glmin, x_map->gprev);   <* 
-                                           *>    for (i = 0; i < LEN_HUGE; ++i) {                                                               <* 
-                                           *>       if (x_map->map [i] < 0)  break;                                                             <* 
-                                           *>       fprintf (f, "%4d "  , x_map->map [i]);                                                      <* 
-                                           *>    }                                                                                              <* 
-                                           *>    fprintf (f, "   %4d %4d %4d %4d\n", x_map->gnext, x_map->glmax, x_map->gamax, x_map->gmax);    <* 
-                                           *>    fclose (f);                                                                                    <* 
-                                           *>    /+---(complete)-----------------------+/                                                       <* 
-                                           *>    return 0;                                                                                      <* 
-                                           *> }                                                                                                 <*/
-
 char
 MAP_mapper           (char a_req)
 {
@@ -1134,15 +985,6 @@ MAP_mapper           (char a_req)
    DEBUG_MAP    yLOG_exit    (__FUNCTION__);
    return 0;
 }
-
-/*> char                                                                              <* 
- *> LOC_row_map          (char a_type)                                                <* 
- *> {                                                                                 <* 
- *>    if (a_type == YVIKEYS_INIT)  LOC_mapper   ('R');                               <* 
- *>    else                         LOC_mapper   ('r');                               <* 
- *>    LOC__mapprint ('r');                                                            <* 
- *>    return 0;                                                                      <* 
- *> }                                                                                 <*/
 
 
 

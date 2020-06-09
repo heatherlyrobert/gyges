@@ -445,7 +445,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
       rc = VALID_col (i);
       /*> rc = str4gyges (b, i, y, z, 0, x_label, YSTR_USABLE);                       <*/
       if (rc < 0)  break;
-      rc = BTREE_by_coord (&x_owner, b, i, y);
+      rc = api_ysort_by_coord (&x_owner, b, i, y);
       /*> rc = api_ycalc_whos_at (b, i, y, z, YCALC_LOOK, &x_owner, NULL);            <*/
       if (rc < 0 || x_owner == NULL)              break;
       if (x_owner->type != YCALC_DATA_MERGED)     break;

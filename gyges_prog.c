@@ -82,12 +82,15 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    my.btree = 'y';
-   BTREE_init ();
+   api_ysort_init ();
    rc = yVIKEYS_init         (MODE_MAP);
+   yVIKEYS_dump_add ("btree"      , api_ysort_btree_dump);
+   yVIKEYS_dump_add ("seq"        , yCALC_seq_dump);
+   yVIKEYS_dump_add ("big"        , PROG_bigdump);
    NODE_init ();
    TAB_init  ();
    LOC_init  ();
-   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", "gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed) spreadsheet", FILE_prepper, FILE_finisher);
+   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed)", "gyges", "spreadsheet file", api_yvikeys_handlers, FILE_prepper, FILE_finisher);
    rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
@@ -215,15 +218,14 @@ PROG_final         (void)
    yCALC_calculate   ();
    /*---(status options)-----------------*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
-   /*> yVIKEYS_view_option (YVIKEYS_STATUS, "buffer" , CURS_status_buffer  , "details of current buffer"                  );   <*/
-   /*> yVIKEYS_view_option (YVIKEYS_STATUS, "reg"    , CURS_status_reg     , "details of map register contents"           );   <*/
-   /*> yVIKEYS_view_option (YVIKEYS_STATUS, "treg"   , CURS_status_textreg , "details of text register contents"          );   <*/
    yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
    yVIKEYS_view_option (YVIKEYS_STATUS, "deps"   , CURS_status_deps    , "details of current cell dependencies"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
    yVIKEYS_view_option (YVIKEYS_STATUS, "mundo"  , CURS_status_history , "change history for debugging"               );
    yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
    yVIKEYS_view_option (YVIKEYS_STATUS, "detail" , CURS_status_detail  , "details on recent errors"                   );
+   yVIKEYS_view_option (YVIKEYS_BUFFER, "summary", CURS_bufsum         , "one-line buffer inventory"                  );
+   yVIKEYS_view_option (YVIKEYS_BUFFER, "detail" , CURS_bufdet         , "multi-line buffer list"                     );
    yVIKEYS_cmds_direct (":status mode");
    yVIKEYS_cmds_direct (":read");
    MAP_mapper (YVIKEYS_INIT);
@@ -257,6 +259,15 @@ PROG_end             (void)
    HIST_wrap    ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_PROG   yLOGS_end     ();
+   return 0;
+}
+
+char         /*-> tbd --------------------------------[ leaf   [gc.630.122.30]*/ /*-[02.0000.00#.!]-*/ /*-[--.---.---.--]-*/
+PROG_bigdump            (void *a_file)
+{
+   CELL_dump      (a_file);
+   api_ysort_btree_dump (a_file);
+   yCALC_seq_dump (a_file);
    return 0;
 }
 

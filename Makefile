@@ -6,9 +6,9 @@
 # basename of executable, header, and all code files
 NAME_BASE  = gyges
 # additional standard and outside libraries
-LIB_STD    = -lm -lncurses
+LIB_STD    = -lm -lncurses -ltinfo
 # all heatherly libraries used, debug versions whenever available
-LIB_MINE   = -lySTR_debug -lyVIKEYS_debug -lyRPN_debug -lyREGEX_debug -lyCOLOR_debug -lyCALC_debug -lyPARSE_debug
+LIB_MINE   = -lySTR_debug -lyVIKEYS_debug -lyRPN_debug -lyREGEX_debug -lyCOLOR_debug -lyCALC_debug -lyPARSE_debug -lySORT_debug
 # directory for production code, no trailing slash
 INST_DIR   = /usr/local/bin
 

@@ -107,7 +107,7 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
       return rce;
    }
    /*---(check unoccupied)---------------*/
-   rc = BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
+   rc = api_ysort_by_coord (&x_curr, a_tab, a_col, a_row);
    DEBUG_LOCS   yLOG_point   ("a_curr"    , x_curr);
    --rce;  if (x_curr != NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -136,9 +136,9 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
    /*---(label and key)------------------*/
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = strdup (x_label);
-   a_cell->key   = BTREE_label2key (x_label);
+   a_cell->key   = api_ysort_label2key (x_label);
    DEBUG_REGS   yLOG_complex ("DEBUG 4"   , "%-10.10s, %2dt, %3dc, %4dr", a_cell->label, a_cell->tab, a_cell->col, a_cell->row);
-   BTREE_update ();
+   api_ysort_update ();
    /*---(adjust tab)--------------------*/
    TAB_resize (a_tab, "");
    /*> if (x_tab->type == G_TAB_AUTO) {                                               <* 
@@ -201,7 +201,7 @@ LOC_unhook         (tCELL *a_cell)
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = g_tbd;
    a_cell->key   = UNHOOKED;
-   BTREE_update ();
+   api_ysort_update ();
    /*---(adjust tab)--------------------*/
    TAB_resize (x_tab, "");
    /*---(complete)-----------------------*/
@@ -236,7 +236,7 @@ LOC_move           (
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = BTREE_by_coord (&x_src, a_stab, a_scol, a_srow);
+   rc = api_ysort_by_coord (&x_src, a_stab, a_scol, a_srow);
    DEBUG_LOCS   yLOG_point   ("x_src"     , x_src);
    /*---(defense: target)----------------*/
    rc = str4gyges (a_dtab, a_dcol, a_drow, 0, 0, x_label, YSTR_USABLE);
@@ -245,7 +245,7 @@ LOC_move           (
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   x_dst = BTREE_by_coord (&x_dst, a_dtab, a_dcol, a_drow);
+   x_dst = api_ysort_by_coord (&x_dst, a_dtab, a_dcol, a_drow);
    /*---(overwrite as necessary)---------*/
    if (x_dst != NULL) {
       CELL_change (NULL, HIST_NONE, a_dtab, a_dcol, a_drow, "");
@@ -418,7 +418,7 @@ LOC_cell_at_loc      (int a_tab, int a_col, int a_row)
    /*---(begin)--------------------------*/
    DEBUG_LOCS_M   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   rc = BTREE_by_coord (&x_curr, a_tab, a_col, a_row);
+   rc = api_ysort_by_coord (&x_curr, a_tab, a_col, a_row);
    if (rc < 0)  {
       DEBUG_LOCS_M   yLOG_note    ("nothing found");
       DEBUG_LOCS_M   yLOG_exit    (__FUNCTION__);
