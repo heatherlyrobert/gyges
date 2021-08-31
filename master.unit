@@ -8,7 +8,7 @@
 
 
 #==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-MASTER        layering of testing to coordinate sequence                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#GLOBAL        layering of testing to coordinate sequence                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    WAVE       primary/independent data structures (è)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      stage    (1) simple validators and checkers                                                                                                                                                                                           

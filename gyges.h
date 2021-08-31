@@ -5,28 +5,38 @@
 /*===[[ BEG_HEADER ]]=========================================================*/
 
 /*===[[ ONE_LINERS ]]=========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
+/*  12          12      -        1         2         3         4         5         6         7         8*/
+/*345678901-12345678901-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
 
 #define     P_FOCUS     "TO (major tools)"
 #define     P_NICHE     "ss (spreadsheet)"
+#define     P_SUBJECT   "technical spreadsheet"
 #define     P_PURPOSE   "technical, fullsome, aesthetic, and keyboard-centric spreadsheet"
 
 #define     P_NAMESAKE  "gyges-hecatoncheires (hundred-handed)"
 #define     P_HERITAGE  "gyges, the furious, is one of the three hecatoncheires"
 #define     P_IMAGERY   "ugly, impossibly powerful, one-hundred handed, fifty headed giant"
+#define     P_REASON    "gyges and spreadsheets are both impossibly scary and complex"
+
+#define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
+
+#define     P_BASENAME  "gyges"
+#define     P_FULLPATH  "/usr/local/bin/gyges"
+#define     P_SUFFIX    "gyges"
+#define     P_CONTENT   "spreadsheet data"
 
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
+#define     P_DEPENDS   "none"
 
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   "2010-09"
-#define     P_DEPENDS   "none"
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5n"
-#define     P_VERTXT    "switched over to improved yPARSE, hugely cool"
+#define     P_VERNUM    "3.5m"
+#define     P_VERTXT    "cleaned file, row, col, and tab unit tests"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -51,6 +61,8 @@
  *
  *  signal processing
  *  computer vision
+ *  simulation
+ *  virtual reality/immersive
  *
  *
  */
@@ -204,10 +216,12 @@
 #include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
 #include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
-#include    <yCOLOR.h>             /* heatherly color library                 */
+#include    <yCOLOR.h>       /* heatherly color library                 */
 #include    <yCALC.h>        /* CUSTOM : heatherly interactive calculation    */
-#include    <yPARSE.h>             /* heatherly file reading and writing      */
-#include    <ySORT.h>              /* heatherly sorting library               */
+#include    <yPARSE.h>       /* heatherly file reading and writing      */
+#include    <ySORT.h>        /* heatherly sorting library               */
+
+#include    <yDLST_solo.h>   /* heatherly list cursoring constants      */
 
 
 
@@ -243,7 +257,7 @@ typedef struct timespec  tTSPEC;
 #define     DEF_TABS    5
 #define     MIN_TABS    1
 /*---(columns)------------------------*/
-#define     MAX_COLS    130
+#define     MAX_COLS    702
 #define     DEF_COLS    26
 #define     MIN_COLS    1
 /*---(rows)---------------------------*/
@@ -1343,6 +1357,7 @@ char        TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, 
 char        TAB_free                (char a_index);
 char        TAB_first_filled        (void);
 char        TAB_first_open          (void);
+char        TAB_new_quick           (void);
 char        TAB_new_in_open         (uchar *a_name, uchar *a_size);
 char        TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size);
 char        TAB_free_all_empties    (void);

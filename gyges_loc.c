@@ -37,12 +37,12 @@ LOC_purge            (void)
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/
-   rc = TAB_by_cursor (&x_tab, &x_seq, '_');
+   rc = TAB_by_cursor (&x_tab, &x_seq, YDLST_HEAD);
    while (x_tab != NULL && rc == 0) {
       DEBUG_PROG   yLOG_value   ("tab"       , x_tab->tab);
       rc = TAB_cleanse   (x_tab);
       DEBUG_PROG   yLOG_value   ("cleanse"   , rc);
-      rc = TAB_by_cursor (&x_tab, &x_seq, '>');
+      rc = TAB_by_cursor (&x_tab, &x_seq, YDLST_NEXT);
    }
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);

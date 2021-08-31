@@ -1083,6 +1083,7 @@ CELL_writer        (uchar *a_verb, tCELL *a_curr)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
+   char        rc          =   0;
    char        x_format    [LEN_LABEL] = "";
    char        x_level     [LEN_LABEL] = "";
    char        t           [LEN_RECD]  = "";
@@ -1091,6 +1092,12 @@ CELL_writer        (uchar *a_verb, tCELL *a_curr)
    /*---(clear output)-------------------*/
    yPARSE_outclear  ();
    /*---(defenses)-----------------------*/
+   DEBUG_OUTP   yLOG_point   ("a_verb"    , a_verb);
+   --rce;  if (a_verb  == NULL) {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   DEBUG_OUTP   yLOG_info    ("a_verb"    , a_verb);
    DEBUG_OUTP   yLOG_point   ("a_curr"    , a_curr);
    --rce;  if (a_curr  == NULL) {
       DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
@@ -1122,7 +1129,8 @@ CELL_writer        (uchar *a_verb, tCELL *a_curr)
    /*---(call writer)--------------------*/
    strlcpy  (t, a_curr->source, LEN_RECD);
    strldchg (t, G_KEY_SPACE, G_CHAR_STORAGE, LEN_RECD);
-   yPARSE_vprintf (s_count, a_verb, a_curr->label, x_format, t);
+   rc = yPARSE_vprintf (s_count, a_verb, a_curr->label, x_format, t);
+   DEBUG_OUTP   yLOG_value   ("vprintf"   , rc);
    /*---(complete)-----------------------*/
    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 1;

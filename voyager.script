@@ -1,0 +1,250 @@
+#! /bin/gyges
+##
+## yVIKEYS script to create the voyager spreadsheet for demonstration
+##
+
+
+º:myhome  600 100¦»
+º:mysize  615 435¦»
+
+
+ºµre5»
+
+
+##===[[ preparation ]]========================================================##
+º:0p29¦··+1¦··l+1¦··l+1¦··l+1¦··l-1¦··:0p30¦··s ¦··ls  5¦··:0p34¦··s=$c$30+5¦··:0a1¦»
+
+ºswhere is the voyager 1 spacecraft?¦···ls<¦··ls<¦··ls<¦··ls<¦»
+
+
+##==[[ header statement ]]====================================================##
+º:0a3¦»
+ºsa friend of mine stunned me recently.  he said, a major news channel reported that the¦»
+ºl··s<¦··y··lp··lp··lp··lp··lp··lp··lp··lp··lp··lp»
+º0j·svoyager spacecraft·had returned signals from numerous stars it had already passed.¦»
+ºl··s<¦··y··lp··lp··lp··lp··lp··lp··lp··lp··lp··lp»
+º0j·sthe reporter was then confidently making pronouncements and uncovering conspiracies !?!¦»
+ºl··s<¦··y··lp··lp··lp··lp··lp··lp··lp··lp··lp··lp»
+
+
+##==[[ titles ]]==============================================================##
+
+:0a8¦
+
+º4j····sstart with some headers¦··f|··ls<¦··ls<¦··ls<¦··ls<¦»
+º0j····sand column sizing to¦·····f|··ls<¦··ls<¦··ls<¦··ls<¦»
+º0j····sorganze.¦R················f|··ls<¦··ls<¦··ls<¦··ls<¦»
+º6k0»
+
+·····ssubject¦··········F·w····-^¦
+l····syear¦·············F·wl···-^¦
+l····sday¦··············F·whhh·-^¦
+l····shour¦·············F·Nll··-^¦
+l····smin¦··············F·Nl···-^¦
+l····ssec¦··············F·nll··-^¦
+0j
+
+ºv··5j5l··x··v··5j5l··x»
+º2jl···snow add scaling values¦···f|··ls<¦»
+ºjh····sto convert between¦·······f|··ls<¦»
+ºjh····sthese time units.¦········f|··ls<¦»
+º04k»
+
+·····sscales (per)¦
+2l···+365¦··············f|
+l····+24¦···············f|
+l····+60¦···············f|
+l····+60¦···············f|
+º0j··v··3j5l··x··v··3j5l··x»
+
+
+
+##==[[ legend ]]==============================================================##
+
+º:0c26¦»
+ºsWARNING, simplistic mathematical projections¦···F|¦··ls<¦··ls<¦·ls<¦»
+ºj·3h··s(directionally correct only)¦·············F|¦··ls<¦··ls<¦·ls<¦»
+
+º:0d29¦»
+ºsAUTOMATIC TEXT COLORATION¦···F|_¦··ls<¦··ls<¦»
+º:0c30¦»
+º+1¦····················lsblue things are numerical constants¦··ls<¦··ls<¦»
+º3hj···=`k¦+1¦··········lsgreen things are calculated numbers¦··ls<¦··ls<¦»
+º3hj···=0p29+0q29+0r29+0s29+0t29¦··lsred things are complicated formulas¦··ls<¦··ls<¦»
+º3hj···s 4¦······f>·····lsyellow things are text constants¦·····ls<¦··ls<¦»
+º3hj···#0p30#0q30¦·f>···lspurple things are text formulas¦······ls<¦··ls<¦»
+º3hj···s~p34¦······f>···lsgrey things are like/reused formulas¦·ls<¦··ls<¦»
+
+
+
+##==[[ speeds ]]==============================================================##
+
+:a11¦
+slight miles¦
+L····+186282¦···········fc
+º2j2h··sthis formula is being built¦··ls<¦··ls<¦»
+ºj2h···sby moving/wandering not¦······ls<¦··ls<¦»
+ºj2h···styping directly.¦·············ls<¦··ls<¦»
+º4kh»
+ºµre6»·=`l*kk'¦¦··········fc·ºµre5»
+º2j3h··sthen, cut/paste across¦··ls<¦»
+ºjh····swith automatic formula¦··ls<¦»
+ºjh····stransformations.¦········ls<¦»
+º4k2l»
+ºµre6»y
+h····p
+h····p
+h····p
+ºµre5»
+º2j··v··2j4l··x··v··2j4l··x»
+
+º0·····sgreen background means¦····f|··ls<¦»
+ºjh····sthis value is needed¦······f|··ls<¦»
+ºjh····sby current cell.¦··········f|··ls<¦»
+
+ºl2k···syellow marks¦··············f|»
+ºj·····sthe current¦···············f|»
+ºj·····scell.¦·····················f|»
+
+ºl2k···spurple background means¦···f|··ls<¦··ls<¦»
+ºj2h···sthis cell provides info¦···f|··ls<¦··ls<¦»
+ºj2h···sto the current cell.¦······f|··ls<¦··ls<¦»
+
+º4h4k»
+l
+ÏÏÏÏÏÏÏ
+
+º2j0··v··2j5l··x··v··2j5l··x··2k»
+
+º2l7j··svoyager is 20,000 times¦·······f|··ls<¦»
+ºjh····sslower than light (0.006c).¦···f|··ls<¦»
+º8kh»
+
+0j···ºs  voyager miles¦»
+lll··+38610¦············fc
+l····=`h/kkkl'¦¦········fc··y
+l····p
+hhhk·y
+j····p
+h····p
+
+0j···ºs  speeding bullet¦»
+lll··+682¦··············fc
+lk···y·j·p
+l····p··················fg
+hhhk·y
+j····p
+h····p
+
+0j···ºs  usain·bolt¦»
+lll··+27¦···············fc
+lk···y·j·p··············fg
+l····p··················fg
+hhhk·y
+j····p
+h····p
+
+º4jl··v··j2l··x··v··j2l··x··4kh»
+
+
+##==[[ sun ]]=================================================================##
+0jj·ºsour sun (one au)¦»
+
+º7j····svoyager takes 100 days to¦·····f|··ls<¦»
+ºjh····stravel 1au vs light in 8min.¦··f|··ls<¦»
+º8k0»
+
+l····+9.295e7¦··········fc
+
+0j···ºslight¦············f>»
+l····=`k'''/kkkkk.¦¦····fG··y
+l····p··················fG
+l····p··················fg
+l····p··················fg
+l····p··················f0
+
+0j···ºsvoyager¦··········f>»
+llk··y·j·p
+
+0j···ºsbullet¦···········f>»
+l····p
+
+0j···ºsusain¦············f>»
+l····p
+
+º3jh·v··jl··x··v··jl··x··3k0»
+
+
+
+##==[[ closest start ]]=======================================================##
+0jj··ºsproxima centari¦»
+
+º6j0···sthis star is the closest to¦··f|··ls<¦»
+º0j····searth in ANY direction.¦······f|··ls<¦»
+º7k0»
+
+lj···+4.2¦··············Ff1¦
+k····=`j*kkkkkkkkkkkk¦¦···fc
+
+0j···ºslight¦············f>»
+ll···=`kh'''/11kl.¦¦····fc··y
+l····p··················fc
+l····p··················fc
+
+0j···ºsvoyager¦··········f>»
+llk··y·jh·p·············Fc0¦
+
+0j···ºshuman gens¦······f>»
+l····=`k¦/25¦···········fc
+
+º3j0··v··2jl··x··v··2jl··x»
+º3k»
+
+
+##==[[ first star ]]==========================================================##
+0jj··ºsstar ac +793888¦»
+
+º6j0···sthis is the star voyager¦······f|··ls<¦»
+º0j····swill ACTUALLY pass nearest.¦···f|··ls<¦»
+º7k0»
+
+lj···+17.6¦·············Ff1¦
+k····=`j*17k¦¦··········fc
+
+0j···ºslight¦············f>»
+
+0j···ºsvoyager¦··········f>»
+l····=`2k/15k¦¦·········fc
+
+0j···ºshuman gens¦······f>»
+l····=`k¦/25¦···········fc
+
+º3j0··v··2jl··x··v··2jl··x»
+º3k»
+
+
+
+##==[[ now ]]=================================================================##
+0jj··ºsvoyager NOW (years)¦»
+l····+43¦
+
+0j···ºsmiles so far¦·····f>»
+l····=`k*20k¦¦··········fc
+
+0j···ºspercent done¦·····f>»
+l····=`k/6k¦*100¦·······fg
+
+
+
+
+##==[[ footer quote ]]========================================================##
+º:0a37¦»
+ºsspace is big.  really big.  you just won't believe how vasty, hugely, mindbogglingly big.¦»
+ºl··s<¦··y··lp··lp··lp··lp»
+º0j·s  -- hitchhiker's guide to the galaxy by the one-and-only douglas adams (noted futurist ;)¦»
+ºl··s<¦··y··lp··lp··lp··lp»
+
+
+
+:0f1¦
+

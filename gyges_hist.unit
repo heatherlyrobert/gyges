@@ -1302,9 +1302,9 @@ SCRP          (hist  ) verify visual selection undo and redo handling          
      exec     format as 1 decimal                  yVIKEYS_main_string         "1"                                                                                                   i_equal     0                                                                                                    
      exec     complete                             yVIKEYS_main_string         "¦¥"                                                                                                  i_equal     0                                                                                                    
 
-/*> ,x··223|·R0k11¥··6lr0·5lR10¥·5lR10¥lllll.jhhhhhhhhhhhhhhhhhhhhhhhR0l11llllllllR0llllllhR11lllllR10jhhhhhhhhhhhhhhhhhhhhhhhR0k12llllllllR0lllllR10lllllR11jhhhhhhhhhhhhhhhhhhhhhhhhlR0l122lllllllR0lllllR11lllll.jhhhhhhhhhhhhhhhhhhhhhhhR0m12llllllllR0lllllR12lllllR11hhhhhhhhhhhhhhhhhhhhhhhj   <*/
-/*> ,x··223|·R0k11¥··8lr0·5lR10¥·5lR10¥··4l·Ry FORMAT¥··7l·R1[?]             1[f]¥··,y  <*/
-/*> ,x··250|·Ry DECIMALS¥··5l·R1[3]             1[1]¥··,y  <*/
+#*> ,x··223|·R0k11¥··6lr0·5lR10¥·5lR10¥lllll.jhhhhhhhhhhhhhhhhhhhhhhhR0l11llllllllR0llllllhR11lllllR10jhhhhhhhhhhhhhhhhhhhhhhhR0k12llllllllR0lllllR10lllllR11jhhhhhhhhhhhhhhhhhhhhhhhhlR0l122lllllllR0lllllR11lllll.jhhhhhhhhhhhhhhhhhhhhhhhR0m12llllllllR0lllllR12lllllR11hhhhhhhhhhhhhhhhhhhhhhhj   <*/
+#*> ,x··223|·R0k11¥··8lr0·5lR10¥·5lR10¥··4l·Ry FORMAT¥··7l·R1[?]             1[f]¥··,y  <*/
+#*> ,x··250|·Ry DECIMALS¥··5l·R1[3]             1[1]¥··,y  <*/
 
    COND       check on history stack                                             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      ... check counts                     HIST__unit                  "count"        , 0                                                                                    s_equal     HIST count       :   21n,   21f,   21b,   20i                                                                      

@@ -90,7 +90,7 @@ PROG_init          (int a_argc, char *a_argv[])
    NODE_init ();
    TAB_init  ();
    LOC_init  ();
-   if (rc == 0)  rc = yVIKEYS_whoami       ("gyges", P_VERNUM, P_VERTXT, "/usr/local/bin/gyges", "gyges-hekatonkheires (hundred-handed)", "gyges", "spreadsheet file", api_yvikeys_handlers, FILE_prepper, FILE_finisher);
+   if (rc == 0)  rc = yVIKEYS_whoami       (P_FULLPATH, P_VERNUM, P_VERTXT, P_NAMESAKE, P_SUFFIX, P_CONTENT, api_yvikeys_handlers, FILE_prepper, FILE_finisher);
    rc = FILE_init     ();
    if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
    if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
@@ -141,6 +141,7 @@ PROG_args          (int argc, char *argv[])
    char        t           [LEN_FULL]   = "";
    /*---(begin)--------------------------*/
    /*> FILE_rename ("");                                                              <*/
+   yVIKEYS_args (argc, argv);
    /*---(process)------------------------*/
    for (i = 1; i < argc; ++i) {
       a = argv[i];
@@ -203,7 +204,7 @@ PROG_begin         (void)
    yVIKEYS_bufs_config   (TAB_switch_key , TAB_browse);
    yVIKEYS_hist_config   (HIST_undo, HIST_redo);
    HIST_init ();
-   yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units);
+   yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units, NULL);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -388,16 +389,17 @@ PROG__unit_loud      (void)
    int         x_argc      = 10;
    char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@args", "@@cmds", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
    yURG_logger (x_argc, x_args);
-   yURG_name   ("tops", YURG_ON);
-   yURG_name   ("cell", YURG_ON);
-   yURG_name   ("regs", YURG_ON);
-   yURG_name   ("deps", YURG_ON);
-   yURG_name   ("ystr", YURG_ON);
-   yURG_name   ("args", YURG_ON);
-   yURG_name   ("apis", YURG_ON);
-   yURG_name   ("calc", YURG_ON);
-   yURG_name   ("exec", YURG_ON);
-   yURG_name   ("adjs", YURG_ON);
+   yURG_name   ("tops"  , YURG_ON);
+   yURG_name   ("cell"  , YURG_ON);
+   yURG_name   ("regs"  , YURG_ON);
+   yURG_name   ("deps"  , YURG_ON);
+   yURG_name   ("ystr"  , YURG_ON);
+   yURG_name   ("args"  , YURG_ON);
+   yURG_name   ("apis"  , YURG_ON);
+   yURG_name   ("calc"  , YURG_ON);
+   yURG_name   ("exec"  , YURG_ON);
+   yURG_name   ("adjs"  , YURG_ON);
+   yURG_name   ("yparse", YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

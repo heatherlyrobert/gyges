@@ -1190,12 +1190,14 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
    /*---(header)-------------------------*/
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    DEBUG_OUTP   yLOG_complex ("args"      , "%2dt, %c, %4d", a_index, a_type, a_ref);
+   /*---(clear output)-------------------*/
+   yPARSE_outclear  ();
    /*---(verb)---------------------------*/
    /*> IF_COL   yPARSE_verb_begin ("width");                                          <*/
    /*> ELSE_ROW yPARSE_verb_begin ("height");                                         <*/
    /*---(head)---------------------------*/
    if (a_index >= 0)  rc = TAB_by_index  (&x_tab, a_index);
-   else               rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
+   else               rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_HEAD);
    DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
    /*---(walk)---------------------------*/
    while (x_tab != NULL && rc == 0 && x_ntab < 36) {
@@ -1241,7 +1243,7 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
       }
       /*---(next tab)----------*/
       if (a_index >= 0) break;
-      rc = TAB_by_cursor (&x_tab, &x_ntab, '>');
+      rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_NEXT);
       DEBUG_OUTP   yLOG_complex ("tab"       , "%3drc, %-10.10p, %2d", rc, x_tab, x_ntab);
       /*---(done)--------------*/
    }

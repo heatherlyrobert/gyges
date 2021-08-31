@@ -1,0 +1,240 @@
+#! /bin/gyges
+##
+## yVIKEYS script to create the spreadsheet movement demonstration
+##
+
+º_0»
+º:mark purge¦»
+º:note #¦»
+º:!theia 18¦»
+
+ºµre5»
+#ºµre0»
+ºµcMa»
+
+º:myhome  600 100¦»
+º:mysize  575 380¦»
+
+#===[[ INTRODUCTION (20sec) ]]===============================================================================#
+
+·······º·····:note 94)demo of my vim-ish universal movement standard using gyges¦··»
+·······º·····:note 98=gyges-hecatoncheires is a powerful, technical spreadsheet¦··»
+
+º··gs··gj···k··»
+·´´·´´·º·············ssix dimensions¦·········f-··f^··ls<¦··ls<¦··lsdemo¦··f|··gs··»
+·´´·´´·º·····j·······s1  x  x-axis/horizontal¦····f<··ls<¦··ls<¦··lsy¦·····f|··gs··»
+·´´·´´·º·····j·······s2  y  y-axis/vertical¦······f<··ls<¦··ls<¦··lsy¦·····f|··gs··»
+·······º·····:note 23=gyges has solid and growing scripting and automation¦··»
+·´´·´´·º·····j·······s3  z  z-axis/depth¦·········f<··ls<¦··ls<¦···········f|··gs··»
+·´´·´´·º·····j·······s4  u  buffers/scenarios¦····f<··ls<¦··ls<¦···········f|··gs··»
+·´´·´´·º·····j·······s5  w  timeline¦·············f<··ls<¦··ls<¦···········f|··gs··»
+·······º·····:note 34=therefore requires diverse, specific, and predicable movement¦··»
+·´´·´´·º·····j·······s6  v  versioning/undo¦······f<··ls<¦··ls<¦···········f|··gs··»
+
+º··gs··gj···k··4l··»
+·´´·´´·º·············sexcluded topics¦········f-··f^··ls<¦··ls<¦···············gs··4l··»
+·´´·´´·º·····j·······sa  god-view/orientation¦····f<··ls<¦··ls<¦···············gs··4l··»
+·······º·····:note 45=demo will focus on x-axis and y-axis movement only¦··»
+·´´·´´·º·····j·······sb  data layers/overlays¦····f<··ls<¦··ls<¦···············gs··4l··»
+·´´·´´·º·····j·······sc  grouping/ungrouping¦·····f<··ls<¦··ls<¦···············gs··4l··»
+·´´·´´·º·····j·······sd  search/marks/hints¦······f<··ls<¦··ls<¦···············gs··4l··»
+·······º·····:note 86=hang on, this moves a little fast ;)¦··»
+
+º··:0a1¦··»
+·Ï··Ï··º·····:note /¦··:note 75=quick overview of the gyges workspace and rational limits¦··»
+·Ï··Ï··º·····:note 81=across the top are columns (a up to zz)¦··»
+·Ï··Ï··º·····:note 15=down the side are rows (1 up to 9999)¦··»
+·Ï··Ï··º·····:note 33=buffers/tabs are stacked (up to 36) and called 0-9A-Z¦··»
+·Ï··Ï··º·····:note /¦··:note 22=the current upper-left cell is uniquely named 0a1¦··»
+
+·Ï··Ï··º·····:note /¦··:note 5X=",!" to show current buffer/tab at status (bottom)¦··»
+··Ï··,··Ï··!
+·Ï··Ï··º·····:note 19=current tab is 0, name "tbd"¦··»
+·Ï··Ï··º·····:note 99=usable area is 0a100 (26 x 100)¦··»
+·Ï··Ï··º·····:note 99=make buffer/tab bigger :bsize az200\n updates to (52 x 200)¦··»
+:bsize az200¦
+
+·Ï··Ï··º·····:note /¦··:note 57=then, go to the middle of the workspace using :x50\n¦·»
+:x50¦··z.
+º··s¬¬¬¬¬¬¬¦··mz··»
+·Ï··Ï··º·····:note /¦»
+
+#===[[ UNIT MOVES (20 sec) ]]================================================================================#
+
+·······º·····:note 86=start with basic, absolute movements¦··»
+·´´····º··9k··3h··my··»
+·······º·mx··5k··h···sunit moves¦··l··s<¦··l··s<¦··2h··f-··f^··'x··»
+·´´····º·····:note 25=single unit moves are exactly vi/vim¦··»
+·´··l······················sl¦··f<··´··l············sÖ¦··f<
+·´··h·´··h·´··h············sh¦··f>··´··h············s×¦··f>
+·······º·····:note 62=simple moves can also be prefixed with a count, like 5h¦··»
+·······º·mx··3l··3j··s3k, 25h, 7j¦··l··s<¦··'x··»
+·´··l·´··l·´··k············sk¦··f|··´··k·´··k·´··k··sÔ¦··f|
+·´··j·´··j·´··j·´··j·´··j··sj¦··f|··´··j·´··j·´··j··sÕ¦··f|
+·Ï·Ï···º·····:note /¦»
+
+
+·······º·····:note 63=move to middle with "3l·5j"¦··»
+·´··3l·´··5j
+·······º·····:note /¦··:note 26=my 5x moves are simply upper-case (not vi/vim)¦··»
+·´··L··············º··mx··'y····l··sl  L¦··f<··'x··»
+·´··H·´··H·········º··mx··'y····h··sH  h¦··f>··'x··»
+·´··L·´··K·´··K····º··mx··'y···2k··sK¦·····f|··'x··»
+·´··J·´··J·´··J····º··mx··'y·· 2j··sJ¦·····f|··'x··»
+·Ï·Ï···º·····:note /¦»
+
+·······º·····:note 57=edge moves mostly similar to vi/vim¦··»
+º··'y··l··sl  L  $¦··f<····'y··h··s0  H  h¦··f>····'y··3k··s_¦··f|····'y··3j··s#"~"¦··f|··»
+º··'y··2k··f.··h··s\s\s\s\s¦··f>··vy··4j··p··l··f.··l··p··f<··vy··4k··p····j··s\s¦··f|··vy··2j··p··2h··p··2k··p··'y··»
+·Ï·Ï···º·····:note /¦»
+
+#===[[ SCREEN MOVES (20 sec) ]]==============================================================================#
+
+·······º·····:note 98=these all start with 'g' and are two characters¦··»
+
+·Ï·····º·····:note 57=horizontal/x-axis screen relative moves¦··»
+·Ï···g.···º··s¬¬¬¬¬¬¬¦··mz··h··sg.¦··f>··k··spivot¦··f>··l··j··»
+·Ï···3j···
+·´´··gs···º··sgs¦··f<··f.··j··sstart¦···f<··k··k··shorizontal¦··l··s<¦··h··f|··j·············:note 54="gs" means goto left edge¦··»
+·´´··gh···º··sgh¦··f|··f.··j··sleft¦····f|··k··h··s\s\s\s\s\s\s\s¦··l························:note 54="gh" means goto left quarter¦··»
+·´´··gc···º··sgc¦··f|··f.··j··scenter¦··f|··k··h··s\s\s\s\s\s\s\s¦··h··s\s\s\s\s\s\s\s¦··2l··:note 54="gc" means goto center¦··»
+·´´··gl···º··sgl¦··f|··f.··j··sright¦···f|··k··h··s\s\s\s\s\s\s\s¦··h··s\s\s\s\s\s\s\s¦··2l··:note 54="gl" means goto right quarter¦··»
+·´´··ge···º··sge¦··f>··f.··j··send¦·····f>··k··h··s\s\s\s\s\s\s\s¦··l························:note 54="ge" means goto right edge¦··»
+·´´··gc···º··:note 54="gc" to return to center¦··»
+·Ï·····º·····:note /¦»
+
+·Ï·····º·····:note /¦··:note 92=vertical/y-axis screen relative moves¦··gc··»
+·······º·····:note 98=these all start with 'g' and are two characters¦··»
+·´´··l····
+·´´··gt···º··sgt¦··f>··l··stop¦·····f<··h··4j··l··svertical¦··l··s<¦··h··f<··h··4k······:note 54="gt" means goto top edge¦··»
+·´´··gk···º··sgk¦··f>··l··supper¦···f<··h··k··s\s¦··f>··vy··kp··kp··kp··kp··kp··kp··gk··:note 54="gk" means goto top quarter¦··»
+·´´··gm···º··sgm¦··f>··l··smiddle¦··f<··h··k··s\s¦··f>··vy··kp··kp··kp··kp··kp··kp··gm··:note 54="gm" means goto middle¦··»
+·´´··gj···º··sgj¦··f>··l··slower¦···f<··h··k··s\s¦··f>··vy··kp··kp··kp··k···kp··kp··gj··:note 54="gj" means goto bottom quarter¦··»
+·´´··gb···º··sgb¦··f>··l··sbottom¦··f<··h··k··s\s¦··f>··vy··kp··kp··kp··kp··kp··kp··gb··:note 54="gb" means goto bottom edge¦··»
+·´´··gm···º··:note 54="gm" return middle¦··»
+·Ï·····º·····:note /¦»
+
+·······º·····:note /¦··:note 38=corner (xy) screen relative moves¦··g.··»
+·······º·····:note 98=these all start with 'g' and are two characters¦··»
+·´´´·ga···º··sga¦··f<··j··salpha¦···f<··k··:note 54="ga" means goto top-left¦··»
+·´´´·gu···º··sgu¦··f>··j··sup¦······f>··k··:note 54="gu" means goto top-right¦··»
+·´´´·gd···º··sgd¦··f<··k··sdown¦····f<··j··:note 54="gd" means goto bottom-left¦··»
+·´´´·gz···º··sgz¦··f>··k··somega¦···f>··j··:note 54="gz" means goto bottom-right¦··»
+·´´´·g.···º··:note 54="g." means return to pivot¦··»
+·Ï·Ï···º·····:note /¦»
+
+#===[[ EXACT ]]==============================================================================================#
+
+·······º·····:note 78=exact moves are quite handly also¦··»
+·Ï·Ï···º·····:note 27=":0u41\n" take you directly to that address¦··»
+º··g.·10j··3h··mx··sto cell¦·················f>··l··s<¦··l··s:0u41\n¦··g.··»
+:0u41¦
+mw
+
+mq
+·Ï·Ï···º·····:note 27="mq" marks (names) that cell as q¦··»
+º··'x···j······mx··smark cell¦···············f>··l··s<¦··l··smq¦··'w··»
+
+·Ï·Ï···º·····:note 27="use g. to move away from cell¦··»
+g.
+mw
+
+·Ï·Ï···º·····:note 27="'q" returns to marked cell¦··»
+º··'x···j······mx··sreturn to mark¦··········f>··l··s<¦··l··s'q¦··'w··»
+'q
+
+·Ï·Ï···º·····:note 27="19|" moves to a absolute column¦··»
+º··'x···j······mx··sto column¦···············f>··l··s<¦··l··s19|¦··'q··»
+19|
+mw
+
+·Ï·Ï···º·····:note 27="61%" moves to a absolute row¦··»
+º··'x···j······mx··sto row¦··················f>··l··s<¦··l··s61%¦··'w··»
+61%
+
+·Ï·Ï···º·····:note /¦»
+
+#===[[ PAGE MOVES ]]=========================================================================================#
+
+·······º·····:note /¦··:note 35=page screen relative moves¦··g.··»
+·······º·····:note 98=these all start with 'g' and are two characters¦··»
+·´´····º·····:note 14)TRY NOT TO GET DIZZY¦··»
+
+·´·····º·····:note 38="gH" means half-page left¦··»
+·´·····º·····6j··gh··sgH¦··f|··j··s1/2 page¦···l··s<¦··'z··z.··»
+·´·····º·····6j··gs··sgS¦··f<··j··sfull page¦··l··s<¦··'z··z.··»
+·´´´·gH
+·´´´···º·····'z··z.··»
+
+·´·····º·····:note 38="gL" means half-page right¦··»
+·´·····º·····6j··gl··sgL¦··f|··j··h··s1/2 page¦···f>··l··s<¦··'z··z.··»
+·´·····º·····6j··ge··sgE¦··f>··j··h··sfull page¦··f>··l··s<¦··'z··z.··»
+·´´´·gL
+·´´´···º·····'z··z.··»
+
+·´·····º·····:note 38="gK" means half-page up¦··»
+·´·····º·····2l··gk··k··sgK¦··f>··l··s1/2 page¦····f<··l··s<¦··'z··z.··»
+·´·····º·····2l··gt··j··sgT¦··f>··l··sfull page¦···f<··l··s<¦··'z··z.··»
+·´´´·gK
+·´´´···º·····'z··z.··»
+
+·´·····º·····:note 38="gJ" means half-page down¦··»
+·´·····º·····2l··gj·2j··sgJ¦··f>··l··s1/2 page¦····f<··l··s<¦··'z··z.··»
+·´·····º·····2l··gb··k··sgB¦··f>··l··sfull page¦···f<··l··s<¦··'z··z.··»
+·´´´·gJ
+·´´´···º·····'z··z.··»
+
+·Ï·Ï···º·····:note /¦»
+
+#===[[ SCROLLS ]]============================================================================================#
+
+·······º·····:note 38=horizontal/x-axis scrolls move the current location¦··g.··3j··»
+º··mx··gs··¦A/zs¦··gh··¦A/zh¦··gc··¦A/zc¦··gl··¦A/zl¦··ge··¦A/ze¦··'z··»
+··········º··:note 54=note current cell¦··»
+·´´´·zh···º··:note 54="zh" means scroll current to left-quarter¦··»
+·´´´·zs···º··:note 54="zs" means scroll current to left-edge¦··»
+·´´´·zh···º··:note 54="zh" back to left-quarter¦··»
+·´´´·zc···º··:note 54="zc" means scroll current to center¦··»
+·´´´·zl···º··:note 54="zl" means scroll current to right-quarter¦··»
+·´´´·ze···º··:note 54="ze" means scroll current to right-edge¦··»
+·´´´·zc···º··:note 54="zc" current back to center¦··»
+
+·Ï·Ï···º·····:note 54#¦··:note 38=vertical/y-axis scrolls move the current location¦··g.··l··»
+º··mx··gt··¦A/zt¦··gk··¦A/zk¦··gm··¦A/zm¦··gj··¦A/zj¦··gb··¦A/zb¦··'z··»
+··········º··:note 23=note current cell¦··»
+·´´´·zk···º··:note 23="zk" means scroll current to top-quarter¦··»
+·´´´·zt···º··:note 23="zt" means scroll current to top-edge¦··»
+·´´´·zk···º··:note 23="zk" back to top-quarter¦··»
+·´´´·zm···º··:note 23="zm" means scroll current to middle¦··»
+·´´´·zj···º··:note 23="zj" means scroll current to bottom-quarter¦··»
+·´´´·zb···º··:note 23="zb" means scroll current to bottom-edge¦··»
+·´´´·zm···º··:note 23="zm" current back to middle¦··»
+
+·Ï·Ï···º·····:note 23#¦··:note 38=corner (xy) scrolls move the current location¦··'z··z.··»
+º··gt··gs··¦A/za¦··ge··¦A/zu¦··gb··¦A/zo¦··gs··¦A/zd¦··'z··h··¦A/z.¦··'z··»
+··········º··:note 53=note current cell¦··»
+·´´´·za···º··:note 53="za" means scroll current to top-left¦······»
+·´´´·z.···º··:note 53="z." current to middle-center¦··»
+·´´´·zu···º··:note 53="zu" means scroll current to top-right¦·····»
+·´´´·z.···º··:note 53="z." current to middle-center¦··»
+·´´´·zd···º··:note 53="zd" means scroll current to bottom-left¦···»
+·´´´·z.···º··:note 53="z." current to middle-center¦··»
+·´´´·zz···º··:note 53="zz" means scroll current to bottom-right¦··»
+·´´´·z.···º··:note 53="z." current to middle-center¦··»
+·Ï·Ï··
+
+
+##[[ FINALE (??sec) ]]##########################################################
+
+·Ï·Ï···º·····:note #¦··:note 94)demo of my vim-ish universal movement standard using gyges¦··»
+·Ï·Ï··Ï·Ï·
+º··:0a1¦··»
+·······º·····:note 98=gyges-hecatoncheires is a powerful, technical spreadsheet¦··»
+·Ï·····º·····:note 52=its far from perfect (DIRECTIONAL)¦»
+·Ï·····º·····:note 53=many better, higher quality, and faster options¦»
+·Ï·····º·····:note 54=but; every tragic, misbegotten byte is mine ;)¦»
+·Ï·····º·····:note 55=end-of-demo.  done, finito, completare.¦»
+
+
+
+

@@ -673,7 +673,7 @@ EXIM__import_content    (char *a_content)
    char        rc          =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   strltrim (a_content, ySTR_BOTH, LEN_RECD);
+   if (strchr ("cC", s_style) == NULL)  strltrim (a_content, ySTR_BOTH, LEN_RECD);
    strldchg (a_content, G_CHAR_STORAGE, G_KEY_SPACE, LEN_RECD);
    DEBUG_REGS   yLOG_info    ("a_content" , a_content);
    /*---(check cell type)----------------*/
@@ -701,7 +701,8 @@ EXIM__import_content    (char *a_content)
 char         /*-> tbd --------------------------------[ ------ [fz.732.141.12]*/ /*-[01.0000.014.3]-*/ /*-[--.---.---.--]-*/
 EXIM__import_fields     (int a_row)
 {
-   /*---(locals)-----+-----+-----+-----+-*/
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
    char        rc          =    0;
    char        x_recd      [LEN_RECD]  = "";
    int         x_len       =    0;
@@ -713,12 +714,15 @@ EXIM__import_fields     (int a_row)
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(prep)------------------------*/
-   switch (s_style) {
+   -rce;  switch (s_style) {
    case 'f' : case 'F' : case 'd' : case 'D' :
       strcpy (q, "");
       break;
    case 't' : case 'T' :
       strcpy (q, "\t");
+      break;
+   default  :
+      return rce;
       break;
    }
    /*---(process cells)---------------*/
@@ -735,6 +739,67 @@ EXIM__import_fields     (int a_row)
       if      (p [0] == ' ' && p [x_len - 2] == ' ')  x_format [0] = '|';
       else if (p [0] != ' ')                          x_format [0] = '<';
       else if (p [x_len - 2] != ' ')                  x_format [0] = '>';
+      /*---(process)------------------*/
+      rc = EXIM__import_content (p);
+      DEBUG_REGS   yLOG_value   ("content"   , rc);
+      DEBUG_REGS  yLOG_info    ("s_source"  , s_source);
+      /*---(update)-------------------------*/
+      x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);
+      DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
+      s_hist = HIST_ADD;
+      /*---(next)---------------------*/
+      ++x_col;
+      p = strtok (NULL, q);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> tbd --------------------------------[ ------ [fz.732.141.12]*/ /*-[01.0000.014.3]-*/ /*-[--.---.---.--]-*/
+EXIM__import_csv        (int a_row)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_recd      [LEN_RECD]  = "";
+   int         x_len       =    0;
+   int         x_col       =    0;
+   char       *p           = NULL;
+   char        x_format    [LEN_LABEL] = "??0--";
+   char        q           [LEN_LABEL];
+   tCELL      *x_new       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(prep)------------------------*/
+   --rce;  switch (s_style) {
+   case 'c' : case 'C' :
+      strcpy (q, "\"");
+      break;
+   default  :
+      return rce;
+      break;
+   }
+   /*---(process cells)---------------*/
+   strncpy (x_recd, s_recd, LEN_RECD);
+   p = strtok (x_recd, q);
+   --rce;  while (p != NULL) {
+      /*---(read import data)---------*/
+      x_len = strlen (p);
+      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
+      DEBUG_REGS  yLOG_delim   ("p (orig)"  , p);
+      /*---(check for divider)--------*/
+      if (x_col % 2 == 1) {
+         if (x_len = 1 && strcmp (p, ",") == 0) {
+            ++x_col;
+            p = strtok (NULL, q);
+            continue;
+         }
+         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(set destination)----------*/
+      EXIM__import_destsrc (x_col / 2, a_row);
       /*---(process)------------------*/
       rc = EXIM__import_content (p);
       DEBUG_REGS   yLOG_value   ("content"   , rc);
@@ -1013,11 +1078,13 @@ EXIM_import             (char a_style)
       if (rc >  0)  continue;
       if (rc <  0)  break;
       /*---(handle values)---------------*/
+      if (a_style != '+')  s_style = a_style;
       switch (s_style) {
       case 'v' : case 'V' :   EXIM__import_values  (x_row);      break;
       case 'f' : case 'F' :   EXIM__import_fields  (x_row);      break;
       case 'd' : case 'D' :   EXIM__import_fields  (x_row);      break;
       case 't' : case 'T' :   EXIM__import_fields  (x_row);      break;
+      case 'c' : case 'C' :   EXIM__import_csv     (x_row);      break;
       case 'n' : case 'N' :   EXIM__import_native  ();           break;
       }
       /*---(next)------------------------*/
@@ -1041,7 +1108,7 @@ EXIM_export             (char a_style)
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          = 0;
-   char       *x_valid     = "vdfctrs·VDFCTR·SN";
+   char       *x_valid     = "vdfctrsnVDFCTRSN";
    FILE       *f           = NULL;
    tCELL      *x_curr      = NULL;
    int         x_tab       = 0;
@@ -1161,19 +1228,19 @@ EXIM_export             (char a_style)
          case 'f' : case 'F' :
             fprintf (s_clip, "%s"                , x_trim);
             break;
-         case 'r' : case 'R' :
-            fprintf (s_clip, "%s"                , x_modded);
-            break;
          case 'c' : case 'C' :
             fprintf (s_clip, "\"%s\","             , x_trim);
             break;
          case 't' : case 'T' :
             fprintf (s_clip, "%s\t"                , x_trim);
             break;
+         case 'r' : case 'R' :
+            fprintf (s_clip, "%s"                , x_modded);
+            break;
          case 's' : case 'S' :
             fprintf (s_clip, "%s"                , x_source);
             break;
-         case 'N' :
+         case 'n' : case 'N' :
             fprintf (s_clip, "cell  %-8.8s  "  , x_curr->label);
             fprintf (s_clip, "%c%c%c%c-  "       , x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
             fprintf (s_clip, "%s \n"             , x_source);

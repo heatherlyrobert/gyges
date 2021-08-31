@@ -303,12 +303,12 @@ api_yvikeys_searcher      (char *a_search)
          switch (x_next->type) {
          case YCALC_DATA_STR   :
             DEBUG_SRCH   yLOG_info    ("->source"       , x_next->source);
-            rc = yREGEX_exec (x_next->source);
+            rc = yREGEX_filter (x_next->source);
             break;
          case YCALC_DATA_SFORM :
          case YCALC_DATA_SLIKE :
             DEBUG_SRCH   yLOG_info    ("->v_str"   , x_next->v_str);
-            rc = yREGEX_exec (x_next->v_str);
+            rc = yREGEX_filter (x_next->v_str);
             break;
          default          :
             DEBUG_SRCH   yLOG_note    ("can not process cell type");

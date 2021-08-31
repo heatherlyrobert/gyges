@@ -7,6 +7,19 @@
  *  count is fixed and small.  a linked list would cost space and complexity.
  *  
  *
+ *  spreadsheets are HIGHLY vulnerable to a do-it-all complex, database, 
+ *  graphics, data entry, etc.  adding too many tabs just increases that
+ *  tendency.  so,  have a rational limit on the number of tabs.  it should have
+ *  been 3 or 10, but i am crazy and you never know, so 36.
+ *
+ *  36 working tabs + 3 system tabs
+ *     0-9
+ *     A-Z
+ *     ® (protected) range keeping tab
+ *     ¯ (protected) system data keeping tab
+ *     ¤ (protected) tbd
+ *     ** a-z are reserved for screen elements, such as, ,q for compilier.
+ *     ** è-ÿ are hard to single keystroke, so a little to strange
  *
  *
  */
@@ -23,6 +36,11 @@ static  char    s_count   = 0;
 static  char    s_index   = -1;
 
 tTAB    s_grounded;
+
+
+
+#define   TAB_BACK  '<'
+#define   TAB_FORE  '>'
 
 
 
@@ -240,7 +258,7 @@ TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_siz
    DEBUG_LOCS   yLOG_note    ("update counts");
    x_new->count     = 0;
    ++s_all;
-   if (strchr ("®¯", s_valids [a_index]) == NULL)   ++s_count;
+   if (strchr ("®¯¤", s_valids [a_index]) == NULL)   ++s_count;
    DEBUG_LOCS   yLOG_value   ("s_all"     , s_all);
    DEBUG_LOCS   yLOG_value   ("s_count"   , s_count);
    /*---(update current)-----------------*/
@@ -292,7 +310,7 @@ TAB_free                (char a_index)
    s_master [a_index] = NULL;
    /*---(update counts)------------------*/
    --s_all;
-   if (strchr ("®¯", s_valids [a_index]) == NULL)   --s_count;
+   if (strchr ("®¯¤", s_valids [a_index]) == NULL)   --s_count;
    DEBUG_LOCS   yLOG_value   ("s_all"     , s_all);
    DEBUG_LOCS   yLOG_value   ("s_count"   , s_count);
    /*---(update current)-----------------*/
@@ -360,6 +378,12 @@ TAB_first_open          (void)
 }
 
 char
+TAB_new_quick           (void)
+{
+   return TAB_new (NULL, TAB_first_open (), "tbd", "0z100");
+}
+
+char
 TAB_new_in_open         (uchar *a_name, uchar *a_size)
 {
    return TAB_new (NULL, TAB_first_open (), a_name, a_size);
@@ -377,10 +401,12 @@ TAB_free_all_empties    (void)
    /*---(locals)-----------+-----------+-*/
    char        i           =    0;
    char        rc          =    0;
+   char        x_max       =    0;
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/
-   for (i = 0; i < MAX_TABS; ++i) {
+   x_max = MAX_tab ();
+   for (i = 0; i <= x_max; ++i) {
       DEBUG_PROG   yLOG_complex ("tab"       , "%2d, %-10.10p", i, s_master [i]);
       if (s_master [i] == NULL)    continue;
       rc = TAB_free (i);
@@ -442,18 +468,19 @@ TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move)
    /*---(defenses)-----------------------*/
    DEBUG_LOCS   yLOG_spoint  (s_curr);
    DEBUG_LOCS   yLOG_sint    (s_index);
-   --rce;  if (s_index < 0 && strchr ("<>", a_move) != NULL) {
+   --rce;  if (s_index < 0 && strchr (YDLST_REL , a_move) != NULL) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(handle move)--------------------*/
    --rce;  switch (a_move) {
-   case '[' : x_beg =  0;           x_end = s_nvalid - 1;  x_dir = '>'; break;
-   case '(' : x_beg =  0;           x_end = s_nnorm  - 1;  x_dir = '>'; break;
-   case '>' : x_beg = s_index  + 1; x_end = s_nvalid - 1;  x_dir = '>'; break;
-   case '<' : x_beg = s_index  - 1; x_end = 0;             x_dir = '<'; break;
-   case ')' : x_beg = s_nnorm  - 1; x_end = 0;             x_dir = '<'; break;
-   case ']' : x_beg = s_nvalid - 1; x_end = 0;             x_dir = '<'; break;
+   case YDLST_HEAD : x_beg =  0;           x_end = s_nvalid - 1;  x_dir = TAB_FORE; break;
+   case YDLST_TOPP : x_beg =  0;           x_end = s_nnorm  - 1;  x_dir = TAB_FORE; break;
+   case YDLST_NEXT : x_beg = s_index  + 1; x_end = s_nvalid - 1;  x_dir = TAB_FORE; break;
+   case YDLST_CURR : n     = s_index;                             x_dir = ' ';      break;
+   case YDLST_PREV : x_beg = s_index  - 1; x_end = 0;             x_dir = TAB_BACK; break;
+   case YDLST_BOTT : x_beg = s_nnorm  - 1; x_end = 0;             x_dir = TAB_BACK; break;
+   case YDLST_TAIL : x_beg = s_nvalid - 1; x_end = 0;             x_dir = TAB_BACK; break;
    default  :
               DEBUG_LOCS   yLOG_snote   ("movement unknown");
               DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
@@ -463,14 +490,14 @@ TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move)
    DEBUG_LOCS   yLOG_sint    (x_end);
    DEBUG_LOCS   yLOG_sint    (x_dir);
    /*---(walk)---------------------------*/
-   if (x_dir == '>') {
+   if (x_dir == TAB_FORE) {
       for (i = x_beg; i <= x_end; ++i) {
          if (s_master [i] != NULL) {
             n = i;
             break;
          }
       }
-   } else if (x_dir == '<') {
+   } else if (x_dir == TAB_BACK) {
       for (i = x_beg; i >= x_end; --i) {
          if (s_master [i] != NULL)  {
             n = i;
@@ -487,7 +514,7 @@ TAB_by_cursor           (tTAB **a_found, char *a_start, char a_move)
       rc      = 0;
    }
    /*---(safeties)-----------------------*/
-   else if (strchr ("<>", a_move) != NULL) {
+   else if (strchr (YDLST_REL , a_move) != NULL) {
       DEBUG_LOCS   yLOG_snote   ("bounced off end");
       s_curr  = s_master [s_index];
       n       = s_index;
@@ -588,7 +615,7 @@ TAB_by_name             (tTAB **a_found, uchar *a_regex)
       DEBUG_LOCS   yLOG_complex ("checking"  , "%2d %c %-10.10p", i, s_valids [i], s_master [i]);
       if (s_master [i] == NULL)  continue;
       DEBUG_INPT   yLOG_info    ("tab"       , s_master [i]->name);
-      rc = yREGEX_exec (s_master [i]->name);
+      rc = yREGEX_filter (s_master [i]->name);
       DEBUG_INPT   yLOG_value   ("exec"      , rc);
       if (rc <= 0)   continue;
       ++x_matches;
@@ -803,9 +830,10 @@ TAB_init                (void)
     *> TAB_new_in_abbr ('®', NULL, NULL);                                             <* 
     *> TAB_new_in_abbr ('¯', NULL, NULL);                                             <*/
    /*---(add buffer commands)------------*/
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bquick"      , ""    , ""     , TAB_new_quick              , "open a new tab quickly"               );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bnew"        , ""    , "ss"   , TAB_new_in_open            , "open a new tab in next open slot"     );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bmake"       , ""    , "css"  , TAB_new_in_abbr            , "open a new tab in specific slot"      );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bfree"       , ""    , "css"  , TAB_free_from_abbr         , "free a old tab in specific slot"      );
+   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bfree"       , ""    , "c"    , TAB_free_from_abbr         , "free a old tab in specific slot"      );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "buf"         , ""    , "c"    , TAB_switch_key             , "switch buffer"                        );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "btitle"      , ""    , "s"    , TAB_rename_curr            , "rename current buffer"                );
    rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "bsize"       , ""    , "s"    , TAB_resize_curr            , "change a buffer size"                 );
@@ -968,13 +996,13 @@ TAB_switch_key         (uchar a_key)
    DEBUG_LOCS   yLOG_value   ("x_curr"    , x_curr);
    DEBUG_LOCS   yLOG_value   ("x_prev"    , x_prev);
    /*---(previous tabs)------------------*/
-   --rce;  if (a_key == ',') {
+   --rce;  if (a_key == YDLST_LUSED) {
       x_temp  = x_curr;
       x_curr  = x_prev;
       x_prev  = x_temp;
    }
    /*---(relative tabs)------------------*/
-   else if (a_key > 0 && strchr ("[(<>)]", a_key) != NULL) {
+   else if (a_key > 0 && strchr (YDLST_BOUNCES, a_key) != NULL) {
       x_seq  = x_curr;
       rc     = TAB_by_cursor (&x_tab, &x_seq, a_key);
       if (rc != 0) {
@@ -1512,9 +1540,11 @@ TAB_writer_all          (void)
    char        rc          =    0;
    int         i           =    0;
    char        c           =    0;
+   char        x_max       =    0;
    /*---(walk)---------------------------*/
    /*> yPARSE_verb_begin ("tab");                                                     <*/
-   for (i = 0; i < MAX_TABS; ++i) {
+   x_max = MAX_tab ();
+   for (i = 0; i <= x_max; ++i) {
       rc = TAB_writer   (c, i);
       if (rc <  1)  continue;
       ++c;
@@ -1571,6 +1601,7 @@ TAB_map_mapper            (void)
    tMAPPED    *x_map       = NULL;
    int         i           =    0;
    int         x_pos       =    0;
+   char        x_max       =    0;
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
@@ -1579,7 +1610,8 @@ TAB_map_mapper            (void)
    x_map->umin = -1;
    x_map->gmin =  0;
    /*---(get tab)------------------------*/
-   for (i = 0; i < MAX_TABS; ++i) {
+   x_max = MAX_tab ();
+   for (i = 0; i <= x_max; ++i) {
       DEBUG_MAP    yLOG_point   ("used"      , s_master [i]);
       if (s_master [i] == NULL)  continue;
       x_map->map  [x_pos++] = i;
@@ -1587,7 +1619,7 @@ TAB_map_mapper            (void)
    /*---(fixes)-----------------------*/
    x_map->umax = x_pos - 1;
    if (x_map->umax >= 0)  x_map->umin =  0;
-   x_map->gmax = MAX_TABS - 1;
+   x_map->gmax = x_max;
    /*---(complete)-----------------------*/
    DEBUG_MAP    yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1600,10 +1632,12 @@ TAB_map_display           (char a_section, uchar *a_out)
    char        rce         =  -10;
    tMAPPED    *x_map       = NULL;
    char        i           =    0;
+   char        x_max       =    0;
    /*---(prepare)------------------------*/
    x_map   = &g_bmap;
    /*---(break out)----------------------*/
-   for (i = 0; i < MAX_TABS; ++i) {
+   x_max = MAX_tab ();
+   for (i = 0; i <= x_max; ++i) {
       if (x_map->map [i] == YVIKEYS_EMPTY)   a_out [i] = '·';
       else                                   a_out [i] = LABEL_tab (x_map->map [i]);
    }
@@ -1629,12 +1663,12 @@ TAB_map_absolute          (void)
    x_map->gamin = -1;
    x_map->gamax = -1;
    /*---(find min)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '[');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_HEAD);
    if (rc == 0 && x_tab != NULL) {
       x_min = x_ntab;
    }
    /*---(find max)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, ']');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_TAIL);
    if (rc == 0 && x_tab != NULL) {
       x_max = x_ntab;
    }
@@ -1666,24 +1700,24 @@ TAB_map_local             (void)
    x_map->gnext = -1;
    x_map->glmax = -1;
    /*---(find min)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '(');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_TOPP);
    if (rc == 0 && x_tab != NULL) {
       x_map->glmin = x_ntab;
    }
    /*---(find max)-----------------------*/
-   rc = TAB_by_cursor (&x_tab, &x_ntab, ')');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_BOTT);
    if (rc == 0 && x_tab != NULL) {
       x_map->glmax = x_ntab;
    }
    /*---(find prev)----------------------*/
    x_ntab = x_map->gcur;
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '<');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_PREV);
    if (rc == 0 && x_tab != NULL) {
       x_map->gprev = x_ntab;
    }
    /*---(find next)----------------------*/
    x_ntab = x_map->gcur;
-   rc = TAB_by_cursor (&x_tab, &x_ntab, '>');
+   rc = TAB_by_cursor (&x_tab, &x_ntab, YDLST_NEXT);
    if (rc == 0 && x_tab != NULL) {
       x_map->gnext = x_ntab;
    }
