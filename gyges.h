@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5n"
-#define     P_VERTXT    "yvikeys/del unit-test sub-divided better and fully passed"
+#define     P_VERNUM    "3.5o"
+#define     P_VERTXT    "all unit tests passed again and cleaned up, un-duplicated"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
