@@ -116,8 +116,6 @@
 *      
 */
 
-char        g_empty       [200] = "                                                                                                                                                                                                       ";
-char        g_dashes      [200] = "----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----·----";
 char       *g_tbd         = "tbd";
 
 
@@ -327,7 +325,7 @@ CELL_init          (void)
    tcell       = NULL;
    NCEL        = 0;
    /*---(handlers)-----------------------*/
-   yVIKEYS_dump_add ("cells"      , CELL_dump);
+   /*> yVIKEYS_dump_add ("cells"      , CELL_dump);                                   <*/
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -586,10 +584,10 @@ CELL__delete            (char a_mode, int a_tab, int a_col, int a_row)
    /*---(save before)-----------------*/
    if (x_curr->source != NULL) {
       strcpy  (x_before, x_curr->source);
-      sprintf (x_format, "%c%c%c", x_curr->format, x_curr->align, x_curr->decs);
+      sprintf (x_format, "%c%c%c%c-", x_curr->format, x_curr->align, x_curr->decs, x_curr->unit);
    }
    /*---(history)------------------------*/
-   HIST_delete (a_mode, a_tab, a_col, a_row, x_before, x_format);
+   yMAP_mundo_delete (a_mode, x_curr->label, x_before, x_format);
    /*---(clear it out)----------------*/
    /*> DEBUG_CELL   yLOG_complex ("details"   , "ptr=%p, tab=%4d, col=%4d, row=%4d, t=%c, u=%d", x_curr, x_curr->tab, x_curr->col, x_curr->row, x_curr->type, x_curr->u);   <*/
    rc = CELL__wipe   (x_curr);
@@ -674,13 +672,17 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       }
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
-   DEBUG_REGS   yLOG_complex ("DEBUG 9"   , "%-10.10s, %2dt, %3dc, %4dr", x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   DEBUG_CELL   yLOG_complex ("DEBUG 9"   , "%-10.10s, %2dt, %3dc, %4dr", x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
    /*---(history)------------------------*/
    sprintf (x_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
    DEBUG_CELL   yLOG_info    ("x_bformat" , x_bformat);
-   if (a_source == NULL)            HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
-   else if (a_source [0] == '\0')   HIST_clear   (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat);
-   else                             HIST_change  (a_mode, a_tab, a_col, a_row, x_bsource, x_bformat, a_source);
+   if      (a_source == NULL) {
+      yMAP_mundo_clear   (a_mode, x_curr->label, x_bformat, x_bsource, DEF_FORMAT);
+   } else if (a_source [0] == '\0') {
+      yMAP_mundo_clear   (a_mode, x_curr->label, x_bformat, x_bsource, DEF_FORMAT);
+   } else {
+      yMAP_mundo_source  (a_mode, x_curr->label, x_bsource, a_source);
+   }
    /*---(update)-------------------------*/
    DEBUG_CELL   yLOG_note    ("change source and length values");
    if (x_curr->source != NULL)  free (x_curr->source);
@@ -695,7 +697,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    if (rc < 0 || x_curr == NULL) {
       DEBUG_CELL   yLOG_note    ("cell cleared, no longer exists");
    } else {
-      DEBUG_REGS   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+      DEBUG_CELL   yLOG_complex ("DEBUG 10"  , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
    }
    if (a_cell != NULL)  *a_cell = x_curr;
    /*---(complete)-----------------------*/
@@ -709,7 +711,7 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
    tCELL      *x_new       = NULL;
-   char       x_aformat    [LEN_LABEL] = "??0--";
+   char       x_aformat    [LEN_LABEL] = DEF_FORMAT;
    /*---(defense)------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    if (strlen (a_format) < 5) {
@@ -726,7 +728,7 @@ CELL_overwrite     (char a_mode, int a_tab, int a_col, int a_row, char *a_source
    }
    /*---(history)------------------------*/
    if (a_format [0] != '´')   strcpy (x_aformat, a_format);
-   if (a_mode != HIST_NONE)  HIST_overwrite (a_tab, a_col, a_row, a_source, x_aformat);
+   if (a_mode != YMAP_NONE)  yMAP_mundo_overwrite (YMAP_BEG, x_new->label, DEF_FORMAT, a_source, x_aformat, a_source);
    /*---(formatting)---------------------*/
    DEBUG_CELL   yLOG_note    ("update format fields");
    x_new->align  = x_aformat [0];
@@ -818,37 +820,41 @@ CELL_erase         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
 /*====================------------------------------------====================*/
 static void  o___FORMATTING______o () { return; }
 
-char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.303.#]-*/ /*-[--.---.---.--]-*/
-CELL_units         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_unit)
+char         /*-> change cell horizontal alignment ---[ ------ [gc.940.262.94]*/ /*-[04.0000.403.Y]-*/ /*-[--.---.---.--]-*/
+CELL_align         (tCELL *a_curr, char a_abbr)
 {
-   /*---(design notes)-------------------*/
-   /*
-    *  update all cells to new format regardless of type to keep complexity
-    *  down and flexibility up.  if there is no cell, simply move on.
-    */
-   /*---(defenses)-----------------------*/
-   if (a_head == NULL || a_curr == NULL)    return  0;
-   /*---(prepare)------------------------*/
-   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   HIST_units  (a_mode, HIST_UNITS   , a_curr->tab, a_curr->col, a_curr->row, a_curr->unit, a_unit);
-   a_curr->unit = a_unit;
-   /*---(complete)-----------------------*/
-   return 0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        x_type      =  '-';
+   char        x_prev      =  '0';
+   /*---(defense)------------------------*/
+   if (a_curr == NULL)            return  0;
+   if (a_curr->align == '+')      return  0;
+   /*---(existing)-----------------------*/
+   x_prev = a_curr->align;
+   /*---(limits)-------------------------*/
+   if (a_abbr  == '"')  a_abbr = x_prev;
+   if (str9align (a_abbr) < 0)   return 0;
+   /*---(update)-------------------------*/
+   a_curr->align = a_abbr;
+   /*---(update)-------------------------*/
+   api_ycalc_printer (a_curr);
+   /*---(complete)---------------------------*/
+   return x_prev;
 }
 
 char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.303.#]-*/ /*-[--.---.---.--]-*/
-CELL_format        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
+CELL_format        (tCELL *a_curr, char a_abbr)
 {
-   /*---(design notes)-------------------*/
-   /*
-    *  update all cells to new format regardless of type to keep complexity
-    *  down and flexibility up.  if there is no cell, simply move on.
-    */
+   /*---(locals)-----------+-----+-----+-*/
    char        x_type      =  '-';
-   /*---(defenses)-----------------------*/
-   if (a_head == NULL || a_curr == NULL)        return  0;
-   if (a_curr->align == '+')                    return  0;
-   if (a_format  == '"')  a_format = a_curr->format;
+   char        x_prev      =  '0';
+   /*---(defense)------------------------*/
+   if (a_curr == NULL)            return  0;
+   if (a_curr->align == '+')      return  0;
+   /*---(existing)-----------------------*/
+   x_prev = a_curr->format;
+   /*---(limits)-------------------------*/
+   if (a_abbr  == '"')  a_abbr = x_prev;
    /*---(reset printing errors)----------*/
    if (a_curr->type == YCALC_DATA_ERROR && a_curr->print != NULL && strncmp (a_curr->print, "#p/", 3) == 0) {
       x_type = a_curr->print [9];  /*    #p/ali  (=)  */
@@ -856,47 +862,36 @@ CELL_format        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format)
       x_type = a_curr->type;
    }
    /*---(prepare)------------------------*/
-   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   if      (strchr (YCALC_GROUP_STR , x_type) != 0) {
-      if (str9filler (a_format) < 0)  return 0;
-      HIST_format (a_mode, HIST_FORMAT  , a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
-      a_curr->format = a_format;
+   if        (strchr (YCALC_GROUP_STR , x_type) != 0) {
+      if (str9filler (a_abbr) < 0)  return 0;
+      a_curr->format = a_abbr;
    } else if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
-      if (str9format (a_format) < 0)  return 0;
-      HIST_format (a_mode, HIST_FORMAT  , a_curr->tab, a_curr->col, a_curr->row, a_curr->format, a_format);
-      a_curr->format = a_format;
+      if (str9format (a_abbr) < 0)  return 0;
+      a_curr->format = a_abbr;
+   } else {
+      return 0;
    }
+   /*---(update)-------------------------*/
+   api_ycalc_printer (a_curr);
    /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*-> change cell horizontal alignment ---[ ------ [gc.940.262.94]*/ /*-[04.0000.403.Y]-*/ /*-[--.---.---.--]-*/
-CELL_align         (tCELL *a_head, tCELL *a_curr, char a_mode, char a_align)
-{
-   /*---(defense)------------------------*/
-   if (a_head == NULL || a_curr == NULL)    return  0;
-   if (a_curr->align == '+')                    return  0;
-   if (a_align   == '"')  a_align = a_curr->align;
-   if (str9align (a_align) < 0)             return 0;
-   /*---(process all cells in range)-----*/
-   /*> if (a_mode == HIST_BEG && a_head != a_curr)   a_mode = HIST_ADD;               <*/
-   HIST_format (a_mode, HIST_ALIGN   , a_curr->tab, a_curr->col, a_curr->row, a_curr->align, a_align);
-   a_curr->align = a_align;
-   /*---(complete)---------------------------*/
-   return 0;
+   return x_prev;
 }
 
 char         /*-> change cell decimal places ---------[ ------ [gc.950.272.94]*/ /*-[03.0000.303.S]-*/ /*-[--.---.---.--]-*/
-CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
+CELL_decimals      (tCELL *a_curr, char a_abbr)
 {
-   /*---(locals)-----------+-----------+-*/
+   /*---(locals)-----------+-----+-----+-*/
    char        x_type      =  '-';
-   char        x_decs      = 0;
+   char        x_prev      =  '0';
+   char        x_decs      =  '0';
    /*---(defense)------------------------*/
-   if (a_head == NULL || a_curr == NULL)    return  0;
-   if (a_num  == '"')  x_decs = a_curr->decs;
-   else                x_decs = a_num;
-   /*---(fix ranges)-------------------------*/
+   if (a_curr == NULL)  return  0;
+   /*---(existing)-----------------------*/
+   x_prev = a_curr->decs;
+   /*---(limits)-------------------------*/
+   if (a_abbr  == '"')  x_decs = x_prev;
+   else                 x_decs = a_abbr;
+   /*---(limits)-------------------------*/
    if      (x_decs <  '0')  x_decs = '0';
    else if (x_decs >  '9')  x_decs = '9';
    /*---(reset printing errors)----------*/
@@ -905,107 +900,130 @@ CELL_decimals      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num)
    } else {
       x_type = a_curr->type;
    }
+   if (strchr (YCALC_GROUP_NUM , x_type) == 0)   return 0;
    /*---(update)-----------------------*/
-   if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
-      HIST_format (a_mode, HIST_DECIMALS, a_curr->tab, a_curr->col, a_curr->row, a_curr->decs, x_decs);
-      a_curr->decs = x_decs;
-   }
+   a_curr->decs = x_decs;
+   /*---(update)-------------------------*/
+   api_ycalc_printer (a_curr);
    /*---(complete)---------------------------*/
-   return 0;
+   return x_prev;
 }
 
-char
-CELL_visual        (char a_what, char a_mode, char a_how)
+char         /*-> change cell number formatting ------[ ------ [gc.940.252.A4]*/ /*-[04.0000.303.#]-*/ /*-[--.---.---.--]-*/
+CELL_units         (tCELL *a_curr, char a_abbr)
 {
-   /*---(design notes)-------------------*/
-   /*
-    * called functions return...
-    *   0     for success
-    *   < 0   to indicate error/stop
-    *   > 0   to indicate done early, no need to continue
-    *
-    */
    /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;
-   tCELL      *x_first     = NULL;
-   tCELL      *x_next      = NULL;
-   int         x_tab       =    0;
-   int         x_col       =    0;
-   int         x_row       =    0;
-   int         x_total     =    0;
-   int         x_handle    =    0;
-   int         x_top       =    0;
-   int         x_left      =    0;
-   /*---(header)-------------------------*/
-   DEBUG_CELL    yLOG_enter  (__FUNCTION__);
-   DEBUG_CELL    yLOG_char   ("a_what"    , a_what);
-   DEBUG_CELL    yLOG_char   ("a_mode"    , a_mode);
-   DEBUG_CELL    yLOG_char   ("a_how"     , a_how);
-   /*---(check for sizing)---------------*/
-   if (a_what == CHANGE_WIDTH) {
-      rc = COL_multikey (a_how);
-      DEBUG_CELL    yLOG_exit   (__FUNCTION__);
+   char        x_type      =  '-';
+   char        x_prev      =  '0';
+   /*---(defense)------------------------*/
+   if (a_curr == NULL)            return  0;
+   /*---(existing)-----------------------*/
+   x_prev = a_curr->unit;
+   /*---(update)-------------------------*/
+   x_type = a_curr->type;
+   if (strchr (YCALC_GROUP_NUM , x_type) != 0) {
+      a_curr->unit = a_abbr;
+   } else {
       return 0;
    }
-   if (a_what == CHANGE_HEIGHT) {
-      rc = ROW_multikey (a_how);
-      DEBUG_CELL    yLOG_exit   (__FUNCTION__);
-      return 0;
-   }
-   /*---(get first)----------------------*/
-   rc       = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
-   DEBUG_CELL    yLOG_value  ("rc"        , rc);
-   x_first  = LOC_cell_at_loc (x_tab, x_col, x_row);
-   x_top    = x_row;
-   x_left   = x_col;
-   DEBUG_CELL    yLOG_point  ("x_first"   , x_first);
-   x_next   = x_first;
-   /*---(process range)------------------*/
-   while (rc >= 0) {
-      ++x_total;
-      /*---(cell-specific)---------------*/
-      if (x_next != NULL) {
-         DEBUG_CELL   yLOG_note   ("cell exists");
-         ++x_handle;
-         switch (a_what) {
-         case CHANGE_DECIMAL : rc = CELL_decimals     (x_first, x_next, a_mode, a_how); break;
-         case CHANGE_ALIGN   : rc = CELL_align        (x_first, x_next, a_mode, a_how); break;
-         case CHANGE_FORMAT  : rc = CELL_format       (x_first, x_next, a_mode, a_how); break;
-         case CHANGE_UNITS   : rc = CELL_units        (x_first, x_next, a_mode, a_how); break;
-         case CHANGE_ERASE   : rc = CELL_erase        (x_first, x_next, a_mode, a_how); break;
-                               /*> case CHANGE_MERGE   : rc = CELL_merge_visu   (x_first, x_next, a_mode, a_how); break;   <*/
-                               /*> case CHANGE_UNMERGE : rc = CELL_unmerge_visu (x_first, x_next, a_mode, a_how); break;   <*/
-         }
-         DEBUG_CELL   yLOG_value  ("handle_rc" , rc);
-         /*---(trouble)---------------------*/
-         if (rc < 0) {
-            DEBUG_CELL    yLOG_note   ("detailed function indicated trouble");
-            DEBUG_CELL    yLOG_exitr  (__FUNCTION__, rc);
-            return rc;
-         }
-         /*---(early exit)------------------*/
-         if (rc > 0)  {
-            DEBUG_CELL    yLOG_note   ("detailed function indicated done early");
-            DEBUG_CELL    yLOG_exit   (__FUNCTION__);
-            return 0;
-         }
-         /*---(done)------------------------*/
-         if (a_mode == HIST_BEG)  a_mode = HIST_ADD;
-         api_ycalc_printer (x_next);
-      }
-      /*---(get next)--------------------*/
-      rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
-      DEBUG_CELL   yLOG_value  ("next_rc"   , rc);
-      x_next  = LOC_cell_at_loc (x_tab, x_col, x_row);
-      DEBUG_CELL   yLOG_point  ("x_next"    , x_next);
-      /*---(done)------------------------*/
-   }
-   DEBUG_CELL    yLOG_value  ("x_total"   , x_total);
-   DEBUG_CELL    yLOG_value  ("x_handle"  , x_handle);
+   /*---(update)-------------------------*/
+   api_ycalc_printer (a_curr);
    /*---(complete)-----------------------*/
-   DEBUG_CELL    yLOG_exit   (__FUNCTION__);
-   return 0;
+   return x_prev;
 }
+
+/*> char                                                                                                                             <* 
+ *> CELL_visual        (char a_what, char a_mode, char a_how)                                                                        <* 
+ *> {                                                                                                                                <* 
+ *>    /+---(design notes)-------------------+/                                                                                      <* 
+ *>    /+                                                                                                                            <* 
+ *>     * called functions return...                                                                                                 <* 
+ *>     *   0     for success                                                                                                        <* 
+ *>     *   < 0   to indicate error/stop                                                                                             <* 
+ *>     *   > 0   to indicate done early, no need to continue                                                                        <* 
+ *>     *                                                                                                                            <* 
+ *>     +/                                                                                                                           <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                      <* 
+ *>    char        rc          =    0;                                                                                               <* 
+ *>    tCELL      *x_first     = NULL;                                                                                               <* 
+ *>    tCELL      *x_next      = NULL;                                                                                               <* 
+ *>    ushort      x_tab       =    0;                                                                                               <* 
+ *>    ushort      x_col       =    0;                                                                                               <* 
+ *>    ushort      x_row       =    0;                                                                                               <* 
+ *>    int         x_total     =    0;                                                                                               <* 
+ *>    int         x_handle    =    0;                                                                                               <* 
+ *>    int         x_top       =    0;                                                                                               <* 
+ *>    int         x_left      =    0;                                                                                               <* 
+ *>    /+---(header)-------------------------+/                                                                                      <* 
+ *>    DEBUG_CELL    yLOG_enter  (__FUNCTION__);                                                                                     <* 
+ *>    DEBUG_CELL    yLOG_char   ("a_what"    , a_what);                                                                             <* 
+ *>    DEBUG_CELL    yLOG_char   ("a_mode"    , a_mode);                                                                             <* 
+ *>    DEBUG_CELL    yLOG_char   ("a_how"     , a_how);                                                                              <* 
+ *>    /+---(check for sizing)---------------+/                                                                                      <* 
+ *>    if (a_what == CHANGE_WIDTH) {                                                                                                 <* 
+ *>       rc = COL_multikey (a_how);                                                                                                 <* 
+ *>       DEBUG_CELL    yLOG_exit   (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    if (a_what == CHANGE_HEIGHT) {                                                                                                <* 
+ *>       rc = ROW_multikey (a_how);                                                                                                 <* 
+ *>       DEBUG_CELL    yLOG_exit   (__FUNCTION__);                                                                                  <* 
+ *>       return 0;                                                                                                                  <* 
+ *>    }                                                                                                                             <* 
+ *>    /+---(get first)----------------------+/                                                                                      <* 
+ *>    rc       = yMAP_visu_first (&x_tab, &x_col, &x_row, NULL);                                                                    <* 
+ *>    DEBUG_CELL    yLOG_value  ("rc"        , rc);                                                                                 <* 
+ *>    x_first  = LOC_cell_at_loc (x_tab, x_col, x_row);                                                                             <* 
+ *>    x_top    = x_row;                                                                                                             <* 
+ *>    x_left   = x_col;                                                                                                             <* 
+ *>    DEBUG_CELL    yLOG_point  ("x_first"   , x_first);                                                                            <* 
+ *>    x_next   = x_first;                                                                                                           <* 
+ *>    /+---(process range)------------------+/                                                                                      <* 
+ *>    while (rc >= 0) {                                                                                                             <* 
+ *>       ++x_total;                                                                                                                 <* 
+ *>       /+---(cell-specific)---------------+/                                                                                      <* 
+ *>       if (x_next != NULL) {                                                                                                      <* 
+ *>          DEBUG_CELL   yLOG_note   ("cell exists");                                                                               <* 
+ *>          ++x_handle;                                                                                                             <* 
+ *>          switch (a_what) {                                                                                                       <* 
+ *>          /+> case CHANGE_DECIMAL : rc = CELL_decimals     (x_first, x_next, a_mode, a_how); break;   <+/                         <* 
+ *>          /+> case CHANGE_ALIGN   : rc = CELL_align        (x_first, x_next, a_mode, a_how); break;   <+/                         <* 
+ *>          /+> case CHANGE_FORMAT  : rc = CELL_format       (x_first, x_next, a_mode, a_how); break;   <+/                         <* 
+ *>          /+> case CHANGE_UNITS   : rc = CELL_units        (x_first, x_next, a_mode, a_how); break;   <+/                         <* 
+ *>          case CHANGE_ERASE   : rc = CELL_erase        (x_first, x_next, a_mode, a_how); break;                                   <* 
+ *>                                /+> case CHANGE_MERGE   : rc = CELL_merge_visu   (x_first, x_next, a_mode, a_how); break;   <+/   <* 
+ *>                                /+> case CHANGE_UNMERGE : rc = CELL_unmerge_visu (x_first, x_next, a_mode, a_how); break;   <+/   <* 
+ *>          }                                                                                                                       <* 
+ *>          DEBUG_CELL   yLOG_value  ("handle_rc" , rc);                                                                            <* 
+ *>          /+---(trouble)---------------------+/                                                                                   <* 
+ *>          if (rc < 0) {                                                                                                           <* 
+ *>             DEBUG_CELL    yLOG_note   ("detailed function indicated trouble");                                                   <* 
+ *>             DEBUG_CELL    yLOG_exitr  (__FUNCTION__, rc);                                                                        <* 
+ *>             return rc;                                                                                                           <* 
+ *>          }                                                                                                                       <* 
+ *>          /+---(early exit)------------------+/                                                                                   <* 
+ *>          if (rc > 0)  {                                                                                                          <* 
+ *>             DEBUG_CELL    yLOG_note   ("detailed function indicated done early");                                                <* 
+ *>             DEBUG_CELL    yLOG_exit   (__FUNCTION__);                                                                            <* 
+ *>             return 0;                                                                                                            <* 
+ *>          }                                                                                                                       <* 
+ *>          /+---(done)------------------------+/                                                                                   <* 
+ *>          if (a_mode == YMAP_BEG)  a_mode = YMAP_ADD;                                                                             <* 
+ *>          api_ycalc_printer (x_next);                                                                                             <* 
+ *>       }                                                                                                                          <* 
+ *>       /+---(get next)--------------------+/                                                                                      <* 
+ *>       rc      = yMAP_visu_next  (&x_tab, &x_col, &x_row, NULL);                                                                  <* 
+ *>       DEBUG_CELL   yLOG_value  ("next_rc"   , rc);                                                                               <* 
+ *>       x_next  = LOC_cell_at_loc (x_tab, x_col, x_row);                                                                           <* 
+ *>       DEBUG_CELL   yLOG_point  ("x_next"    , x_next);                                                                           <* 
+ *>       /+---(done)------------------------+/                                                                                      <* 
+ *>    }                                                                                                                             <* 
+ *>    DEBUG_CELL    yLOG_value  ("x_total"   , x_total);                                                                            <* 
+ *>    DEBUG_CELL    yLOG_value  ("x_handle"  , x_handle);                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                      <* 
+ *>    DEBUG_CELL    yLOG_exit   (__FUNCTION__);                                                                                     <* 
+ *>    return 0;                                                                                                                     <* 
+ *> }                                                                                                                                <*/
 
 
 
@@ -1058,16 +1076,16 @@ CELL_reader          (int c, uchar *a_verb)
       return rce;
    }
    /*---(format)-------------------------*/
-   if      (strcmp (x_format , "")         == 0) strcpy  (x_format, "??0--");
-   else if (strcmp (x_format , "-")        == 0) strcpy  (x_format, "??0--");
-   else if (strlen (x_format) <  5)              strcpy  (x_format, "??0--");
+   if      (strcmp (x_format , "")         == 0) strcpy  (x_format, DEF_FORMAT);
+   else if (strcmp (x_format , "-")        == 0) strcpy  (x_format, DEF_FORMAT);
+   else if (strlen (x_format) <  5)              strcpy  (x_format, DEF_FORMAT);
    DEBUG_INPT  yLOG_info    ("x_format"  , x_format);
    /*---(source)-------------------------*/
    DEBUG_INPT   yLOG_info    ("source"    , x_source);
    strldchg (x_source, G_CHAR_STORAGE, G_KEY_SPACE, LEN_RECD);
    DEBUG_INPT   yLOG_info    ("source"    , x_source);
    /*---(update)-------------------------*/
-   x_new = CELL_overwrite (HIST_NONE, x_tab, x_col, x_row, x_source, x_format);
+   x_new = CELL_overwrite (YMAP_NONE, x_tab, x_col, x_row, x_source, x_format);
    DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL)  {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -1120,6 +1138,11 @@ CELL_writer        (uchar *a_verb, tCELL *a_curr)
       return 0;
    }
    DEBUG_OUTP   yLOG_info    ("source"    , a_curr->source);
+   DEBUG_OUTP   yLOG_value   ("tab"       , a_curr->tab);
+   --rce;  if (a_curr->tab >= 36)  {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return  0;
+   }
    /*---(format)-------------------------*/
    DEBUG_OUTP   yLOG_complex ("align"     , "%-3d (%c)", a_curr->align , a_curr->align);
    DEBUG_OUTP   yLOG_complex ("format"    , "%-3d (%c)", a_curr->format, a_curr->format);

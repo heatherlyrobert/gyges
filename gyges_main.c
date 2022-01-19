@@ -22,11 +22,13 @@ main (int argc, char *argv[])
       PROG_end ();
       return -1;
    }
+   DEBUG_PROG   yLOG_note     ("initial tab creation");
    TAB_new_in_abbr ('0', NULL, NULL);
    TAB_new_in_abbr ('®', NULL, NULL);
    TAB_new_in_abbr ('¯', NULL, NULL);
+   TAB_switch      (0);
    /*---(main-loop)----------------------*/
-   rc = yVIKEYS_main  ("keys", "every", NULL);
+   rc = yVICURSES_main  ("keys", "every", NULL);
    /*---(wrap-up)------------------------*/
    DRAW_wrap    ();
    PROG_end     ();

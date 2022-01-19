@@ -83,37 +83,66 @@ CURS_info_request  (char a_type)
 }
 
 
+char
+CURS_current_status     (char a_size, short a_wide, char *a_list)
+{
+   uchar       nn          [LEN_LABEL] = "";
+   uchar       bb          [LEN_LABEL] = "";
+   uchar       cc          [LEN_LABEL] = "";
+   uchar       ee          [LEN_LABEL] = "";
+   uchar       x_pre       [LEN_LABEL] = "";
+   uchar       x_tab       [LEN_LABEL] = "";
+   uchar       x_row       [LEN_HUND]  = "";
+   uchar       x_col       [LEN_HUND]  = "";
+   snprintf (x_pre , LEN_LABEL, " gyges  ");
+   strlpadn (NTAB, nn, '.', '>', 2);
+   strlpadn (CTAB, cc, '.', '>', 2);
+   snprintf (x_tab , LEN_HUND, "§ T %sn %sc", nn, cc);
+   strlpadn (NCOL, nn, '.', '>', 3);
+   strlpadn (BCOL, bb, '.', '>', 3);
+   strlpadn (CCOL, cc, '.', '>', 3);
+   strlpadn (ECOL, ee, '.', '>', 3);
+   snprintf (x_col , LEN_HUND, "§ C %sn %sb %sc %se", nn, bb, cc, ee);
+   strlpadn (NROW, nn, '.', '>', 3);
+   strlpadn (BROW, bb, '.', '>', 3);
+   strlpadn (CROW, cc, '.', '>', 3);
+   strlpadn (EROW, ee, '.', '>', 3);
+   snprintf (x_row , LEN_HUND, "§ R %sn %sb %sc %se", nn, bb, cc, ee);
+   snprintf (a_list, LEN_RECD, "%s %s %s %s ´", x_pre, x_tab, x_col, x_row);
+   return 0;
+}
+
 
 /*====================------------------------------------====================*/
 /*===----                   specific areas of screen                   ----===*/
 /*====================------------------------------------====================*/
 static void  o___SPECIFIC________o () { return; }
 
-char  CURS_status_cell     (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
-char  CURS_status_deps     (char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
-char  CURS_status_rpn      (char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
-char  CURS_status_tab      (char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
-char  CURS_status_error    (char *a_list) { snprintf (a_list, LEN_FULL, "errors (%3d)", nerror); };
-char  CURS_status_detail   (char *a_list) { snprintf (a_list, LEN_FULL, "%-8.8s %2dt, %3dc, %4dr, t=%c a=%c f=%c d=%c u=%c len=%3d", g_curr.label, g_curr.tab, g_curr.col, g_curr.row, g_curr.type, g_curr.align, g_curr.format, g_curr.decs, g_curr.unit, g_curr.len); }
+char  CURS_status_cell     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
+char  CURS_status_deps     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
+char  CURS_status_rpn      (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
+char  CURS_status_tab      (char a_size, short a_wide, char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
+char  CURS_status_error    (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "errors (%3d)", nerror); };
+char  CURS_status_detail   (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "%-8.8s %2dt, %3dc, %4dr, t=%c a=%c f=%c d=%c u=%c len=%3d", g_curr.label, g_curr.tab, g_curr.col, g_curr.row, g_curr.type, g_curr.align, g_curr.format, g_curr.decs, g_curr.unit, g_curr.len); }
 
 
 char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
 CURS_col_color     (short a_col)
 {
-   if      (a_col == CCOL)                       yCOLOR_curs ("h_curr");
-   else if (FR_COL == 'y' && a_col <= FR_ECOL)   yCOLOR_curs ("h_lock");
-   else if (COL_used (CTAB, a_col) >  0)         yCOLOR_curs ("h_used");
-   else                                          yCOLOR_curs ("h_norm");
+   if      (a_col == CCOL)                       yVICURSES_by_name ("h_curr");
+   else if (FR_COL == 'y' && a_col <= FR_ECOL)   yVICURSES_by_name ("h_lock");
+   else if (COL_used (CTAB, a_col) >  0)         yVICURSES_by_name ("h_used");
+   else                                          yVICURSES_by_name ("h_norm");
    return 0;
 }
 
 char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
 CURS_row_color       (short a_row)
 {
-   if      (a_row == CROW)                       yCOLOR_curs ("h_curr");
-   else if (FR_ROW == 'y' && a_row <= FR_EROW)   yCOLOR_curs ("h_lock");
-   else if (ROW_used (CTAB, a_row) >  0)         yCOLOR_curs ("h_used");
-   else                                          yCOLOR_curs ("h_norm");
+   if      (a_row == CROW)                       yVICURSES_by_name ("h_curr");
+   else if (FR_ROW == 'y' && a_row <= FR_EROW)   yVICURSES_by_name ("h_lock");
+   else if (ROW_used (CTAB, a_row) >  0)         yVICURSES_by_name ("h_used");
+   else                                          yVICURSES_by_name ("h_norm");
    return 0;
 }
 
@@ -122,20 +151,20 @@ DRAW_yaxis         (void)
 {
    /*---(locals)-----------+-----------+-*/
    int         i           = 0;
-   int         x_tall      = 0;
-   int         x_left      = 0;
-   int         x_bott      = 0;
+   short       x_tall      = 0;
+   short       x_left      = 0;
+   short       x_bott      = 0;
    uchar       x_label     [LEN_TERSE] = "";     /* column label              */
    /*---(begin)--------------------------*/
    DEBUG_WIND  yLOG_enter   (__FUNCTION__);
-   yVIKEYS_view_size     (YVIKEYS_YAXIS, &x_left, NULL, &x_bott, &x_tall, NULL);
+   yVIEW_size  (YVIEW_YAXIS, NULL, &x_left, NULL, &x_bott, &x_tall);
    DEBUG_WIND  yLOG_complex ("size"      , "%3dl, %3db, %3dt", x_left, x_bott, x_tall);
    DEBUG_WIND  yLOG_complex ("rows"      , "%3db, %3de, %3dn", BROW, EROW, NROW);
    /*---(process rows)------------------*/
    for (i = 0; i < x_tall; ++i) {
       /*---(prepare)------------*/
-      if (BROW + i <= NROW)   strlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
-      else                    strlcpy (x_label, "····"       , LEN_TERSE);
+      if (BROW + i < NROW)   strlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
+      else                   strlcpy (x_label, "····"       , LEN_TERSE);
       /*---(show)---------------*/
       CURS_row_color  (BROW + i);
       mvprintw (x_bott - x_tall + 1 + i, x_left, "%-4.4s", x_label);
@@ -153,10 +182,10 @@ char         /*-> update the column labels -----------[ ------ [gz.D91.061.A5]*/
 DRAW_xaxis         (void)
 {
    /*---(locals)-----------+-----------+-*/
-   int         x_pref      = 0;
-   int         x_left      = 0;
-   int         x_wide      = 0;
-   int         x_bott      = 0;
+   short       x_pref      = 0;
+   short       x_left      = 0;
+   short       x_wide      = 0;
+   short       x_bott      = 0;
    int         i           = 0;                  /* iterator -- columns       */
    int         w           = 0;                  /* column width              */
    int         x_fill      = 0;                  /* adjusted column width     */
@@ -165,12 +194,14 @@ DRAW_xaxis         (void)
    char        x_label     [LEN_TERSE] = "";     /* column label              */
    int         x_pos       = 0;                  /* adjusted column width     */
    char        x_disp      [500]       = "";     /* temporary display message */
+   char        x_over      = '-';                /* partial column at  end    */
    /*---(begin)--------------------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(begin)--------------------------*/
-   yVIKEYS_view_size     (YVIKEYS_YAXIS, NULL   , &x_pref, NULL   , NULL, NULL);
-   yVIKEYS_view_size     (YVIKEYS_XAXIS, &x_left, &x_wide, &x_bott, NULL, NULL);
-   x_cum = x_pref;
+   yVIEW_size     (YVIEW_YAXIS, NULL, NULL, &x_pref, NULL, NULL);
+   yVIEW_size     (YVIEW_XAXIS, NULL, &x_left, &x_wide, &x_bott, NULL);
+   x_cum = x_left + x_pref;
+   yVICURSES_by_name ("b_curr");
    sprintf (x_disp, "¼_%c_½     ", LABEL_tab (CTAB));
    mvprintw (x_bott, x_left, "%*.*s", x_cum, x_cum, x_disp);
    DEBUG_WIND  yLOG_complex ("size"      , "%3dp, %3dl, %3dw, %3db", x_pref, x_left, x_wide, x_bott);
@@ -180,18 +211,22 @@ DRAW_xaxis         (void)
       if (BCOL + i > NCOL) break;
       /*---(prepare)---------------------*/
       x_avail = x_wide - x_cum;
-      w      = COL_size (CTAB, BCOL + i);
-      x_fill = w - 4;
-      if (x_avail < w)  x_fill = x_avail - 4;
+      w       = COL_size (CTAB, BCOL + i);
       strlcpy (x_label, LABEL_col (BCOL + i), LEN_TERSE);
       /*---(format)----------------------*/
       DEBUG_WIND  yLOG_complex ("curr"      , "%3d, %s, %3dw, %3dwa, %3dav", i, x_label, w, x_fill, x_avail);
-      if      (x_avail == 1) snprintf (x_disp, 500, ">");
-      else if (x_avail == 2) snprintf (x_disp, 500, "\[>");
-      else if (x_avail == 3) snprintf (x_disp, 500, "\[->");
-      else if (x_avail <  w) snprintf (x_disp, 500, "\[%*.*s%s>", x_fill, x_fill, g_dashes, x_label);
-      else                   snprintf (x_disp, 500, "\[%*.*s%s\]", x_fill, x_fill, g_dashes, x_label);
-      /*> if (x_disp [5] == '-')  x_disp [5] = G_CHAR_SPACE;                          <*/
+      if (w <= x_avail) {
+         x_fill = w - 4;
+         if      (w == 2)       snprintf (x_disp, 500, "%s", x_label);
+         else if (w == 3)       snprintf (x_disp, 500, "\[%s", x_label);
+         else                   snprintf (x_disp, 500, "\[%*.*s%s\]", x_fill, x_fill, YSTR_COLS, x_label);
+      } else {
+         x_fill = x_avail - 4;
+         if      (x_avail == 1) snprintf (x_disp, 500, ">");
+         else if (x_avail == 2) snprintf (x_disp, 500, "\[>");
+         else if (x_avail == 3) snprintf (x_disp, 500, "\[->");
+         else                   snprintf (x_disp, 500, "\[%*.*s%s>", x_fill, x_fill, YSTR_COLS, x_label);
+      }
       /*---(draw))-----------------------*/
       CURS_col_color  (BCOL + i);
       mvprintw (x_bott, x_cum, x_disp);
@@ -209,16 +244,16 @@ char         /*-> update buffer display --------------[ ------ [gz.D91.061.A5]*/
 CURS_bufsum        (char *a_list)
 {
    /*---(locals)-----------+-----------+-*/
-   int         x_left      = 0;
-   int         x_wide      = 0;
-   int         x_bott      = 0;
+   short       x_left      = 0;
+   short       x_wide      = 0;
+   short       x_bott      = 0;
    uchar       t           [LEN_HUND]  = "";
    uchar       s           [LEN_HUND]  = "";
    short       x_offset    =    0;
    uchar       x_disp      [LEN_RECD]  = "";
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(begin)--------------------------*/
-   yVIKEYS_view_size     (YVIKEYS_BUFFER, &x_left, &x_wide, &x_bott, NULL, NULL);
+   yVIEW_size (YVIEW_BUFFER, NULL, &x_left, &x_wide, &x_bott, NULL);
    DEBUG_WIND  yLOG_complex ("size"      , "%3dl, %3dw, %3db", x_left, x_wide, x_bott);
    TAB_inventory ('L', t);
    /*---(inventory)----------------------*/
@@ -666,12 +701,12 @@ char         /*-> set full color screen --------------[ ------ [gc.D70.532.S5]*/
 CURS_color_min       (int a_col, int a_row, tCELL *a_curr)
 {
    /*---(current)------------------------*/
-   if      (a_col == CCOL && a_row == CROW)             yCOLOR_curs ("h_curr");
-   else if (a_curr != NULL && a_curr->note == 's')      yCOLOR_curs ("h_used");
+   if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("h_curr");
+   else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("h_used");
    /*---(visual-range)-------------------*/
-   else if (yVIKEYS_root   (CTAB, a_col, a_row, NULL))  yCOLOR_curs ("v_root");
-   else if (yVIKEYS_visual (CTAB, a_col, a_row, NULL))  yCOLOR_curs ("v_fill");
-   else                                                 yCOLOR_curs ("h_norm");
+   else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
+   else if (yMAP_visual (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_fill");
+   else                                                 yVICURSES_by_name ("h_norm");
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -691,42 +726,42 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       sprintf    (label, ",%s,", l);
    }
    /*---(current)------------------------*/
-   if      (a_col == CCOL && a_row == CROW)             yCOLOR_curs ("v_curr");
-   else if (a_curr != NULL && a_curr->note == 's')      yCOLOR_curs ("m_srch");
+   if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
+   else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("m_srch");
    /*---(visual-range)-------------------*/
-   else if (yVIKEYS_root   (CTAB, a_col, a_row, NULL))  yCOLOR_curs ("v_root");
-   else if (yVIKEYS_visual (CTAB, a_col, a_row, NULL))  yCOLOR_curs ("v_fill");
+   else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
+   else if (yMAP_visual (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_fill");
    /*---(marks)--------------------------*/
    else if (my.mark_show  == 'y' &&
-         strstr (s_mark_list, label) != NULL)           yCOLOR_curs ("m_temp");
+         strstr (s_mark_list, label) != NULL)           yVICURSES_by_name ("m_temp");
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
       /*---(related)---------------------*/
-      if      (strstr (my.reqs_list, label) != NULL)    yCOLOR_curs ("d_reqs");
-      else if (strstr (my.deps_list, label) != NULL)    yCOLOR_curs ("d_pros");
-      else if (strstr (my.like_list, label) != NULL)    yCOLOR_curs ("d_like");
+      if      (strstr (my.reqs_list, label) != NULL)    yVICURSES_by_name ("d_reqs");
+      else if (strstr (my.deps_list, label) != NULL)    yVICURSES_by_name ("d_pros");
+      else if (strstr (my.like_list, label) != NULL)    yVICURSES_by_name ("d_like");
       /*---(trouble)---------------------*/
-      else if (a_curr->type == YCALC_DATA_ERROR)        yCOLOR_curs ("!_errs");
+      else if (a_curr->type == YCALC_DATA_ERROR)        yVICURSES_by_name ("!_errs");
       /*---(pointers)--------------------*/
-      else if (a_curr->type == YCALC_DATA_RANGE)        yCOLOR_curs ("p_rang");
-      else if (a_curr->type == YCALC_DATA_ADDR )        yCOLOR_curs ("p_addr");
+      else if (a_curr->type == YCALC_DATA_RANGE)        yVICURSES_by_name ("p_rang");
+      else if (a_curr->type == YCALC_DATA_ADDR )        yVICURSES_by_name ("p_addr");
       /*---(numbers)---------------------*/
-      else if (a_curr->type == YCALC_DATA_NUM  )        yCOLOR_curs ("9_norm");
+      else if (a_curr->type == YCALC_DATA_NUM  )        yVICURSES_by_name ("9_norm");
       else if (a_curr->type == YCALC_DATA_NFORM) {
-         if   (yCALC_nreq (a_curr->ycalc)  < 5)         yCOLOR_curs ("9_form");
-         else                                           yCOLOR_curs ("9_dang");
+         if   (yCALC_nreq (a_curr->ycalc)  < 5)         yVICURSES_by_name ("9_form");
+         else                                           yVICURSES_by_name ("9_dang");
       }
-      else if (a_curr->type == YCALC_DATA_NLIKE)        yCOLOR_curs ("9_like");
+      else if (a_curr->type == YCALC_DATA_NLIKE)        yVICURSES_by_name ("9_like");
       /*---(strings)---------------------*/
-      else if (a_curr->type == YCALC_DATA_STR  )        yCOLOR_curs ("#_norm");
+      else if (a_curr->type == YCALC_DATA_STR  )        yVICURSES_by_name ("#_norm");
       else if (a_curr->type == YCALC_DATA_SFORM) {
-         if   (yCALC_nreq (a_curr->ycalc)  < 5)         yCOLOR_curs ("#_form");
-         else                                           yCOLOR_curs ("#_dang");
+         if   (yCALC_nreq (a_curr->ycalc)  < 5)         yVICURSES_by_name ("#_form");
+         else                                           yVICURSES_by_name ("#_dang");
       }
-      else if (a_curr->type == YCALC_DATA_SLIKE)        yCOLOR_curs ("#_like");
+      else if (a_curr->type == YCALC_DATA_SLIKE)        yVICURSES_by_name ("#_like");
       /*---(constants)-------------------*/
-      else if (a_curr->type == YCALC_DATA_BLANK)        yCOLOR_curs (">_null");
-      else                                              yCOLOR_curs (">_unkn");
+      else if (a_curr->type == YCALC_DATA_BLANK)        yVICURSES_by_name (">_null");
+      else                                              yVICURSES_by_name (">_unkn");
    }
    /*---(complete)-----------------------*/
    return 0;
@@ -748,7 +783,7 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    /*---(display cell)-------------------*/
    if (x_curr == NULL || x_curr->print == NULL)  {
       DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, "");
-      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, g_empty);
+      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, YSTR_EMPTY);
    } else {
       DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->print);
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->print);
@@ -766,8 +801,8 @@ DRAW_main          (void)
    int         ch          = 0;
    tCELL      *x_curr      = NULL;
    static tCELL  *x_save      =    1;
-   int         x_left, x_wide;
-   int         x_bott, x_tall;
+   short       x_left, x_wide;
+   short       x_bott, x_tall;
    int         y_cur       = 0;
    int         x_cur       = 0;
    short       y_pos       = 0;
@@ -775,27 +810,30 @@ DRAW_main          (void)
    int         w           = 0;
    int         cw          = 0;
    /*---(update globals)-----------------*/
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    x_curr    = LOC_cell_at_curr ();
-   /*> if (x_curr != x_save) {                                                                   <* 
-    *>    if (x_curr != NULL) {                                                                  <* 
-    *>       yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                                      <* 
-    *>       yCALC_disp_pros (x_curr->ycalc, my.deps_list);                                      <* 
-    *>       yCALC_disp_like (x_curr->ycalc, my.like_list);                                      <* 
-    *>       /+> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <*    <* 
-    *>        *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <+/   <* 
-    *>    } else {                                                                               <* 
-    *>       strncpy (my.reqs_list, "n/a", LEN_RECD);                                            <* 
-    *>       strncpy (my.deps_list, "n/a", LEN_RECD);                                            <* 
-    *>       strncpy (my.like_list, "n/a", LEN_RECD);                                            <* 
-    *>       strncpy (my.rpn_list , "n/a", LEN_RECD);                                            <* 
-    *>    }                                                                                      <* 
-    *> }                                                                                         <*/
+   if (x_curr != x_save) {
+      if (x_curr != NULL) {
+         yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
+         yCALC_disp_pros (x_curr->ycalc, my.deps_list);
+         yCALC_disp_like (x_curr->ycalc, my.like_list);
+         /*> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <* 
+          *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <*/
+      } else {
+         strncpy (my.reqs_list, "n/a", LEN_RECD);
+         strncpy (my.deps_list, "n/a", LEN_RECD);
+         strncpy (my.like_list, "n/a", LEN_RECD);
+         strncpy (my.rpn_list , "n/a", LEN_RECD);
+      }
+   }
    x_save = x_curr;
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
    strncpy (s_mark_list, "+", LEN_RECD);
    /*> yVIKEYS_hint_marklist  (s_mark_list);                                          <*/
    /*---(display all)--------------------*/
-   yVIKEYS_view_size     (YVIKEYS_MAIN, &x_left, &x_wide, &x_bott, &x_tall, NULL);
+   yVIEW_size (YVIEW_MAIN, NULL, &x_left, &x_wide, &x_bott, &x_tall);
+   DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3dw, %3db, %3dt", x_left, x_wide, x_bott, x_tall);
+   attrset (0);
    for (y_cur = BROW; y_cur <= EROW; ++y_cur) {
       /*---(prepare)---------------------*/
       y_pos = x_bott - x_tall + 1 + (y_cur - BROW);
@@ -821,6 +859,7 @@ DRAW_main          (void)
     *> if (w > 0)  CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);                      <*/
    move (s_cursor_y, s_cursor_x);
    /*---(complete)-----------------------*/
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -870,13 +909,13 @@ DRAW_init          (void)
 {
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
-   yVIKEYS_view_basic    (YVIKEYS_MAIN , YVIKEYS_FLAT, YVIKEYS_TOPLEF, 0, DRAW_main);
-   yVIKEYS_view_defsize  (YVIKEYS_YAXIS    , 5, 0);
-   yVIKEYS_view_simple   (YVIKEYS_XAXIS    , 0, DRAW_xaxis  );
-   yVIKEYS_view_simple   (YVIKEYS_YAXIS    , 0, DRAW_yaxis  );
-   /*> yVIKEYS_view_simple   (YVIKEYS_BUFFER   , 0, DRAW_buffer );                    <*/
-   yVIKEYS_cmds_direct   (":layout gyges");
-   yVIKEYS_cmds_add      (YVIKEYS_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
+   yVIEW_full     (YVIEW_MAIN , YVIEW_FLAT, YVIEW_TOPLEF, 1.0, 0, DRAW_main);
+   yVIEW_defsize  (YVIEW_YAXIS, 5, 0);
+   yVIEW_simple   (YVIEW_XAXIS, 0, DRAW_xaxis);
+   yVIEW_simple   (YVIEW_YAXIS, 0, DRAW_yaxis);
+   /*> yVIEW_simple   (YVIEW_BUFFER   , 0, DRAW_buffer );                    <*/
+   /*> yCMD_direct   (":layout gyges");                                               <*/
+   yCMD_add      (YCMD_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
    /*---(get window size)-------------*/
    /*> CURS_size   ();                                                                <*/
    /*---(colors)----------------------*/

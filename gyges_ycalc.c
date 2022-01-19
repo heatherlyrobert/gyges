@@ -49,7 +49,7 @@ api_ycalc_enabler       (void *a_owner, void *a_deproot)
 }
 
 char         /*-> tbd --------------------------------[ leaf   [ge.933.522.50]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string)
+api_ycalc_pointer       (void *a_owner, char **r_source, char **r_type, double **r_value, char **r_string)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -66,25 +66,25 @@ api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double *
    x_owner   = (tCELL *) a_owner;
    DEBUG_APIS   yLOG_snote   (x_owner->label);
    /*---(save)---------------------------*/
-   if (a_source != NULL) {
-      DEBUG_APIS   yLOG_spoint  (*a_source);
-      *a_source = &x_owner->source;
-      DEBUG_APIS   yLOG_spoint  (*a_source);
+   if (r_source != NULL) {
+      DEBUG_APIS   yLOG_spoint  (*r_source);
+      *r_source = &x_owner->source;
+      DEBUG_APIS   yLOG_spoint  (*r_source);
    }
-   if (a_type  != NULL) {
-      DEBUG_APIS   yLOG_spoint  (*a_type);
-      *a_type   = &x_owner->type;
-      DEBUG_APIS   yLOG_spoint  (*a_type);
+   if (r_type  != NULL) {
+      DEBUG_APIS   yLOG_spoint  (*r_type);
+      *r_type   = &x_owner->type;
+      DEBUG_APIS   yLOG_spoint  (*r_type);
    }
-   if (a_value  != NULL) {
-      DEBUG_APIS   yLOG_spoint  (*a_value);
-      *a_value  = &x_owner->v_num;
-      DEBUG_APIS   yLOG_spoint  (*a_value);
+   if (r_value  != NULL) {
+      DEBUG_APIS   yLOG_spoint  (*r_value);
+      *r_value  = &x_owner->v_num;
+      DEBUG_APIS   yLOG_spoint  (*r_value);
    }
-   if (a_string != NULL) {
-      DEBUG_APIS   yLOG_spoint  (*a_string);
-      *a_string = &x_owner->v_str;
-      DEBUG_APIS   yLOG_spoint  (*a_string);
+   if (r_string != NULL) {
+      DEBUG_APIS   yLOG_spoint  (*r_string);
+      *r_string = &x_owner->v_str;
+      DEBUG_APIS   yLOG_spoint  (*r_string);
    }
    /*---(complete)-----------------------*/
    DEBUG_APIS   yLOG_sexit   (__FUNCTION__);
@@ -126,7 +126,7 @@ api_ycalc_reaper        (void **a_owner)
       return rce;
    }
    /*---(delete)-------------------------*/
-   rc = CELL__delete (HIST_NONE, x_owner->tab, x_owner->col, x_owner->row);
+   rc = CELL__delete (YMAP_NONE, x_owner->tab, x_owner->col, x_owner->row);
    --rce;  if (rc < 0) {
       DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -263,6 +263,7 @@ api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owne
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
    if (a_owner   != NULL)  *a_owner   = NULL;
    if (a_deproot != NULL)  *a_deproot = NULL;
@@ -270,6 +271,7 @@ api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owne
    rc = str4gyges (b, x, y, z, 0, x_label, YSTR_USABLE);
    if (rc == 0)  rc = api_ycalc_named (x_label, a_force, a_owner, a_deproot);
    /*---(complete)-----------------------*/
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -336,17 +338,27 @@ api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_
 }
 
 char
-api_ycalc_address       (void *a_owner, int *b, int *x, int *y, int *z)
+api_ycalc_address       (void *a_owner, int *u, int *x, int *y, int *z)
 {
    char        rc          =    0;
    tCELL      *x_owner     = NULL;
-   if (b != NULL)  *b   = 0;
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_note    ("defaulting");
+   if (u != NULL)  *u   = 0;
    if (x != NULL)  *x   = 0;
    if (y != NULL)  *y   = 0;
    if (z != NULL)  *z   = 0;
-   if (a_owner == NULL)  return -1;
+   DEBUG_PROG   yLOG_point   ("a_owner"   , a_owner);
+   if (a_owner == NULL) {
+      DEBUG_PROG   yLOG_note    ("owner null");
+      DEBUG_PROG   yLOG_exitr   (__FUNCTION__, -1);
+      return -1;
+   }
    x_owner    = (tCELL     *) a_owner;
-   rc = str2gyges (x_owner->label, b, x, y, z, NULL, 0, YSTR_USABLE);
+   DEBUG_PROG   yLOG_point   ("label"     , x_owner->label);
+   DEBUG_PROG   yLOG_note    (x_owner->label);
+   rc = str2gyges (x_owner->label, u, x, y, z, NULL, 0, YSTR_USABLE);
+   DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rc);
    return rc;
 }
 

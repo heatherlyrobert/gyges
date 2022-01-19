@@ -114,7 +114,9 @@ char ROW_writer_all  (void) { return NODE_writer_all (IS_ROW); }
 /*====================------------------------------------====================*/
 static void  o___YVIKEYS_________o () { return; }
 
-char ROW_mapper      (char a_req) { return NODE_map_update (IS_ROW, a_req); }
+char ROW_mapper      (char a_level) { return NODE_map_update (IS_ROW, a_level); }
+
+char ROW_entry       (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used) { return NODE_entry (IS_ROW, a_pos, r_ref, r_wide, r_used); }
 
 
 

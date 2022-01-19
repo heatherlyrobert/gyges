@@ -24,7 +24,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), single cell   
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       single cell in the middle (delete and pull from right)             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··dl"                                                                                      i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··dl"                                                                                      i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -67,7 +67,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), single cell   
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -90,7 +90,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), multiple      
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       multiple delete and fill from right                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··3dl"                                                                                     i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··3dl"                                                                                     i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -133,7 +133,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), multiple      
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "3u"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "3u"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -156,7 +156,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), visual        
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       single line visual delete and fill from right                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··v4l··dl"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··v4l··dl"                                                                                 i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -199,7 +199,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), visual        
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -224,7 +224,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), multi-line    
    GROUP      multi line visual delete and fill from right                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       select and delete                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··v4lk··dl"                                                                                i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··v4lk··dl"                                                                                i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -267,7 +267,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), multi-line    
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -290,7 +290,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge right    
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       delete and fill on empty spot on far right                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         ":2u4¦··dl"                                                                                           i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                ":2u4¦··dl"                                                                                           i_equal     0                                                                                                    
 
    COND       second table row (no change)                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a3"                                                                              s_equal     s_celln print    : (   8) :   cd   :                                                                 
@@ -350,7 +350,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge right    
      get      ...  printable                       CELL__unitnew               "printable"      , "2z5"                                                                              s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -373,7 +373,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge left     
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       delete and fill from leftmost (col zero)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3j··dl"                                                                                        i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3j··dl"                                                                                        i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -416,7 +416,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge left     
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       repeat to cause a formula reference problem                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.026))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "dl"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "dl"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -459,7 +459,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge left     
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       repeat again to cause a circular reference                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "dl"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "dl"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -S-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -504,12 +504,12 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge left     
    GROUP      verify undo working properly                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "3u"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "3u"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       delete and fill on last filled spot in table                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.033))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··7l3j··dl"                                                                                      i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··7l3j··dl"                                                                                      i_equal     0                                                                                                    
 
    REUSE -Z-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -520,7 +520,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), edge left     
      get      ...  printable                       CELL__unitnew               "printable"      , "2h6"                                                                              s_equal     s_celln print    : (   8) :#e/err> :                                                                 
 
    COND       request undo                                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((10.032))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "3u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "3u"                                                                                                  i_lesser    0                                                                                                    
 
    GROUP      complete                                                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -541,7 +541,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), column        
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       select and delete                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l···Dx"                                                                                       i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l···Dx"                                                                                       i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      ...  printable                       CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -604,7 +604,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from right (dl), column        
      get      ...  printable                       CELL__unitnew               "printable"      , "2h6"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -627,7 +627,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), single         
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       single cell in the middle (delete and pull from left)              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··dh"                                                                                      i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··dh"                                                                                      i_equal     0                                                                                                    
 
    REUSE -T-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -670,7 +670,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), single         
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.005))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -693,7 +693,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), multi-cell     
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       multiple delete and fill from left                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.006))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··2dh"                                                                                     i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··2dh"                                                                                     i_equal     0                                                                                                    
 
    REUSE -T-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -736,14 +736,14 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), multi-cell     
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.009))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    GROUP      visual selection in the middle (delete and pull from left)         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       single line visual delete and fill from left                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··vl··dh"                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··vl··dh"                                                                                  i_equal     0                                                                                                    
 
    REUSE -T-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -786,7 +786,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), multi-cell     
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.013))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -809,7 +809,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), visual         
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       multi line visual delete and fill from left                        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.014))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··vlk··dh"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··vlk··dh"                                                                                 i_equal     0                                                                                                    
 
    REUSE -T-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -852,7 +852,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), visual         
      get      ...  printable                       CELL__unitnew               "printable"      , "2z4"                                                                              s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.017))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -875,7 +875,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), edge left      
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       delete and fill from leftmost (col zero)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.018))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3j··dh"                                                                                        i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3j··dh"                                                                                        i_equal     0                                                                                                    
 
    REUSE -T-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -920,7 +920,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), edge left      
    GROUP      verify undo working properly                                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.021))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -943,7 +943,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), edge right     
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       delete and fill from rightmost (col max)                           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3j$··dh"                                                                                       i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3j$··dh"                                                                                       i_equal     0                                                                                                    
 
    COND       second table row                                                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.023))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a3"                                                                              s_equal     s_celln print    : (   8) :   cd   :                                                                 
@@ -1022,7 +1022,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), edge right     
      get      ...  printable                       CELL__unitnew               "printable"      , "2z6"                                                                              s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1045,7 +1045,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), column         
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       select and delete                                                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.022))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l···dX"                                                                                       i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l···dX"                                                                                       i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (----) ::                                                                         
@@ -1108,7 +1108,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from left (dh), column         
      get      ...  printable                       CELL__unitnew               "printable"      , "2h6"                                                                              s_equal     s_celln print    : (   8) :   40   :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((11.027))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1131,7 +1131,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), single cell   
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       single cell in the middle (delete and pull from below)             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··dj"                                                                                      i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··dj"                                                                                      i_equal     0                                                                                                    
 
    REUSE -U-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1206,7 +1206,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), single cell   
      get      ...  printable                       CELL__unitnew               "printable"      , "2h99"                                                                             s_equal     s_celln print    : (   8) :#e/err> :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1229,7 +1229,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), multi-cell    
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       multiple delete and fill from below                                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.011))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··2dj"                                                                                     i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··2dj"                                                                                     i_equal     0                                                                                                    
 
    REUSE -U-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1304,7 +1304,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), multi-cell    
      get      ...  printable                       CELL__unitnew               "printable"      , "2h99"                                                                             s_equal     s_celln print    : (   8) :#e/err> :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1327,7 +1327,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), visual        
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       multi line visual delete and fill from below                       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.020))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l3j··vlj··dj"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l3j··vlj··dj"                                                                                 i_equal     0                                                                                                    
 
    REUSE -U-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1402,7 +1402,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), visual        
      get      ...  printable                       CELL__unitnew               "printable"      , "2h99"                                                                             s_equal     s_celln print    : (   8) :#e/err> :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.028))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1425,7 +1425,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), edge top      
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       delete and fill from below while in topmost (row zero)             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.029))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··2l··dj"                                                                                        i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··2l··dj"                                                                                        i_equal     0                                                                                                    
 
    COND       column headers                                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.030))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -1618,7 +1618,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), edge top      
      get      ...  printable                       CELL__unitnew               "printable"      , "2z99"                                                                             s_equal     s_celln print    : (   8) :  ends  :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.040))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1641,7 +1641,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), multi-row     
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       selection and delete                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3l3j··vj···Dy"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3l3j··vj···Dy"                                                                                 i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -1694,7 +1694,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from below (dj), multi-row     
      get      ...  printable                       CELL__unitnew               "printable"      , "2h5"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1717,7 +1717,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), single        
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       move and delete                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3l2j··dk"                                                                                      i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3l2j··dk"                                                                                      i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -1770,7 +1770,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), single        
      get      ...  printable                       CELL__unitnew               "printable"      , "2h5"                                                                              s_equal     s_celln print    : (   8) :   43   :                                                                 
 
    COND       request undo deletion                                              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.010))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1793,7 +1793,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), multi-cell    
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       move and delete                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3l3j··2dk"                                                                                     i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3l3j··2dk"                                                                                     i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -1846,7 +1846,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), multi-cell    
      get      ...  printable                       CELL__unitnew               "printable"      , "2h5"                                                                              s_equal     s_celln print    : (   8) :   43   :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1869,7 +1869,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), visual        
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       selection and delete                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3l3j··vlj··dk"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3l3j··vlj··dk"                                                                                 i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -1922,7 +1922,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), visual        
      get      ...  printable                       CELL__unitnew               "printable"      , "2h5"                                                                              s_equal     s_celln print    : (   8) :   43   :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "2u"                                                                                                  i_lesser    0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "2u"                                                                                                  i_lesser    0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -1945,7 +1945,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), edge top      
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       selection and delete                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3l····vlj··dk"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3l····vlj··dk"                                                                                 i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (   8) :[  0  ] :                                                                 
@@ -1998,7 +1998,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), edge top      
      get      ...  printable                       CELL__unitnew               "printable"      , "2h5"                                                                              s_equal     s_celln print    : (   8) :#e/err> :                                                                 
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
@@ -2021,7 +2021,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), multi rows    
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
    COND       selection and delete                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "¥¥0_··3l3j··vj···dY"                                                                                 i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "¥¥0_··3l3j··vj···dY"                                                                                 i_equal     0                                                                                                    
 
    COND       title table row                                                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      get      main table                           CELL__unitnew               "printable"      , "2a1"                                                                              s_equal     s_celln print    : (----) ::                                                                         
@@ -2094,7 +2094,7 @@ SCRP          (YVIKEYS/DEL) verify delete, pull from above (dk), multi rows    
      get      ...  printable                       CELL__unitnew               "printable"      , "2h7"                                                                              s_equal     s_celln print    : (----) ::                                                                         
 
    COND       request undo paste                                                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((12.019))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     exec     handle the keys                      yVIKEYS_main_string         "u"                                                                                                   i_equal     0                                                                                                    
+     exec     handle the keys                      yKEYS_string                "u"                                                                                                   i_equal     0                                                                                                    
 
    REUSE -R-  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 

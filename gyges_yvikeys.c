@@ -16,14 +16,14 @@ static long s_stamp = 0;
 char
 api_vikeys_init         (void)
 {
-   yVIKEYS_menu_add ("µePn", "normal"    , "Pn");
-   yVIKEYS_menu_add ("µeP#", "clear"     , "P#");
-   yVIKEYS_menu_add ("µePr", "replace"   , "Pr");
-   yVIKEYS_menu_add ("µePd", "dup"       , "Pd");
-   yVIKEYS_menu_add ("µePc", "combo"     , "Pc");
-   yVIKEYS_menu_add ("µePm", "move"      , "Pm");
-   yVIKEYS_menu_add ("µePf", "force"     , "Pf");
-   yVIKEYS_menu_add ("µePv", "values"    , "Pv");
+   /*> yVIKEYS_menu_add ("µePn", "normal"    , "Pn");                                 <* 
+    *> yVIKEYS_menu_add ("µeP#", "clear"     , "P#");                                 <* 
+    *> yVIKEYS_menu_add ("µePr", "replace"   , "Pr");                                 <* 
+    *> yVIKEYS_menu_add ("µePd", "dup"       , "Pd");                                 <* 
+    *> yVIKEYS_menu_add ("µePc", "combo"     , "Pc");                                 <* 
+    *> yVIKEYS_menu_add ("µePm", "move"      , "Pm");                                 <* 
+    *> yVIKEYS_menu_add ("µePf", "force"     , "Pf");                                 <* 
+    *> yVIKEYS_menu_add ("µePv", "values"    , "Pv");                                 <*/
    return 0;
 }
 
@@ -35,15 +35,15 @@ api_yvikeys_handlers    (void)
    /*---(header)-------------------------*/
    DEBUG_FILE   yLOG_enter   (__FUNCTION__);
    /*---(handlers)-----------------------*/
-   rc = yPARSE_handler_max (FILE_TABS    , "tab"       , 4.1, "LTc---------", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,min,max,wid,tal,dep,t"        , "gyges tabs (v-axis)"      );
+   rc = yPARSE_handler_max (FILE_TABS    , "tab"       , 4.1, "LTcTTc------", -1, TAB_reader      , TAB_writer_all  , "------------" , "name,max,t,beg,cur,c"      , "gyges tabs (universe)"    );
    DEBUG_FILE   yLOG_value   ("tab"       , rc);
-   rc = yPARSE_handler_max (FILE_COLS    , "width"     , 4.2, "Tss---------", -1, COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"                        , "gyges cols (x-axis)"      );
+   rc = yPARSE_handler_max (FILE_COLS    , "width"     , 4.2, "Tss---------", -1, COL_reader      , COL_writer_all  , "------------" , "label,wid,cnt"             , "gyges cols (x-axis)"      );
    DEBUG_FILE   yLOG_value   ("width"     , rc);
-   rc = yPARSE_handler_max (FILE_ROWS    , "height"    , 4.3, "Tss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"                        , "gyges rows (y-axis)"      );
+   rc = yPARSE_handler_max (FILE_ROWS    , "height"    , 4.3, "Tss---------", -1, ROW_reader      , ROW_writer_all  , "------------" , "label,tal,cnt"             , "gyges rows (y-axis)"      );
    DEBUG_FILE   yLOG_value   ("height"    , rc);
-   rc = yPARSE_handler_max (FILE_DEPCEL  , "cell_dep"  , 5.1, "TTO---------", -1, CELL_reader     , CELL_writer_all , "------------" , "label,afdu?,contents" , "gyges dependent cells"  );
+   rc = yPARSE_handler_max (FILE_DEPCEL  , "cell_dep"  , 5.1, "TTO---------", -1, CELL_reader     , CELL_writer_all , "------------" , "label,afdu?,contents"      , "gyges dependent cells"    );
    DEBUG_FILE   yLOG_value   ("cell_dep"  , rc);
-   rc = yPARSE_handler_max (FILE_FREECEL , "cell_free" , 5.2, "TTO---------", -1, CELL_reader     , NULL            , "------------" , "label,afdu?,contents" , "gyges free cells"       );
+   rc = yPARSE_handler_max (FILE_FREECEL , "cell_free" , 5.2, "TTO---------", -1, CELL_reader     , NULL            , "------------" , "label,afdu?,contents"      , "gyges free cells"         );
    DEBUG_FILE   yLOG_value   ("cell_free" , rc);
    /*---(complete)-----------------------*/
    DEBUG_FILE   yLOG_exit    (__FUNCTION__);
@@ -57,19 +57,6 @@ api_yvikeys_handlers    (void)
 /*====================------------------------------------====================*/
 static void   o___MAP_____________o (void) { return; }
 
-char         /*-> break label into coordinates -------[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
-api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z)
-{
-   if (a_z != NULL)  *a_z = 0;
-   return str2gyges (a_label, a_buf, a_x, a_y, NULL, NULL, 0, YSTR_USABLE);
-}
-
-char         /*-> return address for coordinates -----[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
-api_yvikeys_addressor   (char *a_label, int a_buf, int a_x, int a_y, int a_z)
-{
-   return str4gyges (a_buf, a_x, a_y, 0, 0, a_label, YSTR_USABLE);
-}
-
 
 
 /*====================------------------------------------====================*/
@@ -80,7 +67,7 @@ static void   o___SOURCE__________o (void) { return; }
 char
 api_yvikeys_saver       (char *a_contents)
 {
-   CELL_change  (NULL, HIST_BEG, CTAB, CCOL, CROW, a_contents);
+   CELL_change  (NULL, YMAP_BEG, CTAB, CCOL, CROW, a_contents);
    return 0;
 }
 
@@ -112,151 +99,6 @@ api_yvikeys_exim        (char a_dir, char a_style)
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return rc;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                      map mode formatting                     ----===*/
-/*====================------------------------------------====================*/
-static void   o___FORMAT__________o (void) { return; }
-
-char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
-api_yvikeys_format      (int a_major, int a_minor)
-{
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_complex ("args"      , "%3d, %3d", a_major, a_minor);
-   /*---(column widths)------------------*/
-   switch (a_minor) {
-   case  'm' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'm');  break;  /* smallest    */
-   case  'h' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'h');  break;  /* less by 1   */
-   case  'H' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'H');  break;  /* less by 5   */
-   case  'l' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'l');  break;  /* more by 1   */
-   case  'L' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'L');  break;  /* more by 5   */
-   case  'n' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'n');  break;  /* normal      */
-   case  'N' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'N');  break;  /* normal-plus */
-   case  'w' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'w');  break;  /* wide        */
-   case  'W' : CELL_visual   (CHANGE_WIDTH  , HIST_BEG, 'W');  break;  /* largest     */
-   }
-   /*---(row heights)--------------------*/
-   switch (a_minor) {
-   case  'J' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'J');  break;  /* smallest    */
-   case  'j' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'j');  break;  /* less by 1   */
-   case  'k' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'k');  break;  /* more by 1   */
-   case  'K' : CELL_visual   (CHANGE_HEIGHT , HIST_BEG, 'K');  break;  /* largest     */
-   }
-   /*---(decimal places)-----------------*/
-   switch (a_minor) {
-   case  '0' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '0');  break;  /* none        */
-   case  '1' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '1');  break;  /* less by 1   */
-   case  '2' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '2');  break;  /* exactly 2   */
-   case  '3' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '3');  break;  /* exactly 3   */
-   case  '4' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '4');  break;  /* exactly 4   */
-   case  '5' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '5');  break;  /* exactly 5   */
-   case  '6' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '6');  break;  /* exactly 6   */
-   case  '7' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '7');  break;  /* exactly 7   */
-   case  '8' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '8');  break;  /* exactly 8   */
-   case  '9' : CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '9');  break;  /* exactly 9   */
-   }
-   /*---(horizontal alignments)----------*/
-   switch (a_minor) {
-   case  '<' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '<');  break;  /* left        */
-   case  '|' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '|');  break;  /* center      */
-   case  '>' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '>');  break;  /* right       */
-   case  '[' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '[');  break;  /* left dec    */
-   case  '^' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '^');  break;  /* center dec  */
-   case  ']' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, ']');  break;  /* right dec   */
-   case  '}' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '}');  break;  /* right +2    */
-   case  '{' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '{');  break;  /* left  +2    */
-   case  ':' : CELL_visual   (CHANGE_ALIGN  , HIST_BEG, ':');  break;  /* < with :    */
-   case  '\'': CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '\''); break;  /* > with :    */
-   }
-   /*---(merging)------------------------*/
-   switch (a_minor) {
-   case  'M' : CELL_visual   (CHANGE_MERGE  , HIST_BEG, 'm');  break;  /* merge       */
-   case  'U' : CELL_visual   (CHANGE_UNMERGE, HIST_BEG, 'u');  break;  /* merge       */
-   }
-   /*---(integer formats)----------------*/
-   switch (a_minor) {
-   case  'i' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'i');  break;  /* integer    */
-   case  'I' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'I');  break;  /* indented   */
-   case  'f' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  break;  /* real       */
-   case  'g' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  CELL_visual   (CHANGE_DECIMAL , HIST_ADD, '3');  break;  /* real       */
-   case  'G' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'f');  CELL_visual   (CHANGE_DECIMAL , HIST_ADD, '6');  break;  /* real       */
-   case  'e' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'e');  break;  /* exponencial*/
-   case  'E' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'E');  break;  /* spaced exp */
-   }
-   /*---(comma formats)------------------*/
-   switch (a_minor) {
-   case  'c' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'c');  break;  /* comma           */
-   case  ',' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'c');  break;  /* comma           */
-   case  'C' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'C');  break;  /* comma           */
-   case  'a' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'a');  break;  /* accounting      */
-   case  'A' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'A');  break;  /* accounting      */
-   case  '$' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '$');  break;  /* dollar          */
-   case  's' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 's');  break;  /* signed          */
-   case  'S' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'S');  break;  /* signed          */
-   case  ';' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, ';');  break;  /* technical       */
-   case  'p' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'p');  break;  /* bullet point    */
-   case  'P' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'P');  break;  /* bullet point    */
-   }
-   /*---(roman numerals)-----------------*/
-   switch (a_minor) {
-   case  'r' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'r');  break;  /* roman           */
-   case  'R' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'R');  break;  /* roman upper     */
-   }
-   /*---(special formats)----------------*/
-   switch (a_minor) {
-   case  'o' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'o');  break;  /* octal           */
-   case  'O' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'O');  break;  /* spaced octal    */
-   case  'x' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'x');  break;  /* hex             */
-   case  'X' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'X');  break;  /* spaced hex      */
-   case  'b' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'b');  break;  /* binary          */
-   case  'B' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'B');  break;  /* spaced binary   */
-   case  'z' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'z');  break;  /* base-62         */
-   case  'Z' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'Z');  break;  /* spaced base-62  */
-   }
-   /*---(time and date)------------------*/
-   switch (a_minor) {
-   case  't' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 't');  break;  /* time            */
-   case  'T' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'T');  break;  /* timestamp       */
-   case  'd' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'd');  break;  /* date            */
-   case  'D' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'D');  break;  /* full date       */
-   }
-   /*---(string fills)-------------------*/
-   switch (a_minor) {
-   case  '-' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '-');  break;  /* filled dash     */
-   case  '=' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '=');  break;  /* filled equal    */
-   case  '_' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '_');  break;  /* filled under    */
-   case  '.' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '.');  break;  /* filled period   */
-   case  '+' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '+');  break;  /* filled plus     */
-   case  '!' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '!');  break;  /* filled empty    */
-   case  '/' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '/');  break;  /* filled divs     */
-   case  '@' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '@');  break;  /* filled divs     */
-   case  'q' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'q');  break;  /* filled quote    */
-   case  'Q' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, 'Q');  break;  /* filled quote    */
-   case  '~' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '~');  break;  /* filled ruler    */
-   case  '#' : CELL_visual   (CHANGE_FORMAT , HIST_BEG, '#');  break;  /* filled numbers  */
-   }
-   /*---(defaults)-----------------------*/
-   switch (a_minor) {
-   case  '?' :
-      CELL_visual   (CHANGE_FORMAT , HIST_BEG, '?');
-      CELL_visual   (CHANGE_ALIGN  , HIST_BEG, '?');
-      CELL_visual   (CHANGE_DECIMAL, HIST_BEG, '0');
-      CELL_visual   (CHANGE_UNITS  , HIST_BEG, '-');
-      break;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> keys for formatting sub-mode -------[ ------ [gc.MT0.202.C7]*/ /*-[01.0000.112.!]-*/ /*-[--.---.---.--]-*/
-api_yvikeys_units       (int a_major, int a_minor)
-{
-   CELL_visual   (CHANGE_UNITS  , HIST_BEG, a_minor);
-   return 0;
 }
 
 
@@ -317,7 +159,7 @@ api_yvikeys_searcher      (char *a_search)
          }
          DEBUG_SRCH   yLOG_value   ("exec rc"   , rc);
          if (rc > 0) {
-            yVIKEYS_srch_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);
+            /*> yVIKEYS_srch_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);   <*/
             x_next->note = 's';
          }
       }
@@ -379,8 +221,8 @@ api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z)
    }
    /*---(delete)-------------------------*/
    DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
-   if (a_1st == 'y')  rc = CELL_change (NULL, HIST_BEG, b, x, y, "");
-   else               rc = CELL_change (NULL, HIST_ADD, b, x, y, "");
+   if (a_1st == 'y')  rc = CELL_change (NULL, YMAP_BEG, b, x, y, "");
+   else               rc = CELL_change (NULL, YMAP_ADD, b, x, y, "");
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -401,7 +243,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
    char        rce         = -10;
    char        rc          = 0;
    tCELL      *x_copy      = NULL;
-   int         b, xb, xe, yb, ye;
+   ushort      u, xb, xe, yb, ye;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -426,9 +268,9 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
       return rce;     /* don't write, recreate on read */
    }
    /*---(check for bounds)---------------*/
-   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
-   DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", b, xb, xe, yb, ye);
-   rc = yVIKEYS_mreg_inside (a_curr->tab, a_curr->col, a_curr->row, 0);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
+   DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
+   /*> rc = yVIKEYS_mreg_inside (a_curr->tab, a_curr->col, a_curr->row, 0);           <*/
    DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
    --rce;  if (rc <= 0)  {
       DEBUG_REGS   yLOG_note    ("cell not in visual area");
@@ -447,7 +289,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
    x_copy->label = strdup (a_curr->label);
    yCALC_stamp_set (a_curr->ycalc, s_stamp);
    /*---(place in buffer)----------------*/
-   rc = yVIKEYS_mreg_add  (x_copy, x_copy->label);
+   /*> rc = yVIKEYS_mreg_add  (x_copy, x_copy->label);                                <*/
    DEBUG_REGS   yLOG_value   ("hook_rc"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_note    ("could not hook to register");
@@ -471,9 +313,9 @@ api_yvikeys_copier      (char a_type, long a_stamp)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   int         x_tab       =    0;
-   int         x_col       =    0;
-   int         x_row       =    0;
+   ushort      x_tab       =    0;
+   ushort      x_col       =    0;
+   ushort      x_row       =    0;
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
@@ -485,11 +327,11 @@ api_yvikeys_copier      (char a_type, long a_stamp)
    rc      = yCALC_seq_downdown (s_stamp, api_yvikeys_copier_seq);
    /*---(independents)-------------------*/
    DEBUG_REGS   yLOG_note    ("INDEPENDENT CELLS");
-   rc      = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
+   rc      = yMAP_visu_first (&x_tab, &x_col, &x_row, NULL);
    while (rc >= 0) {
       x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
       if (x_curr != NULL && !yCALC_stamp_cmp (x_curr->ycalc, s_stamp))   api__yvikeys_copier_one (x_curr, s_stamp);
-      rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
+      rc      = yMAP_visu_next  (&x_tab, &x_col, &x_row, NULL);
    }
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -556,7 +398,7 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
    tCELL      *x_provider  = NULL;               /* provider cell to adjust   */
    tCELL      *x_original  = NULL;
    int         x_nreq, x_npro;
-   int         b, xb, xe, yb, ye;
+   ushort      u, xb, xe, yb, ye;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
@@ -570,8 +412,8 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
-   DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", b, xb, xe, yb, ye);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
+   DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
    p  = strtok_r (a_list, q, &s);
    DEBUG_REGS   yLOG_point   ("p"         , p);
    while (p != NULL) {
@@ -580,7 +422,7 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
       DEBUG_REGS   yLOG_point   ("x_provider", x_provider);
       if (x_provider != NULL) {
          DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);
-         rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);
+         /*> rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);   <*/
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc == 0) {
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
@@ -590,10 +432,10 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
             sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
             DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
-            CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
+            CELL_overwrite (YMAP_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);
          }
       }
-      /*> CELL_change  (x_copy, HIST_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <*/
+      /*> CELL_change  (x_copy, YMAP_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <*/
       p  = strtok_r (NULL  , q, &s);
       DEBUG_REGS   yLOG_point   ("p"         , p);
    }
@@ -681,8 +523,8 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
    sprintf (x_bformat, "%c%c%c%c-", a_cell->align, a_cell->format, a_cell->decs, a_cell->unit);
    DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);
-   if (a_1st == 'y')  x_copy = CELL_overwrite (HIST_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
-   else               x_copy = CELL_overwrite (HIST_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
+   if (a_1st == 'y')  x_copy = CELL_overwrite (YMAP_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
+   else               x_copy = CELL_overwrite (YMAP_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    DEBUG_REGS   yLOG_complex ("DEBUG 3"   , "%-10.10s, %2dt, %3dc, %4dr", x_copy->label, x_copy->tab, x_copy->col, x_copy->row);
    /*---(providers)----------------------*/
    DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");
@@ -736,10 +578,10 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
     *>          DEBUG_REGS   yLOG_info    ("x_source"  , x_source);                                                                                    <* 
     *>          sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);                           <* 
     *>          DEBUG_REGS   yLOG_info    ("x_bformat" , x_bformat);                                                                                   <* 
-    *>          CELL_overwrite (HIST_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);                                     <* 
+    *>          CELL_overwrite (YMAP_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);                                     <* 
     *>       }                                                                                                                                         <* 
     *>    }                                                                                                                                            <* 
-    *>    /+> CELL_change  (x_copy, HIST_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <+/                                                 <* 
+    *>    /+> CELL_change  (x_copy, YMAP_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <+/                                                 <* 
     *>    p  = strtok_r (NULL  , q, &s);                                                                                                               <* 
     *>    DEBUG_REGS   yLOG_point   ("p"         , p);                                                                                                 <* 
     *> }                                                                                                                                               <*/
@@ -866,12 +708,12 @@ api_yvikeys_macro_set       (char a_name, char *a_keys)
    x_row = a_name - 'a';
    x_len = strlen (a_keys);
    if (x_len == 0) {
-      CELL_change (NULL, HIST_NONE , 37, 0, x_row, "");
-      CELL_change (NULL, HIST_NONE , 37, 1, x_row, "");
+      CELL_change (NULL, YMAP_NONE , 37, 0, x_row, "");
+      CELL_change (NULL, YMAP_NONE , 37, 1, x_row, "");
    } else {
       sprintf (t, "%c", a_name);
-      CELL_change (NULL, HIST_NONE , 37, 0, x_row, t     );
-      CELL_change (NULL, HIST_NONE , 37, 1, x_row, a_keys);
+      CELL_change (NULL, YMAP_NONE , 37, 0, x_row, t     );
+      CELL_change (NULL, YMAP_NONE , 37, 1, x_row, a_keys);
    }
    return 0;
 }
@@ -883,74 +725,479 @@ api_yvikeys_macro_set       (char a_name, char *a_keys)
 /*====================------------------------------------====================*/
 static void  o___MAPPING_________o () { return; }
 
+/*> char                                                                               <* 
+ *> MAP__clear            (tMAPPED *a_map)                                             <* 
+ *> {                                                                                  <* 
+ *>    /+---(locals)-----------+-----------+-+/                                        <* 
+ *>    int         i           =    0;                                                 <* 
+ *>    /+---(lefts)--------------------------+/                                        <* 
+ *>    a_map->umin = a_map->gmin = a_map->gamin = a_map->glmin = a_map->gprev = -1;    <* 
+ *>    /+---(map)----------------------------+/                                        <* 
+ *>    for (i= 0; i < LEN_HUGE; ++i)  a_map->map [i] =  YVIKEYS_EMPTY;                 <* 
+ *>    /+---(rights)-------------------------+/                                        <* 
+ *>    a_map->umax = a_map->gmax = a_map->gamax = a_map->glmax = a_map->gnext = -1;    <* 
+ *>    /+---(screen)-------------------------+/                                        <* 
+ *>    a_map->ubeg  = a_map->ucur  = a_map->uend  = a_map->ulen  = a_map->utend = 0;   <* 
+ *>    /+---(grids)--------------------------+/                                        <* 
+ *>    a_map->gbeg = a_map->gcur = a_map->gend = 0;                                    <* 
+ *>    /+---(complete)-----------------------+/                                        <* 
+ *>    return  0;                                                                      <* 
+ *> }                                                                                  <*/
+
 char
-MAP__clear            (tMAPPED *a_map)
+MAP_rows             (void)
 {
-   /*---(locals)-----------+-----------+-*/
-   int         i           =    0;
-   /*---(lefts)--------------------------*/
-   a_map->umin = a_map->gmin = a_map->gamin = a_map->glmin = a_map->gprev = -1;
-   /*---(map)----------------------------*/
-   for (i= 0; i < LEN_HUGE; ++i)  a_map->map [i] =  YVIKEYS_EMPTY;
-   /*---(rights)-------------------------*/
-   a_map->umax = a_map->gmax = a_map->gamax = a_map->glmax = a_map->gnext = -1;
-   /*---(screen)-------------------------*/
-   a_map->ubeg  = a_map->ucur  = a_map->uend  = a_map->ulen  = a_map->utend = 0;
-   /*---(grids)--------------------------*/
-   a_map->gbeg = a_map->gcur = a_map->gend = 0;
-   /*---(complete)-----------------------*/
-   return  0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   ushort      b, c, e;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(rows)---------------------------*/
+   rc = yMAP_axis_grid (YMAP_YAXIS, &b, &c, &e, NULL);
+   DEBUG_MAP    yLOG_complex ("ROWS"      , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NROW, BROW, CROW, EROW, b, c, e);
+   if (CROW == c) {
+      DEBUG_MAP    yLOG_note    ("row did not change, do not remap");
+   } else {
+      DEBUG_MAP    yLOG_note    ("row change, remap");
+      COL_mapper (0);
+   }
+   BROW   = b;
+   CROW   = c;
+   EROW   = e;
+   DEBUG_MAP    yLOG_complex ("ROWS+"     , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NROW, BROW, CROW, EROW, b, c, e);
+   /*---(ocmplete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
 }
+
+char
+MAP_columns          (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   ushort      b, c, e;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(columns)------------------------*/
+   rc = yMAP_axis_grid (YMAP_XAXIS, &b, &c, &e, NULL);
+   DEBUG_MAP    yLOG_complex ("COLS"      , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NCOL, BCOL, CCOL, ECOL, b, c, e);
+   if (CCOL == c) {
+      DEBUG_MAP    yLOG_note    ("column did not change, do not remap");
+   } else {
+      DEBUG_MAP    yLOG_note    ("column change, remap");
+      ROW_mapper (0);
+   }
+   BCOL   = b;
+   CCOL   = c;
+   ECOL   = e;
+   DEBUG_MAP    yLOG_complex ("COLS+"     , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NCOL, BCOL, CCOL, ECOL, b, c, e);
+   /*---(ocmplete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+MAP_universe         (char a_req)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   ushort      b, c, e;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(tabs)---------------------------*/
+   rc = yMAP_axis_grid (YMAP_UNIV , &b, &c, &e, NULL);
+   DEBUG_MAP    yLOG_complex ("TABS"      , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", NTAB, 0   , CTAB, 0   , b, c, e);
+   if (CTAB != c || a_req == YMAP_UNIVERSE) {
+      DEBUG_MAP    yLOG_note    ("tab change, force remap");
+      TAB_mapper ();
+   } else if (a_req == YMAP_UNIVDISP) {
+      DEBUG_MAP    yLOG_note    ("UNIVDISP, tab did not change, but forcing remap");
+      TAB_mapper ();
+   } else {
+      DEBUG_MAP    yLOG_note    ("tab did not change, do not remap");
+   }
+   DEBUG_MAP    yLOG_complex ("TABS+"     , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", NTAB, 0   , CTAB, 0   , b, c, e);
+   /*---(ocmplete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+/*> char                                                                                                                         <* 
+ *> MAP_display_only     (void)                                                                                                  <* 
+ *> {                                                                                                                            <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                  <* 
+ *>    char        rc          =    0;                                                                                           <* 
+ *>    ushort      b, c, e;                                                                                                      <* 
+ *>    /+---(header)-------------------------+/                                                                                  <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                                                                 <* 
+ *>    /+---(columns)------------------------+/                                                                                  <* 
+ *>    yMAP_axis_grid (YMAP_XAXIS, &b, &c, &e, NULL);                                                                            <* 
+ *>    BCOL   = b;                                                                                                               <* 
+ *>    CCOL   = c;                                                                                                               <* 
+ *>    ECOL   = e;                                                                                                               <* 
+ *>    DEBUG_MAP    yLOG_complex ("columns"   , "%4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", NCOL, BCOL, CCOL, ECOL, b, c, e);   <* 
+ *>    /+---(rows)---------------------------+/                                                                                  <* 
+ *>    yMAP_axis_grid (YMAP_YAXIS, &b, &c, &e, NULL);                                                                            <* 
+ *>    BROW   = b;                                                                                                               <* 
+ *>    CROW   = c;                                                                                                               <* 
+ *>    EROW   = e;                                                                                                               <* 
+ *>    DEBUG_MAP    yLOG_complex ("rows"      , "%4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", NROW, BROW, CROW, EROW, b, c, e);   <* 
+ *>    /+---(ocmplete)-----------------------+/                                                                                  <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                 <* 
+ *>    return 0;                                                                                                                 <* 
+ *> }                                                                                                                            <*/
+
+
+char
+api_yvikeys_axis_get    (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_senter  (__FUNCTION__);
+   DEBUG_MAP    yLOG_schar   (a_axis);
+   /*---(defaults)-----------------------*/
+   DEBUG_MAP    yLOG_snote   ("default");
+   if (n != NULL)  *n = 0;
+   if (b != NULL)  *b = 0;
+   if (c != NULL)  *c = 0;
+   if (e != NULL)  *e = 0;
+   /*---(axis)---------------------------*/
+   --rce;  switch (a_axis) {
+   case YMAP_UNIV  :
+      DEBUG_MAP    yLOG_snote   ("u-axis is tabs");
+      if (n != NULL)  *n = NTAB;
+      if (b != NULL)  *b = 0;
+      if (c != NULL)  *c = CTAB;
+      if (e != NULL)  *e = NTAB - 1;
+      break;
+   case YMAP_XAXIS :
+      DEBUG_MAP    yLOG_snote   ("x-axis is cols");
+      if (n != NULL)  *n = NCOL;
+      if (b != NULL)  *b = BCOL;
+      if (c != NULL)  *c = CTAB;
+      if (e != NULL)  *e = ECOL;
+      break;
+   case YMAP_YAXIS :
+      DEBUG_MAP    yLOG_snote   ("y-axis is rows");
+      if (n != NULL)  *n = NROW;
+      if (b != NULL)  *b = BROW;
+      if (c != NULL)  *c = CROW;
+      if (e != NULL)  *e = EROW;
+      break;
+   case YMAP_ZAXIS :
+      DEBUG_MAP    yLOG_snote   ("z-axis, un-used in gyges");
+      break;
+   default  :
+      DEBUG_MAP    yLOG_snote   ("axis not understood");
+      DEBUG_MAP    yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char
+api_yvikeys_axis_set    (char a_axis, ushort b, ushort c, ushort e)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_senter  (__FUNCTION__);
+   DEBUG_MAP    yLOG_schar   (a_axis);
+   /*---(axis)---------------------------*/
+   --rce;  switch (a_axis) {
+   case YMAP_UNIV  :
+      DEBUG_MAP    yLOG_snote   ("u-axis is tabs");
+      CTAB = c;
+      break;
+   case YMAP_XAXIS :
+      DEBUG_MAP    yLOG_snote   ("x-axis is cols");
+      BCOL = b;
+      CCOL = c;
+      ECOL = e;
+      break;
+   case YMAP_YAXIS :
+      DEBUG_MAP    yLOG_snote   ("y-axis is rows");
+      BROW = b;
+      CROW = c;
+      EROW = e;
+      break;
+   case YMAP_ZAXIS :
+      DEBUG_MAP    yLOG_snote   ("z-axis, un-used in gyges");
+      break;
+   default  :
+      DEBUG_MAP    yLOG_snote   ("axis not understood");
+      DEBUG_MAP    yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char
+api_yvikeys_axis_entry  (char a_axis, ushort a_pos, short *a_ref, uchar *a_size, uchar *a_used)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        c           =    0;
+   tCELL      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_senter  (__FUNCTION__);
+   DEBUG_MAP    yLOG_schar   (a_axis);
+   /*---(defaults)-----------------------*/
+   DEBUG_MAP    yLOG_snote   ("default");
+   if (a_ref  != NULL)  *a_ref  = 0;
+   if (a_size != NULL)  *a_size = 0;
+   if (a_used != NULL)  *a_used = 0;
+   /*---(axis)---------------------------*/
+   --rce;  switch (a_axis) {
+   case YMAP_UNIV  :
+      DEBUG_MAP    yLOG_snote   ("u-axis is tabs");
+      /*---(illegal)---------------------*/
+      if (VALID_tab (a_pos) != 1) {
+         DEBUG_MAP    yLOG_snote   ("not legal");
+         DEBUG_MAP    yLOG_sexitr  (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(basics)----------------------*/
+      if (a_ref  != NULL)  *a_ref  = YSTR_UNIV [a_pos];
+      if (a_size != NULL)  *a_size = 1;
+      /*---(usage)-----------------------*/
+      if (a_used == NULL)  break;
+      c = TAB_used (a_pos);
+      if      (c <  0)   *a_used = YMAP_NADA;
+      else if (c == 0)   *a_used = YMAP_PLACE;
+      else               *a_used = YMAP_USED;
+      /*---(done)------------------------*/
+      break;
+   case YMAP_XAXIS :
+      DEBUG_MAP    yLOG_snote   ("x-axis is cols");
+      /*---(illegal)---------------------*/
+      if (VALID_col (a_pos) != 1) {
+         DEBUG_MAP    yLOG_snote   ("not legal");
+         DEBUG_MAP    yLOG_sexitr  (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(basics)----------------------*/
+      if (a_ref  != NULL)  *a_ref  = a_pos;
+      if (a_size != NULL)  *a_size = COL_size (CTAB, a_pos);
+      if (a_used == NULL)  break;
+      /*---(usage)-----------------------*/
+      x_curr = LOC_cell_at_loc (CTAB, a_pos, CROW);
+      if (x_curr == NULL)  *a_used = YMAP_NADA;
+      else                 *a_used = YMAP_USED;
+      /*---(done)------------------------*/
+      break;
+   case YMAP_YAXIS :
+      DEBUG_MAP    yLOG_snote   ("y-axis is rows");
+      /*---(illegal)---------------------*/
+      if (VALID_row (a_pos) != 1) {
+         DEBUG_MAP    yLOG_snote   ("not legal");
+         DEBUG_MAP    yLOG_sexitr  (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(basics)----------------------*/
+      if (a_ref  != NULL)  *a_ref  = a_pos;
+      if (a_size != NULL)  *a_size = ROW_size (CTAB, a_pos);
+      if (a_used == NULL)  break;
+      /*---(usage)-----------------------*/
+      x_curr = LOC_cell_at_loc (CTAB, CCOL, a_pos);
+      if (x_curr == NULL)  *a_used = YMAP_NADA;
+      else                 *a_used = YMAP_USED;
+      /*---(done)------------------------*/
+      break;
+   case YMAP_ZAXIS :
+      DEBUG_MAP    yLOG_snote   ("z-axis, un-used in gyges");
+      break;
+   default  :
+      DEBUG_MAP    yLOG_snote   ("axis not understood");
+      DEBUG_MAP    yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+/*> char                                                                                 <* 
+ *> NODE_map_update            (char a_type, char a_level)                               <* 
+ *> {                                                                                    <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                          <* 
+ *>    char        rce         =  -10;                                                   <* 
+ *>    char        rc          =    0;                                                   <* 
+ *>    uchar       x_axis      =  '-';                                                   <* 
+ *>    ushort      x_size      =    0;                                                   <* 
+ *>    short       x_avail     =    0;                                                   <* 
+ *>    int         i           =    0;                                                   <* 
+ *>    tCELL      *x_curr      = NULL;                                                   <* 
+ *>    tNODE      *x_node      = NULL;                                                   <* 
+ *>    ushort      x_wide      =    0;                                                   <* 
+ *>    /+---(header)-------------------------+/                                          <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                         <* 
+ *>    DEBUG_MAP    yLOG_char    ("a_type"    , a_type);                                 <* 
+ *>    DEBUG_MAP    yLOG_complex ("sizes"     , "%4dt, %4dc, %4dr", CTAB, NCOL, NROW);   <* 
+ *>    /+---(defense)------------------------+/                                          <* 
+ *>    --rce;  switch (a_type) {                                                         <* 
+ *>    case 'c' :                                                                        <* 
+ *>       x_axis = 'x';                                                                  <* 
+ *>       x_size = NCOL;                                                                 <* 
+ *>       break;                                                                         <* 
+ *>    case 'r' :                                                                        <* 
+ *>       x_axis = 'y';                                                                  <* 
+ *>       x_size = NROW;                                                                 <* 
+ *>       break;                                                                         <* 
+ *>    default  :                                                                        <* 
+ *>       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);                                 <* 
+ *>       return rce;                                                                    <* 
+ *>       break;                                                                         <* 
+ *>    }                                                                                 <* 
+ *>    DEBUG_MAP    yLOG_char    ("x_axis"    , x_axis);                                 <* 
+ *>    DEBUG_MAP    yLOG_value   ("x_size"    , x_size);                                 <* 
+ *>    /+---(preparation)--------------------+/                                          <* 
+ *>    rc = yMAP_clear  (x_axis);                                                        <* 
+ *>    rc = yMAP_start  (x_axis, x_size);                                                <* 
+ *>    IF_COL    yVIEW_size (YVIEW_MAIN, NULL, NULL, &x_avail, NULL, NULL);              <* 
+ *>    ELSE_ROW  yVIEW_size (YVIEW_MAIN, NULL, NULL, NULL, NULL, &x_avail);              <* 
+ *>    yMAP_axis_avail (x_axis, x_avail);                                                <* 
+ *>    /+---(update grid)--------------------+/                                          <* 
+ *>    for (i = 0; i < x_size; ++i) {                                                    <* 
+ *>       /+---(defaults)--------------------+/                                          <* 
+ *>       IF_COL    x_wide = DEF_WIDTH;                                                  <* 
+ *>       ELSE_ROW  x_wide = DEF_HEIGHT;                                                 <* 
+ *>       /+---(get cell)--------------------+/                                          <* 
+ *>       IF_COL    x_curr = LOC_cell_at_loc (CTAB, i, CROW);                            <* 
+ *>       ELSE_ROW  x_curr = LOC_cell_at_loc (CTAB, CCOL, i);                            <* 
+ *>       /+---(handle used)-----------------+/                                          <* 
+ *>       if (x_curr != NULL) {                                                          <* 
+ *>          rc = NODE_by_index (&x_node, CTAB, a_type, i);                              <* 
+ *>          if (x_node != NULL)   x_wide = x_node->size;                                <* 
+ *>          rc = yMAP_append (i, x_wide, 'Ï');                                          <* 
+ *>       }                                                                              <* 
+ *>       /+---(handle empty)----------------+/                                          <* 
+ *>       else {                                                                         <* 
+ *>          rc = yMAP_append (i, x_wide, '·');                                          <* 
+ *>       }                                                                              <* 
+ *>       /+---(done)------------------------+/                                          <* 
+ *>    }                                                                                 <* 
+ *>    /+---(update)-------------------------+/                                          <* 
+ *>    rc = yMAP_finish ();                                                              <* 
+ *>    /+---(complete)-----------------------+/                                          <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                         <* 
+ *>    return rc;                                                                        <* 
+ *> }                                                                                    <*/
+
 
 char
 MAP_mapper           (char a_req)
 {
    /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
    tCELL      *x_curr      = NULL;
    char        t           [LEN_RECD];
+   ushort      b, c, e;
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*> yVIKEYS_view_size     (YVIKEYS_MAIN, NULL, &g_xmap.uavail, NULL, &g_ymap.uavail, NULL);   <*/
-   /*---(remap)----------------*/
-   TAB_map_update   (a_req);
-   COL_mapper       (a_req);
-   ROW_mapper       (a_req);
-   /*> if (a_req == YVIKEYS_INIT) {                                                   <* 
-    *>    LOC__mapper   ('T');                                                        <* 
-    *>    LOC__mapper   ('C');                                                        <* 
-    *>    LOC__mapper   ('R');                                                        <* 
-    *> } else {                                                                       <* 
-    *>    LOC__mapper   ('t');                                                        <* 
-    *>    LOC__mapper   ('c');                                                        <* 
-    *>    LOC__mapper   ('r');                                                        <* 
-    *> }                                                                              <*/
-   if (CTAB != g_bmap.gcur) {
-      TAB_switch (g_bmap.gcur);
-      a_req = YVIKEYS_INIT;
+   DEBUG_MAP    yLOG_char    ("a_req"     , a_req);
+   /*---(just display)---------*/
+   if (a_req == YMAP_DISPONLY) {
+      MAP_universe (a_req);
+      MAP_columns ();
+      MAP_rows    ();
+      DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+      return 0;
    }
-   /*---(save to globals)------*/
-   BCOL   = g_xmap.gbeg;
-   CCOL   = g_xmap.gcur;
-   ECOL   = g_xmap.gend;
-   BROW   = g_ymap.gbeg;
-   CROW   = g_ymap.gcur;
-   EROW   = g_ymap.gend;
-   /*---(save to tab)----------*/
-   if (PTAB != NULL) {
-      PTAB->bcol = BCOL;
-      PTAB->ccol = CCOL;
-      PTAB->ecol = ECOL;
-      PTAB->brow = BROW;
-      PTAB->crow = CROW;
-      PTAB->erow = EROW;
+   /*---(universe change)------*/
+   if (a_req == YMAP_UNIVERSE) {
+      MAP_universe (a_req);
+      ++CCOL;
+      MAP_columns  ();
+      ++CROW;
+      MAP_rows     ();
+      DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_req == YMAP_UNIVDISP) {
+      MAP_universe (a_req);
+   }
+   /*---(initialization)-------*/
+   /*> if (a_req == YMAP_INIT) {                                                      <* 
+    *>    TAB_mapper       (a_req);                                                   <* 
+    *>    COL_mapper       (a_req);                                                   <* 
+    *>    ROW_mapper       (a_req);                                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
+   /*---(everything)-----------*/
+   if (a_req == YMAP_INIT) {
+      DEBUG_MAP    yLOG_note    ("full initialization");
+      TAB_mapper       ();
+      COL_mapper       (0);
+      ROW_mapper       (0);
+   }
+   /*---(tab)------------------*/
+   if (a_req == YMAP_INIT) {
+      DEBUG_MAP    yLOG_note    ("full initialization, map tab");
+      TAB_mapper       ();
+   } else {
+      rc = yMAP_axis_grid (YMAP_UNIV , &b, &c, &e, NULL);
+      DEBUG_MAP    yLOG_complex ("TABS"      , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NTAB, 0, CTAB, 0, b, c, e);
+      if (CTAB == c)  {
+         DEBUG_MAP    yLOG_note    ("tab did not change, do not remap");
+      } else {
+         DEBUG_MAP    yLOG_note    ("tab change, remap");
+         a_req = YMAP_INIT;
+         TAB_mapper       ();
+      }
+   }
+   /*---(col)------------------*/
+   if (a_req == YMAP_INIT) {
+      DEBUG_MAP    yLOG_note    ("full initialization, map col");
+      ROW_mapper       (0);
+   } else {
+      rc = yMAP_axis_grid (YMAP_XAXIS, &b, &c, &e, NULL);
+      DEBUG_MAP    yLOG_complex ("COLS"      , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NCOL, BCOL, CCOL, ECOL, b, c, e);
+      if (CCOL == c) {
+         DEBUG_MAP    yLOG_note    ("col did not change, do not remap");
+      } else {
+         DEBUG_MAP    yLOG_note    ("col change, remap");
+         ROW_mapper (0);
+      }
+      BCOL   = b;
+      CCOL   = c;
+      ECOL   = e;
+      DEBUG_MAP    yLOG_complex ("COLS+"     , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NCOL, BCOL, CCOL, ECOL, b, c, e);
+   }
+   /*---(row)------------------*/
+   if (a_req == YMAP_INIT) {
+      DEBUG_MAP    yLOG_note    ("full initialization, map row");
+      COL_mapper       (0);
+   } else {
+      rc = yMAP_axis_grid (YMAP_YAXIS, &b, &c, &e, NULL);
+      DEBUG_MAP    yLOG_complex ("ROWS"      , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NROW, BROW, CROW, EROW, b, c, e);
+      if (CROW == c) {
+         DEBUG_MAP    yLOG_note    ("row did not change, do not remap");
+      } else {
+         DEBUG_MAP    yLOG_note    ("row change, remap");
+         COL_mapper (0);
+      }
+      BROW   = b;
+      CROW   = c;
+      EROW   = e;
+      DEBUG_MAP    yLOG_complex ("ROWS+"     , "%4d § %4dn, %4db, %4dc, %4de § %4db, %4dc, %4de", rc, NROW, BROW, CROW, EROW, b, c, e);
    }
    /*---(get current)----------*/
    x_curr = LOC_cell_at_curr ();
-   if  (MODE_curr () == UMOD_WANDER) {
+   if  (yMODE_curr () == UMOD_WANDER) {
       ;;
    } else if (x_curr == NULL || x_curr->source == NULL) {
+      DEBUG_MAP    yLOG_complex ("CURRENT"   , "%4dt, %4dc, %4dr", CTAB, CCOL, CROW);
       str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
-      yVIKEYS_source (t, "");
+      ySRC_update (t, "·····", "");
       strlcpy (my.reqs_list, "n/a", LEN_RECD);
       strlcpy (my.deps_list, "n/a", LEN_RECD);
       strlcpy (my.like_list, "n/a", LEN_RECD);
@@ -966,7 +1213,8 @@ MAP_mapper           (char a_req)
       g_curr.decs   = '-';
       g_curr.unit   = '-';
    } else {
-      yVIKEYS_source (x_curr->label, x_curr->source);
+      sprintf (t, "%c%c%c%c%c", x_curr->type, x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
+      ySRC_update (x_curr->label, t, x_curr->source);
       yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
       yCALC_disp_pros (x_curr->ycalc, my.deps_list);
       yCALC_disp_like (x_curr->ycalc, my.like_list);

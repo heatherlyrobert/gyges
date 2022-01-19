@@ -70,32 +70,39 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_PROG   yLOG_info     ("namesake", P_NAMESAKE);
    DEBUG_PROG   yLOG_info     ("heritage", P_HERITAGE);
    DEBUG_PROG   yLOG_info     ("imagery" , P_IMAGERY);
-   DEBUG_PROG   yLOG_info     ("gyges"   , PROG_version    ());
-   DEBUG_PROG   yLOG_info     ("yURG"    , yURG_version    ());
-   DEBUG_PROG   yLOG_info     ("ySTR"    , ySTR_version    ());
-   DEBUG_PROG   yLOG_info     ("yLOG"    , yLOGS_version   ());
-   DEBUG_PROG   yLOG_info     ("yRPN"    , yRPN_version    ());
-   DEBUG_PROG   yLOG_info     ("yVIKEYS" , yVIKEYS_version ());
-   DEBUG_PROG   yLOG_info     ("yCALC"   , yCALC_version   ());
-   DEBUG_PROG   yLOG_info     ("yPARSE"  , yPARSE_version  ());
+   DEBUG_PROG   yLOG_info     ("gyges"   , PROG_version      ());
+   DEBUG_PROG   yLOG_info     ("yURG"    , yURG_version      ());
+   DEBUG_PROG   yLOG_info     ("ySTR"    , ySTR_version      ());
+   DEBUG_PROG   yLOG_info     ("yLOG"    , yLOGS_version     ());
+   DEBUG_PROG   yLOG_info     ("yRPN"    , yRPN_version      ());
+   DEBUG_PROG   yLOG_info     ("yVICURS" , yVICURSES_version ());
+   DEBUG_PROG   yLOG_info     ("yMODE"   , yMODE_version     ());
+   DEBUG_PROG   yLOG_info     ("yKEYS"   , yKEYS_version     ());
+   DEBUG_PROG   yLOG_info     ("yMACRO"  , yMACRO_version    ());
+   DEBUG_PROG   yLOG_info     ("yVIEW"   , yVIEW_version     ());
+   DEBUG_PROG   yLOG_info     ("yMAP"    , yMAP_version      ());
+   DEBUG_PROG   yLOG_info     ("ySRC"    , ySRC_version      ());
+   DEBUG_PROG   yLOG_info     ("yCALC"   , yCALC_version     ());
+   DEBUG_PROG   yLOG_info     ("yPARSE"  , yPARSE_version    ());
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    /*---(yvikeys config)-----------------*/
    my.btree = 'y';
    api_ysort_init ();
-   rc = yVIKEYS_init         (MODE_MAP);
-   yVIKEYS_dump_add ("btree"      , api_ysort_btree_dump);
-   yVIKEYS_dump_add ("seq"        , yCALC_seq_dump);
-   yVIKEYS_dump_add ("big"        , PROG_bigdump);
+   yVICURSES_init   ("gyges spreadsheet", P_VERNUM, MODE_MAP);
+   /*> rc = yMODE_init (MODE_MAP);                                                    <*/
+   /*> yVIKEYS_dump_add ("btree"      , api_ysort_btree_dump);                        <*/
+   /*> yVIKEYS_dump_add ("seq"        , yCALC_seq_dump);                              <*/
+   /*> yVIKEYS_dump_add ("big"        , PROG_bigdump);                                <*/
    NODE_init ();
    TAB_init  ();
    LOC_init  ();
-   if (rc == 0)  rc = yVIKEYS_whoami       (P_FULLPATH, P_VERNUM, P_VERTXT, P_NAMESAKE, P_SUFFIX, P_CONTENT, api_yvikeys_handlers, FILE_prepper, FILE_finisher);
    rc = FILE_init     ();
-   if (rc == 0)  rc = yVIKEYS_macro_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
-   if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);
-   if (rc == 0)  rc = yVIKEYS_src_config   (api_yvikeys_saver    );
-   if (rc == 0)  rc = yVIKEYS_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_router, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
+   rc = yFILE_whoami       (P_FULLPATH, P_VERNUM, P_VERTXT, P_ONELINE, P_SUFFIX, P_CONTENT, api_yvikeys_handlers, FILE_prepper, FILE_finisher);
+   if (rc == 0)  rc = yMACRO_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
+   /*> if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);   <*/
+   if (rc == 0)  rc = ySRC_config   (api_yvikeys_saver);
+   if (rc == 0)  rc = yMAP_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_router, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
    if (rc <  0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
@@ -116,11 +123,11 @@ PROG_init          (int a_argc, char *a_argv[])
       return rc;
    }
    /*---(ystr config)--------------------*/
-   /*> rc = str0gyges (LOC_checker);                                                  <*/
+   rc = str0gyges (LOC_checker);
    /*---(yrpn config)--------------------*/
-   rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yVIKEYS_mreg_inside);
+   rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yMAP_inside);
    /*---(globals)------------------------*/
-   if (rc == 0)  rc = yVIKEYS_hist_config (HIST_undo, HIST_redo);
+   /*> if (rc == 0)  rc = yVIKEYS_hist_config (HIST_undo, HIST_redo);                 <*/
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
    /*---(complete)-----------------------*/
@@ -141,7 +148,7 @@ PROG_args          (int argc, char *argv[])
    char        t           [LEN_FULL]   = "";
    /*---(begin)--------------------------*/
    /*> FILE_rename ("");                                                              <*/
-   yVIKEYS_args (argc, argv);
+   /*> yVIKEYS_args (argc, argv);                                                     <*/
    /*---(process)------------------------*/
    for (i = 1; i < argc; ++i) {
       a = argv[i];
@@ -169,7 +176,7 @@ PROG_args          (int argc, char *argv[])
    /*---(update title)-------------------*/
    if (strlen (x_name) > 0) {
       sprintf (t, ":file %s", x_name);
-      yVIKEYS_cmds_direct (t);
+      yCMD_direct (t);
    }
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
@@ -199,12 +206,11 @@ PROG_begin         (void)
    /*---(prepare)------------------------*/
    /*> DEP_init  ();                                                                  <*/
    /*---(overall)------------------------*/
-   yVIKEYS_view_config   ("gyges spreadsheet", P_VERNUM, YVIKEYS_CURSES, 0, 0, 0);
-   yVIKEYS_map_config    (YVIKEYS_OFFICE, MAP_mapper, api_yvikeys_locator, api_yvikeys_addressor);
-   yVIKEYS_bufs_config   (TAB_switch_key , TAB_browse);
-   yVIKEYS_hist_config   (HIST_undo, HIST_redo);
-   HIST_init ();
-   yVIKEYS_mode_formatter (api_yvikeys_format, api_yvikeys_units, NULL);
+   /*> yVIEW_config   ("gyges spreadsheet", P_VERNUM, YVIEW_CURSES, 0, 0, 0);         <*/
+   yMAP_config       (YMAP_OFFICE, api_ymap_locator, api_ymap_addressor, api_ymap_sizer, api_ymap_entry, api_ymap_placer, api_ymap_done);
+   yMAP_mundo_config (5, api_ymap_mundo);
+   yMAP_univ_config  (TAB_switch);
+   yMAP_formatter    (api_ymap_formatter);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -218,20 +224,22 @@ PROG_final         (void)
    /*> CURS_screen_reset ();                                                          <*/
    yCALC_calculate   ();
    /*---(status options)-----------------*/
-   yVIKEYS_view_option (YVIKEYS_STATUS, "tab"    , CURS_status_tab     , "tab name, type, and dimensions"             );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "cell"   , CURS_status_cell    , "details of current cell"                    );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "deps"   , CURS_status_deps    , "details of current cell dependencies"       );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "rpn"    , CURS_status_rpn     , "details of current cell rpn notation"       );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "mundo"  , CURS_status_history , "change history for debugging"               );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "error"  , CURS_status_error   , "details on recent errors"                   );
-   yVIKEYS_view_option (YVIKEYS_STATUS, "detail" , CURS_status_detail  , "details on recent errors"                   );
-   yVIKEYS_view_option (YVIKEYS_BUFFER, "summary", CURS_bufsum         , "one-line buffer inventory"                  );
-   yVIKEYS_view_option (YVIKEYS_BUFFER, "detail" , CURS_bufdet         , "multi-line buffer list"                     );
-   yVIKEYS_cmds_direct (":status mode");
-   yVIKEYS_cmds_direct (":read");
-   MAP_mapper (YVIKEYS_INIT);
-   yVIKEYS_map_refresh ();
-   yVIKEYS_cmds_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );
+   yVIEW_switch_add (YVIEW_STATUS, "gyges"  , "", CURS_current_status , "current location information"               );
+   yVIEW_switch_add (YVIEW_STATUS, "tab"    , "", CURS_status_tab     , "tab name, type, and dimensions"             );
+   yVIEW_switch_add (YVIEW_STATUS, "cell"   , "", CURS_status_cell    , "details of current cell"                    );
+   yVIEW_switch_add (YVIEW_STATUS, "deps"   , "", CURS_status_deps    , "details of current cell dependencies"       );
+   yVIEW_switch_add (YVIEW_STATUS, "rpn"    , "", CURS_status_rpn     , "details of current cell rpn notation"       );
+   /*> yVIEW_switch_add (YVIEW_STATUS, "mundo"  , CURS_status_history , "change history for debugging"               );   <*/
+   yVIEW_switch_add (YVIEW_STATUS, "error"  , "", CURS_status_error   , "details on recent errors"                   );
+   yVIEW_switch_add (YVIEW_STATUS, "detail" , "", CURS_status_detail  , "details on recent errors"                   );
+   yVIEW_switch_add (YVIEW_BUFFER, "summary", "", CURS_bufsum         , "one-line buffer inventory"                  );
+   yVIEW_switch_add (YVIEW_BUFFER, "detail" , "", CURS_bufdet         , "multi-line buffer list"                     );
+   yCMD_direct (":status mode");
+   yCMD_direct (":layout gyges");
+   yCMD_direct (":formula label");
+   /*> yCMD_direct (":read");                                                         <*/
+   /*> MAP_mapper (YMAP_INIT);                                                        <*/
+   /*> yCMD_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );   <*/
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -253,11 +261,10 @@ PROG_end             (void)
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    my.btree = '-';
-   yCALC_wrap    ();
-   CELL_wrap     ();
-   LOC_wrap      ();
-   yVIKEYS_wrap ();
-   HIST_wrap    ();
+   yCALC_wrap     ();
+   CELL_wrap      ();
+   LOC_wrap       ();
+   yVICURSES_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_PROG   yLOGS_end     ();
    return 0;
@@ -400,6 +407,13 @@ PROG__unit_loud      (void)
    yURG_name   ("exec"  , YURG_ON);
    yURG_name   ("adjs"  , YURG_ON);
    yURG_name   ("yparse", YURG_ON);
+   yURG_name   ("ymode" , YURG_ON);
+   yURG_name   ("ykeys" , YURG_ON);
+   yURG_name   ("ymacro", YURG_ON);
+   yURG_name   ("ycmd"  , YURG_ON);
+   yURG_name   ("ysrc"  , YURG_ON);
+   yURG_name   ("ymap"  , YURG_ON);
+   yURG_name   ("yview" , YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

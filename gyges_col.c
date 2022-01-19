@@ -114,7 +114,9 @@ char COL_writer_all  (void) { return NODE_writer_all (IS_COL); }
 /*====================------------------------------------====================*/
 static void  o___YVIKEYS_________o () { return; }
 
-char COL_mapper      (char a_req) { return NODE_map_update (IS_COL, a_req); }
+char COL_mapper      (char a_level) { return NODE_map_update (IS_COL, a_level); }
+
+char COL_entry       (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used) { return NODE_entry (IS_COL, a_pos, r_ref, r_wide, r_used); }
 
 
 

@@ -396,10 +396,10 @@ NODE_init            (void)
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(command line commands)----------*/
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colreset"    , ""    , ""     , COL_cleanse_curr           , "make all columns default size"        );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "colwide"     , ""    , "sii"  , COL_multisize              , "change the size of columns"           );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_cleanse_curr           , "make all rows default size"           );
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_multisize              , "change the size of columns"           );
+   rc = yCMD_add (YCMD_M_BUFFERS, "colreset"    , ""    , ""     , COL_cleanse_curr           , "make all columns default size"        );
+   rc = yCMD_add (YCMD_M_BUFFERS, "colwide"     , ""    , "sii"  , COL_multisize              , "change the size of columns"           );
+   rc = yCMD_add (YCMD_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_cleanse_curr           , "make all rows default size"           );
+   rc = yCMD_add (YCMD_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_multisize              , "change the size of columns"           );
    /*---(add yparse specification)-------*/
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
@@ -688,8 +688,8 @@ NODE_max             (char a_index, char a_type)
    /*---(find max)-----------------------*/
    DEBUG_LOCS   yLOG_value   ("max"       , x_tab->ncol);
    DEBUG_LOCS   yLOG_value   ("max"       , x_tab->nrow);
-   IF_COL   x_max = x_tab->ncol;
-   ELSE_ROW x_max = x_tab->nrow;
+   IF_COL   x_max = x_tab->ncol - 1;
+   ELSE_ROW x_max = x_tab->nrow - 1;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_max;
@@ -803,7 +803,7 @@ NODE_size                (char a_index, char a_type, short a_ref)
 }
 
 char
-NODE__resize            (char a_index, char a_type, short a_ref, char a_size, char a_key, char a_mode)
+NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_key, char a_mode)
 {  /*---(notes)--------------------------*/
    /*
     * metis § ----- § if col/row set back to default and empty, remove it
@@ -820,9 +820,9 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
    char        x_prev      =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr, %3ds, %c, %c", a_index, a_type, a_ref, a_size, a_key, a_mode);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr, %3ds, %c, %c", u, a_type, a_ref, a_size, a_key, a_mode);
    /*---(defense)------------------------*/
-   rc = TAB_pointer (&x_tab, a_index);
+   rc = TAB_pointer (&x_tab, u);
    DEBUG_LOCS   yLOG_point   ("x_tab"     , x_tab);
    --rce;  if (x_tab == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -849,7 +849,8 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
       a_size = x_node->size;
       /*---(width)-------------*/
       switch (a_key) {
-      case  'm' : a_size  = 0;                           break;
+      case  'M' : a_size  = MIN_WIDTH;                   break;
+      case  'm' : a_size  = 4;                           break;
       case  'n' : a_size  = DEF_WIDTH;                   break;
       case  'N' : a_size  = 12;                          break;
       case  'w' : a_size  = 20;                          break;
@@ -861,10 +862,10 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
       }
       /*---(height)------------*/
       switch (a_key) {
-      case  'J' : a_size  = 0;                           break;
+      case  'J' : a_size  = MIN_HEIGHT;                  break;
       case  'j' : a_size -= 1;                           break;
       case  'k' : a_size += 1;                           break;
-      case  'K' : a_size  = 4;                           break;
+      case  'K' : a_size  = MAX_HEIGHT;                  break;
       }
       /*---(done)--------------*/
    }
@@ -885,8 +886,6 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
    }
    /*---(update)-------------------------*/
    x_node->size = a_size;
-   IF_COL   HIST_size   (a_mode, HIST_WIDTH   , a_index, a_ref, CROW, x_prev, a_size);
-   ELSE_ROW HIST_size   (a_mode, HIST_HEIGHT  , a_index, CCOL, a_ref, x_prev, a_size);
    /*---(check if default size)----------*/
    IF_DEFAULT {
       DEBUG_LOCS   yLOG_note    ("making default size");
@@ -911,16 +910,14 @@ NODE__resize            (char a_index, char a_type, short a_ref, char a_size, ch
       IF_COL   x_curr = x_curr->c_next;
       ELSE_ROW x_curr = x_curr->r_next;
    }
-   /*---(reset headers)------------------*/
-   yVIKEYS_map_refresh ();
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return c;
+   return x_prev;
 }
 
-char NODE_resize     (char a_index, char a_type, short a_ref, char a_size) { return NODE__resize (a_index, a_type, a_ref, a_size, 0, HIST_BEG); }
+char NODE_resize     (char a_index, char a_type, short a_ref, char a_size) { return NODE__resize (a_index, a_type, a_ref, a_size, 0, YMAP_BEG); }
 
-char NODE_reset      (char a_index, char a_type, short a_ref) { return NODE__resize (a_index, a_type, a_ref, -1, 0, HIST_BEG); }
+char NODE_reset      (char a_index, char a_type, short a_ref) { return NODE__resize (a_index, a_type, a_ref, -1, 0, YMAP_BEG); }
 
 char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
 NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
@@ -951,8 +948,8 @@ NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
    IF_COL   x_ref = x_col;
    ELSE_ROW x_ref = x_row;
    for (x_off = 0; x_off < a_count; ++x_off) {
-      if (x_off == 0)  rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, HIST_BEG);
-      else             rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, HIST_ADD);
+      if (x_off == 0)  rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, YMAP_BEG);
+      else             rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, YMAP_ADD);
       DEBUG_INPT  yLOG_value   ("risize"    , rc);
       --rce;  if (rc < 0) {
          DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
@@ -970,7 +967,7 @@ NODE_multikey      (char a_type, char a_key)
    /*  update all cells to new width, either a standard size, or a specific   */
    /*  value communicated as a negative number.                               */
    /*---(locals)-----------+-----------+-*/
-   int         b, xb, xe, yb, ye;
+   ushort      u, xb, xe, yb, ye;
    int         x_size      = 0;
    short       x_pos, x_beg, x_end;
    /*---(header)-------------------------*/
@@ -981,14 +978,14 @@ NODE_multikey      (char a_type, char a_key)
       a_key  = 0;
    }
    /*---(get coordinates)-------------*/
-   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
-   DEBUG_LOCS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", b, xb, xe, yb, ye);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
+   DEBUG_LOCS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
    IF_COL   { x_beg = xb; x_end = xe; }
    ELSE_ROW { x_beg = yb; x_end = ye; }
    DEBUG_LOCS   yLOG_complex ("range"     , "%4db..%4de", x_beg, x_end);
    for (x_pos = x_beg; x_pos <= x_end; ++x_pos) {
-      if (x_pos == x_beg)  NODE__resize (b, a_type, x_pos, x_size, a_key, HIST_BEG);
-      else                 NODE__resize (b, a_type, x_pos, x_size, a_key, HIST_ADD);
+      if (x_pos == x_beg)  NODE__resize (u, a_type, x_pos, x_size, a_key, YMAP_BEG);
+      else                 NODE__resize (u, a_type, x_pos, x_size, a_key, YMAP_ADD);
    }
    /*---(complete)---------------------------*/
    DEBUG_LOCS  yLOG_exit   (__FUNCTION__);
@@ -1263,391 +1260,502 @@ char NODE_writer_all (char a_type) { return NODE_writer_driver (-1, a_type, -1);
 /*====================------------------------------------====================*/
 static void  o___MAPPER__________o () { return; }
 
-char
-NODE_map_init              (char a_type)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   tMAPPED    *x_map       = NULL;
-   /*---(prepare)------------------------*/
-   IF_COL   x_map   = &g_xmap;
-   ELSE_ROW x_map   = &g_ymap;
-   /*---(clear)--------------------------*/
-   x_map->ubeg = x_map->ucur = x_map->uend  = x_map->ulen  = x_map->utend = 0;
-   x_map->gbeg = x_map->gcur = x_map->gend = 0;
-   /*---(complete)-----------------------*/
-   return 0;
-}
+/*> char                                                                              <* 
+ *> NODE_map_init              (char a_type)                                          <* 
+ *> {                                                                                 <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                       <* 
+ *>    tMAPPED    *x_map       = NULL;                                                <* 
+ *>    /+---(prepare)------------------------+/                                       <* 
+ *>    IF_COL   x_map   = &g_xmap;                                                    <* 
+ *>    ELSE_ROW x_map   = &g_ymap;                                                    <* 
+ *>    /+---(clear)--------------------------+/                                       <* 
+ *>    x_map->ubeg = x_map->ucur = x_map->uend  = x_map->ulen  = x_map->utend = 0;    <* 
+ *>    x_map->gbeg = x_map->gcur = x_map->gend = 0;                                   <* 
+ *>    /+---(complete)-----------------------+/                                       <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
+
+/*> char                                                                                                            <* 
+ *> NODE_map_clear          (tMAPPED **a_map, tTAB **a_tab, int *a_max, int *a_curr, tNODE **a_node, char a_type)   <* 
+ *> {                                                                                                               <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                     <* 
+ *>    char        rce         =  -10;                                                                              <* 
+ *>    char        rc          =    0;                                                                              <* 
+ *>    tMAPPED    *x_map       = NULL;                                                                              <* 
+ *>    tTAB       *x_tab       = NULL;                                                                              <* 
+ *>    tNODE      *x_node      = NULL;                                                                              <* 
+ *>    int         i           =    0;                                                                              <* 
+ *>    int         x_len       =    0;                                                                              <* 
+ *>    int         x_max       =    0;                                                                              <* 
+ *>    int         x_curr      =    0;                                                                              <* 
+ *>    int         x_opps      =    0;                                                                              <* 
+ *>    char        x_type      =  '-';                                                                              <* 
+ *>    /+---(header)-------------------------+/                                                                     <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                                                    <* 
+ *>    /+---(prepare)------------------------+/                                                                     <* 
+ *>    IF_COL   x_map   = &g_xmap;                                                                                  <* 
+ *>    ELSE_ROW x_map   = &g_ymap;                                                                                  <* 
+ *>    /+---(clear)--------------------------+/                                                                     <* 
+ *>    for (i= 0; i < LEN_HUGE; ++i)  x_map->map  [i] =  YVIKEYS_EMPTY;                                             <* 
+ *>    x_map->umin = x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;                                 <* 
+ *>    x_map->umax = x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;                                 <* 
+ *>    /+---(screen)-------------------------+/                                                                     <* 
+ *>    IF_COL   yVIKEYS_view_bounds (YVIEW_MAIN, NULL, NULL, &x_len, NULL, NULL, NULL);                           <* 
+ *>    ELSE_ROW yVIKEYS_view_bounds (YVIEW_MAIN, NULL, NULL, NULL, NULL, NULL, &x_len);                           <* 
+ *>    x_map->uavail = x_len;                                                                                       <* 
+ *>    /+---(get tab)------------------------+/                                                                     <* 
+ *>    rc = TAB_by_index (&x_tab, CTAB);                                                                            <* 
+ *>    DEBUG_MAP    yLOG_complex ("tab"       , "%3drc, %-10.10p", rc, x_tab);                                      <* 
+ *>    --rce;  if (rc < 0 || x_tab == NULL) {                                                                       <* 
+ *>       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);                                                            <* 
+ *>       return rce;                                                                                               <* 
+ *>    }                                                                                                            <* 
+ *>    /+---(maximum)------------------------+/                                                                     <* 
+ *>    IF_COL    x_max   = NCOL;                                                                                    <* 
+ *>    ELSE_ROW  x_max   = NROW;                                                                                    <* 
+ *>    DEBUG_MAP    yLOG_complex ("map"       , "%-10.10p, max %4d", x_map, x_max);                                 <* 
+ *>    /+---(find the opposite node)---------+/                                                                     <* 
+ *>    IF_COL   { x_type = IS_ROW; x_curr = g_xmap.gcur; x_opps = g_ymap.gcur; }                                    <* 
+ *>    ELSE_ROW { x_type = IS_COL; x_curr = g_ymap.gcur; x_opps = g_xmap.gcur; }                                    <* 
+ *>    rc = NODE_by_index (&x_node, x_tab, x_type, x_opps);                                                         <* 
+ *>    DEBUG_MAP    yLOG_complex ("node"      , "%3drc, %-10.10p", rc, x_node);                                     <* 
+ *>    if (rc == 0 && x_node != NULL) {                                                                             <* 
+ *>       DEBUG_MAP    yLOG_complex ("node more" , "%c %4d %4d", x_node->type, x_node->ref, x_node->count);         <* 
+ *>    }                                                                                                            <* 
+ *>    /+---(clear used)---------------------+/                                                                     <* 
+ *>    for (i = 0; i <  LEN_HUGE; ++i) x_map->used [i] = '\0';                                                      <* 
+ *>    for (i = 0; i <= x_max   ; ++i) x_map->used [i] = '·';                                                       <* 
+ *>    /+---(save)---------------------------+/                                                                     <* 
+ *>    if (a_map   != NULL)  *a_map   = x_map;                                                                      <* 
+ *>    if (a_tab   != NULL)  *a_tab   = x_tab;                                                                      <* 
+ *>    if (a_max   != NULL)  *a_max   = x_max;                                                                      <* 
+ *>    if (a_curr  != NULL)  *a_curr  = x_curr;                                                                     <* 
+ *>    if (a_node  != NULL)  *a_node  = x_node;                                                                     <* 
+ *>    /+---(complete)-----------------------+/                                                                     <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                    <* 
+ *>    return 0;                                                                                                    <* 
+ *> }                                                                                                               <*/
+
+/*> char                                                                               <* 
+ *> NODE_map_mapper            (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type)   <* 
+ *> {                                                                                  <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                        <* 
+ *>    char        rce         =  -10;                                                 <* 
+ *>    char        rc          =    0;                                                 <* 
+ *>    tNODE      *x_node      = NULL;                                                 <* 
+ *>    int         x_ref       =    0;                                                 <* 
+ *>    int         x_pos       =    0;                                                 <* 
+ *>    char        x_size      =    0;                                                 <* 
+ *>    int         i           =    0;                                                 <* 
+ *>    /+---(header)-------------------------+/                                        <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                       <* 
+ *>    /+---(big mins)--------------------+/                                           <* 
+ *>    a_map->umin = 0;                                                                <* 
+ *>    a_map->gmin = 0;                                                                <* 
+ *>    /+---(fill main map)------------------+/                                        <* 
+ *>    rc = NODE_by_cursor (&x_node, a_tab, a_type, '[');                              <* 
+ *>    for (x_ref = 0; x_ref <= a_max; ++x_ref) {                                      <* 
+ *>       /+---(get size)----------+/                                                  <* 
+ *>       if (rc != 0 || x_node == NULL) {                                             <* 
+ *>          IF_COL   x_size = DEF_WIDTH;                                              <* 
+ *>          ELSE_ROW x_size = DEF_HEIGHT;                                             <* 
+ *>       } else {                                                                     <* 
+ *>          if (x_ref < x_node->ref) {                                                <* 
+ *>             IF_COL   x_size = DEF_WIDTH;                                           <* 
+ *>             ELSE_ROW x_size = DEF_HEIGHT;                                          <* 
+ *>          } else {                                                                  <* 
+ *>             x_size = x_node->size;                                                 <* 
+ *>             rc = NODE_by_cursor (&x_node, a_tab, a_type, '>');                     <* 
+ *>          }                                                                         <* 
+ *>       }                                                                            <* 
+ *>       /+---(fill)--------------+/                                                  <* 
+ *>       for (i = 0; i < x_size; ++i)  a_map->map  [x_pos++] = x_ref;                 <* 
+ *>    }                                                                               <* 
+ *>    /+---(big maxs)--------------------+/                                           <* 
+ *>    a_map->gmax = a_max;                                                            <* 
+ *>    a_map->umax = x_pos - 1;                                                        <* 
+ *>    /+---(complete)-----------------------+/                                        <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                       <* 
+ *>    return 0;                                                                       <* 
+ *> }                                                                                  <*/
+
+/*> char                                                                                             <* 
+ *> NODE_map_display           (tMAPPED *a_map, char a_type, char a_section, uchar *a_out)           <* 
+ *> {                                                                                                <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                      <* 
+ *>    char        rce         =  -10;                                                               <* 
+ *>    char        i           =    0;                                                               <* 
+ *>    char        x_off       =    0;                                                               <* 
+ *>    char       *x_markers   = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";   <* 
+ *>    char        x_max       =   80;                                                               <* 
+ *>    /+---(break out)----------------------+/                                                      <* 
+ *>    x_off = a_section * x_max;                                                                    <* 
+ *>    for (i = 0; i < x_max; ++i) {                                                                 <* 
+ *>       if (a_map->map [i + x_off] == YVIKEYS_EMPTY)                                               <* 
+ *>          a_out [i] = '·';                                                                        <* 
+ *>       else if (i > 0 && a_map->map [i + x_off] == a_map->map [i + x_off - 1])                    <* 
+ *>          a_out [i] = '-';                                                                        <* 
+ *>       else if (a_map->map [i + x_off] < 62)                                                      <* 
+ *>          a_out [i] = x_markers [a_map->map [i + x_off]];                                         <* 
+ *>       else                                                                                       <* 
+ *>          a_out [i] = '¬';                                                                        <* 
+ *>    }                                                                                             <* 
+ *>    a_out [x_max] = '\0';                                                                         <* 
+ *>    /+---(complete)-----------------------+/                                                      <* 
+ *>    return 0;                                                                                     <* 
+ *> }                                                                                                <*/
+
+/*> char                                                                                                                                                    <* 
+ *> NODE_map_used       (tMAPPED *a_map, tNODE *a_node, int a_max, int a_curr, char a_type)                                                                 <* 
+ *> {                                                                                                                                                       <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                                             <* 
+ *>    char        rce         =  -10;                                                                                                                      <* 
+ *>    char        rc          =    0;                                                                                                                      <* 
+ *>    tCELL      *x_cell      = NULL;                                                                                                                      <* 
+ *>    int         n           =    0;                                                                                                                      <* 
+ *>    /+---(header)-------------------------+/                                                                                                             <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                                                                                            <* 
+ *>    DEBUG_LOCS   yLOG_complex ("args"      , "a_map %-10.10p, a_node %-10.10p, a_max %3d, a_curr %3d, type %c", a_map, a_node, a_max, a_curr, a_type);   <* 
+ *>    /+---(check node)---------------------+/                                                                                                             <* 
+ *>    if (a_node == NULL) {                                                                                                                                <* 
+ *>       DEBUG_MAP    yLOG_note    ("node null, none used");                                                                                               <* 
+ *>       DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                                         <* 
+ *>       return 0;                                                                                                                                         <* 
+ *>    }                                                                                                                                                    <* 
+ *>    DEBUG_MAP    yLOG_complex ("node"      , "%c %4d %4d", a_node->type, a_node->ref, a_node->count);                                                    <* 
+ *>    /+---(mark used)----------------------+/                                                                                                             <* 
+ *>    x_cell = a_node->n_head;                                                                                                                             <* 
+ *>    while (rc == 0 && x_cell != NULL) {                                                                                                                  <* 
+ *>       DEBUG_MAP    yLOG_info    ("cell"      , x_cell->label);                                                                                          <* 
+ *>       IF_COL   n = x_cell->col;                                                                                                                         <* 
+ *>       ELSE_ROW n = x_cell->row;                                                                                                                         <* 
+ *>       a_map->used [n] = '+';                                                                                                                            <* 
+ *>       IF_COL   x_cell = x_cell->r_next;                                                                                                                 <* 
+ *>       ELSE_ROW x_cell = x_cell->c_next;                                                                                                                 <* 
+ *>    }                                                                                                                                                    <* 
+ *>    /+---(mark current)-------------------+/                                                                                                             <* 
+ *>    if (a_map->used [a_curr] == '+')  a_map->used [a_curr] = 'Ï';                                                                                        <* 
+ *>    else                              a_map->used [a_curr] = 'o';                                                                                        <* 
+ *>    /+---(complete)-----------------------+/                                                                                                             <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                                            <* 
+ *>    return 0;                                                                                                                                            <* 
+ *> }                                                                                                                                                       <*/
+
+/*> char                                                                               <* 
+ *> NODE_map_absolute          (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type)   <* 
+ *> {                                                                                  <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                        <* 
+ *>    char        rce         =  -10;                                                 <* 
+ *>    char        rc          =    0;                                                 <* 
+ *>    tNODE      *x_node      = NULL;                                                 <* 
+ *>    char        x_min       =   -1;                                                 <* 
+ *>    char        x_max       =   -1;                                                 <* 
+ *>    /+---(header)-------------------------+/                                        <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                       <* 
+ *>    /+---(default)------------------------+/                                        <* 
+ *>    a_map->gamin = -1;                                                              <* 
+ *>    a_map->gamax = -1;                                                              <* 
+ *>    /+---(find min)-----------------------+/                                        <* 
+ *>    rc = NODE_by_cursor (&x_node, a_tab, a_type, '[');                              <* 
+ *>    while (rc == 0 && x_node != NULL) {                                             <* 
+ *>       if (x_node->count > 0) {                                                     <* 
+ *>          x_min = x_node->ref;                                                      <* 
+ *>          break;                                                                    <* 
+ *>       }                                                                            <* 
+ *>       rc = NODE_by_cursor (&x_node, a_tab, a_type, '>');                           <* 
+ *>    }                                                                               <* 
+ *>    /+---(find max)-----------------------+/                                        <* 
+ *>    rc = NODE_by_cursor (&x_node, a_tab, a_type, ']');                              <* 
+ *>    while (rc == 0 && x_node != NULL) {                                             <* 
+ *>       if (x_node->count > 0)  {                                                    <* 
+ *>          x_max = x_node->ref;                                                      <* 
+ *>          break;                                                                    <* 
+ *>       }                                                                            <* 
+ *>       rc = NODE_by_cursor (&x_node, a_tab, a_type, '<');                           <* 
+ *>    }                                                                               <* 
+ *>    /+---(update)-------------------------+/                                        <* 
+ *>    a_map->gamin = x_min;                                                           <* 
+ *>    a_map->gamax = x_max;                                                           <* 
+ *>    /+---(complete)-----------------------+/                                        <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                       <* 
+ *>    return 0;                                                                       <* 
+ *> }                                                                                  <*/
+
+/*> char                                                                                             <* 
+ *> NODE_map_local             (tMAPPED *a_map, int a_max, int a_curr, tNODE *a_node, char a_type)   <* 
+ *> {                                                                                                <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                      <* 
+ *>    char        rce         =  -10;                                                               <* 
+ *>    char        rc          =    0;                                                               <* 
+ *>    int         i           =    0;                                                               <* 
+ *>    int         n           =    0;                                                               <* 
+ *>    char        x_type      =  '-';                                                               <* 
+ *>    int         x_curr      =    0;                                                               <* 
+ *>    int         x_opps      =    0;                                                               <* 
+ *>    short       x_prev      =   -1;               /+ prev filled               +/                 <* 
+ *>    short       x_next      =   -1;               /+ next filled               +/                 <* 
+ *>    /+---(header)-------------------------+/                                                      <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                                     <* 
+ *>    /+---(default)------------------------+/                                                      <* 
+ *>    a_map->glmin = -1;                                                                            <* 
+ *>    a_map->gprev = -1;                                                                            <* 
+ *>    a_map->gnext = -1;                                                                            <* 
+ *>    a_map->glmax = -1;                                                                            <* 
+ *>    /+---(check node)---------------------+/                                                      <* 
+ *>    if (a_node == NULL) {                                                                         <* 
+ *>       DEBUG_MAP    yLOG_note    ("node null, none used");                                        <* 
+ *>       DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                  <* 
+ *>       return 0;                                                                                  <* 
+ *>    }                                                                                             <* 
+ *>    /+---(glmin)--------------------------+/                                                      <* 
+ *>    DEBUG_MAP    yLOG_point   ("n_head"    , a_node->n_head);                                     <* 
+ *>    if (a_node->n_head != NULL) {                                                                 <* 
+ *>       IF_COL   a_map->glmin = a_node->n_head->col;                                               <* 
+ *>       ELSE_ROW a_map->glmin = a_node->n_head->row;                                               <* 
+ *>    }                                                                                             <* 
+ *>    /+---(glmax)--------------------------+/                                                      <* 
+ *>    DEBUG_MAP    yLOG_point   ("n_tail"    , a_node->n_tail);                                     <* 
+ *>    if (a_node->n_tail != NULL) {                                                                 <* 
+ *>       IF_COL   a_map->glmax = a_node->n_tail->col;                                               <* 
+ *>       ELSE_ROW a_map->glmax = a_node->n_tail->row;                                               <* 
+ *>    }                                                                                             <* 
+ *>    /+---(complete)-----------------------+/                                                      <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                     <* 
+ *>    return 0;                                                                                     <* 
+ *> }                                                                                                <*/
+
+/*> char                                                                              <* 
+ *> NODE_map_char       (uchar *a_map, short a_curr)                                  <* 
+ *> {                                                                                 <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                       <* 
+ *>    uchar       c           =  '·';                                                <* 
+ *>    uchar      *p           = NULL;                                                <* 
+ *>    uchar      *x_spaces    = " ·o";                                               <* 
+ *>    /+---(header)-------------------------+/                                       <* 
+ *>    DEBUG_MAP    yLOG_senter  (__FUNCTION__);                                      <* 
+ *>    c = a_map [a_curr];                                                            <* 
+ *>    DEBUG_MAP    yLOG_sint    (c);                                                 <* 
+ *>    p = strchr (x_spaces, c);                                                      <* 
+ *>    DEBUG_MAP    yLOG_spoint  (p);                                                 <* 
+ *>    if (c == 0 || p != NULL)    c = ' ';                                           <* 
+ *>    else                        c = '+';                                           <* 
+ *>    DEBUG_MAP    yLOG_sint    (c);                                                 <* 
+ *>    DEBUG_MAP    yLOG_sexit   (__FUNCTION__);                                      <* 
+ *>    return c;                                                                      <* 
+ *> }                                                                                 <*/
+
+/*> char                                                                              <* 
+ *> NODE_map_ends       (uchar *a_map, int a_curr, int *a_prev, int *a_next)          <* 
+ *> {                                                                                 <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                       <* 
+ *>    char        rce         =  -10;                                                <* 
+ *>    short       x_max       =    0;                                                <* 
+ *>    short       i           =    0;                                                <* 
+ *>    short       x_found     =    0;                                                <* 
+ *>    uchar       p           =  '·';                                                <* 
+ *>    uchar       c           =  '·';                                                <* 
+ *>    uchar       n           =  '·';                                                <* 
+ *>    /+---(prepare)------------------------+/                                       <* 
+ *>    if (a_prev != NULL)  *a_prev = -1;                                             <* 
+ *>    if (a_next != NULL)  *a_next = -1;                                             <* 
+ *>    /+---(max)----------------------------+/                                       <* 
+ *>    --rce;  if (a_map  == NULL)         return rce;                                <* 
+ *>    x_max = strllen (a_map, LEN_HUGE) - 1;                                         <* 
+ *>    --rce;  if (x_max  <= 0   )         return rce;                                <* 
+ *>    --rce;  if (a_curr <  0    )        return rce;                                <* 
+ *>    --rce;  if (a_curr >  x_max)        return rce;                                <* 
+ *>    /+---(header)-------------------------+/                                       <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                      <* 
+ *>    /+---(prev)---------------------------+/                                       <* 
+ *>    DEBUG_MAP    yLOG_note    ("working previous");                                <* 
+ *>    x_found = -1;                                                                  <* 
+ *>    c = NODE_map_char (a_map, a_curr);                                             <* 
+ *>    if (a_curr > 0) {                                                              <* 
+ *>       p = NODE_map_char (a_map, a_curr - 1);                                      <* 
+ *>       if (c == ' ' || (c == '+' && p == ' ')) {                                   <* 
+ *>          DEBUG_MAP    yLOG_note    ("start in spaces");                           <* 
+ *>          for (i = a_curr - 1; i >= 0; --i) {                                      <* 
+ *>             c = NODE_map_char (a_map, i);                                         <* 
+ *>             if (c == ' ')  continue;                                              <* 
+ *>             x_found = i;                                                          <* 
+ *>             break;                                                                <* 
+ *>          }                                                                        <* 
+ *>       } else {                                                                    <* 
+ *>          DEBUG_MAP    yLOG_note    ("start in filled");                           <* 
+ *>          for (i = a_curr - 1; i >= 0; --i) {                                      <* 
+ *>             if (a_map [i] == '+')  continue;                                      <* 
+ *>             x_found = i + 1;                                                      <* 
+ *>             break;                                                                <* 
+ *>          }                                                                        <* 
+ *>       }                                                                           <* 
+ *>       if (x_found < 0)      x_found = 0;                                          <* 
+ *>       if (a_prev != NULL)   *a_prev = x_found;                                    <* 
+ *>    }                                                                              <* 
+ *>    /+---(prev)---------------------------+/                                       <* 
+ *>    DEBUG_MAP    yLOG_note    ("working next");                                    <* 
+ *>    x_found = -1;                                                                  <* 
+ *>    c = NODE_map_char (a_map, a_curr);                                             <* 
+ *>    if (a_curr < x_max) {                                                          <* 
+ *>       n = NODE_map_char (a_map, a_curr + 1);                                      <* 
+ *>       if (c == ' ' || (c == '+' && n == ' ')) {                                   <* 
+ *>          DEBUG_MAP    yLOG_note    ("start in spaces");                           <* 
+ *>          for (i = a_curr + 1; i <= x_max; ++i) {                                  <* 
+ *>             c = NODE_map_char (a_map, i);                                         <* 
+ *>             if (c == ' ')  continue;                                              <* 
+ *>             x_found = i;                                                          <* 
+ *>             break;                                                                <* 
+ *>          }                                                                        <* 
+ *>       } else {                                                                    <* 
+ *>          DEBUG_MAP    yLOG_note    ("start in filled");                           <* 
+ *>          for (i = a_curr + 1; i <= x_max; ++i) {                                  <* 
+ *>             if (a_map [i] == '+')  continue;                                      <* 
+ *>             x_found = i - 1;                                                      <* 
+ *>             break;                                                                <* 
+ *>          }                                                                        <* 
+ *>       }                                                                           <* 
+ *>       if (x_found < 0)      x_found = x_max;                                      <* 
+ *>       if (a_next != NULL)  *a_next = x_found;                                     <* 
+*>    }                                                                              <* 
+*>    /+---(complete)-----------------------+/                                       <* 
+*>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                      <* 
+*>    return 0;                                                                      <* 
+*> }                                                                                 <*/
+
+/*> char                                                                                                <* 
+ *> NODE_map_update_OLD        (char a_type, char a_req)                                                <* 
+ *> {                                                                                                   <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                         <* 
+ *>    char        rc          =    0;                                                                  <* 
+ *>    tMAPPED    *x_map       = NULL;                                                                  <* 
+ *>    tTAB       *x_tab       = NULL;                                                                  <* 
+ *>    int         x_max       =    0;                                                                  <* 
+ *>    int         x_curr      =    0;                                                                  <* 
+ *>    tNODE      *x_node      = NULL;                                                                  <* 
+ *>    /+---(header)-------------------------+/                                                         <* 
+ *>    DEBUG_MAP    yLOG_enter   (__FUNCTION__);                                                        <* 
+ *>    /+---(clear)--------------------------+/                                                         <* 
+ *>    if (a_req == YMAP_INIT)  NODE_map_init (a_req);                                               <* 
+ *>    if (rc == 0)  rc = NODE_map_clear    (&x_map, &x_tab, &x_max, &x_curr, &x_node, a_type);         <* 
+ *>    if (rc == 0)  rc = NODE_map_mapper   ( x_map,  x_tab,  x_max, a_type);                           <* 
+ *>    if (rc == 0)  rc = NODE_map_used     ( x_map, x_node,  x_max,  x_curr, a_type);                  <* 
+ *>    if (rc == 0)  rc = NODE_map_absolute ( x_map,  x_tab,  x_max, a_type);                           <* 
+ *>    if (rc == 0)  rc = NODE_map_local    ( x_map,  x_max, x_curr, x_node, a_type);                   <* 
+ *>    if (rc == 0)  rc = NODE_map_ends     ( x_map->used, x_curr, &(x_map->gprev), &(x_map->gnext));   <* 
+ *>    /+---(complete)-----------------------+/                                                         <* 
+ *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                        <* 
+ *>    return rc;                                                                                       <* 
+ *> }                                                                                                   <*/
 
 char
-NODE_map_clear          (tMAPPED **a_map, tTAB **a_tab, int *a_max, int *a_curr, tNODE **a_node, char a_type)
+NODE_map_update            (char a_type, char a_level)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tMAPPED    *x_map       = NULL;
-   tTAB       *x_tab       = NULL;
-   tNODE      *x_node      = NULL;
+   uchar       x_axis      =  '-';
+   ushort      x_size      =    0;
+   short       x_avail     =    0;
    int         i           =    0;
-   int         x_len       =    0;
-   int         x_max       =    0;
-   int         x_curr      =    0;
-   int         x_opps      =    0;
-   char        x_type      =  '-';
+   tCELL      *x_curr      = NULL;
+   tNODE      *x_node      = NULL;
+   ushort      x_wide      =    0;
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*---(prepare)------------------------*/
-   IF_COL   x_map   = &g_xmap;
-   ELSE_ROW x_map   = &g_ymap;
-   /*---(clear)--------------------------*/
-   for (i= 0; i < LEN_HUGE; ++i)  x_map->map  [i] =  YVIKEYS_EMPTY;
-   x_map->umin = x_map->gmin = x_map->gamin = x_map->glmin = x_map->gprev = -1;
-   x_map->umax = x_map->gmax = x_map->gamax = x_map->glmax = x_map->gnext = -1;
-   /*---(screen)-------------------------*/
-   IF_COL   yVIKEYS_view_bounds (YVIKEYS_MAIN, NULL, NULL, &x_len, NULL, NULL, NULL);
-   ELSE_ROW yVIKEYS_view_bounds (YVIKEYS_MAIN, NULL, NULL, NULL, NULL, NULL, &x_len);
-   x_map->uavail = x_len;
-   /*---(get tab)------------------------*/
-   rc = TAB_by_index (&x_tab, CTAB);
-   DEBUG_MAP    yLOG_complex ("tab"       , "%3drc, %-10.10p", rc, x_tab);
-   --rce;  if (rc < 0 || x_tab == NULL) {
+   DEBUG_MAP    yLOG_char    ("a_type"    , a_type);
+   DEBUG_MAP    yLOG_complex ("sizes"     , "%4dt, %4dc, %4dr", CTAB, NCOL, NROW);
+   /*---(defense)------------------------*/
+   --rce;  switch (a_type) {
+   case 'c' :
+      x_axis = 'x';
+      x_size = NCOL;
+      break;
+   case 'r' :
+      x_axis = 'y';
+      x_size = NROW;
+      break;
+   default  :
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
+      break;
    }
-   /*---(maximum)------------------------*/
-   IF_COL    x_max   = NCOL;
-   ELSE_ROW  x_max   = NROW;
-   DEBUG_MAP    yLOG_complex ("map"       , "%-10.10p, max %4d", x_map, x_max);
-   /*---(find the opposite node)---------*/
-   IF_COL   { x_type = IS_ROW; x_curr = g_xmap.gcur; x_opps = g_ymap.gcur; }
-   ELSE_ROW { x_type = IS_COL; x_curr = g_ymap.gcur; x_opps = g_xmap.gcur; }
-   rc = NODE_by_index (&x_node, x_tab, x_type, x_opps);
-   DEBUG_MAP    yLOG_complex ("node"      , "%3drc, %-10.10p", rc, x_node);
-   if (rc == 0 && x_node != NULL) {
-      DEBUG_MAP    yLOG_complex ("node more" , "%c %4d %4d", x_node->type, x_node->ref, x_node->count);
-   }
-   /*---(clear used)---------------------*/
-   for (i = 0; i <  LEN_HUGE; ++i) x_map->used [i] = '\0';
-   for (i = 0; i <= x_max   ; ++i) x_map->used [i] = '·';
-   /*---(save)---------------------------*/
-   if (a_map   != NULL)  *a_map   = x_map;
-   if (a_tab   != NULL)  *a_tab   = x_tab;
-   if (a_max   != NULL)  *a_max   = x_max;
-   if (a_curr  != NULL)  *a_curr  = x_curr;
-   if (a_node  != NULL)  *a_node  = x_node;
-   /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-NODE_map_mapper            (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   tNODE      *x_node      = NULL;
-   int         x_ref       =    0;
-   int         x_pos       =    0;
-   char        x_size      =    0;
-   int         i           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*---(big mins)--------------------*/
-   a_map->umin = 0;
-   a_map->gmin = 0;
-   /*---(fill main map)------------------*/
-   rc = NODE_by_cursor (&x_node, a_tab, a_type, '[');
-   for (x_ref = 0; x_ref <= a_max; ++x_ref) {
-      /*---(get size)----------*/
-      if (rc != 0 || x_node == NULL) {
-         IF_COL   x_size = DEF_WIDTH;
-         ELSE_ROW x_size = DEF_HEIGHT;
-      } else {
-         if (x_ref < x_node->ref) {
-            IF_COL   x_size = DEF_WIDTH;
-            ELSE_ROW x_size = DEF_HEIGHT;
-         } else {
-            x_size = x_node->size;
-            rc = NODE_by_cursor (&x_node, a_tab, a_type, '>');
-         }
+   DEBUG_MAP    yLOG_char    ("x_axis"    , x_axis);
+   DEBUG_MAP    yLOG_value   ("x_size"    , x_size);
+   /*---(preparation)--------------------*/
+   rc = yMAP_clear  (x_axis);
+   rc = yMAP_start  (x_axis, x_size);
+   IF_COL    yVIEW_size (YVIEW_MAIN, NULL, NULL, &x_avail, NULL, NULL);
+   ELSE_ROW  yVIEW_size (YVIEW_MAIN, NULL, NULL, NULL, NULL, &x_avail);
+   yMAP_axis_avail (x_axis, x_avail);
+   /*---(update grid)--------------------*/
+   for (i = 0; i < x_size; ++i) {
+      /*---(defaults)--------------------*/
+      IF_COL    x_wide = DEF_WIDTH;
+      ELSE_ROW  x_wide = DEF_HEIGHT;
+      /*---(get cell)--------------------*/
+      IF_COL    x_curr = LOC_cell_at_loc (CTAB, i, CROW);
+      ELSE_ROW  x_curr = LOC_cell_at_loc (CTAB, CCOL, i);
+      /*---(handle used)-----------------*/
+      if (x_curr != NULL) {
+         rc = NODE_by_index (&x_node, CTAB, a_type, i);
+         if (x_node != NULL)   x_wide = x_node->size;
+         rc = yMAP_append (i, x_wide, 'Ï');
       }
-      /*---(fill)--------------*/
-      for (i = 0; i < x_size; ++i)  a_map->map  [x_pos++] = x_ref;
-   }
-   /*---(big maxs)--------------------*/
-   a_map->gmax = a_max;
-   a_map->umax = x_pos - 1;
-   /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-NODE_map_display           (tMAPPED *a_map, char a_type, char a_section, uchar *a_out)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        i           =    0;
-   char        x_off       =    0;
-   char       *x_markers   = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-   char        x_max       =   80;
-   /*---(break out)----------------------*/
-   x_off = a_section * x_max;
-   for (i = 0; i < x_max; ++i) {
-      if (a_map->map [i + x_off] == YVIKEYS_EMPTY)
-         a_out [i] = '·';
-      else if (i > 0 && a_map->map [i + x_off] == a_map->map [i + x_off - 1])
-         a_out [i] = '-';
-      else if (a_map->map [i + x_off] < 62)
-         a_out [i] = x_markers [a_map->map [i + x_off]];
-      else
-         a_out [i] = '¬';
-   }
-   a_out [x_max] = '\0';
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char
-NODE_map_used       (tMAPPED *a_map, tNODE *a_node, int a_max, int a_curr, char a_type)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   tCELL      *x_cell      = NULL;
-   int         n           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "a_map %-10.10p, a_node %-10.10p, a_max %3d, a_curr %3d, type %c", a_map, a_node, a_max, a_curr, a_type);
-   /*---(check node)---------------------*/
-   if (a_node == NULL) {
-      DEBUG_MAP    yLOG_note    ("node null, none used");
-      DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   DEBUG_MAP    yLOG_complex ("node"      , "%c %4d %4d", a_node->type, a_node->ref, a_node->count);
-   /*---(mark used)----------------------*/
-   x_cell = a_node->n_head;
-   while (rc == 0 && x_cell != NULL) {
-      DEBUG_MAP    yLOG_info    ("cell"      , x_cell->label);
-      IF_COL   n = x_cell->col;
-      ELSE_ROW n = x_cell->row;
-      a_map->used [n] = '+';
-      IF_COL   x_cell = x_cell->r_next;
-      ELSE_ROW x_cell = x_cell->c_next;
-   }
-   /*---(mark current)-------------------*/
-   if (a_map->used [a_curr] == '+')  a_map->used [a_curr] = 'Ï';
-   else                              a_map->used [a_curr] = 'o';
-   /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-NODE_map_absolute          (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   tNODE      *x_node      = NULL;
-   char        x_min       =   -1;
-   char        x_max       =   -1;
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*---(default)------------------------*/
-   a_map->gamin = -1;
-   a_map->gamax = -1;
-   /*---(find min)-----------------------*/
-   rc = NODE_by_cursor (&x_node, a_tab, a_type, '[');
-   while (rc == 0 && x_node != NULL) {
-      if (x_node->count > 0) {
-         x_min = x_node->ref;
-         break;
+      /*---(handle empty)----------------*/
+      else {
+         rc = yMAP_append (i, x_wide, '·');
       }
-      rc = NODE_by_cursor (&x_node, a_tab, a_type, '>');
-   }
-   /*---(find max)-----------------------*/
-   rc = NODE_by_cursor (&x_node, a_tab, a_type, ']');
-   while (rc == 0 && x_node != NULL) {
-      if (x_node->count > 0)  {
-         x_max = x_node->ref;
-         break;
-      }
-      rc = NODE_by_cursor (&x_node, a_tab, a_type, '<');
+      /*---(done)------------------------*/
    }
    /*---(update)-------------------------*/
-   a_map->gamin = x_min;
-   a_map->gamax = x_max;
-   /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-NODE_map_local             (tMAPPED *a_map, int a_max, int a_curr, tNODE *a_node, char a_type)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         i           =    0;
-   int         n           =    0;
-   char        x_type      =  '-';
-   int         x_curr      =    0;
-   int         x_opps      =    0;
-   short       x_prev      =   -1;               /* prev filled               */
-   short       x_next      =   -1;               /* next filled               */
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*---(default)------------------------*/
-   a_map->glmin = -1;
-   a_map->gprev = -1;
-   a_map->gnext = -1;
-   a_map->glmax = -1;
-   /*---(check node)---------------------*/
-   if (a_node == NULL) {
-      DEBUG_MAP    yLOG_note    ("node null, none used");
-      DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   /*---(glmin)--------------------------*/
-   DEBUG_MAP    yLOG_point   ("n_head"    , a_node->n_head);
-   if (a_node->n_head != NULL) {
-      IF_COL   a_map->glmin = a_node->n_head->col;
-      ELSE_ROW a_map->glmin = a_node->n_head->row;
-   }
-   /*---(glmax)--------------------------*/
-   DEBUG_MAP    yLOG_point   ("n_tail"    , a_node->n_tail);
-   if (a_node->n_tail != NULL) {
-      IF_COL   a_map->glmax = a_node->n_tail->col;
-      ELSE_ROW a_map->glmax = a_node->n_tail->row;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-NODE_map_char       (uchar *a_map, short a_curr)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   uchar       c           =  '·';
-   uchar      *p           = NULL;
-   uchar      *x_spaces    = " ·o";
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_senter  (__FUNCTION__);
-   c = a_map [a_curr];
-   DEBUG_MAP    yLOG_sint    (c);
-   p = strchr (x_spaces, c);
-   DEBUG_MAP    yLOG_spoint  (p);
-   if (c == 0 || p != NULL)    c = ' ';
-   else                        c = '+';
-   DEBUG_MAP    yLOG_sint    (c);
-   DEBUG_MAP    yLOG_sexit   (__FUNCTION__);
-   return c;
-}
-
-char
-NODE_map_ends       (uchar *a_map, int a_curr, int *a_prev, int *a_next)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   short       x_max       =    0;
-   short       i           =    0;
-   short       x_found     =    0;
-   uchar       p           =  '·';
-   uchar       c           =  '·';
-   uchar       n           =  '·';
-   /*---(prepare)------------------------*/
-   if (a_prev != NULL)  *a_prev = -1;
-   if (a_next != NULL)  *a_next = -1;
-   /*---(max)----------------------------*/
-   --rce;  if (a_map  == NULL)         return rce;
-   x_max = strllen (a_map, LEN_HUGE) - 1;
-   --rce;  if (x_max  <= 0   )         return rce;
-   --rce;  if (a_curr <  0    )        return rce;
-   --rce;  if (a_curr >  x_max)        return rce;
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*---(prev)---------------------------*/
-   DEBUG_MAP    yLOG_note    ("working previous");
-   x_found = -1;
-   c = NODE_map_char (a_map, a_curr);
-   if (a_curr > 0) {
-      p = NODE_map_char (a_map, a_curr - 1);
-      if (c == ' ' || (c == '+' && p == ' ')) {
-         DEBUG_MAP    yLOG_note    ("start in spaces");
-         for (i = a_curr - 1; i >= 0; --i) {
-            c = NODE_map_char (a_map, i);
-            if (c == ' ')  continue;
-            x_found = i;
-            break;
-         }
-      } else {
-         DEBUG_MAP    yLOG_note    ("start in filled");
-         for (i = a_curr - 1; i >= 0; --i) {
-            if (a_map [i] == '+')  continue;
-            x_found = i + 1;
-            break;
-         }
-      }
-      if (x_found < 0)      x_found = 0;
-      if (a_prev != NULL)   *a_prev = x_found;
-   }
-   /*---(prev)---------------------------*/
-   DEBUG_MAP    yLOG_note    ("working next");
-   x_found = -1;
-   c = NODE_map_char (a_map, a_curr);
-   if (a_curr < x_max) {
-      n = NODE_map_char (a_map, a_curr + 1);
-      if (c == ' ' || (c == '+' && n == ' ')) {
-         DEBUG_MAP    yLOG_note    ("start in spaces");
-         for (i = a_curr + 1; i <= x_max; ++i) {
-            c = NODE_map_char (a_map, i);
-            if (c == ' ')  continue;
-            x_found = i;
-            break;
-         }
-      } else {
-         DEBUG_MAP    yLOG_note    ("start in filled");
-         for (i = a_curr + 1; i <= x_max; ++i) {
-            if (a_map [i] == '+')  continue;
-            x_found = i - 1;
-            break;
-         }
-      }
-      if (x_found < 0)      x_found = x_max;
-      if (a_next != NULL)  *a_next = x_found;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-
-char
-NODE_map_update            (char a_type, char a_req)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rc          =    0;
-   tMAPPED    *x_map       = NULL;
-   tTAB       *x_tab       = NULL;
-   int         x_max       =    0;
-   int         x_curr      =    0;
-   tNODE      *x_node      = NULL;
-   /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   /*---(clear)--------------------------*/
-   if (a_req == YVIKEYS_INIT)  NODE_map_init (a_req);
-   if (rc == 0)  rc = NODE_map_clear    (&x_map, &x_tab, &x_max, &x_curr, &x_node, a_type);
-   if (rc == 0)  rc = NODE_map_mapper   ( x_map,  x_tab,  x_max, a_type);
-   if (rc == 0)  rc = NODE_map_used     ( x_map, x_node,  x_max,  x_curr, a_type);
-   if (rc == 0)  rc = NODE_map_absolute ( x_map,  x_tab,  x_max, a_type);
-   if (rc == 0)  rc = NODE_map_local    ( x_map,  x_max, x_curr, x_node, a_type);
-   if (rc == 0)  rc = NODE_map_ends     ( x_map->used, x_curr, &(x_map->gprev), &(x_map->gnext));
+   rc = yMAP_finish ();
    /*---(complete)-----------------------*/
    DEBUG_MAP    yLOG_exit    (__FUNCTION__);
    return rc;
+}
+
+char
+NODE_entry              (char a_type, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   ushort      x_max       =    0;
+   uchar       x_wide      =    0;
+   uchar       x_used      =  '-';
+   tCELL      *x_curr      = NULL;
+   ushort      x, y        =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_MAP    yLOG_value   ("a_pos"     , a_pos);
+   yMAP_current (NULL, NULL, &x, &y, NULL);
+   IF_COL  {
+      DEBUG_MAP    yLOG_complex ("xaxis"     , "%3dc, %3dx", CCOL, x);
+      x_max  = NCOL;
+   }
+   ELSE_ROW {
+      DEBUG_MAP    yLOG_complex ("yaxis"     , "%3dc, %3dx", CROW, y);
+      x_max  = NROW;
+   }
+   DEBUG_MAP    yLOG_value   ("x_max"     , x_max);
+   --rce;  if (a_pos >= x_max)  {
+      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get wide)-----------------------*/
+   IF_COL    x_wide = COL_size   (CTAB, a_pos);
+   ELSE_ROW  x_wide = ROW_size   (CTAB, a_pos);
+   /*---(get used)-----------------------*/
+   IF_COL    x_curr = LOC_cell_at_loc (CTAB, a_pos, y    );
+   ELSE_ROW  x_curr = LOC_cell_at_loc (CTAB, x    , a_pos);
+   if (x_curr != NULL)   x_used = YMAP_USED;
+   else                  x_used = YMAP_NADA;
+   /*---(save-back)----------------------*/
+   if (r_ref  != NULL)  *r_ref  = a_pos;
+   if (r_wide != NULL)  *r_wide = x_wide;
+   if (r_used != NULL)  *r_used = x_used;
+   /*---(complete)-----------------------*/
+   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 
@@ -1677,14 +1785,14 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
    tTAB       *x_tsave     = NULL;
    tNODE      *x_nsave     = NULL;
    char        x_label     [LEN_LABEL] = "";
-   tMAPPED    *x_map       = NULL;
+   /*> tMAPPED    *x_map       = NULL;                                                <*/
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(parse location)-----------------*/
    IF_COL   strlcpy (x_pre, "COL", LEN_TERSE);
    ELSE_ROW strlcpy (x_pre, "ROW", LEN_TERSE);
-   IF_COL   x_map   = &g_xmap;
-   ELSE_ROW x_map   = &g_ymap;
+   /*> IF_COL   x_map   = &g_xmap;                                                    <* 
+    *> ELSE_ROW x_map   = &g_ymap;                                                    <*/
    x_tsave = s_tab;
    x_nsave = s_curr;
    DEBUG_LOCS   yLOG_complex ("before"    , "s_tab %-10.10p, s_curr %-10.10p", s_tab, s_curr);
@@ -1733,19 +1841,19 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
          }
       }
    }
-   else if (strcmp (a_question, "map"           ) == 0) {
-      NODE_map_display (x_map, a_type, a_ref, t);
-      snprintf(unit_answer, LEN_FULL, "%-3.3s map     (%2d) : %s", x_pre, a_ref, t);
-   }
-   else if (strcmp (a_question, "used"          ) == 0) {
-      snprintf(unit_answer, LEN_FULL, "%-3.3s used         : [%.80s]", x_pre, x_map->used);
-   }
-   else if (strcmp (a_question, "abs"           ) == 0) {
-      snprintf (unit_answer, LEN_FULL, "%-3.3s abs          : umin  %5d, gmin  %5d, gamin %5d      gamax %5d, gmax  %5d, umax  %5d", x_pre, x_map->umin, x_map->gmin, x_map->gamin, x_map->gamax, x_map->gmax, x_map->umax);
-   }
-   else if (strcmp (a_question, "local"         ) == 0) {
-      snprintf (unit_answer, LEN_FULL, "%-3.3s local        : glmin %5d, gprev %5d                                gnext %5d, glmax %5d", x_pre, x_map->glmin, x_map->gprev, x_map->gnext, x_map->glmax);
-   }
+   /*> else if (strcmp (a_question, "map"           ) == 0) {                              <* 
+    *>    NODE_map_display (x_map, a_type, a_ref, t);                                      <* 
+    *>    snprintf(unit_answer, LEN_FULL, "%-3.3s map     (%2d) : %s", x_pre, a_ref, t);   <* 
+    *> }                                                                                   <*/
+   /*> else if (strcmp (a_question, "used"          ) == 0) {                                     <* 
+    *>    snprintf(unit_answer, LEN_FULL, "%-3.3s used         : [%.80s]", x_pre, x_map->used);   <* 
+    *> }                                                                                          <*/
+   /*> else if (strcmp (a_question, "abs"           ) == 0) {                                                                                                                                                                      <* 
+    *>    snprintf (unit_answer, LEN_FULL, "%-3.3s abs          : umin  %5d, gmin  %5d, gamin %5d      gamax %5d, gmax  %5d, umax  %5d", x_pre, x_map->umin, x_map->gmin, x_map->gamin, x_map->gamax, x_map->gmax, x_map->umax);   <* 
+    *> }                                                                                                                                                                                                                           <*/
+   /*> else if (strcmp (a_question, "local"         ) == 0) {                                                                                                                                                  <* 
+    *>    snprintf (unit_answer, LEN_FULL, "%-3.3s local        : glmin %5d, gprev %5d                                gnext %5d, glmax %5d", x_pre, x_map->glmin, x_map->gprev, x_map->gnext, x_map->glmax);   <* 
+    *> }                                                                                                                                                                                                       <*/
    /*---(wrap-up)------------------------*/
    s_tab  = x_tsave;
    s_curr = x_nsave;

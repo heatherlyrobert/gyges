@@ -10,7 +10,7 @@
 
 #define     P_FOCUS     "TO (major tools)"
 #define     P_NICHE     "ss (spreadsheet)"
-#define     P_SUBJECT   "technical spreadsheet"
+#define     P_SUBJECT   "wicked technical spreadsheet"
 #define     P_PURPOSE   "technical, fullsome, aesthetic, and keyboard-centric spreadsheet"
 
 #define     P_NAMESAKE  "gyges-hecatoncheires (hundred-handed)"
@@ -34,9 +34,9 @@
 #define     P_CREATED   "2010-09"
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
-#define     P_VERMINOR  "3.5-, fully transition to dynamic memory usage"
-#define     P_VERNUM    "3.5o"
-#define     P_VERTXT    "all unit tests passed again and cleaned up, un-duplicated"
+#define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
+#define     P_VERNUM    "3.6a"
+#define     P_VERTXT    "moved to ssh repository"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -192,7 +192,7 @@
 
 
 
-/*===[[ STANDARD C LIBRARIES ]]===============================================*/
+/*---(ansi-c standard)-------------------*/
 #include    <stdio.h>        /* C_ANSI : strcpy, strlen, strchr, strcmp, ...  */
 #include    <string.h>       /* C_ANSI : printf, snprintf, fgets, fopen, ...  */
 #include    <stdlib.h>       /* C_ANSI : exit                                 */
@@ -200,28 +200,35 @@
 #include    <ctype.h>        /* C_ANSI : tolower, toupper, ...                */
 #include    <time.h>         /* C_ANSI : time, strftime, localtime            */
 #include    <malloc.h>       /* C_ANSI : malloc, free                         */
-
 /*---(posix standard)--------------------*/
-#include   <unistd.h>             /* POSIX  standard operating system API     */
-#include   <sys/time.h>           /* POSIX  standard time access              */
-
-/*===[[ DE-FACTO STANDARD LIBRARIES ]]========================================*/
+#include    <unistd.h>            /* POSIX  standard operating system API     */
+#include    <sys/time.h>          /* POSIX  standard time access              */
+/*---(defacto standard)------------------*/
 #include    <ncurses.h>      /* CURSES : mvprintw, refresh, getch, ...        */
-
-/*===[[ CUSTOM LIBRARIES ]]===================================================*/
-#include    <yURG.h>         /* CUSTOM : heatherly urgent processing          */
-#include    <yLOG.h>         /* CUSTOM : heatherly program logging            */
-#include    <yRPN.h>         /* CUSTOM : heatherly infix to RPN conversion    */
-#include    <yVIKEYS.h>      /* CUSTOM : heatherly vi_keys standard           */
-#include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
+/*---(custom core)-----------------------*/
+#include    <yURG.h>              /* heatherly urgent processing              */
+#include    <yLOG.h>              /* heatherly program logging                */
+#include    <ySTR.h>              /* heatherly string processing              */
+/*---(custom vi-keys)--------------------*/
+#include    <yKEYS.h>             /* heatherly vi-keys key handling           */
+#include    <yMODE.h>             /* heatherly vi-keys mode tracking          */
+#include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
+#include    <ySRC.h>              /* heatherly vi-keys source editing         */
+#include    <yCMD.h>              /* heatherly vi-keys command processing     */
+#include    <yVIEW.h>             /* heatherly vi-keys view management        */
+#include    <yMAP.h>              /* heatherly vi-keys location management    */
+#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
+#include    <yVICURSES.h>         /* heatherly vi-keys curses handler         */
+/*---(custom other)----------------------*/
 #include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
-#include    <yCOLOR.h>       /* heatherly color library                 */
 #include    <yCALC.h>        /* CUSTOM : heatherly interactive calculation    */
 #include    <yPARSE.h>       /* heatherly file reading and writing      */
 #include    <ySORT.h>        /* heatherly sorting library               */
+#include    <yRPN.h>         /* CUSTOM : heatherly infix to RPN conversion    */
+/*---(custom constants only)-------------*/
+#include    <yDLST_solo.h>        /* heatherly double-double-list             */
 
-#include    <yDLST_solo.h>   /* heatherly list cursoring constants      */
 
 
 
@@ -265,9 +272,9 @@ typedef struct timespec  tTSPEC;
 #define     DEF_ROWS    100
 #define     MIN_ROWS    1
 /*---(cell width)---------------------*/
-#define     MAX_WIDTH   100
+#define     MAX_WIDTH   50
 #define     DEF_WIDTH   8
-#define     MIN_WIDTH   4
+#define     MIN_WIDTH   2
 #define     MAX_MERGE   10
 /*---(cell height)--------------------*/
 #define     MAX_HEIGHT  4
@@ -275,6 +282,7 @@ typedef struct timespec  tTSPEC;
 #define     MIN_HEIGHT  1
 /*---(registers)----------------------*/
 
+#define     DEF_FORMAT  "??0--"
 
 char        buf0        [LEN_RECD];
 
@@ -340,6 +348,7 @@ struct cACCESSOR {
    /*---(reg/clip file)---*/
    char        f_clip      [LEN_RECD];      /* register clip file             */
    /*---(current tab)-----*/
+   uchar       start;                       /* tab start in reading file      */
    uchar       ntab;           /* number of worksheet tabs                         */
    uchar       ctab;           /* current tab number                               */
    tTAB       *ptab;           /* current tab pointer                              */
@@ -434,7 +443,6 @@ extern    struct cACCESSOR my;
 
 extern    char       *g_nada;
 extern    char       *g_nothing;
-extern    char       *g_default;
 extern    char       *g_ditto;
 extern    char       *g_before;
 extern    char       *g_after;
@@ -587,16 +595,16 @@ int         acell;           /* count of all cells                            */
 
 #define     UNHOOKED    -1
 
-#define     G_TAB_NORMAL   '-'
+#define     G_TAB_NORMAL   'n'
 #define     G_TAB_FIXED    'f'
+#define     G_TAB_AUTO     'a'
 #define     G_TAB_MACRO    'm'
 #define     G_TAB_TABLE    't'
 #define     G_TAB_DATA     'd'
-#define     G_TAB_AUTO     'a'
-#define     G_TAB_TYPES    "-fmtda"
+#define     G_TAB_TYPES    "nfmtda"
 #define     G_TAB_UNLOCK   'x'
 #define     G_TAB_LOCK     'X'
-#define     G_TAB_LOCKED   "NFMTD"
+#define     G_TAB_LOCKED   "NFMTDA"
 
 
 
@@ -867,8 +875,6 @@ extern char    message    [LEN_RECD];
 extern char    sta_error;
 extern char    special;
 
-extern char      g_empty    [200];
-extern char      g_dashes   [200];
 extern   char   *g_tbd;
 
 extern char      ver_ctrl;
@@ -1113,19 +1119,20 @@ char        KEYS_writequit   (void);
 
 /*---(ncurses)----------------------------------*/
 
-char        CURS_status_detail   (char *a_list);
-char        CURS_status_cell     (char *a_list);
-char        CURS_status_deps     (char *a_list);
-char        CURS_status_rpn      (char *a_list);
-char        CURS_status_file     (char *a_list);
+char        CURS_current_status     (char a_size, short a_wide, char *a_list);
+char        CURS_status_detail      (char a_size, short a_wide, char *a_list);
+char        CURS_status_cell        (char a_size, short a_wide, char *a_list);
+char        CURS_status_deps        (char a_size, short a_wide, char *a_list);
+char        CURS_status_rpn         (char a_size, short a_wide, char *a_list);
+char        CURS_status_file        (char a_size, short a_wide, char *a_list);
 /*> char        CURS_status_buffer   (char *a_list);                                  <*/
 /*> char        CURS_status_textreg  (char *a_list);                                  <*/
-char        CURS_status_mark     (char *a_list);
-char        CURS_status_tab      (char *a_list);
-char        CURS_status_reg      (char *a_list);
-char        CURS_status_visual   (char *a_list);
-char        CURS_status_error    (char *a_list);
-char        CURS_status_history  (char *a_list);
+char        CURS_status_mark        (char *a_list);
+char        CURS_status_tab         (char a_size, short a_wide, char *a_list);
+char        CURS_status_reg         (char *a_list);
+char        CURS_status_visual      (char *a_list);
+char        CURS_status_error       (char a_size, short a_wide, char *a_list);
+char        CURS_status_history     (char *a_list);
 
 
 /*> char      CURS_screen_reset    (void);                                            <*/
@@ -1304,13 +1311,13 @@ char        HIST__cursor            (char a_move);
 
 char        HIST__concat       (char *a_format, char *a_content, char **a_final);
 
-char        HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF, char *a_after);
-char        HIST_overwrite     (int a_tab, int a_col, int a_row, char *a_after , char *a_afterF);
-char        HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
-char        HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);
-char        HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);
-char        HIST_units         (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);
-char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int  a_before, int  a_after);
+/*> char        HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF, char *a_after);   <*/
+/*> char        HIST_overwrite     (int a_tab, int a_col, int a_row, char *a_after , char *a_afterF);   <*/
+/*> char        HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);   <*/
+/*> char        HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);   <*/
+/*> char        HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);   <*/
+/*> char        HIST_units         (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);   <*/
+/*> char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int  a_before, int  a_after);   <*/
 
 char        HIST_list          (void);
 char        HIST_debug         (void);
@@ -1390,20 +1397,17 @@ char        TAB_type                (char a_index);
 char        TAB_retype              (char a_index, char a_type);
 /*---(sizing)-------------------------*/
 char        TAB_size                (char a_index, char *a_max);
+char        TAB_size_detail         (char a_index, ushort *a_col, ushort *a_row);
 char        TAB_resize              (char a_index, char *a_max);
 char        TAB_resize_curr         (char *a_max);
 /*---(mapping)------------------------*/
-char        TAB_map_clear           (void);
-char        TAB_map_mapper          (void);
-char        TAB_map_absolute        (void);
-char        TAB_map_local           (void);
-char        TAB_map_update          (char a_req);
+char        TAB_mapper              (void);
+char        TAB_entry               (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(display)------------------------*/
 char        TAB_line                (char a_index, char a_size, char *a_list);
-char        TAB_status              (char  a_tab, char *a_list);
-char        TAB_status_curr         (char *a_list);
+char        TAB_status_curr         (char a_size, short a_wide, char *a_list);
 char        TAB_inventory           (char a_size, char *a_list);
 /*---(unit_test)----------------------*/
 char*       TAB__unit            (char *a_question, int a_tab);
@@ -1456,14 +1460,14 @@ char        NODE_writer             (int c, char a_type, tNODE *a_node, short n)
 char        NODE_writer_one         (char a_index, char a_type, short a_ref);
 char        NODE_writer_all         (char a_type);
 /*---(mapping)------------------------*/
-char        NODE_map_clear          (tMAPPED **a_map, tTAB **a_tab, int *a_max, int *a_curr, tNODE **a_node, char a_type);
-char        NODE_map_mapper         (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type);
-char        NODE_map_display        (tMAPPED *a_map, char a_type, char a_section, uchar *a_out);
-char        NODE_map_used           (tMAPPED *a_map, tNODE *a_node, int a_max, int a_curr, char a_type);
-char        NODE_map_absolute       (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type);
-char        NODE_map_local          (tMAPPED *a_map, int a_max, int a_curr, tNODE *a_node, char a_type);
-char        NODE_map_ends           (uchar *a_map, int a_curr, int *a_prev, int *a_next);
-char        NODE_map_update         (char a_type, char a_req);
+/*> char        NODE_map_clear          (tMAPPED **a_map, tTAB **a_tab, int *a_max, int *a_curr, tNODE **a_node, char a_type);   <*/
+/*> char        NODE_map_mapper         (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type);   <*/
+/*> char        NODE_map_display        (tMAPPED *a_map, char a_type, char a_section, uchar *a_out);   <*/
+/*> char        NODE_map_used           (tMAPPED *a_map, tNODE *a_node, int a_max, int a_curr, char a_type);   <*/
+/*> char        NODE_map_absolute       (tMAPPED *a_map, tTAB *a_tab, int a_max, char a_type);   <*/
+/*> char        NODE_map_local          (tMAPPED *a_map, int a_max, int a_curr, tNODE *a_node, char a_type);   <*/
+/*> char        NODE_map_ends           (uchar *a_map, int a_curr, int *a_prev, int *a_next);   <*/
+char        NODE_entry              (char a_type, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
 /*---(unit_test)----------------------*/
 char*       NODE__unit              (char *a_question, uchar a_tab, char a_type, ushort a_ref);
 
@@ -1505,7 +1509,8 @@ char        COL_reader              (int c, uchar *a_verb);
 char        COL_writer              (char a_index, short a_ref);
 char        COL_writer_all          (void);
 /*---(mapping)------------------------*/
-char        COL_mapper              (char a_req);
+char        COL_mapper              (char a_level);
+char        COL_entry               (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
 /*---(unit_test)----------------------*/
 char*       COL__unit               (char *a_question, uchar a_tab, ushort a_col);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1547,7 +1552,8 @@ char        ROW_reader              (int c, uchar *a_verb);
 char        ROW_writer              (char a_index, short a_ref);
 char        ROW_writer_all          (void);
 /*---(mapping)------------------------*/
-char        ROW_mapper              (char a_req);
+char        ROW_mapper              (char a_level);
+char        ROW_entry               (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
 /*---(unit_test)----------------------*/
 char*       ROW__unit               (char *a_question, uchar a_tab, ushort a_row);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1586,26 +1592,6 @@ char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
 
 
 
-/*---(major changes)-------------*/
-#define     HIST_OVERWRITE    'O'
-#define     HIST_CHANGE       'S'
-#define     HIST_DELETE       'D'
-#define     HIST_CLEAR        'X'
-/*---(minor changes)-------------*/
-#define     HIST_ALIGN        'a'
-#define     HIST_FORMAT       'f'
-#define     HIST_DECIMALS     'd'
-#define     HIST_UNITS        'u'
-#define     HIST_WIDTH        'w'
-#define     HIST_HEIGHT       'h'
-/*---(validations)---------------*/
-#define     HIST_FORMATS      "afdu"
-#define     HIST_SIZES        "wh"
-/*---(modes)---------------------*/
-#define     HIST_NONE          'x'
-#define     HIST_BEG           'y'
-#define     HIST_ADD           '-'
-
 
 
 char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
@@ -1629,24 +1615,25 @@ char      CELL_wrap            (void);
 char      CELL__interpret      (tCELL *a_curr);
 
 
+char      CELL_align           (tCELL *a_curr, char a_abbr);
+char      CELL_format          (tCELL *a_curr, char a_abbr);
+char      CELL_decimals        (tCELL *a_curr, char a_abbr);
+char      CELL_units           (tCELL *a_curr, char a_abbr);
+
 char      CELL_erase           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_align           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_decimals        (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_format          (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_units           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_merge_visu      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
 char      CELL_unmerge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_visual          (char   a_what, char a_mode, char a_how);
+/*> char      CELL_visual          (char   a_what, char a_mode, char a_how);          <*/
 
-#define   CHANGE_WIDTH    'w'
-#define   CHANGE_HEIGHT   'h'
-#define   CHANGE_FORMAT   'f'
-#define   CHANGE_UNITS    'K'
-#define   CHANGE_ERASE    'e'
-#define   CHANGE_ALIGN    'a'
-#define   CHANGE_DECIMAL  'd'
-#define   CHANGE_MERGE    'm'
-#define   CHANGE_UNMERGE  'u'
+/*> #define   CHANGE_WIDTH    'w'                                                     <* 
+ *> #define   CHANGE_HEIGHT   'h'                                                     <* 
+ *> #define   CHANGE_FORMAT   'f'                                                     <* 
+ *> #define   CHANGE_UNITS    'K'                                                     <* 
+ *> #define   CHANGE_ERASE    'e'                                                     <* 
+ *> #define   CHANGE_ALIGN    'a'                                                     <* 
+ *> #define   CHANGE_DECIMAL  'd'                                                     <* 
+ *> #define   CHANGE_MERGE    'm'                                                     <* 
+ *> #define   CHANGE_UNMERGE  'u'                                                     <*/
 
 
 
@@ -1691,7 +1678,7 @@ char        CELL_writer_all         (void);
 /*===[[ gyges_calc.c ]]=======================================================*/
 
 char        api_ycalc_enabler       (void *a_owner, void *a_deproot);
-char        api_ycalc_pointer       (void *a_owner, char **a_source, char **a_type, double **a_value, char **a_string);
+char        api_ycalc_pointer       (void *a_owner, char **r_source, char **r_type, double **r_value, char **r_string);
 char        api_ycalc_reaper        (void **a_owner);
 
 char        api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_deproot);
@@ -1712,8 +1699,9 @@ char*       api_ycalc__unit         (char *a_question, char *a_label);
 char        api_vikeys_init         (void);
 char        api_yvikeys_handlers    (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_locator     (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
-char        api_yvikeys_addressor   (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);
+char        api_yvikeys_axis_get    (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e);
+char        api_yvikeys_axis_set    (char a_axis, ushort b, ushort c, ushort e);
+char        api_yvikeys_axis_entry  (char a_axis, ushort a_pos, short *a_ref, uchar *a_size, uchar *a_used);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_saver       (char *a_contents);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -1730,13 +1718,27 @@ char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char
 char        api_yvikeys_finisher    (int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell);
 char        api_yvikeys_regkiller   (tCELL *a_curr);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_format      (int   a_major, int   a_minor);
-char        api_yvikeys_units       (int   a_major, int   a_minor);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_exim        (char  a_dir  , char  a_style);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char*       api_myvikeys__unit      (char *a_question, int a_num);
 
 
+/*===[[ gyges_ymap.c ]]=======================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(label)----------------*/
+char        api_ymap_locator        (char a_strict, char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        api_ymap_addressor      (char a_strict, char *a_label, ushort u, ushort x, ushort y, ushort z);
+/*---(load)-----------------*/
+char        api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
+char        api_ymap_entry          (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
+/*---(update)---------------*/
+char        api_ymap_placer         (char a_axis, ushort b, ushort c, ushort e);
+char        api_ymap_done           (void);
+/*---(other)----------------*/
+char        api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, char *a_content);
+char        api_ymap_formatter      (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort y, ushort z, uchar *r);
+/*---(done)-----------------*/
 
 
 char        api_ysort_init          (void);
@@ -1757,6 +1759,8 @@ char*       api_ysort__unit         (char *a_question, int n);
 
 
 #endif
+
+
 
 /*===============================[[ end code ]]===============================*/
 /* htag :  714,  326 docs (36%),  386 code (72%),  326 othr (21%),  304 slocl */

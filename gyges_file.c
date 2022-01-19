@@ -86,12 +86,13 @@ FILE_prepper            (void)
    /*> yCALC_cleanse ();                                                              <*/
    CELL_purge   ();
    LOC_purge    ();
-   TAB_new_in_abbr ('0', NULL, NULL);
+   /*> TAB_new_in_abbr ('0', NULL, NULL);                                             <*/
    TAB_new_in_abbr ('®', NULL, NULL);
    TAB_new_in_abbr ('¯', NULL, NULL);
-   MAP_mapper (YVIKEYS_INIT);
-   yVIKEYS_jump (0, 0, 0, 0);
+   /*> MAP_mapper (YMAP_INIT);                                                        <*/
+   /*> yMAP_jump (0, 0, 0, 0);                                                        <*/
    yCALC_set_state ('L');
+   my.start = 0;
    DEBUG_OUTP    yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -101,6 +102,7 @@ FILE_finisher           (void)
 {
    DEBUG_OUTP    yLOG_enter   (__FUNCTION__);
    yCALC_set_state ('-');
+   TAB_switch (my.start);
    DEBUG_OUTP    yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -114,9 +116,9 @@ FILE_new                (void)
    TAB_new_in_abbr ('0', NULL, NULL);
    TAB_new_in_abbr ('®', NULL, NULL);
    TAB_new_in_abbr ('¯', NULL, NULL);
-   MAP_mapper (YVIKEYS_INIT);
-   yVIKEYS_jump (0, 0, 0, 0);
-   /*> yVIKEYS_cmds_direct ("0a1");                                                   <*/
+   /*> MAP_mapper (YMAP_INIT);                                                        <*/
+   yMAP_jump (0, 0, 0, 0);
+   /*> yCMD_direct ("0a1");                                                   <*/
    return 0;
 }
 
@@ -126,7 +128,7 @@ FILE_init               (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    /*---(handlers)-----------------------*/
-   rc = yVIKEYS_cmds_add (YVIKEYS_M_FILE  , "new"         , ""    , ""     , FILE_new                     , "clear out all content"                                       );
+   /*> rc = yCMD_add (YVIKEYS_M_FILE  , "new"         , ""    , ""     , FILE_new                     , "clear out all content"                                       );   <*/
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -161,7 +163,7 @@ static int     s_max      =    0;
 
 static char    s_sizer    =  '-';
 static char    s_style    =  '-';
-static char    s_hist      = HIST_BEG;
+static char    s_hist      = YMAP_BEG;
 static char    s_mapper   =  '-';
 static short   s_map      [MAX_COLS];
 
@@ -416,7 +418,7 @@ EXIM__close             (void)
 char         /*-> place import data into a cell ------[ ------ [fz.310.301.21]*/ /*-[01.0000.025.!]-*/ /*-[--.---.---.--]-*/
 EXIM__import_place   (short a_col, short a_row, char *a_value)
 {
-   CELL_change (NULL, HIST_BEG, CTAB, CCOL + a_col, CROW + a_row, a_value);
+   CELL_change (NULL, YMAP_BEG, CTAB, CCOL + a_col, CROW + a_row, a_value);
    return 0;
 }
 
@@ -439,7 +441,7 @@ char
 EXIM__export_sizer      (void)
 {
    /*---(locals)-----+-----+-----+-----+-*/
-   int         b, xb, yb, xe, ye;
+   ushort      u, xb, yb, xe, ye;
    int         x_col, x_row;
    int         w, h;
    char        t           [LEN_RECD]  = "";
@@ -447,9 +449,9 @@ EXIM__export_sizer      (void)
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(size)---------------------------*/
-   yVIKEYS_visu_coords (&b, &xb, &xe, &yb, &ye, NULL);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
    if (strchr ("SN", s_style) != NULL) {
-      fprintf (s_clip, "##@ bounds %5d %5d %5d %5d %5d %5d\n",  b,  b, xb, yb, xe, ye);
+      fprintf (s_clip, "##@ bounds %5d %5d %5d %5d %5d %5d\n",  u,  u, xb, yb, xe, ye);
       /*> fprintf (s_clip, "##* reach  %5d %5d %5d %5d %5d %5d\n",  0,  0,  0,  0,  0,  0);   <*/
    }
    /*---(x_size)----------------------*/
@@ -583,7 +585,7 @@ EXIM__import_values     (int a_row)
       strlcpy      (t, s_recd + cw, w + 1);
       DEBUG_REGS  yLOG_delim   ("t (orig)"  , t);
       /*---(guess formatting)---------*/
-      strcpy (x_format, "??0--");
+      strcpy (x_format, DEF_FORMAT);
       if      (t [0] == ' ' && t [w - 2] == ' ')  x_format [0] = '|';
       else if (t [0] != ' ')                      x_format [0] = '<';
       else if (t [w - 2] != ' ')                  x_format [0] = '>';
@@ -595,7 +597,7 @@ EXIM__import_values     (int a_row)
       DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
       /*---(change)-------------------*/
       CELL_overwrite (s_hist, CTAB, CCOL + x_col, CROW + a_row, t, x_format);
-      s_hist = HIST_ADD;
+      s_hist = YMAP_ADD;
       /*---(next)---------------------*/
       ++x_col;
       cw += w;
@@ -735,7 +737,7 @@ EXIM__import_fields     (int a_row)
       DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
       DEBUG_REGS  yLOG_delim   ("p (orig)"  , p);
       /*---(guess formatting)---------*/
-      strcpy (x_format, "??0--");
+      strcpy (x_format, DEF_FORMAT);
       if      (p [0] == ' ' && p [x_len - 2] == ' ')  x_format [0] = '|';
       else if (p [0] != ' ')                          x_format [0] = '<';
       else if (p [x_len - 2] != ' ')                  x_format [0] = '>';
@@ -746,7 +748,7 @@ EXIM__import_fields     (int a_row)
       /*---(update)-------------------------*/
       x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);
       DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
-      s_hist = HIST_ADD;
+      s_hist = YMAP_ADD;
       /*---(next)---------------------*/
       ++x_col;
       p = strtok (NULL, q);
@@ -766,7 +768,7 @@ EXIM__import_csv        (int a_row)
    int         x_len       =    0;
    int         x_col       =    0;
    char       *p           = NULL;
-   char        x_format    [LEN_LABEL] = "??0--";
+   char        x_format    [LEN_LABEL] = DEF_FORMAT;
    char        q           [LEN_LABEL];
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
@@ -807,7 +809,7 @@ EXIM__import_csv        (int a_row)
       /*---(update)-------------------------*/
       x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);
       DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
-      s_hist = HIST_ADD;
+      s_hist = YMAP_ADD;
       /*---(next)---------------------*/
       ++x_col;
       p = strtok (NULL, q);
@@ -886,7 +888,7 @@ EXIM__import_native     (void)
       DEBUG_REGS  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   s_hist = HIST_ADD;
+   s_hist = YMAP_ADD;
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1071,7 +1073,7 @@ EXIM_import             (char a_style)
       return rce;
    }
    /*---(process lines)------------------*/
-   s_hist      = HIST_BEG;
+   s_hist      = YMAP_BEG;
    while (1) {
       /*---(read)------------------------*/
       rc = EXIM__import_read ();
@@ -1111,10 +1113,10 @@ EXIM_export             (char a_style)
    char       *x_valid     = "vdfctrsnVDFCTRSN";
    FILE       *f           = NULL;
    tCELL      *x_curr      = NULL;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
-   int         x_rowsave   = 0;
+   ushort      x_tab       = 0;
+   ushort      x_col       = 0;
+   ushort      x_row       = 0;
+   ushort      x_rowsave   = 0;
    int         w           = 0;
    char        x_source    [LEN_RECD]  = "";
    char        x_modded    [LEN_RECD]  = "";
@@ -1158,7 +1160,7 @@ EXIM_export             (char a_style)
    /*> if (strchr ("VDFCTN", s_style) != NULL) {                                      <* 
     *> }                                                                              <*/
    /*---(process independent cells)------*/
-   rc    = yVIKEYS_first (&x_tab, &x_col, &x_row, NULL);
+   rc      = yMAP_visu_first (&x_tab, &x_col, &x_row, NULL);
    x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    x_rowsave = x_row;
    while (rc >= 0) {
@@ -1175,8 +1177,8 @@ EXIM_export             (char a_style)
          DEBUG_REGS   yLOG_note    ("NULL cell");
          w = COL_size (x_tab, x_col);
          switch (s_style) {
-         case 'v' : case 'V' :  fprintf (s_clip, "%*.*s", w, w, g_empty);       break;
-         case 'd' : case 'D' :  fprintf (s_clip, "%*.*s", w, w, g_empty);     break;
+         case 'v' : case 'V' :  fprintf (s_clip, "%*.*s", w, w, YSTR_EMPTY);    break;
+         case 'd' : case 'D' :  fprintf (s_clip, "%*.*s", w, w, YSTR_EMPTY);  break;
          case 'f' : case 'F' :  fprintf (s_clip, " ");                        break;
          case 'c' : case 'C' :  fprintf (s_clip, "\"\",");                      break;
          case 't' : case 'T' :  fprintf (s_clip, " \t");                        break;
@@ -1250,7 +1252,7 @@ EXIM_export             (char a_style)
          ++o;
       }
       x_rowsave = x_row;
-      rc      = yVIKEYS_next  (&x_tab, &x_col, &x_row, NULL);
+      rc      = yMAP_visu_next  (&x_tab, &x_col, &x_row, NULL);
       x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    };
    /*---(close file)---------------------*/
@@ -1275,32 +1277,32 @@ EXIM_export             (char a_style)
 char
 EXIM_init               (void)
 {
-   yVIKEYS_cmds_add (YVIKEYS_M_FILE, "import"      , ""    , "c"    , EXIM_import  , "data import driver");
-   yVIKEYS_menu_add ("µfma", "auto"      , ":import +¦");
-   yVIKEYS_menu_add ("µfmv", "values"    , ":import v¦");
-   yVIKEYS_menu_add ("µfmV", "values+"   , ":import V¦");
-   yVIKEYS_menu_add ("µfmd", "coldel"    , ":import d¦");
-   yVIKEYS_menu_add ("µfmD", "coldel+"   , ":import D¦");
-   yVIKEYS_menu_add ("µfmf", "field"     , ":import f¦");
-   yVIKEYS_menu_add ("µfmF", "field+"    , ":import F¦");
-   yVIKEYS_menu_add ("µfmt", "tab"       , ":import t¦");
-   yVIKEYS_menu_add ("µfmT", "tab+"      , ":import T¦");
-   yVIKEYS_menu_add ("µfmn", "navive"    , ":import N¦");
-   yVIKEYS_cmds_add (YVIKEYS_M_FILE, "export"      , ""    , "c"    , EXIM_export  , "data export driver");
-   yVIKEYS_menu_add ("µfxa", "values"    , ":export v¦");
-   yVIKEYS_menu_add ("µfxV", "values+"   , ":export V¦");
-   yVIKEYS_menu_add ("µfed", "coldel"    , ":export d¦");
-   yVIKEYS_menu_add ("µfxD", "coldel+"   , ":export D¦");
-   yVIKEYS_menu_add ("µfxf", "field"     , ":export f¦");
-   yVIKEYS_menu_add ("µfxF", "field+"    , ":export F¦");
-   yVIKEYS_menu_add ("µfxc", "csv"       , ":export c¦");
-   yVIKEYS_menu_add ("µfxC", "csv+"      , ":export C¦");
-   yVIKEYS_menu_add ("µfxt", "tab"       , ":export t¦");
-   yVIKEYS_menu_add ("µfxT", "tab+"      , ":export T¦");
-   yVIKEYS_menu_add ("µfxr", "results"   , ":export r¦");
-   yVIKEYS_menu_add ("µfxR", "results+"  , ":export R¦");
-   yVIKEYS_menu_add ("µfxs", "source"    , ":export S¦");
-   yVIKEYS_menu_add ("µfxn", "navive"    , ":export N¦");
+   /*> yCMD_add (YVIKEYS_M_FILE, "import"      , ""    , "c"    , EXIM_import  , "data import driver");   <* 
+    *> yVIKEYS_menu_add ("µfma", "auto"      , ":import +¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmv", "values"    , ":import v¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmV", "values+"   , ":import V¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmd", "coldel"    , ":import d¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmD", "coldel+"   , ":import D¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmf", "field"     , ":import f¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmF", "field+"    , ":import F¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmt", "tab"       , ":import t¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmT", "tab+"      , ":import T¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfmn", "navive"    , ":import N¦");                                             <*/
+   /*> yCMD_add (YVIKEYS_M_FILE, "export"      , ""    , "c"    , EXIM_export  , "data export driver");   <* 
+    *> yVIKEYS_menu_add ("µfxa", "values"    , ":export v¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxV", "values+"   , ":export V¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfed", "coldel"    , ":export d¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxD", "coldel+"   , ":export D¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxf", "field"     , ":export f¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxF", "field+"    , ":export F¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxc", "csv"       , ":export c¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxC", "csv+"      , ":export C¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxt", "tab"       , ":export t¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxT", "tab+"      , ":export T¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxr", "results"   , ":export r¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxR", "results+"  , ":export R¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxs", "source"    , ":export S¦");                                             <* 
+    *> yVIKEYS_menu_add ("µfxn", "navive"    , ":export N¦");                                             <*/
    return 0;
 }
 

@@ -248,7 +248,7 @@ LOC_move           (
    x_dst = api_ysort_by_coord (&x_dst, a_dtab, a_dcol, a_drow);
    /*---(overwrite as necessary)---------*/
    if (x_dst != NULL) {
-      CELL_change (NULL, HIST_NONE, a_dtab, a_dcol, a_drow, "");
+      CELL_change (NULL, YMAP_NONE, a_dtab, a_dcol, a_drow, "");
    }
    /*---(set location)-------------------*/
    if (x_src != NULL) {
