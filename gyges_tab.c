@@ -37,6 +37,49 @@ static  char    s_index   = -1;
 
 tTAB    s_grounded;
 
+static  char    s_names [MAX_TABS][LEN_LABEL] = {
+   "mih", 
+   "hun",
+   "cai",
+   "oxi",
+   "caji",
+   "voo",
+   "vaki",
+   "vuku",
+   "vaxac",
+   "bolon",
+   "aardvark",
+   "buffalo",
+   "camel",
+   "dolphin",
+   "elephant",
+   "falcon",
+   "giraffe",
+   "hippo",
+   "iguana",
+   "jaguar",
+   "kangaroo",
+   "llama",
+   "monkey",
+   "nautilus",
+   "octopus",
+   "peacock",
+   "quetzal",
+   "rabbit",
+   "squirrel",
+   "tiger",
+   "unicorn",
+   "vulture",
+   "walrus",
+   "axolotl",
+   "yeti",
+   "zebra",
+   "summary",
+   "system",
+   "temporary",
+   "question",
+};
+
 
 
 #define   TAB_BACK  '<'
@@ -261,7 +304,7 @@ TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_siz
    x_new->tab      = a_index;
    x_new->abbr     = x_abbr;
    x_new->name     = g_tbd;
-   x_new->type     = G_TAB_NORMAL;
+   x_new->type     = G_TAB_FIXED;
    /*---(tie to master list)-------------*/
    DEBUG_LOCS   yLOG_note    ("attach");
    s_master [a_index] = x_new;
@@ -303,8 +346,9 @@ TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_siz
    DEBUG_LOCS   yLOG_value   ("s_index "  , s_index);
    /*---(rename)-------------------------*/
    TAB_rename (a_index, a_name);
-   TAB_retype (a_index, G_TAB_NORMAL);
-   if (a_size == NULL)  TAB_resize (a_index, "z100");
+   TAB_retype (a_index, G_TAB_FIXED);
+   if      (a_size     == NULL)  TAB_resize (a_index, "z100");
+   else if (a_size [0] == '\0')  TAB_resize (a_index, "z100");
    else   {
       rc = TAB_resize (a_index, a_size);
       if (rc < 0)  TAB_resize (a_index, "z100");
@@ -975,28 +1019,37 @@ TAB_rename           (char a_index, char *a_name)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   char        rc          =    0;
    char        x_name      [LEN_LABEL] = "";
    /*---(defense)------------------------*/
    --rce;  if (!TAB_live (a_index))              return rce;
    /*---(name check)---------------------*/
-   --rce;  switch (a_index) {
-   case 36 :
-      strlcpy (x_name, "summary", LEN_LABEL);
-      break;
-   case 37 :
-      strlcpy (x_name, "system" , LEN_LABEL);
-      break;
-   default :
-      if (TAB__name_check (a_name) < 0)          return rce;
-      strlcpy (x_name, a_name   , LEN_LABEL);
-      break;
-
+   rc = TAB__name_check (a_name);
+   if (a_name == NULL || a_name [0] == '\0') {
+      strlcpy (x_name, s_names [a_index], LEN_LABEL);
+      rc = 0;
+   } else if (rc < 0) {
+      strlcpy (x_name, s_names [a_index], LEN_LABEL);
+   } else {
+      strlcpy (x_name, a_name           , LEN_LABEL);
    }
+   /*> --rce;  switch (a_index) {                                                     <* 
+    *> case 36 :                                                                      <* 
+    *>    strlcpy (x_name, "summary", LEN_LABEL);                                     <* 
+    *>    break;                                                                      <* 
+    *> case 37 :                                                                      <* 
+    *>    strlcpy (x_name, "system" , LEN_LABEL);                                     <* 
+    *>    break;                                                                      <* 
+    *> default :                                                                      <* 
+    *>    if (TAB__name_check (a_name) < 0)          return rce;                      <* 
+    *>    strlcpy (x_name, a_name   , LEN_LABEL);                                     <* 
+    *>    break;                                                                      <* 
+    *> }                                                                              <*/
    /*---(set name)-----------------------*/
    if (s_master [a_index]->name != NULL && s_master [a_index]->name != g_tbd)  free (s_master [a_index]->name);
    s_master [a_index]->name = strdup (x_name);
    /*---(complete)-----------------------*/
-   return 0;
+   return rc;
 }
 
 char  TAB_rename_curr      (char *a_name) { return TAB_rename (CTAB, a_name); }
@@ -1194,52 +1247,53 @@ TAB_resize           (char a_index, char *a_max)
    rc = str2gyges  (a_max, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
    DEBUG_LOCS   yLOG_value   ("str2gyges" , rc);
    /*---(check short-cuts)---------------*/
-   --rce;  if      (rc >= 0)                  x_meth = 'f';
-   else if (strcmp (a_max, "min"    ) == 0)   x_meth = 'm';
-   else if (strcmp (a_max, "auto"   ) == 0)   x_meth = 'a';
-   else if (strcmp (a_max, "full"   ) == 0)   x_meth = '*';
-   else if (strcmp (a_max, ""       ) == 0)   x_meth = '-';
+   --rce;  if      (rc >= 0)                  x_meth = G_RESIZE_FIXED;
+   else if (strcmp (a_max, "min"    ) == 0)   x_meth = G_RESIZE_MIN;
+   else if (strcmp (a_max, "auto"   ) == 0)   x_meth = G_RESIZE_AUTO;
+   else if (strcmp (a_max, "max"    ) == 0)   x_meth = G_RESIZE_MAX;
+   else if (strcmp (a_max, "full"   ) == 0)   x_meth = G_RESIZE_MAX;
+   else if (strcmp (a_max, ""       ) == 0)   x_meth = G_RESIZE_NADA;
    else {
       DEBUG_LOCS   yLOG_note    ("max or meth not understood");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   if (x_meth == '-' && x_type == 'f') {
+   if (x_meth == G_RESIZE_NADA && x_type == G_TAB_FIXED) {
       DEBUG_LOCS   yLOG_note    ("fixed tab, no update requested");
       DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
+   /*---(over-rides)---------------------*/
+   if (x_type == G_TAB_AUTO)     x_meth = G_RESIZE_AUTO;
+   if (x_meth == G_RESIZE_NADA)  x_meth = G_RESIZE_AUTO;
    /*---(check short-cuts)---------------*/
-   if (x_meth == 'a' || x_type == 'a') {
+   switch (x_meth) {
+   case G_RESIZE_AUTO   :
       DEBUG_LOCS   yLOG_note    ("auto treatment");
-      if (a_index < 36 && x_type == 'f')  s_master [a_index]->type = '-';
+      if (a_index < 36 && x_type == G_TAB_FIXED)  s_master [a_index]->type = G_TAB_AUTO;
       x_col = COL_max_adjust (a_index);
       x_row = ROW_max_adjust (a_index);
-   }
-   else if (x_meth == 'f') {
+      break;
+   case G_RESIZE_FIXED  :
       DEBUG_LOCS   yLOG_note    ("fixed size");
-      s_master [a_index]->type = 'f';
+      s_master [a_index]->type = G_TAB_FIXED;
       x_max = COL_max_used   (a_index);
       if (x_max > x_col)  x_col = x_max;
       x_max = ROW_max_used   (a_index);
       if (x_max > x_row)  x_row = x_max;
-   }
-   else if (x_meth == 'm') {
+      break;
+   case G_RESIZE_MIN    :
       DEBUG_LOCS   yLOG_note    ("minimum size");
-      s_master [a_index]->type = 'f';
+      s_master [a_index]->type = G_TAB_FIXED;
       x_col = COL_max_used   (a_index);
       x_row = ROW_max_used   (a_index);
-   }
-   else if (x_meth == '*') {
-      DEBUG_LOCS   yLOG_note    ("full size");
-      s_master [a_index]->type = 'f';
+      break;
+   case G_RESIZE_MAX    :
+      DEBUG_LOCS   yLOG_note    ("maximum size");
+      s_master [a_index]->type = G_TAB_FIXED;
       x_col = MAX_col ();
       x_row = MAX_row ();
-   }
-   else {
-      DEBUG_LOCS   yLOG_note    ("normal/auto treatment");
-      x_col = COL_max_adjust (a_index);
-      x_row = ROW_max_adjust (a_index);
+      break;
    }
    DEBUG_LOCS   yLOG_complex ("coord"     , "%3dc, %4dr", x_col, x_row);
    /*---(adjust current)-----------------*/
@@ -1303,8 +1357,8 @@ TAB_retype           (char a_index, char a_type)
    /*---(set type)-----------------------*/
    else {
       if (strchr (G_TAB_TYPES, a_type) == NULL)  return rce;
-      if (a_index < 36 && a_type == 'a')         return rce;
-      x_type = a_type;
+      if (a_index >= 37)  a_type = G_TAB_AUTO;
+      else                x_type = a_type;
    }
    /*---(save)---------------------------*/
    s_master [a_index]->type = x_type;

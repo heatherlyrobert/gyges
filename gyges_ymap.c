@@ -150,6 +150,7 @@ api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
    --rce;  switch (a_axis) {
    case YMAP_UNIV  :
       DEBUG_MAP    yLOG_snote   ("univ");
+      DEBUG_MAP    yLOG_sint    (NTAB);
       if (n != NULL)  *n = NTAB;
       if (b != NULL)  *b = 0;
       if (c != NULL)  *c = CTAB;
@@ -159,6 +160,7 @@ api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
       break;
    case YMAP_XAXIS :
       DEBUG_MAP    yLOG_snote   ("cols");
+      DEBUG_MAP    yLOG_sint    (NCOL);
       if (n != NULL)  *n = NCOL;
       if (b != NULL)  *b = BCOL;
       if (c != NULL)  *c = CCOL;
@@ -168,6 +170,7 @@ api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
       break;
    case YMAP_YAXIS :
       DEBUG_MAP    yLOG_snote   ("rows");
+      DEBUG_MAP    yLOG_sint    (NROW);
       if (n != NULL)  *n = NROW;
       if (b != NULL)  *b = BROW;
       if (c != NULL)  *c = CROW;

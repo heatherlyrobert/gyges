@@ -127,7 +127,6 @@ PROG_init          (int a_argc, char *a_argv[])
    /*---(yrpn config)--------------------*/
    rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yMAP_inside);
    /*---(globals)------------------------*/
-   /*> if (rc == 0)  rc = yVIKEYS_hist_config (HIST_undo, HIST_redo);                 <*/
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
    /*---(complete)-----------------------*/
@@ -211,6 +210,12 @@ PROG_begin         (void)
    yMAP_mundo_config (5, api_ymap_mundo);
    yMAP_univ_config  (TAB_switch);
    yMAP_formatter    (api_ymap_formatter);
+   DEBUG_PROG   yLOG_note     ("initial tab creation");
+   TAB_new_in_abbr ('0', NULL, NULL);
+   TAB_new_in_abbr ('®', NULL, NULL);
+   TAB_new_in_abbr ('¯', NULL, NULL);
+   TAB_switch      (0);
+   yMAP_refresh_full ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;

@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6a"
-#define     P_VERTXT    "moved to ssh repository"
+#define     P_VERNUM    "3.6b"
+#define     P_VERTXT    "updated and fixed tab unit tests."
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -441,11 +441,6 @@ extern    struct cACCESSOR my;
 
 
 
-extern    char       *g_nada;
-extern    char       *g_nothing;
-extern    char       *g_ditto;
-extern    char       *g_before;
-extern    char       *g_after;
 
 
 #define     G_INFO_NONE       ' '
@@ -595,17 +590,22 @@ int         acell;           /* count of all cells                            */
 
 #define     UNHOOKED    -1
 
-#define     G_TAB_NORMAL   'n'
 #define     G_TAB_FIXED    'f'
 #define     G_TAB_AUTO     'a'
 #define     G_TAB_MACRO    'm'
 #define     G_TAB_TABLE    't'
 #define     G_TAB_DATA     'd'
-#define     G_TAB_TYPES    "nfmtda"
+#define     G_TAB_TYPES    "fmtda"
+#define     G_TAB_LOCKED   "FMTDA"
+
 #define     G_TAB_UNLOCK   'x'
 #define     G_TAB_LOCK     'X'
-#define     G_TAB_LOCKED   "NFMTDA"
 
+#define    G_RESIZE_FIXED  'f'
+#define    G_RESIZE_MIN    'm'
+#define    G_RESIZE_AUTO   'a'
+#define    G_RESIZE_MAX    '*'
+#define    G_RESIZE_NADA   '-'
 
 
 #define     NCEL        ncell
@@ -1298,31 +1298,11 @@ char        CELL__unitchange     (tCELL *a_cell, char *a_source);
 
 
 
-char        HIST_init               (void);
-char        HIST_wrap               (void);
 
-char        HIST__new               (char a_mode, char a_type, int a_tab, int a_col, int a_row);
-char        HIST__free              (tHIST **a_curr);
-char        HIST__prune             (char a_type);
-char        HIST__purge             (void);
 
-char        HIST__find              (int a_index);
-char        HIST__cursor            (char a_move);
 
-char        HIST__concat       (char *a_format, char *a_content, char **a_final);
 
-/*> char        HIST_change        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF, char *a_after);   <*/
-/*> char        HIST_overwrite     (int a_tab, int a_col, int a_row, char *a_after , char *a_afterF);   <*/
-/*> char        HIST_clear         (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);   <*/
-/*> char        HIST_delete        (char a_mode, int a_tab, int a_col, int a_row, char *a_before, char *a_beforeF);   <*/
-/*> char        HIST_format        (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);   <*/
-/*> char        HIST_units         (char a_mode, char a_act, int a_tab, int a_col, int a_row, char a_before, char a_after);   <*/
-/*> char        HIST_size          (char a_mode, char a_act, int a_tab, int a_col, int a_row, int  a_before, int  a_after);   <*/
 
-char        HIST_list          (void);
-char        HIST_debug         (void);
-char        HIST_undo          (void);
-char        HIST_redo          (void);
 char*       HIST__unit         (char *a_question, int a_ref);
 
 
