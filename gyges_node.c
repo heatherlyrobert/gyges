@@ -396,10 +396,8 @@ NODE_init            (void)
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(command line commands)----------*/
-   rc = yCMD_add (YCMD_M_BUFFERS, "colreset"    , ""    , ""     , COL_cleanse_curr           , "make all columns default size"        );
-   rc = yCMD_add (YCMD_M_BUFFERS, "colwide"     , ""    , "sii"  , COL_multisize              , "change the size of columns"           );
-   rc = yCMD_add (YCMD_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_cleanse_curr           , "make all rows default size"           );
-   rc = yCMD_add (YCMD_M_BUFFERS, "rowtall"     , ""    , "sii"  , ROW_multisize              , "change the size of columns"           );
+   /*> rc = yCMD_add (YCMD_M_BUFFERS, "colreset"    , ""    , ""     , COL_cleanse_curr           , "make all columns default size"        );   <*/
+   /*> rc = yCMD_add (YCMD_M_BUFFERS, "rowreset"    , ""    , ""     , ROW_cleanse_curr           , "make all rows default size"           );   <*/
    /*---(add yparse specification)-------*/
    /*---(complete)-----------------------*/
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
@@ -818,6 +816,7 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
    tCELL      *x_curr      = NULL;
    short       c           =    0;
    char        x_prev      =    0;
+   char        x_label     [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr, %3ds, %c, %c", u, a_type, a_ref, a_size, a_key, a_mode);
@@ -879,11 +878,11 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
       if (a_size  > MAX_HEIGHT)   a_size = MAX_HEIGHT;
    }
    DEBUG_LOCS   yLOG_value   ("a_size*"   , a_size);
-   if (a_size == x_node->size) {
-      DEBUG_LOCS   yLOG_note    ("already set to new size (no action)");
-      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
+   /*> if (a_size == x_node->size) {                                                  <* 
+    *>    DEBUG_LOCS   yLOG_note    ("already set to new size (no action)");          <* 
+    *>    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);                                   <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
    /*---(update)-------------------------*/
    x_node->size = a_size;
    /*---(check if default size)----------*/
@@ -898,99 +897,12 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
          }
       }
    }
-   /*---(update all col/row)-------------*/
-   x_curr = x_node->n_head;
-   while (x_curr != NULL) {
-      /*---(update merged cells)---------*/
-      if (x_curr->type == YCALC_DATA_MERGED)  yCALC_calc_from (x_curr->ycalc);
-      /*---(update printable)------------*/
-      api_ycalc_printer (x_curr);
-      ++c;
-      /*---(next)------------------------*/
-      IF_COL   x_curr = x_curr->c_next;
-      ELSE_ROW x_curr = x_curr->r_next;
-   }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_prev;
 }
 
 char NODE_resize     (char a_index, char a_type, short a_ref, char a_size) { return NODE__resize (a_index, a_type, a_ref, a_size, 0, YMAP_BEG); }
-
-char NODE_reset      (char a_index, char a_type, short a_ref) { return NODE__resize (a_index, a_type, a_ref, -1, 0, YMAP_BEG); }
-
-char         /*-> change the col width ---------------[ ------ [gc.320.312.31]*/ /*-[00.0000.404.5]-*/ /*-[--.---.---.--]-*/
-NODE_multisize       (char *a_label, char a_type, char a_size, char a_count)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char        x_tab       =    0;
-   short       x_col       =    0;
-   short       x_row       =    0;
-   short       x_ref       =    0;
-   short       x_off       =    0;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%-10.10p, %c, %2ds, %2dc", a_label, a_type, a_size, a_count);
-   /*---(defense)------------------------*/
-   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_value   ("str2gyges" , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_LOCS   yLOG_complex ("coord"     , "%s, %2dt, %3dc, %4dr", a_label, x_tab, x_col, x_row);
-   /*---(prepare)------------------------*/
-   if (a_count == 0)  a_count = 1;
-   DEBUG_LOCS   yLOG_value   ("a_count"   , a_count);
-   /*---(resize)-------------------------*/
-   IF_COL   x_ref = x_col;
-   ELSE_ROW x_ref = x_row;
-   for (x_off = 0; x_off < a_count; ++x_off) {
-      if (x_off == 0)  rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, YMAP_BEG);
-      else             rc = NODE__resize (x_tab, a_type, x_ref + x_off, a_size, 0, YMAP_ADD);
-      DEBUG_INPT  yLOG_value   ("risize"    , rc);
-      --rce;  if (rc < 0) {
-         DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-      }
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> change cell column width -----------[ ------ [gc.E91.292.69]*/ /*-[02.0000.303.Y]-*/ /*-[--.---.---.--]-*/
-NODE_multikey      (char a_type, char a_key)
-{  /*---(design notes)-------------------*/
-   /*  update all cells to new width, either a standard size, or a specific   */
-   /*  value communicated as a negative number.                               */
-   /*---(locals)-----------+-----------+-*/
-   ushort      u, xb, xe, yb, ye;
-   int         x_size      = 0;
-   short       x_pos, x_beg, x_end;
-   /*---(header)-------------------------*/
-   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
-   DEBUG_LOCS   yLOG_complex ("args"      , "%c, %c", a_type, a_key);
-   if (a_key < 0)   {
-      x_size = -a_key;
-      a_key  = 0;
-   }
-   /*---(get coordinates)-------------*/
-   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
-   DEBUG_LOCS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
-   IF_COL   { x_beg = xb; x_end = xe; }
-   ELSE_ROW { x_beg = yb; x_end = ye; }
-   DEBUG_LOCS   yLOG_complex ("range"     , "%4db..%4de", x_beg, x_end);
-   for (x_pos = x_beg; x_pos <= x_end; ++x_pos) {
-      if (x_pos == x_beg)  NODE__resize (u, a_type, x_pos, x_size, a_key, YMAP_BEG);
-      else                 NODE__resize (u, a_type, x_pos, x_size, a_key, YMAP_ADD);
-   }
-   /*---(complete)---------------------------*/
-   DEBUG_LOCS  yLOG_exit   (__FUNCTION__);
-   return 0;
-}
 
 
 
@@ -1127,8 +1039,8 @@ NODE_reader          (int c, uchar *a_verb)
    DEBUG_INPT   yLOG_value   ("width"     , x_size);
    DEBUG_INPT   yLOG_value   ("count"     , x_count);
    /*---(resize)-------------------------*/
-   IF_COL   rc = COL_multisize (x_label, x_size, x_count);
-   ELSE_ROW rc = ROW_multisize (x_label, x_size, x_count);
+   IF_COL   rc = yMAP_multi_wide (x_label, x_size, x_count);
+   ELSE_ROW rc = yMAP_multi_tall (x_label, x_size, x_count);
    DEBUG_INPT   yLOG_value   ("multisize" , rc);
    if (rc < 0) {
       DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);

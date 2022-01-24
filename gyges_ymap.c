@@ -115,13 +115,13 @@ api_ymap_addressor      (char a_strict, char *a_label, ushort u, ushort x, ushor
       return rce;
    }
    DEBUG_FILE   yLOG_value   ("x_size"    , x_size);
-   --rce;  if (x_size <= x) {
+   --rce;  if (x_size < x) {
       DEBUG_FILE   yLOG_note    ("column not available");
       DEBUG_FILE   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_FILE   yLOG_value   ("y_size"    , y_size);
-   --rce;  if (y_size <= y) {
+   --rce;  if (y_size < y) {
       DEBUG_FILE   yLOG_note    ("row not available");
       DEBUG_FILE   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -419,6 +419,7 @@ api_ymap_formatter      (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort 
    char        rc          =    0;
    tCELL      *x_curr      = NULL;
    char        x_prev      =    0;
+   char        x_new       =    0;
    /*---(header)-------------------------*/
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
@@ -427,26 +428,50 @@ api_ymap_formatter      (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort 
    x_curr  = LOC_cell_at_loc (u, x, y);
    /*---(dispatch)-----------------------*/
    switch (a_type) {
-   case YMAP_WIDTH    :
-      x_prev = COL_size (u, x);
-      NODE__resize (u, IS_COL, x, 0, a_abbr, 0);
-      if (r != NULL)  *r = COL_size (u, x);
+   case YMAP_WIDTH    : case YMAP_WEXACT   :
+      DEBUG_HIST  yLOG_note    ("width handler");
+      if (y == 0) {
+         DEBUG_HIST  yLOG_note    ("topmost, do important stuff");
+         x_prev = COL_size (u, x);
+         if (a_type == YMAP_WIDTH)   NODE__resize (u, IS_COL, x, 0, a_abbr, 0);
+         else                        NODE__resize (u, IS_COL, x, a_abbr, 0, 0);
+         x_new  = COL_size (u, x);
+         if (r != NULL)  *r = x_new;
+      } else if (x_curr != NULL) {
+         DEBUG_HIST  yLOG_note    ("other, just update printable");
+         api_ycalc_printer (x_curr);
+         if (r != NULL)  *r = x_new;
+      }
       break;
-   case YMAP_HEIGHT   :
-      x_prev = ROW_size (u, y);
-      NODE__resize (u, IS_ROW, y, 0, a_abbr, 0);
-      if (r != NULL)  *r = ROW_size (u, x);
+   case YMAP_HEIGHT   : case YMAP_HEXACT   :
+      DEBUG_HIST  yLOG_note    ("height handler");
+      if (x == 0) {
+         DEBUG_HIST  yLOG_note    ("leftmost, do important stuff");
+         x_prev = ROW_size (u, y);
+         if (a_type == YMAP_HEIGHT)  NODE__resize (u, IS_ROW, y, 0, a_abbr, 0);
+         else                        NODE__resize (u, IS_ROW, y, a_abbr, 0, 0);
+         x_new  = ROW_size (u, y);
+         if (r != NULL)  *r = x_new;
+      } else {
+         DEBUG_HIST  yLOG_note    ("other, just update printable");
+         api_ycalc_printer (x_curr);
+         if (r != NULL)  *r = x_new;
+      }
       break;
    case YMAP_ALIGN    :
+      DEBUG_HIST  yLOG_note    ("alignment handler");
       x_prev = CELL_align    (x_curr, a_abbr);
       break;
    case YMAP_FORMAT   :
+      DEBUG_HIST  yLOG_note    ("format handler");
       x_prev = CELL_format   (x_curr, a_abbr);
       break;
    case YMAP_DECIMALS :
+      DEBUG_HIST  yLOG_note    ("decimals handler");
       x_prev = CELL_decimals (x_curr, a_abbr);
       break;
    case YMAP_UNITS    :
+      DEBUG_HIST  yLOG_note    ("units handler");
       x_prev = CELL_units    (x_curr, a_abbr);
       break;
    }

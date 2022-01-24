@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6b"
-#define     P_VERTXT    "updated and fixed tab unit tests."
+#define     P_VERNUM    "3.6c"
+#define     P_VERTXT    "updated row, col, and loc unit tests."
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1428,9 +1428,6 @@ short       NODE_max_adjust         (char a_index, char a_type);
 /*---(sizing)-------------------------*/
 char        NODE_size               (char a_tab, char a_type, short a_ref);
 char        NODE_resize             (char a_tab, char a_type, short a_ref, char a_size);
-char        NODE_reset              (char a_tab, char a_type, short a_ref);
-char        NODE_multisize          (char *a_label, char a_type, char a_size, char a_count);
-char        NODE_multikey           (char a_type, char a_key);
 /*---(freezing)-----------------------*/
 char        NODE_freeze             (int a_tab, char a_type, int a_beg, int a_end);
 char        NODE_unfreeze           (int a_tab, char a_type);
@@ -1478,9 +1475,6 @@ char        COL_cleanse_curr        (void);
 /*---(sizing)-------------------------*/
 char        COL_size                (char a_index, short a_ref);
 char        COL_resize              (char a_index, short a_ref, char a_size);
-char        COL_reset               (char a_index, short a_ref);
-char        COL_multisize           (char *a_label, char a_size, char a_count);
-char        COL_multikey            (char a_key);
 /*---(freezing)-----------------------*/
 char        COL_freeze              (char a_index, short a_bcol, short a_ecol);
 char        COL_unfreeze            (char a_index);
@@ -1521,9 +1515,6 @@ char        ROW_cleanse_curr        (void);
 /*---(sizing)-------------------------*/
 char        ROW_size                (char a_index, short a_ref);
 char        ROW_resize              (char a_index, short a_ref, char a_size);
-char        ROW_reset               (char a_index, short a_ref);
-char        ROW_multisize           (char *a_label, char a_size, char a_count);
-char        ROW_multikey            (char a_key);
 /*---(freezing)-----------------------*/
 char        ROW_freeze              (char a_index, short a_bref, short a_eref);
 char        ROW_unfreeze            (char a_index);

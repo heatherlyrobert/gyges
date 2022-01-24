@@ -419,6 +419,7 @@ PROG__unit_loud      (void)
    yURG_name   ("ysrc"  , YURG_ON);
    yURG_name   ("ymap"  , YURG_ON);
    yURG_name   ("yview" , YURG_ON);
+   yURG_name   ("hist"  , YURG_ON);
    PROG_init   (x_argc, x_args);
    yURG_urgs   (x_argc, x_args);
    PROG_args   (x_argc, x_args);

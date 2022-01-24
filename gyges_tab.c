@@ -37,50 +37,6 @@ static  char    s_index   = -1;
 
 tTAB    s_grounded;
 
-static  char    s_names [MAX_TABS][LEN_LABEL] = {
-   "mih", 
-   "hun",
-   "cai",
-   "oxi",
-   "caji",
-   "voo",
-   "vaki",
-   "vuku",
-   "vaxac",
-   "bolon",
-   "aardvark",
-   "buffalo",
-   "camel",
-   "dolphin",
-   "elephant",
-   "falcon",
-   "giraffe",
-   "hippo",
-   "iguana",
-   "jaguar",
-   "kangaroo",
-   "llama",
-   "monkey",
-   "nautilus",
-   "octopus",
-   "peacock",
-   "quetzal",
-   "rabbit",
-   "squirrel",
-   "tiger",
-   "unicorn",
-   "vulture",
-   "walrus",
-   "axolotl",
-   "yeti",
-   "zebra",
-   "summary",
-   "system",
-   "temporary",
-   "question",
-};
-
-
 
 #define   TAB_BACK  '<'
 #define   TAB_FORE  '>'
@@ -1026,25 +982,13 @@ TAB_rename           (char a_index, char *a_name)
    /*---(name check)---------------------*/
    rc = TAB__name_check (a_name);
    if (a_name == NULL || a_name [0] == '\0') {
-      strlcpy (x_name, s_names [a_index], LEN_LABEL);
+      strlcpy (x_name, yMAP_univ_name (a_index), LEN_LABEL);
       rc = 0;
    } else if (rc < 0) {
-      strlcpy (x_name, s_names [a_index], LEN_LABEL);
+      strlcpy (x_name, yMAP_univ_name (a_index), LEN_LABEL);
    } else {
       strlcpy (x_name, a_name           , LEN_LABEL);
    }
-   /*> --rce;  switch (a_index) {                                                     <* 
-    *> case 36 :                                                                      <* 
-    *>    strlcpy (x_name, "summary", LEN_LABEL);                                     <* 
-    *>    break;                                                                      <* 
-    *> case 37 :                                                                      <* 
-    *>    strlcpy (x_name, "system" , LEN_LABEL);                                     <* 
-    *>    break;                                                                      <* 
-    *> default :                                                                      <* 
-    *>    if (TAB__name_check (a_name) < 0)          return rce;                      <* 
-    *>    strlcpy (x_name, a_name   , LEN_LABEL);                                     <* 
-    *>    break;                                                                      <* 
-    *> }                                                                              <*/
    /*---(set name)-----------------------*/
    if (s_master [a_index]->name != NULL && s_master [a_index]->name != g_tbd)  free (s_master [a_index]->name);
    s_master [a_index]->name = strdup (x_name);

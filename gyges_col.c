@@ -77,12 +77,6 @@ char COL_size        (char a_index, short a_ref) { return NODE_size (a_index, IS
 
 char COL_resize      (char a_index, short a_ref, char a_size) { return NODE_resize (a_index, IS_COL, a_ref, a_size); }
 
-char COL_reset       (char a_index, short a_ref) { return NODE_reset (a_index, IS_COL, a_ref); }
-
-char COL_multisize   (char *a_label, char a_size, char a_count) { return NODE_multisize   (a_label, IS_COL, a_size, a_count); }
-
-char COL_multikey    (char a_key) { return NODE_multikey (IS_COL, a_key); }
-
 
 
 /*====================------------------------------------====================*/

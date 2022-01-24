@@ -449,7 +449,7 @@ EXIM__export_sizer      (void)
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(size)---------------------------*/
-   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL, NULL);
    if (strchr ("SN", s_style) != NULL) {
       fprintf (s_clip, "##@ bounds %5d %5d %5d %5d %5d %5d\n",  u,  u, xb, yb, xe, ye);
       /*> fprintf (s_clip, "##* reach  %5d %5d %5d %5d %5d %5d\n",  0,  0,  0,  0,  0,  0);   <*/

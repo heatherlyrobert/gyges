@@ -268,7 +268,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
       return rce;     /* don't write, recreate on read */
    }
    /*---(check for bounds)---------------*/
-   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL, NULL);
    DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
    /*> rc = yVIKEYS_mreg_inside (a_curr->tab, a_curr->col, a_curr->row, 0);           <*/
    DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
@@ -412,7 +412,7 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL);
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL, NULL);
    DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
    p  = strtok_r (a_list, q, &s);
    DEBUG_REGS   yLOG_point   ("p"         , p);
