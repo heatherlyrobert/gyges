@@ -141,7 +141,7 @@ api_ymap_addressor      (char a_strict, char *a_label, ushort u, ushort x, ushor
 static void   o___LOAD____________o (void) { return; }
 
 char
-api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x)
+api_ymap_sizer          (char a_axis, ushort *n, ushort *a, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x)
 {
    char        rce         =  -10;
    char        rc          =    0;
@@ -152,6 +152,7 @@ api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
       DEBUG_MAP    yLOG_snote   ("univ");
       DEBUG_MAP    yLOG_sint    (NTAB);
       if (n != NULL)  *n = NTAB;
+      if (a != NULL)  *a = 0;
       if (b != NULL)  *b = 0;
       if (c != NULL)  *c = CTAB;
       if (e != NULL)  *e = 0;
@@ -162,6 +163,7 @@ api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
       DEBUG_MAP    yLOG_snote   ("cols");
       DEBUG_MAP    yLOG_sint    (NCOL);
       if (n != NULL)  *n = NCOL;
+      if (a != NULL)  yVIEW_size (YVIEW_MAIN, NULL, NULL, a, NULL, NULL);
       if (b != NULL)  *b = BCOL;
       if (c != NULL)  *c = CCOL;
       if (e != NULL)  *e = ECOL;
@@ -172,6 +174,7 @@ api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
       DEBUG_MAP    yLOG_snote   ("rows");
       DEBUG_MAP    yLOG_sint    (NROW);
       if (n != NULL)  *n = NROW;
+      if (a != NULL)  yVIEW_size (YVIEW_MAIN, NULL, NULL, NULL, NULL, a);
       if (b != NULL)  *b = BROW;
       if (c != NULL)  *c = CROW;
       if (e != NULL)  *e = EROW;
@@ -238,6 +241,9 @@ api_ymap_placer         (char a_axis, ushort b, ushort c, ushort e)
    char        rc          =    0;
    DEBUG_MAP    yLOG_senter  (__FUNCTION__);
    DEBUG_MAP    yLOG_schar   (a_axis);
+   DEBUG_MAP    yLOG_sint    (b);
+   DEBUG_MAP    yLOG_sint    (c);
+   DEBUG_MAP    yLOG_sint    (e);
    --rce;  switch (a_axis) {
    case YMAP_UNIV  :
       DEBUG_MAP    yLOG_snote   ("univ NOT ALLOWED");

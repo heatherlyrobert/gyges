@@ -804,8 +804,7 @@ char
 NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_key, char a_mode)
 {  /*---(notes)--------------------------*/
    /*
-    * metis § ----- § if col/row set back to default and empty, remove it
-    *
+    * metis § ····· § if col/row set back to default and empty, remove it                    § M2511E §  · §
     */
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;

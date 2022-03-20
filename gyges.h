@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6c"
-#define     P_VERTXT    "updated row, col, and loc unit tests."
+#define     P_VERNUM    "3.6d"
+#define     P_VERTXT    "fixed small, stupid mistake in api_ymap_sizer effecting screen"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -210,15 +210,16 @@
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
 /*---(custom vi-keys)--------------------*/
-#include    <yKEYS.h>             /* heatherly vi-keys key handling           */
-#include    <yMODE.h>             /* heatherly vi-keys mode tracking          */
-#include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
-#include    <ySRC.h>              /* heatherly vi-keys source editing         */
-#include    <yCMD.h>              /* heatherly vi-keys command processing     */
-#include    <yVIEW.h>             /* heatherly vi-keys view management        */
-#include    <yMAP.h>              /* heatherly vi-keys location management    */
-#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
-#include    <yVICURSES.h>         /* heatherly vi-keys curses handler         */
+#include    <yKEYS.h>             /* heatherly vikeys key handling            */
+#include    <yMODE.h>             /* heatherly vikeys mode tracking           */
+#include    <yMACRO.h>            /* heatherly vikeys macro processing        */
+#include    <ySRC.h>              /* heatherly vikeys source editing          */
+#include    <yCMD.h>              /* heatherly vikeys command processing      */
+#include    <yVIEW.h>             /* heatherly vikeys view management         */
+#include    <yMAP.h>              /* heatherly vikeys location management     */
+#include    <yFILE.h>             /* heatherly vikeys content file handling   */
+#include    <yMARK.h>             /* heatherly vikeys search and marking      */
+#include    <yVICURSES.h>         /* heatherly vikeys curses handler          */
 /*---(custom other)----------------------*/
 #include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
@@ -844,6 +845,7 @@ tCELL       denada;
 extern int     save;
 
 #define     FILE_BUF    "/var/run/buffer.gyges"
+#define     FILE_EXIM   "/root/z_gehye/vi_clip.txt"
 
 char        f_maker     [LEN_RECD];
 
@@ -1616,6 +1618,7 @@ char       *CELL__unitnew           (char  *a_question, char *a_label);
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        FILE_recd_shove         (char *a_recd);
 char        FILE_init               (void);
 char        FILE_prepper            (void);
 char        FILE_finisher           (void);
@@ -1624,6 +1627,8 @@ char        FILE_rename             (char  *a_name);
 char        FILE_write              (void);
 /*> char      FILE_writeas         (char *a_name);                                    <*/
 char*       FILE__unit              (char *a_question, int a_ref);
+char        EXIM__import_bounds     (void);
+char        EXIM__import_sizer      (void);
 
 
 /*---(file)------------------*/
@@ -1701,7 +1706,7 @@ char*       api_myvikeys__unit      (char *a_question, int a_num);
 char        api_ymap_locator        (char a_strict, char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
 char        api_ymap_addressor      (char a_strict, char *a_label, ushort u, ushort x, ushort y, ushort z);
 /*---(load)-----------------*/
-char        api_ymap_sizer          (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
+char        api_ymap_sizer          (char a_axis, ushort *n, ushort *a, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
 char        api_ymap_entry          (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
 /*---(update)---------------*/
 char        api_ymap_placer         (char a_axis, ushort b, ushort c, ushort e);

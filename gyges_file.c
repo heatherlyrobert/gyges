@@ -49,7 +49,6 @@
 
 
 #include    "gyges.h"
-#define     FILE_EXIM   "/root/z_gehye/vi_clip.txt"
 
 
 
@@ -65,8 +64,13 @@ int         s_len       = 0;
 char       *s_p         = NULL;               /* strtok return pointer     */
 char       *s_q         = "";               /* strtok delimeters         */
 char       *s_context   = NULL;               /* strtok context variable   */
-char        s_fields    [20][LEN_RECD];
-int         s_nfield    =   0;
+
+#define     MAX_POS     20
+uchar       s_xpos      [MAX_POS];
+uchar       s_xsep      [MAX_POS];
+uchar       s_exact     [MAX_POS];
+int         s_npos      =   0;
+int         s_mundos    =   0;
 
 
 char        s_cellbad   = 0;
@@ -173,7 +177,7 @@ static short   s_ccol     =    0;
 static short   s_crow     =    0;
 
 
-static int     s_borig    =    0;
+static int     s_uorig    =    0;
 static int     s_xorig    =    0;
 static int     s_yorig    =    0;
 
@@ -415,13 +419,6 @@ EXIM__close             (void)
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
-char         /*-> place import data into a cell ------[ ------ [fz.310.301.21]*/ /*-[01.0000.025.!]-*/ /*-[--.---.---.--]-*/
-EXIM__import_place   (short a_col, short a_row, char *a_value)
-{
-   CELL_change (NULL, YMAP_BEG, CTAB, CCOL + a_col, CROW + a_row, a_value);
-   return 0;
-}
-
 /*> char         /+-> complete data import ---------------[ ------ [fz.311.001.02]+/ /+-[00.0000.014.!]-+/ /+-[--.---.---.--]-+/   <* 
  *> EXIM_import__done       (void)                                                                                                 <* 
  *> {                                                                                                                              <* 
@@ -441,87 +438,230 @@ char
 EXIM__export_sizer      (void)
 {
    /*---(locals)-----+-----+-----+-----+-*/
-   ushort      u, xb, yb, xe, ye;
-   int         x_col, x_row;
+   ushort      u, xb, xe, yb, ye, zb, ze;
+   int         x_col, x_row, i;
    int         w, h;
    char        t           [LEN_RECD]  = "";
    char        s           [LEN_RECD]  = "";
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(size)---------------------------*/
-   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL, NULL);
-   if (strchr ("SN", s_style) != NULL) {
-      fprintf (s_clip, "##@ bounds %5d %5d %5d %5d %5d %5d\n",  u,  u, xb, yb, xe, ye);
-      /*> fprintf (s_clip, "##* reach  %5d %5d %5d %5d %5d %5d\n",  0,  0,  0,  0,  0,  0);   <*/
-   }
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, &zb, &ze, NULL);
+   fprintf (s_clip, "#@ bounds  %2d %4d %4d %4d %4d %4d %4d\n",  u, xb, xe, yb, ye, zb, ze);
    /*---(x_size)----------------------*/
-   sprintf (s, "##x x-size %5d", xe - xb + 1);
+   sprintf (s, "#@ x-parse %2då", xe - xb + 1);
    for (x_col = xb; x_col <= xe; ++x_col) {
       w     = COL_size (CTAB, x_col);
       DEBUG_REGS  yLOG_value   ("w"         , w);
-      sprintf (t, " %5d", w);
-      DEBUG_REGS  yLOG_info    ("t"         , t);
-      strcat  (s, t);
+      strcat  (s, "Ï");
+      for (i = 1; i < w; ++i)   strcat  (s, "-");
+      switch (s_style) {
+      case 'V' : case 'N' :
+         break;
+      case 'D' : case 'F' :  case 'R' :  case 'S' :
+         strcat  (s, "§");
+         break;
+      case 'T' :
+         strcat  (s, "Ú");
+         break;
+      case 'C' :
+         strcat  (s, ",");
+         break;
+      }
       DEBUG_REGS  yLOG_info    ("s"         , s);
    }
-   fprintf (s_clip, "%s\n", s);
+   fprintf (s_clip, "%sæ\n", s);
    /*---(y_size)----------------------*/
-   sprintf (s, "##y y-size %5d", ye - yb + 1);
+   sprintf (s, "#@ y-parse %2då", xe - xb + 1);
    for (x_row = yb; x_row <= ye; ++x_row) {
       h     = ROW_size (CTAB, x_row);
       DEBUG_REGS  yLOG_value   ("h"         , h);
       sprintf (t, " %5d", h);
-      DEBUG_REGS  yLOG_info    ("t"         , t);
-      strcat  (s, t);
+      strcat  (s, "Ï");
+      for (i = 1; i < h; ++i)   strcat  (s, "-");
       DEBUG_REGS  yLOG_info    ("s"         , s);
    }
-   fprintf (s_clip, "%s\n", s);
+   fprintf (s_clip, "%sæ\n", s);
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
-EXIM__import_sizer      (char a_dir)
+EXIM__import_fail       (void)
+{
+   int         i           =    0;
+   if (s_npos >= 0)  yMAP_mundo_rollback ();
+   for (i = 0; i < MAX_POS; ++i) {
+      s_xpos  [i] = 0;
+      s_xsep  [i] = '·';
+      s_exact [i] = 0;
+   }
+   s_npos = 0;
+   return 0;
+}
+
+char
+EXIM__import_sizer      (void)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
-   char        t           [LEN_LABEL];
-   int         c           =    0;
-   int         x_pos       =    0;
+   char        x_dir       =  '-';
+   char        x_label     [LEN_LABEL];
+   int         l           =    0;
+   int         i           =    0;
+   char        c           =    0;
    int         x_size      =    0;
+   char        x_space     =  '-';
+   int         x_mundo     =    0;
+   int         x_count     =    0;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(default)------------------------*/
+   for (i = 0; i < MAX_POS; ++i) {  s_xpos  [i] = 0;  s_xsep [i] = '·'; s_exact [i] = 0; }
+   s_npos = 0;
    /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_char    ("a_dir"     , a_dir);
-   --rce;  if (strchr ("xy", a_dir) == NULL) {
+   DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
+   --rce;  if (strncmp (s_recd, "#@ ",  3) != 0) {
+      DEBUG_REGS   yLOG_note    ("does not start with #@ ");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   x_dir = s_recd [3];
+   /*---(defense)------------------------*/
+   DEBUG_REGS   yLOG_char    ("x_dir"     , x_dir);
+   --rce;  if (strchr ("xy", x_dir) == NULL) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
-   --rce;  if (a_dir == 'x' && strncmp (s_recd, "##x x-size ", 11) != 0) {
+   --rce;  if (x_dir == 'x' && strncmp (s_recd, "#@ x-parse ", 11) != 0) {
+      DEBUG_REGS   yLOG_note    ("prefix is not #@ x-parse ");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_dir == 'y' && strncmp (s_recd, "##y y-size ", 11) != 0) {
+   --rce;  if (x_dir == 'y' && strncmp (s_recd, "#@ y-parse ", 11) != 0) {
+      DEBUG_REGS   yLOG_note    ("prefix is not #@ y-parse ");
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(count)--------------------------*/
-   strncpy (t, s_recd + 11, 5);
-   t [5] = '\0';
-   DEBUG_REGS   yLOG_delim   ("t"         , t);
-   c = atoi (t);
-   DEBUG_REGS   yLOG_value   ("c"         , c);
-   /*---(sizings)------------------------*/
-   for (x_pos = 0; x_pos < c; ++x_pos) {
-      strncpy (t, s_recd + 17 + (x_pos * 6), 5);
-      t [5] = '\0';
-      DEBUG_REGS   yLOG_delim   ("t"         , t);
-      x_size = atoi (t);
-      DEBUG_REGS   yLOG_value   ("x_size"    , x_size);
-      if (a_dir == 'x')  COL_resize    (CTAB, CCOL + x_pos, x_size);
-      /*> else               ROW_heighten (CTAB, CROW + x_pos, x_size);               <*/
+   l = strlen (s_recd);
+   /*> --rce;  if (s_recd [l - 1] != 'æ') {                                           <* 
+    *>    DEBUG_REGS   yLOG_note    ("does not end with æ");                          <* 
+    *>    DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
+   /*---(open sizer)---------------------*/
+   i = 13;
+   c = s_recd [i];
+   DEBUG_REGS   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
+   --rce;  if (c != 'å') {
+      DEBUG_REGS   yLOG_note    ("does not beg with å");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   s_npos = -1;
+   /*---(open sizer)---------------------*/
+   c = s_recd [++i];
+   DEBUG_REGS   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
+   --rce;  while (c != '\0') {
+      /*---(check for spacers)-----------*/
+      if (strchr ("· " , c) != NULL)   x_space = 'y';
+      if (strchr ("Ïæx", c) != NULL)   x_space = '-';
+      if (x_space == 'y') {
+         if (strchr ("· ", c) == NULL) {
+            DEBUG_REGS   yLOG_note    ("space broken by unexpected character");
+            EXIM__import_fail ();
+            DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+      }
+      /*---(real things)-----------------*/
+      if (x_space == '-') {
+         /*---(new field)-------------------*/
+         if (strchr ("Ïæx", c) != NULL) {
+            DEBUG_REGS   yLOG_note    ("Ïx start next field or æ ending");
+            if (strchr ("Ïx", c) != NULL)  s_exact [s_npos + 1] = i;
+            if (s_npos >= 0) {
+               DEBUG_REGS   yLOG_note    ("check for resize");
+               DEBUG_REGS   yLOG_value   ("x_size"    , x_size);
+               s_xpos   [s_npos] = x_size;
+               DEBUG_REGS  yLOG_complex ("mundos"    , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
+               x_mundo = yMAP_mundo_count ();
+               DEBUG_REGS   yLOG_value   ("x_mundo"   , x_mundo);
+               if (x_dir == 'x') {
+                  DEBUG_REGS   yLOG_note    ("update width");
+                  str4gyges (CTAB, CCOL + s_npos, 0, 0, 0, x_label, YSTR_ADAPT);
+                  yMAP_multi_wide (x_label, x_size, 0);
+                  DEBUG_REGS  yLOG_complex ("mundos+"   , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
+                  DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
+                  if (yMAP_mundo_count () != x_mundo) {
+                     DEBUG_REGS   yLOG_note    ("new one added");
+                     DEBUG_REGS   yLOG_info    ("detail"    , yMAP_mundo_detail (x_count));
+                     if (yMAP_mundo_count () > s_mundos && x_count > 0) {
+                        DEBUG_REGS   yLOG_note    ("change to add");
+                        yMAP_mundo_make_add ();
+                     }
+                     ++x_count;
+                  }
+               } else if (x_dir == 'y') {
+                  DEBUG_REGS   yLOG_note    ("update height");
+                  /*> str4gyges (CTAB, 0, CROW + s_npos, 0, 0, x_label, YSTR_ADAPT);   <* 
+                   *> yMAP_multi_tall (x_label, x_size, 0);                            <* 
+                   *> if (yMAP_mundo_count () > s_mundos)  yMAP_mundo_make_add ();     <*/
+               }
+            }
+            ++s_npos;
+            x_size = 1;
+            if (c == 'æ') {
+               DEBUG_REGS   yLOG_note    ("æ ending so break");
+               break;
+            }
+         }
+         /*---(continuation)----------------*/
+         else if (c == '-') {
+            DEBUG_REGS   yLOG_note    ("- continuation character");
+            if (s_npos < 0) {
+               DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+               return rce;
+            }
+            ++x_size;
+         }
+         /*---(other formatting)------------*/
+         else {
+            switch (c) {
+            case 'f' : case '§' : case '' :
+               DEBUG_REGS   yLOG_note    ("field delimiter");
+               s_xsep [s_npos] = 'f';
+               break;
+            case ',' : case 'c' : case '˜' :
+               DEBUG_REGS   yLOG_note    ("comma delimiter");
+               s_xsep [s_npos] = 'c';
+               break;
+            case 't' : case 'Ú' :
+               DEBUG_REGS   yLOG_note    ("tab delimiter");
+               s_xsep [s_npos] = 't';
+               break;
+            default  :
+               DEBUG_REGS   yLOG_note    ("unknown character");
+               EXIM__import_fail ();
+               DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+               return rce;
+               break;
+            }
+         }
+      }
+      /*---(next)------------------------*/
+      c = s_recd [++i];
+      DEBUG_REGS   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
+      /*---(done)------------------------*/
+   }
+   /*---(finished right)-----------------*/
+   --rce;  if (c != 'æ') {
+      DEBUG_REGS   yLOG_note    ("did not complete with æ");
+      EXIM__import_fail ();
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
@@ -541,24 +681,24 @@ EXIM__import_bounds     (void)
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
-   --rce;  if (strncmp (s_recd, "##@ bounds ", 11) != 0) {
+   --rce;  if (strncmp (s_recd, "#@ bounds ", 10) != 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(sizings)------------------------*/
-   for (x_pos = 0; x_pos < 6; ++x_pos) {
-      strncpy (t, s_recd + 11 + (x_pos * 6), 5);
-      t [5] = '\0';
+   for (x_pos = 0; x_pos < 7; ++x_pos) {
+      strncpy (t, s_recd + 9 + (x_pos * 5), 4);
+      t [4] = '\0';
       DEBUG_REGS   yLOG_delim   ("t"         , t);
       x_value = atoi (t);
       DEBUG_REGS   yLOG_value   ("x_value"   , x_value);
       switch (x_pos) {
-      case  0 :  s_borig = x_value;     break;
-      case  2 :  s_xorig = x_value;     break;
+      case  0 :  s_uorig = x_value;     break;
+      case  1 :  s_xorig = x_value;     break;
       case  3 :  s_yorig = x_value;     break;
       }
    }
-   DEBUG_REGS   yLOG_value   ("s_borig"   , s_borig);
+   DEBUG_REGS   yLOG_value   ("s_uorig"   , s_uorig);
    DEBUG_REGS   yLOG_value   ("s_xorig"   , s_xorig);
    DEBUG_REGS   yLOG_value   ("s_yorig"   , s_yorig);
    /*---(complete)-----------------------*/
@@ -566,10 +706,27 @@ EXIM__import_bounds     (void)
    return 0;
 }
 
+char
+EXIM__import_one        (int a_tab, int a_col, int a_row, char *a_format, char *a_source)
+{
+   char        rce         =  -10;
+   tCELL      *x_new       = NULL;
+   DEBUG_REGS  yLOG_note    ("processing and handling mundo");
+   if (yMAP_mundo_count () > s_mundos) {
+      DEBUG_REGS  yLOG_note    ("switch to an add");
+      s_hist = YMAP_ADD;
+   }
+   x_new = CELL_overwrite (s_hist, a_tab, a_col, a_row, a_source, a_format);
+   DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
+   --rce;  if (x_new == NULL)   return rce;
+   return 0;
+}
+
 char         /*-> tbd --------------------------------[ ------ [fz.732.141.12]*/ /*-[01.0000.014.3]-*/ /*-[--.---.---.--]-*/
 EXIM__import_values     (int a_row)
 {
    /*---(locals)-----+-----+-----+-----+-*/
+   char        rc          =    0;
    int         x_col       =    0;
    int         w           =    0;
    int         cw          =    0;
@@ -590,14 +747,34 @@ EXIM__import_values     (int a_row)
       else if (t [0] != ' ')                      x_format [0] = '<';
       else if (t [w - 2] != ' ')                  x_format [0] = '>';
       /*---(process)------------------*/
-      strltrim     (t, ySTR_BOTH, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
       strlencode   (t, ySTR_NORM, LEN_RECD);
       DEBUG_REGS  yLOG_info    ("t (new)"   , t);
+      strltrim     (t, ySTR_BOTH, LEN_RECD);
+      DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
       DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
       /*---(change)-------------------*/
-      CELL_overwrite (s_hist, CTAB, CCOL + x_col, CROW + a_row, t, x_format);
-      s_hist = YMAP_ADD;
+      DEBUG_REGS  yLOG_complex ("mundos"    , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
+      if (strlen (t) > 0) {
+         rc = EXIM__import_one (CTAB, CCOL + x_col, CROW + a_row, x_format, t);
+         if (rc < 0) {
+            EXIM__import_fail ();
+            DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+            return rc;
+         }
+         /*> DEBUG_REGS  yLOG_note    ("processing and handling mundo");              <*/
+         /*> if (yMAP_mundo_count () > s_mundos) {                                     <* 
+          *>    DEBUG_REGS  yLOG_note    ("switch to an add");                         <* 
+          *>    s_hist = YMAP_ADD;                                                     <* 
+          *> }                                                                         <* 
+          *> CELL_overwrite (s_hist, CTAB, CCOL + x_col, CROW + a_row, t, x_format);   <*/
+         /*> DEBUG_REGS  yLOG_complex ("after over", "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);   <*/
+         /*> if (yMAP_mundo_count () > s_mundos) {                                    <* 
+          *>    DEBUG_REGS  yLOG_note    ("switch to an add");                        <* 
+          *>    yMAP_mundo_make_add ();                                               <* 
+          *> }                                                                        <*/
+      } else {
+         DEBUG_REGS  yLOG_note    ("empty, skipping");
+      }
       /*---(next)---------------------*/
       ++x_col;
       cw += w;
@@ -628,7 +805,7 @@ EXIM__import_dest       (char *a_label)
       return rce;
    }
    DEBUG_REGS   yLOG_complex ("src loc"   , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
-   s_otab = CTAB - s_borig;
+   s_otab = CTAB - s_uorig;
    s_ocol = CCOL - s_xorig;
    s_orow = CROW - s_yorig;
    DEBUG_REGS   yLOG_complex ("offset"    , "%2dt, %3dc, %4dr", s_otab, s_ocol, s_orow);
@@ -649,12 +826,12 @@ EXIM__import_destsrc    (int a_col, int a_row)
    char        rc          =    0;
    int         x_tab , x_col , x_row;
    /*---(header)-------------------------*/
-   x_tab = s_borig;
+   x_tab = s_uorig;
    x_col = s_xorig + a_col;
    x_row = s_yorig + a_row;
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    DEBUG_REGS   yLOG_complex ("src loc"   , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
-   s_otab = CTAB - s_borig;
+   s_otab = CTAB - s_uorig;
    s_ocol = CCOL - s_xorig;
    s_orow = CROW - s_yorig;
    DEBUG_REGS   yLOG_complex ("offset"    , "%2dt, %3dc, %4dr", s_otab, s_ocol, s_orow);
@@ -746,9 +923,16 @@ EXIM__import_fields     (int a_row)
       DEBUG_REGS   yLOG_value   ("content"   , rc);
       DEBUG_REGS  yLOG_info    ("s_source"  , s_source);
       /*---(update)-------------------------*/
-      x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);
-      DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
-      s_hist = YMAP_ADD;
+      rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
+      if (rc < 0) {
+         EXIM__import_fail ();
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return rc;
+      }
+      /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
+       *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
+       *> DEBUG_REGS  yLOG_point   ("x_new"     , x_new);                                <* 
+       *> s_hist = YMAP_ADD;                                                             <*/
       /*---(next)---------------------*/
       ++x_col;
       p = strtok (NULL, q);
@@ -807,9 +991,16 @@ EXIM__import_csv        (int a_row)
       DEBUG_REGS   yLOG_value   ("content"   , rc);
       DEBUG_REGS  yLOG_info    ("s_source"  , s_source);
       /*---(update)-------------------------*/
-      x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);
-      DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
-      s_hist = YMAP_ADD;
+      rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
+      if (rc < 0) {
+         EXIM__import_fail ();
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return rc;
+      }
+      /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
+       *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
+       *> DEBUG_REGS  yLOG_point   ("x_new"     , x_new);                                <* 
+       *> s_hist = YMAP_ADD;                                                             <*/
       /*---(next)---------------------*/
       ++x_col;
       p = strtok (NULL, q);
@@ -882,13 +1073,20 @@ EXIM__import_native     (void)
       return rce;
    }
    /*---(update)-------------------------*/
-   x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);
-   DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
-   --rce;  if (x_new == NULL)  {
-      DEBUG_REGS  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
+   if (rc < 0) {
+      EXIM__import_fail ();
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return rc;
    }
-   s_hist = YMAP_ADD;
+   /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
+    *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
+    *> DEBUG_REGS  yLOG_point   ("x_new"     , x_new);                                <* 
+    *> --rce;  if (x_new == NULL)  {                                                  <* 
+    *>    DEBUG_REGS  yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <* 
+    *> s_hist = YMAP_ADD;                                                             <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1010,13 +1208,17 @@ EXIM__import_read       (void)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
    }
-   --rce;  if (s_recd [0] == '#' && s_recd [1] == '#') {
-      DEBUG_REGS   yLOG_note    ("starts with a non-content marker (##)");
-      DEBUG_REGS   yLOG_char    ("s_recd [2]", s_recd [2]);
-      switch (s_recd [2]) {
-      case '@' :  EXIM__import_bounds ();        break;
-      case 'x' :  EXIM__import_sizer ('x');      break;
-      case 'y' :  EXIM__import_sizer ('y');      break;
+   --rce;  if (s_recd [0] == '#') {
+      if (strncmp (s_recd, "#@ ", 3) == 0) {
+         DEBUG_REGS   yLOG_note    ("starts with a hint marker (#@)");
+         DEBUG_REGS   yLOG_char    ("s_recd [3]", s_recd [3]);
+         switch (s_recd [3]) {
+         case 's' : /* EXIM__import_bounds (); */   break;
+         case 'b' :   EXIM__import_bounds ();       break;
+         case 'x' :   EXIM__import_sizer  ();       break;
+         case 'y' :   EXIM__import_sizer  ();       break;
+         case 't' : /* EXIM__import_titles (); */   break;
+         }
       }
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
@@ -1056,6 +1258,16 @@ EXIM__import_read       (void)
 }
 
 char
+EXIM__update_mundos     (void)
+{
+   s_mundos    = yMAP_mundo_current ();
+   if (s_mundos < 0)  s_mundos = 0;
+   if (s_mundos > 0)  ++s_mundos;
+   DEBUG_REGS   yLOG_value   ("s_mundos"  , s_mundos);
+   return 0;
+}
+
+char
 EXIM_import             (char a_style)
 {
    /*---(locals)-----------+-----------+-*/
@@ -1072,8 +1284,9 @@ EXIM_import             (char a_style)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(process lines)------------------*/
    s_hist      = YMAP_BEG;
+   EXIM__update_mundos ();
+   /*---(process lines)------------------*/
    while (1) {
       /*---(read)------------------------*/
       rc = EXIM__import_read ();
@@ -1144,17 +1357,20 @@ EXIM_export             (char a_style)
    /*---(prepare)------------------------*/
    s_style = a_style;
    if (strchr ("VDFCTRSN", s_style) != NULL) {
-      fprintf (s_clip, "### generated by gyges-hekatonkheires (hundred-handed) spreadsheet\n");
-      /*> fprintf (s_clip, "##? ");                                                   <* 
-       *> switch (s_style) {                                                          <* 
-       *> case 'V' :  fprintf (s_clip, "V = pure printable values");      break;      <* 
-       *> case 'D' :  fprintf (s_clip, "D = column delimited");           break;      <* 
-       *> case 'F' :  fprintf (s_clip, "F = field delimited");            break;      <* 
-       *> case 'C' :  fprintf (s_clip, "C = comma separated values");     break;      <* 
-       *> case 'T' :  fprintf (s_clip, "T = tab delimited");              break;      <* 
-       *> case 'N' :  fprintf (s_clip, "N = native format");              break;      <* 
-       *> }                                                                           <* 
-       *> fprintf (s_clip, "\n");                                                     <*/
+      fprintf (s_clip, "#!/usr/local/bin/gyges\n");
+      fprintf (s_clip, "##   generated by gyges-hekatonkheires (hundred-handed) spreadsheet\n");
+      fprintf (s_clip, "#@ style     ");
+      switch (s_style) {
+      case 'V' :  fprintf (s_clip, "V = printable columnar values");  break;
+      case 'D' :  fprintf (s_clip, "D = column delimited");           break;
+      case 'F' :  fprintf (s_clip, "F = field delimited");            break;
+      case 'T' :  fprintf (s_clip, "T = tab delimited");              break;
+      case 'C' :  fprintf (s_clip, "C = comma separated values");     break;
+      case 'R' :  fprintf (s_clip, "R = results/raw values");         break;
+      case 'S' :  fprintf (s_clip, "S = source/contents");            break;
+      case 'N' :  fprintf (s_clip, "N = native format");              break;
+      }
+      fprintf (s_clip, "\n");
       EXIM__export_sizer ();
    }
    /*> if (strchr ("VDFCTN", s_style) != NULL) {                                      <* 
@@ -1262,7 +1478,7 @@ EXIM_export             (char a_style)
       ++t;
    }
    if (strchr ("VDFCTRSN", s_style) != NULL) {
-      fprintf (s_clip, "### complete, finito, done.  %d cells, %d occupied, %d lines\n", c, o, t);
+      fprintf (s_clip, "## complete, finito, done.  %d cells, %d occupied, %d lines\n", c, o, t);
    }
    rc = EXIM__close ();
    --rce;  if (rc < 0) {
@@ -1380,6 +1596,13 @@ FILE__unit_exim_entry   (int a_num, char *a_entry)
    return 0;
 }
 
+char
+FILE_recd_shove         (char *a_recd)
+{
+   strlcpy (s_recd, a_recd, LEN_RECD);
+   return 0;
+}
+
 char*        /*-> unit test accessor -----------------[ ------ [gs.950.221.M1]*/ /*-[03.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 FILE__unit              (char *a_question, int a_ref)
 {
@@ -1391,7 +1614,24 @@ FILE__unit              (char *a_question, int a_ref)
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "FILE             : question not understood");
    /*---(selection)----------------------*/
-   if      (strcmp (a_question, "exim"      )    == 0) {
+   if      (strcmp (a_question, "bounds"    )    == 0) {
+      snprintf (unit_answer, LEN_FULL, "FILE bounds      : %4du  %4dx  %4dy", s_uorig, s_xorig, s_yorig);
+   }
+   if      (strcmp (a_question, "sizer"     )    == 0) {
+      for (i = 0; i < s_npos; ++i) {
+         sprintf (t, "%5d%c"   , s_xpos [i], s_xsep [i]);
+         strlcat (s, t, LEN_RECD);
+      }
+      snprintf (unit_answer, LEN_FULL, "FILE sizer  (%2d) :%s", s_npos, s);
+   }
+   if      (strcmp (a_question, "exact"     )    == 0) {
+      for (i = 0; i < s_npos; ++i) {
+         sprintf (t, "%5d·"   , s_exact [i]);
+         strlcat (s, t, LEN_RECD);
+      }
+      snprintf (unit_answer, LEN_FULL, "FILE exact  (%2d) :%s", s_npos, s);
+   }
+   else if (strcmp (a_question, "exim"      )    == 0) {
       rc = FILE__unit_exim_entry (a_ref, t);
       if (rc < 0) {
          snprintf (unit_answer, LEN_FULL, "FILE exim   (%2d) : none", a_ref);
@@ -1400,7 +1640,7 @@ FILE__unit              (char *a_question, int a_ref)
          snprintf (unit_answer, LEN_FULL, "FILE exim   (%2d) : %2d[%-.40s]", a_ref, strlen (t), t);
       }
    }
-   if      (strcmp (a_question, "map"       )    == 0) {
+   else if (strcmp (a_question, "map"       )    == 0) {
       for (i = 0; i < 10; ++i) {
          sprintf (t, " %2d", s_map [i]);
          strcat  (s, t);

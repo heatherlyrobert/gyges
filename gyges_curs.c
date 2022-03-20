@@ -833,6 +833,7 @@ DRAW_main          (void)
    /*---(display all)--------------------*/
    yVIEW_size (YVIEW_MAIN, NULL, &x_left, &x_wide, &x_bott, &x_tall);
    DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3dw, %3db, %3dt", x_left, x_wide, x_bott, x_tall);
+   DEBUG_GRAF  yLOG_complex ("coords"    , "%3dxb, %3dxe, %3dyb, %3dye", BCOL, ECOL, BROW, EROW);
    attrset (0);
    for (y_cur = BROW; y_cur <= EROW; ++y_cur) {
       /*---(prepare)---------------------*/
