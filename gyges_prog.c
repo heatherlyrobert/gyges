@@ -100,7 +100,7 @@ PROG_init          (int a_argc, char *a_argv[])
    rc = FILE_init     ();
    rc = yFILE_whoami       (P_FULLPATH, P_VERNUM, P_VERTXT, P_ONELINE, P_SUFFIX, P_CONTENT, api_yvikeys_handlers, FILE_prepper, FILE_finisher);
    if (rc == 0)  rc = yMACRO_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
-   /*> if (rc == 0)  rc = yVIKEYS_srch_config  (api_yvikeys_searcher , api_yvikeys_unsearcher);   <*/
+   if (rc == 0)  rc = yMARK_config  (api_yvikeys_searcher , api_yvikeys_unsearcher, NULL);
    if (rc == 0)  rc = ySRC_config   (api_yvikeys_saver);
    if (rc == 0)  rc = yMAP_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_router, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);

@@ -91,31 +91,36 @@ api_ysort__cursor       (uchar a_type, void *a_head, void *a_tail, void *a_beg, 
    tCELL      *x_beg       = NULL;
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_senter  (__FUNCTION__);
+   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
    /*---(check pointers)-----------------*/
-   DEBUG_SORT   yLOG_spoint  (a_beg);
-   DEBUG_SORT   yLOG_spoint  (a_new);
+   DEBUG_SORT   yLOG_point   ("a_beg"     , a_beg);
+   DEBUG_SORT   yLOG_point   ("a_new"     , a_new);
    --rce;  if (a_new == NULL) {
-      DEBUG_SORT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   x_new = (tCELL *) a_head;
    /*---(prepare)------------------------*/
-   DEBUG_SORT   yLOG_snote   ("cast");
-   x_beg    = (tCELL *) a_beg;
-   if (x_beg != NULL)  DEBUG_SORT   yLOG_snote   (x_beg->label);
+   DEBUG_SORT   yLOG_note    ("cast");
+   if (a_beg != NULL) {
+      x_beg    = (tCELL *) a_beg;
+      DEBUG_SORT   yLOG_info    ("x_beg"     , x_beg->label);
+   }
    /*---(update)-------------------------*/
-   DEBUG_SORT   yLOG_schar   (a_action);
+   DEBUG_SORT   yLOG_char    ("a_action"  , a_action);
    switch (a_action) {
-   case '>' : if (x_beg != NULL) { x_new = x_beg->m_next;   break; }
-   case ']' : x_new = (tCELL *) a_tail;                     break;
-   case '<' : if (x_beg != NULL) { x_new = x_beg->m_prev;   break; }
-   case '[' : x_new = (tCELL *) a_head;                     break;
+   case YDLST_HEAD : x_new = (tCELL *) a_head;                   break;
+   case YDLST_PREV : if (x_beg != NULL)  x_new = x_beg->m_prev;  break;
+   case YDLST_NEXT : if (x_beg != NULL)  x_new = x_beg->m_next;  break;
+   case YDLST_TAIL : x_new = (tCELL *) a_tail;                   break;
    }
    /*---(save back)----------------------*/
-   if (x_new != NULL)  DEBUG_SORT   yLOG_snote   (x_new->label);
+   if (x_new != NULL) {
+      DEBUG_SORT   yLOG_note    (x_new->label);
+   }
    *a_new = x_new;
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_sexit   (__FUNCTION__);
+   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

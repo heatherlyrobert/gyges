@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6d"
-#define     P_VERTXT    "fixed small, stupid mistake in api_ymap_sizer effecting screen"
+#define     P_VERNUM    "3.6e"
+#define     P_VERTXT    "yMARK regex search fully integrated -- still must unit test"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1684,8 +1684,8 @@ char        api_yvikeys_saver       (char *a_contents);
 char        api_yvikeys_macro_get   (char   a_name, char  *a_keys);
 char        api_yvikeys_macro_set   (char   a_name, char  *a_keys);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_searcher    (char *a_search);
-char        api_yvikeys_unsearcher  (int b, int x, int y, int z);
+char        api_yvikeys_searcher    (uchar a_not, uchar *a_search);
+char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z);
 char        api_yvikeys_copier      (char a_type, long a_stamp);

@@ -109,15 +109,16 @@ api_yvikeys_exim        (char a_dir, char a_style)
 PRIV void  o___SEARCH__________o () { return; }
 
 char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
-api_yvikeys_searcher      (char *a_search)
+api_yvikeys_searcher      (uchar a_not, uchar *a_search)
 {
-   /*---(locals)-----------+------+----+-*/
-   char        rce         =   -10;
-   char        rc          =     0;
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_len       =    0;
    tCELL      *x_next      = NULL;
-   int         x_tab       = 0;
-   int         x_col       = 0;
-   int         x_row       = 0;
+   int         x_tab       =    0;
+   int         x_col       =    0;
+   int         x_row       =    0;
    /*---(header)--------------------s----*/
    DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
    DEBUG_SRCH   yLOG_point   ("a_search"  , a_search);
@@ -125,8 +126,26 @@ api_yvikeys_searcher      (char *a_search)
    --rce;  if (a_search == NULL) {
       DEBUG_SRCH   yLOG_note    ("can not use null search");
       DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    DEBUG_SRCH   yLOG_info    ("a_search"  , a_search);
+   x_len = strlen (a_search);
+   DEBUG_SRCH   yLOG_value   ("x_len"     , x_len);
+   --rce;  if (x_len <= 0) {
+      DEBUG_SRCH   yLOG_note    ("can be an empty search");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   --rce;  if (a_search [0] != '/') {
+      DEBUG_SRCH   yLOG_note    ("must start with a forward slash");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   if (x_len == 1) {
+      DEBUG_SRCH   yLOG_note    ("nothing to do, redraw only");
+      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    rc = yREGEX_comp (a_search + 1);
    DEBUG_SRCH   yLOG_value   ("comp rc"   , rc);
    --rce;  if (rc < 0) {
@@ -137,7 +156,6 @@ api_yvikeys_searcher      (char *a_search)
    /*---(process range)----------------------*/
    DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
    x_next = hcell;
-   /*> x_next  = VISU_first (&x_tab, &x_col, &x_row);                                 <*/
    do {
       DEBUG_SRCH   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
       if (x_next != NULL && x_next->source != NULL) {
@@ -158,13 +176,15 @@ api_yvikeys_searcher      (char *a_search)
             break;
          }
          DEBUG_SRCH   yLOG_value   ("exec rc"   , rc);
-         if (rc > 0) {
-            /*> yVIKEYS_srch_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);   <*/
+         if (a_not != 'y' && rc > 0) {
+            yMARK_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);
+            x_next->note = 's';
+         } else if (a_not == 'y' && rc <= 0) {
+            yMARK_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);
             x_next->note = 's';
          }
       }
       x_next = x_next->m_next;
-      /*> x_next  = VISU_next (&x_tab, &x_col, &x_row);                               <*/
    } while (x_next != NULL && x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
@@ -172,17 +192,17 @@ api_yvikeys_searcher      (char *a_search)
 }
 
 char
-api_yvikeys_unsearcher   (int b, int x, int y, int z)
+api_yvikeys_unsearcher   (uchar *a_label, ushort u, ushort x, ushort y, ushort z)
 {
    /*---(locals)-----------+------+----+-*/
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
-   DEBUG_SRCH   yLOG_value   ("b"         , b);
+   DEBUG_SRCH   yLOG_value   ("u"         , u);
    DEBUG_SRCH   yLOG_value   ("x"         , x);
    DEBUG_SRCH   yLOG_value   ("y"         , y);
    DEBUG_SRCH   yLOG_value   ("z"         , z);
-   x_curr = LOC_cell_at_loc (b, x, y);
+   x_curr = LOC_cell_at_loc (u, x, y);
    DEBUG_SRCH   yLOG_point   ("x_curr"    , x_curr);
    if (x_curr != NULL) x_curr->note = '-';
    DEBUG_SRCH   yLOG_char    ("x_curr->n" , x_curr->note);
