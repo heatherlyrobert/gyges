@@ -1288,14 +1288,14 @@ CELL_source_line        (tCELL *a_cell, char *a_line)
       return 0;
    }
    /*---(prepare defaults)------------*/
-   snprintf (a_line, LEN_FULL, "- -         -t   -c    -r           -  --[]");
+   snprintf (a_line, LEN_FULL, "- -         -t   -c    -r           -  --åæ");
    --rce;  if (a_cell  == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    /*---(prepare full)----------------*/
-   if (a_cell->source != NULL)  sprintf  (t, "%3d[%.38s]", a_cell->len, a_cell->source);
-   else                         strlcpy  (t, " --[]", LEN_HUND);
+   if (a_cell->source != NULL)  sprintf  (t, "%3då%.38sæ", a_cell->len, a_cell->source);
+   else                         strlcpy  (t, " --åæ", LEN_HUND);
    strl4comma (a_cell->key, s, 0, 'c', '-', LEN_LABEL);
    if (a_cell->tab >= 0)  snprintf (a_line, LEN_FULL, "%c %-8.8s %2dt %3dc %4dr %11.11s %s", a_cell->linked, a_cell->label, a_cell->tab, a_cell->col, a_cell->row, s, t);
    else                   snprintf (a_line, LEN_FULL, "%c %-8.8s  -t   -c    -r           - %s", a_cell->linked, a_cell->label, t);
@@ -1320,14 +1320,14 @@ CELL_result_line        (tCELL *a_cell, char *a_line)
       return 0;
    }
    /*---(prepare defaults)------------*/
-   snprintf (a_line, LEN_FULL, "´ -        t=·           -.-           --[]");
+   snprintf (a_line, LEN_FULL, "´ -        t=·           -.-           --åæ");
    --rce;  if (a_cell  == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    /*---(prepare full)----------------*/
-   if (a_cell->v_str    != NULL)  sprintf  (t, "%3d[%.38s]", strlen (a_cell->v_str), a_cell->v_str);
-   else                           strlcpy  (t, " --[]", LEN_HUND);
+   if (a_cell->v_str    != NULL)  sprintf  (t, "%3då%.38sæ", strlen (a_cell->v_str), a_cell->v_str);
+   else                           strlcpy  (t, " --åæ", LEN_HUND);
    snprintf (a_line, LEN_FULL, "´ %-8.8s t=%c    %17.8lf   %s", a_cell->label, a_cell->type, a_cell->v_num, t);
    /*---(complete)--------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
@@ -1350,7 +1350,7 @@ CELL_print_line         (tCELL *a_cell, char *a_line)
       return 0;
    }
    /*---(prepare defaults)------------*/
-   snprintf (a_line, LEN_FULL, "´ -        a=· f=· d=· u=· 5=· -h  -w  --[]");
+   snprintf (a_line, LEN_FULL, "´ -        a=· f=· d=· u=· 5=· -h  -w  --åæ");
    --rce;  if (a_cell  == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
@@ -1358,8 +1358,8 @@ CELL_print_line         (tCELL *a_cell, char *a_line)
    /*---(prepare full)----------------*/
    if (a_cell->C_parent != NULL)  sprintf  (s, "%1dh %2dw", a_cell->R_parent->size, a_cell->C_parent->size);
    else                           strlcpy  (s, "-h  -w", LEN_LABEL);
-   if (a_cell->print    != NULL)  sprintf  (t, "%3d[%.38s]", strlen (a_cell->print), a_cell->print);
-   else                           strlcpy  (t, " --[]", LEN_HUND);
+   if (a_cell->print    != NULL)  sprintf  (t, "%3då%.38sæ", strlen (a_cell->print), a_cell->print);
+   else                           strlcpy  (t, " --åæ", LEN_HUND);
    snprintf (a_line, LEN_FULL, "´ %-8.8s a=%c f=%c d=%c u=%c 5=%c %s %s", a_cell->label, a_cell->align, a_cell->format, a_cell->decs, a_cell->unit, '·', s, t);
    /*---(complete)--------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);

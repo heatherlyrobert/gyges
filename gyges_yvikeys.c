@@ -1,6 +1,12 @@
 /*============================----beg-of-source---============================*/
 #include   "gyges.h"
 
+/*
+ * metis § wn2·· § col width changes not updating effected merged cell printables         § M2O126 §  · §
+ * metis § dn4<· § cut and paste is disabled                                              § M2O1DD §  · §
+ *
+ *
+ */
 
 
 struct cACCESSOR my;

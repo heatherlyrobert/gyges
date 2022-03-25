@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6e"
-#define     P_VERTXT    "yMARK regex search fully integrated -- still must unit test"
+#define     P_VERNUM    "3.6f"
+#define     P_VERTXT    "cell unit test is improved and working again"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -906,13 +906,31 @@ extern      char          unit_answer [LEN_FULL];
 /*---(from s_main.c)-----------------------*/
 int       main               (int argc, char *argv[]);
 
+
+/*===[[ gyges_prog.c ]]=======================================================*/
+/*··········>·······················>·········································*/
+/*---(preinit)--------------*/
+char        PROG_urgents            (int a_argc, char *a_argv []);
+/*---(startup)--------------*/
+char        PROG__init              (int a_argc, char *a_argv []);
+char        PROG__args              (int a_argc, char *a_argv []);
+char        PROG__begin             (void);
+char        PROG_startup            (int a_argc, char *a_argv []);
+/*---(execution)------------*/
+char        PROG_dawn               (void);
+char        PROG_dusk               (void);
+/*---(shutdown)-------------*/
+char        PROG__end               (void);
+char        PROG_shutdown           (void);
+/*---(unittest)-------------*/
+char        PROG__unit_loud         (void);
+char        PROG__unit_quiet        (void);
+char        PROG__unit_end          (void);
+
+
 /*---(from s.c)----------------------------*/
-char      PROG_init            (int   argc, char *argv[]);
-char      PROG_args            (int   argc, char *argv[]);
-char      PROG_begin           (void);
-char      PROG_final           (void);
 char      PROG_cleanse         (void);
-char      PROG_end             (void);
+char      PROG__end             (void);
 char      PROG_bigdump            (void *a_file);
 
 /*> char      PROG_main_input      (char  a_mode, char a_key);                        <*/
@@ -930,9 +948,6 @@ char      PROG_bigdump            (void *a_file);
 
 char     *PROG__unit          (char *a_question, void *a_thing);
 char      PROG__testing       (void);
-char      PROG__unit_loud      (void);
-char      PROG__unit_quiet     (void);
-char      PROG__unit_end       (void);
 
 
 

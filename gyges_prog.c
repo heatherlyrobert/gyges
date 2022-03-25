@@ -61,9 +61,36 @@ PROG_version       (void)
    return verstring;
 }
 
-char         /*-> very first setup -------------------[ shoot  [gz.633.201.0A]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
-PROG_init          (int a_argc, char *a_argv[])
+
+
+/*====================------------------------------------====================*/
+/*===----                       pre-initialization                     ----===*/
+/*====================------------------------------------====================*/
+static void      o___PREINIT_________________o (void) {;}
+
+char
+PROG_urgents            (int a_argc, char *a_argv [])
 {
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   /*---(initialize)---------------------*/
+   yURG_all_mute ();
+   rc = yURG_logger  (a_argc, a_argv);
+   rc = yURG_urgs    (a_argc, a_argv);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        program startup                       ----===*/
+/*====================------------------------------------====================*/
+static void      o___STARTUP_________________o (void) {;}
+
+char         /*-> very first setup -------------------[ shoot  [gz.633.201.0A]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
+PROG__init         (int a_argc, char *a_argv[])
+{
+   char        rce         =  -10;
    char        rc          =    0;
    /*---(log header)---------------------*/
    DEBUG_PROG   yLOG_info     ("purpose" , P_PURPOSE);
@@ -86,46 +113,133 @@ PROG_init          (int a_argc, char *a_argv[])
    DEBUG_PROG   yLOG_info     ("yPARSE"  , yPARSE_version    ());
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
-   /*---(yvikeys config)-----------------*/
+   /*---(yvicurses config)---------------*/
    my.btree = 'y';
    api_ysort_init ();
-   yVICURSES_init   ("gyges spreadsheet", P_VERNUM, MODE_MAP);
+   rc = yVICURSES_init   ("gyges spreadsheet", P_VERNUM, MODE_MAP);
+   DEBUG_PROG   yLOG_value    ("yVICURSES" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
    /*> rc = yMODE_init (MODE_MAP);                                                    <*/
    /*> yVIKEYS_dump_add ("btree"      , api_ysort_btree_dump);                        <*/
    /*> yVIKEYS_dump_add ("seq"        , yCALC_seq_dump);                              <*/
    /*> yVIKEYS_dump_add ("big"        , PROG_bigdump);                                <*/
-   NODE_init ();
-   TAB_init  ();
-   LOC_init  ();
+   /*---(gyges config)-------------------*/
+   rc = NODE_init ();
+   DEBUG_PROG   yLOG_value    ("NODE"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = TAB_init  ();
+   DEBUG_PROG   yLOG_value    ("TAB"       , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = LOC_init  ();
+   DEBUG_PROG   yLOG_value    ("LOC"       , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
    rc = FILE_init     ();
+   DEBUG_PROG   yLOG_value    ("FILE"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(library config)-----------------*/
    rc = yFILE_whoami       (P_FULLPATH, P_VERNUM, P_VERTXT, P_ONELINE, P_SUFFIX, P_CONTENT, api_yvikeys_handlers, FILE_prepper, FILE_finisher);
-   if (rc == 0)  rc = yMACRO_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
-   if (rc == 0)  rc = yMARK_config  (api_yvikeys_searcher , api_yvikeys_unsearcher, NULL);
-   if (rc == 0)  rc = ySRC_config   (api_yvikeys_saver);
+   DEBUG_PROG   yLOG_value    ("yFILE"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = yMACRO_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
+   DEBUG_PROG   yLOG_value    ("yMACRO"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = yMARK_config  (api_yvikeys_searcher , api_yvikeys_unsearcher, NULL);
+   DEBUG_PROG   yLOG_value    ("yMARK"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = ySRC_config   (api_yvikeys_saver);
+   DEBUG_PROG   yLOG_value    ("ySRC"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
    if (rc == 0)  rc = yMAP_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_router, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
-   if (rc <  0) {
-      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
-      return rc;
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
    }
    /*---(globals)------------------------*/
    rc = CELL_init  ();
-   EXIM_init ();
-   api_vikeys_init ();
+   DEBUG_PROG   yLOG_value    ("CELL"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = EXIM_init ();
+   DEBUG_PROG   yLOG_value    ("EXIM"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = api_vikeys_init ();
+   DEBUG_PROG   yLOG_value    ("API"       , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(ycalc config)-------------------*/
    rc = yCALC_init ('g');
-   if (rc == 0)  rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
-   if (rc == 0)  rc = yCALC_label_config (api_ycalc_named  , api_ycalc_whos_at, api_ycalc_labeler);
-   if (rc == 0)  rc = yCALC_value_config (api_ycalc_valuer , api_ycalc_address, api_ycalc_special, api_ycalc_printer);
-   DEBUG_PROG   yLOG_value    ("ycalc"     , rc);
+   DEBUG_PROG   yLOG_value    ("yCALC"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = yCALC_exist_config (api_ycalc_enabler, api_ycalc_pointer, api_ycalc_reaper);
+   DEBUG_PROG   yLOG_value    ("... exist" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = yCALC_label_config (api_ycalc_named  , api_ycalc_whos_at, api_ycalc_labeler);
+   DEBUG_PROG   yLOG_value    ("... label" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = yCALC_value_config (api_ycalc_valuer , api_ycalc_address, api_ycalc_special, api_ycalc_printer);
+   DEBUG_PROG   yLOG_value    ("... value" , rc);
    if (rc <  0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
    /*---(ystr config)--------------------*/
    rc = str0gyges (LOC_checker);
+   DEBUG_PROG   yLOG_value    ("ySTR"      , rc);
+   if (rc <  0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
+      return rc;
+   }
    /*---(yrpn config)--------------------*/
    rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yMAP_inside);
+   DEBUG_PROG   yLOG_value    ("yRPN"      , rc);
+   if (rc <  0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
+      return rc;
+   }
    /*---(globals)------------------------*/
    my.info_win       = G_INFO_NONE;
    my.menu           = ' ';
@@ -135,7 +249,7 @@ PROG_init          (int a_argc, char *a_argv[])
 }
 
 char         /*-> process the command line args ------[ ------ [gz.952.251.B4]*/ /*-[01.0000.121.!]-*/ /*-[--.---.---.--]-*/
-PROG_args          (int argc, char *argv[])
+PROG__args              (int a_argc, char *a_argv[])
 {
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(locals)-------------------------*/
@@ -147,15 +261,15 @@ PROG_args          (int argc, char *argv[])
    char        t           [LEN_FULL]   = "";
    /*---(begin)--------------------------*/
    /*> FILE_rename ("");                                                              <*/
-   /*> yVIKEYS_args (argc, argv);                                                     <*/
+   /*> yVIKEYS_args (a_argc, a_argv);                                                     <*/
    /*---(process)------------------------*/
-   for (i = 1; i < argc; ++i) {
-      a = argv[i];
+   for (i = 1; i < a_argc; ++i) {
+      a = a_argv[i];
       ++x_total;
       if (a[0] == '@')  continue;
       DEBUG_ARGS  yLOG_info    ("cli arg", a);
       ++x_args;
-      if      (strncmp (a, "-f"        ,10) == 0)  strlcpy (x_name , argv[++i], LEN_RECD);
+      if      (strncmp (a, "-f"        ,10) == 0)  strlcpy (x_name , a_argv[++i], LEN_RECD);
       else if (strncmp (a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp (a, "--help"    ,10) == 0)  PROG_usage();
       /*---(prefixes)--------------------*/
@@ -165,7 +279,7 @@ PROG_args          (int argc, char *argv[])
        *> else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);   <* 
        *> else if (strncmp (a, "--function-list"     ,  9) == 0)  CALC_func_list  ();                             <*/
       /*---(other)-----------------------*/
-      else if (a[0] != '-'                     )   strlcpy (x_name , argv[i]  , LEN_RECD);
+      else if (a[0] != '-'                     )   strlcpy (x_name , a_argv[i]  , LEN_RECD);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);
    DEBUG_ARGS  yLOG_value  ("arguments" , x_args);
@@ -183,7 +297,7 @@ PROG_args          (int argc, char *argv[])
 }
 
 char         /*-> initialize program and variables ---[ ------ [gz.741.041.07]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
-PROG_begin         (void)
+PROG__begin             (void)
 {
    DEBUG_PROG  yLOG_enter (__FUNCTION__);
    /*---(locals)-----------+-----------+-*/
@@ -221,8 +335,51 @@ PROG_begin         (void)
    return 0;
 }
 
+char
+PROG_startup            (int a_argc, char *a_argv [])
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   yURG_stage_check (YURG_BEG);
+   DEBUG_TOPS  yLOG_enter   (__FUNCTION__);
+   /*---(initialize)---------------------*/
+   rc = PROG__init   (a_argc, a_argv);
+   DEBUG_PROG   yLOG_value    ("init"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(arguments)----------------------*/
+   rc = PROG__args   (a_argc, a_argv);
+   DEBUG_PROG   yLOG_value    ("args"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(begin)--------------------------*/
+   rc = PROG__begin  ();
+   DEBUG_PROG   yLOG_value    ("begin"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
+   yURG_stage_check (YURG_MID);
+   return rc;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        program execution                     ----===*/
+/*====================------------------------------------====================*/
+static void      o___EXECUTION_______________o (void) {;}
+
 char         /*-> initialize program and variables ---[ ------ [gz.421.001.08]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
-PROG_final         (void)
+PROG_dawn          (void)
 {
    DEBUG_PROG  yLOG_enter (__FUNCTION__);
    DRAW_init  ();
@@ -251,6 +408,18 @@ PROG_final         (void)
 }
 
 char
+PROG_dusk          (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_PROG  yLOG_enter (__FUNCTION__);
+   /*---(process)------------------------*/
+   DRAW_wrap     ();
+   /*---(complete)-----------------------*/
+   DEBUG_PROG  yLOG_exit  (__FUNCTION__);
+   return 0;
+}
+
+char
 PROG_cleanse         (void)
 {
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
@@ -260,8 +429,15 @@ PROG_cleanse         (void)
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
 }
 
+
+
+/*====================------------------------------------====================*/
+/*===----                        program shutdown                      ----===*/
+/*====================------------------------------------====================*/
+static void      o___SHUTDOWN________________o (void) {;}
+
 char         /*-> shutdown program and free memory ---[ ------ [gz.422.001.03]*/ /*-[00.0000.111.!]-*/ /*-[--.---.---.--]-*/
-PROG_end             (void)
+PROG__end            (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
@@ -272,6 +448,17 @@ PROG_end             (void)
    yVICURSES_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    DEBUG_PROG   yLOGS_end     ();
+   return 0;
+}
+
+char             /* [------] drive the program closure activities ------------*/
+PROG_shutdown           (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_PROG   yLOG_enter    (__FUNCTION__);
+   PROG__end ();
+   DEBUG_PROG   yLOG_exit     (__FUNCTION__);
+   DEBUG_TOPS   yLOGS_end    ();
    return 0;
 }
 
@@ -385,23 +572,44 @@ PRIV void  o___UNITTEST________o () { return; }
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 PROG__unit_quiet     (void)
 {
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         x_argc      =    1;
    char       *x_args [1]  = { "gyges" };
-   yURG_logger (1, x_args);
-   PROG_init   (1, x_args);
-   yURG_urgs   (1, x_args);
-   PROG_args   (1, x_args);
-   PROG_begin  ();
-   /*> PROG_final  ();                                                                <*/
+   /*---(urgents)------------------------*/
+   rc = PROG_urgents  (x_argc, x_args);
+   DEBUG_PROG   yLOG_value    ("urgents"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(startup)------------------------*/
+   rc = PROG_startup  (x_argc, x_args);
+   DEBUG_PROG   yLOG_value    ("startup"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
    return 0;
 }
 
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unit_loud      (void)
 {
+   char        rce         =  -10;
+   char        rc          =    0;
    int         x_argc      = 10;
    char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@args", "@@cmds", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
-   yURG_logger (x_argc, x_args);
+   /*---(urgents)------------------------*/
+   rc = PROG_urgents  (x_argc, x_args);
+   DEBUG_PROG   yLOG_value    ("urgents"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
    yURG_name   ("tops"  , YURG_ON);
+   yURG_name   ("prog"  , YURG_ON);
    yURG_name   ("cell"  , YURG_ON);
    yURG_name   ("regs"  , YURG_ON);
    yURG_name   ("deps"  , YURG_ON);
@@ -411,26 +619,40 @@ PROG__unit_loud      (void)
    yURG_name   ("calc"  , YURG_ON);
    yURG_name   ("exec"  , YURG_ON);
    yURG_name   ("adjs"  , YURG_ON);
+   yURG_name   ("srcp"  , YURG_ON);
    yURG_name   ("yparse", YURG_ON);
    yURG_name   ("ymode" , YURG_ON);
    yURG_name   ("ykeys" , YURG_ON);
    yURG_name   ("ymacro", YURG_ON);
    yURG_name   ("ycmd"  , YURG_ON);
    yURG_name   ("ysrc"  , YURG_ON);
+   yURG_name   ("srch"  , YURG_ON);
    yURG_name   ("ymap"  , YURG_ON);
    yURG_name   ("yview" , YURG_ON);
    yURG_name   ("hist"  , YURG_ON);
-   PROG_init   (x_argc, x_args);
-   yURG_urgs   (x_argc, x_args);
-   PROG_args   (x_argc, x_args);
-   PROG_begin  ();
+   /*---(startup)------------------------*/
+   rc = PROG_startup  (x_argc, x_args);
+   DEBUG_PROG   yLOG_value    ("startup"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
    return 0;
 }
 
 char         /*-> set up program urgents/debugging ---[ light  [uz.210.001.01]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
 PROG__unit_end       (void)
 {
-   PROG_end       ();
+   char        rce         =  -10;
+   char        rc          =    0;
+   rc = PROG_shutdown  ();
+   DEBUG_PROG   yLOG_value    ("shutdown"  , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
    return 0;
 }
 

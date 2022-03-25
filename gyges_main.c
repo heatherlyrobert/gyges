@@ -7,26 +7,29 @@
 
 
 int          /*-> tbd --------------------------------[ ------ [gn.842.232.99]*/ /*-[01.0000.000.!]-*/ /*-[--.---.---.--]-*/
-main (int argc, char *argv[])
+main                    (int a_argc, char *a_argv [])
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          = 0;
-   /*---(initialize)---------------------*/
-   if (rc >= 0)  rc = yURG_logger  (argc, argv);
-   if (rc >= 0)  rc = yURG_urgs    (argc, argv);
-   if (rc >= 0)  rc = PROG_init    (argc, argv);
-   if (rc >= 0)  rc = PROG_args    (argc, argv);
-   if (rc >= 0)  rc = PROG_begin   ();
-   if (rc >= 0)  rc = PROG_final   ();
-   if (rc <  0) {
-      PROG_end ();
-      return -1;
-   }
+   /*---(debugging)----------------------*/
+   rc = PROG_urgents (a_argc, a_argv);
+   DEBUG_PROG   yLOG_value    ("urgents"   , rc);
+   if (rc <  0) { PROG_shutdown (); return -1; }
+   /*---(initialization)-----------------*/
+   rc = PROG_startup (a_argc, a_argv);
+   DEBUG_PROG   yLOG_value    ("startup"   , rc);
+   if (rc <  0) { PROG_shutdown (); return -2; }
+   /*---(visual setup)-------------------*/
+   rc = PROG_dawn    ();
+   DEBUG_PROG   yLOG_value    ("dawn"      , rc);
+   if (rc <  0) { PROG_shutdown (); return -3; }
    /*---(main-loop)----------------------*/
    rc = yVICURSES_main  ("keys", "every", NULL);
+   DEBUG_PROG   yLOG_value    ("main"      , rc);
+   rc = PROG_dusk     ();
+   DEBUG_PROG   yLOG_value    ("dusk"      , rc);
    /*---(wrap-up)------------------------*/
-   DRAW_wrap    ();
-   PROG_end     ();
+   rc = PROG_shutdown ();
    /*---(complete)-----------------------*/
    return 0;
 }
