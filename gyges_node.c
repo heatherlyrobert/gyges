@@ -765,6 +765,41 @@ NODE_max_adjust         (char a_index, char a_type)
 static void  o___SIZING__________o () { return; }
 
 char
+NODE__printables         (char a_type, tNODE *a_node)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(locals)-----------+-----+-----+-*/
+   tCELL      *x_cell      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_LOCS   yLOG_char    ("a_type"    , a_type);
+   --rce;  if (a_type == 0 || strchr ("cr", a_type) == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOCS   yLOG_point   ("a_node"    , a_node);
+   --rce;  if (a_node == NULL) {
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(walk cells)---------------------*/
+   DEBUG_LOCS   yLOG_value   ("count"     , a_node->count);
+   x_cell = a_node->n_head;
+   while (x_cell != NULL) {
+      rc = api_ycalc_printer (x_cell);
+      DEBUG_LOCS   yLOG_complex ("x_cell"    , "%-10.10p, %-10.10s, %4d, %2då%sæ", x_cell, x_cell->label, rc, strlen (x_cell->print), x_cell->print);
+      IF_COL   x_cell = x_cell->c_next;
+      ELSE_ROW x_cell = x_cell->r_next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
 NODE_size                (char a_index, char a_type, short a_ref)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -795,6 +830,8 @@ NODE_size                (char a_index, char a_type, short a_ref)
       ELSE_ROW x_size = DEF_HEIGHT;
    }
    DEBUG_LOCS   yLOG_value   ("x_size"    , x_size);
+   /*---(update cells)-------------------*/
+   NODE__printables (a_type, x_node);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_size;
@@ -804,7 +841,8 @@ char
 NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_key, char a_mode)
 {  /*---(notes)--------------------------*/
    /*
-    * metis § ····· § if col/row set back to default and empty, remove it                    § M2511E §  · §
+    * metis § mv2#· § if col/row set back to default and empty, remove it                    § M2511E § 10 §
+    *
     */
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -896,6 +934,8 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
          }
       }
    }
+   /*---(update cells)-------------------*/
+   NODE__printables (a_type, x_node);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_prev;

@@ -711,10 +711,20 @@ EXIM__import_one        (int a_tab, int a_col, int a_row, char *a_format, char *
 {
    char        rce         =  -10;
    tCELL      *x_new       = NULL;
+   char        t           [LEN_RECD]  = "";
+   int         x_len       =    0;
    DEBUG_REGS  yLOG_note    ("processing and handling mundo");
    if (yMAP_mundo_count () > s_mundos) {
       DEBUG_REGS  yLOG_note    ("switch to an add");
       s_hist = YMAP_ADD;
+   }
+   strlcpy    (t, a_source , LEN_RECD);
+   strlencode (t, ySTR_NORM, LEN_RECD);
+   strltrim   (t, ySTR_BOTH, LEN_RECD);
+   x_len = strlen (t);
+   if (x_len <= 0) {
+      DEBUG_REGS  yLOG_note    ("empty source, skipping");
+      return 0;
    }
    x_new = CELL_overwrite (s_hist, a_tab, a_col, a_row, a_source, a_format);
    DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
@@ -924,9 +934,11 @@ EXIM__import_fields     (int a_row)
       DEBUG_REGS  yLOG_info    ("s_source"  , s_source);
       /*---(update)-------------------------*/
       rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
+      DEBUG_REGS  yLOG_value   ("import_one", rc);
       if (rc < 0) {
+         DEBUG_REGS  yLOG_note    ("FAILED IMPORT");
          EXIM__import_fail ();
-         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rc);
          return rc;
       }
       /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
@@ -1295,12 +1307,18 @@ EXIM_import             (char a_style)
       /*---(handle values)---------------*/
       if (a_style != '+')  s_style = a_style;
       switch (s_style) {
-      case 'v' : case 'V' :   EXIM__import_values  (x_row);      break;
-      case 'f' : case 'F' :   EXIM__import_fields  (x_row);      break;
-      case 'd' : case 'D' :   EXIM__import_fields  (x_row);      break;
-      case 't' : case 'T' :   EXIM__import_fields  (x_row);      break;
-      case 'c' : case 'C' :   EXIM__import_csv     (x_row);      break;
-      case 'n' : case 'N' :   EXIM__import_native  ();           break;
+      case 'v' : case 'V' :   rc = EXIM__import_values  (x_row);      break;
+      case 'f' : case 'F' :   rc = EXIM__import_fields  (x_row);      break;
+      case 'd' : case 'D' :   rc = EXIM__import_fields  (x_row);      break;
+      case 't' : case 'T' :   rc = EXIM__import_fields  (x_row);      break;
+      case 'c' : case 'C' :   rc = EXIM__import_csv     (x_row);      break;
+      case 'n' : case 'N' :   rc = EXIM__import_native  ();           break;
+      }
+      --rce;  if (rc < 0) {
+         DEBUG_REGS   yLOG_note    ("IMPORT FAILED");
+         rc = EXIM__close  ();
+         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
       }
       /*---(next)------------------------*/
       ++x_row;

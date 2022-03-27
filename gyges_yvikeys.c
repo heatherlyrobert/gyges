@@ -2,12 +2,178 @@
 #include   "gyges.h"
 
 /*
- * metis § wn2·· § col width changes not updating effected merged cell printables         § M2O126 §  · §
+ * metis § wn2#· § col width changes not updating effected merged cell printables         § M2O126 §  1 §
  * metis § dn4<· § cut and paste is disabled                                              § M2O1DD §  · §
- *
+ * metis § yv+·· § be able to delete cell and remove from all formulas that require it    § M2PMDa §  · §
+ * metis § yv+·· § add move option that copies, pastes, then clears original              § M2PNVU §  · §
  *
  */
 
+/*
+ *  complex copy/paste scenario...
+ *  -- INNER has all four absolute/relative, provides/requires combos
+ *  -- OUTER has all four absolute/relative, provides/requires combos
+ *  -- first, INNER is copied
+ *  -- then, pasted on top of SQUASH area
+ *  -- INNER connections must apporpriately stay intack
+ *  -- SQUASH areas not overwritten must still work (0g8 Ö 0d7 Ö 0a6)
+ *  -- all OUTER connections must be appropriately updated
+ *
+ *
+ *   legend   Ï source    › destination
+ *
+ *  ORIGINAL ====================================================
+ *
+ *     ---a--- ---b--- ---c--- ---d--- ---e--- ---f--- ---g---
+ *
+ *  1                  abs req ›€€‚                 OUTER
+ *                  ƒ²²²²²²²²²²²²²²²²²²²²²INNER·‚
+ *  2               Œ  rel proÏ€‚ ƒ€›rel req   Œ
+ *               ƒ€€Œ€€€€€€€€€€Ï› ÏÏ            Œ
+ *  3  rel req ›€…  Œ          crucial ›€€€€€€€€Œ€€€€€ rel pro
+ *                 ƒŒ€€€€€€€€€€››  Ï ›€€€€€€€€€€Œ€‚
+ *  4              Œ  abs proÏ€…  „€›abs req   Œ 
+ *                 ‡²²²²²²²²²²²²²²²²²²²²²²²²²²²†  
+ *  5              Œ···························Œ „€€Ï abs pro
+ *                 Œ·················SQUASH····Œ
+ *  6  rel req ›€‚ Œ···························Œ
+ *                Œ···························Œ
+ *  7             Œ···········safe············Œ
+ *                „²²²²²²²²²²²ÏÏ²›²²²²²²²²²²²²…
+ *  8             „€€€€€€€€€€€€…               ƒ€€Ï rel pro
+ *               „€€€€€€€€€€€€€€€… „€€€€€€€€€€€€€€…
+ *  9
+ *
+ * 10        
+ *
+ *
+ *
+ *  COPY/NORMAL (confirmed) =====================================
+ *
+ *     ---a--- ---b--- ---c--- ---d--- ---e--- ---f--- ---g---
+ *
+ *  1                  abs req ›€€‚                 OUTER
+ *                  ƒ²²²²²²²²²²²²²²²²²²²²²INNER·‚
+ *  2               Œ  rel proÏ€‚ ƒ€›rel req   Œ
+ *               ƒ€€Œ€€€€€€€€€€Ï› ÏÏ            Œ
+ *  3  rel req ›€…  Œ          crucial ›€€€€€€€€Œ€€€€Ï rel pro
+ *                 ƒŒ€€€€€€€€€€››  Ï ›€€€€€€€€€€Œ€‚
+ *  4              Œ  abs proÏ€ˆ‚ ‡€Öabs req   Œ 
+ *                 ‡²²²²²²²²²²²²²„€€€€€€€€€€‚²† 
+ *  5              Œ··rel proÏ€‚·ƒ€›rel req··Œ ‡€€Ï abs pro
+ *                 Œ···········››·Ï·›€€€€€€€€€Œ€…
+ *  6  rel req ›€‚ Œƒ€€€€€€€›·CRUCIAL ›€€€€€€€Œ€€€€Ï rel pro
+ *                Œ·························Œ
+ *  7             Œ·abs pro··safe ·abs req›…·Œ
+ *                „²²²²²²²²²²ÏÏ²›²²²²²²²²²²²²…
+ *  8             „€€€€€€€€€€€…               ƒ€€Ï rel pro
+ *               „€€€€€€€€€€€€€€€… „€€€€€€€€€€€€€€…
+ *  9                      
+ *                         
+ * 10                „€€€€€€€€Ï SAFE
+ *
+ *
+ *
+ *  COPY/REPLACE ================================================
+ *
+ *     ---a--- ---b--- ---c--- ---d--- ---e--- ---f--- ---g---
+ *
+ *  1                  abs req ›€€‚                 OUTER
+ *                  ƒ²²²²²²²²²²²²²²²²²²²²²INNER·‚
+ *  2               Œ  rel proÏ€‚ ƒ€›rel req   Œ
+ *               ƒ€€Œ€€€€€€€€€€Ï› ÏÏ            Œ
+ *  3  rel req ›€…  Œ          crucial ›€€€€€€€€Œ€€€€Ï rel pro
+ *                 ƒŒ€€€€€€€€€€››  Ï ›€€€€€€€€€€Œ€‚
+ *  4              Œ  abs proÏ€ˆ‚ ‡€Öabs req   Œ 
+ *                 ‡²²²²²²²²²²²²²„€€€€€€€€€€‚²† 
+ *  5              Œ··rel proÏ€‚·ƒ€›rel req··Œ ‡€€Ï abs pro
+ *                 Œ···········››·Ï·›€€€€€€€€€Œ€…
+ *  6    ERROR ›€‚ Œƒ€€€€€€€›·CRUCIAL ›€€€€€€€Œ€€€€Ï rel pro
+ *                Œ·························Œ
+ *  7             Œ·abs pro··XXXX ·abs req›…·Œ
+ *                „²²²²²²²²²²ÏÏ²²²²²²²²²²²²²²…
+ *  8             „€€€€€€€€€€€…                   Ï rel pro
+ *               „€€€€€€€€€€€€€€€…                 
+ *  9                      
+ *                         
+ * 10                „€€€€€€€€Ï SAFE
+ *
+ *
+ *
+ *  CUT/NORMAL (confirmed) ======================================
+ *
+ *     ---a--- ---b--- ---c--- ---d--- ---e--- ---f--- ---g---
+ *
+ *  1                    ERROR ›€€‚                 OUTER
+ *                  ƒ²²²²²²²²²²²²²²²²²²²²²INNER·‚
+ *  2               Œ    BLANKÏ     ÏBLANK     Œ
+ *               ƒ€€Œ€€€€€€€€€€Ï  Ï             Œ
+ *  3    ERROR ›€…  Œ          XXXXXXX          Œ    Ï rel pro
+ *                  Œ              Ï            Œ  
+ *  4               Œ    BLANKÏ€€‚ ‡€ÖBLANK     Œ  
+ *                  ‡²²²²²²²²²²²²²„€€€€€€€€€€‚²†  
+ *  5               Œ··rel proÏ€‚·ƒ€›rel req··Œ ƒ€€Ï abs pro
+ *                  Œ···········››·Ï·›€€€€€€€€€Œ€…
+ *  6  rel req ›€‚  Œƒ€€€€€€€›· ERROR  ›€€€€€€€Œ€€€€Ï rel pro
+ *                 Œ·························Œ
+ *  7              Œ·abs pro··safe ·  ERROR›…·Œ
+ *                 „²²²²²²²²²²²Ï²›²²²²²²²²²²²²…
+ *  8                                         ƒ€€Ï rel pro
+ *               „€€€€€€€€€€€€€€€… „€€€€€€€€€€€€€€…
+ *  9                      
+ *                         
+ * 10                „€€€€€€€€Ï SAFE
+ *
+ *
+ *
+ *  CUT/MOVE ====================================================
+ *     (ybR-) clear, adjust all copied formulas, adjust relative in providers
+ *
+ *     ---a--- ---b--- ---c--- ---d--- ---e--- ---f--- ---g---
+ *
+ *  1                    ERROR ›€€‚                 OUTER
+ *                  ƒ²²²²²²²²²²²²²²²²²²²²²INNER·‚
+ *  2               Œ                          Œ
+ *                  Œ             Ï             Œ
+ *  3  rel req ›€€‚ Œ          XXXXXXX          Œ    Ï rel pro
+ *                 Œ                           Œ  
+ *  4              Œ                           Œ  
+ *                 ‡²²²²²²²²²²²²²²²²²²²²²²²²²²²†  
+ *  5              Œ··rel proÏ€‚··ƒ€›rel req···Œ
+ *                „€Œ€€€€€€€€€Ï·›··Ï············Œ  
+ *  6    ERROR ›€‚  Œƒ€€€€€€€›·CRUCIAL ›€€€€€€€€Œ€€€€Ï rel pro
+ *                 Œ········ƒ€›··Ï€‚›€€€€€€€€€Œ€‚
+ *  7              Œ·abs proÏ··XXX·›abs req···Œ „€€Ï abs pro
+ *                 „²²²²²²²²²²²Ï²²²²²²²²²²²²²²…
+ *  8                                             Ï rel pro
+ *               „€€€€€€€€€€€€€€€…                 
+ *  9                      
+ *                         
+ * 10                „€€€€€€€€Ï SAFE
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 struct cACCESSOR my;
 char    g_contents      [LEN_RECD] = "";
@@ -225,7 +391,7 @@ api_yvikeys_unsearcher   (uchar *a_label, ushort u, ushort x, ushort y, ushort z
 static void  o___REGISTERS_______o () { return; }
 
 char
-api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z)
+api_yvikeys_clearer     (char a_1st, ushort u, ushort x, ushort y, ushort z)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -238,8 +404,8 @@ api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z)
    DEBUG_REGS   yLOG_char    ("a_1st"     , a_1st);
    if (a_1st == 'y')  x_count = 0;
    /*---(identify cell)------------------*/
-   DEBUG_REGS   yLOG_complex ("coords"    , "%3db, %3dx, %3dy", b, x, y);
-   x_curr = LOC_cell_at_loc (b, x, y);
+   DEBUG_REGS   yLOG_complex ("coords"    , "%3db, %3dx, %3dy", u, x, y);
+   x_curr = LOC_cell_at_loc (u, x, y);
    DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
    --rce;  if (x_curr == NULL) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -247,8 +413,8 @@ api_yvikeys_clearer     (char a_1st, int b, int x, int y, int z)
    }
    /*---(delete)-------------------------*/
    DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
-   if (a_1st == 'y')  rc = CELL_change (NULL, YMAP_BEG, b, x, y, "");
-   else               rc = CELL_change (NULL, YMAP_ADD, b, x, y, "");
+   if (a_1st == 'y')  rc = CELL_change (NULL, YMAP_BEG, u, x, y, "");
+   else               rc = CELL_change (NULL, YMAP_ADD, u, x, y, "");
    DEBUG_REGS   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -296,7 +462,7 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
    /*---(check for bounds)---------------*/
    yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL, NULL);
    DEBUG_REGS   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
-   /*> rc = yVIKEYS_mreg_inside (a_curr->tab, a_curr->col, a_curr->row, 0);           <*/
+   rc = yMAP_inside (a_curr->tab, a_curr->col, a_curr->row, 0);
    DEBUG_REGS   yLOG_value   ("visu_rc"   , rc);
    --rce;  if (rc <= 0)  {
       DEBUG_REGS   yLOG_note    ("cell not in visual area");
@@ -314,8 +480,9 @@ api__yvikeys_copier_one       (tCELL *a_curr, long a_stamp)
    /*---(move in critical data)----------*/
    x_copy->label = strdup (a_curr->label);
    yCALC_stamp_set (a_curr->ycalc, s_stamp);
+   DEBUG_REGS   yLOG_info    ("label"     , x_copy->label);
    /*---(place in buffer)----------------*/
-   /*> rc = yVIKEYS_mreg_add  (x_copy, x_copy->label);                                <*/
+   rc = yMAP_mreg_add  (x_copy, x_copy->label);
    DEBUG_REGS   yLOG_value   ("hook_rc"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_note    ("could not hook to register");
@@ -406,7 +573,7 @@ api_yvikeys_router      (tCELL *a_cell, char *a_list)
 }
 
 char
-api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
+api_yvikeys__rerouter   (char a_pros, ushort a_uoff, ushort a_xoff, ushort a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -448,12 +615,12 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
       DEBUG_REGS   yLOG_point   ("x_provider", x_provider);
       if (x_provider != NULL) {
          DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);
-         /*> rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);   <*/
+         rc = yMAP_inside (x_provider->tab, x_provider->col, x_provider->row, 0);
          DEBUG_REGS   yLOG_value   ("rc"        , rc);
          if (rc == 0) {
             DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);
             DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);
-            rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
+            rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_uoff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
             DEBUG_REGS   yLOG_value   ("rc"        , rc);
             DEBUG_REGS   yLOG_info    ("x_source"  , x_source);
             sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);
@@ -471,7 +638,7 @@ api_yvikeys__rerouter   (char a_pros, int a_boff, int a_xoff, int a_yoff, int a_
 }
 
 char
-api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
+api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, tCELL *a_cell, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -495,7 +662,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);
    DEBUG_REGS   yLOG_char    ("a_intg"    , a_intg);
    DEBUG_REGS   yLOG_char    ("a_1st"     , a_1st);
-   DEBUG_REGS   yLOG_complex ("offset"    , "b=%4d, x=%4d, y=%4d, z=%4d", a_boff, a_xoff, a_yoff, a_zoff);
+   DEBUG_REGS   yLOG_complex ("offset"    , "b=%4d, x=%4d, y=%4d, z=%4d", a_uoff, a_xoff, a_yoff, a_zoff);
    /*---(defense)------------------------*/
    DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);
    --rce;  if (a_cell == NULL)  {
@@ -524,19 +691,19 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    }
    DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
    /*---(set new location)---------------*/
-   x_dtab  = x_stab + a_boff;
+   x_dtab  = x_stab + a_uoff;
    x_dcol  = x_scol + a_xoff;
    x_drow  = x_srow + a_yoff;
    DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
    /*---(reroute providers)--------------*/
-   api_yvikeys__rerouter (a_pros, a_boff, a_xoff, a_yoff, a_zoff, a_cell, a_list);
+   api_yvikeys__rerouter (a_pros, a_uoff, a_xoff, a_yoff, a_zoff, a_cell, a_list);
    /*---(check cell type)----------------*/
    DEBUG_REGS   yLOG_info    ("source"    , a_cell->source);
    DEBUG_REGS   yLOG_char    ("type"      , a_cell->type);
    strcpy (x_source, "");
    if (strchr (YCALC_GROUP_RPN, a_cell->type) != 0) {
       DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
-      rc = yRPN_addr_require (a_cell->source, a_reqs, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
+      rc = yRPN_addr_require (a_cell->source, a_reqs, a_uoff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);
       DEBUG_REGS   yLOG_value   ("rc"        , rc);
       /*> if (rc < 0) {                                                               <* 
        *>    DEBUG_REGS   yLOG_note    ("formula could not be parsed");               <* 
@@ -553,40 +720,40 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
    else               x_copy = CELL_overwrite (YMAP_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    DEBUG_REGS   yLOG_complex ("DEBUG 3"   , "%-10.10s, %2dt, %3dc, %4dr", x_copy->label, x_copy->tab, x_copy->col, x_copy->row);
    /*---(providers)----------------------*/
-   DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");
+   /*> DEBUG_REGS   yLOG_note    ("CHECK PROVIDERS");                                 <*/
    /*> DEBUG_REGS   yLOG_char    ("a_pros"    , a_pros);                              <*/
-   /*> if (a_pros == G_RPN_IGNORE || a_pros == G_RPN_PNONE) {                         <* 
-    *>    DEBUG_REGS   yLOG_note    ("provider updates not requested");               <* 
-    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
-   /*> DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);   <*/
-   /*> x_original = LOC_cell_at_loc (x_stab, x_scol, x_srow);                         <* 
-    *> DEBUG_REGS   yLOG_point   ("x_original", x_original);                          <* 
-    *> if (x_original == NULL) {                                                      <* 
-    *>    DEBUG_REGS   yLOG_note    ("no cell at original location");                 <* 
-    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
-   /*> strlcpy (x_label, x_original->label, LEN_LABEL);                                             <* 
-    *> DEBUG_REGS   yLOG_info    ("label"     , x_label);                                           <* 
-    *> yCALC_show_reqs (x_original->ycalc, &x_nreq, NULL);                                          <* 
-    *> DEBUG_REGS   yLOG_value   ("nreq"      , x_nreq);                                            <* 
-    *> yCALC_show_pros (x_original->ycalc, &x_npro, x_list);                                        <* 
-    *> DEBUG_REGS   yLOG_value   ("npro"      , x_npro);                                            <* 
-    *> DEBUG_REGS   yLOG_info    ("x_list"    , x_list);                                            <* 
-    *> DEBUG_REGS   yLOG_complex ("x_original", "%s, nreq=%d, npro=%d", x_label, x_nreq, x_npro);   <* 
-    *> if (strchr ("-.", x_list [0]) != NULL) {                                                     <* 
-    *>    DEBUG_REGS   yLOG_note    ("no providers identified");                                    <* 
-    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                 <* 
-    *>    return 0;                                                                                 <* 
-    *> }                                                                                            <*/
-   /*> if (a_list == NULL) {                                                          <* 
-    *>    DEBUG_REGS   yLOG_note    ("no providers identified");                      <* 
-    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return 0;                                                                   <* 
-    *> }                                                                              <*/
-   /*> p  = strtok_r (a_list, q, &s);                                                                                                                  <* 
+   /*> if (a_pros == G_RPN_IGNORE || a_pros == G_RPN_PNONE) {                                                                                          <* 
+    *>    DEBUG_REGS   yLOG_note    ("provider updates not requested");                                                                                <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                    <* 
+    *>    return 0;                                                                                                                                    <* 
+    *> }                                                                                                                                               <* 
+    *> DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);                                                  <* 
+    *> x_original = LOC_cell_at_loc (x_stab, x_scol, x_srow);                                                                                          <* 
+    *> DEBUG_REGS   yLOG_point   ("x_original", x_original);                                                                                           <* 
+    *> if (x_original == NULL) {                                                                                                                       <* 
+    *>    DEBUG_REGS   yLOG_note    ("no cell at original location");                                                                                  <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                    <* 
+    *>    return 0;                                                                                                                                    <* 
+    *> }                                                                                                                                               <* 
+    *> strlcpy (x_label, x_original->label, LEN_LABEL);                                                                                                <* 
+    *> DEBUG_REGS   yLOG_info    ("label"     , x_label);                                                                                              <* 
+    *> yCALC_show_reqs (x_original->ycalc, &x_nreq, NULL);                                                                                             <* 
+    *> DEBUG_REGS   yLOG_value   ("nreq"      , x_nreq);                                                                                               <* 
+    *> yCALC_show_pros (x_original->ycalc, &x_npro, x_list);                                                                                           <* 
+    *> DEBUG_REGS   yLOG_value   ("npro"      , x_npro);                                                                                               <* 
+    *> DEBUG_REGS   yLOG_info    ("x_list"    , x_list);                                                                                               <* 
+    *> DEBUG_REGS   yLOG_complex ("x_original", "%s, nreq=%d, npro=%d", x_label, x_nreq, x_npro);                                                      <* 
+    *> if (strchr ("-.", x_list [0]) != NULL) {                                                                                                        <* 
+    *>    DEBUG_REGS   yLOG_note    ("no providers identified");                                                                                       <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                    <* 
+    *>    return 0;                                                                                                                                    <* 
+    *> }                                                                                                                                               <* 
+    *> if (a_list == NULL) {                                                                                                                           <* 
+    *>    DEBUG_REGS   yLOG_note    ("no providers identified");                                                                                       <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                    <* 
+    *>    return 0;                                                                                                                                    <* 
+    *> }                                                                                                                                               <* 
+    *> p  = strtok_r (a_list, q, &s);                                                                                                                  <* 
     *> DEBUG_REGS   yLOG_point   ("p"         , p);                                                                                                    <* 
     *> while (p != NULL) {                                                                                                                             <* 
     *>    DEBUG_REGS   yLOG_info    ("p"         , p);                                                                                                 <* 
@@ -594,12 +761,12 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
     *>    DEBUG_REGS   yLOG_point   ("x_provider", x_provider);                                                                                        <* 
     *>    if (x_provider != NULL) {                                                                                                                    <* 
     *>       DEBUG_REGS   yLOG_complex ("details"   , "%s, %3db, %3dx, %3dy", x_provider->label, x_provider->tab, x_provider->col, x_provider->row);   <* 
-    *>       rc = yVIKEYS_mreg_inside (x_provider->tab, x_provider->col, x_provider->row, 0);                                                          <* 
+    *>       rc = yMAP_inside (x_provider->tab, x_provider->col, x_provider->row, 0);                                                                  <* 
     *>       DEBUG_REGS   yLOG_value   ("rc"        , rc);                                                                                             <* 
     *>       if (rc == 0) {                                                                                                                            <* 
     *>          DEBUG_REGS   yLOG_info    ("source"    , x_provider->source);                                                                          <* 
     *>          DEBUG_REGS   yLOG_info    ("change"    , a_cell->label);                                                                               <* 
-    *>          rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_boff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);                <* 
+    *>          rc = yRPN_addr_provide (x_provider->source, a_pros, a_cell->label, a_uoff, a_xoff, a_yoff, a_zoff, LEN_RECD, x_source);                <* 
     *>          DEBUG_REGS   yLOG_value   ("rc"        , rc);                                                                                          <* 
     *>          DEBUG_REGS   yLOG_info    ("x_source"  , x_source);                                                                                    <* 
     *>          sprintf (x_bformat, "%c%c%c%c-", x_provider->align, x_provider->format, x_provider->decs, x_provider->unit);                           <* 
@@ -611,14 +778,14 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, int 
     *>    p  = strtok_r (NULL  , q, &s);                                                                                                               <* 
     *>    DEBUG_REGS   yLOG_point   ("p"         , p);                                                                                                 <* 
     *> }                                                                                                                                               <*/
-   DEBUG_REGS   yLOG_complex ("DEBUG 5"   , "%-10.10s, %2dt, %3dc, %4dr", x_copy->label, x_copy->tab, x_copy->col, x_copy->row);
+   /*> DEBUG_REGS   yLOG_complex ("DEBUG 5"   , "%-10.10s, %2dt, %3dc, %4dr", x_copy->label, x_copy->tab, x_copy->col, x_copy->row);   <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
-api_yvikeys_finisher    (int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *a_cell)
+api_yvikeys_finisher    (ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -646,7 +813,7 @@ api_yvikeys_finisher    (int a_boff, int a_xoff, int a_yoff, int a_zoff, tCELL *
    }
    DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
    /*---(set new location)---------------*/
-   x_dtab  = x_stab + a_boff;
+   x_dtab  = x_stab + a_uoff;
    x_dcol  = x_scol + a_xoff;
    x_drow  = x_srow + a_yoff;
    DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
