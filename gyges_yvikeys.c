@@ -3,9 +3,12 @@
 
 /*
  * metis § wn2#· § col width changes not updating effected merged cell printables         § M2O126 §  1 §
- * metis § dn4<· § cut and paste is disabled                                              § M2O1DD §  · §
+ * metis § dn4#· § cut and paste is disabled                                              § M2O1DD §  2 §
  * metis § yv+·· § be able to delete cell and remove from all formulas that require it    § M2PMDa §  · §
  * metis § yv+·· § add move option that copies, pastes, then clears original              § M2PNVU §  · §
+ *
+ * metis § dn2·· § interactive cut and paste does not update formulas (#REF)              § M2R63C §  · §
+ *
  *
  */
 
@@ -638,7 +641,7 @@ api_yvikeys__rerouter   (char a_pros, ushort a_uoff, ushort a_xoff, ushort a_yof
 }
 
 char
-api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, tCELL *a_cell, char *a_list)
+api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -785,7 +788,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, usho
 }
 
 char
-api_yvikeys_finisher    (ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, tCELL *a_cell)
+api_yvikeys_finisher    (short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;

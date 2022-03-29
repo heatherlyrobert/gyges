@@ -447,7 +447,6 @@ PROG__end            (void)
    LOC_wrap       ();
    yVICURSES_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
-   DEBUG_PROG   yLOGS_end     ();
    return 0;
 }
 
