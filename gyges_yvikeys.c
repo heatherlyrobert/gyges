@@ -7,8 +7,10 @@
  * metis § yv+·· § be able to delete cell and remove from all formulas that require it    § M2PMDa §  · §
  * metis § yv+·· § add move option that copies, pastes, then clears original              § M2PNVU §  · §
  *
- * metis § dn2·· § interactive cut and paste does not update formulas (#REF)              § M2R63C §  · §
+ * metis § dn2#· § interactive cut and paste does not update formulas (#REF)              § M2R63C §  1 §
+ * metis § wv4#· § remove flickering when screen is redrawn                               § M2S52Y §  1 §
  *
+ * metis § dn8#· § delete-right (dl) does not work when last row/col has contents         § M2T3Ht §  1 §
  *
  */
 
@@ -576,7 +578,7 @@ api_yvikeys_router      (tCELL *a_cell, char *a_list)
 }
 
 char
-api_yvikeys__rerouter   (char a_pros, ushort a_uoff, ushort a_xoff, ushort a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
+api_yvikeys__rerouter   (char a_pros, short a_uoff, short a_xoff, short a_yoff, int a_zoff, tCELL *a_cell, char *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -777,7 +779,7 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, shor
     *>          CELL_overwrite (YMAP_ADD, x_provider->tab, x_provider->col, x_provider->row, x_source, x_bformat);                                     <* 
     *>       }                                                                                                                                         <* 
     *>    }                                                                                                                                            <* 
-    *>    /+> CELL_change  (x_copy, YMAP_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));   <+/                                                 <* 
+    *>    CELL_change  (x_copy, YMAP_NONE, x_dtab, x_dcol, x_drow, strdup (x_copy->source));                                                           <* 
     *>    p  = strtok_r (NULL  , q, &s);                                                                                                               <* 
     *>    DEBUG_REGS   yLOG_point   ("p"         , p);                                                                                                 <* 
     *> }                                                                                                                                               <*/
@@ -790,59 +792,59 @@ api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, shor
 char
 api_yvikeys_finisher    (short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell)
 {
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char        x_label     [LEN_LABEL]  = "";
-   short       x_stab, x_scol, x_srow;
-   short       x_dtab, x_dcol, x_drow;
-   tCELL      *x_curr      = NULL;
-   char        x_list      [LEN_RECD]   = "";
-   /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);
-   --rce;  if (a_cell == NULL)  {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(get original location)----------*/
-   DEBUG_REGS   yLOG_info    ("a_label"   , a_cell->label);
-   rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
-   DEBUG_REGS   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc <  0)  {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
-   /*---(set new location)---------------*/
-   x_dtab  = x_stab + a_uoff;
-   x_dcol  = x_scol + a_xoff;
-   x_drow  = x_srow + a_yoff;
-   DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
-   x_curr  = LOC_cell_at_loc (x_dtab, x_dcol, x_drow);
-   DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
-   if (x_curr == NULL) {
-      DEBUG_REGS   yLOG_note    ("can not find cell");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   DEBUG_REGS   yLOG_complex ("DEBUG 6"   , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
-   /*---(find likes)---------------------*/
-   /*> yCALC_disp_like (x_curr->ycalc, x_list);                                       <*/
-   /*> DEBUG_REGS   yLOG_info    ("x_list"    , x_list);                              <*/
-   DEBUG_REGS   yLOG_complex ("update"    , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
-   yCALC_handle (x_curr->label);
-   /*> if (x_curr->source != NULL && x_curr->source [0] == '~') {                     <* 
-    *>    DEBUG_REGS   yLOG_note    ("recalculate cell and dependencies");            <* 
-    *>    yCALC_handle (x_curr->label);                                               <* 
-    *> }                                                                              <*/
-   DEBUG_REGS   yLOG_complex ("finally"   , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
-   x_curr  = LOC_cell_at_loc (x_dtab, x_dcol, x_drow);
-   DEBUG_REGS   yLOG_complex ("DEBUG 8"   , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
-   /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
-   return 0;
+   /*> /+---(locals)-----------+-----+-----+-+/                                                                                                          <* 
+    *> char        rce         =  -10;                                                                                                                   <* 
+    *> char        rc          =    0;                                                                                                                   <* 
+    *> char        x_label     [LEN_LABEL]  = "";                                                                                                        <* 
+    *> short       x_stab, x_scol, x_srow;                                                                                                               <* 
+    *> short       x_dtab, x_dcol, x_drow;                                                                                                               <* 
+    *> tCELL      *x_curr      = NULL;                                                                                                                   <* 
+    *> char        x_list      [LEN_RECD]   = "";                                                                                                        <* 
+    *> /+---(header)-------------------------+/                                                                                                          <* 
+    *> DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                                         <* 
+    *> /+---(defense)------------------------+/                                                                                                          <* 
+    *> DEBUG_REGS   yLOG_point   ("a_cell"    , a_cell);                                                                                                 <* 
+    *> --rce;  if (a_cell == NULL)  {                                                                                                                    <* 
+    *>    DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                                                 <* 
+    *>    return rce;                                                                                                                                    <* 
+    *> }                                                                                                                                                 <* 
+    *> /+---(get original location)----------+/                                                                                                          <* 
+    *> DEBUG_REGS   yLOG_info    ("a_label"   , a_cell->label);                                                                                          <* 
+    *> rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);                                                            <* 
+    *> DEBUG_REGS   yLOG_value   ("rc"        , rc);                                                                                                     <* 
+    *> --rce;  if (rc <  0)  {                                                                                                                           <* 
+    *>    DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                                                 <* 
+    *>    return rce;                                                                                                                                    <* 
+    *> }                                                                                                                                                 <* 
+    *> DEBUG_REGS   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);                                                    <* 
+    *> /+---(set new location)---------------+/                                                                                                          <* 
+    *> x_dtab  = x_stab + a_uoff;                                                                                                                        <* 
+    *> x_dcol  = x_scol + a_xoff;                                                                                                                        <* 
+    *> x_drow  = x_srow + a_yoff;                                                                                                                        <* 
+    *> DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);                                                    <* 
+    *> x_curr  = LOC_cell_at_loc (x_dtab, x_dcol, x_drow);                                                                                               <* 
+    *> DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);                                                                                                 <* 
+    *> if (x_curr == NULL) {                                                                                                                             <* 
+    *>    DEBUG_REGS   yLOG_note    ("can not find cell");                                                                                               <* 
+    *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                      <* 
+    *>    return 0;                                                                                                                                      <* 
+    *> }                                                                                                                                                 <* 
+    *> DEBUG_REGS   yLOG_complex ("DEBUG 6"   , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);   <* 
+    *> /+---(find likes)---------------------+/                                                                                                          <* 
+    *> /+> yCALC_disp_like (x_curr->ycalc, x_list);                                       <+/                                                            <* 
+    *> /+> DEBUG_REGS   yLOG_info    ("x_list"    , x_list);                              <+/                                                            <* 
+    *> DEBUG_REGS   yLOG_complex ("update"    , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);                                                    <* 
+    *> yCALC_handle (x_curr->label);                                                                                                                     <* 
+    *> /+> if (x_curr->source != NULL && x_curr->source [0] == '~') {                     <*                                                             <* 
+    *>  *>    DEBUG_REGS   yLOG_note    ("recalculate cell and dependencies");            <*                                                             <* 
+    *>  *>    yCALC_handle (x_curr->label);                                               <*                                                             <* 
+    *>  *> }                                                                              <+/                                                            <* 
+    *> DEBUG_REGS   yLOG_complex ("finally"   , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);                                                    <* 
+    *> x_curr  = LOC_cell_at_loc (x_dtab, x_dcol, x_drow);                                                                                               <* 
+    *> DEBUG_REGS   yLOG_complex ("DEBUG 8"   , "%-10.10p, %-10.10s, %2dt, %3dc, %4dr", x_curr, x_curr->label, x_curr->tab, x_curr->col, x_curr->row);   <* 
+    *> /+---(complete)-----------------------+/                                                                                                          <* 
+    *> DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                                         <* 
+    *> return 0;                                                                                                                                         <*/
 }
 
 char         /*-> delete a register cell -------------[ ------ [gz.210.101.01]*/ /*-[00.0000.104.!]-*/ /*-[--.---.---.--]-*/

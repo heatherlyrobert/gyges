@@ -684,8 +684,8 @@ NODE_max             (char a_index, char a_type)
       return rce;
    }
    /*---(find max)-----------------------*/
-   DEBUG_LOCS   yLOG_value   ("max"       , x_tab->ncol);
-   DEBUG_LOCS   yLOG_value   ("max"       , x_tab->nrow);
+   DEBUG_LOCS   yLOG_value   ("max col"   , x_tab->ncol);
+   DEBUG_LOCS   yLOG_value   ("max row"   , x_tab->nrow);
    IF_COL   x_max = x_tab->ncol - 1;
    ELSE_ROW x_max = x_tab->nrow - 1;
    /*---(complete)-----------------------*/

@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6h"
-#define     P_VERTXT    "fixed formula copy and paste by fixing offset ushort to shorts ;)"
+#define     P_VERNUM    "3.6i"
+#define     P_VERTXT    "critical delete-right (dl) testing with formulas working"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

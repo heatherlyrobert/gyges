@@ -57,13 +57,13 @@ api_ymap_locator        (char a_strict, char *a_label, ushort *u, ushort *x, ush
       return rce;
    }
    DEBUG_FILE   yLOG_value   ("x_size"    , x_size);
-   --rce;  if (x_size <= x_col) {
+   --rce;  if (x_size <  x_col) {
       DEBUG_FILE   yLOG_note    ("column not available");
       DEBUG_FILE   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_FILE   yLOG_value   ("y_size"    , y_size);
-   --rce;  if (y_size <= x_row) {
+   --rce;  if (y_size <  x_row) {
       DEBUG_FILE   yLOG_note    ("row not available");
       DEBUG_FILE   yLOG_exitr   (__FUNCTION__, rce);
       return rce;

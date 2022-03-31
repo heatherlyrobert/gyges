@@ -611,6 +611,7 @@ PROG__unit_loud      (void)
    yURG_name   ("prog"  , YURG_ON);
    yURG_name   ("cell"  , YURG_ON);
    yURG_name   ("regs"  , YURG_ON);
+   yURG_name   ("map"   , YURG_ON);
    yURG_name   ("deps"  , YURG_ON);
    yURG_name   ("ystr"  , YURG_ON);
    yURG_name   ("args"  , YURG_ON);
