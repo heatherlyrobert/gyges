@@ -11,6 +11,7 @@
  * metis § wv4#· § remove flickering when screen is redrawn                               § M2S52Y §  1 §
  *
  * metis § dn8#· § delete-right (dl) does not work when last row/col has contents         § M2T3Ht §  1 §
+ * metis § mc4·· § pastes/deletes/appends should check available space before allow       § M3047q §  · §
  *
  */
 
@@ -41,15 +42,15 @@
  *                 ‡²²²²²²²²²²²²²²²²²²²²²²²²²²²†  
  *  5              Œ···························Œ „€€Ï abs pro
  *                 Œ·················SQUASH····Œ
- *  6  rel req ›€‚ Œ···························Œ
+ *  6  rel req ›€‚ Œ···························Œ ²²²Ï future
  *                Œ···························Œ
  *  7             Œ···········safe············Œ
  *                „²²²²²²²²²²²ÏÏ²›²²²²²²²²²²²²…
  *  8             „€€€€€€€€€€€€…               ƒ€€Ï rel pro
  *               „€€€€€€€€€€€€€€€… „€€€€€€€€€€€€€€…
- *  9
- *
- * 10        
+ *  9                             Œ
+ *                                Ï
+ * 10                          future
  *
  *
  *
