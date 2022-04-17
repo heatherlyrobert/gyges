@@ -176,7 +176,7 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   if (rc == 0)  rc = yMAP_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_router, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
+   if (rc == 0)  rc = yMAP_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
@@ -630,6 +630,8 @@ PROG__unit_loud      (void)
    yURG_name   ("ymap"  , YURG_ON);
    yURG_name   ("yview" , YURG_ON);
    yURG_name   ("hist"  , YURG_ON);
+   yURG_name   ("sort"  , YURG_OFF);
+   yURG_name   ("ysort" , YURG_OFF);
    /*---(startup)------------------------*/
    rc = PROG_startup  (x_argc, x_args);
    DEBUG_PROG   yLOG_value    ("startup"   , rc);

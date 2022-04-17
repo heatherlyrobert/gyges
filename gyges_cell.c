@@ -680,9 +680,17 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
       sprintf (s_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
       DEBUG_CELL   yLOG_info    ("s_bformat" , s_bformat);
       if      (a_source == NULL) {
-         yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, DEF_FORMAT);
+         if (s_bsource [0] == '\0' && strcmp (s_bformat, DEF_FORMAT) == 0) {
+            DEBUG_CELL   yLOG_note    ("nothing to do, try to clear a cleared cell");
+         } else {
+            yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, DEF_FORMAT);
+         }
       } else if (a_source [0] == '\0') {
-         yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, DEF_FORMAT);
+         if (s_bsource [0] == '\0' && strcmp (s_bformat, DEF_FORMAT) == 0) {
+            DEBUG_CELL   yLOG_note    ("nothing to do, try to clear a cleared cell");
+         } else {
+            yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, DEF_FORMAT);
+         }
       } else {
          yMAP_mundo_source  (a_mode, x_curr->label, s_bsource, a_source);
       }

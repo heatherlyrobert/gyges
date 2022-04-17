@@ -35,8 +35,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6j"
-#define     P_VERTXT    "tested rest of delete-right (dl) and added delete-left (dh)"
+#define     P_VERNUM    "3.6k"
+#define     P_VERTXT    "all four main deletes (dl,dh,dj,dk) unit tested and brutal fixes"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1704,9 +1704,10 @@ char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_copier      (char a_type, long a_stamp);
 char        api_yvikeys_clearer     (char a_1st, ushort u, ushort x, ushort y, ushort z);
-char        api_yvikeys_router      (tCELL *a_cell, char *a_list);
-char        api_yvikeys_paster      (char a_reqs, char a_pros, char a_intg, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell, char *a_list);
-char        api_yvikeys_finisher    (short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell);
+/*> char        api_yvikeys_router      (tCELL *a_cell, char *a_list);                <*/
+/*> char        api_yvikeys_paster_OLD  (char a_reqs, char a_pros, char a_intg, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell, char *a_list);   <*/
+char        api_yvikeys_paster      (char a_reqs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell);
+char        api_yvikeys_finisher    (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);
 char        api_yvikeys_regkiller   (tCELL *a_curr);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/

@@ -357,6 +357,35 @@ api_ymap_done           (void)
 static void   o___OTHER___________o (void) { return; }
 
 char
+api_ymap__touch         (char *a_label)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tCELL      *x_curr      = NULL;
+   ushort      u, x, y;
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   /*---(get location)-------------------*/
+   rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+   DEBUG_REGS   yLOG_complex ("original"  , "label=%s, tab=%4d, col=%4d, row=%4d", a_label, u, x, y);
+   x_curr = LOC_cell_at_loc (u, x, y);
+   DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
+   --rce;  if (x_curr == NULL) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   if (x_curr->type == YCALC_DATA_ERROR) {
+      DEBUG_REGS   yLOG_note    ("error cell, just a re-touch");
+      CELL_change (NULL, YMAP_NONE, x_curr->tab, x_curr->col, x_curr->row, strdup (x_curr->source));
+   } else {
+      DEBUG_REGS   yLOG_note    ("no trouble, nothing to do");
+   }
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
 api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, char *a_content)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -367,21 +396,26 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
    ushort      u, x, y;
    tCELL      *x_curr      = NULL;
    int         n           =    0;
+   char       *p           = NULL;
+   char       *r           = NULL;
    /*---(header)-------------------------*/
    DEBUG_HIST  yLOG_enter   (__FUNCTION__);
    DEBUG_HIST  yLOG_info    ("a_format"  , a_format);
    DEBUG_HIST  yLOG_info    ("a_content" , a_content);
    /*---(identify location)--------------*/
    DEBUG_HIST  yLOG_info    ("label"     , a_label);
-   rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
-   DEBUG_HIST  yLOG_value   ("str2gyges"   , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   if (a_label != NULL && strcmp (a_label, "n/a") != 0) {
+      rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
+      DEBUG_HIST  yLOG_value   ("str2gyges"   , rc);
+      --rce;  if (rc < 0) {
+         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      DEBUG_HIST  yLOG_complex ("loc"       , "%4du, %4dx, %4dy", u, x, y);
+      x_curr  = LOC_cell_at_loc (u, x, y);
    }
-   DEBUG_HIST  yLOG_complex ("loc"       , "%4du, %4dx, %4dy", u, x, y);
-   x_curr  = LOC_cell_at_loc (u, x, y);
    /*---(handle request)-----------------*/
+   DEBUG_HIST  yLOG_char    ("act"       , a_act);
    switch (a_act) {
    case YMAP_OVERWRITE :
    case YMAP_CLEAR     :
@@ -410,6 +444,16 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
       break;
    case YMAP_UNITS    :
       CELL_units    (x_curr, a_content [0]);
+      break;
+   case YMAP_SYNC     : case 'ù' :
+      DEBUG_HIST  yLOG_note    ("running a sync");
+      strlcpy  (x_source, a_content, LEN_RECD);
+      DEBUG_HIST  yLOG_info    ("x_source"   , x_source);
+      p = strtok_r (x_source, ",", &r);
+      while (p != NULL) {
+         rc = api_ymap__touch (p);
+         p = strtok_r (NULL  , ",", &r);
+      }
       break;
    }
    /*---(complete)-----------------------*/
