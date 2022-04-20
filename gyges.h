@@ -1,5 +1,6 @@
 /*===============================[[ beg code ]]===============================*/
 /* htag ::  714,  326 docs 36%,  386 code 72%,  326 othr 21%,  304 slocl      */
+/* htag :  714,  326 docs (36%),  386 code (72%),  326 othr (21%),  304 slocl */
 
 
 /*===[[ BEG_HEADER ]]=========================================================*/
@@ -35,8 +36,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6k"
-#define     P_VERTXT    "all four main deletes (dl,dh,dj,dk) unit tested and brutal fixes"
+#define     P_VERNUM    "3.6l"
+#define     P_VERTXT    "better mreg unit testing (01-04) with cell attributes and mundo checking"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

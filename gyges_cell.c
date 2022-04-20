@@ -641,7 +641,7 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    tCELL      *x_curr      = NULL;
    /*---(beginning)----------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
-   DEBUG_CELL   yLOG_complex ("location"  , "tab %4d, col %4d, row %4d", a_tab, a_col, a_row);
+   DEBUG_CELL   yLOG_complex ("args"      , "cell %p, mode %c, tab %4d, col %4d, row %4d", a_cell, a_mode, a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("a_source"  , a_source);
    --rce;  if (a_source == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
@@ -650,6 +650,8 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    DEBUG_CELL   yLOG_info    ("a_source"  , a_source);
    /*---(prepare)------------------------*/
    if (a_cell != NULL)  *a_cell = NULL;
+   strlcpy (s_bsource, "", LEN_RECD);
+   strlcpy (s_bformat, "??0--", LEN_LABEL);
    /*---(legal location)-----------------*/
    rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    DEBUG_CELL   yLOG_info    ("legal"     , (rc >= 0) ? "yes" : "no" );
@@ -661,7 +663,6 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    x_curr      = LOC_cell_at_loc (a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_point   ("x_curr"    , x_curr);
    /*---(save before picture)------------*/
-   strlcpy (s_bsource, "", LEN_RECD);
    --rce;  if (x_curr != NULL) {
       DEBUG_CELL   yLOG_note    ("save existing data");
       if (x_curr->source != NULL)  strlcpy (s_bsource, x_curr->source, LEN_RECD);
@@ -675,10 +676,10 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    }
    DEBUG_CELL   yLOG_info    ("cell label", x_curr->label);
    DEBUG_CELL   yLOG_complex ("DEBUG 9"   , "%-10.10s, %2dt, %3dc, %4dr", x_curr->label, x_curr->tab, x_curr->col, x_curr->row);
+   sprintf (s_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
+   DEBUG_CELL   yLOG_info    ("s_bformat" , s_bformat);
    /*---(history)------------------------*/
    if (a_mode != YMAP_NONE) {
-      sprintf (s_bformat, "%c%c%c%c-", x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
-      DEBUG_CELL   yLOG_info    ("s_bformat" , s_bformat);
       if      (a_source == NULL) {
          if (s_bsource [0] == '\0' && strcmp (s_bformat, DEF_FORMAT) == 0) {
             DEBUG_CELL   yLOG_note    ("nothing to do, try to clear a cleared cell");

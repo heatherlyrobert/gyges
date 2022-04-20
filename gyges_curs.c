@@ -846,18 +846,18 @@ DRAW_main          (void)
          if (cw + w > x_wide)  w = x_wide - cw;
          CURS_cell (x_cur, y_cur, y_pos, x_pos, w);
          cw    += w;
+         DEBUG_GRAF  yLOG_complex ("cell"      , "%3dx (%4d) %3dy (%4d), %3dw (%4d)", x_cur, x_pos, y_cur, y_pos, w, cw);
          x_pos += w;
       }
       /*---(fill in at end)--------------*/
-      if (x_pos < x_wide) {
-         w     = x_wide - x_pos;
+      if (cw < x_wide) {
+         w     = x_wide - cw;
+         DEBUG_GRAF  yLOG_complex ("append"    , "%3dx (%4d) %3dy (%4d), %3dw (%4d)", x_cur, x_pos, y_cur, y_pos, w, cw);
          if (ECOL < NCOL - 1) {
             CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);
          }
       }
    }
-   /*> w = g_xmap.tend - x_pos;                                                       <* 
-    *> if (w > 0)  CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);                      <*/
    move (s_cursor_y, s_cursor_x);
    /*---(complete)-----------------------*/
    DEBUG_GRAF  yLOG_exit    (__FUNCTION__);

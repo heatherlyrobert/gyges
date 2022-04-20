@@ -251,15 +251,17 @@ PROG__init         (int a_argc, char *a_argv[])
 char         /*-> process the command line args ------[ ------ [gz.952.251.B4]*/ /*-[01.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG__args              (int a_argc, char *a_argv[])
 {
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(locals)-------------------------*/
-   int         i           = 0;
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         i           =    0;
    char       *a           = NULL;
-   int         x_total     = 0;
-   int         x_args      = 0;
+   int         x_total     =    0;
+   int         x_args      =    0;
    char        x_name      [LEN_FULL]   = "";
    char        t           [LEN_FULL]   = "";
-   /*---(begin)--------------------------*/
+   /*---(header)-------------------------*/
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*> FILE_rename ("");                                                              <*/
    /*> yVIKEYS_args (a_argc, a_argv);                                                     <*/
    /*---(process)------------------------*/
@@ -287,9 +289,20 @@ PROG__args              (int a_argc, char *a_argv[])
       DEBUG_ARGS  yLOG_note   ("no arguments identified");
    }
    /*---(update title)-------------------*/
-   if (strlen (x_name) > 0) {
+   --rce;  if (strlen (x_name) > 0) {
       sprintf (t, ":file %s", x_name);
-      yCMD_direct (t);
+      rc = yCMD_direct (t);
+      DEBUG_ARGS  yLOG_value  (":file"     , rc);
+      if (rc < 0) {
+         DEBUG_PROG  yLOG_exitr (__FUNCTION__, rce);
+         return rce;
+      }
+      rc = yCMD_direct (":read");
+      DEBUG_ARGS  yLOG_value  (":read"     , rc);
+      if (rc < 0) {
+         DEBUG_PROG  yLOG_exitr (__FUNCTION__, rce);
+         return rce;
+      }
    }
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
@@ -548,25 +561,25 @@ PRIV void  o___UNITTEST________o () { return; }
  *>    /+---(dependencies)-------------------+/                                                                                                                                                                                 <* 
  *>    /+> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <*                                        <* 
  *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <*                                    <* 
- *>     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <*                                        <* 
- *>     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/   <*                                      <* 
- *>     *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <*                                       <* 
- *>     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <*                                       <* 
- *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <*                                      <* 
- *>     *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <*                                        <* 
- *>     *>    DEP_disp_reqs  (a_thing, temp);                                                                                                                                               <*                                  <* 
- *>     *>    snprintf(unit_answer, LEN_FULL, "Cell Reqs List   : %-.35s", temp);                                                                                                     <*                                        <* 
- *>     *> } else if (strcmp(a_question, "cell_deps")      == 0) {                                                                                                                    <*                                        <* 
- *>     *>    DEP_disp_pros  (a_thing, temp);                                                                                                                                               <*                                  <* 
- *>     *>    snprintf(unit_answer, LEN_FULL, "Cell Deps List   : %-.35s", temp);                                                                                                     <*                                        <* 
- *>     *> }                                                                                                                                                                          <+/                                       <* 
- *>    /+---(UNKNOWN)------------------------+/                                                                                                                                                                                 <* 
- *>    else {                                                                                                                                                                                                                   <* 
- *>       snprintf(unit_answer, LEN_FULL, "UNKNOWN          : question is not understood");                                                                                                                                     <* 
- *>    }                                                                                                                                                                                                                        <* 
- *>    /+---(complete)-----------------------+/                                                                                                                                                                                 <* 
- *>    return unit_answer;                                                                                                                                                                                                      <* 
- *> }                                                                                                                                                                                                                           <*/
+*>     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <*                                        <* 
+   *>     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/   <*                                      <* 
+      *>     *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <*                                       <* 
+      *>     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <*                                       <* 
+      *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <*                                      <* 
+      *>     *> } else if (strcmp(a_question, "cell_reqs")      == 0) {                                                                                                                    <*                                        <* 
+         *>     *>    DEP_disp_reqs  (a_thing, temp);                                                                                                                                               <*                                  <* 
+            *>     *>    snprintf(unit_answer, LEN_FULL, "Cell Reqs List   : %-.35s", temp);                                                                                                     <*                                        <* 
+            *>     *> } else if (strcmp(a_question, "cell_deps")      == 0) {                                                                                                                    <*                                        <* 
+               *>     *>    DEP_disp_pros  (a_thing, temp);                                                                                                                                               <*                                  <* 
+                  *>     *>    snprintf(unit_answer, LEN_FULL, "Cell Deps List   : %-.35s", temp);                                                                                                     <*                                        <* 
+                  *>     *> }                                                                                                                                                                          <+/                                       <* 
+                  *>    /+---(UNKNOWN)------------------------+/                                                                                                                                                                                 <* 
+                  *>    else {                                                                                                                                                                                                                   <* 
+                     *>       snprintf(unit_answer, LEN_FULL, "UNKNOWN          : question is not understood");                                                                                                                                     <* 
+                        *>    }                                                                                                                                                                                                                        <* 
+                        *>    /+---(complete)-----------------------+/                                                                                                                                                                                 <* 
+                        *>    return unit_answer;                                                                                                                                                                                                      <* 
+                        *> }                                                                                                                                                                                                                           <*/
 
 char         /*-> set up programgents/debugging ------[ light  [uz.320.011.05]*/ /*-[00.0000.00#.#]-*/ /*-[--.---.---.--]-*/
 PROG__unit_quiet     (void)
