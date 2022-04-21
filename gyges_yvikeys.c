@@ -875,7 +875,8 @@ api_yvikeys_paster      (char a_reqs, char a_1st, short uo, short xo, short yo, 
       /*> if (strchr (YCALC_GROUP_RPN, x_copy->type) != 0) {                          <*/
       if (x_copy->type == YCALC_DATA_ERROR) {
          DEBUG_REGS   yLOG_note    ("error cell, just a re-touch");
-         CELL_change (NULL, YMAP_ADD, x_copy->tab, x_copy->col, x_copy->row, strdup (x_copy->source));
+         CELL_change (NULL, YMAP_NONE, x_copy->tab, x_copy->col, x_copy->row, strdup (x_copy->source));
+         yMAP_mundo_recalc (YMAP_ADD, x_copy->label);
       } else {
          DEBUG_REGS   yLOG_note    ("no trouble, nothing to do");
       }
@@ -903,8 +904,6 @@ api_yvikeys_paster      (char a_reqs, char a_1st, short uo, short xo, short yo, 
    x_dcol  = x_scol + xo;
    x_drow  = x_srow + yo;
    DEBUG_REGS   yLOG_complex ("going to"  , "tab=%4d, col=%4d, row=%4d", x_dtab, x_dcol, x_drow);
-   /*---(reroute providers)--------------*/
-   /*> api_yvikeys__rerouter (a_pros, uo, xo, yo, zo, a_cell, a_list);   <*/
    /*---(check cell type)----------------*/
    DEBUG_REGS   yLOG_info    ("source"    , a_cell->source);
    DEBUG_REGS   yLOG_char    ("type"      , a_cell->type);

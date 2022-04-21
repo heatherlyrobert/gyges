@@ -684,13 +684,13 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
          if (s_bsource [0] == '\0' && strcmp (s_bformat, DEF_FORMAT) == 0) {
             DEBUG_CELL   yLOG_note    ("nothing to do, try to clear a cleared cell");
          } else {
-            yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, DEF_FORMAT);
+            yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, s_bformat);
          }
       } else if (a_source [0] == '\0') {
          if (s_bsource [0] == '\0' && strcmp (s_bformat, DEF_FORMAT) == 0) {
             DEBUG_CELL   yLOG_note    ("nothing to do, try to clear a cleared cell");
          } else {
-            yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, DEF_FORMAT);
+            yMAP_mundo_clear   (a_mode, x_curr->label, s_bformat, s_bsource, s_bformat);
          }
       } else {
          yMAP_mundo_source  (a_mode, x_curr->label, s_bsource, a_source);

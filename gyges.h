@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6l"
-#define     P_VERTXT    "better mreg unit testing (01-04) with cell attributes and mundo checking"
+#define     P_VERNUM    "3.6m"
+#define     P_VERTXT    "all mreg testing all caught up with greater details to catch technical issues"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

@@ -446,13 +446,31 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
       CELL_units    (x_curr, a_content [0]);
       break;
    case YMAP_SYNC     : case 'ù' :
-      DEBUG_HIST  yLOG_note    ("running a sync");
-      strlcpy  (x_source, a_content, LEN_RECD);
-      DEBUG_HIST  yLOG_info    ("x_source"   , x_source);
-      p = strtok_r (x_source, ",", &r);
-      while (p != NULL) {
-         rc = api_ymap__touch (p);
-         p = strtok_r (NULL  , ",", &r);
+      if (a_dir == '<') {
+         DEBUG_HIST  yLOG_note    ("running a sync with undo");
+         strlcpy  (x_source, a_content, LEN_RECD);
+         DEBUG_HIST  yLOG_info    ("x_source"   , x_source);
+         p = strtok_r (x_source, ",", &r);
+         while (p != NULL) {
+            rc = api_ymap__touch (p);
+            p = strtok_r (NULL  , ",", &r);
+         }
+      } else {
+         DEBUG_HIST  yLOG_note    ("ignore sync with redo");
+      }
+      break;
+   case YMAP_RECALC   : case 'ø' :
+      if (a_dir == '>') {
+         DEBUG_HIST  yLOG_note    ("running recalc error cell with redo");
+         strlcpy  (x_source, a_content, LEN_RECD);
+         DEBUG_HIST  yLOG_info    ("x_source"   , x_source);
+         p = strtok_r (x_source, ",", &r);
+         while (p != NULL) {
+            rc = api_ymap__touch (p);
+            p = strtok_r (NULL  , ",", &r);
+         }
+      } else {
+         DEBUG_HIST  yLOG_note    ("ignore recalc error cell with undo");
       }
       break;
    }
