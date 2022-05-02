@@ -118,7 +118,7 @@ CURS_current_status     (char a_size, short a_wide, char *a_list)
 /*====================------------------------------------====================*/
 static void  o___SPECIFIC________o () { return; }
 
-char  CURS_status_cell     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-40.40s ][ pros=%-40.40s ][ like=%-40.40s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list); }
+char  CURS_status_cell     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ][ copy=%-20.20s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list, my.copy_list); }
 char  CURS_status_deps     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
 char  CURS_status_rpn      (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
 char  CURS_status_tab      (char a_size, short a_wide, char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
@@ -737,30 +737,52 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
       /*---(related)---------------------*/
-      if      (strstr (my.reqs_list, label) != NULL)    yVICURSES_by_name ("d_reqs");
+      if      (strstr (my.like_list, label) != NULL)    yVICURSES_by_name ("d_like");
+      else if (strstr (my.copy_list, label) != NULL)    yVICURSES_by_name ("d_copy");
+      else if (strstr (my.reqs_list, label) != NULL)    yVICURSES_by_name ("d_reqs");
       else if (strstr (my.deps_list, label) != NULL)    yVICURSES_by_name ("d_pros");
-      else if (strstr (my.like_list, label) != NULL)    yVICURSES_by_name ("d_like");
       /*---(trouble)---------------------*/
       else if (a_curr->type == YCALC_DATA_ERROR)        yVICURSES_by_name ("!_errs");
       /*---(pointers)--------------------*/
       else if (a_curr->type == YCALC_DATA_RANGE)        yVICURSES_by_name ("p_rang");
       else if (a_curr->type == YCALC_DATA_ADDR )        yVICURSES_by_name ("p_addr");
+      else if (a_curr->type == YCALC_DATA_CADDR)        yVICURSES_by_name ("p_calc");
+      else if (a_curr->type == YCALC_DATA_VAR)          yVICURSES_by_name ("p_vars");
+      else if (a_curr->type == (uchar) YCALC_DATA_VAR)  yVICURSES_by_name ("p_vars");
       /*---(numbers)---------------------*/
       else if (a_curr->type == YCALC_DATA_NUM  )        yVICURSES_by_name ("9_norm");
       else if (a_curr->type == YCALC_DATA_NFORM) {
-         if   (yCALC_nreq (a_curr->ycalc)  < 5)         yVICURSES_by_name ("9_form");
+         if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("9_form");
          else                                           yVICURSES_by_name ("9_dang");
       }
       else if (a_curr->type == YCALC_DATA_NLIKE)        yVICURSES_by_name ("9_like");
       /*---(strings)---------------------*/
-      else if (a_curr->type == YCALC_DATA_STR  )        yVICURSES_by_name ("#_norm");
+      else if (a_curr->type == YCALC_DATA_STR  ) {
+         if (a_curr->source [0] == ' ' && a_curr->source [1] == '(' && a_curr->source [5] == ')') {
+            if      (strcmp (a_curr->source, " (cur)") == 0) yVICURSES_by_name ("v_curr");
+            else if (strcmp (a_curr->source, " (req)") == 0) yVICURSES_by_name ("d_reqs");
+            else if (strcmp (a_curr->source, " (pro)") == 0) yVICURSES_by_name ("d_pros");
+            else if (strcmp (a_curr->source, " (lik)") == 0) yVICURSES_by_name ("d_like");
+            else if (strcmp (a_curr->source, " (cop)") == 0) yVICURSES_by_name ("d_copy");
+            else if (strcmp (a_curr->source, " (wrn)") == 0) yVICURSES_by_name ("9_dang");
+            else if (strcmp (a_curr->source, " (err)") == 0) yVICURSES_by_name ("!_errs");
+            else if (strcmp (a_curr->source, " (roo)") == 0) yVICURSES_by_name ("v_root");
+            else if (strcmp (a_curr->source, " (fil)") == 0) yVICURSES_by_name ("v_fill");
+            else if (strcmp (a_curr->source, " (ptr)") == 0) yVICURSES_by_name ("p_addr");
+            else if (strcmp (a_curr->source, " (rng)") == 0) yVICURSES_by_name ("p_rang");
+            else                                             yVICURSES_by_name ("#_norm");
+         } else {
+            yVICURSES_by_name ("#_norm");
+         }
+      }
       else if (a_curr->type == YCALC_DATA_SFORM) {
-         if   (yCALC_nreq (a_curr->ycalc)  < 5)         yVICURSES_by_name ("#_form");
+         if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("#_form");
          else                                           yVICURSES_by_name ("#_dang");
       }
       else if (a_curr->type == YCALC_DATA_SLIKE)        yVICURSES_by_name ("#_like");
       /*---(constants)-------------------*/
-      else if (a_curr->type == YCALC_DATA_BLANK)        yVICURSES_by_name (">_null");
+      else if (a_curr->type == YCALC_DATA_BLANK)        yVICURSES_by_name ("#_dang");
+      else if (a_curr->type == YCALC_DATA_MERGED)       yVICURSES_by_name ("#_norm");
       else                                              yVICURSES_by_name (">_unkn");
    }
    /*---(complete)-----------------------*/
@@ -814,15 +836,26 @@ DRAW_main          (void)
    x_curr    = LOC_cell_at_curr ();
    if (x_curr != x_save) {
       if (x_curr != NULL) {
-         yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
          yCALC_disp_pros (x_curr->ycalc, my.deps_list);
+         yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
          yCALC_disp_like (x_curr->ycalc, my.like_list);
-         /*> if (x_curr->rpn != NULL)  strlcpy (my.rpn_list, x_curr->rpn, LEN_RECD);   <* 
-          *> else                      strncpy (my.rpn_list , "n/a", LEN_RECD);        <*/
+         yCALC_disp_copy (x_curr->ycalc, my.copy_list);
+         /*> switch (x_curr->type) {                                                  <* 
+          *> case YCALC_DATA_NLIKE:                                                   <* 
+          *> case YCALC_DATA_SLIKE:                                                   <* 
+          *>    strncpy (my.reqs_list, "n/a", LEN_RECD);                              <* 
+          *>    yCALC_disp_reqs (x_curr->ycalc, my.like_list);                        <* 
+          *>    break;                                                                <* 
+          *> default :                                                                <* 
+          *>    yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                        <* 
+          *>    strncpy (my.like_list, "n/a", LEN_RECD);                              <* 
+          *>    break;                                                                <* 
+          *> }                                                                        <*/
       } else {
          strncpy (my.reqs_list, "n/a", LEN_RECD);
          strncpy (my.deps_list, "n/a", LEN_RECD);
          strncpy (my.like_list, "n/a", LEN_RECD);
+         strncpy (my.copy_list, "n/a", LEN_RECD);
          strncpy (my.rpn_list , "n/a", LEN_RECD);
       }
    }

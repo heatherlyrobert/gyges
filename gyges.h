@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6m"
-#define     P_VERTXT    "all mreg testing all caught up with greater details to catch technical issues"
+#define     P_VERNUM    "3.6n"
+#define     P_VERTXT    "variables up and working, not unit tested yet"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -411,6 +411,7 @@ struct cACCESSOR {
    char        reqs_list   [LEN_RECD];     /* cell requires                   */
    char        deps_list   [LEN_RECD];     /* cell depends                    */
    char        like_list   [LEN_RECD];     /* cell likes                      */
+   char        copy_list   [LEN_RECD];     /* cell likes                      */
    char        rpn_list    [LEN_RECD];     /* cell rpn contents               */
    char        reg_list    [LEN_RECD];     /* register contents               */
    char        keys        [LEN_RECD];     /* current keystrokes              */
@@ -1668,6 +1669,7 @@ char        CELL_writer_all         (void);
 
 
 /*===[[ gyges_calc.c ]]=======================================================*/
+char        api_ycalc_addvar       (char *a_name, char *a_label);
 
 char        api_ycalc_enabler       (void *a_owner, void *a_deproot);
 char        api_ycalc_pointer       (void *a_owner, char **r_source, char **r_type, double **r_value, char **r_string);

@@ -74,12 +74,12 @@ l····+60¦···············f|
 º:0d29¦»
 ºsAUTOMATIC TEXT COLORATION¦···F|_¦··ls<¦··ls<¦»
 º:0c30¦»
-º+1¦····················lsblue things are numerical constants¦··ls<¦··ls<¦»
-º3hj···=`k¦+1¦··········lsgreen things are calculated numbers¦··ls<¦··ls<¦»
-º3hj···=0p29+0q29+0r29+0s29+0t29¦··lsred things are complicated formulas¦··ls<¦··ls<¦»
-º3hj···s 4¦······f>·····lsyellow things are text constants¦·····ls<¦··ls<¦»
-º3hj···#0p30#0q30¦·f>···lspurple things are text formulas¦······ls<¦··ls<¦»
-º3hj···s~p34¦······f>···lsgrey things are like/reused formulas¦·ls<¦··ls<¦»
+º+1¦····················lsblue are numerical constants¦···············ls<¦··ls<¦»
+º3hj···=`k¦+1¦··········lsgreen are calculated numbers¦···············ls<¦··ls<¦»
+º3hj···=0p29+0q29+0r29+0s29+0t29¦··lsred are complicated formulas¦····ls<¦··ls<¦»
+º3hj···s 4¦······f>·····lsyellow are text constants¦··················ls<¦··ls<¦»
+º3hj···#0p30#0q30¦·f>···lspurple are text formulas¦···················ls<¦··ls<¦»
+º3hj···s~p34¦······f>···lsmagenta are reused formulas¦················ls<¦··ls<¦»
 
 
 

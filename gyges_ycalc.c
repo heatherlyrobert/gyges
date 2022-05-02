@@ -5,6 +5,102 @@
 static char   s_nada       [5] = "";
 static char  *s_root     = "ROOT";
 
+typedef  struct cVARS  tVARS;
+static struct cVARS {
+   char        name        [LEN_LABEL];
+   char        label       [LEN_LABEL];
+};
+tVARS    s_vars   [100];
+int      s_nvar       = 0;
+
+char
+api_ycalc_addvar       (char *a_name, char *a_label)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_dir       =  '-';
+   char        x_name      [LEN_LABEL] = "";
+   int         l           =    0;
+   tCELL      *x_cell      = NULL;
+   int         u, x, y;
+   char        x_label     [LEN_LABEL] = "";
+   /*---(header)-------------------------*/
+   DEBUG_APIS   yLOG_senter  (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_APIS   yLOG_spoint  (a_name);
+   --rce;  if (a_name == NULL) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_APIS   yLOG_snote   (a_name);
+   DEBUG_APIS   yLOG_spoint  (a_label);
+   --rce;  if (a_label == NULL) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_APIS   yLOG_snote   (a_label);
+   /*---(parse name)---------------------*/
+   l = strlen (x_name);
+   DEBUG_APIS   yLOG_sint    (l);
+   --rce;  if (l < 2) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   x_dir = x_name [0];
+   DEBUG_APIS   yLOG_schar   (x_dir);
+   --rce;  if (strchr ("дезж", x_dir) == NULL) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   strlcpy (x_name, a_name + 1, LEN_LABEL);
+   strltrim (x_name, ySTR_BOTH, LEN_LABEL);
+   /*---(fix label)----------------------*/
+   rc  = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+   DEBUG_APIS   yLOG_sint    (rc);
+   --rce;  if (rc < 0) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   switch (x_dir) {
+   case 'д'  :  --y;  break;
+   case 'е'  :  ++y;  break;
+   case 'з'  :  --x;  break;
+   case 'ж'  :  ++x;  break;
+   }
+   rc = str4gyges (u, x, y, 0, 0, x_label, YSTR_USABLE);
+   DEBUG_APIS   yLOG_sint    (rc);
+   --rce;  if (rc < 0) {
+      DEBUG_APIS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_APIS   yLOG_snote   (x_label);
+   /*---(add)----------------------------*/
+   strlcpy (s_vars [s_nvar].name , x_name , LEN_LABEL);
+   strlcpy (s_vars [s_nvar].label, x_label, LEN_LABEL);
+   ++s_nvar;
+   /*---(complete)-----------------------*/
+   DEBUG_APIS   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+
+char
+api_ycalc_findvar      (char *a_name, int *u, int *x, int *y)
+{
+   char        rce         =  -10;
+   int         i           =    0;
+   --rce;  if (a_name == NULL)  return rce;
+   --rce;  if (u   == NULL)     return rce;
+   --rce;  if (x   == NULL)     return rce;
+   --rce;  if (y   == NULL)     return rce;
+   --rce;  for (i = 0; i < s_nvar; ++i) {
+      if (strcmp (a_name, s_vars [i].name) != 0)  continue;
+      return str2gyges (s_vars [i].label, u, x, y, NULL, NULL, 0, YSTR_USABLE);
+   }
+   return rce;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -186,7 +282,7 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
     *>    return x_rc;                                                                <* 
     *> }                                                                              <*/
    /*---(root)---------------------------*/
-   if (strcmp (s_root, a_label) == 0) {
+   --rce;  if (strcmp (s_root, a_label) == 0) {
       if (my.root == NULL) {
          rc = CELL__new (&my.root, UNLINKED);
          DEBUG_PROG   yLOG_value   ("rc"        , rc);
@@ -204,11 +300,15 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    }
    /*---(search)-------------------------*/
    else {
-      rc      = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
-      DEBUG_APIS   yLOG_value   ("str2gyges" , rc);
-      --rce;  if (rc < 0) {
-         DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
+      rc  = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+      DEBUG_APIS   yLOG_value   ("address"   , rc);
+      if (rc < 0) {
+         rc = api_ycalc_findvar (a_label, &x_tab, &x_col, &x_row);
+         DEBUG_APIS   yLOG_value   ("variable"  , rc);
+         if (rc < 0) {
+            DEBUG_APIS   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
       }
       DEBUG_APIS   yLOG_complex ("loc"        , "%3db, %3dx, %3dy", x_tab, x_col, x_row);
       x_owner = LOC_cell_at_loc  (x_tab, x_col, x_row);
@@ -552,6 +652,7 @@ api_ycalc_printer       (void *a_owner)
    DEBUG_APIS   yLOG_char    ("align"     , x_owner->align);
    /*---(reset printing errors)----------*/
    if (x_owner->type == YCALC_DATA_ERROR && x_owner->print != NULL && strncmp (x_owner->print, "#p/", 3) == 0) {
+      DEBUG_APIS   yLOG_note    ("found an error");
       x_type        = x_owner->type;
       x_owner->type = x_owner->print [9];  /*    #p/ali  (=)  */
    }
@@ -573,9 +674,20 @@ api_ycalc_printer       (void *a_owner)
       if      (rc < 0)                  strcpy (t, s);
       else if (x_owner->align == '?')   rc = strlpad (s, t, '!', '>', w - 1);
       else                              rc = strlpad (s, t, '!', x_owner->align, w - 1);
+   } else if (x_owner->type == (uchar) YCALC_DATA_VAR) {
+      strlcpy (s, x_owner->source, LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("variable"  , s);
+      rc = strlpad (s, t, '?', x_owner->align, w - 1);
    } else if (strchr (YCALC_GROUP_STR, x_owner->type) != NULL) {
       if (x_owner->v_str != NULL)  strlcpy (s, x_owner->v_str , LEN_RECD);
-      else                           strlcpy (s, x_owner->source, LEN_RECD);
+      else                         strlcpy (s, x_owner->source, LEN_RECD);
+      DEBUG_APIS   yLOG_info    ("string"    , s);
+      if (x_owner->align == '?')  rc = strlpad (s, t, x_owner->format, '<'       , w - 1);
+      else                        rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);
+   } else if (x_owner->type == YCALC_DATA_CADDR) {
+      strcpy (s, "!");
+      if (x_owner->v_str != NULL)  strlcat (s, x_owner->v_str, LEN_RECD);
+      else                         strlcat (s, "???"        , LEN_RECD);
       DEBUG_APIS   yLOG_info    ("string"    , s);
       if (x_owner->align == '?')  rc = strlpad (s, t, x_owner->format, '<'       , w - 1);
       else                        rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);

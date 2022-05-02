@@ -72,12 +72,29 @@ char
 PROG_urgents            (int a_argc, char *a_argv [])
 {
    /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
    char        rc          =    0;
-   /*---(initialize)---------------------*/
+   /*---(header)-------------------------*/
+   DEBUG_TOPS  yLOG_enter   (__FUNCTION__);
+   /*---(set mute)-----------------------*/
    yURG_all_mute ();
+   /*---(start logger)-------------------*/
    rc = yURG_logger  (a_argc, a_argv);
+   DEBUG_PROG   yLOG_value    ("logger"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(process urgents)----------------*/
    rc = yURG_urgs    (a_argc, a_argv);
-   return 0;
+   DEBUG_PROG   yLOG_value    ("logger"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
+   return rc;
 }
 
 
@@ -467,6 +484,7 @@ char             /* [------] drive the program closure activities ------------*/
 PROG_shutdown           (void)
 {
    /*---(header)-------------------------*/
+   yURG_stage_check (YURG_END);
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    PROG__end ();
    DEBUG_PROG   yLOG_exit     (__FUNCTION__);

@@ -15,6 +15,9 @@
  *
  * metis § ····· § undo/redo config setting that does not reposition afterward            § M3A4FJ §  · §
  *
+ * metis § wg4·· § repeat allowed on x· and d· if no range highlighted                    § M3L0X6 §  · §
+ * metis § wg4·· § repeat on x· and d· with range causes keylogging warning               § M3L0Y0 §  · §
+ *
  */
 
 /*
@@ -1666,6 +1669,7 @@ api_yvikeys_paster      (char a_reqs, char a_1st, short uo, short xo, short yo, 
             strlcpy (my.reqs_list, "n/a", LEN_RECD);
             strlcpy (my.deps_list, "n/a", LEN_RECD);
             strlcpy (my.like_list, "n/a", LEN_RECD);
+            strlcpy (my.copy_list, "n/a", LEN_RECD);
             strlcpy (my.rpn_list , "n/a", LEN_RECD);
             strlcpy (g_curr.label, "-"          , LEN_LABEL);
             g_curr.len    = 0;
@@ -1683,6 +1687,7 @@ api_yvikeys_paster      (char a_reqs, char a_1st, short uo, short xo, short yo, 
             yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
             yCALC_disp_pros (x_curr->ycalc, my.deps_list);
             yCALC_disp_like (x_curr->ycalc, my.like_list);
+            yCALC_disp_copy (x_curr->ycalc, my.copy_list);
             strlcpy (g_curr.label, x_curr->label, LEN_LABEL);
             g_curr.len    = x_curr->len;
             g_curr.type   = x_curr->type;
