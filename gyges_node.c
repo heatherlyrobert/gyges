@@ -770,8 +770,8 @@ NODE__printables         (char a_type, tNODE *a_node)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   /*---(locals)-----------+-----+-----+-*/
    tCELL      *x_cell      = NULL;
+   tCELL      *x_owner     = NULL;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -789,7 +789,12 @@ NODE__printables         (char a_type, tNODE *a_node)
    DEBUG_LOCS   yLOG_value   ("count"     , a_node->count);
    x_cell = a_node->n_head;
    while (x_cell != NULL) {
-      rc = api_ycalc_printer (x_cell);
+      if (x_cell->type == YCALC_DATA_MERGED) {
+         yCALC_merge_source (x_cell->ycalc, &x_owner);
+         rc = api_ycalc_printer (x_owner);
+      } else {
+         rc = api_ycalc_printer (x_cell);
+      }
       DEBUG_LOCS   yLOG_complex ("x_cell"    , "%-10.10p, %-10.10s, %4d, %2då%sæ", x_cell, x_cell->label, rc, strlen (x_cell->print), x_cell->print);
       IF_COL   x_cell = x_cell->c_next;
       ELSE_ROW x_cell = x_cell->r_next;
@@ -799,7 +804,7 @@ NODE__printables         (char a_type, tNODE *a_node)
    return 0;
 }
 
-char
+uchar
 NODE_size                (char a_index, char a_type, short a_ref)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -807,7 +812,7 @@ NODE_size                (char a_index, char a_type, short a_ref)
    char        rc          =    0;
    tTAB       *x_tab       = NULL;
    tNODE      *x_node      = NULL;
-   char        x_size      =    0;
+   uchar       x_size      =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %3dr", a_index, a_type, a_ref);
@@ -831,14 +836,14 @@ NODE_size                (char a_index, char a_type, short a_ref)
    }
    DEBUG_LOCS   yLOG_value   ("x_size"    , x_size);
    /*---(update cells)-------------------*/
-   NODE__printables (a_type, x_node);
+   /*> NODE__printables (a_type, x_node);                                             <*/
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_size;
 }
 
 char
-NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_key, char a_mode)
+NODE__resize            (char u, char a_type, short a_ref, uchar a_size, char a_key, char a_mode)
 {  /*---(notes)--------------------------*/
    /*
     * metis § mv2#· § if col/row set back to default and empty, remove it                    § M2511E § 10 §
@@ -875,13 +880,8 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
    DEBUG_LOCS   yLOG_value   ("count"     , x_node->count);
    DEBUG_LOCS   yLOG_value   ("size"      , x_node->size);
    x_prev = x_node->size;
-   /*---(check for default)--------------*/
-   if (a_size == -1) {
-      IF_COL   a_size = DEF_WIDTH;
-      ELSE_ROW a_size = DEF_HEIGHT;
-   }
    /*---(check for keys)-----------------*/
-   else if (a_key != 0) {
+   if (a_key != 0) {
       a_size = x_node->size;
       /*---(width)-------------*/
       switch (a_key) {
@@ -904,6 +904,11 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
       case  'K' : a_size  = MAX_HEIGHT;                  break;
       }
       /*---(done)--------------*/
+   }
+   /*---(check for default)--------------*/
+   else if (a_size == 0) {
+      IF_COL   a_size = DEF_WIDTH;
+      ELSE_ROW a_size = DEF_HEIGHT;
    }
    DEBUG_LOCS   yLOG_value   ("a_size*"   , a_size);
    /*---(limits)-------------------------*/
@@ -941,7 +946,7 @@ NODE__resize            (char u, char a_type, short a_ref, char a_size, char a_k
    return x_prev;
 }
 
-char NODE_resize     (char a_index, char a_type, short a_ref, char a_size) { return NODE__resize (a_index, a_type, a_ref, a_size, 0, YMAP_BEG); }
+char NODE_resize     (char a_index, char a_type, short a_ref, uchar a_size) { return NODE__resize (a_index, a_type, a_ref, a_size, 0, YMAP_BEG); }
 
 
 

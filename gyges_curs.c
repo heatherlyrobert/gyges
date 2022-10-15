@@ -208,7 +208,14 @@ DRAW_xaxis         (void)
    DEBUG_WIND  yLOG_complex ("cols"      , "%3db, %3de, %3dn", BCOL, ECOL, NCOL);
    /*---(normal cols)--------------------*/
    while (x_cum < x_wide) {
-      if (BCOL + i > NCOL) break;
+      /*---(prepare)---------------------*/
+      x_avail = x_wide - x_cum;
+      /*---(check end)-------------------*/
+      if (BCOL + i >= NCOL) {
+         yVICURSES_by_name ("h_norm");
+         mvprintw (x_bott, x_cum, "%*.*s", x_avail, x_avail, YSTR_EDOTS);
+         break;
+      }
       /*---(prepare)---------------------*/
       x_avail = x_wide - x_cum;
       w       = COL_size (CTAB, BCOL + i);
@@ -726,7 +733,8 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       sprintf    (label, ",%s,", l);
    }
    /*---(current)------------------------*/
-   if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
+   if      (my.ball == 'y' && strstr (my.cagrios, label) != NULL)   yVICURSES_by_name ("a_curr");
+   else if (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
    else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("m_srch");
    /*---(visual-range)-------------------*/
    else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
@@ -758,7 +766,13 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       else if (a_curr->type == YCALC_DATA_NLIKE)        yVICURSES_by_name ("9_like");
       /*---(strings)---------------------*/
       else if (a_curr->type == YCALC_DATA_STR  ) {
-         if (a_curr->source [0] == ' ' && a_curr->source [1] == '(' && a_curr->source [5] == ')') {
+         /*---(agrios)----------------------*/
+         if      (strchr (a_curr->source, (uchar) 'š') != NULL)    yVICURSES_by_name ("a_forc");
+         else if (strchr (a_curr->source, (uchar) 'Ù') != NULL)    yVICURSES_by_name ("a_forc");
+         else if (strchr (a_curr->source, (uchar) ' ') != NULL)    yVICURSES_by_name ("a_call");
+         else if (strchr (a_curr->source, (uchar) '™') != NULL)    yVICURSES_by_name ("a_call");
+         else if (strchr (a_curr->source, (uchar) 'Ø') != NULL)    yVICURSES_by_name ("a_call");
+         else if (a_curr->source [0] == ' ' && a_curr->source [1] == '(' && a_curr->source [5] == ')') {
             if      (strcmp (a_curr->source, " (cur)") == 0) yVICURSES_by_name ("v_curr");
             else if (strcmp (a_curr->source, " (req)") == 0) yVICURSES_by_name ("d_reqs");
             else if (strcmp (a_curr->source, " (pro)") == 0) yVICURSES_by_name ("d_pros");
@@ -776,8 +790,12 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          }
       }
       else if (a_curr->type == YCALC_DATA_SFORM) {
-         if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("#_form");
-         else                                           yVICURSES_by_name ("#_dang");
+         /*> if      (strchr (a_curr->v_str, (uchar) ' ') != NULL)   yVICURSES_by_name ("a_call");   <* 
+          *> else if (strchr (a_curr->v_str, (uchar) '™') != NULL)   yVICURSES_by_name ("a_call");   <* 
+          *> else if (strchr (a_curr->v_str, (uchar) 'Ø') != NULL)   yVICURSES_by_name ("a_call");   <* 
+          *> else if (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");   <*/
+         if      (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");
+         else                                                    yVICURSES_by_name ("#_dang");
       }
       else if (a_curr->type == YCALC_DATA_SLIKE)        yVICURSES_by_name ("#_like");
       /*---(constants)-------------------*/
@@ -843,25 +861,25 @@ DRAW_main          (void)
          /*> switch (x_curr->type) {                                                  <* 
           *> case YCALC_DATA_NLIKE:                                                   <* 
           *> case YCALC_DATA_SLIKE:                                                   <* 
-          *>    strncpy (my.reqs_list, "n/a", LEN_RECD);                              <* 
+          *>    strlcpy (my.reqs_list, "n/a", LEN_RECD);                              <* 
           *>    yCALC_disp_reqs (x_curr->ycalc, my.like_list);                        <* 
           *>    break;                                                                <* 
           *> default :                                                                <* 
           *>    yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                        <* 
-          *>    strncpy (my.like_list, "n/a", LEN_RECD);                              <* 
+          *>    strlcpy (my.like_list, "n/a", LEN_RECD);                              <* 
           *>    break;                                                                <* 
           *> }                                                                        <*/
       } else {
-         strncpy (my.reqs_list, "n/a", LEN_RECD);
-         strncpy (my.deps_list, "n/a", LEN_RECD);
-         strncpy (my.like_list, "n/a", LEN_RECD);
-         strncpy (my.copy_list, "n/a", LEN_RECD);
-         strncpy (my.rpn_list , "n/a", LEN_RECD);
+         strlcpy (my.reqs_list, "n/a", LEN_RECD);
+         strlcpy (my.deps_list, "n/a", LEN_RECD);
+         strlcpy (my.like_list, "n/a", LEN_RECD);
+         strlcpy (my.copy_list, "n/a", LEN_RECD);
+         strlcpy (my.rpn_list , "n/a", LEN_RECD);
       }
    }
    x_save = x_curr;
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
-   strncpy (s_mark_list, "+", LEN_RECD);
+   strlcpy (s_mark_list, "+", LEN_RECD);
    /*> yVIKEYS_hint_marklist  (s_mark_list);                                          <*/
    /*---(display all)--------------------*/
    yVIEW_size (YVIEW_MAIN, NULL, &x_left, &x_wide, &x_bott, &x_tall);
@@ -888,6 +906,8 @@ DRAW_main          (void)
          DEBUG_GRAF  yLOG_complex ("append"    , "%3dx (%4d) %3dy (%4d), %3dw (%4d)", x_cur, x_pos, y_cur, y_pos, w, cw);
          if (ECOL < NCOL - 1) {
             CURS_cell (ECOL + 1, y_cur, y_pos, x_pos, w);
+         } else {
+            mvprintw (y_pos, x_pos, "%-*.*s", w, w, YSTR_EMPTY);
          }
       }
    }
@@ -943,10 +963,10 @@ DRAW_init          (void)
 {
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)------------------*/
-   yVIEW_full     (YVIEW_MAIN , YVIEW_FLAT, YVIEW_TOPLEF, 1.0, 0, DRAW_main);
+   yVIEW_full     (YVIEW_MAIN , YVIEW_FLAT, YVIEW_TOPLEF, 0, 0, DRAW_main);
    yVIEW_defsize  (YVIEW_YAXIS, 5, 0);
-   yVIEW_simple   (YVIEW_XAXIS, 0, DRAW_xaxis);
-   yVIEW_simple   (YVIEW_YAXIS, 0, DRAW_yaxis);
+   yVIEW_simple   (YVIEW_XAXIS, 0, 0, DRAW_xaxis);
+   yVIEW_simple   (YVIEW_YAXIS, 0, 0, DRAW_yaxis);
    /*> yVIEW_simple   (YVIEW_BUFFER   , 0, DRAW_buffer );                    <*/
    /*> yCMD_direct   (":layout gyges");                                               <*/
    yCMD_add      (YCMD_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );

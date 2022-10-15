@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6n"
-#define     P_VERTXT    "variables up and working, not unit tested yet"
+#define     P_VERNUM    "3.6o"
+#define     P_VERTXT    "improve standard of makefile with make_prepare"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -274,7 +274,7 @@ typedef struct timespec  tTSPEC;
 #define     DEF_ROWS    100
 #define     MIN_ROWS    1
 /*---(cell width)---------------------*/
-#define     MAX_WIDTH   50
+#define     MAX_WIDTH   400
 #define     DEF_WIDTH   8
 #define     MIN_WIDTH   2
 #define     MAX_MERGE   10
@@ -408,6 +408,8 @@ struct cACCESSOR {
    /*---(ncurses)---------*/
    char        info_win;
    char        menu;
+   char        ball;                       /* agrios execution tracking       */
+   char        cagrios     [LEN_LABEL];    /* current agrios position         */
    char        reqs_list   [LEN_RECD];     /* cell requires                   */
    char        deps_list   [LEN_RECD];     /* cell depends                    */
    char        like_list   [LEN_RECD];     /* cell likes                      */
@@ -1445,8 +1447,8 @@ short       NODE__max_set           (char a_index, char a_type, short a_max);
 short       NODE_max_set            (char a_index, char a_type, short a_max);
 short       NODE_max_adjust         (char a_index, char a_type);
 /*---(sizing)-------------------------*/
-char        NODE_size               (char a_tab, char a_type, short a_ref);
-char        NODE_resize             (char a_tab, char a_type, short a_ref, char a_size);
+uchar       NODE_size               (char a_tab, char a_type, short a_ref);
+char        NODE_resize             (char a_tab, char a_type, short a_ref, uchar a_size);
 /*---(freezing)-----------------------*/
 char        NODE_freeze             (int a_tab, char a_type, int a_beg, int a_end);
 char        NODE_unfreeze           (int a_tab, char a_type);
@@ -1492,8 +1494,8 @@ short       COL_max_adjust          (char a_index);
 char        COL_cleanse             (tTAB *a_tab);
 char        COL_cleanse_curr        (void);
 /*---(sizing)-------------------------*/
-char        COL_size                (char a_index, short a_ref);
-char        COL_resize              (char a_index, short a_ref, char a_size);
+uchar       COL_size                (char a_index, short a_ref);
+char        COL_resize              (char a_index, short a_ref, uchar a_size);
 /*---(freezing)-----------------------*/
 char        COL_freeze              (char a_index, short a_bcol, short a_ecol);
 char        COL_unfreeze            (char a_index);
@@ -1532,8 +1534,8 @@ short       ROW_max_adjust          (char a_index);
 char        ROW_cleanse             (tTAB *a_tab);
 char        ROW_cleanse_curr        (void);
 /*---(sizing)-------------------------*/
-char        ROW_size                (char a_index, short a_ref);
-char        ROW_resize              (char a_index, short a_ref, char a_size);
+uchar       ROW_size                (char a_index, short a_ref);
+char        ROW_resize              (char a_index, short a_ref, uchar a_size);
 /*---(freezing)-----------------------*/
 char        ROW_freeze              (char a_index, short a_bref, short a_eref);
 char        ROW_unfreeze            (char a_index);
@@ -1669,7 +1671,7 @@ char        CELL_writer_all         (void);
 
 
 /*===[[ gyges_calc.c ]]=======================================================*/
-char        api_ycalc_addvar       (char *a_name, char *a_label);
+/*> char        api_ycalc_addvar       (char *a_name, char *a_label);                 <*/
 
 char        api_ycalc_enabler       (void *a_owner, void *a_deproot);
 char        api_ycalc_pointer       (void *a_owner, char **r_source, char **r_type, double **r_value, char **r_string);
@@ -1699,19 +1701,20 @@ char        api_yvikeys_axis_entry  (char a_axis, ushort a_pos, short *a_ref, uc
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_saver       (char *a_contents);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_macro_get   (char   a_name, char  *a_keys);
-char        api_yvikeys_macro_set   (char   a_name, char  *a_keys);
+char        api_yvikeys_macro_init  (void);
+char        api_ymacro_get          (char   a_name, char  *a_keys);
+char        api_ymacro_set          (char   a_name, char  *a_keys);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_searcher    (uchar a_not, uchar *a_search);
 char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_copier      (char a_type, long a_stamp);
-char        api_yvikeys_clearer     (char a_1st, ushort u, ushort x, ushort y, ushort z);
+char        api_ymap_clearer        (char a_1st, ushort u, ushort x, ushort y, ushort z);
+char        api_ymap_copier         (char a_type, long a_stamp);
 /*> char        api_yvikeys_router      (tCELL *a_cell, char *a_list);                <*/
 /*> char        api_yvikeys_paster_OLD  (char a_reqs, char a_pros, char a_intg, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell, char *a_list);   <*/
-char        api_yvikeys_paster      (char a_reqs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell);
-char        api_yvikeys_finisher    (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);
-char        api_yvikeys_regkiller   (tCELL *a_curr);
+char        api_ymap_paster         (char a_reqs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, tCELL *a_cell);
+char        api_ymap_finisher       (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);
+char        api_ymap_regkiller      (tCELL *a_curr);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_exim        (char  a_dir  , char  a_style);
@@ -1733,6 +1736,8 @@ char        api_ymap_done           (void);
 /*---(other)----------------*/
 char        api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, char *a_content);
 char        api_ymap_formatter      (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort y, ushort z, uchar *r);
+/*---(other)----------------*/
+char        api_ymap_range          (char *a_beg, char *a_end);
 /*---(done)-----------------*/
 
 
@@ -1747,10 +1752,17 @@ char*       api_ysort__unit         (char *a_question, int n);
 
 
 
+/*===[[ gyges_macro.c ]]======================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *a_next);
+char        api_ymacro_forcer        (char a_type, char *a_target, char *a_contents);
+char        api_ymacro_pusher        (char a_dir, char a_level, char *a_args);
+char        api_ymacro_ball          (void);
+char        api_ymacro_noball        (void);
 
-/*===[ SCRP   ]===============================================================*/
-/*345678901-12345678901234567890->--------------------------------------------*/
+
+
+
 
 
 #endif

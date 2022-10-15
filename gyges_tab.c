@@ -444,6 +444,7 @@ TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size)
    x_tab = INDEX_tab (a_abbr);
    rc = TAB_new (NULL, x_tab, a_name, a_size);
    if (rc >= 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   if (a_abbr = (uchar) '®')  api_yvikeys_macro_init ();
    return rc;
 }
 
@@ -657,10 +658,10 @@ TAB_by_name             (tTAB **a_found, uchar *a_regex)
    DEBUG_LOCS   yLOG_delim   ("a_regex"   , a_regex);
    /*---(compile search)-----------------*/
    rc = yREGEX_comp (a_regex);
-   DEBUG_SRCH   yLOG_value   ("comp"      , rc);
+   DEBUG_LOCS    yLOG_value   ("comp"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_note    ("could not compile search");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS    yLOG_note    ("could not compile search");
+      DEBUG_LOCS    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(check all tabs)-----------------*/
@@ -916,31 +917,31 @@ TAB_cleanse             (tTAB *a_tab)
       return rce;
    }
    /*---(cells)--------------------------*/
-   DEBUG_PROG   yLOG_value   ("cells"     , a_tab->count);
+   DEBUG_LOCS   yLOG_value   ("cells"     , a_tab->count);
    --rce;  if (a_tab->count > 0) {
-      DEBUG_PROG   yLOG_note    ("BAD NEWS, celss are on this tab");
+      DEBUG_LOCS   yLOG_note    ("BAD NEWS, celss are on this tab");
       rc = rce;
    }
    /*---(columns)------------------------*/
-   DEBUG_PROG   yLOG_value   ("cols (bef)", a_tab->C_count);
+   DEBUG_LOCS   yLOG_value   ("cols (bef)", a_tab->C_count);
    n = COL_cleanse   (a_tab);
-   DEBUG_PROG   yLOG_value   ("cleanse"   , n);
+   DEBUG_LOCS   yLOG_value   ("cleanse"   , n);
    --rce;  if (n > 0) {
-      DEBUG_PROG   yLOG_note    ("BAD NEWS, columns are left over");
+      DEBUG_LOCS   yLOG_note    ("BAD NEWS, columns are left over");
       rc = rce;
    }
-   DEBUG_PROG   yLOG_value   ("cols (aft)", a_tab->C_count);
+   DEBUG_LOCS   yLOG_value   ("cols (aft)", a_tab->C_count);
    /*---(rows)---------------------------*/
-   DEBUG_PROG   yLOG_value   ("rows (bef)", a_tab->R_count);
+   DEBUG_LOCS   yLOG_value   ("rows (bef)", a_tab->R_count);
    n = ROW_cleanse   (a_tab);
-   DEBUG_PROG   yLOG_value   ("cleanse"   , n);
+   DEBUG_LOCS   yLOG_value   ("cleanse"   , n);
    --rce;  if (n > 0) {
-      DEBUG_PROG   yLOG_note    ("BAD NEWS, columns are left over");
+      DEBUG_LOCS   yLOG_note    ("BAD NEWS, columns are left over");
       rc = rce;
    }
-   DEBUG_PROG   yLOG_value   ("rows (aft)", a_tab->R_count);
+   DEBUG_LOCS   yLOG_value   ("rows (aft)", a_tab->R_count);
    /*---(free)---------------------------*/
-   DEBUG_PROG   yLOG_value   ("free"      , rc);
+   DEBUG_LOCS   yLOG_value   ("free"      , rc);
    if (rc == 0) {
       TAB_free (a_tab->tab);
    }
@@ -1189,7 +1190,7 @@ TAB_resize           (char a_index, char *a_max)
    }
    /*---(check specific size)------------*/
    rc = str2gyges  (a_max, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_value   ("str2gyges" , rc);
+   DEBUG_LOCS   yLOG_complex ("str2gyges" , "%4d, %2du, %3dx, %4dy", rc, x_max, x_col, x_row);
    /*---(check short-cuts)---------------*/
    --rce;  if      (rc >= 0)                  x_meth = G_RESIZE_FIXED;
    else if (strcmp (a_max, "min"    ) == 0)   x_meth = G_RESIZE_MIN;
@@ -1211,6 +1212,7 @@ TAB_resize           (char a_index, char *a_max)
    if (x_type == G_TAB_AUTO)     x_meth = G_RESIZE_AUTO;
    if (x_meth == G_RESIZE_NADA)  x_meth = G_RESIZE_AUTO;
    /*---(check short-cuts)---------------*/
+   DEBUG_LOCS   yLOG_complex ("maxes"     , "%3dux %3dax, %4duy %4day", COL_max_used (a_index), MAX_col (), COL_max_used (a_index), MAX_row ());
    switch (x_meth) {
    case G_RESIZE_AUTO   :
       DEBUG_LOCS   yLOG_note    ("auto treatment");
@@ -1250,6 +1252,8 @@ TAB_resize           (char a_index, char *a_max)
    DEBUG_LOCS   yLOG_note    ("fix tab settings");
    s_master [a_index]->ncol = x_col + 1;
    s_master [a_index]->nrow = x_row + 1;
+   /*---(refresh map)--------------------*/
+   yMAP_refresh_full ();
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1353,16 +1357,16 @@ TAB_line           (char a_index, char a_size, char *a_list)
    char        x_col       [LEN_LABEL] = "";
    char        x_prefix    [LEN_HUND]  = "";
    /*---(beginning)----------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_complex ("args"      , "%2dt, %c, %-10.10p", a_index, a_size, a_list);
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %-10.10p", a_index, a_size, a_list);
    /*---(defense)---------------------*/
    --rce;  if (a_list  == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    snprintf (a_list, LEN_FULL, "");
    --rce;  if (a_size == 0 || strchr ("utsmlhg", a_size) == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(default)---------------------*/
@@ -1375,7 +1379,7 @@ TAB_line           (char a_index, char a_size, char *a_list)
    }
    /*---(bad tab)---------------------*/
    --rce;  if (!VALID_tab (a_index)) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(handle empties)--------------*/
@@ -1388,13 +1392,13 @@ TAB_line           (char a_index, char a_size, char *a_list)
       break;
    }
    if (!TAB_live (a_index)) {
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(get pointer)-----------------*/
    rc = TAB_by_index (&x_tab, a_index);
    --rce;  if (x_tab  == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(generate stats)--------------*/
@@ -1442,7 +1446,7 @@ TAB_line           (char a_index, char a_size, char *a_list)
       break;
    }
    /*---(complete)--------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

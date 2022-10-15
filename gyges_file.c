@@ -51,6 +51,22 @@
 #include    "gyges.h"
 
 
+/*
+ *  export/import sizer
+ *  º  beginning of input
+ *  Ï  beginning of field, interpret intelligently
+ *     beginning of field, force as string by appending '·'
+ *  -  character included in field
+ *  ·  space to be ignored
+ *  »  end of sizer
+ *
+ *  sizer's length is important as content input is ignored if it is beyond
+ *  the end of the sizer.
+ *
+ *
+ *
+ */
+
 
 
 /*---(globals)----------+-----------+-*/
@@ -64,11 +80,14 @@ int         s_len       = 0;
 char       *s_p         = NULL;               /* strtok return pointer     */
 char       *s_q         = "";               /* strtok delimeters         */
 char       *s_context   = NULL;               /* strtok context variable   */
+char        s_xsizer    [LEN_RECD];
+int         s_nsizer    =   0;
 
 #define     MAX_POS     20
-uchar       s_xpos      [MAX_POS];
+uchar       s_beg       [MAX_POS];          /* start pos of each column       */
+uchar       s_wide      [MAX_POS];          /* width of each column           */
+uchar       s_type      [MAX_POS];          /* type of each column            */
 uchar       s_xsep      [MAX_POS];
-uchar       s_exact     [MAX_POS];
 int         s_npos      =   0;
 int         s_mundos    =   0;
 
@@ -187,32 +206,32 @@ EXIM__open              (char a_dir)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_FILE   yLOG_enter   (__FUNCTION__);
    /*---(open file)----------------------*/
-   DEBUG_REGS   yLOG_char    ("a_dir"     , a_dir);
+   DEBUG_FILE   yLOG_char    ("a_dir"     , a_dir);
    switch (a_dir) {
    case 'r'  :
-      DEBUG_REGS   yLOG_note    ("open for reading");
+      DEBUG_FILE   yLOG_note    ("open for reading");
       s_clip = fopen (FILE_EXIM, "rt");
       break;
    case 'w'  :
-      DEBUG_REGS   yLOG_note    ("open for writing");
+      DEBUG_FILE   yLOG_note    ("open for writing");
       s_clip = fopen (FILE_EXIM, "wt");
       break;
    default   :
-      DEBUG_REGS   yLOG_note    ("not a legal file mode");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      DEBUG_FILE   yLOG_note    ("not a legal file mode");
+      DEBUG_FILE   yLOG_exit    (__FUNCTION__);
       return rce;
       break;
    }
-   DEBUG_REGS   yLOG_point   ("s_clip"    , s_clip);
+   DEBUG_FILE   yLOG_point   ("s_clip"    , s_clip);
    --rce;  if (s_clip == NULL) {
-      DEBUG_REGS   yLOG_note    ("can not open clip file");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      DEBUG_FILE   yLOG_note    ("can not open clip file");
+      DEBUG_FILE   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_FILE   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -223,17 +242,17 @@ EXIM__close             (void)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_FILE   yLOG_enter   (__FUNCTION__);
    /*---(close file)---------------------*/
    rc = fclose  (s_clip);
-   DEBUG_REGS   yLOG_value   ("close"     , rc);
+   DEBUG_FILE   yLOG_value   ("close"     , rc);
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_note    ("can not close clip file");
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      DEBUG_FILE   yLOG_note    ("can not close clip file");
+      DEBUG_FILE   yLOG_exit    (__FUNCTION__);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_FILE   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -444,19 +463,20 @@ EXIM__export_sizer      (void)
    char        t           [LEN_RECD]  = "";
    char        s           [LEN_RECD]  = "";
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(size)---------------------------*/
    yMAP_visu_range (&u, &xb, &xe, &yb, &ye, &zb, &ze, NULL);
    fprintf (s_clip, "#@ bounds  %2d %4d %4d %4d %4d %4d %4d\n",  u, xb, xe, yb, ye, zb, ze);
    /*---(x_size)----------------------*/
-   sprintf (s, "#@ x-parse %2då", xe - xb + 1);
+   sprintf (s, "#@ x-parse %3då", xe - xb + 1);
    for (x_col = xb; x_col <= xe; ++x_col) {
       w     = COL_size (CTAB, x_col);
-      DEBUG_REGS  yLOG_value   ("w"         , w);
+      DEBUG_OUTP  yLOG_value   ("w"         , w);
       strcat  (s, "Ï");
-      for (i = 1; i < w; ++i)   strcat  (s, "-");
+      for (i = 1; i < (w - 1); ++i)   strcat  (s, "-");
       switch (s_style) {
       case 'V' : case 'N' :
+         strcat  (s, "·");
          break;
       case 'D' : case 'F' :  case 'R' :  case 'S' :
          strcat  (s, "§");
@@ -468,22 +488,22 @@ EXIM__export_sizer      (void)
          strcat  (s, ",");
          break;
       }
-      DEBUG_REGS  yLOG_info    ("s"         , s);
+      DEBUG_OUTP  yLOG_info    ("s"         , s);
    }
    fprintf (s_clip, "%sæ\n", s);
    /*---(y_size)----------------------*/
-   sprintf (s, "#@ y-parse %2då", xe - xb + 1);
+   sprintf (s, "#@ y-parse %3då", ye - yb + 1);
    for (x_row = yb; x_row <= ye; ++x_row) {
       h     = ROW_size (CTAB, x_row);
-      DEBUG_REGS  yLOG_value   ("h"         , h);
+      DEBUG_OUTP  yLOG_value   ("h"         , h);
       sprintf (t, " %5d", h);
       strcat  (s, "Ï");
       for (i = 1; i < h; ++i)   strcat  (s, "-");
-      DEBUG_REGS  yLOG_info    ("s"         , s);
+      DEBUG_OUTP  yLOG_info    ("s"         , s);
    }
    fprintf (s_clip, "%sæ\n", s);
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -493,9 +513,10 @@ EXIM__import_fail       (void)
    int         i           =    0;
    if (s_npos >= 0)  yMAP_mundo_rollback ();
    for (i = 0; i < MAX_POS; ++i) {
-      s_xpos  [i] = 0;
+      s_wide  [i] = 0;
       s_xsep  [i] = '·';
-      s_exact [i] = 0;
+      s_beg   [i] = 0;
+      s_type  [i] = '·';
    }
    s_npos = 0;
    return 0;
@@ -516,96 +537,106 @@ EXIM__import_sizer      (void)
    int         x_mundo     =    0;
    int         x_count     =    0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
-   for (i = 0; i < MAX_POS; ++i) {  s_xpos  [i] = 0;  s_xsep [i] = '·'; s_exact [i] = 0; }
+   for (i = 0; i < MAX_POS; ++i) { s_wide  [i] = 0; s_xsep [i] = '·'; s_beg [i] = 0; s_type [i] = '·'; }
    s_npos = 0;
    /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
+   DEBUG_INPT   yLOG_info    ("s_recd"    , s_recd);
    --rce;  if (strncmp (s_recd, "#@ ",  3) != 0) {
-      DEBUG_REGS   yLOG_note    ("does not start with #@ ");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_note    ("does not start with #@ ");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    x_dir = s_recd [3];
    /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_char    ("x_dir"     , x_dir);
+   DEBUG_INPT   yLOG_char    ("x_dir"     , x_dir);
    --rce;  if (strchr ("xy", x_dir) == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
+   DEBUG_INPT   yLOG_info    ("s_recd"    , s_recd);
    --rce;  if (x_dir == 'x' && strncmp (s_recd, "#@ x-parse ", 11) != 0) {
-      DEBUG_REGS   yLOG_note    ("prefix is not #@ x-parse ");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_note    ("prefix is not #@ x-parse ");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_dir == 'y' && strncmp (s_recd, "#@ y-parse ", 11) != 0) {
-      DEBUG_REGS   yLOG_note    ("prefix is not #@ y-parse ");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_note    ("prefix is not #@ y-parse ");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    l = strlen (s_recd);
    /*> --rce;  if (s_recd [l - 1] != 'æ') {                                           <* 
-    *>    DEBUG_REGS   yLOG_note    ("does not end with æ");                          <* 
-    *>    DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    DEBUG_INPT   yLOG_note    ("does not end with æ");                          <* 
+    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
     *>    return rce;                                                                 <* 
     *> }                                                                              <*/
    /*---(open sizer)---------------------*/
-   i = 13;
+   i = 14;
    c = s_recd [i];
-   DEBUG_REGS   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
+   DEBUG_INPT   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
    --rce;  if (c != 'å') {
-      DEBUG_REGS   yLOG_note    ("does not beg with å");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_note    ("does not beg with å");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    s_npos = -1;
+   /*---(backup sizer)-------------------*/
+   if (x_dir == 'x') {
+      strlcpy (s_xsizer, s_recd + i + 1, LEN_RECD);
+      s_nsizer = strlen (s_xsizer) - 1;
+   }
    /*---(open sizer)---------------------*/
    c = s_recd [++i];
-   DEBUG_REGS   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
+   DEBUG_INPT   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
    --rce;  while (c != '\0') {
       /*---(check for spacers)-----------*/
       if (strchr ("· " , c) != NULL)   x_space = 'y';
-      if (strchr ("Ïæx", c) != NULL)   x_space = '-';
+      if (strchr ("Ïæ ", c) != NULL)   x_space = '-';
       if (x_space == 'y') {
          if (strchr ("· ", c) == NULL) {
-            DEBUG_REGS   yLOG_note    ("space broken by unexpected character");
+            DEBUG_INPT   yLOG_note    ("space broken by unexpected character");
             EXIM__import_fail ();
-            DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+            DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
             return rce;
          }
       }
       /*---(real things)-----------------*/
       if (x_space == '-') {
          /*---(new field)-------------------*/
-         if (strchr ("Ïæx", c) != NULL) {
-            DEBUG_REGS   yLOG_note    ("Ïx start next field or æ ending");
-            if (strchr ("Ïx", c) != NULL)  s_exact [s_npos + 1] = i;
+         if (strchr ("Ïæ ", c) != NULL) {
+            DEBUG_INPT   yLOG_note    ("Ï  start next field or æ ending");
+            if (strchr ("Ï ", c) != NULL) {
+               s_beg  [s_npos + 1] = i;
+               s_type [s_npos + 1] = c;
+            }
             if (s_npos >= 0) {
-               DEBUG_REGS   yLOG_note    ("check for resize");
-               DEBUG_REGS   yLOG_value   ("x_size"    , x_size);
-               s_xpos   [s_npos] = x_size;
-               DEBUG_REGS  yLOG_complex ("mundos"    , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
+               DEBUG_INPT   yLOG_note    ("check for resize");
+               ++x_size;
+               if (s_recd [s_beg [s_npos]] == ' ') ++x_size;
+               DEBUG_INPT   yLOG_value   ("x_size"    , x_size);
+               s_wide   [s_npos] = x_size;
+               DEBUG_INPT  yLOG_complex ("mundos"    , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
                x_mundo = yMAP_mundo_count ();
-               DEBUG_REGS   yLOG_value   ("x_mundo"   , x_mundo);
+               DEBUG_INPT   yLOG_value   ("x_mundo"   , x_mundo);
                if (x_dir == 'x') {
-                  DEBUG_REGS   yLOG_note    ("update width");
+                  DEBUG_INPT   yLOG_note    ("update width");
                   str4gyges (CTAB, CCOL + s_npos, 0, 0, 0, x_label, YSTR_ADAPT);
                   yMAP_multi_wide (x_label, x_size, 0);
-                  DEBUG_REGS  yLOG_complex ("mundos+"   , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
-                  DEBUG_REGS   yLOG_value   ("x_count"   , x_count);
+                  DEBUG_INPT  yLOG_complex ("mundos+"   , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
+                  DEBUG_INPT   yLOG_value   ("x_count"   , x_count);
                   if (yMAP_mundo_count () != x_mundo) {
-                     DEBUG_REGS   yLOG_note    ("new one added");
-                     DEBUG_REGS   yLOG_info    ("detail"    , yMAP_mundo_detail (x_count));
+                     DEBUG_INPT   yLOG_note    ("new one added");
+                     DEBUG_INPT   yLOG_info    ("detail"    , yMAP_mundo_detail (x_count));
                      if (yMAP_mundo_count () > s_mundos && x_count > 0) {
-                        DEBUG_REGS   yLOG_note    ("change to add");
+                        DEBUG_INPT   yLOG_note    ("change to add");
                         yMAP_mundo_make_add ();
                      }
                      ++x_count;
                   }
                } else if (x_dir == 'y') {
-                  DEBUG_REGS   yLOG_note    ("update height");
+                  DEBUG_INPT   yLOG_note    ("update height");
                   /*> str4gyges (CTAB, 0, CROW + s_npos, 0, 0, x_label, YSTR_ADAPT);   <* 
                    *> yMAP_multi_tall (x_label, x_size, 0);                            <* 
                    *> if (yMAP_mundo_count () > s_mundos)  yMAP_mundo_make_add ();     <*/
@@ -614,15 +645,15 @@ EXIM__import_sizer      (void)
             ++s_npos;
             x_size = 1;
             if (c == 'æ') {
-               DEBUG_REGS   yLOG_note    ("æ ending so break");
+               DEBUG_INPT   yLOG_note    ("æ ending so break");
                break;
             }
          }
          /*---(continuation)----------------*/
          else if (c == '-') {
-            DEBUG_REGS   yLOG_note    ("- continuation character");
+            DEBUG_INPT   yLOG_note    ("- continuation character");
             if (s_npos < 0) {
-               DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+               DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
                return rce;
             }
             ++x_size;
@@ -631,21 +662,21 @@ EXIM__import_sizer      (void)
          else {
             switch (c) {
             case 'f' : case '§' : case '' :
-               DEBUG_REGS   yLOG_note    ("field delimiter");
+               DEBUG_INPT   yLOG_note    ("field delimiter");
                s_xsep [s_npos] = 'f';
                break;
             case ',' : case 'c' : case '˜' :
-               DEBUG_REGS   yLOG_note    ("comma delimiter");
+               DEBUG_INPT   yLOG_note    ("comma delimiter");
                s_xsep [s_npos] = 'c';
                break;
             case 't' : case 'Ú' :
-               DEBUG_REGS   yLOG_note    ("tab delimiter");
+               DEBUG_INPT   yLOG_note    ("tab delimiter");
                s_xsep [s_npos] = 't';
                break;
             default  :
-               DEBUG_REGS   yLOG_note    ("unknown character");
+               DEBUG_INPT   yLOG_note    ("unknown character");
                EXIM__import_fail ();
-               DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+               DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
                return rce;
                break;
             }
@@ -653,18 +684,18 @@ EXIM__import_sizer      (void)
       }
       /*---(next)------------------------*/
       c = s_recd [++i];
-      DEBUG_REGS   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
+      DEBUG_INPT   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
       /*---(done)------------------------*/
    }
    /*---(finished right)-----------------*/
    --rce;  if (c != 'æ') {
-      DEBUG_REGS   yLOG_note    ("did not complete with æ");
+      DEBUG_INPT   yLOG_note    ("did not complete with æ");
       EXIM__import_fail ();
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -678,31 +709,31 @@ EXIM__import_bounds     (void)
    int         x_pos       =    0;
    int         x_value     =    0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_info    ("s_recd"    , s_recd);
+   DEBUG_INPT   yLOG_info    ("s_recd"    , s_recd);
    --rce;  if (strncmp (s_recd, "#@ bounds ", 10) != 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(sizings)------------------------*/
    for (x_pos = 0; x_pos < 7; ++x_pos) {
-      strncpy (t, s_recd + 9 + (x_pos * 5), 4);
+      strlcpy (t, s_recd + 9 + (x_pos * 5), 4);
       t [4] = '\0';
-      DEBUG_REGS   yLOG_delim   ("t"         , t);
+      DEBUG_INPT   yLOG_delim   ("t"         , t);
       x_value = atoi (t);
-      DEBUG_REGS   yLOG_value   ("x_value"   , x_value);
+      DEBUG_INPT   yLOG_value   ("x_value"   , x_value);
       switch (x_pos) {
       case  0 :  s_uorig = x_value;     break;
       case  1 :  s_xorig = x_value;     break;
       case  3 :  s_yorig = x_value;     break;
       }
    }
-   DEBUG_REGS   yLOG_value   ("s_uorig"   , s_uorig);
-   DEBUG_REGS   yLOG_value   ("s_xorig"   , s_xorig);
-   DEBUG_REGS   yLOG_value   ("s_yorig"   , s_yorig);
+   DEBUG_INPT   yLOG_value   ("s_uorig"   , s_uorig);
+   DEBUG_INPT   yLOG_value   ("s_xorig"   , s_xorig);
+   DEBUG_INPT   yLOG_value   ("s_yorig"   , s_yorig);
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -713,9 +744,9 @@ EXIM__import_one        (int a_tab, int a_col, int a_row, char *a_format, char *
    tCELL      *x_new       = NULL;
    char        t           [LEN_RECD]  = "";
    int         x_len       =    0;
-   DEBUG_REGS  yLOG_note    ("processing and handling mundo");
+   DEBUG_INPT  yLOG_note    ("processing and handling mundo");
    if (yMAP_mundo_count () > s_mundos) {
-      DEBUG_REGS  yLOG_note    ("switch to an add");
+      DEBUG_INPT  yLOG_note    ("switch to an add");
       s_hist = YMAP_ADD;
    }
    strlcpy    (t, a_source , LEN_RECD);
@@ -723,11 +754,11 @@ EXIM__import_one        (int a_tab, int a_col, int a_row, char *a_format, char *
    strltrim   (t, ySTR_BOTH, LEN_RECD);
    x_len = strlen (t);
    if (x_len <= 0) {
-      DEBUG_REGS  yLOG_note    ("empty source, skipping");
+      DEBUG_INPT  yLOG_note    ("empty source, skipping");
       return 0;
    }
    x_new = CELL_overwrite (s_hist, a_tab, a_col, a_row, a_source, a_format);
-   DEBUG_REGS  yLOG_point   ("x_new"     , x_new);
+   DEBUG_INPT  yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL)   return rce;
    return 0;
 }
@@ -743,14 +774,43 @@ EXIM__import_values     (int a_row)
    char        t           [LEN_RECD]  = "";
    char        x_format    [LEN_LABEL];
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(process cells)---------------*/
    while (cw < s_max) {
+      /*---(check for masking)--------*/
+      DEBUG_INPT  yLOG_complex ("s_nsizer"  , "%3d, %3d, %s", cw, s_nsizer, s_xsizer);
+      if (s_nsizer > 0 && cw >= s_nsizer) {
+         DEBUG_INPT  yLOG_note    ("past end of sizer, break");
+         break;
+      }
+      DEBUG_INPT  yLOG_char    ("s_xsizer"  , s_xsizer [cw]);
+      if (s_nsizer > 0 && strchr ("· ", s_xsizer [cw]) != NULL) {
+         DEBUG_INPT  yLOG_note    ("found a space, skipping character");
+         ++cw;
+         continue;
+      }
       /*---(read import data)---------*/
       w     = COL_size (CTAB, CCOL + x_col);
-      DEBUG_REGS  yLOG_value   ("w"         , w);
-      strlcpy      (t, s_recd + cw, w + 1);
-      DEBUG_REGS  yLOG_delim   ("t (orig)"  , t);
+      if (s_xsizer [cw] == ' ') --w;
+      DEBUG_INPT  yLOG_value   ("w"         , w);
+      if (s_nsizer > 0 && cw + w - 1 > s_nsizer) {
+         DEBUG_INPT  yLOG_note    ("truncating width to match nzizer");
+         w = s_nsizer - cw;
+         DEBUG_INPT  yLOG_value   ("w"         , w);
+      }
+      /*---(filter to0 short)---------*/
+      if (w < 2) {
+         ++x_col;
+         cw += w;
+         continue;
+      }
+      /*---(take string section)------*/
+      DEBUG_INPT  yLOG_delim   ("t (orig)"  , t);
+      strlcpy      (t, s_recd + cw, w);
+      if (s_nsizer > 0) {
+         if (s_xsizer [cw] == ' ') strlcat (t, "·", LEN_RECD);
+      }
+      DEBUG_INPT  yLOG_delim   ("t (orig)"  , t);
       /*---(guess formatting)---------*/
       strcpy (x_format, DEF_FORMAT);
       if      (t [0] == ' ' && t [w - 2] == ' ')  x_format [0] = '|';
@@ -758,39 +818,40 @@ EXIM__import_values     (int a_row)
       else if (t [w - 2] != ' ')                  x_format [0] = '>';
       /*---(process)------------------*/
       strlencode   (t, ySTR_NORM, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("t (new)"   , t);
+      DEBUG_INPT  yLOG_info    ("t (new)"   , t);
       strltrim     (t, ySTR_BOTH, LEN_RECD);
-      DEBUG_REGS  yLOG_info    ("t (trim)"  , t);
-      DEBUG_REGS  yLOG_value   ("x_col"     , x_col);
+      DEBUG_INPT  yLOG_info    ("t (trim)"  , t);
+      DEBUG_INPT  yLOG_value   ("x_col"     , x_col);
       /*---(change)-------------------*/
-      DEBUG_REGS  yLOG_complex ("mundos"    , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
+      DEBUG_INPT  yLOG_complex ("mundos"    , "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);
       if (strlen (t) > 0) {
          rc = EXIM__import_one (CTAB, CCOL + x_col, CROW + a_row, x_format, t);
          if (rc < 0) {
             EXIM__import_fail ();
-            DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+            DEBUG_INPT   yLOG_exit    (__FUNCTION__);
             return rc;
          }
-         /*> DEBUG_REGS  yLOG_note    ("processing and handling mundo");              <*/
+         /*> DEBUG_INPT  yLOG_note    ("processing and handling mundo");              <*/
          /*> if (yMAP_mundo_count () > s_mundos) {                                     <* 
-          *>    DEBUG_REGS  yLOG_note    ("switch to an add");                         <* 
+          *>    DEBUG_INPT  yLOG_note    ("switch to an add");                         <* 
           *>    s_hist = YMAP_ADD;                                                     <* 
           *> }                                                                         <* 
           *> CELL_overwrite (s_hist, CTAB, CCOL + x_col, CROW + a_row, t, x_format);   <*/
-         /*> DEBUG_REGS  yLOG_complex ("after over", "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);   <*/
+         /*> DEBUG_INPT  yLOG_complex ("after over", "%3dc, %3di, %3ds", yMAP_mundo_count (), yMAP_mundo_current (), s_mundos);   <*/
          /*> if (yMAP_mundo_count () > s_mundos) {                                    <* 
-          *>    DEBUG_REGS  yLOG_note    ("switch to an add");                        <* 
+          *>    DEBUG_INPT  yLOG_note    ("switch to an add");                        <* 
           *>    yMAP_mundo_make_add ();                                               <* 
           *> }                                                                        <*/
       } else {
-         DEBUG_REGS  yLOG_note    ("empty, skipping");
+         DEBUG_INPT  yLOG_note    ("empty, skipping");
       }
       /*---(next)---------------------*/
       ++x_col;
+      --w;
       cw += w;
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -806,25 +867,25 @@ EXIM__import_dest       (char *a_label)
    char        rc          =    0;
    int         x_tab , x_col , x_row;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_info    ("label"     , a_label);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_info    ("label"     , a_label);
    rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_ADAPT);
-   DEBUG_REGS  yLOG_value   ("parse"     , rc);
+   DEBUG_INPT  yLOG_value   ("parse"     , rc);
    --rce;  if (rc < 0)  {
-      DEBUG_REGS  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_REGS   yLOG_complex ("src loc"   , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
+   DEBUG_INPT   yLOG_complex ("src loc"   , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
    s_otab = CTAB - s_uorig;
    s_ocol = CCOL - s_xorig;
    s_orow = CROW - s_yorig;
-   DEBUG_REGS   yLOG_complex ("offset"    , "%2dt, %3dc, %4dr", s_otab, s_ocol, s_orow);
+   DEBUG_INPT   yLOG_complex ("offset"    , "%2dt, %3dc, %4dr", s_otab, s_ocol, s_orow);
    s_dtab = x_tab + s_otab;
    s_dcol = x_col + s_ocol;
    s_drow = x_row + s_orow;
-   DEBUG_REGS   yLOG_complex ("dst loc"   , "%2dt, %3dc, %4dr", s_dtab, s_dcol, s_drow);
+   DEBUG_INPT   yLOG_complex ("dst loc"   , "%2dt, %3dc, %4dr", s_dtab, s_dcol, s_drow);
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -839,18 +900,18 @@ EXIM__import_destsrc    (int a_col, int a_row)
    x_tab = s_uorig;
    x_col = s_xorig + a_col;
    x_row = s_yorig + a_row;
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
-   DEBUG_REGS   yLOG_complex ("src loc"   , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_complex ("src loc"   , "%2dt, %3dc, %4dr", x_tab, x_col, x_row);
    s_otab = CTAB - s_uorig;
    s_ocol = CCOL - s_xorig;
    s_orow = CROW - s_yorig;
-   DEBUG_REGS   yLOG_complex ("offset"    , "%2dt, %3dc, %4dr", s_otab, s_ocol, s_orow);
+   DEBUG_INPT   yLOG_complex ("offset"    , "%2dt, %3dc, %4dr", s_otab, s_ocol, s_orow);
    s_dtab = x_tab + s_otab;
    s_dcol = x_col + s_ocol;
    s_drow = x_row + s_orow;
-   DEBUG_REGS   yLOG_complex ("dst loc"   , "%2dt, %3dc, %4dr", s_dtab, s_dcol, s_drow);
+   DEBUG_INPT   yLOG_complex ("dst loc"   , "%2dt, %3dc, %4dr", s_dtab, s_dcol, s_drow);
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -861,29 +922,29 @@ EXIM__import_content    (char *a_content)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    if (strchr ("cC", s_style) == NULL)  strltrim (a_content, ySTR_BOTH, LEN_RECD);
    strldchg (a_content, G_CHAR_STORAGE, G_KEY_SPACE, LEN_RECD);
-   DEBUG_REGS   yLOG_info    ("a_content" , a_content);
+   DEBUG_INPT   yLOG_info    ("a_content" , a_content);
    /*---(check cell type)----------------*/
    if (a_content [0] == '\0') {
-      DEBUG_REGS   yLOG_note    ("empty cell");
+      DEBUG_INPT   yLOG_note    ("empty cell");
       strcpy (s_source, "");
    } else if (strchr ("=#~", a_content [0]) != 0) {
-      DEBUG_REGS   yLOG_note    ("formula, calling yRPN_adjust");
+      DEBUG_INPT   yLOG_note    ("formula, calling yRPN_adjust");
       rc = yRPN_addr_require (a_content, 'r', s_otab, s_ocol, s_orow, 0, LEN_RECD, s_source);
-      DEBUG_REGS   yLOG_value   ("rc"        , rc);
+      DEBUG_INPT   yLOG_value   ("rc"        , rc);
       if (rc < 0) {
-         DEBUG_REGS   yLOG_note    ("formula could not be parsed");
+         DEBUG_INPT   yLOG_note    ("formula could not be parsed");
          strcpy (s_source, "not_translatable");
       }
    } else {
-      DEBUG_REGS   yLOG_note    ("just copy straight across");
+      DEBUG_INPT   yLOG_note    ("just copy straight across");
       strcpy (s_source, a_content);
    }
-   DEBUG_REGS   yLOG_info    ("s_source"  , s_source);
+   DEBUG_INPT   yLOG_info    ("s_source"  , s_source);
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -901,7 +962,7 @@ EXIM__import_fields     (int a_row)
    char        q           [LEN_LABEL];
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(prep)------------------------*/
    -rce;  switch (s_style) {
    case 'f' : case 'F' : case 'd' : case 'D' :
@@ -915,14 +976,14 @@ EXIM__import_fields     (int a_row)
       break;
    }
    /*---(process cells)---------------*/
-   strncpy (x_recd, s_recd, LEN_RECD);
+   strlcpy (x_recd, s_recd, LEN_RECD);
    p = strtok (x_recd, q);
    while (p != NULL) {
       EXIM__import_destsrc (x_col, a_row);
       /*---(read import data)---------*/
       x_len = strlen (p);
-      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
-      DEBUG_REGS  yLOG_delim   ("p (orig)"  , p);
+      DEBUG_INPT  yLOG_value   ("x_len"     , x_len);
+      DEBUG_INPT  yLOG_delim   ("p (orig)"  , p);
       /*---(guess formatting)---------*/
       strcpy (x_format, DEF_FORMAT);
       if      (p [0] == ' ' && p [x_len - 2] == ' ')  x_format [0] = '|';
@@ -930,27 +991,27 @@ EXIM__import_fields     (int a_row)
       else if (p [x_len - 2] != ' ')                  x_format [0] = '>';
       /*---(process)------------------*/
       rc = EXIM__import_content (p);
-      DEBUG_REGS   yLOG_value   ("content"   , rc);
-      DEBUG_REGS  yLOG_info    ("s_source"  , s_source);
+      DEBUG_INPT   yLOG_value   ("content"   , rc);
+      DEBUG_INPT  yLOG_info    ("s_source"  , s_source);
       /*---(update)-------------------------*/
       rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
-      DEBUG_REGS  yLOG_value   ("import_one", rc);
+      DEBUG_INPT  yLOG_value   ("import_one", rc);
       if (rc < 0) {
-         DEBUG_REGS  yLOG_note    ("FAILED IMPORT");
+         DEBUG_INPT  yLOG_note    ("FAILED IMPORT");
          EXIM__import_fail ();
-         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rc);
+         DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rc);
          return rc;
       }
       /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
        *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
-       *> DEBUG_REGS  yLOG_point   ("x_new"     , x_new);                                <* 
+       *> DEBUG_INPT  yLOG_point   ("x_new"     , x_new);                                <* 
        *> s_hist = YMAP_ADD;                                                             <*/
       /*---(next)---------------------*/
       ++x_col;
       p = strtok (NULL, q);
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -968,7 +1029,7 @@ EXIM__import_csv        (int a_row)
    char        q           [LEN_LABEL];
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(prep)------------------------*/
    --rce;  switch (s_style) {
    case 'c' : case 'C' :
@@ -979,13 +1040,13 @@ EXIM__import_csv        (int a_row)
       break;
    }
    /*---(process cells)---------------*/
-   strncpy (x_recd, s_recd, LEN_RECD);
+   strlcpy (x_recd, s_recd, LEN_RECD);
    p = strtok (x_recd, q);
    --rce;  while (p != NULL) {
       /*---(read import data)---------*/
       x_len = strlen (p);
-      DEBUG_REGS  yLOG_value   ("x_len"     , x_len);
-      DEBUG_REGS  yLOG_delim   ("p (orig)"  , p);
+      DEBUG_INPT  yLOG_value   ("x_len"     , x_len);
+      DEBUG_INPT  yLOG_delim   ("p (orig)"  , p);
       /*---(check for divider)--------*/
       if (x_col % 2 == 1) {
          if (x_len = 1 && strcmp (p, ",") == 0) {
@@ -993,32 +1054,32 @@ EXIM__import_csv        (int a_row)
             p = strtok (NULL, q);
             continue;
          }
-         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
       /*---(set destination)----------*/
       EXIM__import_destsrc (x_col / 2, a_row);
       /*---(process)------------------*/
       rc = EXIM__import_content (p);
-      DEBUG_REGS   yLOG_value   ("content"   , rc);
-      DEBUG_REGS  yLOG_info    ("s_source"  , s_source);
+      DEBUG_INPT   yLOG_value   ("content"   , rc);
+      DEBUG_INPT  yLOG_info    ("s_source"  , s_source);
       /*---(update)-------------------------*/
       rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
       if (rc < 0) {
          EXIM__import_fail ();
-         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
          return rc;
       }
       /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
        *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
-       *> DEBUG_REGS  yLOG_point   ("x_new"     , x_new);                                <* 
+       *> DEBUG_INPT  yLOG_point   ("x_new"     , x_new);                                <* 
        *> s_hist = YMAP_ADD;                                                             <*/
       /*---(next)---------------------*/
       ++x_col;
       p = strtok (NULL, q);
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1033,74 +1094,74 @@ EXIM__import_native     (void)
    char        x_format    [LEN_LABEL];
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(process cells)---------------*/
-   strncpy (x_work, s_recd, LEN_RECD);
+   strlcpy (x_work, s_recd, LEN_RECD);
    p = strtok (x_work, "");
-   DEBUG_REGS   yLOG_point   ("p"         , p);
+   DEBUG_INPT   yLOG_point   ("p"         , p);
    --rce;  if (p == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_REGS   yLOG_info    ("p"         , p);
+   DEBUG_INPT   yLOG_info    ("p"         , p);
    --rce;  if (strncmp ("cell ", p, 5) != 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(label)--------------------------*/
    p = strtok (NULL, "");
-   DEBUG_REGS   yLOG_point   ("p"         , p);
+   DEBUG_INPT   yLOG_point   ("p"         , p);
    --rce;  if (p == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    strltrim (p, ySTR_BOTH, LEN_LABEL);
    rc = EXIM__import_dest (p);
-   DEBUG_REGS   yLOG_value   ("dest"      , rc);
+   DEBUG_INPT   yLOG_value   ("dest"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(format)-------------------------*/
    p = strtok (NULL, "");
-   DEBUG_REGS   yLOG_point   ("p"         , p);
+   DEBUG_INPT   yLOG_point   ("p"         , p);
    --rce;  if (p == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    strltrim (p, ySTR_BOTH, LEN_LABEL);
    strlcpy (x_format, p, LEN_LABEL);
-   DEBUG_REGS   yLOG_info    ("format"    , x_format);
+   DEBUG_INPT   yLOG_info    ("format"    , x_format);
    /*---(source)-------------------------*/
    p = strtok (NULL, "");
-   DEBUG_REGS   yLOG_point   ("p"         , p);
+   DEBUG_INPT   yLOG_point   ("p"         , p);
    --rce;  if (p == NULL) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    rc = EXIM__import_content (p);
-   DEBUG_REGS   yLOG_value   ("content"   , rc);
+   DEBUG_INPT   yLOG_value   ("content"   , rc);
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(update)-------------------------*/
    rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
    if (rc < 0) {
       EXIM__import_fail ();
-      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
     *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
-    *> DEBUG_REGS  yLOG_point   ("x_new"     , x_new);                                <* 
+    *> DEBUG_INPT  yLOG_point   ("x_new"     , x_new);                                <* 
     *> --rce;  if (x_new == NULL)  {                                                  <* 
-    *>    DEBUG_REGS  yLOG_exitr   (__FUNCTION__, rce);                               <* 
+    *>    DEBUG_INPT  yLOG_exitr   (__FUNCTION__, rce);                               <* 
     *>    return rce;                                                                 <* 
     *> }                                                                              <* 
     *> s_hist = YMAP_ADD;                                                             <*/
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1113,32 +1174,32 @@ EXIM__import_native     (void)
  *>    char       *s           = NULL;                                                                                             <* 
  *>    int         x_len       =    0;                                                                                             <* 
  *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
  *>    /+---(parse first)-----------------+/                                                                                       <* 
  *>    p  = strtok_r (s_recd, s_q, &s);                                                                                            <* 
  *>    /+---(process cells)---------------+/                                                                                       <* 
  *>    while (p != NULL) {                                                                                                         <* 
  *>       /+---(read import data)---------+/                                                                                       <* 
- *>       DEBUG_REGS  yLOG_info    ("p (orig)"  , p);                                                                              <* 
+ *>       DEBUG_INPT  yLOG_info    ("p (orig)"  , p);                                                                              <* 
  *>       x_len = strlen (p);                                                                                                      <* 
- *>       DEBUG_REGS  yLOG_value   ("x_len"     , x_len);                                                                          <* 
+ *>       DEBUG_INPT  yLOG_value   ("x_len"     , x_len);                                                                          <* 
  *>       /+---(process)------------------+/                                                                                       <* 
  *>       if (s_style == 'c' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';                                                          <* 
  *>       strltrim (p, ySTR_BOTH, LEN_RECD);                                                                                       <* 
- *>       DEBUG_REGS  yLOG_info    ("p (trim)"  , p);                                                                              <* 
+ *>       DEBUG_INPT  yLOG_info    ("p (trim)"  , p);                                                                              <* 
  *>       x_len = strlen (p);                                                                                                      <* 
- *>       DEBUG_REGS  yLOG_value   ("x_len"     , x_len);                                                                          <* 
+ *>       DEBUG_INPT  yLOG_value   ("x_len"     , x_len);                                                                          <* 
  *>       if (s_sizer == 'a')  REG__inpt_width (x_col, x_len);                                                                     <* 
  *>       strlencode   (p, ySTR_NORM, LEN_RECD);                                                                                   <* 
- *>       DEBUG_REGS  yLOG_info    ("p (new)"   , p);                                                                              <* 
- *>       DEBUG_REGS  yLOG_value   ("x_col"     , x_col);                                                                          <* 
+ *>       DEBUG_INPT  yLOG_info    ("p (new)"   , p);                                                                              <* 
+ *>       DEBUG_INPT  yLOG_value   ("x_col"     , x_col);                                                                          <* 
  *>       REG__inpt_place  (x_col, a_row, p);                                                                                      <* 
  *>       /+---(parse next)---------------+/                                                                                       <* 
  *>       p  = strtok_r (NULL, s_q, &s);                                                                                           <* 
  *>       ++x_col;                                                                                                                 <* 
  *>    }                                                                                                                           <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
@@ -1150,12 +1211,12 @@ EXIM__import_native     (void)
  *>    char        rc          =    0;                                                                                             <* 
  *>    short       x_row       =    0;                                                                                             <* 
  *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_REGS   yLOG_enter   (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
  *>    /+---(prepare)------------------------+/                                                                                    <* 
  *>    rc = EXIM__import_prep   (a_style);                                                                                         <* 
- *>    DEBUG_REGS   yLOG_value   ("prep rc"   , rc);                                                                               <* 
+ *>    DEBUG_INPT   yLOG_value   ("prep rc"   , rc);                                                                               <* 
  *>    --rce;  if (rc < 0) {                                                                                                       <* 
- *>       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
+ *>       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
  *>       return rce;                                                                                                              <* 
  *>    }                                                                                                                           <* 
  *>    rc = EXIM_mapping  ();                                                                                                      <* 
@@ -1166,7 +1227,7 @@ EXIM__import_native     (void)
  *>       if (rc >  0)  continue;                                                                                                  <* 
  *>       if (rc <  0)  break;                                                                                                     <* 
  *>       /+---(process cells)---------------+/                                                                                    <* 
- *>       DEBUG_REGS  yLOG_value   ("x_row"     , x_row);                                                                          <* 
+ *>       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);                                                                          <* 
  *>       /+---(check sizer)-----------------+/                                                                                    <* 
  *>       /+> if (strncmp (s_recd, "#<34"  , 4) == 0) {                                   <*                                       <* 
  *>        *>    REG__inpt_sizer ();                                                      <*                                       <* 
@@ -1183,9 +1244,9 @@ EXIM__import_native     (void)
  *>    }                                                                                                                           <* 
  *>    /+---(wrap up)------------------------+/                                                                                    <* 
  *>    rc = EXIM_import__done ();                                                                                                  <* 
- *>    DEBUG_REGS   yLOG_value   ("done rc"   , rc);                                                                               <* 
+ *>    DEBUG_INPT   yLOG_value   ("done rc"   , rc);                                                                               <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                   <* 
+ *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
  *>    return 0;                                                                                                                   <* 
  *> }                                                                                                                              <*/
 
@@ -1196,76 +1257,76 @@ EXIM__import_read       (void)
    char        rce         =  -10;
    int         x_len       =    0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(read and clean)-----------------*/
    ++s_lines;
-   DEBUG_REGS   yLOG_value   ("line"      , s_lines);
+   DEBUG_INPT   yLOG_value   ("line"      , s_lines);
    fgets (s_recd, LEN_RECD, s_clip);
    --rce;  if (feof (s_clip))  {
-      DEBUG_REGS   yLOG_note    ("end of file reached");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_note    ("end of file reached");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    x_len = strlen (s_recd);
    if (x_len > 0)  s_recd [--x_len] = '\0';
-   DEBUG_REGS   yLOG_value   ("length"    , x_len);
+   DEBUG_INPT   yLOG_value   ("length"    , x_len);
    --rce;  if (x_len <= 0)  {
-      DEBUG_REGS   yLOG_note    ("record is empty");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      DEBUG_INPT   yLOG_note    ("record is empty");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
    }
-   DEBUG_REGS   yLOG_info    ("fixed"     , s_recd);
+   DEBUG_INPT   yLOG_info    ("fixed"     , s_recd);
    --rce;  if (s_recd [0] == '\0') {
-      DEBUG_REGS   yLOG_note    ("starts with a null");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      DEBUG_INPT   yLOG_note    ("starts with a null");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
    }
    --rce;  if (s_recd [0] == '#') {
       if (strncmp (s_recd, "#@ ", 3) == 0) {
-         DEBUG_REGS   yLOG_note    ("starts with a hint marker (#@)");
-         DEBUG_REGS   yLOG_char    ("s_recd [3]", s_recd [3]);
+         DEBUG_INPT   yLOG_note    ("starts with a hint marker (#@)");
+         DEBUG_INPT   yLOG_char    ("s_recd [3]", s_recd [3]);
          switch (s_recd [3]) {
          case 's' : /* EXIM__import_bounds (); */   break;
          case 'b' :   EXIM__import_bounds ();       break;
          case 'x' :   EXIM__import_sizer  ();       break;
-         case 'y' :   EXIM__import_sizer  ();       break;
+         /*> case 'y' :   EXIM__import_sizer  ();       break;                        <*/
          case 't' : /* EXIM__import_titles (); */   break;
          }
       }
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, -rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
    }
    switch (s_recd [x_len - 1]) {
    case '' :
       if (strncmp (s_recd, "cell ", 6) == 0) {
-         DEBUG_REGS   yLOG_note    ("native format detected");
+         DEBUG_INPT   yLOG_note    ("native format detected");
          s_style = 'n';
       } else {
-         DEBUG_REGS   yLOG_note    ("field/column delimited detected");
+         DEBUG_INPT   yLOG_note    ("field/column delimited detected");
          s_style = 'f';
          s_recd [x_len - 1] = '\0';
       }
       break;
    case ','  :
-      DEBUG_REGS   yLOG_note    ("comma separated values detected");
+      DEBUG_INPT   yLOG_note    ("comma separated values detected");
       s_style = 'c';
       s_recd [x_len - 1] = '\0';
       break;
    case '\t' :
-      DEBUG_REGS   yLOG_note    ("tab delimited detected");
+      DEBUG_INPT   yLOG_note    ("tab delimited detected");
       s_style = 't';
       s_recd [x_len - 1] = '\0';
       break;
    default   :
-      DEBUG_REGS   yLOG_note    ("values/printables only detected");
+      DEBUG_INPT   yLOG_note    ("values/printables only detected");
       s_style = 'v';
       break;
    }
-   DEBUG_REGS   yLOG_char    ("s_style"   , s_style);
+   DEBUG_INPT   yLOG_char    ("s_style"   , s_style);
    s_max = x_len;
-   DEBUG_REGS   yLOG_value   ("s_max"     , s_max);
+   DEBUG_INPT   yLOG_value   ("s_max"     , s_max);
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1275,7 +1336,7 @@ EXIM__update_mundos     (void)
    s_mundos    = yMAP_mundo_current ();
    if (s_mundos < 0)  s_mundos = 0;
    if (s_mundos > 0)  ++s_mundos;
-   DEBUG_REGS   yLOG_value   ("s_mundos"  , s_mundos);
+   DEBUG_INPT   yLOG_value   ("s_mundos"  , s_mundos);
    return 0;
 }
 
@@ -1287,16 +1348,18 @@ EXIM_import             (char a_style)
    char        rc          =   0;
    int         x_row       =   0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
-   DEBUG_REGS   yLOG_char    ("a_style"   , a_style);
+   DEBUG_INPT   yLOG_char    ("a_style"   , a_style);
    rc = EXIM__open ('r');
-   DEBUG_REGS   yLOG_value   ("prep"      , rc);
+   DEBUG_INPT   yLOG_value   ("prep"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    s_hist      = YMAP_BEG;
+   strlcpy (s_xsizer, "", LEN_RECD);
+   s_nsizer = 0;
    EXIM__update_mundos ();
    /*---(process lines)------------------*/
    while (1) {
@@ -1315,9 +1378,9 @@ EXIM_import             (char a_style)
       case 'n' : case 'N' :   rc = EXIM__import_native  ();           break;
       }
       --rce;  if (rc < 0) {
-         DEBUG_REGS   yLOG_note    ("IMPORT FAILED");
+         DEBUG_INPT   yLOG_note    ("IMPORT FAILED");
          rc = EXIM__close  ();
-         DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
       /*---(next)------------------------*/
@@ -1325,13 +1388,13 @@ EXIM_import             (char a_style)
    }
    /*---(close file)---------------------*/
    rc = EXIM__close  ();
-   DEBUG_REGS   yLOG_value   ("done"      , rc);
+   DEBUG_INPT   yLOG_value   ("done"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1357,26 +1420,26 @@ EXIM_export             (char a_style)
    int         o           = 0;
    int         t           = 0;
    /*---(header)-------------------------*/
-   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_REGS   yLOG_char    ("a_style"   , a_style);
-   DEBUG_REGS   yLOG_info    ("x_valid"   , x_valid);
+   DEBUG_OUTP   yLOG_char    ("a_style"   , a_style);
+   DEBUG_OUTP   yLOG_info    ("x_valid"   , x_valid);
    --rce;  if (strchr (x_valid, a_style) == NULL) {
-      DEBUG_REGS   yLOG_note    ("style not valid");
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_OUTP   yLOG_note    ("style not valid");
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(open output file)---------------*/
    rc = EXIM__open ('w');
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare)------------------------*/
    s_style = a_style;
    if (strchr ("VDFCTRSN", s_style) != NULL) {
-      fprintf (s_clip, "#!/usr/local/bin/gyges\n");
-      fprintf (s_clip, "##   generated by gyges-hekatonkheires (hundred-handed) spreadsheet\n");
+      fprintf (s_clip, "#!%s\n", P_FULLPATH);
+      fprintf (s_clip, "##   generated by %s\n", P_ONELINE);
       fprintf (s_clip, "#@ style     ");
       switch (s_style) {
       case 'V' :  fprintf (s_clip, "V = printable columnar values");  break;
@@ -1398,17 +1461,17 @@ EXIM_export             (char a_style)
    x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    x_rowsave = x_row;
    while (rc >= 0) {
-      DEBUG_REGS   yLOG_point   ("x_curr"    , x_curr);
+      DEBUG_OUTP   yLOG_point   ("x_curr"    , x_curr);
       ++c;
       /*---(look for line break)---------*/
       if (strchr ("vdfctrs·VDFCTRS", s_style) != NULL && x_row != x_rowsave) {
-         DEBUG_REGS   yLOG_note    ("line break");
+         DEBUG_OUTP   yLOG_note    ("line break");
          fprintf (s_clip, "\n");
          ++t;
       }
       /*---(fill in blank cells)---------*/
       if (x_curr == NULL) {
-         DEBUG_REGS   yLOG_note    ("NULL cell");
+         DEBUG_OUTP   yLOG_note    ("NULL cell");
          w = COL_size (x_tab, x_col);
          switch (s_style) {
          case 'v' : case 'V' :  fprintf (s_clip, "%*.*s", w, w, YSTR_EMPTY);    break;
@@ -1422,16 +1485,16 @@ EXIM_export             (char a_style)
       }
       /*---(write filled cells)----------*/
       else {
-         DEBUG_REGS   yLOG_info    ("cell"      , x_curr->label);
+         DEBUG_OUTP   yLOG_info    ("cell"      , x_curr->label);
          /*---(source)-------------------*/
          if (x_curr->source != NULL) {
-            DEBUG_REGS   yLOG_note    ("convert source string");
+            DEBUG_OUTP   yLOG_note    ("convert source string");
             strlcpy      (x_source, x_curr->source, LEN_RECD);
             strldecode   (x_source, LEN_RECD);
          } else {
-            DEBUG_REGS   yLOG_note    ("source is NULL");
+            DEBUG_OUTP   yLOG_note    ("source is NULL");
          }
-         DEBUG_REGS   yLOG_info    ("source"    , x_source);
+         DEBUG_OUTP   yLOG_info    ("source"    , x_source);
          /*---(modded string)------------*/
          if (strchr (YCALC_GROUP_NUM, x_curr->type) != NULL) {
             sprintf (x_modded, "%lf", x_curr->v_num);
@@ -1442,18 +1505,18 @@ EXIM_export             (char a_style)
          strldecode   (x_modded, LEN_RECD);
          /*---(printable)----------------*/
          if (x_curr->print != NULL) {
-            DEBUG_REGS   yLOG_note    ("convert printable");
+            DEBUG_OUTP   yLOG_note    ("convert printable");
             strlcpy  (x_print , x_curr->print, LEN_RECD);
             strldecode   (x_print, LEN_RECD);
             strlcpy  (x_trim  , x_print, LEN_RECD);
          } else {
-            DEBUG_REGS   yLOG_note    ("printable is NULL");
+            DEBUG_OUTP   yLOG_note    ("printable is NULL");
          }
          /*---(trimmed printable)--------*/
          strltrim (x_trim, ySTR_BOTH, LEN_RECD);
-         DEBUG_REGS   yLOG_info    ("x_print"   , x_print);
-         DEBUG_REGS   yLOG_info    ("x_trim"    , x_trim);
-         DEBUG_REGS   yLOG_info    ("modified"  , x_modded);
+         DEBUG_OUTP   yLOG_info    ("x_print"   , x_print);
+         DEBUG_OUTP   yLOG_info    ("x_trim"    , x_trim);
+         DEBUG_OUTP   yLOG_info    ("modified"  , x_modded);
          switch (s_style) {
          case 'v' : case 'V' :
             fprintf (s_clip, "%s"                  , x_print);
@@ -1490,7 +1553,7 @@ EXIM_export             (char a_style)
       x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    };
    /*---(close file)---------------------*/
-   DEBUG_REGS   yLOG_note    ("closing file");
+   DEBUG_OUTP   yLOG_note    ("closing file");
    if (strchr ("Nn", s_style) == NULL) {
       fprintf (s_clip, "\n");
       ++t;
@@ -1500,11 +1563,11 @@ EXIM_export             (char a_style)
    }
    rc = EXIM__close ();
    --rce;  if (rc < 0) {
-      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1566,7 +1629,7 @@ FILE__unit_exim_entry   (int a_num, char *a_entry)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   strncpy (a_entry, "", LEN_RECD);
+   strlcpy (a_entry, "", LEN_RECD);
    DEBUG_REGS   yLOG_value   ("a_num"     , a_num);
    --rce;  if (a_num < 0)  {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -1590,7 +1653,7 @@ FILE__unit_exim_entry   (int a_num, char *a_entry)
       if (c >= a_num) {
          x_len = strlen (x_recd);
          if (x_len > 0)  x_recd [--x_len] = '\0';
-         strncpy (a_entry, x_recd, LEN_RECD);
+         strlcpy (a_entry, x_recd, LEN_RECD);
          DEBUG_REGS   yLOG_info    ("entry"     , a_entry);
          x_found = 'y';
          break;
@@ -1637,14 +1700,14 @@ FILE__unit              (char *a_question, int a_ref)
    }
    if      (strcmp (a_question, "sizer"     )    == 0) {
       for (i = 0; i < s_npos; ++i) {
-         sprintf (t, "%5d%c"   , s_xpos [i], s_xsep [i]);
+         sprintf (t, "%5d%c"   , s_wide [i], s_xsep [i]);
          strlcat (s, t, LEN_RECD);
       }
       snprintf (unit_answer, LEN_FULL, "FILE sizer  (%2d) :%s", s_npos, s);
    }
    if      (strcmp (a_question, "exact"     )    == 0) {
       for (i = 0; i < s_npos; ++i) {
-         sprintf (t, "%5d·"   , s_exact [i]);
+         sprintf (t, "%5d·"   , s_beg [i]);
          strlcat (s, t, LEN_RECD);
       }
       snprintf (unit_answer, LEN_FULL, "FILE exact  (%2d) :%s", s_npos, s);

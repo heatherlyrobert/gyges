@@ -73,9 +73,9 @@ char ROW_cleanse_curr(void)        { return NODE_cleanse (PTAB, IS_ROW); }
 /*====================------------------------------------====================*/
 static void  o___SIZING__________o () { return; }
 
-char ROW_size        (char a_index, short a_ref) { return NODE_size (a_index, IS_ROW, a_ref); }
+uchar ROW_size        (char a_index, short a_ref) { return NODE_size (a_index, IS_ROW, a_ref); }
 
-char ROW_resize      (char a_index, short a_ref, char a_size) { return NODE_resize (a_index, IS_ROW, a_ref, a_size); }
+char  ROW_resize      (char a_index, short a_ref, uchar a_size) { return NODE_resize (a_index, IS_ROW, a_ref, a_size); }
 
 
 

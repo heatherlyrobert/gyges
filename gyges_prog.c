@@ -49,13 +49,13 @@ PROG_version       (void)
 {
    char    t [20] = "";
 #if    __TINYC__ > 0
-   strncpy (t, "[tcc built  ]", 15);
+   strlcpy (t, "[tcc built  ]", 15);
 #elif  __GNUC__  > 0
-   strncpy (t, "[gnu gcc    ]", 15);
+   strlcpy (t, "[gnu gcc    ]", 15);
 #elif  __CBANG__  > 0
-   strncpy (t, "[cbang      ]", 15);
+   strlcpy (t, "[cbang      ]", 15);
 #else
-   strncpy (t, "[unknown    ]", 15);
+   strlcpy (t, "[unknown    ]", 15);
 #endif
    snprintf (verstring, 100, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
    return verstring;
@@ -75,7 +75,7 @@ PROG_urgents            (int a_argc, char *a_argv [])
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_TOPS  yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(set mute)-----------------------*/
    yURG_all_mute ();
    /*---(start logger)-------------------*/
@@ -93,7 +93,7 @@ PROG_urgents            (int a_argc, char *a_argv [])
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
+   DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return rc;
 }
 
@@ -175,12 +175,19 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   rc = yMACRO_config (api_yvikeys_macro_get, api_yvikeys_macro_set);
+   rc = yMACRO_config (api_ymacro_get, api_ymacro_set);
    DEBUG_PROG   yLOG_value    ("yMACRO"    , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
+   rc = yMACRO_agrios_config (api_ymacro_getter, api_ymacro_forcer, api_ymacro_pusher);
+   DEBUG_PROG   yLOG_value    ("agrios"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
+      return rce;
+   }
+   my.ball = '-';
    rc = yMARK_config  (api_yvikeys_searcher , api_yvikeys_unsearcher, NULL);
    DEBUG_PROG   yLOG_value    ("yMARK"     , rc);
    --rce;  if (rc < 0) {
@@ -193,7 +200,11 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   if (rc == 0)  rc = yMAP_mreg_config  (api_yvikeys_clearer  , api_yvikeys_copier, api_yvikeys_paster, api_yvikeys_finisher, api_yvikeys_regkiller, api_yvikeys_exim);
+   yMAP_config       (YMAP_OFFICE, api_ymap_locator, api_ymap_addressor, api_ymap_sizer, api_ymap_entry, api_ymap_placer, api_ymap_done);
+   yMAP_mundo_config (5, api_ymap_mundo);
+   yMAP_univ_config  (TAB_switch);
+   yMAP_formatter    (api_ymap_formatter);
+   if (rc == 0)  rc = yMAP_mreg_config  (api_ymap_clearer  , api_ymap_copier, api_ymap_paster, api_ymap_finisher, api_ymap_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
@@ -218,6 +229,7 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
+   yFILE_dump_add          ("cells", "", "current cell inventory", CELL_dump);
    /*---(ycalc config)-------------------*/
    rc = yCALC_init ('g');
    DEBUG_PROG   yLOG_value    ("yCALC"     , rc);
@@ -243,6 +255,8 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
+   yFILE_dump_add          ("vars", "", "current ycalc vars inventory"  , yCALC_var_dump);
+   yFILE_dump_add          ("deps" ,"", "current dependencies inventory", yCALC_deps_dump);
    /*---(ystr config)--------------------*/
    rc = str0gyges (LOC_checker);
    DEBUG_PROG   yLOG_value    ("ySTR"      , rc);
@@ -273,6 +287,7 @@ PROG__args              (int a_argc, char *a_argv[])
    char        rc          =    0;
    int         i           =    0;
    char       *a           = NULL;
+   char       *b           = NULL;
    int         x_total     =    0;
    int         x_args      =    0;
    char        x_name      [LEN_FULL]   = "";
@@ -283,10 +298,29 @@ PROG__args              (int a_argc, char *a_argv[])
    /*> yVIKEYS_args (a_argc, a_argv);                                                     <*/
    /*---(process)------------------------*/
    for (i = 1; i < a_argc; ++i) {
-      a = a_argv[i];
+      /*---(set up args)-----------------*/
+      DEBUG_ARGS  yLOG_value   ("check----" , i);
+      a = a_argv [i];
+      if (i + 1 < a_argc)  b = a_argv [i + 1];
+      else                 b = NULL;
+      DEBUG_ARGS  yLOG_info    ("a"         , a);
+      DEBUG_ARGS  yLOG_info    ("b"         , b);
       ++x_total;
-      if (a[0] == '@')  continue;
-      DEBUG_ARGS  yLOG_info    ("cli arg", a);
+      /*---(check vikeys)----------------*/
+      rc = yKEYS_arg_handle (&i, a, b);
+      DEBUG_ARGS  yLOG_value   ("ykeys"     , rc);
+      if (rc == 1) {
+         DEBUG_ARGS  yLOG_note    ("handled by yKEYS_arg_handle");
+         DEBUG_ARGS  yLOG_value   ("bumped i"  , i);
+         continue;
+      }
+      /*---(filter)----------------------*/
+      if (a[0] == '@') {
+         DEBUG_ARGS  yLOG_note    ("skipped urgent");
+         continue;
+      }
+      /*---(local)-----------------------*/
+      DEBUG_ARGS  yLOG_note    ("check for local argument handling");
       ++x_args;
       if      (strncmp (a, "-f"        ,10) == 0)  strlcpy (x_name , a_argv[++i], LEN_RECD);
       else if (strncmp (a, "-h"        ,10) == 0)  PROG_usage();
@@ -350,10 +384,6 @@ PROG__begin             (void)
    /*> DEP_init  ();                                                                  <*/
    /*---(overall)------------------------*/
    /*> yVIEW_config   ("gyges spreadsheet", P_VERNUM, YVIEW_CURSES, 0, 0, 0);         <*/
-   yMAP_config       (YMAP_OFFICE, api_ymap_locator, api_ymap_addressor, api_ymap_sizer, api_ymap_entry, api_ymap_placer, api_ymap_done);
-   yMAP_mundo_config (5, api_ymap_mundo);
-   yMAP_univ_config  (TAB_switch);
-   yMAP_formatter    (api_ymap_formatter);
    DEBUG_PROG   yLOG_note     ("initial tab creation");
    TAB_new_in_abbr ('0', NULL, NULL);
    TAB_new_in_abbr ('®', NULL, NULL);
@@ -373,7 +403,7 @@ PROG_startup            (int a_argc, char *a_argv [])
    char        rc          =    0;
    /*---(header)-------------------------*/
    yURG_stage_check (YURG_BEG);
-   DEBUG_TOPS  yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
    rc = PROG__init   (a_argc, a_argv);
    DEBUG_PROG   yLOG_value    ("init"      , rc);
@@ -396,7 +426,7 @@ PROG_startup            (int a_argc, char *a_argv [])
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_TOPS  yLOG_exit  (__FUNCTION__);
+   DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    yURG_stage_check (YURG_MID);
    return rc;
 }
@@ -432,6 +462,8 @@ PROG_dawn          (void)
    /*> yCMD_direct (":read");                                                         <*/
    /*> MAP_mapper (YMAP_INIT);                                                        <*/
    /*> yCMD_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );   <*/
+   yCMD_add      (YCMD_M_AUDIT , "ball"        , ""    , ""     , api_ymacro_ball            , "" );
+   yCMD_add      (YCMD_M_AUDIT , "noball"      , ""    , ""     , api_ymacro_noball          , "" );
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -471,7 +503,7 @@ PROG__end            (void)
 {
    /*> printf ("ending program now.\n");                                              <*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   my.btree = '-';
+   /*> my.btree = '-';                                                                <*/
    yCALC_wrap     ();
    CELL_wrap      ();
    LOC_wrap       ();
@@ -488,7 +520,7 @@ PROG_shutdown           (void)
    DEBUG_PROG   yLOG_enter    (__FUNCTION__);
    PROG__end ();
    DEBUG_PROG   yLOG_exit     (__FUNCTION__);
-   DEBUG_TOPS   yLOGS_end    ();
+   DEBUG_PROG   yLOGS_end    ();
    return 0;
 }
 

@@ -14,10 +14,10 @@
 ##===[[ preparation ]]========================================================##
 º:0p29¦··+1¦··l+1¦··l+1¦··l+1¦··l-1¦··»
 º:0p30¦··s ¦··ls  5¦··»
-º:0p34¦··s=$c$30+5¦··»
+º:0p34¦··s=p29+5¦··»
 º:0a1¦»
 
-ºswhere is the voyager 1 spacecraft?¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··0··v11l»
+ºswhere is the voyager 1 spacecraft (90 sec)?¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··0··v11l»
 ÏÏÏÏ·ÏÏÏÏ
 º¥»
 
@@ -76,9 +76,9 @@ l····+60¦···············f|
 º:0c30¦»
 º+1¦····················lsblue are numerical constants¦···············ls<¦··ls<¦»
 º3hj···=`k¦+1¦··········lsgreen are calculated numbers¦···············ls<¦··ls<¦»
-º3hj···=0p29+0q29+0r29+0s29+0t29¦··lsred are complicated formulas¦····ls<¦··ls<¦»
-º3hj···s 4¦······f>·····lsyellow are text constants¦··················ls<¦··ls<¦»
-º3hj···#0p30#0q30¦·f>···lspurple are text formulas¦···················ls<¦··ls<¦»
+º3hj···=0p29+0q29+0r29+0s29+0t29+0q29-0r29+0s29+0t29+5-5¦··lsred are complicated formulas¦····ls<¦··ls<¦»
+º3hj···s 4¦······f>·····lsbrown are text constants¦···················ls<¦··ls<¦»
+º3hj···#0p30µ_d0q30¦·f>···lspurple are text formulas¦···················ls<¦··ls<¦»
 º3hj···s~p34¦······f>···lsmagenta are reused formulas¦················ls<¦··ls<¦»
 
 
@@ -217,13 +217,14 @@ l····=`k¦/25¦···········fc
 
 
 ##==[[ first star ]]==========================================================##
-0jj··ºsstar ac +793888¦»
+0jj··ºsgliese 445¦»
 
-º6j0···sthis is the star voyager¦······f|··ls<¦»
-º0j····swill ACTUALLY pass nearest.¦···f|··ls<¦»
-º7k0»
+º6j0···sthis is the star voyager¦········f|··ls<¦»
+º0j····swill ACTUALLY pass nearest¦······f|··ls<¦»
+º0j····s(not close by, ~2 light years)¦··f|··ls<¦»
+º8k0»
 
-lj···+17.6¦·············Ff1¦
+lj···+17.1¦·············Ff1¦
 k····=`j*17k¦¦··········fc
 
 0j···ºslight¦············f>»

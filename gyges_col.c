@@ -73,9 +73,9 @@ char COL_cleanse_curr(void)        { return NODE_cleanse (PTAB, IS_COL); }
 /*====================------------------------------------====================*/
 static void  o___SIZING__________o () { return; }
 
-char COL_size        (char a_index, short a_ref) { return NODE_size (a_index, IS_COL, a_ref); }
+uchar COL_size        (char a_index, short a_ref) { return NODE_size (a_index, IS_COL, a_ref); }
 
-char COL_resize      (char a_index, short a_ref, char a_size) { return NODE_resize (a_index, IS_COL, a_ref, a_size); }
+char  COL_resize      (char a_index, short a_ref, uchar a_size) { return NODE_resize (a_index, IS_COL, a_ref, a_size); }
 
 
 

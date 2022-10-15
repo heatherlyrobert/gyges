@@ -64,22 +64,22 @@ api_ysort__common       (char a_type, void *a_one  , void *a_two)
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_senter  (__FUNCTION__);
+   DEBUG_YSORT   yLOG_senter  (__FUNCTION__);
    /*---(check pointers)-----------------*/
-   DEBUG_SORT   yLOG_spoint  (a_one);
+   DEBUG_YSORT   yLOG_spoint  (a_one);
    --rce;  if (a_one == NULL && a_type != 'i') {
       return rce;
    }
-   DEBUG_SORT   yLOG_spoint  (a_two);
+   DEBUG_YSORT   yLOG_spoint  (a_two);
    --rce;  if (a_two == NULL) {
       return rce;
    }
    --rce;  if (a_one == a_two) {
-      DEBUG_SORT   yLOG_snote   ("same, no action");
+      DEBUG_YSORT   yLOG_snote   ("same, no action");
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -91,23 +91,23 @@ api_ysort__cursor       (uchar a_type, void *a_head, void *a_tail, void *a_beg, 
    tCELL      *x_beg       = NULL;
    tCELL      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
    /*---(check pointers)-----------------*/
-   DEBUG_SORT   yLOG_point   ("a_beg"     , a_beg);
-   DEBUG_SORT   yLOG_point   ("a_new"     , a_new);
+   DEBUG_YSORT   yLOG_point   ("a_beg"     , a_beg);
+   DEBUG_YSORT   yLOG_point   ("a_new"     , a_new);
    --rce;  if (a_new == NULL) {
-      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YSORT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    x_new = (tCELL *) a_head;
    /*---(prepare)------------------------*/
-   DEBUG_SORT   yLOG_note    ("cast");
+   DEBUG_YSORT   yLOG_note    ("cast");
    if (a_beg != NULL) {
       x_beg    = (tCELL *) a_beg;
-      DEBUG_SORT   yLOG_info    ("x_beg"     , x_beg->label);
+      DEBUG_YSORT   yLOG_info    ("x_beg"     , x_beg->label);
    }
    /*---(update)-------------------------*/
-   DEBUG_SORT   yLOG_char    ("a_action"  , a_action);
+   DEBUG_YSORT   yLOG_char    ("a_action"  , a_action);
    switch (a_action) {
    case YDLST_HEAD : x_new = (tCELL *) a_head;                   break;
    case YDLST_PREV : if (x_beg != NULL)  x_new = x_beg->m_prev;  break;
@@ -116,11 +116,11 @@ api_ysort__cursor       (uchar a_type, void *a_head, void *a_tail, void *a_beg, 
    }
    /*---(save back)----------------------*/
    if (x_new != NULL) {
-      DEBUG_SORT   yLOG_note    (x_new->label);
+      DEBUG_YSORT   yLOG_note    (x_new->label);
    }
    *a_new = x_new;
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -134,33 +134,33 @@ api_ysort__checker      (uchar a_type, uchar a_lvl, void *a_one, void *a_two, uc
    tCELL      *x_two       = NULL;
    long        x_key       =   -1;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
-   DEBUG_SORT   yLOG_complex ("args"      , "%c, %2d, %p, %p, %c", a_type, a_lvl, a_one, a_two, a_order);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_complex ("args"      , "%c, %2d, %p, %p, %c", a_type, a_lvl, a_one, a_two, a_order);
    /*---(defense)------------------------*/
    rc = api_ysort__common ('c', a_one, a_two);
    --rce;  if (rc < 0) {
-      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YSORT   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    /*---(prepare)------------------------*/
    x_one    = (tCELL *) a_one;
    /*---(handle object)------------------*/
    if (a_type == tolower (a_type)) {
-      DEBUG_SORT   yLOG_note    ("normal, sorting compare");
+      DEBUG_YSORT   yLOG_note    ("normal, sorting compare");
       x_two    = (tCELL *) a_two;
       x_key    = x_two->key;
    } else {
-      DEBUG_SORT   yLOG_note    ("search compare to value");
+      DEBUG_YSORT   yLOG_note    ("search compare to value");
       x_key = * ((long *) a_two);
    }
-   DEBUG_SORT   yLOG_value   ("x_one->key", x_one->key);
-   DEBUG_SORT   yLOG_value   ("x_key"     , x_key);
+   DEBUG_YSORT   yLOG_value   ("x_one->key", x_one->key);
+   DEBUG_YSORT   yLOG_value   ("x_key"     , x_key);
    if      (x_one->key <  x_key)  rc = -1;
    else if (x_one->key >  x_key)  rc =  1;
    else if (x_one->key == x_key)  rc =  0;
-   DEBUG_SORT   yLOG_value   ("compare"   , rc);
+   DEBUG_YSORT   yLOG_value   ("compare"   , rc);
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -174,34 +174,34 @@ api_ysort__unlinker     (uchar a_type, void **a_head, void **a_tail, void *a_two
    tCELL      *x_tail      = NULL;
    tCELL      *x_two       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    rc = api_ysort__common ('i', NULL, a_two);
    --rce;  if (rc < 0) {
-      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YSORT   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    /*---(prepare)------------------------*/
    x_head   = * ((tCELL **) a_head);
    x_tail   = * ((tCELL **) a_tail);
-   DEBUG_SORT   yLOG_complex ("pointers"  , "head %p, tail %p", x_head, x_tail);
+   DEBUG_YSORT   yLOG_complex ("pointers"  , "head %p, tail %p", x_head, x_tail);
    x_two    = (tCELL *) a_two;
    /*---(unlink current from list)-------*/
-   DEBUG_SORT   yLOG_note    ("unlink");
+   DEBUG_YSORT   yLOG_note    ("unlink");
    if (x_two->m_next != NULL)   x_two->m_next->m_prev = x_two->m_prev;
    else                         x_tail                = x_two->m_prev;
    if (x_two->m_prev != NULL)   x_two->m_prev->m_next = x_two->m_next;
    else                         x_head                = x_two->m_next;
    /*---(ground pointers)----------------*/
-   DEBUG_SORT   yLOG_note    ("ground pointers");
+   DEBUG_YSORT   yLOG_note    ("ground pointers");
    x_two->m_next = NULL;
    x_two->m_prev = NULL;
    /*---(save back)----------------------*/
-   DEBUG_SORT   yLOG_note    ("save back");
+   DEBUG_YSORT   yLOG_note    ("save back");
    *a_head = x_head;
    *a_tail = x_tail;
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -216,11 +216,11 @@ api_ysort__linker       (uchar a_type, void **a_head, void **a_tail, void *a_one
    tCELL      *x_one       = NULL;
    tCELL      *x_two       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    rc = api_ysort__common ('i', a_one, a_two);
    --rce;  if (rc < 0) {
-      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YSORT   yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    /*---(prepare)------------------------*/
@@ -231,18 +231,18 @@ api_ysort__linker       (uchar a_type, void **a_head, void **a_tail, void *a_one
    /*---(insert back in)-----------------*/
    if (a_one == NULL) {
       if (x_head == NULL) {
-         DEBUG_SORT   yLOG_note    ("add first");
+         DEBUG_YSORT   yLOG_note    ("add first");
          x_head         = x_two;
          x_two->m_prev  = NULL;
       } else {
-         DEBUG_SORT   yLOG_note    ("append to tail");
+         DEBUG_YSORT   yLOG_note    ("append to tail");
          x_tail->m_next = x_two;
          x_two->m_prev  = x_tail;
       }
       x_tail       = x_two;
       x_two->m_next    = NULL;
    } else {
-      DEBUG_SORT   yLOG_note    ("insert before");
+      DEBUG_YSORT   yLOG_note    ("insert before");
       if (x_one->m_prev != NULL)   x_one->m_prev->m_next = x_two;
       else                         x_head                = x_two;
       x_two->m_prev   = x_one->m_prev;
@@ -250,11 +250,11 @@ api_ysort__linker       (uchar a_type, void **a_head, void **a_tail, void *a_one
       x_one->m_prev   = x_two;
    }
    /*---(save back)----------------------*/
-   DEBUG_SORT   yLOG_note    ("save back");
+   DEBUG_YSORT   yLOG_note    ("save back");
    *a_head = x_head;
    *a_tail = x_tail;
    /*---(output)-------------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -269,15 +269,15 @@ api_ysort__forker       (uchar a_type, void *a_node, void **a_left, void **a_rig
    tCELL      *x_left      = NULL;
    tCELL      *x_right     = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
-   DEBUG_SORT   yLOG_complex ("args"      , "%c, %p, %p, %p", a_type, a_node, a_left, a_right);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_complex ("args"      , "%c, %p, %p, %p", a_type, a_node, a_left, a_right);
    /*---(prepare)------------------------*/
    x_curr   = (tCELL *) a_node;
-   DEBUG_SORT   yLOG_point   ("x_curr"    , x_curr);
-   DEBUG_SORT   yLOG_info    ("label"     , x_curr->label);
+   DEBUG_YSORT   yLOG_point   ("x_curr"    , x_curr);
+   DEBUG_YSORT   yLOG_info    ("label"     , x_curr->label);
    /*---(set)----------------------------*/
    if (a_type == tolower (a_type)) {
-      DEBUG_SORT   yLOG_note    ("saving run");
+      DEBUG_YSORT   yLOG_note    ("saving run");
       x_left  = * ((tCELL **) a_left);
       x_right = * ((tCELL **) a_right);
       if (a_left  != NULL)  x_curr->b_left  = x_left;
@@ -289,7 +289,7 @@ api_ysort__forker       (uchar a_type, void *a_node, void **a_left, void **a_rig
       if (a_right != NULL)  *a_right = x_curr->b_right;
    }
    /*---(output)-------------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -310,23 +310,23 @@ api_ysort_by_label      (tCELL **a_found, char *a_label)
    void       *x_node      = NULL;
    long        x_key       =   -1;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
    x_key   = api_ysort_label2key (a_label);
-   DEBUG_SORT   yLOG_value   ("x_key"     , x_key);
+   DEBUG_YSORT   yLOG_value   ("x_key"     , x_key);
    --rce;  if (x_key < 0) {
-      DEBUG_SORT   yLOG_note    ("bad label");
+      DEBUG_YSORT   yLOG_note    ("bad label");
       s_result = -1;
-      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YSORT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(search)-------------------------*/
-   DEBUG_SORT   yLOG_note    ("dive into btree");
+   DEBUG_YSORT   yLOG_note    ("dive into btree");
    rc = ySORT_search (YSORT_NONE, rcell, &x_key, &x_node);
    /*---(return)-------------------------*/
-   DEBUG_SORT   yLOG_note    ("found");
+   DEBUG_YSORT   yLOG_note    ("found");
    if (a_found != NULL)  *a_found = (tCELL *) x_node;
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -340,24 +340,24 @@ api_ysort_by_coord      (tCELL **a_found, int a_tab, int a_col, int a_row)
    char        x_label     [LEN_LABEL] = "";
    long        x_key       =   -1;
    /*---(header)-------------------------*/
-   DEBUG_SORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
    /*---(short-cut)----------------------*/
    x_key   = api_ysort_coord2key (a_tab, a_col, a_row, x_label);
-   DEBUG_SORT   yLOG_value   ("x_key"     , x_key);
+   DEBUG_YSORT   yLOG_value   ("x_key"     , x_key);
    --rce;  if (x_key < 0) {
-      DEBUG_SORT   yLOG_note    ("bad coordinates");
+      DEBUG_YSORT   yLOG_note    ("bad coordinates");
       s_result = -1;
-      DEBUG_SORT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YSORT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(search)-------------------------*/
-   DEBUG_SORT   yLOG_note    ("dive into btree");
+   DEBUG_YSORT   yLOG_note    ("dive into btree");
    rc = ySORT_search (YSORT_NONE, rcell, &x_key, &x_node);
    /*---(return)-------------------------*/
-   DEBUG_SORT   yLOG_note    ("found");
+   DEBUG_YSORT   yLOG_note    ("found");
    if (a_found != NULL)  *a_found = (tCELL *) x_node;
    /*---(complete)-----------------------*/
-   DEBUG_SORT   yLOG_exit    (__FUNCTION__);
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -421,9 +421,23 @@ char
 api_ysort_update        (void)
 {
    char        rc          =    0;
-   if (my.btree != 'y')  return 0;
-   if (rc == 0)  rc = ySORT_gnome   ('-', YSORT_ASCEND, &hcell, &tcell);
-   if (rc == 0)  rc = ySORT_treeify ('-', hcell, tcell, ncell, &rcell);
+   /*---(header)-------------------------*/
+   DEBUG_YSORT   yLOG_enter   (__FUNCTION__);
+   DEBUG_YSORT   yLOG_char    ("my.btree"  , my.btree);
+   if (my.btree != 'y') {
+      DEBUG_YSORT   yLOG_note    ("nothing to do");
+      DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (rc == 0) {
+      rc = ySORT_gnome   ('-', YSORT_ASCEND, &hcell, &tcell);
+      DEBUG_YSORT   yLOG_value   ("gnome"     , rc);
+   }
+   if (rc == 0) {
+      rc = ySORT_treeify ('-', hcell, tcell, ncell, &rcell);
+      DEBUG_YSORT   yLOG_value   ("treeify"   , rc);
+   }
+   DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 

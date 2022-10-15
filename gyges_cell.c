@@ -132,6 +132,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
+   char        rc          =    0;
    int         x_tries     =    0;
    tCELL      *x_new       = NULL;
    /*---(begin)--------------------------*/
@@ -213,7 +214,8 @@ CELL__new          (tCELL **a_cell, char a_linked)
    x_new->r_prev    = NULL;
    x_new->r_next    = NULL;
    /*---(sort)---------------------------*/
-   api_ysort_update ();
+   rc = api_ysort_update ();
+   DEBUG_CELL   yLOG_value   ("ysort"     , rc);
    /*---(return)-------------------------*/
    *a_cell = x_new;
    /*---(complete)-----------------------*/
@@ -260,11 +262,13 @@ CELL__free         (tCELL **a_cell)
    }
    /*---(free main)----------------------*/
    DEBUG_CELL   yLOG_note    ("freeing and nulling");
+   (*a_cell)->m_prev = (*a_cell)->m_next = NULL;
    free (*a_cell);
    *a_cell = NULL;
    --ACEL;
    /*---(sort)---------------------------*/
-   api_ysort_update ();
+   rc = api_ysort_update ();
+   DEBUG_CELL   yLOG_value   ("ysort"     , rc);
    /*---(complete)-----------------------*/
    DEBUG_CELL   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1167,6 +1171,7 @@ CELL_writer        (uchar *a_verb, tCELL *a_curr)
    /*---(call writer)--------------------*/
    strlcpy  (t, a_curr->source, LEN_RECD);
    strldchg (t, G_KEY_SPACE, G_CHAR_STORAGE, LEN_RECD);
+   DEBUG_OUTP   yLOG_info    ("to write"  , t);
    rc = yPARSE_vprintf (s_count, a_verb, a_curr->label, x_format, t);
    DEBUG_OUTP   yLOG_value   ("vprintf"   , rc);
    /*---(complete)-----------------------*/
@@ -1235,26 +1240,27 @@ CELL_writer_all         (void)
 }
 
 char
-CELL_dump               (FILE *a_file)
+CELL_dump               (FILE *f)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         c           =    0;
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
-   fprintf (a_file, "yVIKEYS, cell inventory                                                                  (:dump cells)\n");
-   fprintf (a_file, "count = %d all, %d linked\n", ACEL, NCEL);
+   fprintf (f, "#! parsing åÏ---··Ï-------·Ï-·Ï--·Ï---··Ï·Ï·Ï·Ï·Ï··Ï-- Ï-----------------------------------------------------------··æ\n");
+   fprintf (f, "#! titles  åseq···label····u· x·· y··· ·t a f d u  len contents······················································æ\n");
+   fprintf (f, "\n");
+   fprintf (f, "count = %d all, %d linked\n", ACEL, NCEL);
    x_curr = hcell;
    while (x_curr != NULL) {
-      if (c %  5 == 0) fprintf (a_file, "\n");
-      if (c % 25 == 0) fprintf (a_file, "num-  label--- tb col row-  t a f d u  len[contents--------------------]\n\n");
+      if (c %  5 == 0) fprintf (f, "\n");
+      if (c % 25 == 0) fprintf (f, "seq-  label--- u- x-- y---  t a f d u  len contents----------------------------------------------------··´\n\n");
       ++c;
-      fprintf (a_file, "%4d  %-8.8s %2d %3d %4d  %c %c %c %c %c  %3d[%s]\n", c,
+      fprintf (f, "%4d  %-8.8s %2d %3d %4d  %c %c %c %c %c  %3d %-60.60s  ´\n", c,
             x_curr->label, x_curr->tab  , x_curr->col  , x_curr->row,
             x_curr->type , x_curr->align, x_curr->format, x_curr->decs, x_curr->unit,
             x_curr->len  , x_curr->source);
       x_curr = x_curr->m_next;
    }
-   fprintf (a_file, "\n");
    /*---(complete)-----------------------*/
    return 0;
 }

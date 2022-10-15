@@ -34,6 +34,11 @@ LOC_purge            (void)
    tTAB       *x_tab       = NULL;
    char        x_seq       =   -1;
    char        rc          =    0;
+
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   return 0;
+
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/
@@ -137,8 +142,9 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
    if (a_cell->label != g_tbd)  free (a_cell->label);
    a_cell->label = strdup (x_label);
    a_cell->key   = api_ysort_label2key (x_label);
-   DEBUG_REGS   yLOG_complex ("DEBUG 4"   , "%-10.10s, %2dt, %3dc, %4dr", a_cell->label, a_cell->tab, a_cell->col, a_cell->row);
-   api_ysort_update ();
+   DEBUG_LOCS   yLOG_complex ("DEBUG 4"   , "%-10.10s, %2dt, %3dc, %4dr", a_cell->label, a_cell->tab, a_cell->col, a_cell->row);
+   rc = api_ysort_update ();
+   DEBUG_LOCS   yLOG_value   ("ysort"     , rc);
    /*---(adjust tab)--------------------*/
    TAB_resize (a_tab, "");
    /*> if (x_tab->type == G_TAB_AUTO) {                                               <* 
