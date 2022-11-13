@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6o"
-#define     P_VERTXT    "improve standard of makefile with make_prepare"
+#define     P_VERNUM    "3.6p"
+#define     P_VERTXT    "fixed trouble with new tabs in complex files"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -204,25 +204,28 @@
 /*---(posix standard)--------------------*/
 #include    <unistd.h>            /* POSIX  standard operating system API     */
 #include    <sys/time.h>          /* POSIX  standard time access              */
-/*---(defacto standard)------------------*/
-#include    <ncurses.h>      /* CURSES : mvprintw, refresh, getch, ...        */
-/*---(custom core)-----------------------*/
-#include    <yURG.h>              /* heatherly urgent processing              */
-#include    <yLOG.h>              /* heatherly program logging                */
-#include    <ySTR.h>              /* heatherly string processing              */
-/*---(custom vi-keys)--------------------*/
-#include    <yKEYS.h>             /* heatherly vikeys key handling            */
-#include    <yMODE.h>             /* heatherly vikeys mode tracking           */
-#include    <yMACRO.h>            /* heatherly vikeys macro processing        */
-#include    <ySRC.h>              /* heatherly vikeys source editing          */
-#include    <yCMD.h>              /* heatherly vikeys command processing      */
-#include    <yVIEW.h>             /* heatherly vikeys view management         */
-#include    <yMAP.h>              /* heatherly vikeys location management     */
-#include    <yFILE.h>             /* heatherly vikeys content file handling   */
-#include    <yMARK.h>             /* heatherly vikeys search and marking      */
-#include    <yVICURSES.h>         /* heatherly vikeys curses handler          */
+
+
+#include    <make_curses.h>       /* my standard curses headers               */
+/*> /+---(defacto standard)------------------+/                                        <* 
+ *> #include    <ncurses.h>      /+ CURSES : mvprintw, refresh, getch, ...        +/   <* 
+ *> /+---(custom core)-----------------------+/                                        <* 
+ *> #include    <yURG.h>              /+ heatherly urgent processing              +/   <* 
+ *> #include    <yLOG.h>              /+ heatherly program logging                +/   <* 
+ *> #include    <ySTR.h>              /+ heatherly string processing              +/   <* 
+ *> /+---(custom vi-keys)--------------------+/                                        <* 
+ *> #include    <yKEYS.h>             /+ heatherly vikeys key handling            +/   <* 
+ *> #include    <yMODE.h>             /+ heatherly vikeys mode tracking           +/   <* 
+ *> #include    <yMACRO.h>            /+ heatherly vikeys macro processing        +/   <* 
+ *> #include    <ySRC.h>              /+ heatherly vikeys source editing          +/   <* 
+ *> #include    <yCMD.h>              /+ heatherly vikeys command processing      +/   <* 
+ *> #include    <yVIEW.h>             /+ heatherly vikeys view management         +/   <* 
+ *> #include    <yMAP.h>              /+ heatherly vikeys location management     +/   <* 
+ *> #include    <yFILE.h>             /+ heatherly vikeys content file handling   +/   <* 
+ *> #include    <yMARK.h>             /+ heatherly vikeys search and marking      +/   <* 
+*> #include    <yVICURSES.h>         /+ heatherly vikeys curses handler          +/   <*/
 /*---(custom other)----------------------*/
-#include    <yVAR.h>         /* CUSTOM : heatherly variable testing           */
+/*> #include    <yVAR.h>         /+ CUSTOM : heatherly variable testing           +/   <*/
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
 #include    <yCALC.h>        /* CUSTOM : heatherly interactive calculation    */
 #include    <yPARSE.h>       /* heatherly file reading and writing      */

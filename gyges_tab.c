@@ -419,9 +419,13 @@ TAB_new_quick           (void)
 {
    char        rc          =    0;
    char        x_tab       =    0;
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    x_tab = TAB_first_open ();
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
    rc = TAB_new (NULL, x_tab, "tbd", "0z100");
-   if (rc >= 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   DEBUG_LOCS   yLOG_value   ("new"       , rc);
+   if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -430,9 +434,13 @@ TAB_new_in_open         (uchar *a_name, uchar *a_size)
 {
    char        rc          =    0;
    char        x_tab       =    0;
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    x_tab = TAB_first_open ();
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
    rc = TAB_new (NULL, x_tab, a_name, a_size);
-   if (rc >= 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   DEBUG_LOCS   yLOG_value   ("new"       , rc);
+   if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -441,10 +449,15 @@ TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size)
 {
    char        rc          =    0;
    char        x_tab       =    0;
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_LOCS   yLOG_char    ("a_abbr"    , a_abbr);
    x_tab = INDEX_tab (a_abbr);
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
    rc = TAB_new (NULL, x_tab, a_name, a_size);
-   if (rc >= 0)   yMAP_universe (x_tab, YMAP_PLACE);
-   if (a_abbr = (uchar) '®')  api_yvikeys_macro_init ();
+   DEBUG_LOCS   yLOG_value   ("new"       , rc);
+   if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   if (a_abbr == (uchar) '®')  api_yvikeys_macro_init ();
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 

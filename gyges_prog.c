@@ -385,10 +385,15 @@ PROG__begin             (void)
    /*---(overall)------------------------*/
    /*> yVIEW_config   ("gyges spreadsheet", P_VERNUM, YVIEW_CURSES, 0, 0, 0);         <*/
    DEBUG_PROG   yLOG_note     ("initial tab creation");
+   DEBUG_PROG   yLOG_note     ("zero");
    TAB_new_in_abbr ('0', NULL, NULL);
+   DEBUG_PROG   yLOG_note     ("summary");
    TAB_new_in_abbr ('®', NULL, NULL);
+   DEBUG_PROG   yLOG_note     ("system");
    TAB_new_in_abbr ('¯', NULL, NULL);
+   DEBUG_PROG   yLOG_note     ("switch");
    TAB_switch      (0);
+   DEBUG_PROG   yLOG_note     ("refresh");
    yMAP_refresh_full ();
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
