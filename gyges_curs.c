@@ -33,6 +33,10 @@
  *
  */
 
+tERROR     *herror;  /* head  */
+tERROR     *terror;  /* tail  */
+int         nerror;  /* count */
+
 static  char      CURS_page          (void);
 
 int     s_status_row;
@@ -54,6 +58,8 @@ tCURR g_curr;
 static char  s_mark_list   [LEN_RECD];       /* current marks                  */
 /*> static char  s_mark_plus   [LEN_RECD];       /+ current marks with mark id     +/   <*/
 
+int     row_formula;
+int     row_main;
 
 
 #define     MAX_MENU       500
@@ -82,6 +88,13 @@ CURS_info_request  (char a_type)
    return 0;
 }
 
+char
+CURS_version            (char a_size, short a_wide, char *a_list)
+{
+   /*> strlcpy (a_list, PROG_version (), LEN_HUND);                                   <*/
+   sprintf (a_list, " %s [%s] %s Ï", P_NAME, P_VERNUM, P_VERTXT);
+   return 0;
+}
 
 char
 CURS_current_status     (char a_size, short a_wide, char *a_list)
@@ -156,10 +169,10 @@ DRAW_yaxis         (void)
    short       x_bott      = 0;
    uchar       x_label     [LEN_TERSE] = "";     /* column label              */
    /*---(begin)--------------------------*/
-   DEBUG_WIND  yLOG_enter   (__FUNCTION__);
+   DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    yVIEW_size  (YVIEW_YAXIS, NULL, &x_left, NULL, &x_bott, &x_tall);
-   DEBUG_WIND  yLOG_complex ("size"      , "%3dl, %3db, %3dt", x_left, x_bott, x_tall);
-   DEBUG_WIND  yLOG_complex ("rows"      , "%3db, %3de, %3dn", BROW, EROW, NROW);
+   DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3db, %3dt", x_left, x_bott, x_tall);
+   DEBUG_GRAF  yLOG_complex ("rows"      , "%3db, %3de, %3dn", BROW, EROW, NROW);
    /*---(process rows)------------------*/
    for (i = 0; i < x_tall; ++i) {
       /*---(prepare)------------*/
@@ -174,7 +187,7 @@ DRAW_yaxis         (void)
       /*---(done)---------------*/
    }
    /*---(complete)----------------------*/
-   DEBUG_WIND  yLOG_exit    (__FUNCTION__);
+   DEBUG_GRAF  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -204,8 +217,8 @@ DRAW_xaxis         (void)
    yVICURSES_by_name ("b_curr");
    sprintf (x_disp, "¼_%c_½     ", LABEL_tab (CTAB));
    mvprintw (x_bott, x_left, "%*.*s", x_cum, x_cum, x_disp);
-   DEBUG_WIND  yLOG_complex ("size"      , "%3dp, %3dl, %3dw, %3db", x_pref, x_left, x_wide, x_bott);
-   DEBUG_WIND  yLOG_complex ("cols"      , "%3db, %3de, %3dn", BCOL, ECOL, NCOL);
+   DEBUG_GRAF  yLOG_complex ("size"      , "%3dp, %3dl, %3dw, %3db", x_pref, x_left, x_wide, x_bott);
+   DEBUG_GRAF  yLOG_complex ("cols"      , "%3db, %3de, %3dn", BCOL, ECOL, NCOL);
    /*---(normal cols)--------------------*/
    while (x_cum < x_wide) {
       /*---(prepare)---------------------*/
@@ -221,7 +234,7 @@ DRAW_xaxis         (void)
       w       = COL_size (CTAB, BCOL + i);
       strlcpy (x_label, LABEL_col (BCOL + i), LEN_TERSE);
       /*---(format)----------------------*/
-      DEBUG_WIND  yLOG_complex ("curr"      , "%3d, %s, %3dw, %3dwa, %3dav", i, x_label, w, x_fill, x_avail);
+      DEBUG_GRAF  yLOG_complex ("curr"      , "%3d, %s, %3dw, %3dwa, %3dav", i, x_label, w, x_fill, x_avail);
       if (w <= x_avail) {
          x_fill = w - 4;
          if      (w == 2)       snprintf (x_disp, 500, "%s", x_label);
@@ -261,7 +274,7 @@ CURS_bufsum        (char *a_list)
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    /*---(begin)--------------------------*/
    yVIEW_size (YVIEW_BUFFER, NULL, &x_left, &x_wide, &x_bott, NULL);
-   DEBUG_WIND  yLOG_complex ("size"      , "%3dl, %3dw, %3db", x_left, x_wide, x_bott);
+   DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3dw, %3db", x_left, x_wide, x_bott);
    TAB_inventory ('L', t);
    /*---(inventory)----------------------*/
    strlcpy (s, t + 9, LEN_HUND);
@@ -969,7 +982,7 @@ DRAW_init          (void)
    yVIEW_simple   (YVIEW_YAXIS, 0, 0, DRAW_yaxis);
    /*> yVIEW_simple   (YVIEW_BUFFER   , 0, DRAW_buffer );                    <*/
    /*> yCMD_direct   (":layout gyges");                                               <*/
-   yCMD_add      (YCMD_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
+   yCMD_add      (YVIHUB_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
    /*---(get window size)-------------*/
    /*> CURS_size   ();                                                                <*/
    /*---(colors)----------------------*/

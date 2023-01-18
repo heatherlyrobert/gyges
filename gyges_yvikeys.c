@@ -421,69 +421,6 @@ api_yvikeys_unsearcher   (uchar *a_label, ushort u, ushort x, ushort y, ushort z
 }
 
 
-
-/*====================------------------------------------====================*/
-/*===----                     keyboard macro handler                   ----===*/
-/*====================------------------------------------====================*/
-static void  o___MACRO___________o () { return; }
-
-char
-api_yvikeys_macro_init      (void)
-{
-   char        l, i;
-   char       *x_valid     = "0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïðñòóôõö÷øùúûüýþÿ";
-   char       *x_locals    = "·¯>·!·0123456789·?·abcdefghijklmnopqrstuvwxyz";
-   char        t           [LEN_LABEL]   = "";
-   /*---(macros)-------------------------*/
-   l = strlen (x_valid);
-   CELL_overwrite (YMAP_NONE , 37, 0, 0, "abbr"    , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 1, 0, "keys"    , "<-0-·");
-   for (i = 0; i < l; ++i) {
-     sprintf (t, "Ö@%c", x_valid [i]);
-     CELL_overwrite (YMAP_NONE , 37, 0, i + 1, t   , "|?0-·");
-   }
-   COL_resize (37, 0,  5);
-   COL_resize (37, 1, 30);
-   COL_resize (37, 2,  3);
-   /*---(agrios locals)------------------*/
-   CELL_overwrite (YMAP_NONE , 37, 3, 0, "agrios"  , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3, 1, "curr"    , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3, 2, "lvl"     , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3, 3, "exec"    , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3, 4, "code"    , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3, 5, "next"    , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3, 7, "args"    , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3,18, "rc"      , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3,20, "locals"  , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 3,47, "temp"    , ">?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 4, 0, "vars"    , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 4, 3, "····"    , "|?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 4, 3, "····"    , "|?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 4, 4, "····"    , "|?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 4,47, "····"    , "<?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 5, 0, "stack"   , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 6, 0, "<"       , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 7, 0, "<"       , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 8, 0, "<"       , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 9, 0, "<"       , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37,10, 0, "<"       , "<-0-·");
-   CELL_overwrite (YMAP_NONE , 37, 5, 2, "0"       , "|?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 4,47, "<"       , "<?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 5,47, "<"       , "<?0-·");
-   CELL_overwrite (YMAP_NONE , 37, 6,47, "<"       , "<?0-·");
-   l = strlen (x_locals);
-   for (i = 0; i < l; ++i) {
-     if (x_locals [i] == '·')  continue;
-     sprintf (t, "Ö‘%c", x_locals [i]);
-     CELL_overwrite (YMAP_NONE , 37, 4, i + 1, t   , "<?0-·");
-   }
-   CELL_overwrite (YMAP_NONE , 37, 4, 1, "Ö •"     , "<?0-·");
-   COL_resize (37, 4,  5);
-   return 0;
-}
-
-
-
 /*====================------------------------------------====================*/
 /*===----                     mapping for map mode                     ----===*/
 /*====================------------------------------------====================*/

@@ -3,48 +3,64 @@
 /* htag :  714,  326 docs (36%),  386 code (72%),  326 othr (21%),  304 slocl */
 
 
-/*===[[ BEG_HEADER ]]=========================================================*/
 
-/*===[[ ONE_LINERS ]]=========================================================*/
-/*  12          12      -        1         2         3         4         5         6         7         8*/
-/*345678901-12345678901-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
-
+/*===[[ HEADER BEG ]]=========================================================*/
+/*                      ´·········1·········2·········3·········4·········5·········6·········7*/
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*········· ··········· ´·····························´········································*/
+#define     P_NAME      "gyges"
+/*········· ··········· ´·····························´········································*/
 #define     P_FOCUS     "TO (major tools)"
 #define     P_NICHE     "ss (spreadsheet)"
 #define     P_SUBJECT   "wicked technical spreadsheet"
 #define     P_PURPOSE   "technical, fullsome, aesthetic, and keyboard-centric spreadsheet"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_NAMESAKE  "gyges-hecatoncheires (hundred-handed)"
+#define     P_PRONOUNCE ""
 #define     P_HERITAGE  "gyges, the furious, is one of the three hecatoncheires"
+#define     P_BRIEFLY   "one-hundred handed monster"
 #define     P_IMAGERY   "ugly, impossibly powerful, one-hundred handed, fifty headed giant"
 #define     P_REASON    "gyges and spreadsheets are both impossibly scary and complex"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
-
+/*········· ··········· ´·····························´········································*/
+#define     P_HOMEDIR   "/home/system/gyges.technical_spreadsheet"
 #define     P_BASENAME  "gyges"
 #define     P_FULLPATH  "/usr/local/bin/gyges"
 #define     P_SUFFIX    "gyges"
 #define     P_CONTENT   "spreadsheet data"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_COMPILER  "gcc 11.3.0"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
-#define     P_DEPENDS   "none"
-
+/*········· ··········· ´·····························´········································*/
+#define     P_DEPSTDC   "stdio,stdlib,string,math,ctype,time.malloc"
+#define     P_DEPPOSIX  "unistd,sys/time"
+#define     P_DEPCORE   "yURG,yLOG,ySTR"
+#define     P_DEPVIKEYS "yMODE,yKEYS,yMACRO,ySRC,yFILE,yVIEW,yMAP,yCMD,yMARK"
+#define     P_DEPOTHER  "yPARSE,yREGEX,yCALC,ySORT,yRPN"
+#define     P_DEPGRAPH  "ncurses,yVICURSES"
+#define     P_DEPHEAD   "yVIHUB_solo,yDLST_solo"
+/*········· ··········· ´·····························´········································*/
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   "2010-09"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
-#define     P_VERMINOR  "3.6-, complete integration with new vi-keys libraries"
-#define     P_VERNUM    "3.6p"
-#define     P_VERTXT    "fixed trouble with new tabs in complex files"
-
+#define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
+#define     P_VERNUM    "3.7b"
+#define     P_VERTXT    "fixed segfault on shutdown due to variable/cell pointers"
+/*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
 #define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
+/*········· ··········· ´·····························´········································*/
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*                      ´·········1·········2·········3·········4·········5·········6·········7*/
+/*===[[ HEADER END ]]=========================================================*/
 
-/*===[[ REASONING ]]==========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
+
+
 
 /*
  *  spreadsheet
@@ -207,23 +223,23 @@
 
 
 #include    <make_curses.h>       /* my standard curses headers               */
-/*> /+---(defacto standard)------------------+/                                        <* 
- *> #include    <ncurses.h>      /+ CURSES : mvprintw, refresh, getch, ...        +/   <* 
- *> /+---(custom core)-----------------------+/                                        <* 
- *> #include    <yURG.h>              /+ heatherly urgent processing              +/   <* 
- *> #include    <yLOG.h>              /+ heatherly program logging                +/   <* 
- *> #include    <ySTR.h>              /+ heatherly string processing              +/   <* 
- *> /+---(custom vi-keys)--------------------+/                                        <* 
- *> #include    <yKEYS.h>             /+ heatherly vikeys key handling            +/   <* 
- *> #include    <yMODE.h>             /+ heatherly vikeys mode tracking           +/   <* 
- *> #include    <yMACRO.h>            /+ heatherly vikeys macro processing        +/   <* 
- *> #include    <ySRC.h>              /+ heatherly vikeys source editing          +/   <* 
- *> #include    <yCMD.h>              /+ heatherly vikeys command processing      +/   <* 
- *> #include    <yVIEW.h>             /+ heatherly vikeys view management         +/   <* 
- *> #include    <yMAP.h>              /+ heatherly vikeys location management     +/   <* 
- *> #include    <yFILE.h>             /+ heatherly vikeys content file handling   +/   <* 
- *> #include    <yMARK.h>             /+ heatherly vikeys search and marking      +/   <* 
-*> #include    <yVICURSES.h>         /+ heatherly vikeys curses handler          +/   <*/
+/*---(defacto standard)------------------*/
+#include    <ncurses.h>      /* CURSES : mvprintw, refresh, getch, ...        */
+/*---(custom core)-----------------------*/
+#include    <yURG.h>              /* heatherly urgent processing              */
+#include    <yLOG.h>              /* heatherly program logging                */
+#include    <ySTR.h>              /* heatherly string processing              */
+/*---(custom vi-keys)--------------------*/
+#include    <yKEYS.h>             /* heatherly vikeys key handling            */
+#include    <yMODE.h>             /* heatherly vikeys mode tracking           */
+#include    <yMACRO.h>            /* heatherly vikeys macro processing        */
+#include    <ySRC.h>              /* heatherly vikeys source editing          */
+#include    <yCMD.h>              /* heatherly vikeys command processing      */
+#include    <yVIEW.h>             /* heatherly vikeys view management         */
+#include    <yMAP.h>              /* heatherly vikeys location management     */
+#include    <yFILE.h>             /* heatherly vikeys content file handling   */
+#include    <yMARK.h>             /* heatherly vikeys search and marking      */
+#include    <yVICURSES.h>         /* heatherly vikeys curses handler          */
 /*---(custom other)----------------------*/
 /*> #include    <yVAR.h>         /+ CUSTOM : heatherly variable testing           +/   <*/
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
@@ -233,6 +249,7 @@
 #include    <yRPN.h>         /* CUSTOM : heatherly infix to RPN conversion    */
 /*---(custom constants only)-------------*/
 #include    <yDLST_solo.h>        /* heatherly double-double-list             */
+#include    <yVIHUB_solo.h>
 
 
 
@@ -289,7 +306,7 @@ typedef struct timespec  tTSPEC;
 
 #define     DEF_FORMAT  "??0--"
 
-char        buf0        [LEN_RECD];
+/*> extern char        buf0        [LEN_RECD];                                        <*/
 
 
 /*---(macros)-------------------------*/
@@ -477,9 +494,9 @@ struct cERROR {
    tERROR     *gnext;                       /* global error list next         */
    tERROR     *gprev;                       /* global error list prev         */
 };
-tERROR     *herror;  /* head  */
-tERROR     *terror;  /* tail  */
-int         nerror;  /* count */
+extern tERROR     *herror;  /* head  */
+extern tERROR     *terror;  /* tail  */
+extern int         nerror;  /* count */
 #define     PERR_RPN     'r'
 #define     PERR_BUILD   'b'
 #define     PERR_EVAL    'e'
@@ -587,11 +604,11 @@ struct cCELL {
    tCELL      *r_next;       /* next in specific row                          */
    /*---(end)----------------------------*/
 };
-tCELL      *hcell;           /* head pointer for cell data structure          */
-tCELL      *tcell;           /* tail pointer for cell data structure          */
-tCELL      *rcell;           /* root pointer for tree operations              */
-int         ncell;           /* count of linked cells in data structure       */
-int         acell;           /* count of all cells                            */
+extern tCELL      *hcell;           /* head pointer for cell data structure          */
+extern tCELL      *tcell;           /* tail pointer for cell data structure          */
+extern tCELL      *rcell;           /* root pointer for tree operations              */
+extern int         ncell;           /* count of linked cells in data structure       */
+extern int         acell;           /* count of all cells                            */
 
 #define     LINKED       'y'
 #define     UNLINKED     'x'
@@ -727,7 +744,7 @@ struct cTAB {
    uint        count;                       /* count of entries in sheet      */
    /*---(end)----------------------------*/
 };
-tTAB    *p_tab;                        /* current tab pointer                 */
+extern tTAB    *p_tab;                        /* current tab pointer                 */
 
 
 
@@ -812,7 +829,7 @@ tTAB    *p_tab;                        /* current tab pointer                 */
  *
  *
  */
-tCELL       denada;
+extern tCELL       denada;
 #define     DONE_DONE    &denada
 
 
@@ -854,7 +871,7 @@ extern int     save;
 #define     FILE_BUF    "/var/run/buffer.gyges"
 #define     FILE_EXIM   "/root/z_gehye/vi_clip.txt"
 
-char        f_maker     [LEN_RECD];
+/*> extern  char        f_maker     [LEN_RECD];                                       <*/
 
 
 /*---(strchr validation strings)-----------*/
@@ -890,8 +907,8 @@ extern char      ver_ctrl;
 extern char      ver_num  [10];
 extern char      ver_txt  [100];
 
-int     row_formula;
-int     row_main;
+extern int     row_formula;
+extern int     row_main;
 
 
 
@@ -910,8 +927,6 @@ extern      char          unit_answer [LEN_FULL];
 
 
 /*===[[ PROTOTYPES ]]=====================================*/
-/*---(from s_main.c)-----------------------*/
-int       main               (int argc, char *argv[]);
 
 
 /*===[[ gyges_prog.c ]]=======================================================*/
@@ -1143,6 +1158,7 @@ char        KEYS_writequit   (void);
 
 /*---(ncurses)----------------------------------*/
 
+char        CURS_version            (char a_size, short a_wide, char *a_list);
 char        CURS_current_status     (char a_size, short a_wide, char *a_list);
 char        CURS_status_detail      (char a_size, short a_wide, char *a_list);
 char        CURS_status_cell        (char a_size, short a_wide, char *a_list);
@@ -1704,9 +1720,9 @@ char        api_yvikeys_axis_entry  (char a_axis, ushort a_pos, short *a_ref, uc
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_saver       (char *a_contents);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_macro_init  (void);
-char        api_ymacro_get          (char   a_name, char  *a_keys);
-char        api_ymacro_set          (char   a_name, char  *a_keys);
+
+
+
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_yvikeys_searcher    (uchar a_not, uchar *a_search);
 char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
@@ -1755,8 +1771,16 @@ char*       api_ysort__unit         (char *a_question, int n);
 
 
 
-/*===[[ gyges_macro.c ]]======================================================*/
+
+
+/*===[[ gyges_yMACRO.c ]]=====================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(program)--------------*/
+char        api_ymacro_init         (void);
+/*---(saving)---------------*/
+char        api_ymacro_get          (char   a_name, char  *a_keys);
+char        api_ymacro_set          (char   a_name, char  *a_keys);
+/*---(program)--------------*/
 char        api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *a_next);
 char        api_ymacro_forcer        (char a_type, char *a_target, char *a_contents);
 char        api_ymacro_pusher        (char a_dir, char a_level, char *a_args);

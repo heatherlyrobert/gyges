@@ -1,6 +1,58 @@
 /*============================----beg-of-source---============================*/
 #include   "gyges.h"
 
+char
+api_ymacro_init             (void)
+{
+   /*--(locals)------------+-----+-----+-*/
+   char        l, i;
+   char       *x_valid     = "0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+   char       *x_locals    = "·¯>·!·0123456789·?·abcdefghijklmnopqrstuvwxyz";
+   char        t           [LEN_LABEL] = "";
+   /*---(macros)-------------------------*/
+   l = strlen (x_valid);
+   CELL_overwrite (YMAP_NONE , 37, 0, 0, "abbr"    , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 1, 0, "keys"    , "<-0-·");
+   for (i = 0; i < l; ++i) {
+     sprintf (t, "Ö@%c", x_valid [i]);
+     CELL_overwrite (YMAP_NONE , 37, 0, i + 1, t   , "|?0-·");
+   }
+   COL_resize (37, 0,  5);
+   COL_resize (37, 1, 30);
+   COL_resize (37, 2,  3);
+   /*---(agrios locals)------------------*/
+   CELL_overwrite (YMAP_NONE , 37, 3, 0, "agrios"  , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3, 1, "curr"    , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3, 2, "lvl"     , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3, 3, "exec"    , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3, 4, "code"    , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3, 5, "next"    , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3, 7, "args"    , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3,18, "rc"      , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3,20, "locals"  , ">?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 3,47, "temp"    , "<?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 4, 0, "vars"    , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 4, 4, "····"    , "|?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 5, 0, "stack"   , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 6, 0, "<"       , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 7, 0, "<"       , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 8, 0, "<"       , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 9, 0, "<"       , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37,10, 0, "<"       , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 5, 2, "0"       , "|?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 4,47, "····················", "<?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 5,47, "<"       , "<?0-·");
+   CELL_overwrite (YMAP_NONE , 37, 6,47, "<"       , "<?0-·");
+   l = strlen (x_locals);
+   for (i = 0; i < l; ++i) {
+     if (x_locals [i] == '·')  continue;
+     sprintf (t, "Ö‘%c", x_locals [i]);
+     CELL_overwrite (YMAP_NONE , 37, 4, i + 1, t   , "<?0-·");
+   }
+   CELL_overwrite (YMAP_NONE , 37, 4, 1, "Ö •"     , "<?0-·");
+   COL_resize (37, 4,  5);
+   return 0;
+}
 
 
 /*====================------------------------------------====================*/
@@ -29,7 +81,7 @@ api_ymacro_get          (char a_name, char *a_keys)
    char        rce         =  -10;
    char        rc          =    0;
    char       *p           = NULL;
-   char       *x_valid     = "0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+   char       *x_valid     = "0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïðñòóôõö÷øùúûüýþÿ ";
    short       x_row       =    0;
    tCELL      *x_curr      = NULL;
    int         l           =    0;
@@ -112,7 +164,7 @@ api_ymacro_set          (char a_name, char *a_keys)
    char        rce         =  -10;
    char        rc          =    0;
    char       *p           = NULL;
-   char       *x_valid     = "0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+   char       *x_valid     = "0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïðñòóôõö÷øùúûüýþÿ ";
    short       x_row       =    0;
    int         x_len       =    0;
    tCELL      *x_curr      = NULL;
@@ -122,7 +174,7 @@ api_ymacro_set          (char a_name, char *a_keys)
    /*---(header)-------------------------*/
    DEBUG_YMACRO   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_YMACRO   yLOG_value   ("a_name"    , a_name);
+   DEBUG_YMACRO   yLOG_char    ("a_name"    , a_name);
    --rce;  if (a_name == 0) {
       DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
       return rce;

@@ -57,7 +57,7 @@ PROG_version       (void)
 #else
    strlcpy (t, "[unknown    ]", 15);
 #endif
-   snprintf (verstring, 100, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
+   snprintf (verstring, LEN_HUND, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
    return verstring;
 }
 
@@ -255,7 +255,7 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
-   yFILE_dump_add          ("vars", "", "current ycalc vars inventory"  , yCALC_var_dump);
+   yFILE_dump_add          ("vars", "", "current ycalc vars inventory"  , yCALC_vars_dump);
    yFILE_dump_add          ("deps" ,"", "current dependencies inventory", yCALC_deps_dump);
    /*---(ystr config)--------------------*/
    rc = str0gyges (LOC_checker);
@@ -451,6 +451,7 @@ PROG_dawn          (void)
    /*> CURS_screen_reset ();                                                          <*/
    yCALC_calculate   ();
    /*---(status options)-----------------*/
+   yVIEW_switch_add (YVIEW_STATUS, "version", "", CURS_version        , "current location information"               );
    yVIEW_switch_add (YVIEW_STATUS, "gyges"  , "", CURS_current_status , "current location information"               );
    yVIEW_switch_add (YVIEW_STATUS, "tab"    , "", CURS_status_tab     , "tab name, type, and dimensions"             );
    yVIEW_switch_add (YVIEW_STATUS, "cell"   , "", CURS_status_cell    , "details of current cell"                    );
@@ -467,8 +468,8 @@ PROG_dawn          (void)
    /*> yCMD_direct (":read");                                                         <*/
    /*> MAP_mapper (YMAP_INIT);                                                        <*/
    /*> yCMD_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );   <*/
-   yCMD_add      (YCMD_M_AUDIT , "ball"        , ""    , ""     , api_ymacro_ball            , "" );
-   yCMD_add      (YCMD_M_AUDIT , "noball"      , ""    , ""     , api_ymacro_noball          , "" );
+   yCMD_add      (YVIHUB_M_AUDIT , "ball"        , ""    , ""     , api_ymacro_ball            , "" );
+   yCMD_add      (YVIHUB_M_AUDIT , "noball"      , ""    , ""     , api_ymacro_noball          , "" );
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit  (__FUNCTION__);
    return 0;
@@ -681,14 +682,14 @@ PROG__unit_loud      (void)
    yURG_name   ("regs"  , YURG_ON);
    yURG_name   ("map"   , YURG_ON);
    yURG_name   ("deps"  , YURG_ON);
-   yURG_name   ("ystr"  , YURG_ON);
+   /*> yURG_name   ("ystr"  , YURG_ON);                                               <*/
    yURG_name   ("args"  , YURG_ON);
    yURG_name   ("apis"  , YURG_ON);
-   yURG_name   ("calc"  , YURG_ON);
+   yURG_name   ("ycalc" , YURG_ON);
    yURG_name   ("exec"  , YURG_ON);
    yURG_name   ("adjs"  , YURG_ON);
    yURG_name   ("srcp"  , YURG_ON);
-   yURG_name   ("yparse", YURG_ON);
+   /*> yURG_name   ("yparse", YURG_ON);                                               <*/
    yURG_name   ("ymode" , YURG_ON);
    yURG_name   ("ykeys" , YURG_ON);
    yURG_name   ("ymacro", YURG_ON);
@@ -697,9 +698,9 @@ PROG__unit_loud      (void)
    yURG_name   ("srch"  , YURG_ON);
    yURG_name   ("ymap"  , YURG_ON);
    yURG_name   ("yview" , YURG_ON);
-   yURG_name   ("hist"  , YURG_ON);
-   yURG_name   ("sort"  , YURG_OFF);
-   yURG_name   ("ysort" , YURG_OFF);
+   /*> yURG_name   ("hist"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("sort"  , YURG_OFF);                                              <*/
+   /*> yURG_name   ("ysort" , YURG_OFF);                                              <*/
    /*---(startup)------------------------*/
    rc = PROG_startup  (x_argc, x_args);
    DEBUG_PROG   yLOG_value    ("startup"   , rc);

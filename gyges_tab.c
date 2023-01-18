@@ -37,6 +37,7 @@ static  char    s_index   = -1;
 
 tTAB    s_grounded;
 
+tTAB    *p_tab;                        /* current tab pointer                 */
 
 #define   TAB_BACK  '<'
 #define   TAB_FORE  '>'
@@ -456,7 +457,7 @@ TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size)
    rc = TAB_new (NULL, x_tab, a_name, a_size);
    DEBUG_LOCS   yLOG_value   ("new"       , rc);
    if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
-   if (a_abbr == (uchar) '®')  api_yvikeys_macro_init ();
+   if (a_abbr == (uchar) '¯')  api_ymacro_init ();
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
@@ -898,14 +899,14 @@ TAB_init                (void)
     *> TAB_new_in_abbr ('®', NULL, NULL);                                             <* 
     *> TAB_new_in_abbr ('¯', NULL, NULL);                                             <*/
    /*---(universe commands)--------------*/
-   rc = yCMD_add (YCMD_M_BUFFERS, "uquick"      , "uq"  , ""     , TAB_new_quick              , "open a new tab quickly"               );
-   rc = yCMD_add (YCMD_M_BUFFERS, "unew"        , ""    , "ss"   , TAB_new_in_open            , "open a new tab in next open slot"     );
-   rc = yCMD_add (YCMD_M_BUFFERS, "umake"       , ""    , "css"  , TAB_new_in_abbr            , "open a new tab in specific slot"      );
-   rc = yCMD_add (YCMD_M_BUFFERS, "ufree"       , ""    , "c"    , TAB_free_from_abbr         , "free a old tab in specific slot"      );
-   rc = yCMD_add (YCMD_M_BUFFERS, "univ"        , ""    , "c"    , TAB_switch_key             , "switch buffer"                        );
-   rc = yCMD_add (YCMD_M_BUFFERS, "utitle"      , ""    , "s"    , TAB_rename_curr            , "rename current buffer"                );
-   rc = yCMD_add (YCMD_M_BUFFERS, "usize"       , ""    , "s"    , TAB_resize_curr            , "change a buffer size"                 );
-   rc = yCMD_add (YCMD_M_BUFFERS, "ubrowse"     , "ub"  , "a"    , TAB_browse                 , "find buffer by name"                  );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "uquick"      , "uq"  , ""     , TAB_new_quick              , "open a new tab quickly"               );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "unew"        , ""    , "ss"   , TAB_new_in_open            , "open a new tab in next open slot"     );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "umake"       , ""    , "css"  , TAB_new_in_abbr            , "open a new tab in specific slot"      );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "ufree"       , ""    , "c"    , TAB_free_from_abbr         , "free a old tab in specific slot"      );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "univ"        , ""    , "c"    , TAB_switch_key             , "switch buffer"                        );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "utitle"      , ""    , "s"    , TAB_rename_curr            , "rename current buffer"                );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "usize"       , ""    , "s"    , TAB_resize_curr            , "change a buffer size"                 );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "ubrowse"     , "ub"  , "a"    , TAB_browse                 , "find buffer by name"                  );
    /*---(add status options)-------------*/
    rc = yVIEW_switch_add (YVIEW_STATUS, "universe" , "uni", TAB_status_curr     , "details of current universe"                );
    /*---(add yparse specification)-------*/

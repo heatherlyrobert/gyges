@@ -116,7 +116,14 @@
 *      
 */
 
+tCELL      *hcell;           /* head pointer for cell data structure          */
+tCELL      *tcell;           /* tail pointer for cell data structure          */
+tCELL      *rcell;           /* root pointer for tree operations              */
+int         ncell;           /* count of linked cells in data structure       */
+int         acell;           /* count of all cells                            */
+
 char       *g_tbd         = "tbd";
+tCELL       denada;
 
 
 static int s_count        =    0;
@@ -434,11 +441,11 @@ CELL__valid        (tCELL *a_cell, char a_linked)
    }
    /*---(quick path: already found)------*/
    DEBUG_CELL   yLOG_spoint  (x_save);
-   if  (a_cell == x_save) {
-      DEBUG_CELL   yLOG_snote   ("quick path");
-      DEBUG_CELL   yLOG_sexit   (__FUNCTION__);
-      return 1;
-   }
+   /*> if  (a_cell == x_save) {                                                       <* 
+    *>    DEBUG_CELL   yLOG_snote   ("quick path");                                   <* 
+    *>    DEBUG_CELL   yLOG_sexit   (__FUNCTION__);                                   <* 
+    *>    return 1;                                                                   <* 
+    *> }                                                                              <*/
    /*---(check for unlinked)-------------*/
    DEBUG_CELL   yLOG_schar   (a_linked);
    if (a_linked == UNLINKED) {
@@ -1554,7 +1561,8 @@ CELL__unitnew      (char *a_question, char *a_label)
     */
    /*---(locals)-----------+-----------+-*/
    int         len         = 0;
-   char        temp        [LEN_RECD];
+   char        t           [LEN_HUND]  = "···åæ";
+   char        s           [LEN_HUND]  = "···åæ";
    char        x_label     [LEN_LABEL];
    int         x_fore      = 0;
    int         x_back      = 0;
@@ -1564,6 +1572,7 @@ CELL__unitnew      (char *a_question, char *a_label)
    int         x_tab       = 0;
    int         x_col       = 0;
    int         x_row       = 0;
+   int         l           = 0;
    /*---(preprare)-----------------------*/
    strcpy  (unit_answer, "s_celln          : question not understood");
    /*---(identify the cell pointer)------*/
@@ -1627,6 +1636,16 @@ CELL__unitnew      (char *a_question, char *a_label)
       /*> if      (x_cell       == NULL)   snprintf(unit_answer, LEN_FULL, "s_celln rpn      : (----) -");                                  <* 
        *> else if (x_cell->nrpn == 0)      snprintf(unit_answer, LEN_FULL, "s_celln rpn      : (%4d) ."     , x_cell->nrpn);                <* 
        *> else                             snprintf(unit_answer, LEN_FULL, "s_celln rpn      : (%4d) %s"    , x_cell->nrpn, x_cell->rpn);   <*/
+   }
+   else if (strcmp(a_question, "quick"    )      == 0) {
+      if (x_cell == NULL) {
+         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ····· ··· ···åæ123456789-123456789-123456789-123456789-123456789- ···åæ123456789-123456789-", a_label);
+      } else {
+         /*> if (x_cell->source != NULL)  sprintf (t, "%3då%.50æ", strlen (x_cell->source), x_cell->source);   <*/
+         /*> if (x_cell->print  != NULL)  sprintf (s, "%3då%.20æ", strlen (x_cell->print) , x_cell->print);   <*/
+         /*> snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : %c%c%c%c%c %3d %-55.55s %s", a_label, x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, COL_size (x_cell->tab, x_cell->col), t, s);   <*/
+         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ", a_label);
+      }
    }
    /*---(complete)-----------------------*/
    return unit_answer;

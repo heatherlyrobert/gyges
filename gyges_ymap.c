@@ -991,6 +991,13 @@ api_ymap_regkiller      (tCELL *a_cell)
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    DEBUG_YMAP   yLOG_point   ("a_cell"    , a_cell);
    /*---(kill)---------------------------*/
+   rc = CELL__valid   (a_cell, LINKED);
+   DEBUG_YMAP   yLOG_value   ("valid"     , rc);
+   if (rc < 0) {
+      DEBUG_YMAP   yLOG_note    ("cell no longer exists");
+      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      return 1;
+   }
    rc = CELL__free (&a_cell);
    DEBUG_YMAP   yLOG_value   ("free"      , rc);
    /*---(complete)-----------------------*/
