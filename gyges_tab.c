@@ -1508,8 +1508,8 @@ TAB_inventory            (char a_size, char *a_list)
    /*---(inventory)----------------------*/
    for (i = 0; i < s_nvalid; ++i)  {
       /*---(abbr)--------------*/
-      if (s_master [i] == NULL)  strlcpy (s, "-", LEN_TERSE);
-      else                       sprintf (s, "%c", LABEL_tab (i));
+      if (s_master [i] == NULL)  strlcpy (s, "-"   , LEN_TERSE);
+      else                       sprintf (s, "%c"  , LABEL_tab (i));
       /*---(concat)------------*/
       switch (a_size) {
       case 'L' :
@@ -1518,12 +1518,12 @@ TAB_inventory            (char a_size, char *a_list)
          strlcat (t, s, LEN_HUND);
          break;
       case 'M' :
-         if (i > 0 && i % 6 == 0)  strlcat (t, " ", LEN_HUND);
+         if (i > 0 && i % 6 == 0)  strlcat (t, " " , LEN_HUND);
          strlcat (t, s, LEN_HUND);
          break;
       case 'S' :
-         if (i > 0 && i % 6 == 0)  strlcat (t, " ", LEN_HUND);
-         if (s [0] != '-')         strlcat (t, s, LEN_HUND);
+         if (i > 0 && i % 6 == 0)  strlcat (t, " " , LEN_HUND);
+         if (s [0] != '-')         strlcat (t, s   , LEN_HUND);
          break;
       }
       /*---(counts)------------*/
@@ -1533,6 +1533,7 @@ TAB_inventory            (char a_size, char *a_list)
       }
    }
    /*---(prefix)-------------------------*/
+   /*> if (strchr (s_valids, x_curr) == NULL)  x_curr = '·';                          <*/
    switch (a_size) {
    case 'L' :
       sprintf (x_pre, "%c ´ %2d %1d ´ ", x_curr, c, a);

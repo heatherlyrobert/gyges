@@ -264,8 +264,7 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
-   /*---(yrpn config)--------------------*/
-   rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yMAP_inside);
+   /*---(yrpn config)--------------------*/ rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yMAP_inside);
    DEBUG_PROG   yLOG_value    ("yRPN"      , rc);
    if (rc <  0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
@@ -492,8 +491,9 @@ PROG_cleanse         (void)
 {
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    yCALC_cleanse ();
-   CELL_purge    ();
-   LOC_purge     ();
+   CELL_wrap      ();
+   LOC_wrap       ();
+   LOC_init      ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
 }
 
@@ -667,8 +667,8 @@ PROG__unit_loud      (void)
 {
    char        rce         =  -10;
    char        rc          =    0;
-   int         x_argc      = 10;
-   char       *x_args [20] = { "gyges_unit", "@@kitchen", "@@args", "@@cmds", "@@calc", "@@yrpn", "@@yparse", "@@locs", "@@yvikeys", "@@map"    };
+   int         x_argc      =  3;
+   char       *x_args [10] = { "gyges_unit", "@@kitchen", "@@ycalc" };
    /*---(urgents)------------------------*/
    rc = PROG_urgents  (x_argc, x_args);
    DEBUG_PROG   yLOG_value    ("urgents"   , rc);
@@ -676,28 +676,28 @@ PROG__unit_loud      (void)
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   yURG_name   ("tops"  , YURG_ON);
-   yURG_name   ("prog"  , YURG_ON);
-   yURG_name   ("cell"  , YURG_ON);
-   yURG_name   ("regs"  , YURG_ON);
-   yURG_name   ("map"   , YURG_ON);
-   yURG_name   ("deps"  , YURG_ON);
+   /*> yURG_name   ("tops"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("prog"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("cell"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("regs"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("map"   , YURG_ON);                                               <*/
+   /*> yURG_name   ("deps"  , YURG_ON);                                               <*/
    /*> yURG_name   ("ystr"  , YURG_ON);                                               <*/
-   yURG_name   ("args"  , YURG_ON);
-   yURG_name   ("apis"  , YURG_ON);
-   yURG_name   ("ycalc" , YURG_ON);
-   yURG_name   ("exec"  , YURG_ON);
-   yURG_name   ("adjs"  , YURG_ON);
-   yURG_name   ("srcp"  , YURG_ON);
+   /*> yURG_name   ("args"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("apis"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("ycalc" , YURG_ON);                                               <*/
+   /*> yURG_name   ("exec"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("adjs"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("srcp"  , YURG_ON);                                               <*/
    /*> yURG_name   ("yparse", YURG_ON);                                               <*/
-   yURG_name   ("ymode" , YURG_ON);
-   yURG_name   ("ykeys" , YURG_ON);
-   yURG_name   ("ymacro", YURG_ON);
-   yURG_name   ("ycmd"  , YURG_ON);
-   yURG_name   ("ysrc"  , YURG_ON);
-   yURG_name   ("srch"  , YURG_ON);
-   yURG_name   ("ymap"  , YURG_ON);
-   yURG_name   ("yview" , YURG_ON);
+   /*> yURG_name   ("ymode" , YURG_ON);                                               <*/
+   /*> yURG_name   ("ykeys" , YURG_ON);                                               <*/
+   /*> yURG_name   ("ymacro", YURG_ON);                                               <*/
+   /*> yURG_name   ("ycmd"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("ysrc"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("srch"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("ymap"  , YURG_ON);                                               <*/
+   /*> yURG_name   ("yview" , YURG_ON);                                               <*/
    /*> yURG_name   ("hist"  , YURG_ON);                                               <*/
    /*> yURG_name   ("sort"  , YURG_OFF);                                              <*/
    /*> yURG_name   ("ysort" , YURG_OFF);                                              <*/
@@ -724,6 +724,15 @@ PROG__unit_end       (void)
       return rce;
    }
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+PROG__unit_cleanse   (void)
+{
+   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   PROG_cleanse ();
+   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

@@ -34,11 +34,6 @@ LOC_purge            (void)
    tTAB       *x_tab       = NULL;
    char        x_seq       =   -1;
    char        rc          =    0;
-
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
-   return 0;
-
    /*---(header)-------------------------*/
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    /*---(initialize s_tabs)----------------*/

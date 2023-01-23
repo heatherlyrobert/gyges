@@ -1,6 +1,8 @@
 /*============================----beg-of-source---============================*/
 #include   "gyges.h"
 
+
+
 char
 api_ymacro_init             (void)
 {
@@ -46,7 +48,7 @@ api_ymacro_init             (void)
    l = strlen (x_locals);
    for (i = 0; i < l; ++i) {
      if (x_locals [i] == '·')  continue;
-     sprintf (t, "Ö‘%c", x_locals [i]);
+     sprintf (t, "Öç%c", x_locals [i]);
      CELL_overwrite (YMAP_NONE , 37, 4, i + 1, t   , "<?0-·");
    }
    CELL_overwrite (YMAP_NONE , 37, 4, 1, "Ö •"     , "<?0-·");
@@ -512,7 +514,7 @@ api_ymacro_pusher        (char a_dir, char a_level, char *a_args)
          }
          DEBUG_YMACRO   yLOG_info    ("t"         , t);
          /*---(get local)----------------------*/
-         if (p [0] == '‘') {
+         if (p [0] == 'ç') {
             /*---(get current)--------------------*/
             DEBUG_YMACRO   yLOG_info    ("str2gyges" , t);
             rc  = str2gyges (t, &uv, &xv, &yv, NULL, NULL, 0, YSTR_LEGAL);
@@ -546,7 +548,7 @@ api_ymacro_pusher        (char a_dir, char a_level, char *a_args)
    }
    /*---(handle pop)---------------------*/
    else if (a_dir == '<') {
-      /*---(copy return ‘?)--------------*/
+      /*---(copy return ç?)--------------*/
       /*> x_copy = LOC_cell_at_loc (u,  5, 18);                                          <* 
        *> DEBUG_YMACRO   yLOG_point   ("x_copy"    , x_copy);                              <* 
        *> if (x_copy != NULL && x_copy->source != NULL) {                                <* 

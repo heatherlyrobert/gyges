@@ -289,6 +289,39 @@ CELL__free         (tCELL **a_cell)
 /*====================------------------------------------====================*/
 static void  o___PROGRAM_________o () { return; }
 
+char
+CELL_start         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   tCELL      *curr        = NULL;
+   tCELL      *next        = NULL;
+   char        rc          = 0;
+   /*---(header)-------------------------*/
+   DEBUG_CELL   yLOG_enter   (__FUNCTION__);
+   /*---(walk through list)--------------*/
+   next = hcell;
+   DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
+   while (next != NULL) {
+      curr = next;
+      next = curr->m_next;
+      rc = CELL__wipe    (curr);
+      DEBUG_CELL   yLOG_value   ("wipe rc"   , rc);
+      rc = LOC_unhook   (curr);
+      DEBUG_CELL   yLOG_value   ("unhook rc" , rc);
+      rc = CELL__free    (&curr);
+      DEBUG_CELL   yLOG_value   ("free rc"   , rc);
+      DEBUG_CELL   yLOG_point   ("next"      , next);
+   }
+   /*---(clean ends)---------------------*/
+   if (ncell == 0) {
+      hcell = NULL;
+      tcell = NULL;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char         /*-> tbd --------------------------------[ ------ [fz.842.041.24]*/ /*-[01.0000.013.T]-*/ /*-[--.---.---.--]-*/
 CELL_purge         (void)
 {
@@ -1639,12 +1672,11 @@ CELL__unitnew      (char *a_question, char *a_label)
    }
    else if (strcmp(a_question, "quick"    )      == 0) {
       if (x_cell == NULL) {
-         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ····· ··· ···åæ123456789-123456789-123456789-123456789-123456789- ···åæ123456789-123456789-", a_label);
+         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ····· ··· ···åæ                                                   ···åæ", a_label);
       } else {
-         /*> if (x_cell->source != NULL)  sprintf (t, "%3då%.50æ", strlen (x_cell->source), x_cell->source);   <*/
-         /*> if (x_cell->print  != NULL)  sprintf (s, "%3då%.20æ", strlen (x_cell->print) , x_cell->print);   <*/
-         /*> snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : %c%c%c%c%c %3d %-55.55s %s", a_label, x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, COL_size (x_cell->tab, x_cell->col), t, s);   <*/
-         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ", a_label);
+         if (x_cell->source != NULL)  sprintf (t, "%3då%.50sæ", strlen (x_cell->source), x_cell->source);
+         if (x_cell->print  != NULL)  sprintf (s, "%3då%.30sæ", strlen (x_cell->print) , x_cell->print);
+         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : %c%c%c%c%c %3d %-55.55s %s", a_label, x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, COL_size (x_cell->tab, x_cell->col), t, s);
       }
    }
    /*---(complete)-----------------------*/

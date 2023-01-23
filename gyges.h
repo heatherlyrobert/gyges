@@ -48,8 +48,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7b"
-#define     P_VERTXT    "fixed segfault on shutdown due to variable/cell pointers"
+#define     P_VERNUM    "3.7c"
+#define     P_VERTXT    "fixed basic unit tests after huge library updates"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -948,6 +948,7 @@ char        PROG_shutdown           (void);
 char        PROG__unit_loud         (void);
 char        PROG__unit_quiet        (void);
 char        PROG__unit_end          (void);
+char        PROG__unit_cleanse      (void);
 
 
 /*---(from s.c)----------------------------*/
@@ -1788,6 +1789,7 @@ char        api_ymacro_ball          (void);
 char        api_ymacro_noball        (void);
 
 
+char*       api_yvikeys__unit      (char *a_question, int a_num);
 
 
 
