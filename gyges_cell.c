@@ -205,6 +205,7 @@ CELL__new          (tCELL **a_cell, char a_linked)
    x_new->format    =  '?';
    x_new->decs      =  '0';
    x_new->unit      =  '-';
+   x_new->five      =  '-';
    x_new->note      =  '-';
    x_new->print     = NULL;
    /*---(btree)--------------------------*/
@@ -1672,11 +1673,11 @@ CELL__unitnew      (char *a_question, char *a_label)
    }
    else if (strcmp(a_question, "quick"    )      == 0) {
       if (x_cell == NULL) {
-         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ····· ··· ···åæ                                                   ···åæ", a_label);
+         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : ······· %3d ···åæ                                                   ···åæ", a_label, COL_size (x_tab, x_col));
       } else {
          if (x_cell->source != NULL)  sprintf (t, "%3då%.50sæ", strlen (x_cell->source), x_cell->source);
          if (x_cell->print  != NULL)  sprintf (s, "%3då%.30sæ", strlen (x_cell->print) , x_cell->print);
-         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : %c%c%c%c%c %3d %-55.55s %s", a_label, x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, COL_size (x_cell->tab, x_cell->col), t, s);
+         snprintf(unit_answer, LEN_FULL, "s_celln %-8.8s : %c%c%c%c%c%c%c %3d %-55.55s %s", a_label, x_cell->type, x_cell->align, x_cell->format, x_cell->decs, x_cell->unit, x_cell->five, x_cell->note, COL_size (x_cell->tab, x_cell->col), t, s);
       }
    }
    /*---(complete)-----------------------*/

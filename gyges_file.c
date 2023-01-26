@@ -68,6 +68,9 @@
  */
 
 
+#define  EXIM_VALID    "vdfctrsnVDFCTRSN"
+#define  EXIM_UPPER    "VDFCTRSN"
+
 
 /*---(globals)----------+-----------+-*/
 char        ver_ctrl    = '-';
@@ -179,7 +182,7 @@ FILE_init               (void)
 /*====================------------------------------------====================*/
 static void  o___IMPORT__________o () { return; }
 
-static FILE   *s_clip     = NULL;
+FILE   *g_clip     = NULL;
 static int     s_lines    =    0;
 
 static int     s_max      =    0;
@@ -207,16 +210,22 @@ EXIM__open              (char a_dir)
    char        rce         =  -10;
    /*---(header)-------------------------*/
    DEBUG_FILE   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_FILE   yLOG_point   ("g_clip"    , g_clip);
+   --rce;  if (g_clip != NULL) {
+      DEBUG_FILE   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(open file)----------------------*/
    DEBUG_FILE   yLOG_char    ("a_dir"     , a_dir);
    switch (a_dir) {
    case 'r'  :
       DEBUG_FILE   yLOG_note    ("open for reading");
-      s_clip = fopen (FILE_EXIM, "rt");
+      g_clip = fopen (FILE_EXIM, "rt");
       break;
    case 'w'  :
       DEBUG_FILE   yLOG_note    ("open for writing");
-      s_clip = fopen (FILE_EXIM, "wt");
+      g_clip = fopen (FILE_EXIM, "wt");
       break;
    default   :
       DEBUG_FILE   yLOG_note    ("not a legal file mode");
@@ -224,8 +233,8 @@ EXIM__open              (char a_dir)
       return rce;
       break;
    }
-   DEBUG_FILE   yLOG_point   ("s_clip"    , s_clip);
-   --rce;  if (s_clip == NULL) {
+   DEBUG_FILE   yLOG_point   ("g_clip"    , g_clip);
+   --rce;  if (g_clip == NULL) {
       DEBUG_FILE   yLOG_note    ("can not open clip file");
       DEBUG_FILE   yLOG_exit    (__FUNCTION__);
       return rce;
@@ -243,14 +252,22 @@ EXIM__close             (void)
    char        rc          =    0;
    /*---(header)-------------------------*/
    DEBUG_FILE   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_FILE   yLOG_point   ("g_clip"    , g_clip);
+   --rce;  if (g_clip == NULL) {
+      DEBUG_FILE   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
    /*---(close file)---------------------*/
-   rc = fclose  (s_clip);
+   rc = fclose  (g_clip);
    DEBUG_FILE   yLOG_value   ("close"     , rc);
    --rce;  if (rc < 0) {
       DEBUG_FILE   yLOG_note    ("can not close clip file");
       DEBUG_FILE   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(ground)-------------------------*/
+   g_clip = NULL;
    /*---(complete)-----------------------*/
    DEBUG_FILE   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -318,9 +335,9 @@ EXIM__close             (void)
  *>    }                                                                                                                           <* 
  *>    /+---(open output file)---------------+/                                                                                    <* 
  *>    DEBUG_REGS   yLOG_note    ("open clip file");                                                                               <* 
- *>    s_clip = fopen (FILE_EXIM, "rt");                                                                                           <* 
- *>    DEBUG_REGS   yLOG_point   ("s_clip"    , s_clip);                                                                           <* 
- *>    --rce;  if (s_clip == NULL) {                                                                                               <* 
+ *>    g_clip = fopen (FILE_EXIM, "rt");                                                                                           <* 
+ *>    DEBUG_REGS   yLOG_point   ("g_clip"    , g_clip);                                                                           <* 
+ *>    --rce;  if (g_clip == NULL) {                                                                                               <* 
  *>       DEBUG_REGS   yLOG_note    ("can not open clip file");                                                                    <* 
  *>       DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                                <* 
  *>       return rce;                                                                                                              <* 
@@ -443,7 +460,7 @@ EXIM__close             (void)
  *> {                                                                                                                              <* 
  *>    /+---(close file)---------------------+/                                                                                    <* 
  *>    DEBUG_REGS   yLOG_note    ("closing file");                                                                                 <* 
- *>    fclose  (s_clip);                                                                                                           <* 
+ *>    fclose  (g_clip);                                                                                                           <* 
  *>    /+---(screen)-------------------------+/                                                                                    <* 
  *>    /+> CURS_screen_reset ();                                                          <+/                                      <* 
  *>    /+---(calculate)----------------------+/                                                                                    <* 
@@ -466,7 +483,7 @@ EXIM__export_sizer      (void)
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
    /*---(size)---------------------------*/
    yMAP_visu_range (&u, &xb, &xe, &yb, &ye, &zb, &ze, NULL);
-   fprintf (s_clip, "#@ bounds  %2d %4d %4d %4d %4d %4d %4d\n",  u, xb, xe, yb, ye, zb, ze);
+   fprintf (g_clip, "#@ bounds  %2d %4d %4d %4d %4d %4d %4d\n",  u, xb, xe, yb, ye, zb, ze);
    /*---(x_size)----------------------*/
    sprintf (s, "#@ x-parse %3då", xe - xb + 1);
    for (x_col = xb; x_col <= xe; ++x_col) {
@@ -490,18 +507,18 @@ EXIM__export_sizer      (void)
       }
       DEBUG_OUTP  yLOG_info    ("s"         , s);
    }
-   fprintf (s_clip, "%sæ\n", s);
+   fprintf (g_clip, "%sæ\n", s);
    /*---(y_size)----------------------*/
-   sprintf (s, "#@ y-parse %3då", ye - yb + 1);
-   for (x_row = yb; x_row <= ye; ++x_row) {
-      h     = ROW_size (CTAB, x_row);
-      DEBUG_OUTP  yLOG_value   ("h"         , h);
-      sprintf (t, " %5d", h);
-      strcat  (s, "Ï");
-      for (i = 1; i < h; ++i)   strcat  (s, "-");
-      DEBUG_OUTP  yLOG_info    ("s"         , s);
-   }
-   fprintf (s_clip, "%sæ\n", s);
+   /*> sprintf (s, "#@ y-parse %3då", ye - yb + 1);                                   <* 
+    *> for (x_row = yb; x_row <= ye; ++x_row) {                                       <* 
+    *>    h     = ROW_size (CTAB, x_row);                                             <* 
+    *>    DEBUG_OUTP  yLOG_value   ("h"         , h);                                 <* 
+    *>    sprintf (t, " %5d", h);                                                     <* 
+    *>    strcat  (s, "Ï");                                                           <* 
+    *>    for (i = 1; i < h; ++i)   strcat  (s, "-");                                 <* 
+    *>    DEBUG_OUTP  yLOG_info    ("s"         , s);                                 <* 
+    *> }                                                                              <* 
+    *> fprintf (g_clip, "%sæ\n", s);                                                  <*/
    /*---(complete)-----------------------*/
    DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -576,7 +593,7 @@ EXIM__import_sizer      (void)
    i = 14;
    c = s_recd [i];
    DEBUG_INPT   yLOG_complex ("curr"      , "%2d#, %c, %c, %2dn, %2ds", i, c, x_space, s_npos, x_size);
-   --rce;  if (c != 'å') {
+   --rce;  if (strchr ("å[", c) == NULL) {
       DEBUG_INPT   yLOG_note    ("does not beg with å");
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -593,7 +610,7 @@ EXIM__import_sizer      (void)
    --rce;  while (c != '\0') {
       /*---(check for spacers)-----------*/
       if (strchr ("· " , c) != NULL)   x_space = 'y';
-      if (strchr ("Ïæ ", c) != NULL)   x_space = '-';
+      if (strchr ("Ïæ] x", c) != NULL)   x_space = '-';
       if (x_space == 'y') {
          if (strchr ("· ", c) == NULL) {
             DEBUG_INPT   yLOG_note    ("space broken by unexpected character");
@@ -605,9 +622,9 @@ EXIM__import_sizer      (void)
       /*---(real things)-----------------*/
       if (x_space == '-') {
          /*---(new field)-------------------*/
-         if (strchr ("Ïæ ", c) != NULL) {
-            DEBUG_INPT   yLOG_note    ("Ï  start next field or æ ending");
-            if (strchr ("Ï ", c) != NULL) {
+         if (strchr ("Ïæ] x", c) != NULL) {
+            DEBUG_INPT   yLOG_note    ("Ï x start next field or æ] ending");
+            if (strchr ("Ï x", c) != NULL) {
                s_beg  [s_npos + 1] = i;
                s_type [s_npos + 1] = c;
             }
@@ -644,8 +661,8 @@ EXIM__import_sizer      (void)
             }
             ++s_npos;
             x_size = 1;
-            if (c == 'æ') {
-               DEBUG_INPT   yLOG_note    ("æ ending so break");
+            if (strchr ("æ]", c) != NULL) {
+               DEBUG_INPT   yLOG_note    ("æ] ending so break");
                break;
             }
          }
@@ -665,7 +682,7 @@ EXIM__import_sizer      (void)
                DEBUG_INPT   yLOG_note    ("field delimiter");
                s_xsep [s_npos] = 'f';
                break;
-            case ',' : case 'c' : case '˜' :
+            case ',' : case 'c' : case '±' :
                DEBUG_INPT   yLOG_note    ("comma delimiter");
                s_xsep [s_npos] = 'c';
                break;
@@ -688,8 +705,8 @@ EXIM__import_sizer      (void)
       /*---(done)------------------------*/
    }
    /*---(finished right)-----------------*/
-   --rce;  if (c != 'æ') {
-      DEBUG_INPT   yLOG_note    ("did not complete with æ");
+   --rce;  if (c == 0 || strchr ("æ]", c) == NULL) {
+      DEBUG_INPT   yLOG_note    ("did not complete with æ]");
       EXIM__import_fail ();
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -718,7 +735,7 @@ EXIM__import_bounds     (void)
    }
    /*---(sizings)------------------------*/
    for (x_pos = 0; x_pos < 7; ++x_pos) {
-      strlcpy (t, s_recd + 9 + (x_pos * 5), 4);
+      strlcpy (t, s_recd + 9 + (x_pos * 5), 5);
       t [4] = '\0';
       DEBUG_INPT   yLOG_delim   ("t"         , t);
       x_value = atoi (t);
@@ -955,12 +972,15 @@ EXIM__import_fields     (int a_row)
    char        rce         =  -10;
    char        rc          =    0;
    char        x_recd      [LEN_RECD]  = "";
+   char        x_field     [LEN_RECD]  = "";
    int         x_len       =    0;
    int         x_col       =    0;
    char       *p           = NULL;
    char        x_format    [LEN_LABEL];
    char        q           [LEN_LABEL];
    tCELL      *x_new       = NULL;
+   int         l           =    0;
+   int         n           =    0;
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(prep)------------------------*/
@@ -979,18 +999,24 @@ EXIM__import_fields     (int a_row)
    strlcpy (x_recd, s_recd, LEN_RECD);
    p = strtok (x_recd, q);
    while (p != NULL) {
+      /*---(prepare)------------------*/
       EXIM__import_destsrc (x_col, a_row);
-      /*---(read import data)---------*/
-      x_len = strlen (p);
-      DEBUG_INPT  yLOG_value   ("x_len"     , x_len);
-      DEBUG_INPT  yLOG_delim   ("p (orig)"  , p);
+      /*---(clean up)-----------------*/
+      if (p [0] == ' ')   strlcpy  (x_field, p + 1, LEN_RECD);
+      else                strlcpy  (x_field, p    , LEN_RECD);
+      l = strlen (x_field);
+      DEBUG_INPT  yLOG_value   ("l"         , l);
+      if (n > 0)  x_field [l--] = '\0';  /*  final spacer  */
+      if (strcmp (x_field, "²") == 0)  x_field [0] = '\0';
+      DEBUG_INPT  yLOG_delim   ("x_field"   , x_field);
       /*---(guess formatting)---------*/
       strcpy (x_format, DEF_FORMAT);
-      if      (p [0] == ' ' && p [x_len - 2] == ' ')  x_format [0] = '|';
-      else if (p [0] != ' ')                          x_format [0] = '<';
-      else if (p [x_len - 2] != ' ')                  x_format [0] = '>';
+      if      (x_field [0] == ' ' && x_field [l - 2] == ' ')  x_format [0] = '|';
+      else if (x_field [0] != ' ' && x_field [l - 2] != ' ')  ;
+      else if (x_field [0] != ' ')                            x_format [0] = '<';
+      else if (x_field [l - 1] != ' ')                        x_format [0] = '>';
       /*---(process)------------------*/
-      rc = EXIM__import_content (p);
+      rc = EXIM__import_content (x_field);
       DEBUG_INPT   yLOG_value   ("content"   , rc);
       DEBUG_INPT  yLOG_info    ("s_source"  , s_source);
       /*---(update)-------------------------*/
@@ -1002,12 +1028,9 @@ EXIM__import_fields     (int a_row)
          DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rc);
          return rc;
       }
-      /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
-       *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
-       *> DEBUG_INPT  yLOG_point   ("x_new"     , x_new);                                <* 
-       *> s_hist = YMAP_ADD;                                                             <*/
       /*---(next)---------------------*/
       ++x_col;
+      ++n;
       p = strtok (NULL, q);
    }
    /*---(complete)-----------------------*/
@@ -1022,61 +1045,56 @@ EXIM__import_csv        (int a_row)
    char        rce         =  -10;
    char        rc          =    0;
    char        x_recd      [LEN_RECD]  = "";
-   int         x_len       =    0;
+   char        x_field     [LEN_RECD]  = "";
    int         x_col       =    0;
    char       *p           = NULL;
+   char       *b           = NULL;
    char        x_format    [LEN_LABEL] = DEF_FORMAT;
-   char        q           [LEN_LABEL];
-   tCELL      *x_new       = NULL;
+   char        q           [LEN_LABEL] = "\", ";
+   int         l           =    0;
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(prep)------------------------*/
-   --rce;  switch (s_style) {
-   case 'c' : case 'C' :
-      strcpy (q, "\"");
-      break;
-   default  :
-      return rce;
-      break;
-   }
    /*---(process cells)---------------*/
    strlcpy (x_recd, s_recd, LEN_RECD);
-   p = strtok (x_recd, q);
+   strlcat (x_recd, ", ", LEN_RECD);
+   b = x_recd;
+   DEBUG_INPT  yLOG_info    ("b"         , b);
+   p = strstr (b, q);
+   DEBUG_INPT  yLOG_point   ("p"         , p);
    --rce;  while (p != NULL) {
-      /*---(read import data)---------*/
-      x_len = strlen (p);
-      DEBUG_INPT  yLOG_value   ("x_len"     , x_len);
-      DEBUG_INPT  yLOG_delim   ("p (orig)"  , p);
-      /*---(check for divider)--------*/
-      if (x_col % 2 == 1) {
-         if (x_len = 1 && strcmp (p, ",") == 0) {
-            ++x_col;
-            p = strtok (NULL, q);
-            continue;
+      /*---(prepare)------------------*/
+      EXIM__import_destsrc (x_col, a_row);
+      DEBUG_INPT  yLOG_complex ("pos"       , "%3dc, %4dr", x_col, a_row);
+      /*---(clean up)-----------------*/
+      DEBUG_INPT  yLOG_info    ("b"         , b);
+      p [0] = p [1] = p [2] = '\0';
+      DEBUG_INPT  yLOG_info    ("b"         , b);
+      b [0] = '\0';
+      ++b;
+      DEBUG_INPT  yLOG_info    ("b"         , b);
+      if (b [0] != '\0') {
+         strlcpy  (x_field, b, LEN_RECD);
+         l = strlen (x_field);
+         DEBUG_INPT  yLOG_value   ("l"         , l);
+         DEBUG_INPT  yLOG_delim   ("x_field"   , x_field);
+         /*---(process)------------------*/
+         rc = EXIM__import_content (b);
+         DEBUG_INPT  yLOG_value   ("content"   , rc);
+         DEBUG_INPT  yLOG_info    ("s_source"  , s_source);
+         /*---(update)-------------------------*/
+         rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
+         if (rc < 0) {
+            EXIM__import_fail ();
+            DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+            return rc;
          }
-         DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
       }
-      /*---(set destination)----------*/
-      EXIM__import_destsrc (x_col / 2, a_row);
-      /*---(process)------------------*/
-      rc = EXIM__import_content (p);
-      DEBUG_INPT   yLOG_value   ("content"   , rc);
-      DEBUG_INPT  yLOG_info    ("s_source"  , s_source);
-      /*---(update)-------------------------*/
-      rc = EXIM__import_one (s_dtab, s_dcol, s_drow, x_format, s_source);
-      if (rc < 0) {
-         EXIM__import_fail ();
-         DEBUG_INPT   yLOG_exit    (__FUNCTION__);
-         return rc;
-      }
-      /*> if (yMAP_mundo_current () >= s_mundos)  s_hist = YMAP_ADD;                     <* 
-       *> x_new = CELL_overwrite (s_hist, s_dtab, s_dcol, s_drow, s_source, x_format);   <* 
-       *> DEBUG_INPT  yLOG_point   ("x_new"     , x_new);                                <* 
-       *> s_hist = YMAP_ADD;                                                             <*/
       /*---(next)---------------------*/
       ++x_col;
-      p = strtok (NULL, q);
+      b = p + 3;
+      DEBUG_INPT  yLOG_info    ("b"         , b);
+      p = strstr (b, q);
+      DEBUG_INPT  yLOG_point   ("p"         , p);
    }
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
@@ -1165,104 +1183,20 @@ EXIM__import_native     (void)
    return 0;
 }
 
-/*> char         /+-> tbd --------------------------------[ ------ [fz.842.141.32]+/ /+-[01.0000.014.9]-+/ /+-[--.---.---.--]-+/   <* 
- *> REG__inpt_delims     (short a_row)                                                                                             <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
- *>    short       x_col       =    0;                                                                                             <* 
- *>    char       *p           = NULL;                                                                                             <* 
- *>    char       *s           = NULL;                                                                                             <* 
- *>    int         x_len       =    0;                                                                                             <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    /+---(parse first)-----------------+/                                                                                       <* 
- *>    p  = strtok_r (s_recd, s_q, &s);                                                                                            <* 
- *>    /+---(process cells)---------------+/                                                                                       <* 
- *>    while (p != NULL) {                                                                                                         <* 
- *>       /+---(read import data)---------+/                                                                                       <* 
- *>       DEBUG_INPT  yLOG_info    ("p (orig)"  , p);                                                                              <* 
- *>       x_len = strlen (p);                                                                                                      <* 
- *>       DEBUG_INPT  yLOG_value   ("x_len"     , x_len);                                                                          <* 
- *>       /+---(process)------------------+/                                                                                       <* 
- *>       if (s_style == 'c' && x_len >= 3)  p [0] = p [x_len - 1] = ' ';                                                          <* 
- *>       strltrim (p, ySTR_BOTH, LEN_RECD);                                                                                       <* 
- *>       DEBUG_INPT  yLOG_info    ("p (trim)"  , p);                                                                              <* 
- *>       x_len = strlen (p);                                                                                                      <* 
- *>       DEBUG_INPT  yLOG_value   ("x_len"     , x_len);                                                                          <* 
- *>       if (s_sizer == 'a')  REG__inpt_width (x_col, x_len);                                                                     <* 
- *>       strlencode   (p, ySTR_NORM, LEN_RECD);                                                                                   <* 
- *>       DEBUG_INPT  yLOG_info    ("p (new)"   , p);                                                                              <* 
- *>       DEBUG_INPT  yLOG_value   ("x_col"     , x_col);                                                                          <* 
- *>       REG__inpt_place  (x_col, a_row, p);                                                                                      <* 
- *>       /+---(parse next)---------------+/                                                                                       <* 
- *>       p  = strtok_r (NULL, s_q, &s);                                                                                           <* 
- *>       ++x_col;                                                                                                                 <* 
- *>    }                                                                                                                           <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
-/*> char         /+-> tbd --------------------------------[ ------ [ge.A42.132.77]+/ /+-[02.0000.013.!]-+/ /+-[--.---.---.--]-+/   <* 
- *> REG_inpt_driver      (char a_style)                                                                                            <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----+-----+-----+-----+-+/                                                                                    <* 
- *>    char        rce         =  -10;                                                                                             <* 
- *>    char        rc          =    0;                                                                                             <* 
- *>    short       x_row       =    0;                                                                                             <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_INPT   yLOG_enter   (__FUNCTION__);                                                                                   <* 
- *>    /+---(prepare)------------------------+/                                                                                    <* 
- *>    rc = EXIM__import_prep   (a_style);                                                                                         <* 
- *>    DEBUG_INPT   yLOG_value   ("prep rc"   , rc);                                                                               <* 
- *>    --rce;  if (rc < 0) {                                                                                                       <* 
- *>       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                                                                           <* 
- *>       return rce;                                                                                                              <* 
- *>    }                                                                                                                           <* 
- *>    rc = EXIM_mapping  ();                                                                                                      <* 
- *>    /+---(process lines)------------------+/                                                                                    <* 
- *>    while (1) {                                                                                                                 <* 
- *>       /+---(read)------------------------+/                                                                                    <* 
- *>       rc = EXIM_import__read ();                                                                                               <* 
- *>       if (rc >  0)  continue;                                                                                                  <* 
- *>       if (rc <  0)  break;                                                                                                     <* 
- *>       /+---(process cells)---------------+/                                                                                    <* 
- *>       DEBUG_INPT  yLOG_value   ("x_row"     , x_row);                                                                          <* 
- *>       /+---(check sizer)-----------------+/                                                                                    <* 
- *>       /+> if (strncmp (s_recd, "#<34"  , 4) == 0) {                                   <*                                       <* 
- *>        *>    REG__inpt_sizer ();                                                      <*                                       <* 
- *>        *>    continue;                                                                <*                                       <* 
- *>        *> }                                                                           <+/                                      <* 
- *>       /+---(handle values)---------------+/                                                                                    <* 
- *>       if (strchr ("Vv", s_style) != NULL) {                                                                                    <* 
- *>          EXIM_import__values  (x_row);                                                                                         <* 
- *>       } else {                                                                                                                 <* 
- *>          REG__inpt_delims  (x_row);                                                                                            <* 
- *>       }                                                                                                                        <* 
- *>       /+---(prepare for next)------------+/                                                                                    <* 
- *>       ++x_row;                                                                                                                 <* 
- *>    }                                                                                                                           <* 
- *>    /+---(wrap up)------------------------+/                                                                                    <* 
- *>    rc = EXIM_import__done ();                                                                                                  <* 
- *>    DEBUG_INPT   yLOG_value   ("done rc"   , rc);                                                                               <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    DEBUG_INPT   yLOG_exit    (__FUNCTION__);                                                                                   <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
-
 char         /*-> read an import record --------------[ leaf   [fe.A34.026.50]*/ /*-[01.0001.014.!]-*/ /*-[--.---.---.--]-*/
 EXIM__import_read       (void)
 {
    /*---(locals)-----+-----+-----+-----+-*/
    char        rce         =  -10;
    int         x_len       =    0;
+   char        x_del       =  '·';
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(read and clean)-----------------*/
    ++s_lines;
    DEBUG_INPT   yLOG_value   ("line"      , s_lines);
-   fgets (s_recd, LEN_RECD, s_clip);
-   --rce;  if (feof (s_clip))  {
+   fgets (s_recd, LEN_RECD, g_clip);
+   --rce;  if (feof (g_clip))  {
       DEBUG_INPT   yLOG_note    ("end of file reached");
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -1289,16 +1223,24 @@ EXIM__import_read       (void)
          case 's' : /* EXIM__import_bounds (); */   break;
          case 'b' :   EXIM__import_bounds ();       break;
          case 'x' :   EXIM__import_sizer  ();       break;
-         /*> case 'y' :   EXIM__import_sizer  ();       break;                        <*/
+                      /*> case 'y' :   EXIM__import_sizer  ();       break;                        <*/
          case 't' : /* EXIM__import_titles (); */   break;
          }
       }
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, -rce);
       return -rce;
    }
-   switch (s_recd [x_len - 1]) {
-   case '' :
-      if (strncmp (s_recd, "cell ", 6) == 0) {
+   DEBUG_INPT   yLOG_complex ("ready"     , "å%sæ", s_recd);
+   strldchg (s_recd, '·', ' ',  LEN_RECD);
+   DEBUG_INPT   yLOG_complex ("strldchg"  , "å%sæ", s_recd);
+   x_len = strlen (s_recd);
+   DEBUG_INPT   yLOG_value   ("x_len"     , x_len);
+   if (s_recd [x_len - 1] == ' ')  s_recd [x_len--] = '\0';
+   x_del = s_recd [x_len - 1];
+   DEBUG_INPT   yLOG_char    ("x_del"     , x_del);
+   switch (x_del) {
+   case '' : case '§' :
+      if (strncmp (s_recd, "cell          ", 15) == 0) {
          DEBUG_INPT   yLOG_note    ("native format detected");
          s_style = 'n';
       } else {
@@ -1312,7 +1254,7 @@ EXIM__import_read       (void)
       s_style = 'c';
       s_recd [x_len - 1] = '\0';
       break;
-   case '\t' :
+   case '\t': case 'Ú' :
       DEBUG_INPT   yLOG_note    ("tab delimited detected");
       s_style = 't';
       s_recd [x_len - 1] = '\0';
@@ -1398,13 +1340,198 @@ EXIM_import             (char a_style)
    return 0;
 }
 
+char
+EXIM__header            (FILE *f, char a_style)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_style     =  '·';
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(default)------------------------*/
+   s_style = '·';
+   x_style = a_style;
+   if (a_style == 0 || strchr ("-·", a_style) != NULL)  x_style = 'V';
+   /*---(defense)------------------------*/
+   DEBUG_OUTP   yLOG_char    ("x_style"   , x_style);
+   --rce;  if (strchr (EXIM_VALID, x_style) == NULL) {
+      DEBUG_OUTP   yLOG_note    ("style not valid");
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_OUTP   yLOG_point   ("f"         , f);
+   --rce;  if (f == NULL) {
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(save back)----------------------*/
+   s_style = x_style;
+   /*---(silent styles)------------------*/
+   if (x_style == 0 || strchr (EXIM_UPPER, x_style) == NULL) {
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(handle noisy styles)------------*/
+   fprintf (f, "#!%s\n", P_FULLPATH);
+   fprintf (f, "##   generated by %s\n", P_ONELINE);
+   fprintf (f, "#@ style     ");
+   --rce;  switch (x_style) {
+   case 'V' :  fprintf (f, "V = printable columnar values");  break;
+   case 'D' :  fprintf (f, "D = column delimited");           break;
+   case 'F' :  fprintf (f, "F = field delimited");            break;
+   case 'T' :  fprintf (f, "T = tab delimited");              break;
+   case 'C' :  fprintf (f, "C = comma separated values");     break;
+   case 'R' :  fprintf (f, "R = results/raw values");         break;
+   case 'S' :  fprintf (f, "S = source/contents");            break;
+   case 'N' :  fprintf (f, "N = native format");              break;
+   default  :
+               DEBUG_OUTP   yLOG_note    ("no header found for style");
+               s_style = '·';
+               DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+               return rce;
+   }
+   fprintf (f, "\n");
+   /*---(sizer)--------------------------*/
+   rc = EXIM__export_sizer ();
+   DEBUG_OUTP   yLOG_value   ("sizer"     , rc);
+   --rce;  if (rc < 0) {
+      s_style = '·';
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+EXIM__write_one         (FILE *f, char a_style, char a_tab, short a_col, short a_row)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tCELL      *x_curr      = NULL;
+   int         w           =    0;
+   char        x_source    [LEN_RECD]  = "";
+   char        x_modded    [LEN_RECD]  = "";
+   char        x_print     [LEN_RECD]  = "";
+   char        x_trim      [LEN_RECD]  = "";
+   char        x_label     [LEN_LABEL] = "";
+   char        t           [LEN_LABEL] = "";
+   int         l           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_OUTP   yLOG_point   ("f"         , f);
+   --rce;  if (f == NULL) {
+      DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get cell)-----------------------*/
+   x_curr  = LOC_cell_at_loc (a_tab, a_col, a_row);
+   DEBUG_OUTP   yLOG_complex ("x_curr"    , "%2dt, %3dc, %4dr, %p", a_tab, a_col, a_row, x_curr);
+   /*---(fill in blank cells)------------*/
+   if (x_curr == NULL) {
+      DEBUG_OUTP   yLOG_note    ("NULL cell");
+      w = COL_size (a_tab, a_col);
+      switch (a_style) {
+      case 'V' :             fprintf (f, "%*.*s", w, w, YSTR_EMPTY);       break;
+      case 'v' :             fprintf (f, "%*.*s", w - 1, w - 1, YSTR_EMPTY);  break;
+      case 'd' : case 'D' :  fprintf (f, "%*.*s··", w - 1, w - 1, YSTR_EMPTY);   break;
+      case 'f' : case 'F' :  fprintf (f, "²··");                         break;
+      case 'c' : case 'C' :  fprintf (f, "\"\",·");                        break;
+      case 't' : case 'T' :  fprintf (f, "²·\t·");                         break;
+      case 'r' : case 'R' :  fprintf (f, "²··");                         break;
+      case 's' : case 'S' :  fprintf (f, "²··");                         break;
+      case 'n' : case 'N' :  str4gyges (a_tab, a_col, a_row, 0, 0, t, YSTR_LEGAL);
+                             strlpad (t, x_label, '.', '<', 11);
+                             fprintf (f, "cell··········%-10.10s··??0--··\n"  , x_label);
+                             break;
+      }
+      DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(write filled cells)-------------*/
+   DEBUG_OUTP   yLOG_info    ("cell"      , x_curr->label);
+   /*---(get source)---------------------*/
+   if (x_curr->source != NULL) {
+      DEBUG_OUTP   yLOG_note    ("convert source string");
+      strlcpy    (x_source, x_curr->source, LEN_RECD);
+      strldecode (x_source, LEN_RECD);
+   } else {
+      DEBUG_OUTP   yLOG_note    ("source is NULL");
+   }
+   DEBUG_OUTP   yLOG_info    ("source"    , x_source);
+   /*---(get modded)---------------------*/
+   if (strchr (YCALC_GROUP_NUM, x_curr->type) != NULL) {
+      sprintf (x_modded, "%lf", x_curr->v_num);
+   } else {
+      if (x_curr->v_str != NULL)   strlcpy (x_modded, x_curr->v_str , LEN_RECD);
+      else                         strlcpy (x_modded, x_curr->source, LEN_RECD);
+   }
+   strldecode    (x_modded, LEN_RECD);
+   /*---(get printable)------------------*/
+   if (x_curr->print != NULL) {
+      DEBUG_OUTP   yLOG_note    ("convert printable");
+      strlcpy    (x_print, x_curr->print, LEN_RECD);
+      strldecode (x_print, LEN_RECD);
+      strlcpy    (x_trim , x_print  , LEN_RECD);
+      strltrim   (x_trim , ySTR_BOTH, LEN_RECD);
+   } else {
+      DEBUG_OUTP   yLOG_note    ("printable is NULL");
+   }
+   /*---(output)-------------------------*/
+   DEBUG_OUTP   yLOG_info    ("x_print"   , x_print);
+   DEBUG_OUTP   yLOG_info    ("x_trim"    , x_trim);
+   DEBUG_OUTP   yLOG_info    ("modified"  , x_modded);
+   /*---(handle)-------------------------*/
+   switch (a_style) {
+   case 'v' :
+      l = strlen (x_print);
+      x_print [l - 1] = '\0';
+      fprintf (f, "%s"        , x_print);
+      break;
+   case 'V' :
+      fprintf (f, "%s"        , x_print);
+      break;
+   case 'd' : case 'D' :
+      l = strlen (x_print);
+      x_print [l - 1] = '\0';
+      fprintf (f, "%s··"    , x_print);
+      break;
+   case 'f' : case 'F' :
+      fprintf (f, "%s··"    , x_trim);
+      break;
+   case 'c' : case 'C' :
+      fprintf (f, "\"%s\",·"  , x_trim);
+      break;
+   case 't' : case 'T' :
+      fprintf (f, "%s·\t·"    , x_trim);
+      break;
+   case 'r' : case 'R' :
+      fprintf (f, "%s··"    , x_modded);
+      break;
+   case 's' : case 'S' :
+      fprintf (f, "%s··"    , x_source);
+      break;
+   case 'n' : case 'N' :
+      strlpad (x_curr->label, x_label, '.', '<', 11);
+      fprintf (f, "cell··········%-10.10s··"  , x_label);
+      fprintf (f, "%c%c%c%c%c··"      , x_curr->align, x_curr->format, x_curr->decs, x_curr->unit, x_curr->five);
+      fprintf (f, "%s·\n"   , x_source);
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP   yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
 char         /*-> tbd --------------------------------[ ------ [ge.RE5.1E2.D3]*/ /*-[05.0000.013.!]-*/ /*-[--.---.---.--]-*/
 EXIM_export             (char a_style)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
    char        rc          = 0;
-   char       *x_valid     = "vdfctrsnVDFCTRSN";
    FILE       *f           = NULL;
    tCELL      *x_curr      = NULL;
    ushort      x_tab       = 0;
@@ -1421,147 +1548,48 @@ EXIM_export             (char a_style)
    int         t           = 0;
    /*---(header)-------------------------*/
    DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_OUTP   yLOG_char    ("a_style"   , a_style);
-   DEBUG_OUTP   yLOG_info    ("x_valid"   , x_valid);
-   --rce;  if (strchr (x_valid, a_style) == NULL) {
-      DEBUG_OUTP   yLOG_note    ("style not valid");
+   /*---(open output file)---------------*/
+   rc = EXIM__open ('w');
+   DEBUG_OUTP   yLOG_value   ("open"      , rc);
+   --rce;  if (rc < 0) {
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(open output file)---------------*/
-   rc = EXIM__open ('w');
+   /*---(header)-------------------------*/
+   rc = EXIM__header (g_clip, a_style);
+   DEBUG_OUTP   yLOG_value   ("header"    , rc);
    --rce;  if (rc < 0) {
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare)------------------------*/
-   s_style = a_style;
-   if (strchr ("VDFCTRSN", s_style) != NULL) {
-      fprintf (s_clip, "#!%s\n", P_FULLPATH);
-      fprintf (s_clip, "##   generated by %s\n", P_ONELINE);
-      fprintf (s_clip, "#@ style     ");
-      switch (s_style) {
-      case 'V' :  fprintf (s_clip, "V = printable columnar values");  break;
-      case 'D' :  fprintf (s_clip, "D = column delimited");           break;
-      case 'F' :  fprintf (s_clip, "F = field delimited");            break;
-      case 'T' :  fprintf (s_clip, "T = tab delimited");              break;
-      case 'C' :  fprintf (s_clip, "C = comma separated values");     break;
-      case 'R' :  fprintf (s_clip, "R = results/raw values");         break;
-      case 'S' :  fprintf (s_clip, "S = source/contents");            break;
-      case 'N' :  fprintf (s_clip, "N = native format");              break;
-      }
-      fprintf (s_clip, "\n");
-      EXIM__export_sizer ();
-   }
-   /*> if (strchr ("VDFCTN", s_style) != NULL) {                                      <* 
-    *> }                                                                              <*/
-   /*---(process independent cells)------*/
    rc      = yMAP_visu_first (&x_tab, &x_col, &x_row, NULL);
-   x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    x_rowsave = x_row;
+   /*---(walk cells)---------------------*/
    while (rc >= 0) {
-      DEBUG_OUTP   yLOG_point   ("x_curr"    , x_curr);
       ++c;
       /*---(look for line break)---------*/
-      if (strchr ("vdfctrs·VDFCTRS", s_style) != NULL && x_row != x_rowsave) {
+      if (strchr ("Nn", s_style) == NULL && x_row != x_rowsave) {
          DEBUG_OUTP   yLOG_note    ("line break");
-         fprintf (s_clip, "\n");
+         fprintf (g_clip, "\n");
          ++t;
-      }
-      /*---(fill in blank cells)---------*/
-      if (x_curr == NULL) {
-         DEBUG_OUTP   yLOG_note    ("NULL cell");
-         w = COL_size (x_tab, x_col);
-         switch (s_style) {
-         case 'v' : case 'V' :  fprintf (s_clip, "%*.*s", w, w, YSTR_EMPTY);    break;
-         case 'd' : case 'D' :  fprintf (s_clip, "%*.*s", w, w, YSTR_EMPTY);  break;
-         case 'f' : case 'F' :  fprintf (s_clip, " ");                        break;
-         case 'c' : case 'C' :  fprintf (s_clip, "\"\",");                      break;
-         case 't' : case 'T' :  fprintf (s_clip, " \t");                        break;
-         case 'r' : case 'R' :  fprintf (s_clip, " ");                        break;
-         case 's' : case 'S' :  fprintf (s_clip, " ");                        break;
-         }
-      }
-      /*---(write filled cells)----------*/
-      else {
-         DEBUG_OUTP   yLOG_info    ("cell"      , x_curr->label);
-         /*---(source)-------------------*/
-         if (x_curr->source != NULL) {
-            DEBUG_OUTP   yLOG_note    ("convert source string");
-            strlcpy      (x_source, x_curr->source, LEN_RECD);
-            strldecode   (x_source, LEN_RECD);
-         } else {
-            DEBUG_OUTP   yLOG_note    ("source is NULL");
-         }
-         DEBUG_OUTP   yLOG_info    ("source"    , x_source);
-         /*---(modded string)------------*/
-         if (strchr (YCALC_GROUP_NUM, x_curr->type) != NULL) {
-            sprintf (x_modded, "%lf", x_curr->v_num);
-         } else {
-            if (x_curr->v_str != NULL)   strlcpy (x_modded, x_curr->v_str , LEN_RECD);
-            else                         strlcpy (x_modded, x_curr->source, LEN_RECD);
-         }
-         strldecode   (x_modded, LEN_RECD);
-         /*---(printable)----------------*/
-         if (x_curr->print != NULL) {
-            DEBUG_OUTP   yLOG_note    ("convert printable");
-            strlcpy  (x_print , x_curr->print, LEN_RECD);
-            strldecode   (x_print, LEN_RECD);
-            strlcpy  (x_trim  , x_print, LEN_RECD);
-         } else {
-            DEBUG_OUTP   yLOG_note    ("printable is NULL");
-         }
-         /*---(trimmed printable)--------*/
-         strltrim (x_trim, ySTR_BOTH, LEN_RECD);
-         DEBUG_OUTP   yLOG_info    ("x_print"   , x_print);
-         DEBUG_OUTP   yLOG_info    ("x_trim"    , x_trim);
-         DEBUG_OUTP   yLOG_info    ("modified"  , x_modded);
-         switch (s_style) {
-         case 'v' : case 'V' :
-            fprintf (s_clip, "%s"                  , x_print);
-            break;
-         case 'd' : case 'D' :
-            fprintf (s_clip, "%s"                , x_print);
-            break;
-         case 'f' : case 'F' :
-            fprintf (s_clip, "%s"                , x_trim);
-            break;
-         case 'c' : case 'C' :
-            fprintf (s_clip, "\"%s\","             , x_trim);
-            break;
-         case 't' : case 'T' :
-            fprintf (s_clip, "%s\t"                , x_trim);
-            break;
-         case 'r' : case 'R' :
-            fprintf (s_clip, "%s"                , x_modded);
-            break;
-         case 's' : case 'S' :
-            fprintf (s_clip, "%s"                , x_source);
-            break;
-         case 'n' : case 'N' :
-            fprintf (s_clip, "cell  %-8.8s  "  , x_curr->label);
-            fprintf (s_clip, "%c%c%c%c-  "       , x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
-            fprintf (s_clip, "%s \n"             , x_source);
-            ++t;
-            break;
-         }
-         ++o;
-      }
+      } else if (strchr ("Nn", s_style) != NULL)  ++t;
+      rc = EXIM__write_one  (g_clip, s_style, x_tab, x_col, x_row);
+      if (rc == 1)  ++o;
       x_rowsave = x_row;
       rc      = yMAP_visu_next  (&x_tab, &x_col, &x_row, NULL);
-      x_curr  = LOC_cell_at_loc (x_tab, x_col, x_row);
    };
    /*---(close file)---------------------*/
    DEBUG_OUTP   yLOG_note    ("closing file");
    if (strchr ("Nn", s_style) == NULL) {
-      fprintf (s_clip, "\n");
+      fprintf (g_clip, "\n");
       ++t;
    }
-   if (strchr ("VDFCTRSN", s_style) != NULL) {
-      fprintf (s_clip, "## complete, finito, done.  %d cells, %d occupied, %d lines\n", c, o, t);
+   if (strchr (EXIM_UPPER, s_style) != NULL) {
+      fprintf (g_clip, "## complete, finito, done.  %d cells, %d occupied, %d lines\n", c, o, t);
    }
    rc = EXIM__close ();
+   DEBUG_OUTP   yLOG_value   ("close"     , rc);
    --rce;  if (rc < 0) {
       DEBUG_OUTP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -1698,14 +1726,14 @@ FILE__unit              (char *a_question, int a_ref)
    if      (strcmp (a_question, "bounds"    )    == 0) {
       snprintf (unit_answer, LEN_FULL, "FILE bounds      : %4du  %4dx  %4dy", s_uorig, s_xorig, s_yorig);
    }
-   if      (strcmp (a_question, "sizer"     )    == 0) {
+   else if (strcmp (a_question, "sizer"     )    == 0) {
       for (i = 0; i < s_npos; ++i) {
          sprintf (t, "%5d%c"   , s_wide [i], s_xsep [i]);
          strlcat (s, t, LEN_RECD);
       }
       snprintf (unit_answer, LEN_FULL, "FILE sizer  (%2d) :%s", s_npos, s);
    }
-   if      (strcmp (a_question, "exact"     )    == 0) {
+   else if (strcmp (a_question, "exact"     )    == 0) {
       for (i = 0; i < s_npos; ++i) {
          sprintf (t, "%5d·"   , s_beg [i]);
          strlcat (s, t, LEN_RECD);

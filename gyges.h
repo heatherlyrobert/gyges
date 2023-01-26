@@ -15,9 +15,9 @@
 #define     P_SUBJECT   "wicked technical spreadsheet"
 #define     P_PURPOSE   "technical, fullsome, aesthetic, and keyboard-centric spreadsheet"
 /*········· ··········· ´·····························´········································*/
-#define     P_NAMESAKE  "gyges-hecatoncheires (hundred-handed)"
+#define     P_NAMESAKE  "gyges-hekatonkheires (hundred-handed)"
 #define     P_PRONOUNCE ""
-#define     P_HERITAGE  "gyges, the furious, is one of the three hecatoncheires"
+#define     P_HERITAGE  "gyges, the furious, is one of the three hekatonkheires"
 #define     P_BRIEFLY   "one-hundred handed monster"
 #define     P_IMAGERY   "ugly, impossibly powerful, one-hundred handed, fifty headed giant"
 #define     P_REASON    "gyges and spreadsheets are both impossibly scary and complex"
@@ -48,8 +48,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7c"
-#define     P_VERTXT    "fixed basic unit tests after huge library updates"
+#define     P_VERNUM    "3.7d"
+#define     P_VERTXT    "fixed file unit tests after lots of tweaks to process"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -584,6 +584,7 @@ struct cCELL {
    uchar       format;       /* formatting/filler style                       */
    uchar       decs;         /* number of decimals to be shown                */
    uchar       unit;         /* units for conversion                          */
+   uchar       five;         /* fifth characteristic (tbd)                    */
    uchar      *print;        /* printable version of the cell                 */
    uchar       note;         /* note for error, searching, etc                */
    /*---(calculation)--------------------*/
@@ -870,6 +871,7 @@ extern int     save;
 
 #define     FILE_BUF    "/var/run/buffer.gyges"
 #define     FILE_EXIM   "/root/z_gehye/vi_clip.txt"
+extern FILE   *g_clip;
 
 /*> extern  char        f_maker     [LEN_RECD];                                       <*/
 
@@ -1111,6 +1113,9 @@ char      REG__paste_main      (char a_clear, char a_reqs, char a_pros, char a_i
 char      REG_paste            (char a_type);
 
 /*---(data import)----------*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        EXIM__open              (char a_dir);
+char        EXIM__close             (void);
 char      REG__inpt_prep       (char a_style);
 char      EXIM_mapping         (void);
 char      REG__inpt_read       (void);
