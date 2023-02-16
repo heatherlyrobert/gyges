@@ -456,6 +456,7 @@ PROG_dawn          (void)
    yVIEW_switch_add (YVIEW_STATUS, "cell"   , "", CURS_status_cell    , "details of current cell"                    );
    yVIEW_switch_add (YVIEW_STATUS, "deps"   , "", CURS_status_deps    , "details of current cell dependencies"       );
    yVIEW_switch_add (YVIEW_STATUS, "rpn"    , "", CURS_status_rpn     , "details of current cell rpn notation"       );
+   yVIEW_switch_add (YVIEW_STATUS, "vars"   , "", yCALC_vars_status   , "variable inventory statistics"              );
    /*> yVIEW_switch_add (YVIEW_STATUS, "mundo"  , CURS_status_history , "change history for debugging"               );   <*/
    yVIEW_switch_add (YVIEW_STATUS, "error"  , "", CURS_status_error   , "details on recent errors"                   );
    yVIEW_switch_add (YVIEW_STATUS, "detail" , "", CURS_status_detail  , "details on recent errors"                   );

@@ -776,6 +776,10 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("9_form");
          else                                           yVICURSES_by_name ("9_dang");
       }
+      else if (a_curr->type == (uchar) YCALC_DATA_MATH) {
+         if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("9_form");
+         else                                           yVICURSES_by_name ("9_dang");
+      }
       else if (a_curr->type == YCALC_DATA_NLIKE)        yVICURSES_by_name ("9_like");
       /*---(strings)---------------------*/
       else if (a_curr->type == YCALC_DATA_STR  ) {
@@ -983,6 +987,7 @@ DRAW_init          (void)
    /*> yVIEW_simple   (YVIEW_BUFFER   , 0, DRAW_buffer );                    <*/
    /*> yCMD_direct   (":layout gyges");                                               <*/
    yCMD_add      (YVIHUB_M_VIEW  , "coloration"  , "col" , "s"    , DRAW_coloration            , "" );
+   yCMD_add      (YVIHUB_M_VIEW  , "var"         , ""    , "s"    , LOC_variable               , "" );
    /*---(get window size)-------------*/
    /*> CURS_size   ();                                                                <*/
    /*---(colors)----------------------*/

@@ -1,8 +1,4 @@
 /*===============================[[ beg code ]]===============================*/
-/* htag ::  714,  326 docs 36%,  386 code 72%,  326 othr 21%,  304 slocl      */
-/* htag :  714,  326 docs (36%),  386 code (72%),  326 othr (21%),  304 slocl */
-
-
 
 /*===[[ HEADER BEG ]]=========================================================*/
 /*                      ´·········1·········2·········3·········4·········5·········6·········7*/
@@ -48,8 +44,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7d"
-#define     P_VERTXT    "fixed file unit tests after lots of tweaks to process"
+#define     P_VERNUM    "3.7e"
+#define     P_VERTXT    "updates to support sweet yRPN, yCALC operator work"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1354,6 +1350,7 @@ char*       HIST__unit         (char *a_question, int a_ref);
 
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(program)-------------------*/
+char        LOC_variable            (char *a_name);
 char        LOC_init             /* shoot  0----- */  (void);
 char        LOC_purge            /* stem   0----- */  (void);
 char        LOC_wrap             /* shoot  0----- */  (void);

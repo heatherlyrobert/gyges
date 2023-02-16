@@ -5,6 +5,24 @@
 static char    s_label     [LEN_RECD]   = "";
 
 
+char
+LOC_variable            (char *a_name)
+{
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_target    [LEN_LABEL] = "";
+   char        x_label     [LEN_LABEL] = "";
+   int         u, x, y;
+   --rce;  if (a_name == NULL)  return rce;
+   rc = yCALC_variable (a_name, x_target, x_label);
+   --rce;  if (rc < 0)  return rce;
+   rc = str2gyges  (x_target, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+   --rce;  if (rc < 0)  return rce;
+   rc = yMAP_jump (u, x, y, 0);
+   rce;  if (rc < 0)  return rce;
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/

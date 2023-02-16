@@ -1,0 +1,159 @@
+.TH gyges_vars· 6 2013-Jan "linux" "introduction to variables"
+
+.SH NAME
+gyges - technical, fullsome, aesthetic, and keboard-centric spreadsheet
+
+.SH PATRON
+gyges-hekatonkheires (hundred-handed) powerful greek giant
+
+.SH IMAGERY
+ugly, impossibly powerful, one-hundred handed, fifty headed giant
+
+.SH IMAGERY (see HERITAGE at bottom for more)
+ugly, impossibly powerful, one-hundred handed, fifty headed giant
+
+.SH SUMMARY
+gyges is a complete desktop spreedsheet replacement with extensive functions,
+operators, and variables; dependency-graph calculations; macros and scripts;
+with one-hundred precent vi-keys keyboard control.
+
+.SH SERIOUS DISCLAIMER
+i am a crazy, naive, dog-fooding c programmer.  i am not trying to be best.
+i optimize for learning, transparency, and ease of maintenance.  if i wanted
+awesome, fast, and cutting-edge, i'd use yours ;)
+
+.SH DOCUMENTATION FILES (see also)
+.nf  
+· gyges·(1)          interfacing applications with library
+· gyges·(5)          user files, data streams, and configuration
+· gyges·(6)          interactive feel, usage, and navigation
+Ï gyges_vars·(6)·····introduction to variables
+· gyges·(7)          decision rationale, scope, and objectives
+
+.SH FILE PURPOSE
+introduction to the value, classification, creation, appearance, use, support,
+and removal of variables within the gyges spreedsheet
+
+.SH TABLE OF CONTENTS
+.nf  
+a) value             why use variables?
+b) appearance        what they look like
+c) naming            contraints in naming
+d) creation          creating and destroying variables
+e) usage             using in formulas
+f) vs functions      naming vs function names
+g) system            special classes of variables
+h) errors            errors associated with variables
+i) support           couple of helpers
+
+.SH A) VALUE (intuitivness)
+variables are nothing more than an alternative way of referring to a cell.
+their usage is one-hundred percent optional.  anywhere a variable can be used,
+the actual cell address can be used instead.
+
+the idea is to make using a cell's contents more intiutive within formulas,
+macros, and scripts.  in addition to providing a visible label.
+
+.SH B) APPEARANCE
+variable names appear in a cell next to the target value -- either left (Ö),
+right (×), above (Ô), or below (Õ).  they start with an arrow to indicate
+where the target is and are highlighted in a specific color (bright yellow). a
+space or spaces may follow the arrow if that helps clarity.
+
+   example      Ö·a  10
+
+this means when you refer to 'a', it is actually the cell to the right.
+variable labels can be formatted with left, center, or right alignments to
+help clarity (cosmetic only).
+
+.SH C) NAMING
+normal variables should be 1 to 5 characters, but can be up to 19 characters.
+longer names are cumbersome and defeat the intuitiveness factor.  start with
+a letter [a-ZA-Z] and then use letters, numbers, or underscores [a-ZA-Z0-9_].
+the final letter can be a subscript [ÀÁÂÃÄÅ].
+
+greek letter variables can 1 to 2 characters.  start with a greek letter
+[è-ÿ] and possibly follow with a subscript [ÀÁÂÃÄÅ]
+
+.SH D) CREATION
+variables are solely interactive.  i really don't like hidden data and
+mechanisms.  creating a variable is done by putting a specific format into
+a cell:  an arrow follow by the name.  that's it.
+
+use 's' to create cell contents, start with an arrow, optionally a space,
+then the name, and press enter.  arrows are entered using...
+
+   example     µ_l  Ö       µ_h  ×       µ_j  Õ       µ_k  Ô
+
+to remove a variable, just delete the label and it is automatically
+disconnected.
+
+BUT, all the formulas using that variable will automatically change to error
+status, displaying "#e/var" meaning a variable is not found.  if you recreate
+the variable later, the using cells will automatically pick up the new location.
+
+if you attempt to use an existing variables name again, the label will display
+"#b/dup" meaning duplicate variable attempt.  no harm, the existing variable
+remains.
+
+.SH E) USAGE
+simply replace address references with the variable name as desired.  remember
+variable names are the equivalent of absoulte references, so copying formulas
+from place-to-place will always refer to the same variable.
+
+   example     = sqrt (sqr (0d3) + sqr (0f6))
+
+   can become  = (xÆ + yÆ)Î
+
+ALSO, pointer indirection is done on variable names the same as with addresses.
+
+   example     = *Mh21
+
+   can become  = *range
+
+FUN EXAMPLE with bezier curve formulas.  not perfect, but fun.
+
+   example    = ¸1-t¹ÇxÀ + 3t¸1-t¹ÆxÁ + 3tÆ¸1-t¹xÂ + tÇxÃ
+   note       ¸ is a pure-math (, never interpreted as a function
+
+.SH F) VS FUNCTIONS
+since functions are always followed by an open parenthesis and variables
+are not, variables are allowed to have the same names as functions without
+causing confusion.  this also allows function names to be greatly abbreviated
+without limiting variable name options.
+
+   example     = x + x (5c10)   means x plus x-coord of cell 5c10
+
+.SH G) SYSTEM VARIABLES
+there are several kinds of system-provided variables.
+
+macro variables starting with (@) are a reference to the keyboard macros
+actual keystrokes and look like @a.  there are 60 macro names [0-9a-zè-ÿ].
+
+local variables starting with (ç) help support the agrios macro system.
+ç0 -ç9 are parameters, ça -çz are locals, ç? is the return code, etc.
+
+special variables, the mose important of which is (•) which is the the current
+cell address.
+
+.SH H) errors
+if a cell refers to a non-existant variable it will show "#e/var" and tell
+you the variable name.
+   example   #e/var (j)      means variable name (j) not found
+
+if you attempt to create a duplicate variables name, the label cell will show
+"#b/dup" and tell you the variable name.
+   example   #b/dup (a)      means variable name (a) already exists
+
+.SH I) support
+there is a status bar with variable counts and information.
+   type   :status vars¦      changes the status bar
+
+there is a variable inventory dump to check troubles
+   type   :dump vars¦        puts the inventory in the clipboard
+
+and, to go directly to a variables location
+   type   :var a¦            will take to directly to variable (a)
+
+
+
