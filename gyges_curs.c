@@ -786,10 +786,10 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       /*---(strings)---------------------*/
       else if (a_curr->type == YCALC_DATA_STR  ) {
          /*---(agrios)----------------------*/
-         if      (strchr (a_curr->source, (uchar) 'š') != NULL)    yVICURSES_by_name ("a_forc");
+         if      (strchr (a_curr->source, (uchar) 'Û') != NULL)    yVICURSES_by_name ("a_forc");
          else if (strchr (a_curr->source, (uchar) 'Ù') != NULL)    yVICURSES_by_name ("a_forc");
          else if (strchr (a_curr->source, (uchar) ' ') != NULL)    yVICURSES_by_name ("a_call");
-         else if (strchr (a_curr->source, (uchar) '™') != NULL)    yVICURSES_by_name ("a_call");
+         else if (strchr (a_curr->source, (uchar) 'Ú') != NULL)    yVICURSES_by_name ("a_call");
          else if (strchr (a_curr->source, (uchar) 'Ø') != NULL)    yVICURSES_by_name ("a_call");
          else if (a_curr->source [0] == ' ' && a_curr->source [1] == '(' && a_curr->source [5] == ')') {
             if      (strcmp (a_curr->source, " (cur)") == 0) yVICURSES_by_name ("v_curr");
