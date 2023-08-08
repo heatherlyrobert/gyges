@@ -1,0 +1,1505 @@
+##
+ºµre5»
+
+º·:macro è=µ[·m0··:note #µn··0·FwLLLµn·l·Fmlµn·l·FWllµn·l·fm·0·'0·µ]¦·»
+
+{
+   º:0p29¦··+15¦··l+27¦··l+32¦··l+128¦··l-4¦··»
+   º·:j1¦··Fmhh¦·l··Fwll¦··»
+}
+º:0a1¦»
+
+##:skip¦
+
+##===[[ OVERVIEW ]]============================================================#
+
+º·:a10¦··»
+º·····squick tour of functions available in gyges¦···f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sas well as some of the related concepts¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··srequired to demonstrate them¦·················f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·3j··sapproximately 7 min duration¦·················f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·3j··sthese functions supplement the build-in¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··soperator set for more-complicated or¦·········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··slesser-used actions¦··························f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·3j··ssince i use gyges like others use python¦·····f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sor perl, i have included extra abilities¦·····f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sfor manipulating data and text¦···············f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##:unskip¦
+
+º·:k1¦···»
+º·3h····sconditional¦······f<··ls<¦···2l······»
+º··h····sƒ¦··l··srelational¦········f<········»
+º··h·j··s¦··l··#"   if,ifs,˜,ßµsµsµs"¦·······»
+
+º··h·j··s¦··l··slogical¦···········f<········»
+º··h·j··s„¦··l··#"   and,or,xorµsµsµs"¦·······»
+
+
+º·3h·j··strigonometry¦·····f<··ls<¦···2l······»
+º··h····sƒ¦··l··splanar trig¦·······f<········»
+º··h·j··s¦··l··#"   sin,cos,tanµsµsµs"¦······»
+
+º··h·j··s¦··l··skinematics¦········f<········»
+º··h·j··s¦··l··#"   source from yKINE"¦······»
+
+º··h·j··s¦··l··sspherical trig¦····f<········»
+º··h·j··s„¦··l··#"   under development"¦······»
+
+
+º·3h·j··sstring handling¦··f<··ls<¦···2l······»
+º··h····sƒ¦··l··sparsing¦···········f<········»
+º··h·j··s¦··l··#"   len,left,midµsµsµs"¦·····»
+
+º··h·j··s¦··l··strimming¦··········f<········»
+º··h·j··s¦··l··#"   trim,strimµsµsµs"¦·······»
+
+º··h·j··s¦··l··spadding¦···········f<········»
+º··h·j··s¦··l··#"   lpad,lppadµsµsµs"¦·······»
+
+º··h·j··s¦··l··sconverting¦········f<········»
+º··h·j··s¦··l··#"   lower,upperµsµsµs"¦······»
+
+º··h·j··s¦··l··scleaning¦··········f<········»
+º··h·j··s„¦··l··#"   alpha,sevenµsµsµs"¦······»
+
+
+º·3h·j··scell metadata¦····f<··ls<¦···2l······»
+º··h····sƒ¦··l··scell types¦········f<········»
+º··h·j··s¦··l··#"   blank,calcµsµsµs"¦·······»
+
+º··h·j··s¦··l··scell info¦·········f<········»
+º··h·j··s¦··l··#"   u,x,y,labelµsµsµs"¦······»
+
+º··h·j··s¦··l··scell address¦······f<········»
+º··h·j··s„¦··l··#"   ru,ax,absaµsµsµs"¦·······»
+
+
+º·3h·j··sdata ranges¦······f<··ls<¦···2l······»
+º··h····sƒ¦··l···srange info¦········f<·······»
+º··h·j··s¦··l···#"   us,xs,ysµsµsµs"¦········»
+
+º··h·j··s¦··l···srange types¦·······f<·······»
+º··h·j··s¦··l···#"   blanks,calcsµsµsµs"¦····»
+
+º··h·j··s¦··l···sstatistics¦········f<·······»
+º··h·j··s¦··l···#"   sum,mean,sdevµsµsµs"¦···»
+
+º··h·j··s¦··l···sdata lookup¦·······f<·······»
+º··h·j··s„¦··l···#"   hl,vl,rl,clµsµsµs"¦·····»
+
+
+º·3h·j··ssupporting¦·······f<··ls<¦···2l······»
+º··h····sƒ¦··l···sformula auditing¦··f<·······»
+º··h·j··s¦··l···#"   f,r,nproµsµsµs"¦········»
+
+º··h·j··s¦··l···sdate and time¦·····f<·······»
+º··h·j··s„¦··l···#"   now,days,dvµsµsµs"¦·····»
+
+##:skip¦
+
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+
+##===[[ COLORATION ]]==========================================================#
+º·®a1..i38±·x·»
+
+º·:b2¦···sspreadsheets are versitle, powerful, and forgiving¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º···j····sBUT, as a result, wickedly deceptive and dangerous¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º···j····sgyges uses automatic cell coloration to be more¦·······f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º···j····sinformative, traceable, and debuggable¦················f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:a23¦·stxt¦········f>··l·sstring literal¦············ls<¦··ls<¦··»
+º·0··j··#a23©"+"¦····f>··l·sstring formula¦············ls<¦··ls<¦··»
+º·0··j··s~`k¦¦·······f>··l·sformula reused/like¦·······ls<¦··ls<¦··»
+
+º·0·2j··+42¦·········f>··l·snumeric literal¦···········ls<¦··ls<¦··»
+º·0··j··=`k¦+15¦·····f>··l·snumeric formula¦···········ls<¦··ls<¦··»
+º·0··j··s~`k¦¦·······f>··l·sformula reused/like¦·······ls<¦··ls<¦··»
+
+º·0·2j··s&a37¦·······f>··l·saddress pointer¦···········ls<¦··ls<¦··»
+º·0··j··s&a37..a37¦··f>··l·srange pointer¦·············ls<¦··ls<¦··»
+º·0··j··s!a37¦·······f>··l·scalculated pointer¦········ls<¦··ls<¦··»
+º·0··j··sÖname¦······f>··l·svariable assignment¦·······ls<¦··ls<¦··»
+
+º·0·2j··=p29+q29+r29+s29+t29+15+10¦·f>·l·swarning, complex¦·ls<¦··ls<¦··»
+º·0··j···············f>··l·sblank or empty¦············ls<¦··ls<¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:e24¦·s (cur)¦····l·s current location¦·········ls<¦··ls<¦··3h»
+
+º···2j··s (req)¦····l·s requires value from¦······ls<¦··ls<¦··3h»
+º· ··j··s (pro)¦····l·s provides value to¦········ls<¦··ls<¦··3h»
+
+º···2j··s (lik)¦····l·s imitates formula from¦····ls<¦··ls<¦··3h»
+º····j··s (cop)¦····l·s reuses/like current¦······ls<¦··ls<¦··3h»
+
+º···2j··s (roo)¦····l·s root of selection¦········ls<¦··ls<¦··3h»
+º····j··s (fil)¦····l·s all other selected¦·······ls<¦··ls<¦··3h»
+
+º···2j··s (err)¦····l·s contains an error¦········ls<¦··ls<¦··3h»
+º:e24¦»
+
+##---(line titles)-----------#
+º:a10¦»
+º··2j····snumber¦ ····f>·»
+º··2j····sstring¦ ····f>·»
+
+##---(literals)--------------#
+º:b10¦»
+º·····slit¦········f>·»
+º·2j··sÕ¦··f|·»
+º·l···stype "+125µn" to¦······f|··ls<¦··ls<¦··ls<¦··3h»
+º·j···senter number here¦·····f|··ls<¦··ls<¦··ls<¦··3h»
+º·hk·» Ï
++125¦······f>··Ï
+º·l··v··j·3l··x··h»
+
+º·2j··sÕ¦··f|·»
+º·l···stype "sabcµn" to¦······f|··ls<¦··ls<¦··ls<¦··3h»
+º·j···senter text here¦·······f|··ls<¦··ls<¦··ls<¦··3h»
+º·hk·» Ï
+sabc¦······f>··Ï
+º·l··v··j·3l··x··h»
+
+##---(formulas)--------------#
+º:c10¦»
+º·····sform¦·······f>·»
+º·2j··sÕ¦··f|·»
+º·l···stype "=c12+10µn" to¦···f|··ls<¦··ls<¦··ls<¦··3h»
+º·j···senter numeric formula¦·f|··ls<¦··ls<¦··ls<¦··3h»
+º·hk·» Ï
+=b12+10¦···f>··Ï
+º·l··v··j·3l··x··h»
+
+º·2j··sÕ¦··f|·»
+º·l···stype "#c14©"+"µn" to¦··f|··ls<¦··ls<¦··ls<¦··3h»
+º·j···senter string formula¦··f|··ls<¦··ls<¦··ls<¦··3h»
+º·hk·» Ï
+#b14©"+"¦··f>··Ï
+º·l··v··j·3l··x··h»
+
+##---(like formula)----------#
+º:d10¦»
+º·····slike¦·······f>·»
+º·2j··sÕ¦··f|·»
+º·l···stype "~$c12µn" to¦·····f|··ls<¦··ls<¦··ls<¦··3h»
+º·j···senter like formula¦····f|··ls<¦··ls<¦··ls<¦··3h»
+º·hk·» Ï
+s~$c12¦····f>··Ï
+º·l··v··j·3l··x··h»
+
+##---(copied likes)----------#
+º·2j·····sÕ¦·····f|·»
+º·4k·l···s--->¦··f|·»
+º·2j·····sÕ¦·····f|·»
+º·2j·····sÕ¦·····f|·»
+
+º·l···j··scopy like formula¦·····f|··ls<¦··ls<¦··ls<¦··3h»
+º·····j··sdown to replicate¦·····f|··ls<¦··ls<¦··ls<¦··3h»
+
+º·4k·2h·»·y·Ï
+··2j···p··Ï
+··2k·l·p··Ï
+··2j···p··Ï
+º·j·l··v··j·3l··x··h·k·»
+
+
+##---(complex formula)-------#
+º·:f10¦·»
+º·····stotal¦··········f>·»
+
+º·2j··=®(b12..e12)¦······l·s  sum numbers¦····ls<¦··2h·»
+º·2j··=count(b14..e14)¦··l·s  count strings¦··ls<¦··2h·»
+
+º·:c17¦··syou can see most of¦·······f|··ls<¦··ls<¦··ls<¦··3h»
+º·····j··sof the content color¦······f|··ls<¦··ls<¦··ls<¦··3h»
+º·····j··svariants above¦············f|··ls<¦··ls<¦··ls<¦··3h»
+j·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(requires)--------------#
+º·®a15..i22±·x·»
+º·:e17¦··sthe purple background means¦············f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····sthe yellow formula needs those four¦····f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····scells to generate its answer¦···········f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º·:f12¦··k·sƒ€€€€€€€‚¦·ls<¦·h·2j·s„€€€€€€€…¦·ls<¦·h···k·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(like and provides)-----#
+º·k·X·2j·X·»
+º·®a11..i11±·x··®a13..i13±·x·»
+º·®a15..i22±·x·»
+º·:d17¦··scyan means it uses c14's for its¦·······f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····sformula, and green means it is used¦····f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····sby e14 and f14 for its content¦·········f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º·:d14¦··k·sƒ€€€€€€€‚¦·ls<¦·h·2j·s„€€€€€€€…¦·ls<¦·h···k·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(sources likes)---------#
+º·k·X·2j·X·»
+º·®a13..i13±·x··®a15..i15±·x·»
+º·®a15..i22±·x·»
+º·:b17¦··sfinally, crimson means both¦············f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····sd12 and e12 take its formula¦···········f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····sand adapt it for their onw values¦······f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º·:c12¦··k·sƒ€€€€€€€‚¦·ls<¦·h·2j·s„€€€€€€€…¦·ls<¦·h···k·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(bottom line)-----------#
+º·k·X·2j·X·»
+º·®a11..i11±·x··®a13..i13±·x·»
+º·®a15..i22±·x·»
+º·:c17¦··sfor gyges, coloration is not for¦·······f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····scute and pretty, its for rapid¦·········f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º···j····sdebugging and transparency¦·············f|··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+j·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ LOGIC ]]===============================================================#
+##:unskip¦
+º·®a1..i38±·x·»
+
+º·:a2¦····sone of gyges' critical protections from subtle¦············f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º····j····smistakes is the strict interpretation of formulas¦·········f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b5¦····snever assume a string's value is zero or atoi(),¦··········f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º····j····sor assume a number in string is just a printf() result¦····f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:c8¦····syou can mix strings, references and numbers at will,¦······f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º····j····sonly explicitly, never by forgiving interpretation¦········f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b11¦···shence, gyges provides several different IF's¦··············f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b13¦··sÕa¦·f|·j··+10¦··f|·»
+º·:c13¦··sÕb¦·f|·j··+21¦··f|·»
+º·:d13¦··sÕc¦·f|·j··+99¦··f|·»
+º·:e13¦··sÕd¦·f|·j··+386¦·f|·»
+º·:f13¦··sÕs¦·f|·j··shey¦·f|·»
+º·:g13¦··sÕt¦·f|·j··sbye¦·f|·»
+
+
+º·:a16¦···= if  (a < b, c, d)¦····l·s#" = if  (a < b, c, d)"¦······ls<¦··ls<¦··l·scorrect¦··································f<·ls<¦··ls<¦··ls<¦··ls<¦··0·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note ME.a            ÔMc¦···:note LE,numerics     ÔKc¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note MG,matches      ×Sc¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note OH,matches      ×Uc¦··» ÏÏ·ÏÏ·ÏÏ
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:a18¦···# if  (a < b, c, d)¦····l·s#" # if  (a < b, c, d)"¦······ls<¦··ls<¦··l·sattempt to put numeric in string result¦··f<·ls<¦··ls<¦··ls<¦··ls<¦··0·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note MG.a            ÔM5¦···:note LG,numerics     ÔK5¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note MH,matches      ×S5¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note OJ,BOOM         ×U5¦··» ÏÏ·ÏÏ·ÏÏ
+º·m0··:a35¦···# if  (a < b, c, d)¦····l·smeans execution found VALUE when it needed something else¦···f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:a20¦···= if  (a < b, s, t)¦····l·s#" = if  (a < b, s, t)"¦······ls<¦··ls<¦··l·stried to use value IF on string values¦···f<·ls<¦··ls<¦··ls<¦··ls<¦··0·»
+º·:note MH.a            ÔMC¦···:note LH,strings      ÔKC¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note MJ,BOOM         ×SC¦··» ÏÏ·ÏÏ·ÏÏ
+º·m0··:a37¦···= if  (a < b, s, t)¦····l·smeans execution found STRING when it needed something else¦··f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:a22¦···# ifs (a < b, s, t)¦·f>·l·s#" # ifs (a < b, s, t)"¦······ls<¦··ls<¦··l·scorrect¦··································f<·ls<¦··ls<¦··ls<¦··ls<¦··0·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note MJ.a            ÔME¦···:note LJ,strings      ÔKE¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note MK,matches      ×SE¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note OL,matches      ×UE¦··» ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:b26¦···sthere are other combos, but you get the idea¦················f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b28¦···#"if      for returning values"¦······························f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b29¦···#"ifs     for returning strings"¦·····························f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b30¦···#"ifr     for references and variables"¦······················f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b31¦···#"ifm     for conditional macro/agrios execution ;)"¦·········f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(logical)------------------#
+º·®a17..i38±·x·»
+º·®a11..i11±·x·»
+
+º:b19¦··scovered in operators demo¦··f|·f.··ls<¦··ls<¦··ls<¦··ls<¦··h··»
+
+º:b20¦··snumerics¦··ls<¦··h··»
+º·2j··#" à··=="¦··»
+º··j··#" Þ··!="¦··»
+º·2j··#" <"¦······»
+º··j··#" Ü··<="¦··»
+º··j··#" >"¦······»
+º··j··#" Ý··>="¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:d20¦··sstring¦····ls<¦··h··»
+º·2j··#" ©="¦·····»
+º··j··#" ©!"¦·····»
+º·2j··#" â"¦······»
+º··j··#" ã"¦······»
+º·2j··#" ©<"¦·····»
+º··j··#" ©>"¦·····»
+º·2j··#" ©Ü"¦·····»
+º··j··#" ©Ý"¦·····»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:f20¦··slogical¦··ls<¦··h··»
+º·2j··#"·!"¦······»
+º·2j··#" Ð··&&"¦··»
+º··j··#" Ñ··||"¦··»
+º·2j··#" Ô··!&"¦··»
+º··j··#" Õ··!|"¦··»
+º·2j··#" Ò··&|"¦··»
+º··j··#" Ó··|&"¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:h20¦··shelpful¦··ls<¦··h··»
+º·2j··#"·˜"¦······»
+º··j··#"·range"¦··»
+º·2j··#"·ß"¦······»
+º··j··#"·about"¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:a34¦···= range (b, a, c)¦········l·#f(`h)¥¦······················ls<¦··ls<¦··l·sis b between a and c (inclusive)¦·········f<·ls<¦··ls<¦··ls<¦··ls<¦··0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:a36¦···= about (c, b, a)¦········l·#f(`h)¥¦······················ls<¦··ls<¦··l·sis c equal to b plus/minus a¦·············f<·ls<¦··ls<¦··ls<¦··ls<¦··0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ BASIC TRIG ]]==========================================================#
+##:unskip¦
+º·®a1..i38±·x·»
+
+º·:d3¦····sas a spider roboticist, kinematics¦·······f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····sand trigonometry are vital.  not just¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····sthe basics, but nearly every variation¦···f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+
+{
+   ##---(4th quarter)---------------#
+   º·:a6¦··s      y µ@¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(3rd quarter)---------------#
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_e   µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V        µ_e¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_4µsµsµsµsµsµsµsµsµsµsµsµ_e¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V          µsµs¦····ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V         ´ µs   µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V        µs  µs¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(2nd quarter)---------------#
+   º·0j····s        µ_V       ´   µs      µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V      µs    µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V     ´     µs        µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s  sin µS µ_V    µs      µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V   ´       µs         µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V  µs        µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V ´         µs          µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_Vµsï         µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s x µ@µ_Hµ_Hµ_Hµ_Hµ_5µ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_8µ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_eµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ@¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(1st quarter)---------------#
+   º·0j····s        µ_V    cos µC¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ@¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+}
+
+º·m0·»
+º·:e8¦····sat all starts with a fullsome set of¦·····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····splanar trigonomety functions, including¦··f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····smany that most people have never seen¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º·'0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·m0·»
+º·:f13¦···si am a degree guy ;)  so¦·················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····sradian versions end with 'r'¦·············f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····s(sinr vs sin)¦····························f<··ls<¦··ls<¦··ls<¦··3h»
+º·'0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·m0·»
+º·:f17¦···sdeg¦·····f>····lX·lX·lX··3h»
+º·j·······+0¦·······f>····lX·lX·lX··3h»
+º·j·······=`k+¥15¦··f>·y··lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·j·······p···············lX·lX·lX··3h»
+º·'0·»
+
+º·:f31¦···syup, gonna build a table¦·················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····sfor later use to test¦····················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····sdata lookups and pointers¦················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·®f30..i38±·x·»
+º·:g17¦··ssin¦··f|·f-···l··scos¦··f|·f-··h·»
+j·=ù($f18)¦··ff·f3
+º·m0··:f31¦··sfor sin¦··l·#f(g18)¦··ls<¦··'0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+l·=ý($f18)¦··ff·f3
+º·m0··:g32¦··sfor cos¦··l·#f(h18)¦··ls<¦··'0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·m0·»
+º·:f34¦···snow we use like formulas¦·················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····sto build the table¦·······················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j·»
+º·'0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+·h·j···s~`k'¦¦··ff·f3·
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·m0·»
+º·:f34¦···sand copy it through both¦·················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····scolumns (it adapts)¦······················f<··ls<¦··ls<¦··ls<¦··3h»
+º····j·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·'0·»
+
+·y·lp·h··8(jp·lp·h)
+º·:g18¦·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·m0·»
+º·:f34¦···sù = sin, ý = cos, and ú = tan¦············f<··ls<¦··ls<¦··ls<¦··3h»
+º····j····s ¦········································f<··ls<¦··ls<¦··ls<¦··3h»
+º····j·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·'0·»
+
+º·h·k··v·el·ej·Y·»
+
+
+
+##===[[ EXTENDED TRIG ]]=======================================================#
+##:unskip¦
+º·®a1..i38±·x·»
+
+{
+   ##---(4th quarter)----------#
+   º:a6¦···s      y µ@¦·············ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦············ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦················ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s   csc  µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µq¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(3rd quarter)----------#
+   º·0j····s  xcsc  µ_V  µq   cot¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_e   µ_e µq¦·ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s   cvs  µ_V        µ_e¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_4µsµsµsµsµsµsµsµsµsµsµsµ_e¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V       µ_d  µsµs  µq¦····ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s  scrd  µ_V  µ_d      ´ µsµ_d  µ_e µq¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s      µ_d µ_V        µs  µs µ_d      µq¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(2nd quarter)----------#
+   º·0j····s µ_d      µ_V       ´   µs  µ_d   µ_e    µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V      µs    µs   µ_dsagµ_d      µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V     ´     µs    µ_d   µ_e        µq    tan ú¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s  sin µS µ_V    µs      µs µ_d   µ_d              µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V   ´  apo µ_dµs      µ_d  µ_e             µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V  µs    µ_d   µs   crd µ_d                  µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V ´  µ_d      µs        µ_d µ_e arc              µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_Vµsï         µs         µ_d                      µq¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s x µ@µ_Hµ_Hµ_Hµ_Hµ_5µ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_8µ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_eµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµqµ_Hµ_Hµ_Hµ_Hµ@¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(1st quarter)----------#
+   º·0j····s        µ_V    cos µC      siv            xsec               sec¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ@¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+}
+
+º·:c2¦··Pm·»
+
+º·m0·»
+º·:c32¦···swhile only the basic six are required,¦···f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····susing other variants significantly¦·······f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····sreduces formula size and complexity¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º·'0·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+º·:e14¦··sbasic¦···f|··j·#"sin"¦··f|··j·#"cos"¦··f|··j·#"tan"¦··f|··j·#"cot"¦··f|··j·#"sec"¦··f|··j·#"csc"¦··f|····························»
+º·:e2¦···v·10j·y·l·p·stan¦·j·¦lrµT¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:f14¦··sancient¦·f|··j·#"crd"¦··f|··j·#"arc"¦··f|··j·#"sag"¦··f|··j·#"apo"¦··f|··j·#"los"¦··f|·········································»
+º·:f2¦···v·10j·y·l·p·ssec¦·j·¦l·dl·isec¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:g14¦··sversed¦··f|··j·#"siv"¦··f|··j·#"cov"¦··f|··j·#"sic"¦··f|··j·#"coc"¦··f|··j·#"hsiv"¦·f|··j·#"hcov"¦·f|··j·#"hsic"¦·f|··j·#"hcoc"¦·f|··»
+º·:g2¦···v·10j·y·l·p·scrd¦·j·¦l·Rcrd¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:h14¦··sother¦···f|··j·#"xsec"¦·f|··j·#"xcsc"¦·f|··j·#"scrd"¦·f|··j·#"xcrd"¦·f|··j·#"hcrd"¦·f|··j·#"csag"¦·f|··j·#"xsag"¦·f|··j·#"fsag"¦·f|··»
+º·:h2¦···v·10j·y·l·p·srad¦·j·¦l·Rrad¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:i14¦··sreverse¦·f|··j·#"asin"¦·f|··j·#"acos"¦·f|··j·#"atan"¦·f|··j·#"acrd"¦·f|······················································»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:i22¦··sconvert¦·f|··j·#"rad"¦··f|··j·#"deg"¦··f|················································································»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·m0·»
+º·:d36¦···sto keep trig functions calculatable,¦·····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º····j····sinfinity ß 10M (9,999,999)¦···············f<··ls<¦··ls<¦··ls<¦··ls<¦··4h»
+º·'0·»
+º·:f9¦·fN·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:f9¦·fn·»
+
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ STRING ]]==============================================================#
+##:unskip¦
+º·®a1..i38±·x·»
+
+º·:a1¦···sÖs¦··f|·»
+º···l····sstring manipulation is critical, but common and boring;¦··f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º···j····sso, we'll just do a general sampling of functions¦········f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(length)-----------------#
+º·m0·:d7¦····scount of characters in string¦············f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º········= len   (s)¦·········f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d7..i7±··x·'0·»
+
+##---(sub-string)-------------#
+º·m0·:d11¦···sextracting specific sub-strings¦··········f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º········# left  (s, 3)¦······f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+º···j····# right (s, 7)¦······f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+º···j····# mid   (s, 10, 6)¦··f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+º···j····# beg   (s, 40)¦·····f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+º···j····= l (b7)¦············f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d11..i11±··x·'0·»
+
+##---(other extract)----------#
+º·m0·:d13¦···sfunkier data extraction¦··················f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º········# at    (s, 5)¦······f<··ls<¦··l#f(`hh)¥¦··ls<¦··ls<¦··4h·»
+º···j····# word  (s, 4)¦······f<··ls<¦··l#f(`hh)¥¦··ls<¦··lssame as ©* operator¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d13..i13±··x·'0·»
+
+##---(getting cell data)------#
+º·m0·:d15¦···saccessing cell data¦······················f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º········# b7¦················f<··ls<¦··l#f(`hh)¥¦··ls<¦··l·scell's full result¦··ls<¦··ls<¦··ls<¦··7h·»
+º···j····# p (b7)¦············f<··ls<¦··l#f(`hh)¥¦··ls<¦··l·scell's exact printable¦····ls<¦··ls<¦··ls<¦··7h·»
+º···j····# p (c7)¦············f<··ls<¦··l#f(`hh)¥¦··ls<¦··l·smerge's exact printable¦···ls<¦··ls<¦··ls<¦··7h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d15..i15±··x·'0·»
+
+##---(parsing fields)---------#
+º·m0·:d18¦···sextracting a field from a string (©/)¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º···j·h··sÖf¦··f|··l·stesting  µf    one  µfµf 6 µf endpoint µf¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º···j····# parse (f, 2)¦······f<··ls<¦··l#f(`hh)¥¦··ls<¦··lssame as ©/ operator¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d18..i18±··x·'0·»
+
+##---(parsing list item)------#
+º·m0·:d21¦···sextracting list item (©´)¦················f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º···j·h··sÖl¦··f|··l·s,a10,a22,c5,g16,h12,i3,¦························f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º···j····# list  (l, 5)¦······f<··ls<¦··l#f(`hh)¥¦··ls<¦··lssame as ©´ operator¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d21..i21±··x·'0·»
+
+##---(trimming spaces)--------#
+º·m0·:d30¦···sremoving/trimming spaces¦·················f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º···j·h··sÖt¦··f|··l·s    extra   spaces     ¦······f<··ls<¦··ls<¦··ls<¦··lsw wraps string in å...æ¦··ls<¦··ls<¦··ls<¦··7h»
+º···j····# w (t)¦···········f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+º···j····# w (ltrim (t))¦···f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+º···j····# w (rtrim (t))¦···f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+º···j····# w (trim  (t))¦···f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+º···j····# w (strim (t))¦···f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+º···j····# w (etrim (t))¦···f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d30..i30±··x·'0·»
+
+##---(cleaning characters)----#
+º·m0·:d35¦···sredacting/cleaning bad characters¦········f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º···j·h··sÖc¦··f|··l·stesting ^-the ~ ?#!. 5, ¸aÆ¹ 1 a [n]¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º···j····# alpha  (c)¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··l#f(`5h)¥¦··ls<¦··6h·»
+º···j····# alphac (c)¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··l#f(`5h)¥¦··ls<¦··6h·»
+º···j····# seven  (c)¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··l#f(`5h)¥¦··ls<¦··6h·»
+º···j····# sevenc (c)¦······f<··ls<¦··ls<¦··ls<¦··ls<¦··l#f(`5h)¥¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d35..i35±··x·'0·»
+
+##---(padding strings)--------#
+º·m0·:d38¦···spadding strings to specific length¦·······f<··ls<¦··ls<¦··ls<¦··ls<¦··'0·»
+º···j····# w (lpad (b4, 7))¦····f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+º···j····# w (rpad (b4, 15))¦···f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·m0·®d38..i38±··x·'0·»
+
+##---(redaction)--------------#
+## º·h·j····sÖj¦··f|··l·swelcome to the jeopardy game¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+## º···j····# mask   (j, "etraonisld")¦··f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··ls<¦··7h·»
+## º···j····# redact (j, "etraonisld")¦··f<··ls<¦··ls<¦··ls<¦··l#f(`4h)¥¦··ls<¦··ls<¦··ls<¦··7h·»
+
+##---(summary)----------------#
+º·:b38¦··sWHEW, just a sampling of more frequently used¦·····f|···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h»
+º·v·el·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+¥·0
+
+
+
+##===[[ CELL TYPES ]]==========================================================#
+º·®a1..i38±·x·»
+
+º·:a2¦···»
+º·····swhile cell informating, addressing, and typing¦·····f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sare relatively straight forward; they are vital¦····f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sto advanced macros and pointers¦····················f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(number line)-----------#
+º·:a10¦·····················l·slit¦·····f>··l·sform¦·····f>··l·slike¦····f>··l·s--->¦····f>··l·stotal¦············f>·»
+º·:a12¦··snumber¦···f>······l·+125¦·····f>··l·=b12+10¦···f>··l·s~$c12¦···f>··l·s~$c12¦···f>··l·=®(b12..e12)¦······f>·»
+
+##---(variables)-------------#
+º·:h2¦···sÖT¦·········f>··l·sµ@¦·»
+º·:h3¦···sÖF¦·········f>··l·sµs¦·»
+º·:h4¦···sÖs¦·········f>··l·s&h2¦··»
+º·:a7¦···sÖr¦·········f>··l·s&b12¦··»
+
+##---(get info)--------------#
+º·:a14¦··= t  (a12)¦···f>···ll·#f(`2h)¥¦··ls<¦···l·stype as a number¦·····ls<¦··ls<¦··»
+º·:a15¦··# ta (a12)¦···f>···ll·#f(`2h)¥¦··ls<¦···l·stype as a character¦··ls<¦··ls<¦··»
+º·:a16¦··# ts (a12)¦···f>···ll·#f(`2h)¥¦··ls<¦···l·stype as a label¦······ls<¦··ls<¦··»
+·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:e14¦··v·2j·2l·y··2l·p·»
+º·:a14¦··v·3j·y··5(lp)·»
+
+##---(cell types)------------#
+º·:a27¦··smajor cell types¦··f|·f.··8(ls<¦)·0·»
+
+º·2j·l·m0···sµsµstextµsµsµsµsµs¦·······ls<¦··h··»
+º·····2j····#"slit    s"©+ifs (slit  (ár),T,F)¦···········ls<¦··h··»
+º······j····#"scalc   #"©+ifs (scalc (ár),T,F)¦···········ls<¦··h··»
+º······j····#"slike   5"©+ifs (slike (ár),T,F)¦···········ls<¦··h··»
+º·····2j····sµsµsµsµsµsµsµsµsµsµsµs¦···ls<¦··h··»
+º······j····#"str      "©+ifs (str   (ár),T,F)¦···········ls<¦··h··»
+
+º·'0·2l·m0··sµsµsvalueµsµsµsµs¦········ls<¦··h··»
+º·····2j····#"nlit    n"©+ifs (nlit  (ár),T,F)¦···········ls<¦··h··»
+º······j····#"ncalc   ="©+ifs (ncalc (ár),T,F)¦···········ls<¦··h··»
+º······j····#"nlike   9"©+ifs (nlike (ár),T,F)¦···········ls<¦··h··»
+º······j····#"nmath   ¼"©+ifs (nmath (ár),T,F)¦···········ls<¦··h··»
+º······j····sµsµsµsµsµsµsµsµsµsµsµs¦···ls<¦··h··»
+º······j····#"num      "©+ifs (num   (ár),T,F)¦···········ls<¦··h··»
+
+º·'0·2l·m0··sµsµspointµsµsµsµs¦········ls<¦··h··»
+º·····2j····#"ref     &"©+ifs (ref   (ár),T,F)¦···········ls<¦··h··»
+º······j····#"cref    !"©+ifs (cref  (ár),T,F)¦···········ls<¦··h··»
+º······j····#"rlike   1"©+ifs (rlike (ár),T,F)¦···········ls<¦··h··»
+º······j····#"rref    :"©+ifs (rref  (ár),T,F)¦···········ls<¦··h··»
+º······j····sµsµsµsµsµsµsµsµsµsµsµs¦···ls<¦··h··»
+º······j····#"point    "©+ifs (point (ár),T,F)¦···········ls<¦··h··»
+
+º·'0·2l·m0··sµsµsbroadµsµsµsµs¦········ls<¦··h··»
+º·····2j····#"lit      "©+ifs (lit   (ár),T,F)¦···ls<¦··h··»
+º······j····#"calc     "©+ifs (calc  (ár),T,F)¦···ls<¦··h··»
+º······j····#"like     "©+ifs (like  (ár),T,F)¦···ls<¦··h··»
+º······j····#"form     "©+ifs (form  (ár),T,F)¦···ls<¦··h··»
+º······j····#"var      "©+ifs (var   (ár),T,F)¦···ls<¦··h··»
+º······j····#"merge    "©+ifs (merge (ár),T,F)¦···ls<¦··h··»
+º······j····#"blank   -"©+ifs (blank (ár),T,F)¦···ls<¦··h··»
+
+##---(string line)-----------#
+º·®a14..·i16±·Y·2j·p·»
+º·:a14¦··sstring¦···f>······l·sabc¦·····f>··l·#b14©"+"¦··f>··l·s~$c14¦···f>··l·s~$c14¦···f>··l·=count(b14..e14)¦··f>·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(formulas)--------------#
+º·®a16..·i18±·x·»
+º·:g12¦·····= lit (b12)¦··f|·fy····l·#f(`h)¥¦··ls<¦·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(pointers)--------------#
+º·®a7..b7±·x·»
+º·:a22¦··sreference¦··f^·f.··ls<¦··»
+º·:a23¦··sÖr¦·····················f>··l·s&a12¦··»
+º··h·j···# ts (ár)¦···············f>··l·#f(`h)¥¦··ls<¦·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(table discussion)------#
+º·:b17¦··»
+º·····si integrated the ¶type check¶ into the table¦·······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sbelow.  so b12 is nlit.  then, also grouped¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sinto num (all numeric) and lit (all literals)¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·®a17..·i19±·x·»
+
+##---(literal type)----------#
+º·:var r¦··s&a12¦··:a12¦··»
+º·:note #¦··»
+º·:note JC,source                       ÔRE¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note JA,target                       ÔUj¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note CB-type string literal          ÕOQ¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note CB-therefore string             ÕOX¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note CB-and also literal             ÕjO¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(like type)-------------#
+º·:var r¦··s&d12¦··:d12¦··»
+º·:note #¦··»
+º·:note Db,source                       ÔRE¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note Dc,target                       ×Ji¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note cb-numeric like formula         ÕFS¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note cb-therefore number             ÕFX¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note cb-and like                     ÕdS¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note cb-and formula                  ÕdU¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(pointer type)----------#
+º·:var r¦··s&i4¦···:i4¦···»
+º·:note #¦··»
+º·:note gb,source                       ÔRE¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note gc,target                       Ôjt¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note ob-normal reference             ÕcQ¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note ob-therefore pointer            ÕcX¦·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+
+##===[[ CELL INFO AND ADDRESSING ]]============================================#
+##:unskip¦
+º·®a1..i38±·x·»
+º·:note #¦··»
+
+##---(introduction)-------------#
+º·:a2¦···»
+º·····spointers to fixed locations are useful, but¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sreal power comes from calculated addresses which¦···f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sbring massive flexibility¦··························f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(data table)---------------#
+{
+   º·:b14¦···sdeg¦··f>··l·ssin¦··f>f.··l·scos¦··f>f.··l·stan¦··f>f.··l·ssec¦··f>f.··l·scrd¦··f>f.··l·srad¦··f>f.··»
+   º·0·l·j···+0¦····f>··j·=`k+¥15¦··f>·y··8(jp)··»
+   º·:c15¦···=ù($b15)¦··ff·f3···l·=ý($b15)¦··ff·f3···l·=ú($b15)¦··ff·f3···l·=sec($b15)¦··ff·f3···l·=crd($b15)¦··ff·f3···l·=rad($b15)¦··ff·f3··»
+   º·:c16¦···s~`k'¦¦····ff·f3··y··5(lp)··»
+   º·:c16¦···v·5l·y··8(jp)··»
+}
+
+##---(make reference)-----------#
+º·:d6¦···»
+º·····sstart with a highly varied data table¦··············f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··5h·»
+º··j··sand a reference into the middle¦····················f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··5h·»
+º·:a8¦···sÖr¦·········f>··l·s&e19¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note ci,source                       ÔRp¦·»
+ÏÏ·ÏÏ·ÏÏ
+º·:note cg,target                       ÔD5¦·»
+ÏÏ·ÏÏ·ÏÏ
+º·:note jh-tan of 60Ì¦·······················»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+##---(cell info)----------------#
+º·:a27¦···sfunc¦··f|f.··l·sr¦··f|f.························»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:a29¦···scontent¦··f|····l·# p (r)¦··f|······»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:a31¦···su¦········f|····l·= u (r)¦··f|······l·#f(`h)¥¦··ls<¦··lsu = universe/tab¦····ls<¦··ls<¦··5h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:a33¦···sx¦········f|····l·= x (r)¦··f|······l·#f(`h)¥¦··ls<¦··lsstarts at zero (0)¦··ls<¦··ls<¦··5h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:a35¦···sy¦········f|····l·= y (r)¦··f|······l·#f(`h)¥¦··ls<¦··lsstarts at zero (0)¦··ls<¦··ls<¦··5h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:a37¦···slabel¦····f|····l·# label (r)¦··f|··l·#f(`h)¥¦··ls<¦··2h··»
+ÏÏ·ÏÏ·ÏÏ
+
+##---(pointer info)-------------#
+º·®c27..i38±·x·»
+
+º·:c27¦···sár¦··f|f.·······························»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:c29¦···= ár¦······f|·fff3·l·#f(`h)¥¦··ls<¦··2h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:c31¦···= u (ár)¦··f|······l·#f(`h)¥¦··ls<¦··lsu = universe/tab¦····ls<¦··ls<¦··5h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:c33¦···= x (ár)¦··f|······l·#f(`h)¥¦··ls<¦··lsstarts at zero (0)¦··ls<¦··ls<¦··5h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:c35¦···= y (ár)¦··f|······l·#f(`h)¥¦··ls<¦··lsstarts at zero (0)¦··ls<¦··ls<¦··5h··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:c37¦···# label (ár)¦··f|··l·#f(`h)¥¦··ls<¦··2h··»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+##---(relative)-----------------#
+º·®a27..i38±·x·»
+
+º·:note h5,origin                       ÖD5¦·»
+ÏÏ·ÏÏ·ÏÏ
+
+º·®c5..i13±··x·»
+º·:d6¦···sÕøx¦··f>··j·-2¦···kl··sÕøy¦··f>··j·-3¦··kl··s   ø (r) for relative¦··ls<¦··ls<¦··ls<¦··»
+
+º·:d27¦···scalculated addresses/references¦·····ls<¦··ls<¦··ls<¦··3h·j····»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:e29¦···srel¦······f>f.·······························»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:d31¦···sx-only¦··f>··l·f>··= rx  (ár, øx)¦······ff·f3···l·#f(`h)¥¦··ls<¦··ls<¦··3h·»
+º·:note h5,origin                       ÖD5¦·» ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note NL,formula                      ÖFO¦·» ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note SL,ref                          ×Vn¦·» ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note SK,vars                         ÔLq¦·» ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note NK,CALCREF                      ÕM5¦·» ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+º·:d33¦···sy-only¦··f>··l·f>··= ry  (ár, øy)¦······ff·f3···l·#f(`h)¥¦··ls<¦··ls<¦··3h·»
+º·:note h5,origin                       ÖD5¦·» ÏÏ·ÏÏ·ÏÏ 
+º·:note NL,formula                      ÖFR¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SL,ref                          ×Vn¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SK,vars                         ÔLq¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note NK,CALCREF                      ÕHd¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+º·:d35¦···sboth¦····f>··l·f>··= rxy (ár, øx, øy)¦··ff·f3···l·#f(`h)¥¦··ls<¦··ls<¦··3h·»
+º·:note h5,origin                       ÖD5¦·» ÏÏ·ÏÏ·ÏÏ 
+º·:note NL,formula                      ÖFU¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SL,ref                          ×Vn¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SK,vars                         ÔLq¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note NK,CALCREF                      ÕMd¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+º·:d37¦···scan change tab/universe too !¦·······ls<¦··ls<¦··ls<¦··3h·j····»
+ÏÏ·ÏÏ·ÏÏ
+
+##---(absolute)-----------------#
+º·®f28..i36±·x·»
+
+º·:d9¦···sÕôx¦··f>··j·+3¦···kl··sÕôy¦··f>··j·+21¦··kl··s   ô (n) for new/absolute¦··ls<¦··ls<¦··ls<¦»
+
+º·:f29¦···sabs¦······f>f.·······························»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:f31¦···= ax  (ár, ôx)¦······ff·f3···l·#f(`h)¥¦··ls<¦··ls<¦··3h·»
+º·:note h5,origin                       ÖD5¦·» ÏÏ·ÏÏ·ÏÏ 
+º·:note NL,formula                      ÖBO¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SL,ref                          ×Vn¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SK,vars                         ÔMm¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note NK,CALCREF                      ÕL5¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+
+º·:f33¦···= ay  (ár, ôy)¦······ff·f3···l·#f(`h)¥¦··ls<¦··ls<¦··3h·»
+º·:note h5,origin                       ÖD5¦·» ÏÏ·ÏÏ·ÏÏ 
+º·:note NL,formula                      ÖBR¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SL,ref                          ×Vn¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SK,vars                         ÔMm¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note NK,CALCREF                      ÕID¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+º·:f35¦···= axy (ár, ôx, ôy)¦··ff·f3···l·#f(`h)¥¦··ls<¦··ls<¦··3h·»
+º·:note h5,origin                       ÖD5¦·» ÏÏ·ÏÏ·ÏÏ 
+º·:note NL,formula                      ÖBU¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SL,ref                          ×Vn¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note SK,vars                         ÔMm¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note NK,CALCREF                      ÕLD¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ  ÏÏ·ÏÏ·ÏÏ
+º·:note #¦··»
+
+##---(little cool)--------------#
+º·®a27..i38±·x·»
+º·®a5..i13±··x·»
+º·:d11¦··sÕøx¦··f>··j·+2¦···kl··sÕøy¦··f>··j·+4¦··»
+º·:a7¦····sÖt¦··f>··l··s&c15¦···············»
+º·:a8¦····sÖc¦··f>··l··s! rxy (át, øx, øy)¦··l·#f(`h)¥¦···ls<¦··ls<¦···»
+º·l·scalculated reference!!¦··ls<¦··ls<¦··2h·j·s  (wicked useful)¦··ls<¦··ls<¦··»
+º·:var c¦··»
+
+º·:b27¦···sfishing for context¦·········ls<¦··ls<¦··ls<¦··3h·j····»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:b29¦···sÕh¦··f|··j··+13¦··f|··»
+º·:c29¦···# ay (ác, h)¦·····f|··l·#f(`h)¥¦··ls<¦··j·2h··sÔf¦··f|··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:b32¦···sÕd¦··f|··j··+1¦···f|··»
+º·:c32¦···= ax (ác, d)¦·····f|··l·#f(`h)¥¦··ls<¦··j·2h··sÔa¦··f|··»
+ÏÏ·ÏÏ·ÏÏ
+
+º·:b35¦···s>>¦··f|··»
+º·:c35¦···#label(ác)©" is the "©f©" ("©p(a)©") which is "©p(ác)¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+º·:c36¦···#f(`k)¥¦·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+º·:b35¦··v·6l·»
+º·:note Zk,ref                          ÔVp¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zj,uses                         ÖLj¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zi,points                       ÖH5¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zg,results                      ÕVV¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+º·:note #¦·»
+º·¥··:var øx¦··+3¦··:var øy¦··+5¦·»
+º·:b35¦··v·6l·»
+º·:note Zk,ref                          ÔVp¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zj,uses                         ÖLj¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zi,points                       ÖDA¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zg,results                      ÕVV¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+º·:note #¦·»
+º·¥··:var øx¦··+0¦··:var øy¦··+1¦·»
+º·:b35¦··v·6l·»
+º·:note Zk,ref                          ÔVp¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zj,uses                         ÖLj¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zi,points                       ÖQd¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zg,results                      ÕVV¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+º·:note #¦·»
+º·¥··:var øx¦··+5¦··:var øy¦··+9¦·»
+º·:b35¦··v·6l·»
+º·:note Zk,ref                          ÔVp¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zj,uses                         ÖLj¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zi,points                       ÖeG¦·» ÏÏ·ÏÏ·ÏÏ
+º·:note Zg,results                      ÕVV¦·» ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ RANGES -- COUNTS ]]====================================================#
+##:unskip¦
+º·®a1..i38±··x·»
+º·:note #¦··»
+
+##---(introduction)-------------#
+º·:a2¦···»
+º·····sranges are useful constructs to allow data¦·········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sanalysis and searching.  we'll start with the¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··ssimple cell typing¦·································f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(data table)---------------#
+{
+   º·:b14¦···sdeg¦··f>··l·ssin¦··f>f.··l·scos¦··f>f.··l·stan¦··f>f.··l·ssec¦··f>f.··l·scrd¦··f>f.··l·srad¦··f>f.··»
+   º·0·l·j···+0¦····f>··j·=`k+¥15¦··f>·y··8(jp)··»
+   º·:c15¦···=ù($b15)¦··ff·f3···l·=ý($b15)¦··ff·f3···l·=ú($b15)¦··ff·f3···l·=sec($b15)¦··ff·f3···l·=crd($b15)¦··ff·f3···l·=rad($b15)¦··ff·f3··»
+   º·:c16¦···s~`k'¦¦····ff·f3··y··5(lp)··»
+   º·:c16¦···v·5l·y··8(jp)··»
+}
+
+##---(make reference)-----------#
+º·:d6¦···»
+º·····sthe counts by type are named exactly¦···············f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··5h·»
+º··j··slike types, but plural¦·····························f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··5h·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b11¦··sÕµsrange¦··j··s&b14..h24¦··ls<¦·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(cell types)------------#
+º·:a26¦··smajor cell types¦··f|·f.··8(ls<¦)·0·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·2j·l·m0···sµsµstextµsµsµsµsµs¦·······ls<¦··h··»
+º·····2j····#"slits   s"©+sif (slits  (árange), 2)¦···········ls<¦··h··»
+º······j····#"scalcs  #"©+sif (scalcs (árange), 2)¦···········ls<¦··h··»
+º······j····#"slikes  5"©+sif (slikes (árange), 2)¦···········ls<¦··h··»
+º·····2j····sµsµsµsµsµsµsµsµsµsµsµs¦···ls<¦··h··»
+º······j····#"strs     "©+sif (strs   (árange), 2)¦···········ls<¦··h··»
+º·····2j····#"every    "©+sif (every  (árange), 2)¦···········ls<¦··h··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·'0·2l·m0··sµsµsvalueµsµsµsµs¦········ls<¦··h··»
+º·····2j····#"nlits   n"©+sif (nlits  (árange), 2)¦···········ls<¦··h··»
+º······j····#"ncalcs  ="©+sif (ncalcs (árange), 2)¦···········ls<¦··h··»
+º······j····#"nlikes  9"©+sif (nlikes (árange), 2)¦···········ls<¦··h··»
+º······j····#"nmaths  ¼"©+sif (nmaths (árange), 2)¦···········ls<¦··h··»
+º······j····sµsµsµsµsµsµsµsµsµsµsµs¦···ls<¦··h··»
+º······j····#"nums     "©+sif (nums   (árange), 2)¦···········ls<¦··h··»
+º·····2j····#"used     "©+sif (used   (árange), 2)¦···········ls<¦··h··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·'0·2l·m0··sµsµspointµsµsµsµs¦········ls<¦··h··»
+º·····2j····#"refs    &"©+sif (refs   (árange), 2)¦···········ls<¦··h··»
+º······j····#"crefs   !"©+sif (crefs  (árange), 2)¦···········ls<¦··h··»
+º······j····#"rlikes  1"©+sif (rlikes (árange), 2)¦···········ls<¦··h··»
+º······j····#"rrefs   :"©+sif (rrefs  (árange), 2)¦···········ls<¦··h··»
+º······j····sµsµsµsµsµsµsµsµsµsµsµs¦···ls<¦··h··»
+º······j····#"points   "©+sif (points (árange), 2)¦···········ls<¦··h··»
+º·····2j····#"empty    "©+sif (empty  (árange), 2)¦···········ls<¦··h··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·'0·2l·m0··sµsµsbroadµsµsµsµs¦········ls<¦··h··»
+º·····2j····#"lits     "©+sif (lits   (árange), 2)¦···ls<¦··h··»
+º······j····#"calcs    "©+sif (calcs  (árange), 2)¦···ls<¦··h··»
+º······j····#"likes    "©+sif (likes  (árange), 2)¦···ls<¦··h··»
+º······j····#"forms    "©+sif (forms  (árange), 2)¦···ls<¦··h··»
+º······j····#"vars     "©+sif (vars   (árange), 2)¦···ls<¦··h··»
+º······j····#"merges   "©+sif (merges (árange), 2)¦···ls<¦··h··»
+º······j····#"blanks  -"©+sif (blanks (árange), 2)¦···ls<¦··h··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ RANGES -- STRING SEARCH ]]=============================================#
+## :unskip¦
+º·®a1..i38±··x·»
+º·:note #¦··»
+
+##---(introduction)-------------#
+º·:a2¦···»
+º·····svertical and horizontal text lookups are¦·············f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sthe bread-and-butter of traditional use¦··············f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(data table)---------------#
+{
+   º·:a14¦···sname¦·f.··j·sholly¦····j·stravis¦···j·szeke¦···j·sbettany¦··j·ssusan¦····j·shank¦·····j·sbobby¦····j·sjalen¦····j·ssarah¦····j·sbob¦·····»
+   º·:b14¦···sdeg¦··f>··l·ssin¦··f>f.··l·scos¦··f>f.··l·stan¦··f>f.··l·ssec¦··f>f.··l·scrd¦··f>f.··l·srad¦··f>f.··»
+   º·0·l·j···+0¦····f>··j·=`k+¥15¦··f>·y··8(jp)··»
+   º·:c15¦···=ù($b15)¦··ff·f3···l·=ý($b15)¦··ff·f3···l·=ú($b15)¦··ff·f3···l·=sec($b15)¦··ff·f3···l·=crd($b15)¦··ff·f3···l·=rad($b15)¦··ff·f3··»
+   º·:c16¦···s~`k'¦¦····ff·f3··y··5(lp)··»
+   º·:c16¦···v·5l·y··8(jp)··»
+}
+
+º·:a11¦··sÕµsrange¦··j··s&a14..h24¦··ls<¦·»
+
+º·:a27¦··sfunc¦·f.··l··sfound¦·f.··l··starget¦·f.··l·soffset¦·f.··»
+
+º·:a29¦··svertical, down first column¦··ls<¦··ls<¦··ls<¦··»
+º·:a30¦··s  vl¦····f>·2l··szeke¦·····l·+2¦·f|··»
+º·:b30¦··=vl(árange,`l,l)¥¦··········ff·f3·f|··»
+º···j····#f(`k)¥¦····ls<¦·ls<¦·······2h·j······»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:a33¦··shorizontal, across top row¦···ls<¦··ls<¦··ls<¦··»
+º·:a34¦··shl¦······f>·2l··ssin¦······l·+6¦·f|··»
+º·:b34¦··=hl(árange,`l,l)¥¦··········ff·f3·f|··»
+º···j····#f(`k)¥¦····ls<¦·ls<¦·······2h·j······»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b5¦···»
+º·····sthe problem is people use tons of them with¦···········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sslightly different values to get enough data¦··········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:c8¦···»
+º·····smy version return addresses, rather than values¦·······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sso they can be used as calculated pointers ;))¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:e30¦··sµ'µ_Hµ_Hµ_Hµ_Hµ_9¦··k·s     µ_V¦···»
+
+º·:e28¦··scref¦··f>··l·s!vl(árange,`3h2j,l)¥¦····f|·»
+º···k····#f(`j)¥¦····ls<¦·ls<¦·······2h··»
+º··2j····=á`k¦¦·················ff·f3·f|·»
+º·l·k····#ax(á`h,¥0)¦····················»
+º···j····#ry(ax(á`hk,¥0),1)¦·············»
+º···j····#f(`k)¥¦····ls<¦·ls<¦···········»
+º·:b30¦·» ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ
+º·:note JA,formula      ×MO¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note DA,calcref      Ö5J¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note G5;same result  Ö3c¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note dg=exact same formula except = vs ! prefix making a reference¦··» ··ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ
+º·:note 5V=but, now you can riff around nearby cells and find the next name Ô5O¦··» ··ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ
+
+º·:note #¦··»
+º·:e30¦··sµ'µ_Hµ_Hµ_Hµ_Hµ_6¦··k·s     µ_V¦··2j··s     µ_V¦··j··s     µ_V¦··»
+
+º·:e33¦··svr¦····f>··l·s!vr(árange,`3h3k)¥¦······f|·»
+º···k····#f(`j)¥¦····ls<¦·ls<¦·······2h··»
+º··2j····=ax(á`k,2h3k)¥¦········ff·f3·f|·»
+º·l·k····#á`h¦¦··························»
+º···j····#ry(á`hk,¥1)¦···················»
+º···j····#f(`k)¥¦····ls<¦·ls<¦···········»
+º·:b30¦·» ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ
+º·:note ON,w/offset     ÔEK¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note OP,pure         ÕER¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note TV=the vr variant allows much simplier pointer exploration Ö5V¦··» ··ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:note #¦··»
+
+## º·:a31¦··svpre¦··f>·2l··sb¦·······l·+5¦·f|·» ÏÏ·ÏÏ·ÏÏ
+## º·:b31¦··=vpre (árange, `l,l)¥¦·····ff·f3·f|·» ÏÏ·ÏÏ·ÏÏ
+## º·:a35¦··shpre¦··f>·2l··sr¦·······l·+9¦·f|·» ÏÏ·ÏÏ·ÏÏ
+## º·:b35¦··=hpre (árange, `l,l)¥¦·····ff·f3·f|·» ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ RANGES -- SEARCHING ]]=================================================#
+## :unskip¦
+º·®a1..i38±··x·»
+º·:note #¦··»
+
+##---(introduction)-------------#
+º·:a2¦···»
+º·····sgyges has a wide variety of numeric searching¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sfunctions to provide better data analytics¦···········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b7¦····straditional methods¦·············································ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"v vert"¦····l··s  search column, use x-offset to return value¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"h horz"¦····l··s  search row, use y-offset to return value¦·····ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·0·2j·l··ssearch entire range¦·············································ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"r range"¦···l··s  return first found¦···························ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"c count"¦···l··s  return total found¦···························ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"i index"¦···l··s  return Nth found¦·····························ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·0·4j·l··sfor every one of those scopes, you can search¦···················ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"match"¦·····l··sexact match¦····································ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"range"¦·····l··swithin high and low values (inclusive)¦·········ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"about"¦·····l··sbase value + / - value¦·························ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"close"¦·····l··sfinds closest value¦····························ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"over"¦······l··sfinds first entry greater than¦·················ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·0·j··l··#"under"¦·····l··sfinds last entry lesser than¦···················ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·0·4j·l··sso, vmatch is a vertical match¦··································ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·0·4j·l··sjust going to demonstrate a few interesting ones¦················ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+º·0··j·l··sto get the idea¦·················································ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(demo)---------------------#
+##:unskip¦
+º·®a1..i38±··x·»
+º·:note #¦··»
+
+##---(introduction)-------------#
+º·:a2¦···»
+º·····slets just take a look at <about> using count (c)¦·········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sand index (i) to cursor through matches¦··················f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+##---(data table)---------------#
+{
+   º·:b8¦····sdeg¦··f>··l·ssin¦··f>f.··l·scos¦··f>f.··l·stan¦··f>f.··l·ssec¦··f>f.··l·scrd¦··f>f.··l·srad¦··f>f.··»
+   º·0·l·j···+0¦····f>··j·=`k+¥15¦··f>·y··8(jp)··»
+   º·:c9¦····=ù($b9)¦··ff·f3···l·=ý($b9)¦··ff·f3···l·=ú($b9)¦··ff·f3···l·=sec($b9)¦··ff·f3···l·=crd($b9)¦··ff·f3···l·=rad($b9)¦··ff·f3··»
+   º·:c10¦···s~`k'¦¦····ff·f3··y··5(lp)··»
+   º·:c10¦···v·5l·y··8(jp)··»
+}
+
+º·:b5¦···sÕµsrange¦··j··s&c9..h18¦··ls<¦·»
+
+º·:a21¦··sÖv¦···f|···l··+0.866¦··ff·f3·f|··l··sbase value for search¦····ls<¦··ls<¦··ls<¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:a23¦··sÖi¦···f|···l··+0.010¦··ff·f3·f|··l··splus or minus value¦······ls<¦··ls<¦··ls<¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b25¦··= cabout (árange, v, i)¦····f|····l··#f(`h)¥¦···················ls<¦··ls<¦··ls<¦··»
+º·:b25¦··:note bG,found        ×RH¦··» ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b27¦··snum¦···f|·f.··l·sref¦···f|·f.··l·sfunc¦··f|·f.··l·sdeg¦···f|·f.··l·svalue¦·f|·f.·»
+º·:b28¦··+0¦·····f|·····l·s! iabout (árange, v, i, `h)¥¦··f|··l·#f(`h)¥¦··ls<¦··ls<¦··ls<¦··»
+º·:c28¦·» ··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+
+º·:b29¦··=`k+¥1¦··········f|··l·s~c$28¦··f|····l·#f(`h)¥¦··ls<¦··2h·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:b29¦··v·l·y··j·p···························»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:c33¦··»
+º·····sbecause calculated references set dependencies,¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··syou can visually walk the matches now¦················f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:c28¦··»
+º·:note eE,ref          ÔLL¦··»
+º·:note eD,point        ÕMi¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+º·:c29¦··»
+º·:note eE,ref          ÔLN¦··»
+º·:note eD,point        ÕMc¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+º·:c30¦··»
+º·:note eE,ref          ÔLO¦··»
+º·:note eD,point        ÕIk¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:a29¦··sÕf¦··f|··j·+7¦··f|··2j··sÕd¦··f|··f|··j·+1¦··f|··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·®d28..i30±·x··»
+º·®b31..i38±·x··»
+º·:d28¦··# ay (á`h,¥f)¦···f|········l·#f(`h)¥¦··ls<¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:e28¦··= ax (á`2h,¥d)¦··f|········l·#f(`h)¥¦··ls<¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:f28¦··= á`3h¦¦·········ff·f3·f|··l·#f(`h)¥¦··ls<¦··»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·®g28..i28±·x··»
+
+º·:c29¦··v····y··3(l·p)···ff·f3·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:c29¦··v·3l·y····j·p···»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:var i¦··+0.100¦··»
+º·:note bD,update       ×RE¦··» ÏÏ·ÏÏ·ÏÏ
+º·:note bG,more         ×RH¦··» ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:b29¦··v·4l·y··5(j·p)··»
+
+º·:b34¦··v·2l·y····j·p··:d35¦··s<¦··»
+
+º·:c37¦··»
+º·····shere's an index out-of-range error, #e/mis¦···········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·®b35..i35±·x··»
+º·:c36¦··»
+º·····sthis is exactly how i iterate through data-sets¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··swithin macros ;)  acts like a foreach cursor¦·········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º·:c28¦··»
+7 (ÏÏ·ÏÏ·ÏÏ·ÏÏ·j)
+
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ RANGES -- STATISTICS ]]================================================#
+##:unskip¦
+º·®a1..i38±··x·»
+º·:note #¦··»
+
+##---(introduction)-------------#
+º·:a2¦···»
+º·····sgyges supports common statistics, but its not¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··smy specialty enough to push the boundaries ;)¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+{
+   º·:0a16¦···sA¦·f|·f.···j·+53.73¦···j··········j·+53.87¦··j·+53.85¦··j·+53.88¦··j·+54.08¦··sµs¦·f.··»
+   º·:0b16¦···sB¦·f|·f.···j·+54.14¦·· j·+54.50¦··j·+54.30¦··j··········j·+54.40¦··j·+54.16¦··sµs¦·f.··»
+   º·:0c16¦···sC¦·f|·f.···j·+54.08¦·· j·+59.12¦··j·+52.00¦··j·+52.50¦··j··········j·+53.13¦··sµs¦·f.··»
+   º·:0a17¦···v·2l·5j··ff·f2·f|··¥·»
+}
+
+º·:b5¦···»
+º·····swithout hesitation, the proper application of¦········f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sstatistics is more of an art than science¦············f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:a14¦···sÖr¦··f|···l·s&`2jh:2l6j¦¦··ls<¦··h·»
+
+{
+   º·:a24¦···severy¦··f>···l·= every (ár)¦··f|··0·»
+   º···j·····sused¦···f>···l·= used  (ár)¦··f|··0·»
+   º···j·····snums¦···f>···l·= nums  (ár)¦··f|··0·»
+   º··2j·····si included titles¦···f|·ls<¦··ls<¦··0··»
+   º···j·····sand empties in the¦··f|·ls<¦··ls<¦··0··»
+   º···j·····srange to show¦·······f|·ls<¦··ls<¦··0··»
+   º···j·····sthey are filtered¦···f|·ls<¦··ls<¦··0··»
+   º·:b14¦··»
+}
+º·:note 55=only nums (literals and calculated) are included in dataset ÕQJ¦··» ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·:note #¦·»
+
+º·:c8¦···»
+º·····shaving more than a few clearly defined statistical¦···f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sfunctions only encourages gross over-confidence¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:e12¦···smin¦·····f>··l·= min    (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····sqtr1¦····f>··l·= qtr1   (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····sqtr2¦····f>··l·= qtr2   (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····sqtr3¦····f>··l·= qtr3   (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····smax¦·····f>··l·= max    (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º··2j·····ssrange¦··f>··l·= srange (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····sqrange¦··f>··l·= qrange (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦··l·s(q3-q1)¦··4h·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º··2j·····smean¦····f>··l·= mean   (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····smedian¦··f>··l·= median (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····smode¦····f>··l·= mode   (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º··2j·····sstddev¦··f>··l·= stddev (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+º··2j·····sskew¦····f>··l·= skew   (ár)¦····f|·ff·f2···l·#f(`h)¥¦··ls<¦···3h·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·:b36¦··»
+º·····sstatistics seems like drowsing -- it appears to work¦······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+º··j··sas long as there isn't an idiot behind the stick :)¦·······f|·ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··6h·»
+j·ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+º·®a1..i37±··x··»
+:mundo_purge¦
+
+º·:a6¦···sfinal notes...¦·····················································f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b11¦··s1. cells are allocated in real-time only as needed¦·················f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b13¦··s2. calculations are turned into byte-code for fast execution¦·······f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b15¦··s3. cells calculated as necessary based on dependency graphs¦········f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b17¦··s4. only the c-standard and ncurses libraries are not my own¦········f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b19¦··s5. used pure 8-bit interface with my custom shrike font¦············f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b21¦··s6. common 16-color terminal interface tuned by my theia¦············f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+º·:b23¦··s7. it may not be perfect, but its 100% home brew¦···················f<··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦···»
+
+º·:c29¦··sdone, finito, completare, whimper [µ@µ'µsµsµs¦······················f|··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·®b29..i29±·»
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+··ÏÏ·ÏÏ·ÏÏ·ÏÏ ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+

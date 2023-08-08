@@ -745,9 +745,10 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       str4gyges  (CTAB, a_col, a_row, 0, 0, l, YSTR_CHECK);
       sprintf    (label, ",%s,", l);
    }
+   /*> DEBUG_GRAF  yLOG_complex ("BALL"      , "%c å%sæ å%sæ", my.ball, my.cagrios, label);   <*/
    /*---(current)------------------------*/
-   if      (my.ball == 'y' && strstr (my.cagrios, label) != NULL)   yVICURSES_by_name ("a_curr");
-   else if (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
+   if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
+   else if (my.ball == 'y' && strstr (my.cagrios, label) != NULL)         yVICURSES_by_name ("i_wand");
    else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("m_srch");
    /*---(visual-range)-------------------*/
    else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
@@ -768,6 +769,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       else if (a_curr->type == YCALC_DATA_RANGE)        yVICURSES_by_name ("p_rang");
       else if (a_curr->type == YCALC_DATA_ADDR )        yVICURSES_by_name ("p_addr");
       else if (a_curr->type == YCALC_DATA_CADDR)        yVICURSES_by_name ("p_calc");
+      else if (a_curr->type == YCALC_DATA_RLIKE)        yVICURSES_by_name ("9_like");
       else if (a_curr->type == YCALC_DATA_VAR)          yVICURSES_by_name ("p_vars");
       else if (a_curr->type == (uchar) YCALC_DATA_VAR)  yVICURSES_by_name ("p_vars");
       /*---(numbers)---------------------*/
@@ -807,9 +809,9 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          }
       }
       else if (a_curr->type == YCALC_DATA_SFORM) {
-         /*> if      (strchr (a_curr->v_str, (uchar) ' ') != NULL)   yVICURSES_by_name ("a_call");   <* 
-          *> else if (strchr (a_curr->v_str, (uchar) '™') != NULL)   yVICURSES_by_name ("a_call");   <* 
-          *> else if (strchr (a_curr->v_str, (uchar) 'Ø') != NULL)   yVICURSES_by_name ("a_call");   <* 
+         /*> if      (strchr (a_curr->v_str, (uchar) ' ') != NULL)   yVICURSES_by_name ("A_call");   <* 
+          *> else if (strchr (a_curr->v_str, (uchar) '™') != NULL)   yVICURSES_by_name ("A_call");   <* 
+          *> else if (strchr (a_curr->v_str, (uchar) 'Ø') != NULL)   yVICURSES_by_name ("A_call");   <* 
           *> else if (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");   <*/
          if      (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");
          else                                                    yVICURSES_by_name ("#_dang");

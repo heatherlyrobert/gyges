@@ -513,7 +513,7 @@ PROG__end            (void)
    /*> my.btree = '-';                                                                <*/
    yCALC_wrap     ();
    CELL_wrap      ();
-   LOC_wrap       ();
+   /*> LOC_wrap       ();                                                             <*/
    yVICURSES_wrap ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
    return 0;

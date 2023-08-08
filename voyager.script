@@ -2,10 +2,18 @@
 ##
 ## yVIKEYS script to create the voyager spreadsheet for demonstration
 ##
-
-
-º:myhome  600 100¦»
-º:mysize  615 435¦»
+## demo uses "shrike" font, and 101 columns by 43 lines
+##
+##   this is a very common size for my keybindings configuration
+##
+##   best viewed if terminal is set to COLUMNS=101 or slightly more
+##   and LINES=43 or slightly more
+##
+##   different for other systems, but i can for fluxbox/X11 to exact settings using
+##      º:myhome  600 100¦»
+##      º:mysize  615 435¦»
+##   obviously this is a little system dependent, but i keep hardware a long time ;)
+##
 
 
 ºµre5»
@@ -164,7 +172,7 @@ h····p
 ºjh····stravel 1au vs light in 8min.¦··f|··ls<¦»
 º8k0»
 
-l····+9.295e7¦··········fc
+l····+9.295Ë7¦··········fc
 
 0j···ºslight¦············f>»
 l····=`k'''/kkkkk.¦¦····fG··y

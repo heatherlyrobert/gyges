@@ -56,6 +56,7 @@
  *  º  beginning of input
  *  Ï  beginning of field, interpret intelligently
  *     beginning of field, force as string by appending '·'
+ *  #  beginning of field, force as number (especially leading zeros)
  *  -  character included in field
  *  ·  space to be ignored
  *  »  end of sizer
@@ -64,6 +65,26 @@
  *  the end of the sizer.
  *
  *
+ *               127-bit mode                    256-bit mode
+ *  outside      [   ]                           å···æ
+ *  junk space                                   ··
+ *  intellegent    (-------                      ··Ï-------··
+ *  string         #-------                      ··#-------··
+ *  number         9-------                      ··9-------··
+ *  field          (-------f                     ··Ï-------f··
+ *  comma          (-------c                     ··Ï-------c··
+ *  tab            (-------t                     ··Ï-------t··
+ *
+ *  sizer indicates final column width in host application, e.g., gyges
+ *  f c t fields means the data continues until, but field is as sized (not auto)
+ *
+ *
+ *  ·· -------··   force as string (make a number into a string with trailing space)
+ *  ··=-------··   force as number (take out lead zeros, commas, dollar signs, etc)
+ *
+ *  f  §  
+ *  c  ,  ±
+ *  t  Ú
  *
  */
 
@@ -537,6 +558,48 @@ EXIM__import_fail       (void)
    }
    s_npos = 0;
    return 0;
+}
+
+char
+EXEC__import_space      (cchar c, char *r_space)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_senter  (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_INPT   yLOG_spoint  (r_space);
+   --rce;  if (r_space == NULL) {
+      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT   yLOG_schar   (*r_space);
+   /*---(start)--------------------------*/
+   if (strchr ("· " , c) != NULL) {
+      DEBUG_INPT   yLOG_snote   ("normal spacer");
+      *r_space = 'y';
+      rc = 1;
+   }
+   /*---(end)----------------------------*/
+   else if (strchr ("]æ", c) != NULL) {
+      DEBUG_INPT   yLOG_snote   ("end-of-definition");
+      *r_space = '-';
+   }
+   else if (strchr ("(Ï#9", c) != NULL) {
+      DEBUG_INPT   yLOG_snote   ("beg-of-field");
+      *r_space = '-';
+   }
+   /*---(trouble)------------------------*/
+   if (*r_space == 'y' && strchr ("· ", c) == NULL) {
+      DEBUG_INPT   yLOG_snote   ("space broken by unexpected character");
+      EXIM__import_fail ();
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
+   return rc;
 }
 
 char
@@ -1223,7 +1286,6 @@ EXIM__import_read       (void)
          case 's' : /* EXIM__import_bounds (); */   break;
          case 'b' :   EXIM__import_bounds ();       break;
          case 'x' :   EXIM__import_sizer  ();       break;
-                      /*> case 'y' :   EXIM__import_sizer  ();       break;                        <*/
          case 't' : /* EXIM__import_titles (); */   break;
          }
       }

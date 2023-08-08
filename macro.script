@@ -1,0 +1,1170 @@
+ºµre5»
+
+º·:macro è=µ[·m0··:note #µn··0·FwLLLµn·l·Fmlµn·l·FWllµn·l·fm·0·'0·µ]¦·»
+
+
+##===[[ INTRO ]]==============================================================##
+
+º:!cp -f /root/z_gehye/big_greek.txt /root/z_gehye/vi_clip.txt¦»
+
+º:note zz)keyboard macro tour­using gyges-hecatoncheires¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 52=as a c programmer and roboticist, automation is essential Õ55¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 73=standard macros and scripts are available in all my programs ×55¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 84=this quick demo focuses on standard keyboard macros ×55¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 86=i will use a recent, real example of text manipulation ×55¦»
+º0_··"+f···:a10¦··zt··:a28¦»
+
+º:note 77=my opengl font is sourced from a file of ascii-art glyphs ×55¦»
+Ï···º:note g5;µA alpha¦·····:note 77¦»
+Ï·l·º:note g5;µB beta¦······:note 77¦»
+Ï·l·º:note g5;µG gamma¦·····:note 77¦»
+Ï·l·º:note g5;µD delta¦·····:note 77¦»
+
+º:note 58=we'll replicate my keyboard macros to flip a glyph Ô55¦»
+Ïlº:note g5;µE epsilon¦···:note 58¦»
+Ïlº:note g5;µZ zeta¦······:note 58¦»
+Ïlº:note g5;µE eta¦·······:note 58¦»
+Ïlº:note g5;µY theta¦·····:note 58¦»
+
+º:note 37=underneath us are the actual greek letter glyphs Ö55¦»
+Ïlº:note g5;µI iota¦······:note 37¦»
+Ïlº:note g5;µK kappa¦·····:note 37¦»
+Ïlº:note g5;µL lambda¦····:note 37¦»
+Ïlº:note g5;µM mu¦········:note 37¦»
+
+º:note W3=TOPIC 1, quick keyboard macro intro (95% like vi/vim)¦»
+Ïlº:note g5;µN nu¦········:note W3¦»
+Ïlº:note g5;µX xi¦········:note W3¦»
+Ïlº:note g5;µO omicron¦···:note W3¦»
+Ïlº:note g5;µP pi¦········:note W3¦»
+
+º:note Wh=TOPIC 2, qlyph flipping and grid clean-up (new stuff)¦»
+Ïlº:note g5;µR rho¦·······:note Wh¦»
+Ïlº:note g5;µS sigma¦·····:note Wh¦»
+Ïlº:note g5;µT tau¦·······:note Wh¦»
+Ïlº:note g5;µU upsilon¦···:note Wh¦»
+
+º:note Wb=TOPIC 3, extra on maintaining macros and building scripts¦»
+Ïlº:note g5;µF phi¦·······:note Wb¦»
+Ïlº:note g5;µX chi¦·······:note Wb¦»
+Ïlº:note g5;µQ psi¦·······:note Wb¦»
+Ïlº:note g5;µW omega¦·····:note Wb¦»
+
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ BASIC KEYBOARD MACROS ]]==============================================##
+
+º:note #¦»
+º·_0··v·$~·x·»
+º·0·26(fn·l)·0»
+
+## :unskip¦
+
+º:a4¦»
+º:note 11)basic keyboard macros standard in my programs¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:a4¦····skeyboard macros have one of 60¦···f<·ls<¦·y·lp·lp»
+  ºj·3h····sstandard, one-letter names¦·······f<·ls<¦·y·lp·lp»
+  ºj·3h····sa-z, 0-9, and è-ÿ¦················f<·ls<¦·y·lp·lp»
+  ºj·3h··»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:i3¦····sstart and stop recording with q¦······f<·ls<¦·y·lp·lp»
+  ºj·3h····sex. type "qa·2l·4j·2h·2k·q"¦··········f<·ls<¦·y·lp·lp»
+  ºj·3h»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:i6¦····s¶qa¶ means capture keys into¦·········f<·ls<¦·y·lp·lp»
+  ºj·3h····sthe keyboard macro named 'a'¦·········f<·ls<¦·y·lp·lp»
+  ºj·3h»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:i9¦····sremember, they are also being¦········f<·ls<¦·y·lp·lp»
+  ºj·3h····sexecuted at the same time¦············f<·ls<¦·y·lp·lp»
+  ºj·3h»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:i12¦···styped keys are shown in lower¦········f<·ls<¦·y·lp·lp»
+  ºj·3h····sright (keys) as entered¦··············f<·ls<¦·y·lp·lp»
+  ºj·3h»
+  º:note 79;watch keys ‡xZ¦»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:i15¦···sthe second ¶q¶ means save, or¦········f<·ls<¦·y·lp·lp»
+  ºj·3h····suse ¶Q¶ so throw away¦················f<·ls<¦·y·lp·lp»
+  ºj·3h»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:i18¦···snow, set up the expected path¦········f<·ls<¦·y·lp·lp»
+  ºj·3h····sfor our simple macro¦·················f<·ls<¦·y·lp·lp»
+  ºj·3h»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:e10¦···sbeg¦·f>·lsµ_Eµ_H¥vy·ppppppppppaµ_3¦·ls<¦·»
+  º:g11¦···s    µ_V¦·»
+  º:e12¦···send¦·f|·2l·s    µ_V¦·»
+  º:e13¦···s   µ_U¦·2l·s    µ_V¦·»
+  º:e14¦···s   µ_7µ_H¥vy·pppppppppppppppaµ_9¦·ls<¦·ls<¦·»
+  º:e10¦··ma·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º:i21¦···shear is what the example says¦········f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º········s  µ' ¶qa¶ to start¦···················f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º········s  µ' ¶2l¶ to move two right¦··········f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+·2l
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º········s  µ' ¶4j¶ means down four¦············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+·4j
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º········s  µ' ¶2h¶ is left two¦················f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+·2h
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º········s  µ' ¶2k¶ means up two¦···············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+·2k
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º········s  µ' and ¶q¶ means save¦··············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·ma·'l·»
+  º·j······snow we will enter the actual¦·········f<·ls<¦·y·lp·lp»
+  ºj·3h····smacro by using those keys¦············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml»
+  º:e10¦··ma·»
+ºµre5»
+qa·2l·4j·2h·2k·q
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j······smacros can be seen using vars¦········f<·ls<¦·y·lp·lp»
+  ºj·3h····s@a refers to saved macro 'a'¦·········f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a»
+ºµre5»
+º:e7¦··sAS SAVED¦·f|··ls<¦·ls<¦·»
+ºj·2h··#"@a="©@a¦·f|··ls<¦·ls<¦·»
+º·'l···#"  µ' formula "©f(e8)¦····················f<·ls<¦·y·lp·lp»
+º·3h·j·ml·'a·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·:a10¦··sexecute macros with an @ sign¦········f<·ls<¦·y·lp·lp·»
+  º·j·3h···sso, move to beg and type "@a"¦········f<·ls<¦·y·lp·lp·»
+  º·3h·j·ml·'a»
+ºµre5»
+º·'a··»·Ï·@a
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·sthe speed you saw is my 5/demo¦·······f<·ls<¦·y·lp·lp»
+  º·j·3h···sspeed, i.e, 10 keys per second¦·······f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+Ï·@a
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·sexecution speed is throttled¦·········f<·ls<¦·y·lp·lp»
+  º·j·3h···sby "µµreµ'" (scRipt Execution)¦·······f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·2j·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·swe will select ¶blitz¶ speed¦·········f<·ls<¦·y·lp·lp»
+  º·j·3h···swith ¶µµre0¶ and execute again¦·······f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+µ´´r´´e´´5·Ï·
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ºµre0»·@a·ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·s¶blitz¶ speed is asap, but, on¦·······f<·ls<¦·y·lp·lp»
+  º·j·3h···smy gear, 1-10 usec/key¦···············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·2j·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·shave 10 speeds from 0/blitz¦··········f<·ls<¦·y·lp·lp»
+  º·j·3h···sto 9/three seconds per key¦···········f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·2j·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·srepeating is easy, just preface¦······f<·ls<¦·y·lp·lp»
+  º·j·3h···swith a number, ex ¶6@a¶¦··············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·2j·»
+  º:e10¦· ·sbeg¦·f>·lsµ_Eµ_H¥vy·ppppppppppaµ_3¦·f<·ls<¦·»
+  º:g11¦· ·s    µ_V¦·f<·························f<·»
+  º:e12¦· ·s  1st µ_H¥vy·pppppppppppppaµ_6¦·····f<·ls<¦·ls<¦·»
+  º:e13¦· ·s   µ_U¦·f<·lX··l·s    µ_V¦··········f<·»
+  º:e14¦· ·s  2nd µ_H¥vy·pppppppppppppaµ_6¦·····f<·ls<¦·ls<¦·»
+  º:e15¦· ·s   µ_U¦·f<·lX··l·s    µ_V¦··········f<·»
+  º:e16¦· ·s  3rd µ_H¥vy·pppppppppppppaµ_6¦·····f<·ls<¦·ls<¦·»
+  º:e17¦· ·s   µ_U¦·f<·lX··l·s    µ_V¦··········f<·»
+  º:e18¦· ·s  4th µ_H¥vy·pppppppppppppaµ_6¦·····f<·ls<¦·ls<¦·lX»
+  º:e19¦· ·s   µ_U¦·f<·lX··l·s    µ_V¦··········f<·»
+  º:e20¦· ·s  5th µ_H¥vy·pppppppppppppaµ_6¦·····f<·ls<¦·ls<¦·»
+  º:e21¦· ·s   µ_U¦·f<·lX··l·s    µ_V¦··········f<·»
+  º:e22¦· ·s  6th µ_H¥vy·pppppppppppppaµ_6¦·····f<·ls<¦·ls<¦·»
+  º:e23¦· ·s   µ_U¦·f<·lX··l·s    µ_V¦··········f<·»
+  º:e24¦· ·s   µ_7µ_H¥vy·pppppppppppppppaµ_9¦···f<·ls<¦·ls<¦·»
+  º·'a»
+ºµre5»
+µ´´r´´e´´5·Ï·6@a
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·snow, show blitz speed on the¦·········f<·ls<¦·y·lp·lp»
+  º·j·3h···ssame size repeats ;)  wow¦············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+µ´´r´´e´´5·Ï·
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ºµre0»·6@a·ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·sgo a couple more times¦···············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+ºµre0»·6@a·ºµre5» Ï·'a·Ï
+ºµre0»·6@a·ºµre5» Ï·'a·Ï
+ºµre0»·6@a·ºµre5» Ï·'a·Ï
+ºµre0»·6@a·ºµre5» ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'l·»
+  º·j···· ·sautomation is worth it ;)¦············f<·ls<¦·y·lp·lp»
+  º·3h·j·ml·'a·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:e31¦····sEVERYTHING is keyboard¦··················f|·ls<¦·y·lp·lp»
+  º·j·3h····scentric, so keyboard macros¦·············f|·ls<¦·y·lp·lp»
+  º·j·3h····scan do ANYTHING¦·························f|·ls<¦·y·lp·lp»
+  º·j·3h»
+  º:e30¦·v·3l·4j·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+¥
+
+
+
+##===[[ GREEK ASCII ART ]]====================================================##
+
+º·_0··v·ge·gb·x·»
+º·@è·»
+
+º·:note pz)opengl font ascii-art overview¦·»
+º·:a2¦·»
+º·:!cp -f /root/z_gehye/gamma.txt  /root/z_gehye/vi_clip.txt¦·»
+º·"+F·»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 82=i always use custom texture-mapped fonts in opengl ×6o¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º:a1¦··s         center line¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º······¦A        normal side margin¦··ls<¦··ls<¦··h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 83=they're fast and don't require outside runtime libraries  ×6o¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···2j·sinformational header¦·····ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···3j·snomal upper margin¦·······ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 84=also, i don't like specialty editors like font programs   ×6c¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···3j·sascent space¦·············ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···3j·scap height¦···············ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 85=so, i source the font from ascii-art, like to the left ;) ×6c¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º··10j·smedian line¦··············ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···8j·smiddle guide¦·············ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 8G=my macro examples will use the greek letter delta (ë)     ×6J¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º··17j·sbaseline¦·················ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···8j·sdescent space¦············ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 87=its simple and easy to tell when flipped                  ×6J¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º···5j·snomal lower margin¦·······ls<¦·h»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º:note 8U=we'll use the center part (cap height to baseline)¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+º·_·:a2¦···dy·dy·dy·dy·dy·dy·dy·dy·dy·dy·»
+º···:a39¦··dy·dy·dy·dy·dy·dy·dy·dy·dy·dy·dy·dy·dy·dy·»
+º···:a1¦···v·l·x····»
+º···:b1¦···v·l·40j·x·»
+º·0_»
+º·®a2..a38±··"-F·»
+º:!cp -f /root/z_gehye/vi_clip.txt /root/z_gehye/gamma2.txt¦»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ PLAN OF ATTACK ]]=====================================================##
+
+º·:note #¦·»
+
+º:note pz)plan of attack¦»
+
+
+ºµre0»
+  º:c4¦···sin this example, we'll horizontally¦···f<··»
+  ºj······sflip an ascii source glyph (delta)¦····f<··»
+  ºj······sfrom my opengl shrike font¦············f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c8¦···sthis is a good way to show macros¦·····f<··»
+  ºj······smanipulating strings in complex¦·······f<··»
+  ºj······sand useful ways¦·······················f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c12¦··swe will develop this in three blocks¦··f<··»
+  ºj······sand require only about 10 lines of¦····f<··»
+  ºj······smacros...¦·····························f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c16¦··sa) remove the visual grid lines¦·······f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c18¦··sb) flip the glyph space only¦··········f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c20¦··sc) put an improved grid back on¦·······f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c22¦··sfirst will be the flipping (b) as¦·····f<··»
+  ºj······sits more traditional and easier to¦····f<··»
+  ºj······sfollow...¦·····························f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c26¦··sthis part is 99% the same as when¦·····f<··»
+  ºj······si did it using vi/vim¦·················f<··»
+  ºj······»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+##===[[ HORIZONTAL FLIPPING ]]================================================##
+
+º·®b1..d38±·x·»
+º·:note #¦·»
+
+
+º:note pz)start with horizontal flipping¦»
+
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·squick design decision -- break the¦··········f<··»
+  º'lj·ml·seffort into three pieces¦····················f<··»
+  º'lj·ml·»
+ºµre5»
+º·:b5¦···sµdµsµsµs¦··l·sµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµs¦··l·sµsµsµb¦··»
+··:b6¦···sÖc¦·f|·º·ls(preparation)¦·························mc··l·#ifs (c ©= @c, "y", "-")¦··f|··»
+··:b8¦···sÖd¦·f|·º·ls(flip two characters)¦·················md··l·#ifs (d ©= @d, "y", "-")¦··f|··»
+··:b10¦··sÖe¦·f|·º·ls(looping for all chars/lines)¦·········me··l·#ifs (e ©= @e, "y", "-")¦··f|··»
+º·:b11¦··sµdµsµsµs¦··l·sµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµs¦··l·sµsµsµb¦··»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+ºµre0»
+  º:c33¦···ssome helpful special symbols¦·»
+  º··j·····sµn········enter key¦··········»
+  º··j·····sµe········escape key¦·········»
+  º··j·····sµs········visual space¦·······»
+  º··j·····s(µsµsµs)··grouping/repeat¦····»
+  º··j·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·smark the top of the glyph ¶mt"¦··············f<··»
+  º'lj·ml·»
+ºµre5»
+:a2¦·mt
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+º·®b12..d32±·x·»
+
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·spreparation key is to set the¦··············f<··»
+  º'lj·ml·sbeg 'b' and end 'e' markers properly¦·······f<··»
+ºµre5»
+:a2¦·mt
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·smacro 'c', ¶(prepartion)¶¦···················f<··»
+  º'lj·ml·s ´ enter source edit mode    ¶µn¶¦···········f<··»
+ºµre5»
+'c··sµn¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ set begin (b) mark        ¶mb¶¦···········f<··»
+  º_0·#"µ*µj beg"¦·»
+ºµre5»
+'c··¦Aµsµs0µslµsmb¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ set end (e) mark          ¶me¶¦···········f<··»
+  º_0·#"µ*µj beg                 end µjµ*µ*µ*µ*µ*µ*"¦·»
+ºµre5»
+'c··¦Aµsµs$µsHµshµsme¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ get out of source mode    ¶µe¶¦···········f<··»
+ºµre5»
+'c··¦Aµsµsµe¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·»
+  º'lj·ml·suse ¶:macro cyµn¶ to save/yank the¦··········f<··»
+  º'lj·ml·scurrent cell to macro 'c'¦···················f<··»
+ºµre5»
+'c··:macro cy¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·»
+  º'lj·ml·sthis needs to be repeated once for¦··········f<··»
+  º'lj·ml·seach gylph line processed¦···················f<··»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+
+º·®b12..d32±·x·»
+
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·sflipping key is to move the markers¦·········f<··»
+  º'lj·ml·sinward after each flip¦······················f<··»
+  º'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·smacro 'd', ¶(flip two characters)¶¦··········f<··»
+  º'lj·ml·s ´ enter source edit mode    ¶µn¶¦···········f<··»
+ºµre5»
+'d··sµn¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ delete at end mark        ¶'edl¶¦·········f<··»
+ºµre5»
+'d··¦Aµsµs'edl¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ paste before beg mark     ¶'bP¶¦··········f<··»
+ºµre5»
+'d··¦Aµs'bP¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ move beg mark inward      ¶mb¶¦···········f<··»
+ºµre5»
+'d··¦Aµsmb¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ delete at beg mark        ¶dl¶¦···········f<··»
+ºµre5»
+'d··¦Aµsµsdl¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ paste before end mark     ¶'eP¶¦··········f<··»
+ºµre5»
+'d··¦Aµs'eP¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ move end mark inward      ¶hhme¶¦·········f<··»
+ºµre5»
+'d··¦Aµshhµsme¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ save changes              ¶µn¶¦···········f<··»
+ºµre5»
+'d··¦Aµsµsµn¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·»
+  º'lj·ml·suse ¶:macro dyµn¶ to save/yank the¦··········f<··»
+  º'lj·ml·scurrent cell to macro 'd'¦···················f<··»
+ºµre5»
+'d··:macro dy¦
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+º·®b12..d38±·x·»
+
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·slets flip some characters by running¦········f<··»
+  º'lj·ml·s@c once, and @d over-and-over again¦·········f<··»
+  º'lj·ml·»
+  º'lj·ml·sµ_4abcdefghijklmnopqrstuvwxyz0µsµsµsµsµ_6¦···f<··hsex.¦·f>·l»
+ºµre5»
+
+ºµre3»
+  º'l·»@c
+  º'lj·ml··h+1¦······l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+  º'lj·ml··h=`k¦+1¦··l·ky·jp·»@d
+ºµre5»
+
+
+ºµre0»
+  º:c30¦·ml»
+  º'lj·ml·sworks !!! need to repeat @d 13 times¦········f<··»
+  º'lj·ml·sso, quickly create the looping macro¦········f<··»
+  º'lj·ml·sthen watch the ¶after" line closely ;)¦······f<··»
+  º'lj·ml·»
+ºµre5»
+'e··s@cµs13@d¦
+'e··:macro ey¦
+
+ºµre0»
+  º:c16¦·y·:c35¦·p·hsbefore¦·f>·l»
+  º:c36¦·p·hsafter¦··f>·l»
+ºµre5»
+
+ºµre3»
+   @e
+ºµre5»
+
+ºµre0»
+  º:c37¦·s        DO IT AGAIN !!!¦·»
+ºµre5»
+
+ºµre3»
+   º:c16¦·y·:c36¦·p·»
+   @e
+ºµre5»
+
+º·®b12..d38±·x·»
+
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·supdate the looping, save it, and use it at¦··f<··»
+  º'lj·ml·s¶blitz¶ full-speed on the glyph itself¦······f<··»
+  º'lj·ml·s100,000 to 1,000,000 keys per second¦········f<··»
+  º'lj·ml·»
+ºµre5»
+'e··¦·I'tµs37(¥·Aµsj)·_'t¦
+:macro ey¦
+ºµre0» 't·@e ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c16¦·ml»
+  º'lj·ml·sslow it down a little to flip the glyph¦·····f<··»
+  º'lj·ml·sback (µµre1) which is called ¶fast¶¦·········f<··»
+  º'lj·ml·s10,000 keys per second¦······················f<··»
+  º'lj·ml·»
+ºµre5»
+ºµre1» 't·@e ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c20¦·ml»
+  º'lj·ml·sonce again even even a little slower¦········f<··»
+  º'lj·ml·s(µµe2) which is called ¶thousand¶¦···········f<··»
+  º'lj·ml·s1,000 keys per second¦·······················f<··»
+ºµre5»
+ºµre2» 't·@e ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c24¦·ml»
+  º'lj·ml·sput to original at blitz¦····················f<··»
+  º't·@e»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º:c28¦·ml»
+  º'lj·ml·sit works, but the guidelines are trouble¦····f<··»
+  º'lj·ml·sand misplaced.  i will show you how to¦······f<··»
+  º'lj·ml·sfix them, but moving faster¦·················f<··»
+  º'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ REMOVE GRIDS ]]=======================================================##
+## :unskip¦
+º·®b12..d38±·x·»
+º·@è·»
+
+##---(messy glyph)-------------*/
+º·:note 35+here is the same glyph after text editing, which always disrupts the ornamental guidelines¦»
+º·:a2¦··»
+º·:!cp -f /root/z_gehye/gamma_ugly.txt  /root/z_gehye/vi_clip.txt¦·»
+º·:a2¦·"+F·:a2¦·mt·»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+º·:note 35#¦·»
+
+##---(placeholders)------------*/
+ºµre0»
+  º:c12¦·ml»
+  º'lj·ml·slet's break the effort into two macros¦··f<··»
+  º'lj·ml·sto make then simplier and clearer.¦······f<··»
+  º'lj·ml·swe'll just name them 'a' and 'b'¦········f<··»
+  º'lj·ml·»
+ºµre5»
+º·:b1¦··sµdµsµsµs¦··l·sµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµs¦··l·sµsµsµb¦··»
+··:b2¦··sÖa¦·f|·º·ls(one time preparation)¦··ma···l·#ifs (a ©= @a, "y", "-")¦··f|··»
+··:b4¦··sÖb¦·f|·º·ls(clear all grid lines)¦··mb···l·#ifs (b ©= @b, "y", "-")¦··f|··»
+ÏÏ·ÏÏ·ÏÏ
+
+##---(placeholders)------------*/
+ºµre0»
+  º'lj·ml·s'a' prepartion work...¦······················f<··»
+  º'lj·ml·s ´ mark the top of the glyph ¶mt¶¦···········f<··»
+ºµre5»
+'a··smt¦
+ÏÏ·ÏÏ·ÏÏ
+
+##---(prep macro)--------------*/
+ºµre0»
+  º'lj·ml·s ´ enter source edit mode    ¶µn¶¦··············f<··»
+ºµre5»
+'a··¦Aµsµsµn¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ set left change boundary  ¶m<¶¦···········f<··»
+  º_0·#"µ*µj from here µsµsµs"¦·»
+ºµre5»
+'a··¦Aµsµs0µslµsm<¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ set right change boundary ¶m>¶¦···········f<··»
+  º_0·#"µ*µj from here µsµsµsµsµsµsµsµsµsµs to here µjµ*"¦·»
+ºµre5»
+'a··¦Aµsµs$µshµsm>¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ define subset to act on   ¶µ_hµ_Hµ_VµJµ_0µ_5µs_s¶¦··f<··»
+ºµre5»
+'a··¦Aµsµsµ_hµ_Hµ_VµµJµ_0µ_5µµsµ_s¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ get out of source mode    ¶µe¶¦·········f<··»
+ºµre5»
+'a··¦Aµsµsµe¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ use ¶:macro ayµn¶ to save to macro 'a'¦·f<··»
+ºµre5»
+'a··:macro ay¦
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+##---(clear macro)-------------*/
+ºµre0»
+  º'lj·ml·»
+  º'lj·ml·s'b' clear the grid lines...¦····················f<··»
+  º'lj·ml·s ´ enter source edit mode    ¶µn¶¦··············f<··»
+ºµre5»
+'b··sµn¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ clear all matching chars  ¶µ_ax¶¦············f<··»
+ºµre5»
+'b··¦Aµsµ_ax¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ save the changes          ¶µn¶¦·········f<··»
+ºµre5»
+'b··¦Aµsµn¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ go down one line          ¶j¶¦·········f<··»
+ºµre5»
+'b··¦Aµsj¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ do that all 37 times      ¶37(...)¶¦······f<··»
+ºµre5»
+'b··¦I@aµs37(¥·A)¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ return to the top         ¶_'t¶¦··········f<··»
+ºµre5»
+'b··¦Aµs_'t¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·s ´ use ¶:macro byµn¶ to save to macro 'b'¦·f<··»
+ºµre5»
+'b··:macro by¦
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+##---(run)---------------------*/
+ºµre0»
+  º'l·2j·ml·sin demo/slow speed, execute @a¦·················f<··»
+ºµre5»
+º:a2¦»
+ºµre4»@a
+ÏÏ·ÏÏ·ÏÏ
+
+
+ºµre0»
+  º'lj·ml·sthen execute @b, also in slow mode¦·············f<··»
+ºµre5»
+º:a2¦»
+ºµre4»@b
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·sreimport the messy version¦·····················f<··»
+  º·:!cp -f /root/z_gehye/gamma_ugly.txt  /root/z_gehye/vi_clip.txt¦·»
+  º·:a2¦·"+F·:a2¦·mt·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+ºµre0»
+  º'lj·ml·s... and do again a full speed (jesus)¦··········f<··»
+  º·:a2¦·@a·@b·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ ADD BETTER GRID ]]====================================================##
+º·®b12..d38±·x·»
+
+ºµre0»
+  º:c22¦··ml·»
+  º'lj·ml·snow, we put in improved grid lines¦···f<··»
+  º'lj·ml·»
+ºµre5»
+··:b12¦·sÖf¦·f|·º·ls(preparation)¦·························mf···l·#ifs (f ©= @f, "y", "-")¦··f|·»
+··:b14¦·sÖg¦·f|·º·ls(normal horizontal)¦···················mg···l·#ifs (g ©= @g, "y", "-")¦··f|·»
+··:b16¦·sÖh¦·f|·º·ls(full horizontal)¦·····················mh···l·#ifs (h ©= @h, "y", "-")¦··f|·»
+··:b18¦·sÖi¦·f|·º·ls(vertical grids)¦······················mi···l·#ifs (i ©= @i, "y", "-")¦··f|·»
+··:b20¦·sÖj¦·f|·º·ls(prissy little center point)¦··········mj···l·#ifs (j ©= @j, "y", "-")¦··f|·»
+º·:b21¦·sµdµsµsµs¦··l·sµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµs¦··l·sµsµsµb¦··»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·sprep is same as 'a' but need a¦··············f<··»
+  º'lj·ml·sdifferenct character subset¦·················f<··»
+  º'lj·ml·»
+ºµre5»
+'f··s@aµsµnµsµ_hµµwµµsµµJµ_sµsµe¦
+:macro fy¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·screate a full line replacement¦··············f<··»
+  º'lj·ml·swith a light grid¦···························f<··»
+  º'lj·ml·»
+ºµre5»
+'g··sµnµsµ_arµµsµsµn¦
+:macro gy¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·sreplace each horizontal gridline¦············f<··»
+  º'lj·ml·swith a special one for midline last¦·········f<··»
+  º'lj·ml·»
+ºµre5»
+'h··s'tµs@fµs@gµs2µs%@gµs12%µs@gµs37%µs@gµsµs20%µsµnµsµ_arµ_Hµsµnµs_'t¦
+:macro hy¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·sreplace the vertical grids with¦·············f<··»
+  º'lj·ml·stwo different types of lines¦················f<··»
+  º'lj·ml·»
+ºµre5»
+'i··s'tµs@fµs37(µnµs15|µsµ_mrµ_Vµs28|µsµ_mrµµsµsµnµsj)µs_'t¦
+:macro iy¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·shandle a prissy little center-point¦·········f<··»
+  º'lj·ml·sformat when not covered by glyph¦············f<··»
+ºµre5»
+'j··s'tµs20%µsµnµsµs15|µsµ_mRµ_Hµ_5µsµnµs't¦
+:macro jy¦
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ MASTER MACRO ]]=======================================================##
+º·®b22..d38±·x·»
+
+ºµre0»
+  º:c24¦··ml·»
+  º'lj·ml·sfinally, one macro to rule them all :)¦·····f<··»
+  º'lj·ml·»
+ºµre5»
+··:b22¦·sÖz¦·f|·º·ls(main macro)¦··························mz···l·#ifs (z ©= @z, "y", "-")¦··f|·»
+º·:b23¦·sµdµsµsµs¦··l·sµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµsµs¦··l·sµsµsµb¦··»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·scall line removal              (@b)¦·········f<··»
+  º'lj·ml·»
+ºµre5»
+'z··s:a2µn·@b¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·scall glyph horizontal flipping (@e)¦·········f<··»
+  º'lj·ml·»
+ºµre5»
+'z··¦Aµs@e¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·scall horizontal line placement (@h)¦·········f<··»
+  º'lj·ml·»
+ºµre5»
+'z··¦Aµs@h¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·scall vertical line placement   (@i)¦·········f<··»
+  º'lj·ml·»
+ºµre5»
+'z··¦Aµs@i¦
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·scall center point touch-up     (@j)¦·········f<··»
+  º'lj·ml·»
+ºµre5»
+'z··¦Aµs@j¦
+:macro zy¦
+ÏÏ·ÏÏ·ÏÏ
+
+º·®b26..d38±·x·»
+
+ºµre0»
+  º:c26¦··ml·»
+  º'lj·ml·sbring back the messy glyph¦··················f<··»
+  º'lj·ml·»
+ºµre5»
+º·:!cp -f /root/z_gehye/gamma_ugly.txt  /root/z_gehye/vi_clip.txt¦·»
+º·:a2¦·"+F·:a2¦·mt·»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·srun at full speed¦···························f<··»
+  º·@z·»
+  º'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·sreverse it back¦·····························f<··»
+  º·@z»
+  º'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'lj·ml·schills !!!  and put it back¦·················f<··»
+ºµre5»
+º·:!cp -f /root/z_gehye/gamma_ugly.txt  /root/z_gehye/vi_clip.txt¦·»
+º·:a2¦·"+F·:a2¦·mt·»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'l·····srun again!!!¦································f<··»
+  º·@z·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º'l·····snow just flip it in place¦···················f<··»
+  º·@z·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ CHECKING ]]===========================================================##
+º·®b25..d38±·x·@è·»
+
+º:c24¦··ml·»
+
+ºµre0»
+  º·'lj·ml·ssince i created the macros in cells,¦········f<··»
+  º·'lj·ml·si risked them being out-of-sync with¦········f<··»
+  º·'lj·ml·sthe ¶real¶ version that runs (confusion).¦···f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·sto the right of the macro is a formula¦······f<··»
+  º·'lj·ml·sthat compares the local and saved version €€€€€€€€€€€…¦··f<··ls<¦·»
+  º·'lj·ml·sy = saved, - = updated, error = empty¦·······f<··»
+  º·'lj·ml·»
+  º·l·2k·5(k·s ¦)··k·s ´¦·æ
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·#f(d22)¦··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·stest by adding a space to macro z (yes)¦·····f<··»
+  º·'z·¦A ¦·»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·slots of options, lots of solutions¦··········f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+##===[[ AWESOME ]]============================================================##
+º·®b25..d38±·x·@è·»
+
+º:c24¦··ml·»
+
+ºµre0»
+  º·'lj·ml·sthis entire demo script is essentially¦······f<··»
+  º·'lj·ml·swritten in keyboard macros ;)¦···············f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·sa script file line is read and¦··············f<··»
+  º·'lj·ml·splaced into a macro called dot '.'¦··········f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·smacro dot is executed.  then another¦·······f<··»
+  º·'lj·ml·sline is read.  repeat.  easy peasy :)¦······f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·ssmall, reliable, and consistent¦············f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ºµre0»
+  º·'lj·ml·send-of-demo.  done, finito, completare...¦···f<··»
+  º·'lj·ml·»
+ºµre5»
+ÏÏ·ÏÏ·ÏÏ
+
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+ÏÏ·ÏÏ·ÏÏ
+
+
+
+
+

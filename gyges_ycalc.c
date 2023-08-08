@@ -690,7 +690,7 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_YCALC   yLOG_info    ("string"    , s);
       if (x_owner->align == '?')  rc = strlpad (s, t, x_owner->format, '<'       , w - 1);
       else                        rc = strlpad (s, t, x_owner->format, x_owner->align, w - 1);
-   } else if (x_owner->type == YCALC_DATA_CADDR) {
+   } else if (x_owner->type == YCALC_DATA_CADDR || x_owner->type == YCALC_DATA_RLIKE) {
       DEBUG_YCALC   yLOG_note    ("calc-address-type");
       strcpy (s, "!");
       if (x_owner->v_str != NULL)  strlcat (s, x_owner->v_str, LEN_RECD);

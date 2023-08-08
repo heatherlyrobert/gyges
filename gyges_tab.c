@@ -930,8 +930,9 @@ TAB_cleanse             (tTAB *a_tab)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_LOCS   yLOG_complex ("tab"       , "%2d, %c, %s, %c", a_tab->tab, a_tab->abbr, a_tab->name, a_tab->type);
    /*---(cells)--------------------------*/
-   DEBUG_LOCS   yLOG_value   ("cells"     , a_tab->count);
+   DEBUG_LOCS   yLOG_value   ("cell count", a_tab->count);
    --rce;  if (a_tab->count > 0) {
       DEBUG_LOCS   yLOG_note    ("BAD NEWS, celss are on this tab");
       rc = rce;
@@ -955,10 +956,12 @@ TAB_cleanse             (tTAB *a_tab)
    }
    DEBUG_LOCS   yLOG_value   ("rows (aft)", a_tab->R_count);
    /*---(free)---------------------------*/
-   DEBUG_LOCS   yLOG_value   ("free"      , rc);
+   DEBUG_LOCS   yLOG_value   ("ready"     , rc);
    if (rc == 0) {
+      DEBUG_LOCS   yLOG_note    ("freeing");
       TAB_free (a_tab->tab);
    }
+   DEBUG_LOCS   yLOG_value   ("done"      , rc);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
