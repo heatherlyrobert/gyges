@@ -898,8 +898,8 @@ DRAW_main          (void)
    }
    x_save = x_curr;
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
-   strlcpy (s_mark_list, "+", LEN_RECD);
-   /*> yVIKEYS_hint_marklist  (s_mark_list);                                          <*/
+   /*> strlcpy (s_mark_list, "+", LEN_RECD);                                          <*/
+   yMARK_mark_list (&(my.mark_show), s_mark_list);
    /*---(display all)--------------------*/
    yVIEW_size (YVIEW_MAIN, NULL, &x_left, &x_wide, &x_bott, &x_tall);
    DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3dw, %3db, %3dt", x_left, x_wide, x_bott, x_tall);
