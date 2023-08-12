@@ -684,9 +684,16 @@ CELL_change        (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
    tCELL      *x_curr      = NULL;
-   /*---(beginning)----------------------*/
+   /*---(header)-------------------------*/
    DEBUG_CELL   yLOG_enter   (__FUNCTION__);
    DEBUG_CELL   yLOG_complex ("args"      , "cell %p, mode %c, tab %4d, col %4d, row %4d", a_cell, a_mode, a_tab, a_col, a_row);
+   /*---(defense)------------------------*/
+   DEBUG_CELL   yLOG_value   ("a_tab"     , a_tab);
+   --rce;  if (TAB_is_locked (a_tab)) {
+      DEBUG_CELL   yLOG_note    ("can not complete, destination tab is locked");
+      DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    DEBUG_CELL   yLOG_point   ("a_source"  , a_source);
    --rce;  if (a_source == NULL) {
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);

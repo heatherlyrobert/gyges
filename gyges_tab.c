@@ -446,7 +446,7 @@ TAB_new_in_open         (uchar *a_name, uchar *a_size)
 }
 
 char
-TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size)
+TAB_new_in_abbr_OLD     (uchar a_abbr, uchar *a_name, uchar *a_size)
 {
    char        rc          =    0;
    char        x_tab       =    0;
@@ -458,6 +458,32 @@ TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size)
    DEBUG_LOCS   yLOG_value   ("new"       , rc);
    if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
    if (a_abbr == (uchar) '¯')  api_ymacro_init ();
+   DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char
+TAB_new_in_abbr         (char a_abbr, char a_size [LEN_LABEL], char *a_name [LEN_TITLE])
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          =    0;
+   char        x_tab       =    0;
+   /*---(header)-------------------------*/
+   DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   /*---(check tab)----------------------*/
+   DEBUG_LOCS   yLOG_char    ("a_abbr"    , a_abbr);
+   if      (a_abbr == '\0')  x_tab = TAB_first_open ();
+   else if (a_abbr == '>' )  x_tab = TAB_first_open ();
+   else                      x_tab = INDEX_tab (a_abbr);
+   DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+   /*---(create tab)---------------------*/
+   rc = TAB_new (NULL, x_tab, a_name, a_size);
+   DEBUG_LOCS   yLOG_value   ("new"       , rc);
+   /*---(update universe)----------------*/
+   if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
+   /*---(test for macro setup)-----------*/
+   if (a_abbr == '¯')  api_ymacro_init ();
+   /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
@@ -488,9 +514,11 @@ char
 TAB_free_from_abbr      (uchar a_abbr)
 {
    switch (a_abbr) {
-   case '*':  return  TAB_free_all_empties ();        break;
-   case '.':  return  TAB_free (CTAB);                break;
-   default :  return  TAB_free (INDEX_tab (a_abbr));  break;
+   case '*' :  return  TAB_free_all_empties ();        break;
+   case '.' :  return  TAB_free (CTAB);                break;
+   case ' ' :  return  TAB_free (CTAB);                break;
+   case '\0':  return  TAB_free (CTAB);                break;
+   default  :  return  TAB_free (INDEX_tab (a_abbr));  break;
    }
    return 0;
 }
@@ -899,14 +927,18 @@ TAB_init                (void)
     *> TAB_new_in_abbr ('®', NULL, NULL);                                             <* 
     *> TAB_new_in_abbr ('¯', NULL, NULL);                                             <*/
    /*---(universe commands)--------------*/
-   rc = yCMD_add (YVIHUB_M_BUFFERS, "uquick"      , "uq"  , ""     , TAB_new_quick              , "open a new tab quickly"               );
-   rc = yCMD_add (YVIHUB_M_BUFFERS, "unew"        , ""    , "ss"   , TAB_new_in_open            , "open a new tab in next open slot"     );
+   /*> rc = yCMD_add (YVIHUB_M_BUFFERS, "uquick"      , "uq"  , ""     , TAB_new_quick              , "open a new tab quickly"               );   <*/
+   /*> rc = yCMD_add (YVIHUB_M_BUFFERS, "unew"        , ""    , "ss"   , TAB_new_in_open            , "open a new tab in next open slot"     );   <*/
    rc = yCMD_add (YVIHUB_M_BUFFERS, "umake"       , ""    , "css"  , TAB_new_in_abbr            , "open a new tab in specific slot"      );
    rc = yCMD_add (YVIHUB_M_BUFFERS, "ufree"       , ""    , "c"    , TAB_free_from_abbr         , "free a old tab in specific slot"      );
-   rc = yCMD_add (YVIHUB_M_BUFFERS, "univ"        , ""    , "c"    , TAB_switch_key             , "switch buffer"                        );
+   /*> rc = yCMD_add (YVIHUB_M_BUFFERS, "univ"        , ""    , "c"    , TAB_switch_key             , "switch buffer"                        );   <*/
    rc = yCMD_add (YVIHUB_M_BUFFERS, "utitle"      , ""    , "s"    , TAB_rename_curr            , "rename current buffer"                );
    rc = yCMD_add (YVIHUB_M_BUFFERS, "usize"       , ""    , "s"    , TAB_resize_curr            , "change a buffer size"                 );
    rc = yCMD_add (YVIHUB_M_BUFFERS, "ubrowse"     , "ub"  , "a"    , TAB_browse                 , "find buffer by name"                  );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "ulock"       , ""    , ""     , TAB_lock                   , "lock a universes content"             );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "uunlock"     , ""    , ""     , TAB_unlock                 , "unlock a universes content"           );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "uauto"       , ""    , ""     , TAB_auto                   , "change a universes size to auto"      );
+   rc = yCMD_add (YVIHUB_M_BUFFERS, "ufixed"      , ""    , ""     , TAB_fixed                  , "change a universes size to fixed"     );
    /*---(add status options)-------------*/
    rc = yVIEW_switch_add (YVIEW_STATUS, "universe" , "uni", TAB_status_curr     , "details of current universe"                );
    /*---(add yparse specification)-------*/
@@ -1183,6 +1215,8 @@ TAB_resize           (char a_index, char *a_max)
    int         x_max       =    0;
    char        x_type      =  '-';
    char        x_meth      =  '-';
+   char       *p           = NULL;
+   char        x_size      [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -1206,16 +1240,35 @@ TAB_resize           (char a_index, char *a_max)
       return 0;
    }
    /*---(check specific size)------------*/
-   rc = str2gyges  (a_max, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_complex ("str2gyges" , "%4d, %2du, %3dx, %4dy", rc, x_max, x_col, x_row);
+   strlcpy (x_size, a_max, LEN_LABEL);
+   p = strchr (x_size, ',');
+   if (p == NULL)   p = strchr (x_size, '´');
+   if (p == NULL) {
+      rc = str2gyges  (x_size, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+   } else {
+      rc = -1;
+      p [0] = '\0';
+      x_col = atoi (x_size);
+      x_row = atoi (p + 1);
+      if (x_col > 0 && x_row > 0) {
+         --x_col;
+         --x_row;
+         rc = 0;
+      }
+   }
+   DEBUG_LOCS   yLOG_complex ("request"   , "%4d, %-10.10s, %3dx, %4dy", rc, x_size, x_col, x_row);
    /*---(check short-cuts)---------------*/
-   --rce;  if      (rc >= 0)                  x_meth = G_RESIZE_FIXED;
-   else if (strcmp (a_max, "min"    ) == 0)   x_meth = G_RESIZE_MIN;
-   else if (strcmp (a_max, "auto"   ) == 0)   x_meth = G_RESIZE_AUTO;
-   else if (strcmp (a_max, "max"    ) == 0)   x_meth = G_RESIZE_MAX;
-   else if (strcmp (a_max, "full"   ) == 0)   x_meth = G_RESIZE_MAX;
-   else if (strcmp (a_max, ""       ) == 0)   x_meth = G_RESIZE_NADA;
-   else {
+   --rce;  if      (rc >= 0)                   x_meth = G_RESIZE_FIXED;
+   else if (strcmp (x_size, "min"    ) == 0)   x_meth = G_RESIZE_MIN;
+   else if (strcmp (x_size, "auto"   ) == 0)   x_meth = G_RESIZE_AUTO;
+   else if (strcmp (x_size, "max"    ) == 0)   x_meth = G_RESIZE_MAX;
+   else if (strcmp (x_size, "full"   ) == 0)   x_meth = G_RESIZE_MAX;
+   else if (strcmp (x_size, ""       ) == 0)   x_meth = G_RESIZE_NADA;
+   else if (strcmp (x_size, "def"    ) == 0) {
+      x_meth = G_RESIZE_FIXED;
+      x_col  = 25; 
+      x_row  = 99; 
+   } else {
       DEBUG_LOCS   yLOG_note    ("max or meth not understood");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -1331,6 +1384,23 @@ TAB_retype           (char a_index, char a_type)
    return 0;
 }
 
+char  TAB_lock    (void)  { return TAB_retype (CTAB, G_TAB_LOCK); }
+char  TAB_unlock  (void)  { return TAB_retype (CTAB, G_TAB_UNLOCK); }
+char  TAB_auto    (void)  { return TAB_retype (CTAB, G_TAB_AUTO); }
+char  TAB_fixed   (void)  { return TAB_retype (CTAB, G_TAB_FIXED); }
+
+char
+TAB_is_locked           (char a_tab)
+{
+   char        rce         =  -10;
+   char        x_type      =  '-';
+   /*---(defense)------------------------*/
+   --rce;  if (!TAB_live (a_tab))              return rce;
+   x_type = s_master [a_tab]->type;
+   if (x_type == toupper (x_type))  return 1;
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -1372,6 +1442,8 @@ TAB_line           (char a_index, char a_size, char *a_list)
    char        x_count     [LEN_LABEL] = "";
    char        x_row       [LEN_LABEL] = "";
    char        x_col       [LEN_LABEL] = "";
+   char        x_by        [LEN_LABEL] = "";
+   char        x_by2       [LEN_LABEL] = "";
    char        x_prefix    [LEN_HUND]  = "";
    /*---(beginning)----------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
@@ -1392,7 +1464,7 @@ TAB_line           (char a_index, char a_size, char *a_list)
    case 't' : snprintf (a_list, LEN_FULL, "uni ? -· ·······   ´"); break;
    case 's' : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ····´"); break;
    case 'm' : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ····-  §  ······· ······· ······· ´"); break;
-   default  : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ····-  §  ······· ······· ·······  §  ····- ····-  §  ······· ······· ´"); break;
+   default  : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ········ ····-  §  ······· ······· ·······  §  ····- ····-  §  ······· ······· ´"); break;
    }
    /*---(bad tab)---------------------*/
    --rce;  if (!VALID_tab (a_index)) {
@@ -1427,6 +1499,8 @@ TAB_line           (char a_index, char a_size, char *a_list)
       strlpad    (t, x_beg   , '.', '<', 7);
       str4gyges  (s_curr->tab, s_curr->ecol, s_curr->erow, 0, 0, t, YSTR_USABLE);
       strlpad    (t, x_end   , '.', '<', 7);
+      sprintf (x_by, "%d´%d", s_curr->ncol, s_curr->nrow);
+      strlpad    (x_by, x_by2, '.', '<', 10);
    case 'm' : /* current, min used, and max used */
       str4gyges  (s_curr->tab, s_curr->ccol, s_curr->crow, 0, 0, t, YSTR_USABLE);
       strlpad    (t, x_cur   , '.', '<', 7);
@@ -1458,8 +1532,8 @@ TAB_line           (char a_index, char a_size, char *a_list)
             x_tab->abbr, x_name, x_tab->type, '·', x_siz, x_count, x_cur, x_min, x_max);
       break;
    default :
-      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-4.4sn  §  %-7.7s %-7.7s %-7.7s  §  %-4.4sc %-4.4sr  §  %-7.7s %-7.7s ´",
-            x_tab->abbr, x_name, x_tab->type, '·', x_siz, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
+      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  §  %-7.7s %-7.7s %-7.7s  §  %-4.4sc %-4.4sr  §  %-7.7s %-7.7s ´",
+            x_tab->abbr, x_name, x_tab->type, '·', x_siz, x_by2, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
       break;
    }
    /*---(complete)--------------------*/
@@ -1469,6 +1543,34 @@ TAB_line           (char a_index, char a_size, char *a_list)
 
 char  TAB_status_curr    (char a_size, short a_wide, char *a_list) { return TAB_line (CTAB, a_size, a_list); }
 
+char
+TAB_dump             (void *f)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   char        x_line      [LEN_FULL]  = "";
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(walk list)----------------------*/
+   for (i = 0; i < MAX_TABS; ++i) {
+      switch (i) {
+      case  5 : case 10 : case 16 : case 22 : case 28 : case 34 : case 36 :
+         fprintf (f, "\n");
+         break;
+      }
+      switch (i) {
+      case  0 : case 10 : case 36 :
+         fprintf (f, "\n# ---title---- ty -size-- --dims-- cells     --cur-- --min-- --max--     ncols nrows     top-lef bot-rig ´\n");
+         break;
+      }
+      TAB_line    (i, 'l', x_line);
+      fprintf (f, "%s\n", x_line + 9);
+   }
+   fprintf (f, "\n");
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 /*
  *
@@ -1609,7 +1711,7 @@ TAB_reader           (int c, uchar *a_verb)
    }
    DEBUG_INPT   yLOG_value   ("tab"       , x_tab);
    /*---(make tab)-----------------------*/
-   rc = TAB_new_in_abbr (LABEL_tab (x_tab), x_name, x_label);
+   rc = TAB_new_in_abbr (LABEL_tab (x_tab), x_label, x_name);
    DEBUG_INPT   yLOG_value   ("new"       , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);

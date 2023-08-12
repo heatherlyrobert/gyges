@@ -229,7 +229,8 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   yFILE_dump_add          ("cells", "", "current cell inventory", CELL_dump);
+   yFILE_dump_add          ("cells"   , "", "current cell inventory", CELL_dump);
+   yFILE_dump_add          ("universe", "", "detailed inventory of universes", TAB_dump);
    /*---(ycalc config)-------------------*/
    rc = yCALC_init ('g');
    DEBUG_PROG   yLOG_value    ("yCALC"     , rc);

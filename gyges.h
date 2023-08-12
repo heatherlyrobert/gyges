@@ -44,8 +44,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7f"
-#define     P_VERTXT    "added five demo scripts from website video"
+#define     P_VERNUM    "3.7g"
+#define     P_VERTXT    "tab locking now controls cell creation, destruction, and change"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1389,7 +1389,7 @@ char        TAB_first_filled        (void);
 char        TAB_first_open          (void);
 char        TAB_new_quick           (void);
 char        TAB_new_in_open         (uchar *a_name, uchar *a_size);
-char        TAB_new_in_abbr         (uchar a_abbr, uchar *a_name, uchar *a_size);
+char        TAB_new_in_abbr         (char a_abbr, char a_size [LEN_LABEL], char *a_name [LEN_TITLE]);
 char        TAB_free_all_empties    (void);
 char        TAB_free_from_abbr      (uchar a_abbr);
 /*---(search)-------------------------*/
@@ -1418,6 +1418,11 @@ char        TAB_rename_curr         (char *a_name);
 /*---(types)--------------------------*/
 char        TAB_type                (char a_index);
 char        TAB_retype              (char a_index, char a_type);
+char        TAB_lock                (void);
+char        TAB_unlock              (void);
+char        TAB_auto                (void);
+char        TAB_fixed               (void);
+char        TAB_is_locked           (char a_tab);
 /*---(sizing)-------------------------*/
 char        TAB_size                (char a_index, char *a_max);
 char        TAB_size_detail         (char a_index, ushort *a_col, ushort *a_row);
@@ -1426,12 +1431,11 @@ char        TAB_resize_curr         (char *a_max);
 /*---(mapping)------------------------*/
 char        TAB_mapper              (void);
 char        TAB_entry               (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
-
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(display)------------------------*/
 char        TAB_line                (char a_index, char a_size, char *a_list);
 char        TAB_status_curr         (char a_size, short a_wide, char *a_list);
 char        TAB_inventory           (char a_size, char *a_list);
+char        TAB_dump                (void *f);
 /*---(unit_test)----------------------*/
 char*       TAB__unit            (char *a_question, int a_tab);
 
