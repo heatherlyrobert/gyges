@@ -734,35 +734,41 @@ CURS_color_min       (int a_col, int a_row, tCELL *a_curr)
 char         /*-> set full color screen --------------[ ------ [gc.D70.532.S5]*/ /*-[02.2000.015.!]-*/ /*-[--.---.---.--]-*/
 CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
 {
-   /*---(locals)---------------------------*/
-   char        label     [LEN_RECD] = "zzz";
-   char        l         [LEN_RECD]  = "";
-   /*---(identify cell)--------------------*/
-   if (a_curr != NULL) {
-      LOC_label  (a_curr, l);
-      sprintf    (label, ",%s,", l);
-   } else {
-      str4gyges  (CTAB, a_col, a_row, 0, 0, l, YSTR_CHECK);
-      sprintf    (label, ",%s,", l);
-   }
-   /*> DEBUG_GRAF  yLOG_complex ("BALL"      , "%c å%sæ å%sæ", my.ball, my.cagrios, label);   <*/
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   char       *p           = NULL;
+   char        l           [LEN_LABEL] = "";
+   char        x_label     [LEN_LABEL] = "zzz";
+   char        x_mark      [LEN_LABEL] = "";
+   /*---(identify cell)------------------*/
+   if (a_curr != NULL)    LOC_label  (a_curr, l);
+   else                   str4gyges  (CTAB, a_col, a_row, 0, 0, l, YSTR_CHECK);
+   sprintf    (x_label, ",%s,", l);
+   sprintf    (x_mark , "%s," , l);
+   DEBUG_GRAF  yLOG_complex ("BALL"      , "%c å%sæ å%sæ", my.ball, my.cagrios, x_label);
    /*---(current)------------------------*/
    if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
-   else if (my.ball == 'y' && strstr (my.cagrios, label) != NULL)         yVICURSES_by_name ("i_wand");
+   else if (my.ball == 'y' &&
+         strstr (my.cagrios, x_label) != NULL)          yVICURSES_by_name ("i_wand");
    else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("m_srch");
    /*---(visual-range)-------------------*/
    else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
    else if (yMAP_visual (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_fill");
    /*---(marks)--------------------------*/
-   else if (my.mark_show  == 'y' &&
-         strstr (s_mark_list, label) != NULL)           yVICURSES_by_name ("m_temp");
+   else if (my.mark_show  == 'y' && (p = strstr (s_mark_list, x_mark))  != NULL) {
+      yVICURSES_by_name ("m_temp");
+   }
+   else if (my.mark_show  == 'Y' && (p = strstr (s_mark_list, x_mark))  != NULL) {
+      yVICURSES_by_name ("m_temp");
+      rc = p [-2];
+   }
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
       /*---(related)---------------------*/
-      if      (strstr (my.like_list, label) != NULL)    yVICURSES_by_name ("d_like");
-      else if (strstr (my.copy_list, label) != NULL)    yVICURSES_by_name ("d_copy");
-      else if (strstr (my.reqs_list, label) != NULL)    yVICURSES_by_name ("d_reqs");
-      else if (strstr (my.deps_list, label) != NULL)    yVICURSES_by_name ("d_pros");
+      if      (strstr (my.like_list, x_label) != NULL)  yVICURSES_by_name ("d_like");
+      else if (strstr (my.copy_list, x_label) != NULL)  yVICURSES_by_name ("d_copy");
+      else if (strstr (my.reqs_list, x_label) != NULL)  yVICURSES_by_name ("d_reqs");
+      else if (strstr (my.deps_list, x_label) != NULL)  yVICURSES_by_name ("d_pros");
       /*---(trouble)---------------------*/
       else if (a_curr->type == YCALC_DATA_ERROR)        yVICURSES_by_name ("!_errs");
       /*---(pointers)--------------------*/
@@ -792,29 +798,27 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
          else if (strchr (a_curr->source, G_CHAR_FALSE   ) != NULL)    yVICURSES_by_name ("a_call");
          else if (strchr (a_curr->source, G_CHAR_UNLIKELY) != NULL)    yVICURSES_by_name ("a_call");
          else if (a_curr->source [0] == ' ' && a_curr->source [1] == '(' && a_curr->source [5] == ')') {
-            if      (strcmp (a_curr->source, " (cur)") == 0) yVICURSES_by_name ("v_curr");
-            else if (strcmp (a_curr->source, " (req)") == 0) yVICURSES_by_name ("d_reqs");
-            else if (strcmp (a_curr->source, " (pro)") == 0) yVICURSES_by_name ("d_pros");
-            else if (strcmp (a_curr->source, " (lik)") == 0) yVICURSES_by_name ("d_like");
-            else if (strcmp (a_curr->source, " (cop)") == 0) yVICURSES_by_name ("d_copy");
-            else if (strcmp (a_curr->source, " (wrn)") == 0) yVICURSES_by_name ("9_dang");
-            else if (strcmp (a_curr->source, " (err)") == 0) yVICURSES_by_name ("!_errs");
-            else if (strcmp (a_curr->source, " (roo)") == 0) yVICURSES_by_name ("v_root");
-            else if (strcmp (a_curr->source, " (fil)") == 0) yVICURSES_by_name ("v_fill");
-            else if (strcmp (a_curr->source, " (ptr)") == 0) yVICURSES_by_name ("p_addr");
-            else if (strcmp (a_curr->source, " (rng)") == 0) yVICURSES_by_name ("p_rang");
-            else                                             yVICURSES_by_name ("#_norm");
-         } else {
-            yVICURSES_by_name ("#_norm");
-         }
+            if      (strcmp (a_curr->source, " (cur)") == 0)           yVICURSES_by_name ("v_curr");
+            else if (strcmp (a_curr->source, " (req)") == 0)           yVICURSES_by_name ("d_reqs");
+            else if (strcmp (a_curr->source, " (pro)") == 0)           yVICURSES_by_name ("d_pros");
+            else if (strcmp (a_curr->source, " (lik)") == 0)           yVICURSES_by_name ("d_like");
+            else if (strcmp (a_curr->source, " (cop)") == 0)           yVICURSES_by_name ("d_copy");
+            else if (strcmp (a_curr->source, " (wrn)") == 0)           yVICURSES_by_name ("9_dang");
+            else if (strcmp (a_curr->source, " (err)") == 0)           yVICURSES_by_name ("!_errs");
+            else if (strcmp (a_curr->source, " (roo)") == 0)           yVICURSES_by_name ("v_root");
+            else if (strcmp (a_curr->source, " (fil)") == 0)           yVICURSES_by_name ("v_fill");
+            else if (strcmp (a_curr->source, " (ptr)") == 0)           yVICURSES_by_name ("p_addr");
+            else if (strcmp (a_curr->source, " (rng)") == 0)           yVICURSES_by_name ("p_rang");
+            else                                                       yVICURSES_by_name ("#_norm");
+         } else                                                        yVICURSES_by_name ("#_norm");
       }
       else if (a_curr->type == YCALC_DATA_SFORM) {
          /*> if      (strchr (a_curr->v_str, (uchar) ' ') != NULL)   yVICURSES_by_name ("A_call");   <* 
           *> else if (strchr (a_curr->v_str, (uchar) '™') != NULL)   yVICURSES_by_name ("A_call");   <* 
           *> else if (strchr (a_curr->v_str, (uchar) 'Ø') != NULL)   yVICURSES_by_name ("A_call");   <* 
           *> else if (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");   <*/
-         if      (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");
-         else                                                    yVICURSES_by_name ("#_dang");
+         if      (yCALC_ncalc (a_curr->ycalc)  < 10)    yVICURSES_by_name ("#_form");
+         else                                           yVICURSES_by_name ("#_dang");
       }
       else if (a_curr->type == YCALC_DATA_SLIKE)        yVICURSES_by_name ("#_like");
       /*---(constants)-------------------*/
@@ -823,27 +827,36 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       else                                              yVICURSES_by_name (">_unkn");
    }
    /*---(complete)-----------------------*/
-   return 0;
+   return rc;
 }
 
 char         /*-> display an individual cell ---------[ ------ [gc.D70.532.S5]*/ /*-[02.2000.015.!]-*/ /*-[--.---.---.--]-*/
 CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wide)
 {
    /*---(locals)-------------------------*/
+   char        rc          =    0;
    tCELL      *x_curr      = LOC_cell_at_loc (CTAB, a_col, a_row);
+   char        t           [LEN_TERSE] = "";
+   char        x_text      [LEN_RECD]  = "";
    /*---(save cursor position)-----------*/
    if (a_col == CCOL && a_row == CROW) {
       s_cursor_x = a_xpos + a_wide - 1;
       s_cursor_y = a_ypos;
    }
    /*---(set color)----------------------*/
-   if (s_coloration == 'F')  CURS_color_full (a_col, a_row, x_curr);
-   else                      CURS_color_min  (a_col, a_row, x_curr);
+   if (s_coloration == 'F')  rc = CURS_color_full (a_col, a_row, x_curr);
+   else                      rc = CURS_color_min  (a_col, a_row, x_curr);
    /*---(display cell)-------------------*/
-   if (x_curr == NULL || x_curr->print == NULL)  {
+   if (my.mark_show == 'Y' && rc != 0)  {
+      sprintf (t, "%c", rc);
+      strlpad (t, x_text, '.', '|', a_wide - 1);
+      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_text);
+   }
+   else if (x_curr == NULL || x_curr->print == NULL)  {
       DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, "");
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, YSTR_EMPTY);
-   } else {
+   }
+   else {
       DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->print);
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->print);
    }
@@ -898,8 +911,8 @@ DRAW_main          (void)
    }
    x_save = x_curr;
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
-   /*> strlcpy (s_mark_list, "+", LEN_RECD);                                          <*/
    yMARK_mark_list (&(my.mark_show), s_mark_list);
+   DEBUG_GRAF  yLOG_info    ("mark_list" , s_mark_list);
    /*---(display all)--------------------*/
    yVIEW_size (YVIEW_MAIN, NULL, &x_left, &x_wide, &x_bott, &x_tall);
    DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3dw, %3db, %3dt", x_left, x_wide, x_bott, x_tall);

@@ -1,0 +1,729 @@
+#! /bin/gyges --script vikeys_note
+
+
+ºµre6»
+
+
+ºsquick demonstration of visual notes¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··0··v6l»
+ÏÏÏÏ·ÏÏÏÏ
+º¥»
+
+## :skip¦
+
+
+##===[[ WHY ]]================================================================##
+
+
+{  º
+   ·:j1¦··Fmhh¦·l··Fwll¦··
+
+   ·:k1¦···
+   ·3h····sconditional¦······f<··ls<¦···2l······
+   ··h····sƒ¦··l··srelational¦········f<········
+   ··h·j··s¦··l··#"   if,ifs,˜,ßµsµsµs"¦·······
+
+   ··h·j··s¦··l··slogical¦···········f<········
+   ··h·j··s„¦··l··#"   and,or,xorµsµsµs"¦·······
+
+
+   ·3h·j··strigonometry¦·····f<··ls<¦···2l······
+   ··h····sƒ¦··l··splanar trig¦·······f<········
+   ··h·j··s¦··l··#"   sin,cos,tanµsµsµs"¦······
+
+   ··h·j··s¦··l··skinematics¦········f<········
+   ··h·j··s¦··l··#"   source from yKINE"¦······
+
+   ··h·j··s¦··l··sspherical trig¦····f<········
+   ··h·j··s„¦··l··#"   under development"¦······
+
+
+   ·3h·j··sstring handling¦··f<··ls<¦···2l······
+   ··h····sƒ¦··l··sparsing¦···········f<········
+   ··h·j··s¦··l··#"   len,left,midµsµsµs"¦·····
+
+   ··h·j··s¦··l··strimming¦··········f<········
+   ··h·j··s¦··l··#"   trim,strimµsµsµs"¦·······
+
+   ··h·j··s¦··l··spadding¦···········f<········
+   ··h·j··s¦··l··#"   lpad,lppadµsµsµs"¦·······
+
+   ··h·j··s¦··l··sconverting¦········f<········
+   ··h·j··s¦··l··#"   lower,upperµsµsµs"¦······
+
+   ··h·j··s¦··l··scleaning¦··········f<········
+   ··h·j··s„¦··l··#"   alpha,sevenµsµsµs"¦······
+
+
+   ·3h·j··scell metadata¦····f<··ls<¦···2l······
+   ··h····sƒ¦··l··scell types¦········f<········
+   ··h·j··s¦··l··#"   blank,calcµsµsµs"¦·······
+
+   ··h·j··s¦··l··scell info¦·········f<········
+   ··h·j··s¦··l··#"   u,x,y,labelµsµsµs"¦······
+
+   ··h·j··s¦··l··scell address¦······f<········
+   ··h·j··s„¦··l··#"   ru,ax,absaµsµsµs"¦·······
+
+
+   ·3h·j··sdata ranges¦······f<··ls<¦···2l······
+   ··h····sƒ¦··l···srange info¦········f<·······
+   ··h·j··s¦··l···#"   us,xs,ysµsµsµs"¦········
+
+   ··h·j··s¦··l···srange types¦·······f<·······
+   ··h·j··s¦··l···#"   blanks,calcsµsµsµs"¦····
+
+   ··h·j··s¦··l···sstatistics¦········f<·······
+   ··h·j··s¦··l···#"   sum,mean,sdevµsµsµs"¦···
+
+   ··h·j··s¦··l···sdata lookup¦·······f<·······
+   ··h·j··s„¦··l···#"   hl,vl,rl,clµsµsµs"¦·····
+
+
+   ·3h·j··ssupporting¦·······f<··ls<¦···2l······
+   ··h····sƒ¦··l···sformula auditing¦··f<·······
+   ··h·j··s¦··l···#"   f,r,nproµsµsµs"¦········
+
+   ··h·j··s¦··l···sdate and time¦·····f<·······
+   ··h·j··s„¦··l···#"   now,days,dvµsµsµs"¦·····
+
+   ##---(4th quarter)---------------#
+   º·:a6¦··s      y µ@¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(3rd quarter)---------------#
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_e   µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V        µ_e¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_4µsµsµsµsµsµsµsµsµsµsµsµ_e¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V          µsµs¦····ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V         ´ µs   µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V        µs  µs¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(2nd quarter)---------------#
+   º·0j····s        µ_V       ´   µs      µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V      µs    µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V     ´     µs        µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s  sin µS µ_V    µs      µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V   ´       µs         µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V  µs        µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V ´         µs          µ_e¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_Vµsï         µs¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s x µ@µ_Hµ_Hµ_Hµ_Hµ_5µ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_8µ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_eµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ_Hµ@¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ##---(1st quarter)---------------#
+   º·0j····s        µ_V    cos µC¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ_V¦··ls<¦··ls<¦··ls<¦··ls<¦··»
+   º·0j····s        µ@¦···ls<¦··ls<¦··ls<¦··ls<¦··»
+
+   ·:®d3..g14¦·x·
+   ·:®h1..i28¦·x·
+   ·:®h30..i38¦·x·
+
+   ·m0·
+   ·:f17¦···sdeg¦·····f>····lX·lX·lX··3h
+   ·j·······+0¦·······f>····lX·lX·lX··3h
+   ·j·······=`k+¥15¦··f>·y··lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·j·······p···············lX·lX·lX··3h
+   ·®f30..i38±·x·
+   ·:g17¦··ssin¦··f|·f-···l··scos¦··f|·f-··h·
+   ·j·=ù($f18)¦··ff·f3·
+   ·m0··:f31¦··sfor sin¦··l·#f(g18)¦··ls<¦··'0·
+   ·l·=ý($f18)¦··ff·f3·
+   ·m0··:g32¦··sfor cos¦··l·#f(h18)¦··ls<¦··'0·
+   ··h·j···s~`k'¦¦··ff·f3·
+   ·y·lp·h··8(jp·lp·h)
+   ·:g18¦·
+
+   ·:f34¦···sand copy it through both¦·················f<··ls<¦··ls<¦··ls<¦··3h
+   ····j····scolumns (it adapts)¦······················f<··ls<¦··ls<¦··ls<¦··3h
+   ····j·
+
+   ·:®a1..i1¦·
+} »
+ÏÏÏÏ·ÏÏÏÏ
+
+º¥ ·:c3¦····swhen screens are relatively empty¦········f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ····j····sit is easy to put comments, ideas,¦·······f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ····j····sand instructions anywhere¦················f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ·:®a1..i1¦·»
+ÏÏÏÏ·ÏÏÏÏ
+ÏÏÏÏ·ÏÏÏÏ
+
+º¥ ·:d8¦····sbut, as the content builds up, which¦·····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ····j····sit inevatably will when useful topics¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ····j····sare under way, there is no room¦··········f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ·:®a1..i1¦·»
+ÏÏÏÏ·ÏÏÏÏ
+ÏÏÏÏ·ÏÏÏÏ
+
+º¥ ·:e13¦···sand, even if you could, anything you¦·····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ····j····sadd gets lost in the clutter.  this is¦···f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ····j····swhy i created integrated visual notes¦····f<··ls<¦··ls<¦··ls<¦··ls<¦··4h·»
+º  ·:®a1..i1¦·»
+ÏÏÏÏ·ÏÏÏÏ
+ÏÏÏÏ·ÏÏÏÏ
+
+º  ·:note 37=sometimes a note really stands out ÔDD¦··»
+ÏÏÏÏ·ÏÏÏÏ
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+##===[[ SI8ES ]]==============================================================##
+:unskip¦
+{ º
+   ·:®h1..l1¦··x·
+   ·:h1¦··s<¦··ls<¦··ls<¦··ls<¦
+   ·:®a2..l38¦·x·
+   ·:k1¦··fn·h··fn··
+   ·:a1¦··sfirst, the eleven (11) standard visual notes sizes¦
+   ·:note #¦
+} »
+
+º·:f3¦···s . bullet¦······ls<¦··:a1¦·»
+º :note 2w.a·ÖEw¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f5¦···s , word¦········ls<¦··:a1¦·»
+º :note 2p,hello·ÖE2¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f7¦···s ; call-out¦····ls<¦··:a1¦·»
+º :note 7w;longer text·×dq¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f9¦···s : long-call¦···ls<¦··:a1¦·»
+º :note 9r:scientific name·Õdn¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f11¦··s ^ command¦·····ls<¦··:a1¦·»
+º :note 7g^/bin/gyges --script vikeys_note·Ôdk¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+º·:b20¦··s - small¦·······ls<¦··:a1¦·»
+º :note Zj-small size note area·ÖV5¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b22¦··s ) title¦·······ls<¦··:a1¦·»
+º :note 3a)uses a size and color to make title stand-out·ÖPD¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+º·:k20¦··s = normal¦······ls<¦··:a1¦·»
+º :note cE=normal size notes have plenty of solid text space for trainers·Ôq5¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:k22¦··s ! warning¦·····ls<¦··:a1¦·»
+º :note 7L!warnings are distinctive on purpose·ÖqD¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+º·:f34¦··s + large¦·······ls<¦··:a1¦·»
+º :note 9T+µglarge notes are about as large as you could possibly want·ÖbT¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f36¦··s & post-it¦·····ls<¦··:a1¦·»
+º :note 19$µgµghuge post-it type notes leave room for blank spaceµgµgand separate linesµg  µ' plus bulletsµg  µ' and bullets·ÖEW¦ »
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:note 2w¦··» ÏÏÏÏ
+º·:note 2p¦··» ÏÏÏÏ
+º·:note 7w¦··» ÏÏÏÏ
+º·:note 9r¦··» ÏÏÏÏ
+º·:note 7g¦··» ÏÏÏÏ
+º·:note Zj¦··» ÏÏÏÏ
+º·:note 3a¦··» ÏÏÏÏ
+º·:note cE¦··» ÏÏÏÏ
+º·:note 7L¦··» ÏÏÏÏ
+º·:note 9T¦··» ÏÏÏÏ
+º·:note 19¦··» ÏÏÏÏ
+
+º·:note %¦··» ÏÏÏÏ·ÏÏÏÏ
+º·:note !¦··» ÏÏÏÏ·ÏÏÏÏ
+º·:note %¦··» ÏÏÏÏ·ÏÏÏÏ
+º·:note !¦··» ÏÏÏÏ·ÏÏÏÏ
+
+
+
+##===[[ POSITIONS ]]==========================================================##
+##:unskip¦
+{ º
+   ·:®a2..l38¦·x·
+   ·:k1¦··fn·h··fn··
+   ·:a1¦··ssecond, the eighty-one (81) standard visual notes positions¦
+   ·:note #¦·
+} »
+
+{ º
+   ·:a3¦···ssizes¦··f|·f-···ls<¦·
+   ·h·j····s . bullet¦······ls<¦·
+   ·h·j····s , word¦········ls<¦·
+   ·h·j····s ; call-out¦····ls<¦·
+   ·h·j····s : long-call¦···ls<¦·
+   ·h·j····s ^ command¦·····ls<¦·
+   ·h·j····s - small¦·······ls<¦·
+   ·h·j····s ) title¦·······ls<¦·
+   ·h·j····s = normal¦······ls<¦·
+   ·h·j····s ! warning¦·····ls<¦·
+   ·h·j····s + large¦·······ls<¦·
+   ·h·j····s & post-it¦·····ls<¦·
+   :a1¦
+} »
+
+## :skip¦
+
+
+
+º·:b21¦··snormal note coordinates are¦···ls<¦··ls<¦··ls<¦·»
+º·3h·j···s1-9 in both x and y axis¦······ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:note 1b,x-pos¦··»
+º·:note 15.1¦··»
+º·:note 25.2¦··»
+º·:note 35.3¦··»
+º·:note 45.4¦··»
+º·:note 55.5¦··»
+º·:note 65.6¦··»
+º·:note 75.7¦··»
+º·:note 85.8¦··»
+º·:note 95.9¦··»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b24¦··sobviously, in curses they¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···scan not be perfect ;)¦·········ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:note c1,y-pos¦··»
+º·:note 51.1¦··»
+º·:note 52.2¦··»
+º·:note 53.3¦··»
+º·:note 54.4¦··»
+º·:note 55.5¦··»
+º·:note 56.6¦··»
+º·:note 57.7¦··»
+º·:note 58.8¦··»
+º·:note 59.9¦··»
+
+º·:b27¦··snotes are ephemeral, so they¦··ls<¦··ls<¦··ls<¦·»
+º·3h·j···sare only know by their xy pos¦·ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b30¦··stherefore, the note at 5x, 5y¦·ls<¦··ls<¦··ls<¦·»
+º·3h·j···sis referred to as ¶55¶¦········ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b33¦··sthe coordinate markers are¦····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sare bullet notes (17 total)¦···ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b36¦··sand, the axis labels are¦······ls<¦··ls<¦··ls<¦·»
+º·3h·j···sword notes (2 total)¦··········ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i4¦···syou now know enough to¦········ls<¦··ls<¦··ls<¦·»
+º·3h·j···screate a basic note¦···········ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i7¦···s:note xys<text>µn¦·············ls<¦··ls<¦··ls<¦·»
+º·3h·j···swhere 's' is a size abbrev¦····ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i10¦··sexample...¦····················ls<¦··ls<¦··ls<¦·»
+º·3h·j···s  ¶:note 55-screen center¶¦····ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+:note 55-screen center¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i13¦··sthis means a - (small) at¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···s5x, 5y with the given label¦···ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i23¦··sto remove (#) the note...¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···s  ¶:note 55#µn¶¦···············ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+:note 55#¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i26¦··severy note put at 55 replaces¦·ls<¦··ls<¦··ls<¦·»
+º·3h·j···sthe previous 55, not overlays¦·ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i29¦··sthere can be only one 55 !!¦···ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h34¦··sthats the basics, next...¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·v·3l····»
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+
+##===[[ HELPERS ]]============================================================##
+##:unskip¦
+{ º
+   ·:®a15..l38¦·x·
+   ·:®h1..l38¦··x·
+   ·:a1¦··sfew helpers, because i use them frequently¦··
+   ·:note #¦·
+} »
+
+º·:note 49!you can watch me typing here  á×3X¦
+
+º·:b22¦··sto help place notes and targets¦··ls<¦··ls<¦··ls<¦·»
+º·3h·j···syou can request guidelines¦·······ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h2¦···sguides¦····l·s:note |µn···········(simple)¦······ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note |¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b25¦··sthey are part of note overlay¦····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sand so easy to turn off too¦······ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h3¦···············l·s:note |#µn··········(hide)¦········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note |#¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b28¦··srather than 1-9, you can use¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sthe "fine" positions Z-Aa-z¦······ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h4¦···············l·s:note |fµn··········(fine)¦········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note |f¦
+ÏÏÏÏ·ÏÏÏÏ
+
+:note |#¦
+º·:b31¦··sand for large screens or hard¦····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sto see situations, use "all"¦·····ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h5¦···············l·s:note |aµn··········(all)¦·········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note |a¦
+ÏÏÏÏ·ÏÏÏÏ
+
+:note |#¦
+º·:b34¦··shonestly, use my goto is the¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···s"fine" version¦···················ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+:note |f¦
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+##===[[ BASIC CONTROL ]]======================================================##
+##:unskip¦
+
+{ º
+   ·:®a21..f38¦·x·
+} »
+
+º·:b22¦··swe will create a few notes to¦····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sshow some more global features¦···ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h7¦···screate¦····l·s:note 24-small size noteµn¦········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 24-small size note¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h8¦···············l·s:note 35-a second noteµn¦··········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 35-a second note¦
+
+º·:b25¦··sas you see, the current note¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sis bright, the others dimmer¦·····ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h9¦···············l·s:note 46-third smallµn¦············ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 46-third small¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b28¦··snotes can be globally hidden¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sand shown when necessary¦·········ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h11¦··svisible¦···l·s:note %µn···········(hide all)¦····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note %¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h12¦··············l·s:note !µn···········(show all)¦····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note !¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b31¦··swhile yellow is my default¦·······ls<¦··ls<¦··ls<¦·»
+º·3h·j···snote color, you can change that¦··ls<¦··ls<¦··ls<¦·»
+º·3h·j···s  "bg" means background¦··········ls<¦··ls<¦··ls<¦·»
+º·3h·j···s  "yr" curr=yel, prev=red¦········ls<¦··ls<¦··ls<¦·»
+º·4h·4k··»
+ÏÏÏÏ·ÏÏÏÏ
+
+{ º
+   :d3¦····scolor¦····F>-¦··l··sdark¦··F|-¦···l··slight¦··F|-¦·
+   ·2h·j···sbrown¦····f>····l··sw¦·····f|·····l··sW¦······f|·
+   ·2h·j···sred¦······f>····l··sr¦·····f|·····l··sR¦······f|·
+   ·2h·j···sgold¦·····f>····l··so¦·····f|·····l··sO¦······f|·
+   ·2h·j···syellow¦···f>····l··sy¦·····f|·····l··sY¦······f|·
+   ·2h·j···sgreen¦····f>····l··sg¦·····f|·····l··sG¦······f|·
+   ·2h·j···sblue¦·····f>····l··sb¦·····f|·····l··sB¦······f|·
+   ·2h·j···spurple¦···f>····l··sp¦·····f|·····l··sP¦······f|·
+   ·2h·j···scrimson¦··f>····l··sc¦·····f|·····l··sC¦······f|·
+   :d13¦···scolor expect a¦·····f|·····ls<¦···ls<¦··
+   ·2h·j···s16 color terminal¦··f|·····ls<¦···ls<¦··
+} »
+
+º·:h14¦··scolor¦·····l·s:note bg yrµn·······(curr/prev)¦···ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note bg yr¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h15¦··············l·s:note bg ccµn·······(crimson)¦·····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note bg cc¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h16¦··············l·s:note bg ~~µn·······(defaults)¦····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note bg ~~¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:note 49#¦
+
+º·:b36¦··sand, you can jump a note to¦······ls<¦··ls<¦··ls<¦·»
+º·3h·j···sthe top to get focus¦·············ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h18¦··scurrent¦···l·s:note 24µn··········(to top)¦······ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 24¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h19¦··············l·s:note 35µn··········(to top)¦······ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 35¦
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+##===[[ HELPERS ]]============================================================##
+##:unskip¦
+{ º
+   ·:®a21..l38¦·x·
+} »
+
+º·:b22¦··s"fine" positioning works just¦····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sthe same as the normal 1-9¦·······ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h23¦··sfine¦······l·s:note Ip.µLµn·······(tiny)¦········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note Ip.ò¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b25¦··sto move a note, just provide¦·····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sthe note pos and the new pos¦·····ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h25¦··smove¦······l·s:note Ip>Ikµn·······(move down)¦···ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note Ip>Ik¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b28¦··ssometimes overlapping notes¦······ls<¦··ls<¦··ls<¦·»
+º·3h·j···scan be useful¦····················ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h26¦··············l·s:note Ik>Igµn·······(again)¦·······ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note Ik>Ig¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b31¦··scan alter existing notes¦·········ls<¦··ls<¦··ls<¦·»
+º·3h·j···sput '´' where no-change¦··········ls<¦··ls<¦··ls<¦·»
+º·4h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h28¦··salter¦·····l·s:note Ig,´µn········(chg size)¦····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note Ig,´¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h29¦··············l·s:note Ig´testµn·····(chg text)¦····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note Ig´test¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h30¦··············l·s:note Ig´&yµn·······(append)¦······ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note Ig´&y¦
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+##===[[ CONNECTORS ]]=========================================================##
+##:unskip¦
+{ º
+   ·:®a21..f38¦·x·
+   ·:a1¦··sfinally, about note connectors¦··
+   ·:note #¦·
+   ·:note |f¦·
+} »
+
+º·:b22¦··sconnectors specify a call-out¦····ls<¦··ls<¦··ls<¦·»
+º·3h·j···sline by dir and end-point¦········ls<¦··ls<¦··ls<¦·»
+º·:l38¦··»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h32¦··sline¦······l·s:note 1J-what   ÕVDµn¦···········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 1J,what··ÔVD¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h33¦··············l·s:note 1K-how    ÕdQµn¦···········ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note 1K,how···ÔdQ¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:c25¦··si like "fine" scale to¦···········ls<¦··ls<¦··»
+º·2h·j···sreally line things up¦············ls<¦··ls<¦··»
+º·:l38¦··»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:c28¦··sthis dual note effect¦············ls<¦··ls<¦··»
+º·2h·j···sis a real favorite¦···············ls<¦··ls<¦··»
+º·:l38¦··»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b34¦··sthe "dir" arrows (× Õ Ô Ö)¦·······ls<¦··ls<¦··ls<¦··ls<¦··»
+º·4h·j···sspecify which side of the box¦····ls<¦··ls<¦··ls<¦··ls<¦··»
+º·4h·j···sthe connector exits¦··············ls<¦··ls<¦··ls<¦··ls<¦··»
+º·:l38¦··»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:b34¦··schanging line ¶:note Cc 12µn¶¦····ls<¦··ls<¦··ls<¦··ls<¦··»
+º·4h·j···scurr=CRIMSON, prev = darker¦······ls<¦··ls<¦··ls<¦··ls<¦··»
+º·4h·j···s':' means dotted for prev¦········ls<¦··ls<¦··ls<¦··ls<¦··»
+º·:l38¦··»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h35¦··scolor¦·····l·s:note ln Ccµn·······(crimson)¦·····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note ln Cc¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h36¦··············l·s:note ln G:µn·······(dotted)¦······ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note ln G:¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:h37¦··············l·s:note ln Y:µn·······(default)¦·····ls<¦··ls<¦··ls<¦·»
+º·4h·····»
+:note ln Y:¦
+ÏÏÏÏ·ÏÏÏÏ
+
+
+
+##===[[ LAST THOUGHTS ]]======================================================##
+:unskip¦
+{ º
+   ·:®a2..l38¦·x·
+   ·:a1¦··slast thoughts¦··
+   ·:note #¦·
+} »
+
+º·:c7¦···sthat's the geist of notes, which¦····ls<¦··ls<¦··ls<¦··ls<¦·»
+º·4h·j···swork in both curses and opengl¦······ls<¦··ls<¦··ls<¦··ls<¦·»
+º·5h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:d11¦··sjust to helpful gifts before¦········ls<¦··ls<¦··ls<¦··ls<¦·»
+º·4h·j···swe close this demo¦··················ls<¦··ls<¦··ls<¦··ls<¦·»
+º·5h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:e15¦··sstealth notes (~ size) are just¦·····ls<¦··ls<¦··ls<¦··ls<¦·»
+º·4h·j···sconnectors without the box/text¦·····ls<¦··ls<¦··ls<¦··ls<¦·»
+º·5h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f19¦··sthey are lovely for connecting¦······ls<¦··ls<¦··ls<¦··ls<¦·»
+º·4h·j···stwo real objects visually¦···········ls<¦··ls<¦··ls<¦··ls<¦·»
+º·5h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f23¦··s:note Po~ ÕNlµn¦·····················ls<¦··ls<¦··ls<¦··ls<¦·»
+:note Po~ ÕNl¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f25¦··s:note Lj~ ÕJfµn¦·····················ls<¦··ls<¦··ls<¦··ls<¦·»
+:note Lj~ ÕJf¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:f27¦··s:note Gd~ ÕEaµn¦·····················ls<¦··ls<¦··ls<¦··ls<¦·»
+:note Gd~ ÕEa¦
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:c30¦··sfinally, you can copy all note details¦····ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·5h·j···sto the clipboard for review¦···············ls<¦··ls<¦··ls<¦··ls<¦··ls<¦·»
+º·6h·k···»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:c33¦··s:dump notesµn¦·······················ls<¦··ls<¦··ls<¦··ls<¦·»
+ÏÏÏÏ·ÏÏÏÏ
+
+º·:i36¦··svaya con dios¦·······················ls<¦··h·v·2l·»
+ÏÏÏÏ·ÏÏÏÏ
+
+
