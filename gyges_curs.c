@@ -748,6 +748,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    DEBUG_GRAF  yLOG_complex ("BALL"      , "%c å%sæ å%sæ", my.ball, my.cagrios, x_label);
    /*---(current)------------------------*/
    if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("v_curr");
+   /*---(critical)-----------------------*/
    else if (my.ball == 'y' &&
          strstr (my.cagrios, x_label) != NULL)          yVICURSES_by_name ("i_wand");
    else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("m_srch");
@@ -862,6 +863,17 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    }
    /*---(highlight off)------------------*/
    attrset (0);
+   /*---(alternate)----------------------*/
+   /*> if (x_curr != NULL && x_curr->note == 's' && a_col == CCOL && a_row == CROW)  {   <* 
+    *>    yVICURSES_by_name ("m_srch");                                                  <* 
+    *>    mvprintw (a_ypos, a_xpos + a_wide - 1, "´");                                   <* 
+    *>    attrset (0);                                                                   <* 
+    *> }                                                                                 <*/
+   if (x_curr != NULL && x_curr->note == 's') {
+      yVICURSES_by_name ("m_srch");
+      mvprintw (a_ypos, a_xpos + a_wide - 1, "´");
+      attrset (0);
+   }
    /*---(complete)-----------------------*/
    return 0;
 }

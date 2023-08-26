@@ -15,7 +15,7 @@
 ## º:myhome  600 100¦»
 ## º:mysize  575 380¦»
 
-:skip¦
+## :skip¦
 
 ##===[[ INTRODUCTION (20sec) ]]===============================================================================#
 
@@ -57,6 +57,8 @@
 :bsize az200¦
 
 ·Ï··Ï··º·····:note /¦··:note 57=then, go to the middle of the workspace using :x50\n¦·»
+
+³
 
 :unskip¦
 

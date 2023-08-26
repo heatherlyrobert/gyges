@@ -318,82 +318,66 @@ api_yvikeys_exim        (char a_dir, char a_style)
 PRIV void  o___SEARCH__________o () { return; }
 
 char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
-api_yvikeys_searcher      (uchar a_not, uchar *a_search)
+api_yvikeys_searcher      (char a_scope)
 {
    /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
    char        rc          =    0;
-   int         x_len       =    0;
    tCELL      *x_next      = NULL;
-   int         x_tab       =    0;
-   int         x_col       =    0;
-   int         x_row       =    0;
-   /*---(header)--------------------s----*/
+   char        x_live      =    0;
+   ushort      u, x, y;
+   /*---(header)-------------------------*/
    DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
-   DEBUG_YMARK   yLOG_point   ("a_search"  , a_search);
-   /*---(defenses)---------------------------*/
-   --rce;  if (a_search == NULL) {
-      DEBUG_YMARK   yLOG_note    ("can not use null search");
-      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_YMARK   yLOG_info    ("a_search"  , a_search);
-   x_len = strlen (a_search);
-   DEBUG_YMARK   yLOG_value   ("x_len"     , x_len);
-   --rce;  if (x_len <= 0) {
-      DEBUG_YMARK   yLOG_note    ("can be an empty search");
-      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   --rce;  if (a_search [0] != '/') {
-      DEBUG_YMARK   yLOG_note    ("must start with a forward slash");
-      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   if (x_len == 1) {
-      DEBUG_YMARK   yLOG_note    ("nothing to do, redraw only");
-      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
-      return 0;
-   }
-   rc = yREGEX_comp (a_search + 1);
-   DEBUG_YMARK   yLOG_value   ("comp rc"   , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_YMARK   yLOG_note    ("could not compile search");
-      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(process range)----------------------*/
-   DEBUG_CELL   yLOG_point   ("hcell"     , hcell);
+   /*---(prepare)----------------------------*/
+   x_live = yMAP_visu_islive ();
    x_next = hcell;
-   do {
-      DEBUG_YMARK   yLOG_complex ("x_next"    , "ptr %p, tab %2d, col %3d, row %4d", x_next, x_tab, x_col, x_row);
-      if (x_next != NULL && x_next->source != NULL) {
-         DEBUG_YMARK   yLOG_char    ("->type"    , x_next->type);
-         switch (x_next->type) {
-         case YCALC_DATA_STR   :
-            DEBUG_YMARK   yLOG_info    ("->source"       , x_next->source);
-            rc = yREGEX_filter (x_next->source);
-            break;
-         case YCALC_DATA_SFORM :
-         case YCALC_DATA_SLIKE :
-            DEBUG_YMARK   yLOG_info    ("->v_str"   , x_next->v_str);
-            rc = yREGEX_filter (x_next->v_str);
-            break;
-         default          :
-            DEBUG_YMARK   yLOG_note    ("can not process cell type");
-            rc = -1;
-            break;
-         }
-         DEBUG_YMARK   yLOG_value   ("exec rc"   , rc);
-         if (a_not != 'y' && rc > 0) {
-            yMARK_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);
-            x_next->note = 's';
-         } else if (a_not == 'y' && rc <= 0) {
-            yMARK_found (x_next->label, x_next->tab, x_next->col, x_next->row, 0);
-            x_next->note = 's';
+   /*---(process range)----------------------*/
+   while (x_next != NULL) {
+      if (!x_live || yMAP_visual (x_next->tab, x_next->col, x_next->row, 0)) {
+         if (x_next->source != NULL && x_next->tab <= 36) {
+            x_next->note = '-';
+            DEBUG_YMARK   yLOG_complex ("x_next"    , "tab %2d, col %3d, row %4d, %c, %s", x_next->tab, x_next->col, x_next->row, x_next->type, x_next->source);
+            rc = yMARK_check (x_next->label, x_next->tab, x_next->col, x_next->row, 0, x_next->type, x_next->source, x_next->v_str, x_next->v_num, x_next->print);
+            DEBUG_YMARK   yLOG_value   ("check"     , rc);
+            if (rc > 0)       x_next->note = 's';
          }
       }
       x_next = x_next->m_next;
+   }
+   /*---(complete)---------------------------*/
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
+api_yvikeys_searcher_OLD  (char a_scope)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tCELL      *x_next      = NULL;
+   char        x_live      =    0;
+   ushort      u, x, y;
+   /*---(header)-------------------------*/
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
+   /*---(prepare)----------------------------*/
+   x_live = yMAP_visu_islive ();
+   if (x_live)  {
+      rc = yMAP_visu_first (&u, &x, &y, NULL);
+      x_next = LOC_cell_at_loc (u, x, y);
+   } else  x_next = hcell;
+   /*---(process range)----------------------*/
+   do {
+      if (x_next != NULL && x_next->source != NULL && x_next->tab <= 36) {
+         x_next->note = '-';
+         DEBUG_YMARK   yLOG_complex ("x_next"    , "tab %2d, col %3d, row %4d, %c, %s", x_next->tab, x_next->col, x_next->row, x_next->type, x_next->source);
+         rc = yMARK_check (x_next->label, x_next->tab, x_next->col, x_next->row, 0, x_next->type, x_next->source, x_next->v_str, x_next->v_num, x_next->print);
+         DEBUG_YMARK   yLOG_value   ("check"     , rc);
+         if (rc > 0)       x_next->note = 's';
+      }
+      if (x_live)  {
+         rc = yMAP_visu_next  (&u, &x, &y, NULL);
+         if (rc < 0)  x_next = DONE_DONE;
+         else         x_next = LOC_cell_at_loc (u, x, y);
+      } else  x_next = x_next->m_next;
    } while (x_next != NULL && x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
@@ -407,10 +391,8 @@ api_yvikeys_unsearcher   (uchar *a_label, ushort u, ushort x, ushort y, ushort z
    tCELL      *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
-   DEBUG_YMARK   yLOG_value   ("u"         , u);
-   DEBUG_YMARK   yLOG_value   ("x"         , x);
-   DEBUG_YMARK   yLOG_value   ("y"         , y);
-   DEBUG_YMARK   yLOG_value   ("z"         , z);
+   /*---(arges)--------------------------*/
+   DEBUG_YMARK   yLOG_complex ("address"   , "%-10.10s, %2d, %3d, %4d", a_label, u, x, y);
    x_curr = LOC_cell_at_loc (u, x, y);
    DEBUG_YMARK   yLOG_point   ("x_curr"    , x_curr);
    if (x_curr != NULL) x_curr->note = '-';

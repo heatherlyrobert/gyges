@@ -44,8 +44,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7i"
-#define     P_VERTXT    "little curses update"
+#define     P_VERNUM    "3.7j"
+#define     P_VERTXT    "updates/simplifications while working through demos"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1731,7 +1731,7 @@ char        api_yvikeys_saver       (char *a_contents);
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        api_yvikeys_searcher    (uchar a_not, uchar *a_search);
+char        api_yvikeys_searcher    (char a_scope);
 char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api_ymap_clearer        (char a_1st, ushort u, ushort x, ushort y, ushort z);
