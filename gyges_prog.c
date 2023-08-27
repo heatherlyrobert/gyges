@@ -466,6 +466,13 @@ PROG_dawn          (void)
    yCMD_direct (":status mode");
    yCMD_direct (":layout gyges");
    yCMD_direct (":formula label");
+   yCMD_direct (":alt      disable");
+   yCMD_direct (":nav      disable");
+   yCMD_direct (":title    disable");
+   yCMD_direct (":version  disable");
+   yCMD_direct (":detail   disable");
+   yCMD_direct (":ribbon   disable");
+   yCMD_direct (":progress disable");
    /*> yCMD_direct (":read");                                                         <*/
    /*> MAP_mapper (YMAP_INIT);                                                        <*/
    /*> yCMD_add      (YVIKEYS_M_AUDIT , "hist"        , ""    , ""     , HIST_list                  , "" );   <*/
