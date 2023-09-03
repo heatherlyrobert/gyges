@@ -44,8 +44,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7k"
-#define     P_VERTXT    "added some layout/part disables to avoid trouble"
+#define     P_VERNUM    "3.7l"
+#define     P_VERTXT    "added ySRC source register variable support"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -1785,6 +1785,7 @@ char*       api_ysort__unit         (char *a_question, int n);
 /*---(program)--------------*/
 char        api_ymacro_init         (void);
 /*---(saving)---------------*/
+char        api_ysrc_saver          (char a_reg, char *a_content);
 char        api_ymacro_get          (char   a_name, char  *a_keys);
 char        api_ymacro_set          (char   a_name, char  *a_keys);
 /*---(program)--------------*/

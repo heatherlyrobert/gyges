@@ -2,6 +2,7 @@
 #include   "gyges.h"
 
 static char  *s_valid  = ".0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïğñòóôõö÷øùúûüışÿ ¤";
+static char  *s_regs   = "¶0123456789abcdefghijklmnopqrstuvwxyzèéêëìíîïğñòóôõö÷øùúûüışÿ";
 
 
 char
@@ -22,6 +23,14 @@ api_ymacro_init             (void)
    COL_resize (37, 0,  5);
    COL_resize (37, 1, 30);
    COL_resize (37, 2,  3);
+   /*---(registers)----------------------*/
+   l = strlen (s_regs);
+   CELL_overwrite (YMAP_NONE , 37, 0, 70, "sreg"    , "<-0-·");
+   CELL_overwrite (YMAP_NONE , 37, 1, 70, "content" , "<-0-·");
+   for (i = 0; i < l; ++i) {
+      sprintf (t, "Ö%c", s_regs [i]);
+      CELL_overwrite (YMAP_NONE , 37, 0, i + 71, t   , "|?0-·");
+   }
    /*---(agrios locals)------------------*/
    CELL_overwrite (YMAP_NONE , 37, 3, 0, "agrios"  , "<-0-·");
    CELL_overwrite (YMAP_NONE , 37, 3, 1, "curr"    , ">?0-·");
@@ -57,6 +66,43 @@ api_ymacro_init             (void)
    CELL_overwrite (YMAP_NONE , 37, 4,50, "Öç®"     , "<?0-·");
    CELL_overwrite (YMAP_NONE , 37, 3,51, "int"     , ">?0-·");
    CELL_overwrite (YMAP_NONE , 37, 4,51, "Öçã"     , "<?0-·");
+   return 0;
+}
+
+char
+api_ysrc_saver          (char a_reg, char *a_content)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char       *p           = NULL;
+   char        n           =   -1;
+   /*---(header)-------------------------*/
+   DEBUG_YSRC     yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YSRC     yLOG_char    ("a_reg"     , a_reg);
+   --rce;  if (a_reg == 0) {
+      DEBUG_YSRC     yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   if (a_reg == '"')  a_reg = '¶';
+   DEBUG_YSRC     yLOG_point   ("a_content" , a_content);
+   --rce;  if (a_content == NULL) {
+      DEBUG_YSRC     yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YSRC     yLOG_info    ("a_content" , a_content);
+   /*---(find)---------------------------*/
+   p = strchr (s_regs, a_reg);
+   DEBUG_YSRC     yLOG_point   ("p"         , p);
+   --rce;  if (p == NULL) {
+      DEBUG_YSRC     yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   n = p - s_regs;
+   /*---(update)-------------------------*/
+   CELL_change (NULL, YMAP_NONE , 37, 1, 71 + n, a_content);
+   /*---(complete)-----------------------*/
+   DEBUG_YSRC     yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

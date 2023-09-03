@@ -285,13 +285,13 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
    --rce;  if (strcmp (s_root, a_label) == 0) {
       if (my.root == NULL) {
          rc = CELL__new (&my.root, UNLINKED);
-         DEBUG_PROG   yLOG_value   ("rc"        , rc);
+         DEBUG_YCALC  yLOG_value   ("rc"        , rc);
          --rce;  if (rc < 0) {
-            DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
+            DEBUG_YCALC  yLOG_exitr   (__FUNCTION__, rce);
             return rce;
          }
          --rce;  if (my.root == NULL) {
-            DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
+            DEBUG_YCALC  yLOG_exitr   (__FUNCTION__, rce);
             return rce;
          }
          my.root->label = strdup (s_root);
@@ -359,7 +359,7 @@ api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owne
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    char        x_label     [LEN_LABEL];
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_YCALC  yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
    if (a_owner   != NULL)  *a_owner   = NULL;
    if (a_deproot != NULL)  *a_deproot = NULL;
@@ -367,7 +367,7 @@ api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owne
    rc = str4gyges (b, x, y, z, 0, x_label, YSTR_USABLE);
    if (rc == 0)  rc = api_ycalc_named (x_label, a_force, a_owner, a_deproot);
    /*---(complete)-----------------------*/
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   DEBUG_YCALC  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -438,23 +438,23 @@ api_ycalc_address       (void *a_owner, int *u, int *x, int *y, int *z)
 {
    char        rc          =    0;
    tCELL      *x_owner     = NULL;
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
-   DEBUG_PROG   yLOG_note    ("defaulting");
+   DEBUG_YCALC  yLOG_enter   (__FUNCTION__);
+   DEBUG_YCALC  yLOG_note    ("defaulting");
    if (u != NULL)  *u   = 0;
    if (x != NULL)  *x   = 0;
    if (y != NULL)  *y   = 0;
    if (z != NULL)  *z   = 0;
-   DEBUG_PROG   yLOG_point   ("a_owner"   , a_owner);
+   DEBUG_YCALC  yLOG_point   ("a_owner"   , a_owner);
    if (a_owner == NULL) {
-      DEBUG_PROG   yLOG_note    ("owner null");
-      DEBUG_PROG   yLOG_exitr   (__FUNCTION__, -1);
+      DEBUG_YCALC  yLOG_note    ("owner null");
+      DEBUG_YCALC  yLOG_exitr   (__FUNCTION__, -1);
       return -1;
    }
    x_owner    = (tCELL     *) a_owner;
-   DEBUG_PROG   yLOG_point   ("label"     , x_owner->label);
-   DEBUG_PROG   yLOG_note    (x_owner->label);
+   DEBUG_YCALC  yLOG_point   ("label"     , x_owner->label);
+   DEBUG_YCALC  yLOG_note    (x_owner->label);
    rc = str2gyges (x_owner->label, u, x, y, z, NULL, 0, YSTR_USABLE);
-   DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rc);
+   DEBUG_YCALC  yLOG_exitr   (__FUNCTION__, rc);
    return rc;
 }
 

@@ -1445,6 +1445,8 @@ TAB_line           (char a_index, char a_size, char *a_list)
    char        x_by        [LEN_LABEL] = "";
    char        x_by2       [LEN_LABEL] = "";
    char        x_prefix    [LEN_HUND]  = "";
+   char        x_type      =  'f';
+   char        x_lock      =  '·';
    /*---(beginning)----------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    DEBUG_LOCS   yLOG_complex ("args"      , "%2dt, %c, %-10.10p", a_index, a_size, a_list);
@@ -1499,9 +1501,9 @@ TAB_line           (char a_index, char a_size, char *a_list)
       strlpad    (t, x_beg   , '.', '<', 7);
       str4gyges  (s_curr->tab, s_curr->ecol, s_curr->erow, 0, 0, t, YSTR_USABLE);
       strlpad    (t, x_end   , '.', '<', 7);
+   case 'm' : /* current, min used, and max used */
       sprintf (x_by, "%d´%d", s_curr->ncol, s_curr->nrow);
       strlpad    (x_by, x_by2, '.', '<', 10);
-   case 'm' : /* current, min used, and max used */
       str4gyges  (s_curr->tab, s_curr->ccol, s_curr->crow, 0, 0, t, YSTR_USABLE);
       strlpad    (t, x_cur   , '.', '<', 7);
       str4gyges  (s_curr->tab, COL_min_used (s_curr->tab), ROW_min_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
@@ -1514,26 +1516,28 @@ TAB_line           (char a_index, char a_size, char *a_list)
    case 't' : /* sizing */
       str4gyges  (s_curr->tab, s_curr->ncol - 1, s_curr->nrow - 1, 0, 0, t, YSTR_USABLE);
       strlpad    (t, x_siz   , '.', '<', 7);
+      x_type = tolower (s_curr->type);
+      if (s_curr->type != x_type)  x_lock = '!';
       break;
    }
    /*---(finish)----------------------*/
    switch (a_size) {
    case 'u' :
-      snprintf (a_list, LEN_FULL, "uni %c %c%c ´", x_tab->abbr, x_tab->type, '·');
+      snprintf (a_list, LEN_FULL, "uni %c %c%c ´", x_tab->abbr, x_type, x_lock);
       break;
    case 't' :
-      snprintf (a_list, LEN_FULL, "uni %c %c%c %-7.7s   ´", x_tab->abbr, x_tab->type, '·', x_siz);
+      snprintf (a_list, LEN_FULL, "uni %c %c%c %-7.7s   ´", x_tab->abbr, x_type, x_lock, x_siz);
       break;
    case 's' :
-      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-4.4s´", x_tab->abbr, x_name, x_tab->type, '·', x_siz, x_count);
+      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-4.4s´", x_tab->abbr, x_name, x_type, x_lock, x_siz, x_count);
       break;
    case 'm' :
-      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-4.4sn  §  %-7.7s %-7.7s %-7.7s ´",
-            x_tab->abbr, x_name, x_tab->type, '·', x_siz, x_count, x_cur, x_min, x_max);
+      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  ´  %-7.7s %-7.7s %-7.7s ´",
+            x_tab->abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max);
       break;
    default :
-      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  §  %-7.7s %-7.7s %-7.7s  §  %-4.4sc %-4.4sr  §  %-7.7s %-7.7s ´",
-            x_tab->abbr, x_name, x_tab->type, '·', x_siz, x_by2, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
+      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  ´  %-7.7s %-7.7s %-7.7s  ´  %-4.4sc %-4.4sr  ´  %-7.7s %-7.7s ´",
+            x_tab->abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
       break;
    }
    /*---(complete)--------------------*/

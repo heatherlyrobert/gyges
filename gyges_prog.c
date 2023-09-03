@@ -194,7 +194,7 @@ PROG__init         (int a_argc, char *a_argv[])
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   rc = ySRC_config   (api_yvikeys_saver);
+   rc = ySRC_config   (api_yvikeys_saver, api_ysrc_saver);
    DEBUG_PROG   yLOG_value    ("ySRC"      , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
