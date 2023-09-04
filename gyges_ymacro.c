@@ -535,9 +535,30 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
    /*---(force contents)-----------------*/
    else {
       DEBUG_YMACRO   yLOG_note    ("actual formla forcing");
-      strlcpy (x_final, a_contents, LEN_RECD);
+      if (strncmp (a_contents, "´+", 2) == 0) {
+         DEBUG_YMACRO   yLOG_note    ("concatenation");
+         x_curr = LOC_cell_labeled (a_target);
+         DEBUG_YMACRO   yLOG_point   ("x_curr"    , x_curr);
+         if (x_curr == NULL) {
+            DEBUG_YMACRO   yLOG_note    ("handle null starting cell");
+            strlcpy (x_final, "", LEN_RECD);
+         } else {
+            DEBUG_YMACRO   yLOG_note    ("handle existing cell");
+            strlcpy (x_final, x_curr->source, LEN_RECD);
+            DEBUG_YMACRO   yLOG_info    ("start"     , x_final);
+         }
+         strlcat (x_final, a_contents + 2, LEN_RECD);
+         DEBUG_YMACRO   yLOG_info    ("x_final"   , x_final);
+      } else if (a_contents [0] == '´') {
+         DEBUG_YMACRO   yLOG_note    ("literal");
+         strlcpy (x_final, a_contents + 1, LEN_RECD);
+      } else {
+         DEBUG_YMACRO   yLOG_note    ("pure replacement");
+         strlcpy (x_final, a_contents, LEN_RECD);
+      }
    }
    /*---(overwrite target)---------------*/
+   strldchg     (x_final, '²', ' ', LEN_RECD);
    CELL_change  (NULL, YMAP_BEG  , u, x, y, x_final);
    /*---(wipe temp)----------------------*/
    if (r_type == 'Û')  CELL_change  (NULL, YMAP_NONE , 37, 4, 47, "···");
