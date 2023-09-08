@@ -587,6 +587,7 @@ CELL__create       (tCELL **a_cell, int a_tab, int a_col, int a_row)
       DEBUG_CELL   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_CELL   yLOG_point   ("*a_cell"   , *a_cell);
    /*---(clear it out)----------------*/
    rc = LOC_hook  (*a_cell, a_tab, a_col, a_row);
    DEBUG_CELL   yLOG_value   ("rc"        , rc);

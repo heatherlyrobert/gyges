@@ -9,9 +9,10 @@ char          unit_answer [LEN_FULL];
 /*====================------------------------------------====================*/
 /*===----                        program wide                          ----===*/
 /*====================------------------------------------====================*/
+static void  o___SUPPORT_________o (void) {;}
 
 char         /*-> display command line help/usage ----[ leaf   [gc.760.000.00]*/ /*-[00.0000.012.!]-*/ /*-[--.---.---.--]-*/
-PROG_usage         (void)
+PROG_usage              (void)
 {
    printf("\n");
    printf("s : light, clean, fast, and aesthetic console-based spreadsheet\n");
@@ -45,7 +46,7 @@ PROG_usage         (void)
 char      verstring    [500];
 
 char*        /*-> return library versio --------------[ leaf   [gs.420.012.00]*/ /*-[00.0000.012.!]-*/ /*-[--.---.---.--]-*/
-PROG_version       (void)
+PROG_version            (void)
 {
    char    t [20] = "";
 #if    __TINYC__ > 0
@@ -61,12 +62,58 @@ PROG_version       (void)
    return verstring;
 }
 
+void             /* [------] receive signals ---------------------------------*/
+PROG__signal            (int a_signal, siginfo_t *a_info, char *a_name, char *a_desc)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   FILE       *f           = NULL;
+   int         x_pid       = 0;
+   char        t           [LEN_DESC]  = "";
+   char        x_recd      [LEN_HUND]  = "";
+   /*---(header)-------------------------*/
+   DEBUG_PROG   yLOG_enter    (__FUNCTION__);
+   /*---(message)-------------------------------*/
+   x_pid     = getpid ();
+   f = fopen ("/tmp/signal_local.log", "at");
+   /*> sprintf (t, "local  %-7.7s (%2d) %s", a_name, a_signal, a_desc);               <* 
+    *> yEXEC_heartquiet (x_pid, 0, t, NULL, x_recd);                                  <* 
+    *> if (f != NULL) {                                                               <* 
+    *>    fprintf (f, "%s\n", x_recd);                                                <* 
+    *>    fflush (f);                                                                 <* 
+    *>    fclose (f);                                                                 <* 
+    *>    f = NULL;                                                                   <* 
+    *> }                                                                              <*/
+   /*---(check signal)-------------------*/
+   DEBUG_PROG   yLOG_complex  ("signal"    , "%2d %-10.10s %s", a_signal, a_name, a_desc);
+   switch (a_signal) {
+   case  SIGHUP:
+      break;
+   case  SIGUSR1:
+      break;
+   case  SIGUSR2:
+      break;
+   case  SIGALRM:
+      break;
+   case  SIGSEGV: case  SIGTERM: case  SIGABRT:
+      yVICURSES_wrap ();
+      DEBUG_PROG   yLOG_exit     (__FUNCTION__);
+      DEBUG_PROG   yLOGS_end    ();
+      return;
+      break;
+   default      :
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_PROG   yLOG_exit     (__FUNCTION__);
+   return;
+}
+
 
 
 /*====================------------------------------------====================*/
 /*===----                       pre-initialization                     ----===*/
 /*====================------------------------------------====================*/
-static void      o___PREINIT_________________o (void) {;}
+static void      o___PREINIT________o (void) {;}
 
 char
 PROG_urgents            (int a_argc, char *a_argv [])
@@ -102,7 +149,7 @@ PROG_urgents            (int a_argc, char *a_argv [])
 /*====================------------------------------------====================*/
 /*===----                        program startup                       ----===*/
 /*====================------------------------------------====================*/
-static void      o___STARTUP_________________o (void) {;}
+static void      o___STARTUP________o (void) {;}
 
 char         /*-> very first setup -------------------[ shoot  [gz.633.201.0A]*/ /*-[00.0000.121.!]-*/ /*-[--.---.---.--]-*/
 PROG__init         (int a_argc, char *a_argv[])
@@ -204,7 +251,7 @@ PROG__init         (int a_argc, char *a_argv[])
    yMAP_mundo_config (5, api_ymap_mundo);
    yMAP_univ_config  (TAB_switch);
    yMAP_formatter    (api_ymap_formatter);
-   if (rc == 0)  rc = yMAP_mreg_config  (api_ymap_clearer  , api_ymap_copier, api_ymap_paster, api_ymap_finisher, api_ymap_regkiller, api_yvikeys_exim);
+   if (rc == 0)  rc = yMAP_mreg_config  (api_ymap_clearer_NEW, api_ymap_copier, api_ymap_paster, api_ymap_finisher, api_ymap_regkiller, api_yvikeys_exim);
    DEBUG_PROG   yLOG_value    ("yvikeys"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
@@ -367,6 +414,8 @@ PROG__begin             (void)
    /*---(locals)-----------+-----------+-*/
    int         i, j, k;
    char        tmp         [100];
+   /*---(signaling)----------------------*/
+   yEXEC_signal (YEXEC_SOFT, YEXEC_YES, YEXEC_NO, PROG__signal, NULL);
    /*---(clear)--------------------------*/
    /*> MARK_init ();                                                                  <*/
    /*---(locals)-------------------------*/
@@ -441,7 +490,7 @@ PROG_startup            (int a_argc, char *a_argv [])
 /*====================------------------------------------====================*/
 /*===----                        program execution                     ----===*/
 /*====================------------------------------------====================*/
-static void      o___EXECUTION_______________o (void) {;}
+static void      o___EXECUTION______o (void) {;}
 
 char         /*-> initialize program and variables ---[ ------ [gz.421.001.08]*/ /*-[00.0000.101.!]-*/ /*-[--.---.---.--]-*/
 PROG_dawn          (void)
@@ -455,6 +504,8 @@ PROG_dawn          (void)
    yVIEW_switch_add (YVIEW_STATUS, "gyges"  , "", CURS_current_status , "current location information"               );
    yVIEW_switch_add (YVIEW_STATUS, "tab"    , "", CURS_status_tab     , "tab name, type, and dimensions"             );
    yVIEW_switch_add (YVIEW_STATUS, "cell"   , "", CURS_status_cell    , "details of current cell"                    );
+   yVIEW_switch_add (YVIEW_STATUS, "pros"   , "", CURS_status_pros    , "cell's provider (dependencies)"             );
+   yVIEW_switch_add (YVIEW_STATUS, "reqs"   , "", CURS_status_reqs    , "cell's requires (dependencies)"             );
    yVIEW_switch_add (YVIEW_STATUS, "deps"   , "", CURS_status_deps    , "details of current cell dependencies"       );
    yVIEW_switch_add (YVIEW_STATUS, "rpn"    , "", CURS_status_rpn     , "details of current cell rpn notation"       );
    yVIEW_switch_add (YVIEW_STATUS, "vars"   , "", yCALC_vars_status   , "variable inventory statistics"              );
@@ -511,7 +562,7 @@ PROG_cleanse         (void)
 /*====================------------------------------------====================*/
 /*===----                        program shutdown                      ----===*/
 /*====================------------------------------------====================*/
-static void      o___SHUTDOWN________________o (void) {;}
+static void      o___SHUTDOWN_______o (void) {;}
 
 char         /*-> shutdown program and free memory ---[ ------ [gz.422.001.03]*/ /*-[00.0000.111.!]-*/ /*-[--.---.---.--]-*/
 PROG__end            (void)
@@ -553,7 +604,7 @@ PROG_bigdump            (void *a_file)
 /*====================------------------------------------====================*/
 /*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___UNITTEST________o () { return; }
+static void  o___UNITTEST________o () { return; }
 
 /*> char*        /+-> tbd --------------------------------[ light  [us.JC0.271.X1]+/ /+-[01.0000.00#.!]-+/ /+-[--.---.---.--]-+/                                                                                                <* 
  *> PROG__unit           (char *a_question, void *a_thing)                                                                                                                                                                      <* 

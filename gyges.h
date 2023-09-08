@@ -44,8 +44,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7m"
-#define     P_VERTXT    "updated to handle agrios forced literal addition"
+#define     P_VERNUM    "3.7n"
+#define     P_VERTXT    "improvements found by vikeys_content.script demo"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -213,6 +213,7 @@
 #include    <ctype.h>        /* C_ANSI : tolower, toupper, ...                */
 #include    <time.h>         /* C_ANSI : time, strftime, localtime            */
 #include    <malloc.h>       /* C_ANSI : malloc, free                         */
+#include    <signal.h>
 /*---(posix standard)--------------------*/
 #include    <unistd.h>            /* POSIX  standard operating system API     */
 #include    <sys/time.h>          /* POSIX  standard time access              */
@@ -243,6 +244,7 @@
 #include    <yPARSE.h>       /* heatherly file reading and writing      */
 #include    <ySORT.h>        /* heatherly sorting library               */
 #include    <yRPN.h>         /* CUSTOM : heatherly infix to RPN conversion    */
+#include    <yEXEC.h>        /* heatherly job control                   */
 /*---(custom constants only)-------------*/
 #include    <yDLST_solo.h>        /* heatherly double-double-list             */
 #include    <yVIHUB_solo.h>
@@ -432,6 +434,8 @@ struct cACCESSOR {
    char        copy_list   [LEN_RECD];     /* cell likes                      */
    char        rpn_list    [LEN_RECD];     /* cell rpn contents               */
    char        reg_list    [LEN_RECD];     /* register contents               */
+   char        pros_plus   [LEN_RECD];
+   char        reqs_plus   [LEN_RECD];
    char        keys        [LEN_RECD];     /* current keystrokes              */
    /*---(done)------------*/
 };
@@ -929,6 +933,10 @@ extern      char          unit_answer [LEN_FULL];
 
 /*===[[ gyges_prog.c ]]=======================================================*/
 /*··········>·······················>·········································*/
+/*---(support)--------------*/
+char        PROG_usage              (void);
+char*       PROG_version            (void);
+void        PROG__signal            (int a_signal, siginfo_t *a_info, char *a_name, char *a_desc);
 /*---(preinit)--------------*/
 char        PROG_urgents            (int a_argc, char *a_argv []);
 /*---(startup)--------------*/
@@ -1164,6 +1172,8 @@ char        CURS_version            (char a_size, short a_wide, char *a_list);
 char        CURS_current_status     (char a_size, short a_wide, char *a_list);
 char        CURS_status_detail      (char a_size, short a_wide, char *a_list);
 char        CURS_status_cell        (char a_size, short a_wide, char *a_list);
+char        CURS_status_pros        (char a_size, short a_wide, char *a_list);
+char        CURS_status_reqs        (char a_size, short a_wide, char *a_list);
 char        CURS_status_deps        (char a_size, short a_wide, char *a_list);
 char        CURS_status_rpn         (char a_size, short a_wide, char *a_list);
 char        CURS_status_file        (char a_size, short a_wide, char *a_list);
@@ -1704,7 +1714,7 @@ char        api_ycalc_pointer       (void *a_owner, char **r_source, char **r_ty
 char        api_ycalc_reaper        (void **a_owner);
 
 char        api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_deproot);
-char        api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
+char        api_ycalc_whos_at       (int u, int x, int y, int z, char a_force, void **a_owner, void **a_deproot);
 char*       api_ycalc_labeler       (void *a_owner);
 
 char        api_ycalc_valuer        (void *a_owner, char *a_type, double *a_value, char **a_string);
@@ -1734,6 +1744,9 @@ char        api_yvikeys_saver       (char *a_contents);
 char        api_yvikeys_searcher    (char a_scope);
 char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        api__ymap_clearer_one   (tCELL *a_curr, long a_stamp);
+char        api_ymap_clearer_seq    (void *a_owner, void *a_deproot, int a_seq, int a_level);
+char        api_ymap_clearer_NEW    (char a_type, long a_stamp);
 char        api_ymap_clearer        (char a_1st, ushort u, ushort x, ushort y, ushort z);
 char        api_ymap_copier         (char a_type, long a_stamp);
 /*> char        api_yvikeys_router      (tCELL *a_cell, char *a_list);                <*/

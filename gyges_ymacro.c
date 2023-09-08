@@ -537,7 +537,7 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
       DEBUG_YMACRO   yLOG_note    ("actual formla forcing");
       if (strncmp (a_contents, "´+", 2) == 0) {
          DEBUG_YMACRO   yLOG_note    ("concatenation");
-         x_curr = LOC_cell_labeled (a_target);
+         x_curr = LOC_cell_labeled (x_label);
          DEBUG_YMACRO   yLOG_point   ("x_curr"    , x_curr);
          if (x_curr == NULL) {
             DEBUG_YMACRO   yLOG_note    ("handle null starting cell");

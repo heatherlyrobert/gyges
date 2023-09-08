@@ -163,21 +163,25 @@ api_ycalc_pointer       (void *a_owner, char **r_source, char **r_type, double *
    DEBUG_YCALC   yLOG_snote   (x_owner->label);
    /*---(save)---------------------------*/
    if (r_source != NULL) {
+      DEBUG_YCALC   yLOG_snote   ("r_source");
       DEBUG_YCALC   yLOG_spoint  (*r_source);
       *r_source = &x_owner->source;
       DEBUG_YCALC   yLOG_spoint  (*r_source);
    }
    if (r_type  != NULL) {
+      DEBUG_YCALC   yLOG_snote   ("r_type");
       DEBUG_YCALC   yLOG_spoint  (*r_type);
       *r_type   = &x_owner->type;
       DEBUG_YCALC   yLOG_spoint  (*r_type);
    }
    if (r_value  != NULL) {
+      DEBUG_YCALC   yLOG_snote   ("r_value");
       DEBUG_YCALC   yLOG_spoint  (*r_value);
       *r_value  = &x_owner->v_num;
       DEBUG_YCALC   yLOG_spoint  (*r_value);
    }
    if (r_string != NULL) {
+      DEBUG_YCALC   yLOG_snote   ("r_string");
       DEBUG_YCALC   yLOG_spoint  (*r_string);
       *r_string = &x_owner->v_str;
       DEBUG_YCALC   yLOG_spoint  (*r_string);
@@ -267,20 +271,6 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
       return rce;
    }
    DEBUG_YCALC   yLOG_info    ("a_label"   , a_label);
-   /*---(shortcut)-----------------------*/
-   /*> if (strcmp (x_label, a_label) == 0 && a_force == x_sforce) {                   <* 
-    *>    DEBUG_YCALC   yLOG_note    ("short-cut");                                    <* 
-    *>    if (a_owner   != NULL) {                                                    <* 
-    *>       *a_owner   = x_saved;                                                    <* 
-    *>       DEBUG_YCALC   yLOG_point   ("*a_owner"  , *a_owner);                      <* 
-    *>    }                                                                           <* 
-    *>    if (a_deproot != NULL) {                                                    <* 
-    *>       *a_deproot = x_saved->ycalc;                                             <* 
-    *>       DEBUG_YCALC   yLOG_point   ("*a_deproot", *a_deproot);                    <* 
-    *>    }                                                                           <* 
-    *>    DEBUG_YCALC   yLOG_exit    (__FUNCTION__);                                   <* 
-    *>    return x_rc;                                                                <* 
-    *> }                                                                              <*/
    /*---(root)---------------------------*/
    --rce;  if (strcmp (s_root, a_label) == 0) {
       if (my.root == NULL) {
@@ -354,17 +344,19 @@ api_ycalc_named         (char *a_label, char a_force, void **a_owner, void **a_d
 }
 
 char         /*-> tbd --------------------------------[ leaf   [gc.320.621.10]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
-api_ycalc_whos_at       (int b, int x, int y, int z, char a_force, void **a_owner, void **a_deproot)
+api_ycalc_whos_at       (int u, int x, int y, int z, char a_force, void **a_owner, void **a_deproot)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
-   char        x_label     [LEN_LABEL];
+   char        x_label     [LEN_LABEL] = "";
+   /*---(header)-------------------------*/
    DEBUG_YCALC  yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
    if (a_owner   != NULL)  *a_owner   = NULL;
    if (a_deproot != NULL)  *a_deproot = NULL;
    /*---(legal)--------------------------*/
-   rc = str4gyges (b, x, y, z, 0, x_label, YSTR_USABLE);
+   rc = str4gyges (u, x, y, z, 0, x_label, YSTR_USABLE);
+   DEBUG_YCALC  yLOG_complex ("gyges"     , "%-10.10s, %2du, %3dx, %4dy, %drc", x_label, u, x, y, rc);
    if (rc == 0)  rc = api_ycalc_named (x_label, a_force, a_owner, a_deproot);
    /*---(complete)-----------------------*/
    DEBUG_YCALC  yLOG_exit    (__FUNCTION__);

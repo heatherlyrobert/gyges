@@ -329,6 +329,8 @@ api_ymap_done           (void)
       strlcpy (my.like_list, "n/a", LEN_RECD);
       strlcpy (my.copy_list, "n/a", LEN_RECD);
       strlcpy (my.rpn_list , "n/a", LEN_RECD);
+      strlcpy (my.pros_plus, "n/a", LEN_RECD);
+      strlcpy (my.reqs_plus, "n/a", LEN_RECD);
       strlcpy (g_curr.label, "-"          , LEN_LABEL);
       g_curr.len    = 0;
       g_curr.type   = YCALC_DATA_BLANK;
@@ -349,6 +351,8 @@ api_ymap_done           (void)
    yCALC_disp_pros (x_curr->ycalc, my.deps_list);
    yCALC_disp_like (x_curr->ycalc, my.like_list);
    yCALC_disp_copy (x_curr->ycalc, my.copy_list);
+   yCALC_disp_prosplus (x_curr->ycalc, my.pros_plus);
+   yCALC_disp_reqsplus (x_curr->ycalc, my.reqs_plus);
    strlcpy (g_curr.label, x_curr->label, LEN_LABEL);
    g_curr.len    = x_curr->len;
    g_curr.type   = x_curr->type;
@@ -587,6 +591,155 @@ api_ymap_range          (char *a_beg, char *a_end)
 /*===----                     map mode registers                       ----===*/
 /*====================------------------------------------====================*/
 static void  o___REGISTERS_______o () { return; }
+
+static char s_1st  = '-';
+
+char
+api__ymap_clear_done    (void)
+{
+}
+
+char         /*-> tail recursion function for copy ---[ ------ [ge.D55.237.63]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
+api__ymap_clearer_one   (tCELL *a_curr, long a_stamp)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         = -10;
+   char        rc          = 0;
+   ushort      u, xb, xe, yb, ye;
+   /*---(header)-------------------------*/
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YMAP   yLOG_point   ("a_curr"    , a_curr);
+   --rce;  if (a_curr    == NULL) {
+      DEBUG_YMAP   yLOG_note    ("original cell null");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;     /* no cell                       */
+   }
+   DEBUG_YMAP   yLOG_complex ("DEBUG_YMAP 2"   , "%-10.10s, %2dt, %3dc, %4dr", a_curr->label, a_curr->tab, a_curr->col, a_curr->row);
+   DEBUG_YMAP   yLOG_point   ("s"         , a_curr->source);
+   --rce;  if (a_curr->source == NULL) {
+      DEBUG_YMAP   yLOG_note    ("no source");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;     /* nothing to write              */
+   }
+   DEBUG_YMAP   yLOG_info    ("s"         , a_curr->source);
+   DEBUG_YMAP   yLOG_char    ("t"         , a_curr->type);
+   --rce;  if (a_curr->type == '-')  {
+      DEBUG_YMAP   yLOG_note    ("could not copy an empty");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;     /* don't write, recreate on read */
+   }
+   /*---(check for bounds)---------------*/
+   yMAP_visu_range (&u, &xb, &xe, &yb, &ye, NULL, NULL, NULL);
+   DEBUG_YMAP   yLOG_complex ("visual"    , "%2dt, %3d to %3dc, %4d to %4dr", u, xb, xe, yb, ye);
+   rc = yMAP_inside (a_curr->tab, a_curr->col, a_curr->row, 0);
+   DEBUG_YMAP   yLOG_value   ("visu_rc"   , rc);
+   --rce;  if (rc <= 0)  {
+      DEBUG_YMAP   yLOG_note    ("REJECTED, cell not in visual area");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(add to placeholder reg)---------*/
+   rc = yMAP_mreg_add  (&denada, a_curr->label, "", "");
+   /*---(delete)-------------------------*/
+   /*> if (s_1st == 'y')  rc = CELL_change (NULL, YMAP_BEG, a_curr->tab, a_curr->col, a_curr->row, "");   <* 
+    *> else               rc = CELL_change (NULL, YMAP_ADD, a_curr->tab, a_curr->col, a_curr->row, "");   <* 
+    *> DEBUG_YMAP   yLOG_value   ("rc"        , rc);                                                      <* 
+    *> --rce;  if (rc < 0) {                                                                              <* 
+    *>    DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);                                                  <* 
+    *>    return rce;                                                                                     <* 
+    *> }                                                                                                  <*/
+   /*---(complete)-----------------------*/
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+api_ymap_clearer_seq    (void *a_owner, void *a_deproot, int a_seq, int a_level)
+{
+   return  api__ymap_clearer_one ((tCELL *) a_owner, s_stamp);
+}
+
+char
+api_ymap_clearer_NEW    (char a_type, long a_stamp)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   ushort      u           =    0;
+   ushort      x           =    0;
+   ushort      y           =    0;
+   tCELL      *x_curr      = NULL;
+   int         x_cmp       =    0;
+   char        x_abbr      =  '·';
+   int         c           =    0;
+   char        x_list      [LEN_HUGE]  = "";
+   char       *p           = NULL;
+   char       *r           = NULL;
+   int         n           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   DEBUG_YMAP   yLOG_value   ("a_stamp"   , a_stamp);
+   s_stamp = a_stamp;
+   s_1st   = 'y';
+   /*---(dependents)---------------------*/
+   DEBUG_YMAP   yLOG_note    ("DEPENDENT CELLS (GATHERING)");
+   rc      = yCALC_seq_downup   (s_stamp, api_ymap_clearer_seq);
+   /*> yCALC_seq_list (x_list);                                                       <* 
+    *> DEBUG_YMAP   yLOG_info    ("SEQ LIST"  , x_list);                              <* 
+    *> yCALC_seq_dump (YSTR_CLIP);                                                    <*/
+   /*---(clear them)---------------------*/
+   DEBUG_YMAP   yLOG_note    ("DEPENDENT CELLS (DELETING)");
+   rc = yMAP_mreg_list (&x_abbr, &c, &x_list);
+   DEBUG_YMAP   yLOG_char    ("x_abbr"    , x_abbr);
+   DEBUG_YMAP   yLOG_value   ("c"         , c);
+   DEBUG_YMAP   yLOG_info    ("x_list"    , x_list);
+   p = strtok_r (x_list, ",", &r);
+   while (p != NULL) {
+      x_curr  = LOC_cell_labeled (p);
+      ++n;
+      DEBUG_YMAP   yLOG_complex ("x_curr"    , "%4d, %-10.10s, %p", n, p, x_curr);
+      if (x_curr != NULL) {
+         DEBUG_YMAP   yLOG_complex ("coords"    , "%2du, %3dx, %4dy", x_curr->tab, x_curr->col, x_curr->row);
+         if (s_1st == 'y')  rc = CELL_change (NULL, YMAP_BEG, x_curr->tab, x_curr->col, x_curr->row, "");
+         else               rc = CELL_change (NULL, YMAP_ADD, x_curr->tab, x_curr->col, x_curr->row, "");
+         DEBUG_YMAP   yLOG_value   ("rc"        , rc);
+         --rce;  if (rc < 0) {
+            DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         if (rc >=  0)  s_1st = '-';
+      }
+      p = strtok_r (NULL  , ",", &r);
+   }
+   /*---(independents)-------------------*/
+   DEBUG_YMAP   yLOG_note    ("INDEPENDENT CELLS");
+   rc      = yMAP_visu_first (&u, &x, &y, NULL);
+   DEBUG_YMAP   yLOG_value   ("first"     , rc);
+   while (rc >= 0) {
+      x_curr  = LOC_cell_at_loc (u, x, y);
+      if (x_curr != NULL) {
+         x_cmp = yCALC_stamp_cmp (x_curr->ycalc, s_stamp);
+         DEBUG_YMAP   yLOG_complex ("x_curr"    , "%-10.10s, %2du, %3dx, %4dy, %d, %p", x_curr->label, u, x, y, x_cmp, x_curr);
+         if (!x_cmp) {
+            DEBUG_YMAP   yLOG_note    ("call clear");
+            if (s_1st == 'y')  rc = CELL_change (NULL, YMAP_BEG, x_curr->tab, x_curr->col, x_curr->row, "");
+            else               rc = CELL_change (NULL, YMAP_ADD, x_curr->tab, x_curr->col, x_curr->row, "");
+            s_1st = '-';
+         } else {
+            DEBUG_YMAP   yLOG_note    ("stamp matches, rejected");
+         }
+      } else {
+         DEBUG_YMAP   yLOG_complex ("x_curr"    , "%-10.10s, %2du, %3dx, %4dy, %d", "······", u, x, y, 0, x_curr);
+      }
+      rc      = yMAP_visu_next  (&u, &x, &y, NULL);
+      DEBUG_YMAP   yLOG_value   ("next"      , rc);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char
 api_ymap_clearer        (char a_1st, ushort u, ushort x, ushort y, ushort z)
