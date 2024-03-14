@@ -1112,15 +1112,15 @@ NODE_writer              (int c, char a_type, tNODE *a_node, short n)
    /*---(clear output)-------------------*/
    yPARSE_outclear  ();
    /*---(verb)------------------------*/
-   IF_COL   strlcpy (x_verb, "width"   , LEN_LABEL);
-   ELSE_ROW strlcpy (x_verb, "height"  , LEN_LABEL);
+   IF_COL   ystrlcpy (x_verb, "width"   , LEN_LABEL);
+   ELSE_ROW ystrlcpy (x_verb, "height"  , LEN_LABEL);
    DEBUG_OUTP   yLOG_info    ("x_verb"    , x_verb);
    /*---(filter)----------------------*/
    x_size = a_node->size;
    DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
    /*---(write)-----------------------*/
-   IF_COL   rc = str4gyges (a_node->tab, a_node->ref, 0, 0, 0, x_label, YSTR_USABLE);
-   ELSE_ROW rc = str4gyges (a_node->tab, 0, a_node->ref, 0, 0, x_label, YSTR_USABLE);
+   IF_COL   rc = ystr4gyges (a_node->tab, a_node->ref, 0, 0, 0, x_label, YSTR_USABLE);
+   ELSE_ROW rc = ystr4gyges (a_node->tab, 0, a_node->ref, 0, 0, x_label, YSTR_USABLE);
    yPARSE_vprintf (c, x_verb, x_label, x_size, n);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
@@ -1516,7 +1516,7 @@ static void  o___MAPPER__________o () { return; }
  *>    if (a_next != NULL)  *a_next = -1;                                             <* 
  *>    /+---(max)----------------------------+/                                       <* 
  *>    --rce;  if (a_map  == NULL)         return rce;                                <* 
- *>    x_max = strllen (a_map, LEN_HUGE) - 1;                                         <* 
+ *>    x_max = ystrllen (a_map, LEN_HUGE) - 1;                                         <* 
  *>    --rce;  if (x_max  <= 0   )         return rce;                                <* 
  *>    --rce;  if (a_curr <  0    )        return rce;                                <* 
  *>    --rce;  if (a_curr >  x_max)        return rce;                                <* 
@@ -1745,8 +1745,8 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
    /*---(parse location)-----------------*/
-   IF_COL   strlcpy (x_pre, "COL", LEN_TERSE);
-   ELSE_ROW strlcpy (x_pre, "ROW", LEN_TERSE);
+   IF_COL   ystrlcpy (x_pre, "COL", LEN_TERSE);
+   ELSE_ROW ystrlcpy (x_pre, "ROW", LEN_TERSE);
    /*> IF_COL   x_map   = &g_xmap;                                                    <* 
     *> ELSE_ROW x_map   = &g_ymap;                                                    <*/
    x_tsave = s_tab;
@@ -1763,9 +1763,9 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
       else {
          for (i = 0; i < 20; ++i) {
             NODE_by_index (&x_node, x_tab, a_type, i);
-            if (x_node == NULL)    strlcpy (s, "  -" , LEN_LABEL);
+            if (x_node == NULL)    ystrlcpy (s, "  -" , LEN_LABEL);
             else                { sprintf (s, " %2d", x_node->count); ++c; }
-            strlcat (t, s, LEN_HUND);
+            ystrlcat (t, s, LEN_HUND);
          }
          snprintf(unit_answer, LEN_FULL, "%-3.3s counts   (%c) : (%3d)%s", x_pre, x_abbr, c, t);
       }
@@ -1785,14 +1785,14 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
             while (x_curr != NULL) {
                IF_COL   sprintf (s, "%d", x_curr->row);
                ELSE_ROW sprintf (s, "%d", x_curr->col);
-               if (x_curr != x_node->n_head)   strlcat (t, ",", LEN_HUND);
-               strlcat (t, s, LEN_HUND);
+               if (x_curr != x_node->n_head)   ystrlcat (t, ",", LEN_HUND);
+               ystrlcat (t, s, LEN_HUND);
                IF_COL   x_curr = x_curr->c_next;
                ELSE_ROW x_curr = x_curr->r_next;
             }
             x_abbr2 = LABEL_tab (x_node->tab);
-            IF_COL   strlcpy (x_label, LABEL_col (a_ref), LEN_LABEL);
-            ELSE_ROW strlcpy (x_label, LABEL_row (a_ref), LEN_LABEL);
+            IF_COL   ystrlcpy (x_label, LABEL_col (a_ref), LEN_LABEL);
+            ELSE_ROW ystrlcpy (x_label, LABEL_row (a_ref), LEN_LABEL);
             snprintf(unit_answer, LEN_FULL, "%-3.3s %-7.7s  (%c) : %c %2d=%-2d %-4.4s %2ds %2dc %2df %2db  [%s]", x_pre, a_question, x_abbr, x_abbr2, a_ref, x_node->ref, x_label, x_node->size, x_node->count, x_fore, x_back, t);
          }
       }

@@ -50,13 +50,13 @@ PROG_version            (void)
 {
    char    t [20] = "";
 #if    __TINYC__ > 0
-   strlcpy (t, "[tcc built  ]", 15);
+   ystrlcpy (t, "[tcc built  ]", 15);
 #elif  __GNUC__  > 0
-   strlcpy (t, "[gnu gcc    ]", 15);
+   ystrlcpy (t, "[gnu gcc    ]", 15);
 #elif  __CBANG__  > 0
-   strlcpy (t, "[cbang      ]", 15);
+   ystrlcpy (t, "[cbang      ]", 15);
 #else
-   strlcpy (t, "[unknown    ]", 15);
+   ystrlcpy (t, "[unknown    ]", 15);
 #endif
    snprintf (verstring, LEN_HUND, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
    return verstring;
@@ -304,15 +304,17 @@ PROG__init         (int a_argc, char *a_argv[])
       return rc;
    }
    yFILE_dump_add          ("vars", "", "current ycalc vars inventory"  , yCALC_vars_dump);
-   yFILE_dump_add          ("deps" ,"", "current dependencies inventory", yCALC_deps_dump);
+   yFILE_dump_add          ("deps" ,"", "user dependencies inventory", yCALC_deps_dump_user);
+   yFILE_dump_add          ("DEPS" ,"", "full dependencies inventory", yCALC_deps_dump_all);
    /*---(ystr config)--------------------*/
-   rc = str0gyges (LOC_checker);
+   rc = ystr0gyges (LOC_checker);
    DEBUG_PROG   yLOG_value    ("ySTR"      , rc);
    if (rc <  0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
       return rc;
    }
-   /*---(yrpn config)--------------------*/ rc = yRPN_addr_config   (str2gyges, str4gyges, str6gyges, str8gyges, yMAP_inside);
+   /*---(yrpn config)--------------------*/
+   rc = yRPN_addr_config   (ystr2gyges, ystr4gyges, ystr6gyges, ystr8gyges, yMAP_inside);
    DEBUG_PROG   yLOG_value    ("yRPN"      , rc);
    if (rc <  0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rc);
@@ -369,7 +371,7 @@ PROG__args              (int a_argc, char *a_argv[])
       /*---(local)-----------------------*/
       DEBUG_ARGS  yLOG_note    ("check for local argument handling");
       ++x_args;
-      if      (strncmp (a, "-f"        ,10) == 0)  strlcpy (x_name , a_argv[++i], LEN_RECD);
+      if      (strncmp (a, "-f"        ,10) == 0)  ystrlcpy (x_name , a_argv[++i], LEN_RECD);
       else if (strncmp (a, "-h"        ,10) == 0)  PROG_usage();
       else if (strncmp (a, "--help"    ,10) == 0)  PROG_usage();
       /*---(prefixes)--------------------*/
@@ -379,7 +381,7 @@ PROG__args              (int a_argc, char *a_argv[])
        *> else if (strncmp (a, "--layout-"           ,  9) == 0)  PROG_layout_set ("cli", "layout"   , a +  9);   <* 
        *> else if (strncmp (a, "--function-list"     ,  9) == 0)  CALC_func_list  ();                             <*/
       /*---(other)-----------------------*/
-      else if (a[0] != '-'                     )   strlcpy (x_name , a_argv[i]  , LEN_RECD);
+      else if (a[0] != '-'                     )   ystrlcpy (x_name , a_argv[i]  , LEN_RECD);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);
    DEBUG_ARGS  yLOG_value  ("arguments" , x_args);
@@ -439,7 +441,9 @@ PROG__begin             (void)
    DEBUG_PROG   yLOG_note     ("summary");
    TAB_new_in_abbr ('®', NULL, NULL);
    DEBUG_PROG   yLOG_note     ("system");
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    TAB_new_in_abbr ('¯', NULL, NULL);
+   DEBUG_CELL   yLOG_value   ("NCEL (aft)", NCEL);
    DEBUG_PROG   yLOG_note     ("switch");
    TAB_switch      (0);
    DEBUG_PROG   yLOG_note     ("refresh");
@@ -551,7 +555,7 @@ PROG_cleanse         (void)
 {
    DEBUG_PROG   yLOG_enter   (__FUNCTION__);
    yCALC_cleanse ();
-   CELL_wrap      ();
+   CELL_purge     ();
    LOC_wrap       ();
    LOC_init      ();
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
@@ -727,8 +731,8 @@ PROG__unit_loud      (void)
 {
    char        rce         =  -10;
    char        rc          =    0;
-   int         x_argc      =  3;
-   char       *x_args [10] = { "gyges_unit", "@@kitchen", "@@ycalc" };
+   int         x_argc      =  4;
+   char       *x_args [10] = { "gyges_unit", "@@kitchen", "@@ycalc", ""      };
    /*---(urgents)------------------------*/
    rc = PROG_urgents  (x_argc, x_args);
    DEBUG_PROG   yLOG_value    ("urgents"   , rc);
@@ -736,31 +740,32 @@ PROG__unit_loud      (void)
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;
    }
-   /*> yURG_name   ("tops"  , YURG_ON);                                               <*/
-   /*> yURG_name   ("prog"  , YURG_ON);                                               <*/
-   /*> yURG_name   ("cell"  , YURG_ON);                                               <*/
-   /*> yURG_name   ("regs"  , YURG_ON);                                               <*/
+   yURG_name   ("tops"  , YURG_ON);
+   yURG_name   ("prog"  , YURG_ON);
+   yURG_name   ("cell"  , YURG_ON);
+   yURG_name   ("regs"  , YURG_ON);
    /*> yURG_name   ("map"   , YURG_ON);                                               <*/
-   /*> yURG_name   ("deps"  , YURG_ON);                                               <*/
+   yURG_name   ("deps"  , YURG_ON);
    /*> yURG_name   ("ystr"  , YURG_ON);                                               <*/
    /*> yURG_name   ("args"  , YURG_ON);                                               <*/
    /*> yURG_name   ("apis"  , YURG_ON);                                               <*/
    /*> yURG_name   ("ycalc" , YURG_ON);                                               <*/
    /*> yURG_name   ("exec"  , YURG_ON);                                               <*/
    /*> yURG_name   ("adjs"  , YURG_ON);                                               <*/
-   /*> yURG_name   ("srcp"  , YURG_ON);                                               <*/
+   yURG_name   ("srcp"  , YURG_ON);
+   yURG_name   ("locs"  , YURG_ON);
    /*> yURG_name   ("yparse", YURG_ON);                                               <*/
-   /*> yURG_name   ("ymode" , YURG_ON);                                               <*/
-   /*> yURG_name   ("ykeys" , YURG_ON);                                               <*/
-   /*> yURG_name   ("ymacro", YURG_ON);                                               <*/
-   /*> yURG_name   ("ycmd"  , YURG_ON);                                               <*/
-   /*> yURG_name   ("ysrc"  , YURG_ON);                                               <*/
+   yURG_name   ("ymode" , YURG_ON);
+   yURG_name   ("ykeys" , YURG_ON);
+   yURG_name   ("ymacro", YURG_ON);
+   yURG_name   ("ycmd"  , YURG_ON);
+   yURG_name   ("ysrc"  , YURG_ON);
    /*> yURG_name   ("srch"  , YURG_ON);                                               <*/
-   /*> yURG_name   ("ymap"  , YURG_ON);                                               <*/
+   yURG_name   ("ymap"  , YURG_ON);
    /*> yURG_name   ("yview" , YURG_ON);                                               <*/
    /*> yURG_name   ("hist"  , YURG_ON);                                               <*/
    /*> yURG_name   ("sort"  , YURG_OFF);                                              <*/
-   /*> yURG_name   ("ysort" , YURG_OFF);                                              <*/
+   /*> yURG_name   ("ysort" , YURG_ON);                                               <*/
    /*---(startup)------------------------*/
    rc = PROG_startup  (x_argc, x_args);
    DEBUG_PROG   yLOG_value    ("startup"   , rc);

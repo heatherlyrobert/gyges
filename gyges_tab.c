@@ -463,27 +463,34 @@ TAB_new_in_abbr_OLD     (uchar a_abbr, uchar *a_name, uchar *a_size)
 }
 
 char
-TAB_new_in_abbr         (char a_abbr, char a_size [LEN_LABEL], char *a_name [LEN_TITLE])
+TAB_new_in_abbr         (char a_abbr, char a_name [LEN_TITLE], char a_size [LEN_LABEL])
 {
    /*---(locals)-----------+-----------+-*/
    char        rc          =    0;
    char        x_tab       =    0;
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(check tab)----------------------*/
    DEBUG_LOCS   yLOG_char    ("a_abbr"    , a_abbr);
    if      (a_abbr == '\0')  x_tab = TAB_first_open ();
    else if (a_abbr == '>' )  x_tab = TAB_first_open ();
    else                      x_tab = INDEX_tab (a_abbr);
    DEBUG_LOCS   yLOG_value   ("x_tab"     , x_tab);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(create tab)---------------------*/
+   DEBUG_LOCS   yLOG_info    ("a_size"    , a_size);
+   DEBUG_LOCS   yLOG_info    ("a_name"    , a_name);
    rc = TAB_new (NULL, x_tab, a_name, a_size);
    DEBUG_LOCS   yLOG_value   ("new"       , rc);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(update universe)----------------*/
    if (rc == 0)   yMAP_universe (x_tab, YMAP_PLACE);
    /*---(test for macro setup)-----------*/
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    if (a_abbr == '¯')  api_ymacro_init ();
    /*---(complete)-----------------------*/
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
 }
@@ -1015,7 +1022,7 @@ TAB_name             (char a_index, char *a_name)
    --rce;  if (!TAB_live (a_index))              return rce;
    --rce;  if (a_name  == NULL)                  return rce;
    /*---(return)-------------------------*/
-   strlcpy (a_name, s_master [a_index]->name, LEN_LABEL);
+   ystrlcpy (a_name, s_master [a_index]->name, LEN_LABEL);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1032,12 +1039,12 @@ TAB_rename           (char a_index, char *a_name)
    /*---(name check)---------------------*/
    rc = TAB__name_check (a_name);
    if (a_name == NULL || a_name [0] == '\0') {
-      strlcpy (x_name, yMAP_univ_name (a_index), LEN_LABEL);
+      ystrlcpy (x_name, yMAP_univ_name (a_index), LEN_LABEL);
       rc = 0;
    } else if (rc < 0) {
-      strlcpy (x_name, yMAP_univ_name (a_index), LEN_LABEL);
+      ystrlcpy (x_name, yMAP_univ_name (a_index), LEN_LABEL);
    } else {
-      strlcpy (x_name, a_name           , LEN_LABEL);
+      ystrlcpy (x_name, a_name           , LEN_LABEL);
    }
    /*---(set name)-----------------------*/
    if (s_master [a_index]->name != NULL && s_master [a_index]->name != g_tbd)  free (s_master [a_index]->name);
@@ -1187,7 +1194,7 @@ TAB_size             (char a_index, char *a_max)
    char        rce         =  -10;
    --rce;  if (!TAB_live (a_index))              return rce;
    --rce;  if (a_max   == NULL)                  return rce;
-   str4gyges (a_index, s_master [a_index]->ncol - 1, s_master [a_index]->nrow - 1, 0, 0, a_max, YSTR_CHECK);
+   ystr4gyges (a_index, s_master [a_index]->ncol - 1, s_master [a_index]->nrow - 1, 0, 0, a_max, YSTR_CHECK);
    return 0;
 }
 
@@ -1219,6 +1226,7 @@ TAB_resize           (char a_index, char *a_max)
    char        x_size      [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_LOCS   yLOG_enter   (__FUNCTION__);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(defense)------------------------*/
    DEBUG_LOCS   yLOG_value   ("a_index"   , a_index);
    --rce;  if (!TAB_live (a_index))  {
@@ -1240,11 +1248,11 @@ TAB_resize           (char a_index, char *a_max)
       return 0;
    }
    /*---(check specific size)------------*/
-   strlcpy (x_size, a_max, LEN_LABEL);
+   ystrlcpy (x_size, a_max, LEN_LABEL);
    p = strchr (x_size, ',');
    if (p == NULL)   p = strchr (x_size, '´');
    if (p == NULL) {
-      rc = str2gyges  (x_size, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+      rc = ystr2gyges  (x_size, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
    } else {
       rc = -1;
       p [0] = '\0';
@@ -1257,6 +1265,7 @@ TAB_resize           (char a_index, char *a_max)
       }
    }
    DEBUG_LOCS   yLOG_complex ("request"   , "%4d, %-10.10s, %3dx, %4dy", rc, x_size, x_col, x_row);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(check short-cuts)---------------*/
    --rce;  if      (rc >= 0)                   x_meth = G_RESIZE_FIXED;
    else if (strcmp (x_size, "min"    ) == 0)   x_meth = G_RESIZE_MIN;
@@ -1282,6 +1291,7 @@ TAB_resize           (char a_index, char *a_max)
    if (x_type == G_TAB_AUTO)     x_meth = G_RESIZE_AUTO;
    if (x_meth == G_RESIZE_NADA)  x_meth = G_RESIZE_AUTO;
    /*---(check short-cuts)---------------*/
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    DEBUG_LOCS   yLOG_complex ("maxes"     , "%3dux %3dax, %4duy %4day", COL_max_used (a_index), MAX_col (), COL_max_used (a_index), MAX_row ());
    switch (x_meth) {
    case G_RESIZE_AUTO   :
@@ -1312,6 +1322,7 @@ TAB_resize           (char a_index, char *a_max)
       break;
    }
    DEBUG_LOCS   yLOG_complex ("coord"     , "%3dc, %4dr", x_col, x_row);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(adjust current)-----------------*/
    if (a_index == CTAB) {
       DEBUG_LOCS   yLOG_note    ("tab is current, adjusting");
@@ -1323,7 +1334,9 @@ TAB_resize           (char a_index, char *a_max)
    s_master [a_index]->ncol = x_col + 1;
    s_master [a_index]->nrow = x_row + 1;
    /*---(refresh map)--------------------*/
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    yMAP_refresh_full ();
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1392,12 +1405,30 @@ char  TAB_fixed   (void)  { return TAB_retype (CTAB, G_TAB_FIXED); }
 char
 TAB_is_locked           (char a_tab)
 {
+   /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   char        x_live      =    0;
    char        x_type      =  '-';
+   /*---(beginning)----------------------*/
+   DEBUG_LOCS   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   --rce;  if (!TAB_live (a_tab))              return rce;
+   DEBUG_LOCS   yLOG_sint    (a_tab);
+   x_live = TAB_live (a_tab);
+   DEBUG_LOCS   yLOG_svalue  ("x_live", x_live);
+   --rce;  if (!TAB_live (a_tab)) {
+      DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
    x_type = s_master [a_tab]->type;
-   if (x_type == toupper (x_type))  return 1;
+   DEBUG_LOCS   yLOG_schar   (x_type);
+   if (x_type == toupper (x_type)) {
+      DEBUG_LOCS   yLOG_snote   ("LOCKED");
+      DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
+      return 1;
+   }
+   DEBUG_LOCS   yLOG_snote   ("unlocked");
+   /*---(complete)-----------------------*/
+   DEBUG_LOCS   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -1409,19 +1440,48 @@ TAB_is_locked           (char a_tab)
 static void  o___STATUS__________o () { return; }
 
 /*
- * large (L)
- * 123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12
- * G 16 bigger_tab   - 0b2     0f31    0a1     0a1     0f33     42n   5c  21r 0z100  ´
- *                                                                  |
- * medium (M)                                                       |
- * 123456789-123456789-123456789-123456789-123456789-               |
- * G 16 bigger_tab   0b2     0f31     42n   5c  21r ´               |
- *                                         |                        |
- * small (S)                               |                        |
- * 123456789-123456789-123456789-          |                        |
- * G bigger_tab   0f31     42n ´           |                        |
+ *
+ *  u  micro    10  ···  123456789´
+ *  t  tiny     20  +10  123456789-123456789´
+ *  s  small    40  +20  123456789-123456789-123456789-123456789´
+ *  m  medium   70  +30  123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *  l  large   110  +40  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *  h  huge    160  +50  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *  g  gargan  220  +60  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *
+ *
+ *  u  micro    10  ···  123456789´
+ *  t  tiny     20  +10  123456789-123456789´
+ *  s  small    40  +20  123456789-123456789-123456789-123456789´
+ *  m  medium   80  +40  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *  l  large   120  +40  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *  h  huge    160  +40  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *  g  gargan  220  +60  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+ *
  *
  */
+
+   /*> if (a_size == '-') { /+ no adapt option +/                                     <* 
+    *>    if      (a_wide <  20)  a_size = 'u';                                       <* 
+    *>    else if (a_wide <  40)  a_size = 't';                                       <* 
+    *>    else if (a_wide <  70)  a_size = 's';                                       <* 
+    *>    else if (a_wide < 110)  a_size = 'm';                                       <* 
+    *>    else if (a_wide < 160)  a_size = 'l';                                       <* 
+    *>    else if (a_wide < 220)  a_size = 'h';                                       <* 
+    *>    else                    a_size = 'g';                                       <* 
+    *> }                                                                              <*/
+
+/*>                                                                                   <* 
+ *>    case 'u'  :  *a_wide =   0; break;                                             <* 
+ *>    case 't'  :  *a_wide =  20; break;                                             <* 
+ *>    case 's'  :  *a_wide =  40; break;                                             <* 
+ *>    case 'm'  :  *a_wide =  70; break;                                             <* 
+ *>    case 'l'  :  *a_wide = 110; break;                                             <* 
+ *>    case 'h'  :  *a_wide = 160; break;                                             <* 
+ *>    case 'g'  :  *a_wide = 220; break;                                             <* 
+ *>                                                                                   <*/
+
+
 
 char         /*-> tbd --------------------------------[ leaf   [ge.632.233.70]*/ /*-[01.0000.104.!]-*/ /*-[--.---.---.--]-*/
 TAB_line           (char a_index, char a_size, char *a_list)
@@ -1463,10 +1523,15 @@ TAB_line           (char a_index, char a_size, char *a_list)
    /*---(default)---------------------*/
    switch (a_size) {
    case 'u' : snprintf (a_list, LEN_FULL, "uni ? -· ´"); break;
+//                                         123456789´
    case 't' : snprintf (a_list, LEN_FULL, "uni ? -· ·······   ´"); break;
+//                                         123456789-123456789´
    case 's' : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ····´"); break;
-   case 'm' : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ····-  §  ······· ······· ······· ´"); break;
-   default  : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ········ ····-  §  ······· ······· ·······  §  ····- ····-  §  ······· ······· ´"); break;
+//                                         123456789-123456789-123456789-123456789´
+   case 'm' : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ········ ····-  ´  ······· ······· ·······  ´"); break;
+//                                         123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
+   default  : snprintf (a_list, LEN_FULL, " univrs  ? ············ -· ······· ········ ····-  ´  ······· ······· ·······  ´  ····- ····-  ´  ······· ·······      ´"); break;
+//                                         123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789´
    }
    /*---(bad tab)---------------------*/
    --rce;  if (!VALID_tab (a_index)) {
@@ -1495,27 +1560,27 @@ TAB_line           (char a_index, char a_size, char *a_list)
    /*---(generate stats)--------------*/
    switch (a_size) {
    case 'g' : case 'h' : case 'l' :
-      strlpadn   (s_curr->C_count, x_col   , '.', '>',  4);
-      strlpadn   (s_curr->R_count, x_row   , '.', '>',  4);
-      str4gyges  (s_curr->tab, s_curr->bcol, s_curr->brow, 0, 0, t, YSTR_USABLE);
-      strlpad    (t, x_beg   , '.', '<', 7);
-      str4gyges  (s_curr->tab, s_curr->ecol, s_curr->erow, 0, 0, t, YSTR_USABLE);
-      strlpad    (t, x_end   , '.', '<', 7);
+      ystrlpadn   (s_curr->C_count, x_col   , '.', '>',  4);
+      ystrlpadn   (s_curr->R_count, x_row   , '.', '>',  4);
+      ystr4gyges  (s_curr->tab, s_curr->bcol, s_curr->brow, 0, 0, t, YSTR_USABLE);
+      ystrlpad    (t, x_beg   , '.', '<', 7);
+      ystr4gyges  (s_curr->tab, s_curr->ecol, s_curr->erow, 0, 0, t, YSTR_USABLE);
+      ystrlpad    (t, x_end   , '.', '<', 7);
    case 'm' : /* current, min used, and max used */
       sprintf (x_by, "%d´%d", s_curr->ncol, s_curr->nrow);
-      strlpad    (x_by, x_by2, '.', '<', 10);
-      str4gyges  (s_curr->tab, s_curr->ccol, s_curr->crow, 0, 0, t, YSTR_USABLE);
-      strlpad    (t, x_cur   , '.', '<', 7);
-      str4gyges  (s_curr->tab, COL_min_used (s_curr->tab), ROW_min_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
-      strlpad    (t, x_min   , '.', '<', 7);
-      str4gyges  (s_curr->tab, COL_max_used (s_curr->tab), ROW_max_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
-      strlpad    (t, x_max   , '.', '<', 7);
+      ystrlpad    (x_by, x_by2, '.', '<', 10);
+      ystr4gyges  (s_curr->tab, s_curr->ccol, s_curr->crow, 0, 0, t, YSTR_USABLE);
+      ystrlpad    (t, x_cur   , '.', '<', 7);
+      ystr4gyges  (s_curr->tab, COL_min_used (s_curr->tab), ROW_min_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
+      ystrlpad    (t, x_min   , '.', '<', 7);
+      ystr4gyges  (s_curr->tab, COL_max_used (s_curr->tab), ROW_max_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
+      ystrlpad    (t, x_max   , '.', '<', 7);
    case 's' : /* name and count */
-      strlpad    (s_curr->name   , x_name  , '.', '<', 12);
-      strlpadn   (s_curr->count  , x_count , '.', '>',  4);
+      ystrlpad    (s_curr->name   , x_name  , '.', '<', 12);
+      ystrlpadn   (s_curr->count  , x_count , '.', '>',  4);
    case 't' : /* sizing */
-      str4gyges  (s_curr->tab, s_curr->ncol - 1, s_curr->nrow - 1, 0, 0, t, YSTR_USABLE);
-      strlpad    (t, x_siz   , '.', '<', 7);
+      ystr4gyges  (s_curr->tab, s_curr->ncol - 1, s_curr->nrow - 1, 0, 0, t, YSTR_USABLE);
+      ystrlpad    (t, x_siz   , '.', '<', 7);
       x_type = tolower (s_curr->type);
       if (s_curr->type != x_type)  x_lock = '!';
       break;
@@ -1536,7 +1601,7 @@ TAB_line           (char a_index, char a_size, char *a_list)
             x_tab->abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max);
       break;
    default :
-      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  ´  %-7.7s %-7.7s %-7.7s  ´  %-4.4sc %-4.4sr  ´  %-7.7s %-7.7s ´",
+      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  ´  %-7.7s %-7.7s %-7.7s  ´  %-4.4sc %-4.4sr  ´  %-7.7s %-7.7s      ´",
             x_tab->abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
       break;
    }
@@ -1617,22 +1682,22 @@ TAB_inventory            (char a_size, char *a_list)
    /*---(inventory)----------------------*/
    for (i = 0; i < s_nvalid; ++i)  {
       /*---(abbr)--------------*/
-      if (s_master [i] == NULL)  strlcpy (s, "-"   , LEN_TERSE);
+      if (s_master [i] == NULL)  ystrlcpy (s, "-"   , LEN_TERSE);
       else                       sprintf (s, "%c"  , LABEL_tab (i));
       /*---(concat)------------*/
       switch (a_size) {
       case 'L' :
-         if (i > 0 && i % 6 == 0)  strlcat (t, " ´", LEN_HUND);
-         if (i > 0 && i % 3 == 0)  strlcat (t, " " , LEN_HUND);
-         strlcat (t, s, LEN_HUND);
+         if (i > 0 && i % 6 == 0)  ystrlcat (t, " ´", LEN_HUND);
+         if (i > 0 && i % 3 == 0)  ystrlcat (t, " " , LEN_HUND);
+         ystrlcat (t, s, LEN_HUND);
          break;
       case 'M' :
-         if (i > 0 && i % 6 == 0)  strlcat (t, " " , LEN_HUND);
-         strlcat (t, s, LEN_HUND);
+         if (i > 0 && i % 6 == 0)  ystrlcat (t, " " , LEN_HUND);
+         ystrlcat (t, s, LEN_HUND);
          break;
       case 'S' :
-         if (i > 0 && i % 6 == 0)  strlcat (t, " " , LEN_HUND);
-         if (s [0] != '-')         strlcat (t, s   , LEN_HUND);
+         if (i > 0 && i % 6 == 0)  ystrlcat (t, " " , LEN_HUND);
+         if (s [0] != '-')         ystrlcat (t, s   , LEN_HUND);
          break;
       }
       /*---(counts)------------*/
@@ -1652,7 +1717,7 @@ TAB_inventory            (char a_size, char *a_list)
       break;
    }
    /*---(prefix)-------------------------*/
-   strltrim (t, ySTR_SINGLE, LEN_HUND);
+   ystrltrim (t, ySTR_SINGLE, LEN_HUND);
    sprintf (a_list, "%s%s", x_pre, t);
    return 0;
 }
@@ -1707,15 +1772,15 @@ TAB_reader           (int c, uchar *a_verb)
    }
    /*---(max)----------------------------*/
    DEBUG_INPT   yLOG_info    ("max"       , x_label);
-   rc = str2gyges (x_label, &x_tab, &xe, &ye, NULL, NULL, 0, YSTR_ADAPT);
-   DEBUG_INPT   yLOG_value   ("str2gyges" , rc);
+   rc = ystr2gyges (x_label, &x_tab, &xe, &ye, NULL, NULL, 0, YSTR_ADAPT);
+   DEBUG_INPT   yLOG_value   ("ystr2gyges" , rc);
    --rce;  if (rc < 0 || x_tab >= 36) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_INPT   yLOG_value   ("tab"       , x_tab);
    /*---(make tab)-----------------------*/
-   rc = TAB_new_in_abbr (LABEL_tab (x_tab), x_label, x_name);
+   rc = TAB_new_in_abbr (LABEL_tab (x_tab), x_name, x_label);
    DEBUG_INPT   yLOG_value   ("new"       , rc);
    --rce;  if (rc < 0) {
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
@@ -1749,13 +1814,13 @@ TAB_reader           (int c, uchar *a_verb)
    if (strcmp (x_beg, "") != 0) {
       u->ecol = xe;
       u->erow = ye;
-      str2gyges (x_beg, NULL, &xb, &yb, NULL, NULL, 0, YSTR_ADAPT);
+      ystr2gyges (x_beg, NULL, &xb, &yb, NULL, NULL, 0, YSTR_ADAPT);
       u->bcol = xb;
       u->brow = yb;
    }
    DEBUG_INPT   yLOG_info    ("x_cur"     , x_cur);
    if (strcmp (x_cur, "") != 0) {
-      str2gyges (x_cur, NULL, &xc, &yc, NULL, NULL, 0, YSTR_ADAPT);
+      ystr2gyges (x_cur, NULL, &xc, &yc, NULL, NULL, 0, YSTR_ADAPT);
       u->ccol = xc;
       u->crow = yc;
       /*> yMAP_axis_force (YMAP_XAXIS, xb, xc, xe);                                   <*/
@@ -1800,7 +1865,7 @@ TAB_writer            (int c, char a_tab)
    /*---(prepare)------------------------*/
    TAB_name    (a_tab, x_name);
    x_type = TAB_type (a_tab);
-   str4gyges (a_tab, COL_max (a_tab), ROW_max (a_tab), 0, 0, x_max, YSTR_USABLE);
+   ystr4gyges (a_tab, COL_max (a_tab), ROW_max (a_tab), 0, 0, x_max, YSTR_USABLE);
    /*---(get pointer)--------------------*/
    TAB_pointer (&u, a_tab);
    DEBUG_INPT   yLOG_point   ("u"         , u);
@@ -1808,8 +1873,8 @@ TAB_writer            (int c, char a_tab)
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   str4gyges (a_tab, u->bcol, u->brow, 0, 0, x_beg, YSTR_USABLE);
-   str4gyges (a_tab, u->ccol, u->crow, 0, 0, x_cur, YSTR_USABLE);
+   ystr4gyges (a_tab, u->bcol, u->brow, 0, 0, x_beg, YSTR_USABLE);
+   ystr4gyges (a_tab, u->ccol, u->crow, 0, 0, x_cur, YSTR_USABLE);
    if (a_tab == CTAB)  x_here = 'y';
    /*---(write)--------------------------*/
    rc = yPARSE_vprintf (c, "tab", x_name, x_max, x_type, x_beg, x_cur, x_here);
@@ -1957,13 +2022,13 @@ TAB__unit          (char *a_question, int a_index)
       x_index = s_index;
       x_curr  = s_curr;
       if (a_question [0] == 'e') {
-         strlcpy (x_pref, "entry", LEN_LABEL);
+         ystrlcpy (x_pref, "entry", LEN_LABEL);
          TAB_by_index (NULL, a_index);
       } else if (a_question [0] == 'c') {
-         strlcpy (x_pref, "curr " , LEN_LABEL);
+         ystrlcpy (x_pref, "curr " , LEN_LABEL);
          a_index = s_index;
       } else {
-         strlcpy (x_pref, "focus" , LEN_LABEL);
+         ystrlcpy (x_pref, "focus" , LEN_LABEL);
          a_index = CTAB;
       }
       TAB_line (a_index, 'l', t);

@@ -16,7 +16,7 @@ LOC_variable            (char *a_name)
    --rce;  if (a_name == NULL)  return rce;
    rc = yCALC_variable (a_name, x_target, x_label);
    --rce;  if (rc < 0)  return rce;
-   rc = str2gyges  (x_target, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+   rc = ystr2gyges  (x_target, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
    --rce;  if (rc < 0)  return rce;
    rc = yMAP_jump (u, x, y, 0);
    rce;  if (rc < 0)  return rce;
@@ -108,7 +108,7 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
       return rce;
    }
    /*---(check its legal)----------------*/
-   rc = str4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
+   rc = ystr4gyges (a_tab, a_col, a_row, 0, 0, x_label, YSTR_USABLE);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -249,8 +249,8 @@ LOC_move           (
    char        rc          =   0;
    char        x_label     [LEN_LABEL];
    /*---(defense: source)----------------*/
-   rc = str4gyges (a_stab, a_scol, a_srow, 0, 0, x_label, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_value   ("str4gyges" , rc);
+   rc = ystr4gyges (a_stab, a_scol, a_srow, 0, 0, x_label, YSTR_USABLE);
+   DEBUG_LOCS   yLOG_value   ("ystr4gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -258,8 +258,8 @@ LOC_move           (
    rc = api_ysort_by_coord (&x_src, a_stab, a_scol, a_srow);
    DEBUG_LOCS   yLOG_point   ("x_src"     , x_src);
    /*---(defense: target)----------------*/
-   rc = str4gyges (a_dtab, a_dcol, a_drow, 0, 0, x_label, YSTR_USABLE);
-   DEBUG_LOCS   yLOG_value   ("str4gyges" , rc);
+   rc = ystr4gyges (a_dtab, a_dcol, a_drow, 0, 0, x_label, YSTR_USABLE);
+   DEBUG_LOCS   yLOG_value   ("ystr4gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -464,7 +464,7 @@ LOC_cell_labeled   (char *a_label)
    int         x_col       =   0;           /* working col value              */
    int         x_row       =   0;           /* working row value              */
    /*---(defenses)-----------------------*/
-   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+   rc = ystr2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
    if (rc < 0)    return NULL;
    return LOC_cell_at_loc (x_tab, x_col, x_row);
 }
@@ -490,11 +490,11 @@ LOC_label         (
    char        rce         = -10;           /* return code for errors         */
    /*---(defense: valid output)----------*/
    --rce;  if (a_final        == NULL) return rce;
-   strlcpy (a_final, ""           , LEN_LABEL);
+   ystrlcpy (a_final, ""           , LEN_LABEL);
    --rce;  if (a_cell         == NULL) return rce;
    --rce;  if (a_cell->label  == NULL) return rce;
    /*---(copy label)---------------------*/
-   strlcpy (a_final, a_cell->label, LEN_LABEL);
+   ystrlcpy (a_final, a_cell->label, LEN_LABEL);
    /*---(complete)-----------------------*/
    return  0;
 }
@@ -546,7 +546,7 @@ LOC__unit          (char *a_question, char *a_label)
    strcpy  (unit_answer, "LOC              : label could not be parsed");
    if (a_label != NULL && strcmp (a_label, "") != 0) {
       x_label = a_label [0];
-      rc = str2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, &x_abs, 0, YSTR_USABLE);
+      rc = ystr2gyges  (a_label, &x_tab, &x_col, &x_row, NULL, &x_abs, 0, YSTR_USABLE);
    } else {
       x_tab   = CTAB;
       x_label = LABEL_tab (x_tab);
@@ -560,10 +560,10 @@ LOC__unit          (char *a_question, char *a_label)
    /*> DEBUG_LOCS   yLOG_complex  ("row"       , "%3db, %3de, %3dc, %3dn", s_tabs [x_tab].brow, s_tabs [x_tab].erow, s_tabs [x_tab].crow, s_tabs [x_tab].nrow - 1);   <*/
    /*---(prepare data)-------------------*/
    strcpy  (unit_answer, "LOC              : locations could not be prepared");
-   /*> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, 0, x_beg, YSTR_CHECK);           <* 
-    *> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, 0, x_end, YSTR_CHECK);           <* 
-    *> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, 0, x_cur, YSTR_CHECK);           <* 
-    *> if (rc >= 0)  rc = str4gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);   <* 
+   /*> if (rc >= 0)  rc = ystr4gyges  (x_tab, s_tabs [x_tab].bcol, s_tabs [x_tab].brow, 0, 0, x_beg, YSTR_CHECK);           <* 
+    *> if (rc >= 0)  rc = ystr4gyges  (x_tab, s_tabs [x_tab].ecol, s_tabs [x_tab].erow, 0, 0, x_end, YSTR_CHECK);           <* 
+    *> if (rc >= 0)  rc = ystr4gyges  (x_tab, s_tabs [x_tab].ccol, s_tabs [x_tab].crow, 0, 0, x_cur, YSTR_CHECK);           <* 
+    *> if (rc >= 0)  rc = ystr4gyges  (x_tab, s_tabs [x_tab].ncol - 1, s_tabs [x_tab].nrow - 1, 0, 0, x_max, YSTR_CHECK);   <* 
     *> if (rc <  0)  return unit_answer;                                                                                   <*/
    /*---(overall)------------------------*/
    strcpy  (unit_answer, "LOC              : question not understood");

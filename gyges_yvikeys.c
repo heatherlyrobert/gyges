@@ -880,12 +880,12 @@ MAP_mapper           (char a_req)
    } else if (x_curr == NULL || x_curr->source == NULL) {
       DEBUG_YMAP    yLOG_complex ("CURRENT"   , "%4dt, %4dc, %4dr", CTAB, CCOL, CROW);
       ySRC_update (t, "·····", "");
-      strlcpy (my.reqs_list, "n/a", LEN_RECD);
-      strlcpy (my.deps_list, "n/a", LEN_RECD);
-      strlcpy (my.like_list, "n/a", LEN_RECD);
-      strlcpy (my.copy_list, "n/a", LEN_RECD);
-      strlcpy (my.rpn_list , "n/a", LEN_RECD);
-      strlcpy (g_curr.label, "-"          , LEN_LABEL);
+      ystrlcpy (my.reqs_list, "n/a", LEN_RECD);
+      ystrlcpy (my.deps_list, "n/a", LEN_RECD);
+      ystrlcpy (my.like_list, "n/a", LEN_RECD);
+      ystrlcpy (my.copy_list, "n/a", LEN_RECD);
+      ystrlcpy (my.rpn_list , "n/a", LEN_RECD);
+      ystrlcpy (g_curr.label, "-"          , LEN_LABEL);
       g_curr.len    = 0;
       g_curr.type   = YCALC_DATA_BLANK;
       g_curr.tab    = -1;
@@ -902,7 +902,7 @@ MAP_mapper           (char a_req)
       yCALC_disp_pros (x_curr->ycalc, my.deps_list);
       yCALC_disp_like (x_curr->ycalc, my.like_list);
       yCALC_disp_copy (x_curr->ycalc, my.copy_list);
-      strlcpy (g_curr.label, x_curr->label, LEN_LABEL);
+      ystrlcpy (g_curr.label, x_curr->label, LEN_LABEL);
       g_curr.len    = x_curr->len;
       g_curr.type   = x_curr->type;
       g_curr.tab    = x_curr->tab;

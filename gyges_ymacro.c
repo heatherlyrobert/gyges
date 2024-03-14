@@ -168,11 +168,11 @@ api_ymacro_get          (char a_name, char *a_keys)
          y  = CROW;
          rc = 0;
       } else {
-         rc  = str2gyges (a_keys, &u, &x, &y, NULL, NULL, 0, YSTR_LEGAL);
-         DEBUG_YMACRO   yLOG_value   ("str2gyges" , rc);
+         rc  = ystr2gyges (a_keys, &u, &x, &y, NULL, NULL, 0, YSTR_LEGAL);
+         DEBUG_YMACRO   yLOG_value   ("ystr2gyges" , rc);
       }
       if (rc >= 0) {
-         strlcpy (x_label, a_keys, LEN_LABEL);
+         ystrlcpy (x_label, a_keys, LEN_LABEL);
          DEBUG_YMACRO   yLOG_complex ("current"   , "%2du, %3dx, %3dy", u, x, y);
       }
       DEBUG_YMACRO   yLOG_note    ("done looking for alternate");
@@ -188,14 +188,14 @@ api_ymacro_get          (char a_name, char *a_keys)
    }
    --rce;  switch (x_curr->type) {
    case YCALC_DATA_STR :
-      strlcpy (a_keys, x_curr->source, LEN_RECD);
+      ystrlcpy (a_keys, x_curr->source, LEN_RECD);
       break;
    case YCALC_DATA_SFORM : case YCALC_DATA_SLIKE :
-      strlcpy (a_keys, x_curr->v_str , LEN_RECD);
+      ystrlcpy (a_keys, x_curr->v_str , LEN_RECD);
       break;
    default :
       DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
-      strlcpy (a_keys, ""            , LEN_RECD);
+      ystrlcpy (a_keys, ""            , LEN_RECD);
       return rce;
       break;
    }
@@ -251,11 +251,11 @@ api_ymacro_set          (char a_name, char *a_keys)
          y  = CROW;
          rc = 0;
       } else {
-         rc  = str2gyges (a_keys, &u, &x, &y, NULL, NULL, 0, YSTR_LEGAL);
-         DEBUG_YMACRO   yLOG_value   ("str2gyges" , rc);
+         rc  = ystr2gyges (a_keys, &u, &x, &y, NULL, NULL, 0, YSTR_LEGAL);
+         DEBUG_YMACRO   yLOG_value   ("ystr2gyges" , rc);
       }
       if (rc >= 0) {
-         strlcpy (x_label, a_keys, LEN_LABEL);
+         ystrlcpy (x_label, a_keys, LEN_LABEL);
          DEBUG_YMACRO   yLOG_complex ("current"   , "%2du, %3dx, %3dy", u, x, y);
          x_curr = LOC_cell_at_loc (u, x, y);
          DEBUG_YMACRO   yLOG_point   ("x_curr"    , x_curr);
@@ -263,14 +263,14 @@ api_ymacro_set          (char a_name, char *a_keys)
             --rce;  switch (x_curr->type) {
             case YCALC_DATA_STR :
                DEBUG_YMACRO   yLOG_note    ("string source");
-               strlcpy (a_keys, x_curr->source, LEN_RECD);
+               ystrlcpy (a_keys, x_curr->source, LEN_RECD);
                break;
             case YCALC_DATA_SFORM : case YCALC_DATA_SLIKE :
                DEBUG_YMACRO   yLOG_note    ("string formula source");
-               strlcpy (a_keys, x_curr->v_str , LEN_RECD);
+               ystrlcpy (a_keys, x_curr->v_str , LEN_RECD);
                break;
             default :
-               strlcpy (a_keys, ""            , LEN_RECD);
+               ystrlcpy (a_keys, ""            , LEN_RECD);
                break;
             }
          }
@@ -320,31 +320,31 @@ api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *r_
    if (r_label [0] == '*') {
       rc = yCALC_variable (r_label + 1, x_early, NULL);
       DEBUG_YMACRO   yLOG_value   ("variable"  , rc);
-      if (rc < 0)  strlcpy (x_early, r_label + 1, LEN_LABEL);
+      if (rc < 0)  ystrlcpy (x_early, r_label + 1, LEN_LABEL);
       x_curr = LOC_cell_labeled (x_early);
       switch (x_curr->type) {
       case YCALC_DATA_STR :
-         strlcpy (x_early, x_curr->source, LEN_LABEL);
+         ystrlcpy (x_early, x_curr->source, LEN_LABEL);
          break;
       case YCALC_DATA_SFORM : case YCALC_DATA_SLIKE :
-         strlcpy (x_early, x_curr->v_str , LEN_LABEL);
+         ystrlcpy (x_early, x_curr->v_str , LEN_LABEL);
          break;
       case YCALC_DATA_ADDR  : case YCALC_DATA_CADDR :
-         strlcpy (x_early, x_curr->v_str + 1, LEN_LABEL);
+         ystrlcpy (x_early, x_curr->v_str + 1, LEN_LABEL);
          break;
       default :
          break;
       }
    } else {
-      strlcpy (x_early, r_label, LEN_LABEL);
+      ystrlcpy (x_early, r_label, LEN_LABEL);
    }
    /*---(check for variable)-------------*/
    rc = yCALC_variable (x_early, x_label, NULL);
    DEBUG_YMACRO   yLOG_value   ("variable"  , rc);
-   if (rc < 0)  strlcpy (x_label, x_early, LEN_LABEL);
+   if (rc < 0)  ystrlcpy (x_label, x_early, LEN_LABEL);
    /*---(get current)--------------------*/
-   DEBUG_YMACRO   yLOG_info    ("str2gyges" , x_label);
-   rc  = str2gyges (x_label, &u, &x, &y, NULL, NULL, 0, YSTR_LEGAL);
+   DEBUG_YMACRO   yLOG_info    ("ystr2gyges" , x_label);
+   rc  = ystr2gyges (x_label, &u, &x, &y, NULL, NULL, 0, YSTR_LEGAL);
    DEBUG_YMACRO   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
@@ -354,7 +354,7 @@ api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *r_
    switch (a_type) {
    case ' ' :
       DEBUG_YMACRO   yLOG_note    ("function call, make next == label");
-      strlcpy (r_next, x_label, LEN_LABEL);
+      ystrlcpy (r_next, x_label, LEN_LABEL);
       break;
    case 'Ø' :
       DEBUG_YMACRO   yLOG_note    ("relative move to current");
@@ -370,8 +370,8 @@ api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *r_
       DEBUG_YMACRO   yLOG_value   ("offset"    , o);
       y += o;
       DEBUG_YMACRO   yLOG_value   ("new y"     , y);
-      rc = str4gyges (u, x, y, 0, 0, r_label, YSTR_LEGAL);
-      DEBUG_YMACRO   yLOG_value   ("str4gyges" , rc);
+      rc = ystr4gyges (u, x, y, 0, 0, r_label, YSTR_LEGAL);
+      DEBUG_YMACRO   yLOG_value   ("ystr4gyges" , rc);
       --rce;  if (rc < 0) {
          DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -380,8 +380,8 @@ api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *r_
       /* intentional fall-thru */
    case '™' : default  :
       DEBUG_YMACRO   yLOG_note    ("advance next next");
-      rc = str4gyges (u, x, y + 1, 0, 0, r_next, YSTR_LEGAL);
-      DEBUG_YMACRO   yLOG_value   ("str4gyges" , rc);
+      rc = ystr4gyges (u, x, y + 1, 0, 0, r_next, YSTR_LEGAL);
+      DEBUG_YMACRO   yLOG_value   ("ystr4gyges" , rc);
       --rce;  if (rc < 0) {
          DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -396,16 +396,16 @@ api_ymacro_getter        (char a_type, char *r_label, char *r_contents, char *r_
       DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = str4gyges (u, x, y, 0, 0, x_label, YSTR_LEGAL);
+   rc = ystr4gyges (u, x, y, 0, 0, x_label, YSTR_LEGAL);
    DEBUG_YMACRO   yLOG_char    ("type"      , x_curr->type);
    --rce;  switch (x_curr->type) {
    case YCALC_DATA_STR   :
       DEBUG_YMACRO   yLOG_note    ("string literal");
-      strlcpy (r_contents, x_curr->source, LEN_RECD);
+      ystrlcpy (r_contents, x_curr->source, LEN_RECD);
       break;
    case YCALC_DATA_SFORM : case YCALC_DATA_SLIKE :
       DEBUG_YMACRO   yLOG_note    ("string formula");
-      strlcpy (r_contents, x_curr->v_str , LEN_RECD);
+      ystrlcpy (r_contents, x_curr->v_str , LEN_RECD);
       break;
    default :
       DEBUG_YMACRO   yLOG_note    ("unusable cell type");
@@ -460,7 +460,7 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
       DEBUG_YMACRO   yLOG_note    ("found a pointer deref request");
       rc = yCALC_variable (a_target + 1, x_early, NULL);
       DEBUG_YMACRO   yLOG_value   ("variable"  , rc);
-      if (rc < 0)  strlcpy (x_early, a_target + 1, LEN_LABEL);
+      if (rc < 0)  ystrlcpy (x_early, a_target + 1, LEN_LABEL);
       x_curr = LOC_cell_labeled (x_early);
       DEBUG_YMACRO   yLOG_point   ("x_curr"    , x_curr);
       if (x_curr == NULL) {
@@ -471,19 +471,19 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
       switch (x_curr->type) {
       case YCALC_DATA_STR :
          DEBUG_YMACRO   yLOG_note    ("use the string contents");
-         strlcpy (x_early, x_curr->source, LEN_LABEL);
+         ystrlcpy (x_early, x_curr->source, LEN_LABEL);
          break;
       case YCALC_DATA_SFORM : case YCALC_DATA_SLIKE :
          DEBUG_YMACRO   yLOG_note    ("use results of string formula");
-         strlcpy (x_early, x_curr->v_str , LEN_LABEL);
+         ystrlcpy (x_early, x_curr->v_str , LEN_LABEL);
          break;
       case YCALC_DATA_ADDR  :
          DEBUG_YMACRO   yLOG_note    ("use the actual address");
-         strlcpy (x_early, x_curr->source + 1, LEN_LABEL);
+         ystrlcpy (x_early, x_curr->source + 1, LEN_LABEL);
          break;
       case YCALC_DATA_CADDR :
          DEBUG_YMACRO   yLOG_note    ("use the calculated address");
-         strlcpy (x_early, x_curr->v_str    , LEN_LABEL);
+         ystrlcpy (x_early, x_curr->v_str    , LEN_LABEL);
          break;
       default :
          DEBUG_YMACRO   yLOG_note    ("this type can not be used");
@@ -493,16 +493,16 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
       }
    } else {
       DEBUG_YMACRO   yLOG_note    ("normal target");
-      strlcpy (x_early, a_target, LEN_LABEL);
+      ystrlcpy (x_early, a_target, LEN_LABEL);
    }
    DEBUG_YMACRO   yLOG_info    ("x_early"   , x_early);
    /*---(check for variable)-------------*/
    rc = yCALC_variable (x_early, x_label, NULL);
    DEBUG_YMACRO   yLOG_value   ("rc"        , rc);
-   if (rc < 0)  strlcpy (x_label, x_early, LEN_LABEL);
+   if (rc < 0)  ystrlcpy (x_label, x_early, LEN_LABEL);
    /*---(get target)---------------------*/
    DEBUG_YMACRO   yLOG_info    ("x_label"   , x_label);
-   rc  = str2gyges (x_label, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+   rc  = ystr2gyges (x_label, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
    DEBUG_YMACRO   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
@@ -525,7 +525,7 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
          DEBUG_YMACRO   yLOG_value   ("v"         , x_temp->v_num);
          sprintf (x_final, "%lf" , v);
       } else if (strchr (YCALC_GROUP_STR, x_temp->type) != NULL) {
-         strlcpy (x_final, x_temp->v_str , LEN_RECD);
+         ystrlcpy (x_final, x_temp->v_str , LEN_RECD);
       } else {
          DEBUG_YMACRO   yLOG_note    ("unusable cell type");
          DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
@@ -541,24 +541,24 @@ api_ymacro_forcer        (char r_type, char *a_target, char *a_contents)
          DEBUG_YMACRO   yLOG_point   ("x_curr"    , x_curr);
          if (x_curr == NULL) {
             DEBUG_YMACRO   yLOG_note    ("handle null starting cell");
-            strlcpy (x_final, "", LEN_RECD);
+            ystrlcpy (x_final, "", LEN_RECD);
          } else {
             DEBUG_YMACRO   yLOG_note    ("handle existing cell");
-            strlcpy (x_final, x_curr->source, LEN_RECD);
+            ystrlcpy (x_final, x_curr->source, LEN_RECD);
             DEBUG_YMACRO   yLOG_info    ("start"     , x_final);
          }
-         strlcat (x_final, a_contents + 2, LEN_RECD);
+         ystrlcat (x_final, a_contents + 2, LEN_RECD);
          DEBUG_YMACRO   yLOG_info    ("x_final"   , x_final);
       } else if (a_contents [0] == '´') {
          DEBUG_YMACRO   yLOG_note    ("literal");
-         strlcpy (x_final, a_contents + 1, LEN_RECD);
+         ystrlcpy (x_final, a_contents + 1, LEN_RECD);
       } else {
          DEBUG_YMACRO   yLOG_note    ("pure replacement");
-         strlcpy (x_final, a_contents, LEN_RECD);
+         ystrlcpy (x_final, a_contents, LEN_RECD);
       }
    }
    /*---(overwrite target)---------------*/
-   strldchg     (x_final, '²', ' ', LEN_RECD);
+   ystrldchg     (x_final, '²', ' ', LEN_RECD);
    CELL_change  (NULL, YMAP_BEG  , u, x, y, x_final);
    /*---(wipe temp)----------------------*/
    if (r_type == 'Û')  CELL_change  (NULL, YMAP_NONE , 37, 4, 47, "···");
@@ -608,7 +608,7 @@ api_ymacro_pusher        (char a_dir, char a_level, char *a_args)
       sprintf (t, "%d", a_level);
       CELL_overwrite  (YMAP_NONE , u, 5, 2, t, "<?0-·");
       /*---(pass args)-------------------*/
-      if (a_args != NULL)  strlcpy (x_args, a_args, LEN_LABEL);
+      if (a_args != NULL)  ystrlcpy (x_args, a_args, LEN_LABEL);
       DEBUG_YMACRO   yLOG_info    ("x_args"    , x_args);
       p = strtok_r (x_args, ",", &r);
       DEBUG_YMACRO   yLOG_point   ("p"         , p);
@@ -630,16 +630,16 @@ api_ymacro_pusher        (char a_dir, char a_level, char *a_args)
          /*---(get local)----------------------*/
          if (p [0] == 'ç') {
             /*---(get current)--------------------*/
-            DEBUG_YMACRO   yLOG_info    ("str2gyges" , t);
-            rc  = str2gyges (t, &uv, &xv, &yv, NULL, NULL, 0, YSTR_LEGAL);
+            DEBUG_YMACRO   yLOG_info    ("ystr2gyges" , t);
+            rc  = ystr2gyges (t, &uv, &xv, &yv, NULL, NULL, 0, YSTR_LEGAL);
             DEBUG_YMACRO   yLOG_value   ("rc"        , rc);
             --rce;  if (rc < 0) {
                DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
                return rce;
             }
             /*---(make correct address)-----------*/
-            rc = str4gyges (uv, xv + 1, yv, 0, 0, t, YSTR_LEGAL);
-            DEBUG_YMACRO   yLOG_value   ("str4gyges" , rc);
+            rc = ystr4gyges (uv, xv + 1, yv, 0, 0, t, YSTR_LEGAL);
+            DEBUG_YMACRO   yLOG_value   ("ystr4gyges" , rc);
             if (rc < 0) {
                DEBUG_YMACRO   yLOG_exitr   (__FUNCTION__, rce);
                return rce;
@@ -647,11 +647,11 @@ api_ymacro_pusher        (char a_dir, char a_level, char *a_args)
             DEBUG_YMACRO   yLOG_info    ("t*"        , t);
          }
          /*---(get copy)-----------------------*/
-         strlcpy (x_contents, "", LEN_RECD);
+         ystrlcpy (x_contents, "", LEN_RECD);
          x_copy = LOC_cell_labeled (t);
          DEBUG_YMACRO   yLOG_point   ("x_copy"    , x_copy);
          if (x_copy != NULL && x_copy->source != NULL) {
-            strlcpy (x_contents, x_copy->source, LEN_RECD);
+            ystrlcpy (x_contents, x_copy->source, LEN_RECD);
          }
          CELL_overwrite  (YMAP_NONE , 37, 5,  7 + n, x_contents, "<?0-·");
          /*---(next)---------------------------*/

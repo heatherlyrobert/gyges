@@ -31,8 +31,8 @@ api_ymap_locator        (char a_strict, char *a_label, ushort *u, ushort *x, ush
       return rce;
    }
    /*---(legality)-----------------------*/
-   rc = str2gyges (a_label, &x_buf, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
-   DEBUG_YMAP   yLOG_value   ("str2gyges" , rc);
+   rc = ystr2gyges (a_label, &x_buf, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+   DEBUG_YMAP   yLOG_value   ("ystr2gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMAP   yLOG_note    ("address not legal");
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
@@ -89,17 +89,17 @@ api_ymap_addressor      (char a_strict, char *a_label, ushort u, ushort x, ushor
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    /*---(defaults)-----------------------*/
-   if (a_label != NULL)  strlcpy (a_label, "", LEN_LABEL);
+   if (a_label != NULL)  ystrlcpy (a_label, "", LEN_LABEL);
    /*---(legality)-----------------------*/
-   rc = str4gyges (u, x, y, z, 0, x_label, YSTR_USABLE);
-   DEBUG_YMAP   yLOG_value   ("str4gyges" , rc);
+   rc = ystr4gyges (u, x, y, z, 0, x_label, YSTR_USABLE);
+   DEBUG_YMAP   yLOG_value   ("ystr4gyges" , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMAP   yLOG_note    ("address not legal");
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    if (a_strict != 'y') {
-      if (a_label != NULL)  strlcpy (a_label, x_label, LEN_LABEL);
+      if (a_label != NULL)  ystrlcpy (a_label, x_label, LEN_LABEL);
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -129,7 +129,7 @@ api_ymap_addressor      (char a_strict, char *a_label, ushort u, ushort x, ushor
       return rce;
    }
    /*---(save-back)----------------------*/
-   if (a_label != NULL)  strlcpy (a_label, x_label, LEN_LABEL);
+   if (a_label != NULL)  ystrlcpy (a_label, x_label, LEN_LABEL);
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -298,8 +298,11 @@ api_ymap_done           (void)
    /*---(update current)-------*/
    x_mute = yLOGS_mute_check ();
    yLOGS_mute ();
-   str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
-   CELL_change (NULL, YMAP_NONE , 37, 5, 1, t);
+   ystr4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
+   x_curr      = LOC_cell_at_loc (37, 5, 1);
+   if (x_curr != NULL)  CELL_change (NULL, YMAP_NONE , 37, 5, 1, t);
+   DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    if (x_mute)  yLOGS_unmute ();
    /*---(handle by mode)-----------------*/
    switch (yMODE_curr ()) {
@@ -322,16 +325,16 @@ api_ymap_done           (void)
    DEBUG_YMAP    yLOG_point   ("x_curr"    , x_curr);
    /*---(no current content)-------------*/
    if (x_curr == NULL || x_curr->source == NULL) {
-      str4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
+      ystr4gyges (CTAB, CCOL, CROW, 0, 0, t, YSTR_CHECK);
       ySRC_update (t, "·····", "");
-      strlcpy (my.reqs_list, "n/a", LEN_RECD);
-      strlcpy (my.deps_list, "n/a", LEN_RECD);
-      strlcpy (my.like_list, "n/a", LEN_RECD);
-      strlcpy (my.copy_list, "n/a", LEN_RECD);
-      strlcpy (my.rpn_list , "n/a", LEN_RECD);
-      strlcpy (my.pros_plus, "n/a", LEN_RECD);
-      strlcpy (my.reqs_plus, "n/a", LEN_RECD);
-      strlcpy (g_curr.label, "-"          , LEN_LABEL);
+      ystrlcpy (my.reqs_list, "n/a", LEN_RECD);
+      ystrlcpy (my.deps_list, "n/a", LEN_RECD);
+      ystrlcpy (my.like_list, "n/a", LEN_RECD);
+      ystrlcpy (my.copy_list, "n/a", LEN_RECD);
+      ystrlcpy (my.rpn_list , "n/a", LEN_RECD);
+      ystrlcpy (my.pros_plus, "n/a", LEN_RECD);
+      ystrlcpy (my.reqs_plus, "n/a", LEN_RECD);
+      ystrlcpy (g_curr.label, "-"          , LEN_LABEL);
       g_curr.len    = 0;
       g_curr.type   = YCALC_DATA_BLANK;
       g_curr.tab    = -1;
@@ -353,7 +356,7 @@ api_ymap_done           (void)
    yCALC_disp_copy (x_curr->ycalc, my.copy_list);
    yCALC_disp_prosplus (x_curr->ycalc, my.pros_plus);
    yCALC_disp_reqsplus (x_curr->ycalc, my.reqs_plus);
-   strlcpy (g_curr.label, x_curr->label, LEN_LABEL);
+   ystrlcpy (g_curr.label, x_curr->label, LEN_LABEL);
    g_curr.len    = x_curr->len;
    g_curr.type   = x_curr->type;
    g_curr.tab    = x_curr->tab;
@@ -386,7 +389,7 @@ api_ymap__touch         (char *a_label)
    /*---(header)-------------------------*/
    DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(get location)-------------------*/
-   rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+   rc = ystr2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
    DEBUG_YMAP   yLOG_complex ("original"  , "label=%s, tab=%4d, col=%4d, row=%4d", a_label, u, x, y);
    x_curr = LOC_cell_at_loc (u, x, y);
    DEBUG_YMAP   yLOG_point   ("x_curr"    , x_curr);
@@ -424,8 +427,8 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
    /*---(identify location)--------------*/
    DEBUG_YMAP  yLOG_info    ("label"     , a_label);
    if (a_label != NULL && strcmp (a_label, "n/a") != 0) {
-      rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
-      DEBUG_YMAP  yLOG_value   ("str2gyges"   , rc);
+      rc = ystr2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
+      DEBUG_YMAP  yLOG_value   ("ystr2gyges"   , rc);
       --rce;  if (rc < 0) {
          DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -439,11 +442,11 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
    case YMAP_OVERWRITE :
    case YMAP_CLEAR     :
    case YMAP_DELETE    :
-      strldchg (a_content, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
+      ystrldchg (a_content, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       CELL_overwrite (YMAP_NONE, u, x, y, a_content, a_format);
       break;
    case YMAP_SOURCE    :
-      strldchg (a_content, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
+      ystrldchg (a_content, G_CHAR_SPACE, G_KEY_SPACE, LEN_RECD);
       CELL_change  (NULL, YMAP_NONE, u, x, y, a_content);
       break;
    case YMAP_WIDTH    :
@@ -467,7 +470,7 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
    case YMAP_SYNC     : case 'ù' :
       if (a_dir == '<') {
          DEBUG_YMAP  yLOG_note    ("running a sync with undo");
-         strlcpy  (x_source, a_content, LEN_RECD);
+         ystrlcpy  (x_source, a_content, LEN_RECD);
          DEBUG_YMAP  yLOG_info    ("x_source"   , x_source);
          p = strtok_r (x_source, ",", &r);
          while (p != NULL) {
@@ -481,7 +484,7 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
    case YMAP_RECALC   : case 'ø' :
       if (a_dir == '>') {
          DEBUG_YMAP  yLOG_note    ("running recalc error cell with redo");
-         strlcpy  (x_source, a_content, LEN_RECD);
+         ystrlcpy  (x_source, a_content, LEN_RECD);
          DEBUG_YMAP  yLOG_info    ("x_source"   , x_source);
          p = strtok_r (x_source, ",", &r);
          while (p != NULL) {
@@ -491,6 +494,9 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
       } else {
          DEBUG_YMAP  yLOG_note    ("ignore recalc error cell with undo");
       }
+      break;
+   case YMAP_POSITION  :
+      rc = yMAP_jump (u, x, y, 0);
       break;
    }
    /*---(complete)-----------------------*/
@@ -661,7 +667,7 @@ api_ymap_clearer_seq    (void *a_owner, void *a_deproot, int a_seq, int a_level)
 }
 
 char
-api_ymap_clearer_NEW    (char a_type, long a_stamp)
+api_ymap_clearer_NEW    (char a_1st, char a_type, long a_stamp)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -682,7 +688,7 @@ api_ymap_clearer_NEW    (char a_type, long a_stamp)
    /*---(prepare)------------------------*/
    DEBUG_YMAP   yLOG_value   ("a_stamp"   , a_stamp);
    s_stamp = a_stamp;
-   s_1st   = 'y';
+   s_1st   = a_1st;
    /*---(dependents)---------------------*/
    DEBUG_YMAP   yLOG_note    ("DEPENDENT CELLS (GATHERING)");
    rc      = yCALC_seq_downup   (s_stamp, api_ymap_clearer_seq);
@@ -921,8 +927,8 @@ api_ymap_paster         (char a_reqs, char a_1st, short uo, short xo, short yo, 
    /*---(check for retouch)--------------*/
    --rce;  if (a_reqs != 0 && strchr ("?!", a_reqs) != NULL) {
       DEBUG_YMAP   yLOG_note    ("call for a retouch run");
-      if (a_reqs == '!')  rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
-      else                rc = str2gyges ((char *) a_cell, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
+      if (a_reqs == '!')  rc = ystr2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
+      else                rc = ystr2gyges ((char *) a_cell, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
       DEBUG_YMAP   yLOG_complex ("original"  , "tab=%4d, col=%4d, row=%4d", x_stab, x_scol, x_srow);
       x_dtab  = x_stab + uo;
       x_dcol  = x_scol + xo;
@@ -953,7 +959,7 @@ api_ymap_paster         (char a_reqs, char a_1st, short uo, short xo, short yo, 
    }
    /*---(get original location)----------*/
    DEBUG_YMAP   yLOG_info    ("a_label"   , a_cell->label);
-   rc = str2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
+   rc = ystr2gyges (a_cell->label, &x_stab, &x_scol, &x_srow, NULL, NULL, 0, YSTR_USABLE);
    DEBUG_YMAP   yLOG_value   ("rc"        , rc);
    --rce;  if (rc <  0)  {
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
@@ -1068,7 +1074,7 @@ api_ymap_finisher       (char a_pros, char *a_target, char *a_labels, short uo, 
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   strlcpy (x_work, x_curr->source, LEN_RECD);
+   ystrlcpy (x_work, x_curr->source, LEN_RECD);
    DEBUG_YMAP   yLOG_point   ("x_work"    , x_work);
    /*---(prepare tokens)-----------------*/
    rc = yRPN_parsed (x_work, &x_tokens, NULL, LEN_RECD);
@@ -1083,32 +1089,32 @@ api_ymap_finisher       (char a_pros, char *a_target, char *a_labels, short uo, 
    DEBUG_YMAP    yLOG_point   ("p"         , p);
    while (p != NULL) {
       /*---(compare to list)-------------*/
-      rc = str2gyges (p, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
-      DEBUG_YMAP    yLOG_value   ("str2gyges" , rc);
+      rc = ystr2gyges (p, &u, &x, &y, NULL, NULL, 0, YSTR_USABLE);
+      DEBUG_YMAP    yLOG_value   ("ystr2gyges" , rc);
       /*---(handle non-address)----------*/
       if (rc <  0)  {
          DEBUG_YMAP    yLOG_note    ("not an address, just append");
-         strlcat (x_final, p      , LEN_RECD);
+         ystrlcat (x_final, p      , LEN_RECD);
       }
       /*---(check against pros)----------*/
       else {
-         rc = str4gyges (u, x, y, 0, 0, x_label, YSTR_USABLE);
-         DEBUG_YMAP    yLOG_value   ("str4gyges" , rc);
+         rc = ystr4gyges (u, x, y, 0, 0, x_label, YSTR_USABLE);
+         DEBUG_YMAP    yLOG_value   ("ystr4gyges" , rc);
          sprintf (t, ",%s,", x_label);
          DEBUG_YMAP    yLOG_info    ("t"         , t);
          /*---(not applicable)-----------*/
          if (strstr (a_labels, t) == NULL)  {
             DEBUG_YMAP    yLOG_note    ("not on provider list, just append");
-            strlcat (x_final, p      , LEN_RECD);
+            ystrlcat (x_final, p      , LEN_RECD);
          }
          /*---(update provider)----------*/
          else {
-            rc = str8gyges (p, uo, xo, yo, zo, x_force, x_fixed, YSTR_LEGAL);
-            DEBUG_YMAP    yLOG_value   ("str8gyges" , rc);
-            strlcat (x_final, x_fixed, LEN_RECD);
+            rc = ystr8gyges (p, uo, xo, yo, zo, x_force, x_fixed, YSTR_LEGAL);
+            DEBUG_YMAP    yLOG_value   ("ystr8gyges" , rc);
+            ystrlcat (x_final, x_fixed, LEN_RECD);
          }
       }
-      strlcat (x_final, " ", LEN_RECD);
+      ystrlcat (x_final, " ", LEN_RECD);
       /*---(display)---------------------*/
       DEBUG_YMAP    yLOG_info    ("x_final"   , x_final);
       if (strcmp (x_fixed, "#REF") == 0)  ++x_bad;

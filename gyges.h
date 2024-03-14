@@ -31,11 +31,11 @@
 #define     P_COMPILER  "gcc 11.3.0"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
 /*········· ··········· ´·····························´········································*/
-#define     P_DEPSTDC   "stdio,stdlib,string,math,ctype,time.malloc"
+#define     P_DEPSTDC   "stdio,stdlib,string,math,ctype,time,malloc"
 #define     P_DEPPOSIX  "unistd,sys/time"
 #define     P_DEPCORE   "yURG,yLOG,ySTR"
 #define     P_DEPVIKEYS "yMODE,yKEYS,yMACRO,ySRC,yFILE,yVIEW,yMAP,yCMD,yMARK"
-#define     P_DEPOTHER  "yPARSE,yREGEX,yCALC,ySORT,yRPN"
+#define     P_DEPOTHER  "yPARSE,yREGEX,yCALC,ySORT,yRPN,yEXEC"
 #define     P_DEPGRAPH  "ncurses,yVICURSES"
 #define     P_DEPHEAD   "yVIHUB_solo,yDLST_solo"
 /*········· ··········· ´·····························´········································*/
@@ -44,8 +44,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
 #define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7n"
-#define     P_VERTXT    "improvements found by vikeys_content.script demo"
+#define     P_VERNUM    "3.7o"
+#define     P_VERTXT    "found hidden, detailed cell creation issues and fixed/tested"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -237,6 +237,7 @@
 #include    <yFILE.h>             /* heatherly vikeys content file handling   */
 #include    <yMARK.h>             /* heatherly vikeys search and marking      */
 #include    <yVICURSES.h>         /* heatherly vikeys curses handler          */
+#include    <yX11.h>              /* heatherly vikeys curses handler          */
 /*---(custom other)----------------------*/
 /*> #include    <yVAR.h>         /+ CUSTOM : heatherly variable testing           +/   <*/
 #include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
@@ -870,7 +871,7 @@ extern tCELL       denada;
 extern int     save;
 
 #define     FILE_BUF    "/var/run/buffer.gyges"
-#define     FILE_EXIM   "/root/z_gehye/vi_clip.txt"
+#define     FILE_EXIM   YSTR_CLIP
 extern FILE   *g_clip;
 
 /*> extern  char        f_maker     [LEN_RECD];                                       <*/
@@ -1399,7 +1400,7 @@ char        TAB_first_filled        (void);
 char        TAB_first_open          (void);
 char        TAB_new_quick           (void);
 char        TAB_new_in_open         (uchar *a_name, uchar *a_size);
-char        TAB_new_in_abbr         (char a_abbr, char a_size [LEN_LABEL], char *a_name [LEN_TITLE]);
+char        TAB_new_in_abbr         (char a_abbr, char a_name [LEN_TITLE], char a_size [LEN_LABEL]);
 char        TAB_free_all_empties    (void);
 char        TAB_free_from_abbr      (uchar a_abbr);
 /*---(search)-------------------------*/
@@ -1612,11 +1613,15 @@ char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
 /*345678901-12345678901234567890->--------------------------------------------*/
 /*---(memory)----------------------------*/
+char        CELL__new_driver     (char a_root, tCELL **a_cell, char a_linked);
 char        CELL__new            (tCELL **a_cell, char a_linked);
+char        CELL__new_root       (tCELL **a_cell);
+char        CELL__free_driver    (char a_root, tCELL **a_cell);
 char        CELL__free           (tCELL **a_cell);
-char        CELL__create         /* ------ */  (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
-char        CELL__delete       (char a_mode, int a_tab, int a_col, int a_row);
-char        CELL_dup             /* ------ */  (tCELL **a_cell, tCELL* a_old);
+char        CELL__free_root      (tCELL **a_cell);
+char        CELL__create         (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
+char        CELL__delete         (char a_mode, int a_tab, int a_col, int a_row);
+char        CELL_dup             (tCELL **a_cell, tCELL* a_old);
 
 
 
@@ -1666,6 +1671,7 @@ char      CELL_unmerge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char 
 
 
 char        CELL_dump               (FILE *a_file);
+char        CELL_debug_list         (void);
 char*       CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_ref);
 char       *CELL__unit              (char  *a_question, tCELL *a_cell);
 char       *CELL__unitnew           (char  *a_question, char *a_label);
@@ -1746,7 +1752,7 @@ char        api_yvikeys_unsearcher  (uchar *a_label, ushort u, ushort x, ushort 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        api__ymap_clearer_one   (tCELL *a_curr, long a_stamp);
 char        api_ymap_clearer_seq    (void *a_owner, void *a_deproot, int a_seq, int a_level);
-char        api_ymap_clearer_NEW    (char a_type, long a_stamp);
+char        api_ymap_clearer_NEW    (char a_1st, char a_type, long a_stamp);
 char        api_ymap_clearer        (char a_1st, ushort u, ushort x, ushort y, ushort z);
 char        api_ymap_copier         (char a_type, long a_stamp);
 /*> char        api_yvikeys_router      (tCELL *a_cell, char *a_list);                <*/

@@ -53,7 +53,7 @@ HIST__unit         (char *a_question, int a_ref)
    } else if (strcmp (a_question, "current"   )    == 0) {
       /*> if      (s_curr == NULL)    snprintf (unit_answer, LEN_FULL, "HIST curr   (--) : -       ,  -t,   -c,   -r, - -           0[]              0[]");                                                                         <* 
        *> else {                                                                                                                                                                                                                    <* 
-       *>    rc = str2gyges (s_curr->addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);                                                                                                                                     <* 
+       *>    rc = ystr2gyges (s_curr->addr, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);                                                                                                                                     <* 
        *>    if (strlen (s_curr->before) < 13)  sprintf  (b, "%2d[%s]"      , strlen (s_curr->before), s_curr->before);                                                                                                             <* 
        *>    else                               sprintf  (b, "%2d[%-12.12s>", strlen (s_curr->before), s_curr->before);                                                                                                             <* 
        *>    if (strlen (s_curr->after ) < 13)  sprintf  (a, "%2d[%s]"      , strlen (s_curr->after ), s_curr->after );                                                                                                             <* 

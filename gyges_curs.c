@@ -91,7 +91,7 @@ CURS_info_request  (char a_type)
 char
 CURS_version            (char a_size, short a_wide, char *a_list)
 {
-   /*> strlcpy (a_list, PROG_version (), LEN_HUND);                                   <*/
+   /*> ystrlcpy (a_list, PROG_version (), LEN_HUND);                                   <*/
    sprintf (a_list, " %s [%s] %s Ï", P_NAME, P_VERNUM, P_VERTXT);
    return 0;
 }
@@ -108,18 +108,18 @@ CURS_current_status     (char a_size, short a_wide, char *a_list)
    uchar       x_row       [LEN_HUND]  = "";
    uchar       x_col       [LEN_HUND]  = "";
    snprintf (x_pre , LEN_LABEL, " gyges  ");
-   strlpadn (NTAB, nn, '.', '>', 2);
-   strlpadn (CTAB, cc, '.', '>', 2);
+   ystrlpadn (NTAB, nn, '.', '>', 2);
+   ystrlpadn (CTAB, cc, '.', '>', 2);
    snprintf (x_tab , LEN_HUND, "§ T %sn %sc", nn, cc);
-   strlpadn (NCOL, nn, '.', '>', 3);
-   strlpadn (BCOL, bb, '.', '>', 3);
-   strlpadn (CCOL, cc, '.', '>', 3);
-   strlpadn (ECOL, ee, '.', '>', 3);
+   ystrlpadn (NCOL, nn, '.', '>', 3);
+   ystrlpadn (BCOL, bb, '.', '>', 3);
+   ystrlpadn (CCOL, cc, '.', '>', 3);
+   ystrlpadn (ECOL, ee, '.', '>', 3);
    snprintf (x_col , LEN_HUND, "§ C %sn %sb %sc %se", nn, bb, cc, ee);
-   strlpadn (NROW, nn, '.', '>', 3);
-   strlpadn (BROW, bb, '.', '>', 3);
-   strlpadn (CROW, cc, '.', '>', 3);
-   strlpadn (EROW, ee, '.', '>', 3);
+   ystrlpadn (NROW, nn, '.', '>', 3);
+   ystrlpadn (BROW, bb, '.', '>', 3);
+   ystrlpadn (CROW, cc, '.', '>', 3);
+   ystrlpadn (EROW, ee, '.', '>', 3);
    snprintf (x_row , LEN_HUND, "§ R %sn %sb %sc %se", nn, bb, cc, ee);
    snprintf (a_list, LEN_RECD, "%s %s %s %s ´", x_pre, x_tab, x_col, x_row);
    return 0;
@@ -178,8 +178,8 @@ DRAW_yaxis         (void)
    /*---(process rows)------------------*/
    for (i = 0; i < x_tall; ++i) {
       /*---(prepare)------------*/
-      if (BROW + i < NROW)   strlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
-      else                   strlcpy (x_label, "····"       , LEN_TERSE);
+      if (BROW + i < NROW)   ystrlcpy (x_label, LABEL_row (BROW + i), LEN_TERSE);
+      else                   ystrlcpy (x_label, "····"       , LEN_TERSE);
       /*---(show)---------------*/
       CURS_row_color  (BROW + i);
       mvprintw (x_bott - x_tall + 1 + i, x_left, "%-4.4s", x_label);
@@ -234,7 +234,7 @@ DRAW_xaxis         (void)
       /*---(prepare)---------------------*/
       x_avail = x_wide - x_cum;
       w       = COL_size (CTAB, BCOL + i);
-      strlcpy (x_label, LABEL_col (BCOL + i), LEN_TERSE);
+      ystrlcpy (x_label, LABEL_col (BCOL + i), LEN_TERSE);
       /*---(format)----------------------*/
       DEBUG_GRAF  yLOG_complex ("curr"      , "%3d, %s, %3dw, %3dwa, %3dav", i, x_label, w, x_fill, x_avail);
       if (w <= x_avail) {
@@ -279,9 +279,9 @@ CURS_bufsum        (char *a_list)
    DEBUG_GRAF  yLOG_complex ("size"      , "%3dl, %3dw, %3db", x_left, x_wide, x_bott);
    TAB_inventory ('L', t);
    /*---(inventory)----------------------*/
-   strlcpy (s, t + 9, LEN_HUND);
+   ystrlcpy (s, t + 9, LEN_HUND);
    sprintf (x_disp, "buffers %s ····· ····· ····· ····· ····· ····· ····· ·····", t + 2);
-   strlcpy (a_list, x_disp, LEN_RECD);
+   ystrlcpy (a_list, x_disp, LEN_RECD);
    /*---(current)------------------------*/
    x_offset  = 17;
    x_offset += CTAB;
@@ -744,7 +744,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    char        x_mark      [LEN_LABEL] = "";
    /*---(identify cell)------------------*/
    if (a_curr != NULL)    LOC_label  (a_curr, l);
-   else                   str4gyges  (CTAB, a_col, a_row, 0, 0, l, YSTR_CHECK);
+   else                   ystr4gyges  (CTAB, a_col, a_row, 0, 0, l, YSTR_CHECK);
    sprintf    (x_label, ",%s,", l);
    sprintf    (x_mark , "%s," , l);
    DEBUG_GRAF  yLOG_complex ("BALL"      , "%c å%sæ å%sæ", my.ball, my.cagrios, x_label);
@@ -852,7 +852,7 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
    /*---(display cell)-------------------*/
    if (my.mark_show == 'Y' && rc != 0)  {
       sprintf (t, "%c", rc);
-      strlpad (t, x_text, '.', '|', a_wide - 1);
+      ystrlpad (t, x_text, '.', '|', a_wide - 1);
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_text);
    }
    else if (x_curr == NULL || x_curr->print == NULL)  {
@@ -909,22 +909,22 @@ DRAW_main          (void)
     *>       /+> switch (x_curr->type) {                                                  <*    <* 
     *>        *> case YCALC_DATA_NLIKE:                                                   <*    <* 
     *>        *> case YCALC_DATA_SLIKE:                                                   <*    <* 
-    *>        *>    strlcpy (my.reqs_list, "n/a", LEN_RECD);                              <*    <* 
+    *>        *>    ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                              <*    <* 
     *>        *>    yCALC_disp_reqs (x_curr->ycalc, my.like_list);                        <*    <* 
     *>        *>    break;                                                                <*    <* 
     *>        *> default :                                                                <*    <* 
     *>        *>    yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                        <*    <* 
-    *>        *>    strlcpy (my.like_list, "n/a", LEN_RECD);                              <*    <* 
+    *>        *>    ystrlcpy (my.like_list, "n/a", LEN_RECD);                              <*    <* 
     *>        *>    break;                                                                <*    <* 
     *>        *> }                                                                        <+/   <* 
     *>    } else {                                                                              <* 
-    *>       strlcpy (my.reqs_list, "n/a", LEN_RECD);                                           <* 
-    *>       strlcpy (my.deps_list, "n/a", LEN_RECD);                                           <* 
-    *>       strlcpy (my.like_list, "n/a", LEN_RECD);                                           <* 
-    *>       strlcpy (my.copy_list, "n/a", LEN_RECD);                                           <* 
-    *>       strlcpy (my.rpn_list , "n/a", LEN_RECD);                                           <* 
-    *>       strlcpy (s_pros_plus , "n/a", LEN_RECD);                                           <* 
-    *>       strlcpy (s_reqs_plus , "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (my.deps_list, "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (my.like_list, "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (my.copy_list, "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (my.rpn_list , "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (s_pros_plus , "n/a", LEN_RECD);                                           <* 
+    *>       ystrlcpy (s_reqs_plus , "n/a", LEN_RECD);                                           <* 
     *>    }                                                                                     <* 
     *> }                                                                                        <*/
    x_save = x_curr;
@@ -936,13 +936,13 @@ DRAW_main          (void)
     *>    yCALC_disp_prosplus (x_curr->ycalc, my.pros_plus);                          <* 
     *>    yCALC_disp_reqsplus (x_curr->ycalc, my.reqs_plus);                          <* 
     *> } else {                                                                       <* 
-    *>    strlcpy (my.reqs_list, "n/a", LEN_RECD);                                    <* 
-    *>    strlcpy (my.deps_list, "n/a", LEN_RECD);                                    <* 
-    *>    strlcpy (my.like_list, "n/a", LEN_RECD);                                    <* 
-    *>    strlcpy (my.copy_list, "n/a", LEN_RECD);                                    <* 
-    *>    strlcpy (my.rpn_list , "n/a", LEN_RECD);                                    <* 
-    *>    strlcpy (my.pros_plus, "n/a", LEN_RECD);                                    <* 
-    *>    strlcpy (my.reqs_plus, "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.deps_list, "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.like_list, "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.copy_list, "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.rpn_list , "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.pros_plus, "n/a", LEN_RECD);                                    <* 
+    *>    ystrlcpy (my.reqs_plus, "n/a", LEN_RECD);                                    <* 
     *> }                                                                              <*/
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
    yMARK_mark_list (&(my.mark_show), s_mark_list);

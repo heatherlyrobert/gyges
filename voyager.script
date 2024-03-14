@@ -15,39 +15,48 @@
 ##   obviously this is a little system dependent, but i keep hardware a long time ;)
 ##
 
+###<<< BLITZ
 
-ºµre5»
+º··µre5··»
 
-
-##===[[ preparation ]]========================================================##
-º:0p29¦··+1¦··l+1¦··l+1¦··l+1¦··l-1¦··»
-º:0p30¦··s ¦··ls  5¦··»
-º:0p34¦··s=p29+5¦··»
-º:0a1¦»
-
-ºswhere is the voyager 1 spacecraft (90 sec)?¦···ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··ls<¦··0··v11l»
-ÏÏÏÏ·ÏÏÏÏ
-º¥»
+{
+   :note #¦
+   :myhome 675 100¦
+   :mysize 619 443¦
+   :0p29¦··+1¦··l+1¦··l+1¦··l+1¦··l-1¦··
+   :0p30¦··s ¦··ls  5¦··
+   :0p34¦··s=p29+5¦··
+   0_
+}
+###<<< SCREEN_PRINT unit_ymacro_voyager_1.scrn
 
 
 ##==[[ header statement ]]====================================================##
-º:0a3¦»
-ºsa friend of mine stunned me recently.  he said, a major news channel reported that the¦»
-ºl··s<¦··y··lp··lp··lp··lp··lp··lp··lp··lp··lp··lp»
-º0j·svoyager spacecraft·had returned signals from numerous stars it had already passed.¦»
-ºl··s<¦··y··lp··lp··lp··lp··lp··lp··lp··lp··lp··lp»
-º0j·sthe reporter was then confidently making pronouncements and uncovering conspiracies !?!¦»
-ºl··s<¦··y··lp··lp··lp··lp··lp··lp··lp··lp··lp··lp»
+º:0a1¦·······swhere is the voyager 1 spacecraft (90 sec)?¦···············································11(ls<¦)··»
+º··0··v·11l··»
+## ÏÏÏÏÏ·ÏÏÏÏÏ
+ÏÏ
+
+º··¥··0··2j··sa friend of mine stunned me recently.  he said, a major news channel reported that the¦····11(ls<¦)··»
+º··¥··0···j··svoyager spacecraft had returned signals from numerous stars it had already passed.¦········11(ls<¦)··»
+º··¥··0···j··sthe reporter was then confidently making pronouncements and uncovering conspiracies !?!¦···11(ls<¦)··»
+º··¥··0···j··»
+## ÏÏÏÏÏ·ÏÏÏÏÏ ÏÏÏÏÏ·ÏÏÏÏÏ
+ÏÏÏÏ
+
+
+###<<< SCREEN_PRINT unit_ymacro_voyager_2.scrn
 
 
 ##==[[ titles ]]==============================================================##
 
-:0a8¦
 
-º4j····sstart with some headers¦··f|··ls<¦··ls<¦··ls<¦··ls<¦»
-º0j····sand column sizing to¦·····f|··ls<¦··ls<¦··ls<¦··ls<¦»
-º0j····sorganze.¦R················f|··ls<¦··ls<¦··ls<¦··ls<¦»
-º6k0»
+º·:0a12¦·····sstart with some headers¦··f|··4(ls<¦)··»
+º·0···j······sand column sizing to¦·····f|··4(ls<¦)··»
+º·0···j······sorganze.¦R················f|··4(ls<¦)··»
+º·:0a8¦·»
+## ÏÏÏÏÏ·ÏÏÏÏÏ
+ÏÏ
 
 ·····ssubject¦··········F·w····-^¦
 l····syear¦·············F·wl···-^¦
@@ -55,8 +64,7 @@ l····sday¦··············F·whhh·-^¦
 l····shour¦·············F·Nll··-^¦
 l····smin¦··············F·Nl···-^¦
 l····ssec¦··············F·nll··-^¦
-0j
-
+0·j
 
 ºv··5j5l··x··v··5j5l··x»
 º2jl···snow add scaling values¦···f|··ls<¦»
@@ -70,91 +78,94 @@ l····+24¦···············f|
 l····+60¦···············f|
 l····+60¦···············f|
 º0j··v··3j5l··x··v··3j5l··x»
-
+## ÏÏÏÏÏ·ÏÏÏÏÏ
+ÏÏ
 
 
 ##==[[ legend ]]==============================================================##
 
-º:0c26¦»
-ºsWARNING, simplistic mathematical projections¦···F|¦··ls<¦··ls<¦·ls<¦»
-ºj·3h··s(directionally correct only)¦·············F|¦··ls<¦··ls<¦·ls<¦»
+º·:0c26¦··sWARNING, simplistic mathematical projections¦········F|¦··································3(ls<¦)··»
+º··j·3h···s(directionally correct only)¦························F|¦··································3(ls<¦)··»
 
-º:0d29¦»
-ºsAUTOMATIC TEXT COLORATION¦···F|_¦··ls<¦··ls<¦»
-º:0c30¦»
-º+1¦····················lsblue are numerical constants¦···············ls<¦··ls<¦»
-º3hj···=`k¦+1¦··········lsgreen are calculated numbers¦···············ls<¦··ls<¦»
-º3hj···=0p29+0q29+0r29+0s29+0t29+0q29-0r29+0s29+0t29+5-5¦··lsred are complicated formulas¦····ls<¦··ls<¦»
-º3hj···s 4¦······f>·····lsbrown are text constants¦···················ls<¦··ls<¦»
-º3hj···#0p30µ_d0q30¦·f>···lspurple are text formulas¦···················ls<¦··ls<¦»
-º3hj···s~p34¦······f>···lsmagenta are reused formulas¦················ls<¦··ls<¦»
+º·:0d29¦··sAUTOMATIC TEXT COLORATION¦···························F|_¦·································2(ls<¦)··»
+º·:0c30¦··+1¦···················································l··sblue are numerical constants¦····2(ls<¦)··»
+º·3h·j····=`k¦+1¦···············································l··sgreen are calculated numbers¦····2(ls<¦)··»
+º·3h·j····=0p29+0q29+0r29+0s29+0t29+0q29-0r29+0s29+0t29+5-5¦····l··sred are complicated formulas¦····2(ls<¦)··»
+º·3h·j····s 4¦··········f>······································l··sbrown are text constants¦········2(ls<¦)··»
+º·3h·j····#0p30µ_d0q30¦·f>······································l··spurple are text formulas¦········2(ls<¦)··»
+º·3h·j····s~p34¦········f>······································l··smagenta are reused formulas¦·····2(ls<¦)··»
+## ÏÏÏÏÏ·ÏÏÏÏÏ
+ÏÏ
 
+
+###<<< SCREEN_PRINT unit_ymacro_voyager_3.scrn
 
 
 ##==[[ speeds ]]==============================================================##
 
-:a11¦
-slight miles¦
-L····+186282¦···········fc
-º2j2h··sthis formula is being built¦··ls<¦··ls<¦»
-ºj2h···sby moving/wandering not¦······ls<¦··ls<¦»
-ºj2h···styping directly.¦·············ls<¦··ls<¦»
-º4kh»
-ºµre6»·=`l*kk'¦¦··········fc·ºµre5»
-º2j3h··sthen, cut/paste across¦··ls<¦»
-ºjh····swith automatic formula¦··ls<¦»
-ºjh····stransformations.¦········ls<¦»
-º4k2l»
-ºµre6»y
-h····p
-h····p
-h····p
-ºµre5»
-º2j··v··2j4l··x··v··2j4l··x»
+:a11¦·····slight miles¦···L····+186282¦·······fc
 
-º0·····sgreen background means¦····f|··ls<¦»
-ºjh····sthis value is needed¦······f|··ls<¦»
-ºjh····sby current cell.¦··········f|··ls<¦»
+º·2j·2h···sthis formula is being built¦·····2(ls<¦)··»
+º··j·2h···sby moving/wandering not¦·········2(ls<¦)··»
+º··j·2h···styping directly.¦················2(ls<¦)··»
+º·4k··h··»
 
-ºl2k···syellow marks¦··············f|»
-ºj·····sthe current¦···············f|»
-ºj·····scell.¦·····················f|»
-
-ºl2k···spurple background means¦···f|··ls<¦··ls<¦»
-ºj2h···sthis cell provides info¦···f|··ls<¦··ls<¦»
-ºj2h···sto the current cell.¦······f|··ls<¦··ls<¦»
+=Ï`ÏlÏ*ÏkÏkÏ'Ï¦Ï¦····fc
 
 
+º·2j·3h··sthen, cut/paste across¦·············ls<¦··»
+º··j··h··swith automatic formula¦·············ls<¦··»
+º··j··h··stransformations.¦···················ls<¦··»
 
+·4k·Ï·2l·Ï·y·Ï·3(hÏpÏ)
 
+º·2j··v··2j4l··x··v··2j4l··x»
 
-º4h4k»
+º··0·····sgreen background means¦·····f|······ls<¦··»
+º··j··h··sthis value is needed¦·······f|······ls<¦··»
+º··j··h··sby current cell.¦···········f|······ls<¦··»
+
+º·2k··l··syellow marks¦···············f|··»
+º··j·····sthe current¦················f|··»
+º··j·····scell.¦······················f|··»
+
+º··l·2k··spurple background means¦····f|····2(ls<¦)··»
+º··j·2h··sthis cell provides info¦····f|····2(ls<¦)··»
+º··j·2h··sto the current cell.¦·······f|····2(ls<¦)··»
+
+º·4h·4k·»
 l
-ÏÏÏÏÏÏÏ
+## ÏÏÏÏÏÏÏ
+ÏÏÏ
 
-º2j0··v··2j5l··x··v··2j5l··x··2k»
 
-º2l7j··svoyager is 20,000 times¦·······f|··ls<¦»
-ºjh····sslower than light (0.006c).¦···f|··ls<¦»
-º8kh»
+###<<< SCREEN_PRINT unit_ymacro_voyager_4.scrn
+
+
+
+º·2j··0··v··2j5l··x··v··2j5l··x··2k»
+
+º·2l·7j··svoyager is 20,000 times¦·······f|··ls<¦··»
+º··j··h··sSLOWER than light (0.006c).¦···f|··ls<¦··»
+º·8k·h··»
 
 0j···ºs  voyager miles¦»
-lll··+38610¦············fc
-l····=`h/kkkl'¦¦········fc··y
-l····p
-hhhk·y
-j····p
-h····p
+3l···+38610¦············fc
+l····=Ï`ÏhÏ/ÏkÏkÏkÏlÏ'Ï¦Ï¦·····fc··y·ÏÏ·l··p
 
-0j···ºs  speeding bullet¦»
-lll··+682¦··············fc
-lk···y·j·p
+·3h·k··y···j····p
+··h····p
+
+·0··j···ºs  speeding bullet¦»
+···3l····+682¦··············fc
+····l··k···y·j·p
+
 l····p··················fg
 hhhk·y
 j····p
 h····p
 
-0j···ºs  usain·bolt¦»
+0j···ºs  usain bolt¦»
 lll··+27¦···············fc
 lk···y·j·p··············fg
 l····p··················fg
@@ -163,7 +174,6 @@ j····p
 h····p
 
 º4jl··v··j2l··x··v··j2l··x··4kh»
-
 
 ##==[[ sun ]]=================================================================##
 0jj·ºsour sun (one au)¦»
@@ -192,6 +202,8 @@ l····p
 
 º3jh·v··jl··x··v··jl··x··3k0»
 
+###<<< SCREEN_PRINT unit_ymacro_voyager_5.scrn
+
 
 
 ##==[[ closest start ]]=======================================================##
@@ -218,11 +230,11 @@ llk··y·jh·p·············Fc0¦
 º·0··j··sinterstellar spacecraft¦·······f|··ls<¦»
 º·0·5k·»
 l····=`k¦/25¦···········fc
-ÏÏ
+# ÏÏ
+Ï
 
 º3j0··v··3jl··x··v··2jl··x»
 º3k»
-
 
 ##==[[ first star ]]==========================================================##
 0jj··ºsgliese 445¦»
@@ -245,6 +257,10 @@ l····=`k¦/25¦···········fc
 
 º3j0··v··2jl··x··v··2jl··x»
 º3k»
+
+
+###<<< SCREEN_PRINT unit_ymacro_voyager_6.scrn
+
 
 
 
@@ -271,4 +287,7 @@ l····=`k/6k¦*100¦·······fg
 
 
 º_0··v5l»
+
+
+###<<< SCREEN_PRINT unit_ymacro_voyager_7.scrn
 

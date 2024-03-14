@@ -36,7 +36,7 @@ api_ysort_label2key     (char *a_label)
 {
    int       x_tab, x_col, x_row;
    char      rc;
-   rc = str2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
+   rc = ystr2gyges (a_label, &x_tab, &x_col, &x_row, NULL, NULL, 0, YSTR_USABLE);
    if (rc < 0)  return -1;
    return x_row + (x_col * 10000) + (x_tab * 10000000);
 }
@@ -45,7 +45,7 @@ long
 api_ysort_coord2key     (int a_tab, int a_col, int a_row, char *a_label)
 {
    char      rc;
-   rc = str4gyges (a_tab, a_col, a_row, NULL, NULL, a_label, YSTR_USABLE);
+   rc = ystr4gyges (a_tab, a_col, a_row, NULL, NULL, a_label, YSTR_USABLE);
    if (rc < 0)  return -1;
    if (a_tab < 0 && a_col < 0 && a_row < 0)  return -1;
    return a_row + (a_col * 10000) + (a_tab * 10000000);
@@ -382,7 +382,7 @@ api_ysort_dumper        (uchar a_type, int a_lvl, tCELL *a_node, char *a_path, c
    x_len = 10 - strlen (a_node->label);
    fprintf (s_file, "%s%s%*.*s", a_pre, a_node->label, x_len, x_len, "··········");
    /*---(spacer and suffix)--------------*/
-   strlcpy (x_pre, "", LEN_RECD);
+   ystrlcpy (x_pre, "", LEN_RECD);
    for (i = 15; i > a_lvl; --i)  strcat (x_pre, "···");
    fprintf (s_file, "%s %2d %-20.20s %2dt, %3dc, %4dr, %20lld", x_pre, a_lvl, a_path, a_node->tab, a_node->col, a_node->row, a_node->key);
    if      (a_node->key < 0)         fprintf (s_file, "   buffer/register");
@@ -502,8 +502,8 @@ api_ysort__unit         (char *a_question, int n)
       /*> ySORT_search_stats (&x_result, &x_last, &x_depth, x_path);                  <*/
       ySORT_search_stats (&x_result, &x_last   , &x_depth, x_path);
       /*> x_last = (tCELL *) x_void;                                                  <*/
-      if (x_last != NULL)  strlcpy (t, x_last->label, LEN_LABEL);
-      else                 strlcpy (t, "-"          , LEN_LABEL);
+      if (x_last != NULL)  ystrlcpy (t, x_last->label, LEN_LABEL);
+      else                 ystrlcpy (t, "-"          , LEN_LABEL);
       snprintf (unit_answer, LEN_FULL, "YSORT result     : %2d %-8.8s  %2d %s", x_result, t, x_depth, x_path);
    }
    /*---(complete)-----------------------*/
