@@ -77,8 +77,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "4.--, next revision in production"
 #define     P_VERMINOR  "4.0-, clean, simplify, and integrate code"
-#define     P_VERNUM    "4.0a"
-#define     P_VERTXT    "cleaned cell structure field naming and added gpl headers"
+#define     P_VERNUM    "4.0b"
+#define     P_VERTXT    "all unit-tests updated to current standard, but not executed yet"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -260,6 +260,7 @@
 #include    <yURG.h>              /* heatherly urgent processing              */
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
+#include    <yENV.h>              /* heatherly environment handling           */
 /*---(custom vi-keys)--------------------*/
 #include    <yKEYS.h>             /* heatherly vikeys key handling            */
 #include    <yMODE.h>             /* heatherly vikeys mode tracking           */
@@ -993,10 +994,6 @@ char        PROG_dusk               (void);
 char        PROG__end               (void);
 char        PROG_shutdown           (void);
 /*---(unittest)-------------*/
-char        PROG__unit_loud         (void);
-char        PROG__unit_quiet        (void);
-char        PROG__unit_end          (void);
-char        PROG__unit_cleanse      (void);
 
 
 /*---(from s.c)----------------------------*/

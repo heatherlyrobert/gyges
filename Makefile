@@ -10,7 +10,7 @@ NAME_BASE  = gyges
 LIB_STD    = $(LIB_CURSTD)
 # all heatherly libraries used, debug versions whenever available
 #            123456789-1234 123456789-1234 123456789-1234 123456789-1234 123456789-1234 123456789-1234 123456789-1234 123456789-1234 123456789-1234
-LIB_CORE   = -lyLOG_debug   -lyURG_debug   -lySTR_debug
+LIB_CORE   = -lyLOG_debug   -lyURG_debug   -lySTR_debug   -lyENV_debug
 LIB_VIKEYS = -lyMODE_debug  -lyKEYS_debug  -lyMACRO_debug -lySRC_debug   -lyFILE_debug  -lyVIEW_debug  -lyMAP_debug   -lyCMD_debug   -lyMARK_debug
 LIB_OTHER  = -lyRPN_debug   -lyREGEX_debug -lyCALC_debug  -lyPARSE_debug -lySORT_debug  -lyEXEC_debug
 LIB_GRAPH  = -lncurses      -ltinfo        -lyVICURSES_debug   -lyX11_debug
